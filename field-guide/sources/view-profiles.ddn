@@ -1,0 +1,52 @@
+ddn "0.6";
+module "ddn.fieldguide.viewprofiles";
+
+// kind: names what sort of diagram a view is; strictness: decides whether
+// out-of-vocabulary elements are info diagnostics (permissive, the default)
+// or check failures (strict). kind pins defaults only — explicit style,
+// layout and projection declarations still win.
+
+data model {
+  object begin "Start" { kind: "flow.start"; }
+  object capture "Capture request" { kind: "flow.process"; }
+  object review "Complete?" { kind: "flow.decision"; }
+  object done "End" { kind: "flow.end"; }
+  relation s1 "submit" @begin -> @capture { kind: "flow.next"; }
+  relation s2 "check" @capture -> @review { kind: "flow.next"; }
+  relation s3 "yes" @review -> @done { kind: "flow.next"; x_diagram: { branch: "complete" }; }
+  relation s4 "no" @review -> @capture { kind: "flow.next"; x_diagram: { branch: "incomplete" }; }
+}
+
+// Out-of-vocabulary guest: a note renders normally but is not part of the
+// flow.process vocabulary subset, so a permissive view reports DDN-VP03.
+data extras {
+  note audit "Every rejection is written to the audit log.";
+}
+
+view flow_strict "Request flow — strict flowchart" {
+  data: [@model];
+  kind: flowchart;
+  strictness: strict;
+  publication { size: content; fit: none; }
+}
+
+view flow_permissive "Same flow plus a guest note — permissive" {
+  data: [@model, @extras];
+  kind: patent-figure;
+  strictness: permissive;
+  publication { size: content; fit: none; }
+}
+
+view flow_colorblind "Same flow — colorblind-safe theme" {
+  data: [@model];
+  kind: flowchart;
+  theme: colorblind_safe;
+  publication { size: content; fit: none; }
+}
+
+view flow_mono "Same flow — mono print theme" {
+  data: [@model];
+  kind: flowchart;
+  theme: mono_print;
+  publication { size: content; fit: none; }
+}

@@ -2209,6 +2209,44 @@
       "svg": "corpus/basics-110-presentation-architecture.svg"
     },
     {
+      "entry": "website/examples/basics/111-publication-chrome.ddn",
+      "view": "fig1",
+      "title": "Sensor monitor",
+      "views": [
+        {
+          "id": "fig1",
+          "title": "Sensor monitor"
+        },
+        {
+          "id": "fig2",
+          "title": "Sensor monitor (detail)"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/basics-111-publication-chrome.svg"
+    },
+    {
+      "entry": "website/examples/basics/112-markings-metadata.ddn",
+      "view": "overview",
+      "title": "Billing overview",
+      "views": [
+        {
+          "id": "overview",
+          "title": "Billing overview"
+        },
+        {
+          "id": "filing",
+          "title": "Billing overview (print)"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/basics-112-markings-metadata.svg"
+    },
+    {
       "entry": "website/examples/basics/12-nested-fields.ddn",
       "view": "detailed",
       "title": "Nested fields / domains and representations",

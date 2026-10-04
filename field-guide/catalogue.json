@@ -1,10 +1,10 @@
 {
   "meta": {
-    "edition": "field-guide-0.7",
+    "edition": "field-guide-0.8",
     "runtime": "0.7.0",
-    "reviewed": "2026-09-30",
-    "chapterCount": 148,
-    "plannedChapterCount": 148,
+    "reviewed": "2026-10-04",
+    "chapterCount": 155,
+    "plannedChapterCount": 155,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -2271,7 +2271,7 @@
         "view": "container",
         "profile": "c4.container@1",
         "projection": "graph",
-        "sha256": "b0b3a0cb3b09317afdcd46f58682669976d721e1bca532b0ff351f8dfce4224c",
+        "sha256": "18fa713a574a31e074b498c3b92a3b85b7a7e1fe77b0ec7c19f9fffd7a447ee7",
         "modelFingerprint": "ac3fe2c1e216fa37",
         "warnings": [
           "DDN-TW01"
@@ -2314,8 +2314,8 @@
         "expectation": "Only the label of Web application / review changes; containers, links and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "b0b3a0cb3b09317afdcd46f58682669976d721e1bca532b0ff351f8dfce4224c",
-        "after": "59733e642217f6c9a388886eb2df25bc5c9e6a3ddb428be9ac02b08785031c5a",
+        "before": "18fa713a574a31e074b498c3b92a3b85b7a7e1fe77b0ec7c19f9fffd7a447ee7",
+        "after": "8d0330ef6d9aac7424c24c9f549746fe6c2c68dcada5876ac60fb8ba59bf15df",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -2457,10 +2457,9 @@
         "view": "lan",
         "profile": "network.basic@1",
         "projection": "graph",
-        "sha256": "53d05a1222a583794e078e65cc73829f926397ce671507cdfa2e799de9c81101",
+        "sha256": "e4d57a84f161bc6e580d33cd6333f036704f3dbba60a0c42f158a8fad2183dd8",
         "modelFingerprint": "45a74ff084928b60",
         "warnings": [
-          "DDN-LW05",
           "DDN-TW01"
         ]
       },
@@ -2500,8 +2499,8 @@
         "expectation": "Only the label of Office bus / review changes; hosts, attachments and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "53d05a1222a583794e078e65cc73829f926397ce671507cdfa2e799de9c81101",
-        "after": "9b7be62fd531203058e890935bb9c561115d125591d34726d7f32e87db8afd85",
+        "before": "e4d57a84f161bc6e580d33cd6333f036704f3dbba60a0c42f158a8fad2183dd8",
+        "after": "726af6aebde165551cd50f85bc9bbbcaeff3840039ffe8bcdfcbf4bb95b0b22a",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -2548,7 +2547,7 @@
         "view": "net",
         "profile": "network.basic@1",
         "projection": "graph",
-        "sha256": "6ed5ac0b6a8561f042dddf45cd0d8738f5d760326ed507844a3d3a83d4ba0883",
+        "sha256": "99c74c7121acc2857ee12f99df951ebe0895a57bdb23b5fc0755783bde1c1d5b",
         "modelFingerprint": "3ae43b7b15f5f107",
         "warnings": [
           "DDN-LW05",
@@ -2584,8 +2583,8 @@
         "expectation": "Only the label of Edge firewall / review changes; glyphs, attachments and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "6ed5ac0b6a8561f042dddf45cd0d8738f5d760326ed507844a3d3a83d4ba0883",
-        "after": "5b9bd05dd15f0a93397eccccef2a19bd0317723835c16ddb51b833efe65972e1",
+        "before": "99c74c7121acc2857ee12f99df951ebe0895a57bdb23b5fc0755783bde1c1d5b",
+        "after": "5fb45659b735470dafb5dad55e26964fc23d2c4f7946156298ef837ba0f577ea",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -2893,7 +2892,7 @@
         "view": "dynamic",
         "profile": "c4.dynamic@1",
         "projection": "graph",
-        "sha256": "22d55e81ec03a0970fe63fc3b763f7637309d6cc19f275b216b05cb79bc12795",
+        "sha256": "d86921e5e135b2e9dd4ad2d0b4dba129092dde4c71c37ce690caf983c54eec5c",
         "modelFingerprint": "5b04ad76b73611fe",
         "warnings": [
           "DDN-TW01"
@@ -2928,8 +2927,8 @@
         "expectation": "Only the label of Customer / review changes; order, interactions and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "22d55e81ec03a0970fe63fc3b763f7637309d6cc19f275b216b05cb79bc12795",
-        "after": "d2edaa225ddbb7b151914560a16d9de37df2ac227ac4deb062fd444bb175f495",
+        "before": "d86921e5e135b2e9dd4ad2d0b4dba129092dde4c71c37ce690caf983c54eec5c",
+        "after": "2cc0f1c1bfc0a5c0c469cbddb31d462265ac06a2ec9c4c774af67e577b798357",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -6741,7 +6740,7 @@
         "view": "dashboard_quality",
         "profile": "panels.composed@1",
         "projection": "panels",
-        "sha256": "f19132cb82ce239b66b7759aaf2bf51232485fd4a985433334d1688397fd49a0",
+        "sha256": "7ddf7ca09070db47f89c89a670148d33fd522f7843fabe8ff910418a9c3d4bc6",
         "modelFingerprint": "833f2d66db2a3dd0",
         "warnings": [
           "DDN-TW01",
@@ -6800,8 +6799,8 @@
         "expectation": "Only the record's value changes from 9.82 to 9.92; the chart re-renders from the swapped records and undo restores the original payload."
       },
       "exerciseEvidence": {
-        "before": "f19132cb82ce239b66b7759aaf2bf51232485fd4a985433334d1688397fd49a0",
-        "after": "50da5394d75a43e7ee1b5e94b3ed602ceb1cd3175630e5bedda8d4f3f718f890",
+        "before": "7ddf7ca09070db47f89c89a670148d33fd522f7843fabe8ff910418a9c3d4bc6",
+        "after": "924cb495f468e8a0bd5a7f39c67fe87b17e9e918dbf4880db0920eace226d338",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -6851,7 +6850,7 @@
         "view": "lifecycle_trace",
         "profile": "state.flat@1",
         "projection": "graph",
-        "sha256": "6b200f4ccf6e8ec35696052145c17149c54acfe31da348a507a9ebe011773cd6",
+        "sha256": "151bbbc642991d79d337b0c857e0c0bf7c6f3be0c336e7ae8122f526dd152de1",
         "modelFingerprint": "2597cf0130cd2d87",
         "warnings": [
           "DDN-TW01"
@@ -6906,8 +6905,8 @@
         "expectation": "Only one record value changes; states, trace and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "6b200f4ccf6e8ec35696052145c17149c54acfe31da348a507a9ebe011773cd6",
-        "after": "c120f198a065b2c2ae0e38d82d8e6c05626922647b3a70f1707b853ea8351f73",
+        "before": "151bbbc642991d79d337b0c857e0c0bf7c6f3be0c336e7ae8122f526dd152de1",
+        "after": "5b2dd0a370acb86d6e23c4a92fde297718fda58a35d8f93d363cb2a174cd62fd",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -7340,7 +7339,7 @@
         "view": "components",
         "profile": "uml.composite@1",
         "projection": "graph",
-        "sha256": "bd9c2f68fe356bd8cdaf7aabdbcf449755320c8ef5097384bb0b4ab988f389d6",
+        "sha256": "78257b60a06d141e37b015c4ff60647cd4f8f08cbc390dd875802b29ca5b7e34",
         "modelFingerprint": "d03432c9d2b6369b",
         "warnings": [
           "DDN-TW01"
@@ -7375,8 +7374,8 @@
         "expectation": "Only the label of Storefront / review changes; ports, connectors and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "bd9c2f68fe356bd8cdaf7aabdbcf449755320c8ef5097384bb0b4ab988f389d6",
-        "after": "54aabc503788977793b16e173e1f5b24d100059aa11caee90b4b80b6d316e1fa",
+        "before": "78257b60a06d141e37b015c4ff60647cd4f8f08cbc390dd875802b29ca5b7e34",
+        "after": "5f5da04f8948c504dd081b4c94d27c5c3575a0034d6f9d814246a381f42edc31",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -7614,7 +7613,7 @@
         "view": "pins",
         "profile": "uml.activity@2",
         "projection": "graph",
-        "sha256": "0944483293e622e610fa5bbeab02ce1f5e4e948063aa67c28b7effd93be8108a",
+        "sha256": "0994538f779b798e39531cabbdc92dbd59f91466adbc5cf3d31d82559a7177ac",
         "modelFingerprint": "1e14ad2d0c36e645",
         "warnings": [
           "DDN-TW01"
@@ -7649,8 +7648,8 @@
         "expectation": "Only the label of start / review changes; pins, flows and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "0944483293e622e610fa5bbeab02ce1f5e4e948063aa67c28b7effd93be8108a",
-        "after": "e0f2182e757f38b6f43494101bce1e6ed8963b1bab47017af5e4a9c5fb34b58c",
+        "before": "0994538f779b798e39531cabbdc92dbd59f91466adbc5cf3d31d82559a7177ac",
+        "after": "29c59bbcdebca2919c0997d125b4e3231652fb9a08b0c438a1570722d1a2d764",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -7791,7 +7790,7 @@
         "view": "communication",
         "profile": "uml.communication@1",
         "projection": "graph",
-        "sha256": "230c4cae7b3d7c93ce7c1f9c4d2a7282bcdc43366b6e352942fa5566046cb5f7",
+        "sha256": "e7067bde3c90c5440fdb167b358606b56968ff107fb60449925886e5e68baf38",
         "modelFingerprint": "b35e8a7c1167dd00",
         "warnings": [
           "DDN-TW01"
@@ -7833,8 +7832,8 @@
         "expectation": "Only the label of Customer app / review changes; links, numbering and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "230c4cae7b3d7c93ce7c1f9c4d2a7282bcdc43366b6e352942fa5566046cb5f7",
-        "after": "73fe8eb348982d4931c31d19517cbbc15fbb6b3cbb7fb71d34bda65a4516b264",
+        "before": "e7067bde3c90c5440fdb167b358606b56968ff107fb60449925886e5e68baf38",
+        "after": "86339bde6079364d21d8ac19483535b1bdbb1be86c4c4e8b847971b6f6344348",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8258,7 +8257,7 @@
         "view": "v",
         "profile": "cmmn.complete@1",
         "projection": "graph",
-        "sha256": "41b99cb996e1029e29afa710d766bbdf2f738325acd886531f18e709ab1dfb2b",
+        "sha256": "112d93a41e1d572cf3c19b2154885e56c090e2e368b9d0a5c486167db0b3cc2e",
         "modelFingerprint": "d7e0d0958b8b8b1f",
         "warnings": [
           "DDN-TW01"
@@ -8293,8 +8292,8 @@
         "expectation": "Only the label of Intake / review changes; stages, sentries and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "41b99cb996e1029e29afa710d766bbdf2f738325acd886531f18e709ab1dfb2b",
-        "after": "0b0426dc85a1d35a57157ee5f02536a62dbb73a07a62a795cd57c4e3c99f9902",
+        "before": "112d93a41e1d572cf3c19b2154885e56c090e2e368b9d0a5c486167db0b3cc2e",
+        "after": "df657b7c0c315b5651ea92c221dedfba021021396937d17dd06f0f84469c4c93",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8343,7 +8342,7 @@
         "view": "bdd",
         "profile": "sysml.bdd@2",
         "projection": "graph",
-        "sha256": "d956f2f9972f7d9425f710e9519b0256cce3660d490b35d82bd535c8594b429a",
+        "sha256": "01d36c68910d0973674b5e076270c87e15212c61b88c9527e51809f75dd3acac",
         "modelFingerprint": "3e67ed914234873b",
         "warnings": [
           "DDN-TW01"
@@ -8378,8 +8377,8 @@
         "expectation": "Only the label of Pump / review changes; properties, relationships and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "d956f2f9972f7d9425f710e9519b0256cce3660d490b35d82bd535c8594b429a",
-        "after": "dec0a6fdb41946dc95f9827c3b759f8bd3cd1a26bed4be282fd4bc94201b026d",
+        "before": "01d36c68910d0973674b5e076270c87e15212c61b88c9527e51809f75dd3acac",
+        "after": "eaf3849c099682d151304e59e9900940659a09db1e1b297c0575b1a0dd54c362",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8513,7 +8512,7 @@
         "view": "parametric",
         "profile": "sysml.parametric@2",
         "projection": "graph",
-        "sha256": "da748fd1a3f4ae4793e73da05750875eb8dad2333294f3db271d377db363e009",
+        "sha256": "76c649442033d6908c4fa1a3ce0c52846693763eae9a95fab3dc7d979c7dee43",
         "modelFingerprint": "3e67ed914234873b",
         "warnings": [
           "DDN-LW05",
@@ -8549,8 +8548,8 @@
         "expectation": "Only the label of {flow = pressure x area} / review changes; equations, bindings and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "da748fd1a3f4ae4793e73da05750875eb8dad2333294f3db271d377db363e009",
-        "after": "43670b5c68d3d66ae1c2acc8d15762cd073e88fbd6024b0baec67d88efeeaf1d",
+        "before": "76c649442033d6908c4fa1a3ce0c52846693763eae9a95fab3dc7d979c7dee43",
+        "after": "c14f37d5559325a59b0716d723523565ea5d1cc009eb2842c77a7082f92f9e3e",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8605,10 +8604,9 @@
         "view": "requirements",
         "profile": "sysml.requirements@1",
         "projection": "graph",
-        "sha256": "39bfa4c6aa08ea0eeb713ec1323b208b62583d3ea0ae8bf17d0302a3ce591d87",
+        "sha256": "53ef3d3a7d6a66face7a11a64196ba5e28755a2b258429d5ac2a73115bc7e638",
         "modelFingerprint": "8482d8e98d9c553d",
         "warnings": [
-          "DDN-LW05",
           "DDN-TW01"
         ]
       },
@@ -8641,8 +8639,8 @@
         "expectation": "Only the label of Pump performance / review changes; traces and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "39bfa4c6aa08ea0eeb713ec1323b208b62583d3ea0ae8bf17d0302a3ce591d87",
-        "after": "20e7404129f73fd9de12a93a4d94cc5d3c85b68115527a914062bb0d6a6f5c82",
+        "before": "53ef3d3a7d6a66face7a11a64196ba5e28755a2b258429d5ac2a73115bc7e638",
+        "after": "9927a4eedb2fbe23a7d993190f7400fd623880a982b02ff3b1c12ba4ecee745f",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8701,7 +8699,7 @@
         "view": "drd",
         "profile": "dmn.drd@1",
         "projection": "graph",
-        "sha256": "30b9fdb62f6274afa764f41e1c083e07746a18fa8cadd447043743c890bff28a",
+        "sha256": "8a44723ab134ff97a39c7aae27e9c5c930aeed1d8f184389b074d79fe1e7c268",
         "modelFingerprint": "6d82b8c7fb671a09",
         "warnings": [
           "DDN-TW01"
@@ -8736,8 +8734,8 @@
         "expectation": "Only the label of Route claim / review changes; requirements edges and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "30b9fdb62f6274afa764f41e1c083e07746a18fa8cadd447043743c890bff28a",
-        "after": "28d4b66c718f986073dbe8f9e00ee3b62d7364599758729c3064fa3723834e21",
+        "before": "8a44723ab134ff97a39c7aae27e9c5c930aeed1d8f184389b074d79fe1e7c268",
+        "after": "69f600806311a21ec0f1c5b6475ae0a7bac34e4d7bada796b322bbce89b214bf",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -9229,7 +9227,7 @@
         "view": "d",
         "profile": "fbd.basic@1",
         "projection": "graph",
-        "sha256": "1accdb566bdd183d20cbc99a2124a13447fe17c88c963a1dfa1a217b46a83a85",
+        "sha256": "cc534a6c42610f28d8cbc493193dc61ffc7e3bc510ccb3782641b203d5ab5f2f",
         "modelFingerprint": "177fbfd81c7e0f12",
         "warnings": [
           "DDN-TW01"
@@ -9264,8 +9262,8 @@
         "expectation": "Only the label of T1 / review changes; pins, wires and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "1accdb566bdd183d20cbc99a2124a13447fe17c88c963a1dfa1a217b46a83a85",
-        "after": "d875a3ef0a0fc7462aa502e71d38697dc86f68d74475c99775c8418c2fa0505b",
+        "before": "cc534a6c42610f28d8cbc493193dc61ffc7e3bc510ccb3782641b203d5ab5f2f",
+        "after": "f50776f74e687d21760bcd0070cc8571db08b2d3a1c31a09d95fcc171f772bb3",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -9314,7 +9312,7 @@
         "view": "net",
         "profile": "petri.basic@1",
         "projection": "graph",
-        "sha256": "e39f6001d9a31f397f252ef230d678d5c9ac835a6a2f7655b9ec2ced0c69e246",
+        "sha256": "aecc481f58fa522249f5355ebd2838ea5fd9a439876311eae34b85e525b3400a",
         "modelFingerprint": "f87d6c375ecb7f15",
         "warnings": [
           "DDN-TW01"
@@ -9349,8 +9347,8 @@
         "expectation": "Only the label of Idle producers / review changes; arcs, marking and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "e39f6001d9a31f397f252ef230d678d5c9ac835a6a2f7655b9ec2ced0c69e246",
-        "after": "40441ef79b3e747cf7777df148b55f43c49a285882fa3d006caf0434b6811658",
+        "before": "aecc481f58fa522249f5355ebd2838ea5fd9a439876311eae34b85e525b3400a",
+        "after": "342784ea8a4f28393b978d5c7d78fe1d9b69c48f4cf26eac293f895b609d4011",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -9484,7 +9482,7 @@
         "view": "map",
         "profile": "vsm.basic@1",
         "projection": "graph",
-        "sha256": "7589d223b2942ef41e4ecdad3fb3e2c02f4e915e2c7cfb405f2b37009dc67bbf",
+        "sha256": "09c640eff7d2e407daa5b0c0a6cecd91dc0f385526569dc4e63d03c69136b56b",
         "modelFingerprint": "dffc8ea80ee901be",
         "warnings": [
           "DDN-LW05",
@@ -9520,8 +9518,8 @@
         "expectation": "Only the label of Stamping / review changes; flows, data and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "7589d223b2942ef41e4ecdad3fb3e2c02f4e915e2c7cfb405f2b37009dc67bbf",
-        "after": "de70b54162cdbe61d77ece8e89c783bdb0ddfa3313cf8515306059b41aeaf6be",
+        "before": "09c640eff7d2e407daa5b0c0a6cecd91dc0f385526569dc4e63d03c69136b56b",
+        "after": "f1fea7693fa94202b451d6dae3a85c3b21b0ec4dd6256396a4b12bd403a782b5",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -9568,7 +9566,7 @@
         "view": "map",
         "profile": "vsm.basic@1",
         "projection": "graph",
-        "sha256": "85c212101d7b44129b06a8c11c712e071a1bbb9c11d17157edf279daefcc08e7",
+        "sha256": "a66d942d6d6fdac7d840a86fd3e4ff7bc22dfa7559954ccfcfea1fa288da9732",
         "modelFingerprint": "820c5c584338d544",
         "warnings": [
           "DDN-LW05",
@@ -9604,8 +9602,8 @@
         "expectation": "Only the label of Stamping / review changes; symbols and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "85c212101d7b44129b06a8c11c712e071a1bbb9c11d17157edf279daefcc08e7",
-        "after": "cdec4c3917c4eb8c01971d1274f486b595698779c8e974d324c16ca54d39d6f1",
+        "before": "a66d942d6d6fdac7d840a86fd3e4ff7bc22dfa7559954ccfcfea1fa288da9732",
+        "after": "76dfecd2896960d749707a552b82855e05f8474cba3d8e5eafeb7bd1baa60954",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -9935,7 +9933,7 @@
         "view": "mindmap",
         "profile": "mindmap.basic@1",
         "projection": "graph",
-        "sha256": "b0981efb144c19d423297cac820bd7acca6ae406db5e582ca49c57174f52dd13",
+        "sha256": "3b49b52d9f6c4b60bb839b8542c78fac7b920a36220ed68aea1b56431ce09578",
         "modelFingerprint": "33fe259f9dc0fceb",
         "warnings": [
           "DDN-TW01"
@@ -9978,8 +9976,8 @@
         "expectation": "Only the label of Q3 launch brainstorm / review changes; the branch structure and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "b0981efb144c19d423297cac820bd7acca6ae406db5e582ca49c57174f52dd13",
-        "after": "251a7f8d1731afe727fd92f31b4b402f6530a9a9e78ebe9a5f7d833f42aeba42",
+        "before": "3b49b52d9f6c4b60bb839b8542c78fac7b920a36220ed68aea1b56431ce09578",
+        "after": "bc1d4c30180bb8b3842a7aa39f9ac9031bc971e2e6ff64c4b15945f985bd38f0",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -10027,7 +10025,7 @@
         "view": "concepts",
         "profile": "concept.map@1",
         "projection": "graph",
-        "sha256": "ebec552e45e49f1978084bceb34d6b4e06378d7c300015742a53e5cbccb3ef60",
+        "sha256": "c0442fd3417cd6712533edaf8cd854754e36cc307e6eb6512521d0c41d74a449",
         "modelFingerprint": "49ff957b3b158801",
         "warnings": [
           "DDN-TW01"
@@ -10070,8 +10068,8 @@
         "expectation": "Only the label of Order / review changes; propositions and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "ebec552e45e49f1978084bceb34d6b4e06378d7c300015742a53e5cbccb3ef60",
-        "after": "c9b7e460a9edbe2371bbc138f013f9617b3cc80b12cd99c5ade8319279a08d60",
+        "before": "c0442fd3417cd6712533edaf8cd854754e36cc307e6eb6512521d0c41d74a449",
+        "after": "ec36f79f8a98d23059bc404cba9155e2087953e53b883b75d19846ac9e51e2fa",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -10389,7 +10387,7 @@
         "view": "net",
         "profile": "network.basic@1",
         "projection": "graph",
-        "sha256": "1f40e36fd5c54574988bdc93ca7d16da4df6a6aef9dedefd1f7f480b9aa9f1a6",
+        "sha256": "ae2a4ddd073054d60723810161d87b21a0962704244eab27b838b2e19f94ac3e",
         "modelFingerprint": "953e16cedec9e818",
         "warnings": [
           "DDN-TW01"
@@ -10424,8 +10422,8 @@
         "expectation": "Only the label of Office LAN / review changes; icons, relations and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "1f40e36fd5c54574988bdc93ca7d16da4df6a6aef9dedefd1f7f480b9aa9f1a6",
-        "after": "7d13bd98dc57d020bf477f1519147ccf1fcf3651e1e83cb4b3d7a8d05ad0e27d",
+        "before": "ae2a4ddd073054d60723810161d87b21a0962704244eab27b838b2e19f94ac3e",
+        "after": "a33ee23b006105ff3747e2d0435df9da133bbba5f6f6dc8d65e6060dae8238ab",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -10473,7 +10471,7 @@
         "view": "net",
         "profile": "network.basic@1",
         "projection": "graph",
-        "sha256": "712971be47d63a6378db7341a218706972ca6f7031a24e619868e3c44786849a",
+        "sha256": "155774ca02e3d9ff1260af5075794f43ebbb3399521e93b56694eb5eef79325c",
         "modelFingerprint": "b77720b2d3aa4c2e",
         "warnings": [
           "DDN-TW01"
@@ -10508,8 +10506,8 @@
         "expectation": "Only the label of WAN / review changes; glyphs, relations and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "712971be47d63a6378db7341a218706972ca6f7031a24e619868e3c44786849a",
-        "after": "82a696b73c494a935892adb592267ac3c00bb2934ca891c94b82b4b0f2351d7c",
+        "before": "155774ca02e3d9ff1260af5075794f43ebbb3399521e93b56694eb5eef79325c",
+        "after": "682591b02577bb0aac42a4e86e1fc82a85dfa45cf0e4ce46f7d47017eaa4882c",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -10556,7 +10554,7 @@
         "view": "pid",
         "profile": "network.basic@1",
         "projection": "graph",
-        "sha256": "585c999f71dfbcb909f5a23ab12b5bbb3783eb1f1789177942b97680b373a88e",
+        "sha256": "4b550f4a1a816e6570f28e605710a1e35e028a6bb5358de23171b76798379ffe",
         "modelFingerprint": "030ee0c6c16e4e40",
         "warnings": [
           "DDN-TW01"
@@ -10591,8 +10589,8 @@
         "expectation": "Only the label of Feed tank / review changes; symbols and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "585c999f71dfbcb909f5a23ab12b5bbb3783eb1f1789177942b97680b373a88e",
-        "after": "37b8386b322e77c8f321b22ebbc592b2d01072081fcc622a4b316aab7c94f801",
+        "before": "4b550f4a1a816e6570f28e605710a1e35e028a6bb5358de23171b76798379ffe",
+        "after": "0be4229afa727d9560bfa3127e1a46e4dcd186c1c08074c362495521881ad46a",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -10639,10 +10637,9 @@
         "view": "sch",
         "profile": "network.basic@1",
         "projection": "graph",
-        "sha256": "49936088fcf301cce9886f76f8a5e67ba810967f5d6cf6bd99206ff010fb9aab",
+        "sha256": "e97c59b98b1f3ab299b63ae825d922f68db092d2465e06c62c7c2487f24fbf11",
         "modelFingerprint": "449b84ca794c7f76",
         "warnings": [
-          "DDN-LW05",
           "DDN-TW01"
         ]
       },
@@ -10675,8 +10672,8 @@
         "expectation": "Only the label of Battery / review changes; symbols and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "49936088fcf301cce9886f76f8a5e67ba810967f5d6cf6bd99206ff010fb9aab",
-        "after": "62cc96a6db205aeff1bd54c5b70654cbd26fbb4d6970ffe8ea88a78edd457e90",
+        "before": "e97c59b98b1f3ab299b63ae825d922f68db092d2465e06c62c7c2487f24fbf11",
+        "after": "010abe9b70eb9abb66386ffa87bb6a757f389880d3f94cbc8618ba668a49a301",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -10842,7 +10839,7 @@
         "view": "iso_map",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "33ac616b253850e0177075679e60623abef99ad9d755929e0568313cb6850703",
+        "sha256": "5b6d6f9a6d9d8e68a8ab939822027b8d276d69d285fabcf829b8d7a9265f9211",
         "modelFingerprint": "3e3903fb8dd53bef",
         "warnings": [
           "DDN-W106",
@@ -10889,8 +10886,8 @@
         "expectation": "Only the label of Client app / review changes; tiers, blocks and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "33ac616b253850e0177075679e60623abef99ad9d755929e0568313cb6850703",
-        "after": "66e534dfcb472c0d354ae0fc71963dd6b5fdc50a943796a4fcfdc963e163226a",
+        "before": "5b6d6f9a6d9d8e68a8ab939822027b8d276d69d285fabcf829b8d7a9265f9211",
+        "after": "747fa9c0982f88277d3a09de84b52385e5e9abc94f88b70f1b08dbd00a6e535d",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11141,7 +11138,7 @@
         "view": "erd",
         "profile": "erd.crowfoot@1",
         "projection": "graph",
-        "sha256": "a49aa9bd26b2e9899e6c917354e9a22a8af75f7dc8a862638070a17bfa806c20",
+        "sha256": "566b5b616d5b912098c1469c2d5463c958e49fd3bcd34066a2b8def306858274",
         "modelFingerprint": "f99ee911b8a8bce9",
         "warnings": [
           "DDN-TW01"
@@ -11183,8 +11180,8 @@
         "expectation": "Only the label of Customer / review changes; attributes, end marks and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "a49aa9bd26b2e9899e6c917354e9a22a8af75f7dc8a862638070a17bfa806c20",
-        "after": "c5279f42bbc1a5acf6448ce6937ba6c949f67e75392177393560d1772ba195c9",
+        "before": "566b5b616d5b912098c1469c2d5463c958e49fd3bcd34066a2b8def306858274",
+        "after": "b8978aad122240245fbf0c6acaf72c1614855f41a361bd2e788f933bed77e907",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11233,7 +11230,7 @@
         "view": "sv",
         "profile": "uaf.strategic@1",
         "projection": "graph",
-        "sha256": "fc42b415650b5050849f71bde0a3a0a74579bbadc5556c8614b3c3dc2fede51c",
+        "sha256": "aabbd0cea607b1efb7d8b59c830c1abe2e5da72643f93ce0d31f2da2eaf9ae70",
         "modelFingerprint": "4ef9f08643ecfc28",
         "warnings": [
           "DDN-W103",
@@ -11288,8 +11285,8 @@
         "expectation": "Only the label of Order fulfillment / review changes; traces and identities across the files are untouched."
       },
       "exerciseEvidence": {
-        "before": "fc42b415650b5050849f71bde0a3a0a74579bbadc5556c8614b3c3dc2fede51c",
-        "after": "29e29c49c5c66db68bb9280c45543658b7868d1ba8859375ac078797e16f186c",
+        "before": "aabbd0cea607b1efb7d8b59c830c1abe2e5da72643f93ce0d31f2da2eaf9ae70",
+        "after": "b815b7fe0ab1ea7c5451d96162510d5c388c991c815428dad8d91ebea66d8f8d",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11977,7 +11974,7 @@
         "view": "diagram",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "ddb20b1fb9eb93b56986d3c7c420c1893e5be87fc6d15c0e7414e7ceb06e36d7",
+        "sha256": "e3cc09b06911349b967d28a7d851ac06769580f4eb6e215159ddab19ced844f1",
         "modelFingerprint": "9d09e5358ad59c05",
         "warnings": [
           "DDN-TW01"
@@ -12012,8 +12009,8 @@
         "expectation": "Only the label of Orders API / review changes; producer, schemas, consumers and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "ddb20b1fb9eb93b56986d3c7c420c1893e5be87fc6d15c0e7414e7ceb06e36d7",
-        "after": "c0ea8ed2c864e3759e7d747405425bae3f48cf1f9e6677d6775f4bd288ed0652",
+        "before": "e3cc09b06911349b967d28a7d851ac06769580f4eb6e215159ddab19ced844f1",
+        "after": "7d71568249d955533a8b10926cde2d952462f85697d183bcc28f2f8c64d4c481",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -12062,7 +12059,7 @@
         "view": "diagram",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "3471d1a39d5d6860bd2fa17466e56629a8b62058d832f01c35ffdd63ceeb4979",
+        "sha256": "df7ceea0949ed35574369f4324a7e5a7b871695b22ceb8030be5348eff9912fa",
         "modelFingerprint": "ee3fdebc945bd706",
         "warnings": [
           "DDN-LW05",
@@ -12098,8 +12095,8 @@
         "expectation": "Only the label of Zone A / review changes; placement edges and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "3471d1a39d5d6860bd2fa17466e56629a8b62058d832f01c35ffdd63ceeb4979",
-        "after": "ef8e531d9e8113486c8a3b1189ed6565fe9493790c864a2f07f4d90c2c183fb6",
+        "before": "df7ceea0949ed35574369f4324a7e5a7b871695b22ceb8030be5348eff9912fa",
+        "after": "584bdc4210b01c00efea10bf910260e5e3d62b23eea37d5525cd6385969ef84c",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -12535,7 +12532,8 @@
       "when": "Any routed diagram where unrelated lines must cross — bus layouts, networks, wiring.",
       "read": [
         "Find the crossing: the mark (gap, bridge or square) belongs to the line that hops, and it means exactly one thing.",
-        "Connected lines join at a node; crossed lines pass — the mark removes the ambiguity."
+        "Connected lines join at a node; crossed lines pass — the mark removes the ambiguity.",
+        "The router minimizes crossings first (optimize: crossings is the default and keeps improving); the mark disambiguates the crossings that remain, it does not excuse a tangled layout."
       ],
       "inputs": [
         "The model",
@@ -12950,7 +12948,8 @@
       "when": "Anything leaving the screen: print packs, PDF reports, ISO-style documentation sets.",
       "read": [
         "The paper variant fits the model to A4 and declares the smallest text allowed; the screen variant sizes to content.",
-        "Overflow is a diagnostic, not a silent crop — read the warnings before exporting."
+        "Overflow is a diagnostic, not a silent crop — read the warnings before exporting.",
+        "Headers, footers, borders and backgrounds live in the same publication block (see the Publication chrome chapter), and --content-size forces the content-sized form for one render without editing the source."
       ],
       "inputs": [
         "The model",
@@ -13279,7 +13278,7 @@
         "view": "circular",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "8bda9a4a7285253440ff46bb2dc7d38c3454cb48212c7211f9a7e42de3b3548a",
+        "sha256": "436246ff46c9cb84f945843009fce6632f2f065ce5e34959ec1074c742f31863",
         "modelFingerprint": "892e974ab1203b32",
         "warnings": [
           "DDN-LW05",
@@ -13316,8 +13315,8 @@
         "expectation": "Only the label of Integration hub / review changes; pins, computed positions and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "8bda9a4a7285253440ff46bb2dc7d38c3454cb48212c7211f9a7e42de3b3548a",
-        "after": "0ded0b35ac168cd27e1d2ccd3f24b5b336d354c774356e4f2ce3979fac25d0ca",
+        "before": "436246ff46c9cb84f945843009fce6632f2f065ce5e34959ec1074c742f31863",
+        "after": "fb7f4a9c81a98be7c664d4c4757aaa49e517d92de3c351e2e24a261c55f8a179",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -13366,7 +13365,7 @@
         "view": "paused",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "de0ad83a6fe1bdab4c10ffa9e3bda20235f9fb2d7a2ebc6aa3a519051443a20d",
+        "sha256": "76e1faa257a7485ae10af6eea07a5f23c1236cb9d66cc3b964d7579a802e06c0",
         "modelFingerprint": "892e974ab1203b32",
         "warnings": [
           "DDN-LW05",
@@ -13403,8 +13402,8 @@
         "expectation": "Only the label of Integration hub / review changes; retained positions and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "de0ad83a6fe1bdab4c10ffa9e3bda20235f9fb2d7a2ebc6aa3a519051443a20d",
-        "after": "f3f0da2d6691b7c0f4b550fb054fd9f1d7d412c0a61968c3df535e02e0780fee",
+        "before": "76e1faa257a7485ae10af6eea07a5f23c1236cb9d66cc3b964d7579a802e06c0",
+        "after": "d8130ed18e6d98508c43f2f8f62d40600c38d758932159b046deb09568e69766",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -13843,7 +13842,7 @@
         "view": "overview",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "8347def81b9535221850e510a4e69f6a7aa3fdb6f2a68aa67d5f949940923f2b",
+        "sha256": "057668b9c90b2120137d0c0bc47779284e5eb9d35fede335e2de8ef909abfa80",
         "modelFingerprint": "d48d7df71bd3356f",
         "warnings": [
           "DDN-LW05",
@@ -13886,8 +13885,660 @@
         "expectation": "Only the node's name changes; the artwork, anchors and routes are untouched."
       },
       "exerciseEvidence": {
-        "before": "8347def81b9535221850e510a4e69f6a7aa3fdb6f2a68aa67d5f949940923f2b",
-        "after": "a0e820ead030b61d13360d252f72ce0eaccd6e20595c787ac7b460db7ebac90a",
+        "before": "057668b9c90b2120137d0c0bc47779284e5eb9d35fede335e2de8ef909abfa80",
+        "after": "70254e8d1241e72d8d6e0925709a4c1ad6c685de7a118addeedea86953e3a1d4",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "version-06",
+      "title": "Source versions — the 0.6 dialect and when to upgrade",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/version-06.ddn",
+      "view": "main",
+      "what": "The first line of every .ddn file declares its source dialect. ddn \"0.6\" is the 0.8 dialect: it admits view kinds, publication chrome, text fit, markings, provenance and ref: anchors.",
+      "why": "The version line is a promise, not a negotiation: a 0.5 file keeps 0.5 semantics forever, and a processor never rewrites the header. Upgrading is a deliberate, per-file decision.",
+      "when": "Stamp ddn \"0.6\"; when the file itself needs to spell a 0.8 construct. A mixed workspace is normal — each file keeps its own declared version.",
+      "read": [
+        "This file declares 0.6 but uses no 0.8 construct: it renders byte-identically to the same file stamped 0.5 — only the version line differs.",
+        "Using an 0.8 keyword in a 0.5-or-older file fails DDN-V04, naming the construct and the minimum version; nothing is silently accepted.",
+        "The 0.7.0 runtime already implements the 0.8 draft constructs, so a 0.6 file checks and renders today."
+      ],
+      "inputs": [
+        "The constructs the file actually needs",
+        "Who consumes the file (older tooling reads 0.5)"
+      ],
+      "pitfalls": [
+        "Do not re-stamp a file \"just in case\" — upgrade when a construct demands it, so consumers know what they must parse.",
+        "Do not expect bundling or normalization to rewrite headers; they never do."
+      ],
+      "limits": "Accepted headers are 0.2 through 0.6; anything else (including \"0.7\", \"0.8\" or a missing line) is a parse error. Deprecated spellings keep working with an info diagnostic (DDN-V05).",
+      "refs": [],
+      "probe": [
+        "service",
+        "database",
+        "queue"
+      ],
+      "editTask": "Rename one element, apply, then flip the header between \"0.5\" and \"0.6\" and confirm the render does not change.",
+      "tags": [
+        "technique",
+        "version",
+        "0.8",
+        "migration"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/version-06.ddn",
+        "view": "main",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "7c34f144defe2bc84c756fa6065a41ba24a2e29a69aaff257271c6dfe7fa8f37",
+        "modelFingerprint": "71ae1327cba9484f",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/version-06.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/version-06.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view main \"Order service outline\" {\n  data: [@model];\n  publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open field-guide/sources/version-06.ddn and locate view main. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.version06::model.api",
+        "file": "field-guide/sources/version-06.ddn",
+        "before": "Order API",
+        "after": "Order API / review",
+        "expectation": "Only the label of Order API / review changes; the version line and every identity are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "7c34f144defe2bc84c756fa6065a41ba24a2e29a69aaff257271c6dfe7fa8f37",
+        "after": "a0f7fc658680ce9e8b936bc7082833ee39a0502d2c798d0dcf927b867612b1d0",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "view-profiles",
+      "title": "View kinds and strictness — declaring what a view is",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/view-profiles.ddn",
+      "view": "flow_strict",
+      "variants": [
+        {
+          "view": "flow_permissive",
+          "title": "Permissive variant with a guest note"
+        },
+        {
+          "view": "flow_colorblind",
+          "title": "Colorblind-safe theme"
+        },
+        {
+          "view": "flow_mono",
+          "title": "Mono-print theme"
+        }
+      ],
+      "what": "kind: names what sort of diagram a view is (flowchart, c4-context, uml-class, patent-figure, …); strictness: decides whether straying outside that vocabulary is an info note or a check failure.",
+      "why": "A declared kind turns \"this looks wrong\" into a coded diagnostic: permissive mode reports each out-of-vocabulary element as DDN-VP03, strict mode fails the check with DDN-VP04 naming the fix.",
+      "when": "Any view that claims to follow a notation: declare the kind, then choose strict for regulated deliverables and permissive while drafting.",
+      "read": [
+        "The strict variant is a closed flowchart: start, end and labelled decision branches, all inside the flowchart vocabulary.",
+        "The permissive variant adds a note — outside the vocabulary — and renders normally with one DDN-VP03 info diagnostic.",
+        "kind pins defaults only: an explicit style, layout or projection declaration still wins over the kind-derived default.",
+        "Independent of strictness, a kind's attached profile keeps its own contracts — the flowchart profile itself rejects non-flow participants (DDN-PF007), which is why the lenient guest example uses the graph-based patent-figure kind."
+      ],
+      "inputs": [
+        "The diagram's claimed notation",
+        "The tolerance for vocabulary strays (draft vs deliverable)"
+      ],
+      "pitfalls": [
+        "Do not declare a kind to change the picture — kinds never alter routing or layout; they set defaults and a lint axis.",
+        "Do not confuse strictness with validation: strict governs vocabulary membership only and never relaxes profile or geometry checks."
+      ],
+      "limits": "Registered kinds are ddn-native, flowchart, the c4 and uml families, chart-bar/chart-line, ladder and patent-figure; an unknown kind is DDN-VP01, strictness without a kind is DDN-VP02. Themes colorblind_safe and mono_print re-skin paint only — geometry, layout and text are identical across themes; an unknown theme is DDN-VP08.",
+      "refs": [],
+      "probe": [
+        "flow.process",
+        "flow.start",
+        "flow.decision"
+      ],
+      "editTask": "Rename one step, apply, then switch to the permissive variant and read the DDN-VP03 info diagnostic for the guest note.",
+      "tags": [
+        "technique",
+        "0.8",
+        "kind",
+        "strictness",
+        "theme",
+        "accessibility"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/view-profiles.ddn",
+        "view": "flow_strict",
+        "profile": "flow.documented@2",
+        "projection": "graph",
+        "sha256": "b09655df798e114ad7776abba465645264006cdc37a8bfe8776f53fc41123cad",
+        "modelFingerprint": "cea017ac476ece7e",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/view-profiles.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/view-profiles.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view flow_strict \"Request flow — strict flowchart\" {\n  data: [@model];\n  kind: flowchart;\n  strictness: strict;\n  publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open field-guide/sources/view-profiles.ddn and locate view flow_strict. This selects existing data; it is not a stored SVG.",
+        "Inspect the flow.documented@2 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.viewprofiles::model.begin",
+        "file": "field-guide/sources/view-profiles.ddn",
+        "before": "Start",
+        "after": "Start / review",
+        "expectation": "Only the label of Start / review changes; the kind, strictness and every identity are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "b09655df798e114ad7776abba465645264006cdc37a8bfe8776f53fc41123cad",
+        "after": "b7a6bda4256ccb6fed45b6d419823e8d141088b0b3711b1b1e1a17a8ed78cb59",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "patent-figures",
+      "title": "Patent and legal figures — numerals, refs and mono print",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/patent-figure.ddn",
+      "view": "fig1",
+      "variants": [
+        {
+          "view": "fig2",
+          "title": "Content-sized variant"
+        }
+      ],
+      "what": "kind: patent-figure attaches the patent.legal@1 conventions: a boxed reference numeral under each element header, ref: anchors in prose that render as the target's numeral, and black-and-white page chrome with FIG. numbering.",
+      "why": "Legal figures live by their numerals: the specification text references \"valve 106\", and a numeral that drifts from its element invalidates the page. Anchors computed at render time cannot drift.",
+      "when": "Patent drawings, legal exhibits and any filing that must survive black-and-white reproduction with numbered parts.",
+      "read": [
+        "Each element declares numeral: and wears it in a boxed field row; duplicates in one view fail DDN-VP06, out-of-range values DDN-VP05.",
+        "The note's ref:actuate renders as 106 — renumber the element and every anchor follows automatically.",
+        "The portrait page carries the header date, a single border and the FIG. $figure footer; the same model renders content-sized in the variant.",
+        "A decision branch without a label is warned (DDN-VP07) under this profile — examiners require every branch labelled."
+      ],
+      "inputs": [
+        "The figure's elements and their numerals",
+        "The narration prose that references them",
+        "The page size and minimum text the filing office expects"
+      ],
+      "pitfalls": [
+        "Keep a ref: anchor and its target in the same data block — anchors resolve within the declaring block, and a cross-block anchor fails DDN-MK05.",
+        "Do not hand-type numerals into prose where an anchor exists; typed numbers drift, anchors do not."
+      ],
+      "limits": "Drawing conventions only: not legal advice, not a patent-office compliance certification, and claim text is not validated. Anchors render as text only — no hyperlink is emitted.",
+      "refs": [],
+      "probe": [
+        "flow.process",
+        "flow.start",
+        "flow.decision"
+      ],
+      "editTask": "Rename the actuate step, apply, and confirm the note still renders the numeral — then change its numeral and watch the anchor follow.",
+      "tags": [
+        "technique",
+        "0.8",
+        "patent",
+        "legal",
+        "numeral",
+        "mono"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/patent-figure.ddn",
+        "view": "fig1",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "73600e4a01595c02a52b5175fbb9567eb069be2d6cde47e68db57ea619f37ec9",
+        "modelFingerprint": "6615e05538617bb7",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/patent-figure.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/patent-figure.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view fig1 \"FIG. 1 — shutoff control method\" {\n  data: [@method];\n  kind: patent-figure;\n  // A tall, narrow flow fits a portrait page without shrinking text below\n  // the declared minimum — direction is a readability choice here.\n  layout { direction: down; }\n  publication {\n    size: a4; orientation: portrait; margin: 10mm; minimum_text: 7pt;\n    header { right { text: \"$date\"; size: 8pt; } }\n    footer { center { text: \"FIG. $figure\"; size: 10pt; font: serif; } right { text: \"Page $page\"; size: 8pt; } }\n    border { style: single; weight: 1pt; inset: 6mm; }\n  }\n}",
+      "walkthrough": [
+        "Open field-guide/sources/patent-figure.ddn and locate view fig1. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.patent::method.begin",
+        "file": "field-guide/sources/patent-figure.ddn",
+        "before": "Start",
+        "after": "Start / review",
+        "expectation": "Only the label of Start / review changes; numerals, anchors and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "73600e4a01595c02a52b5175fbb9567eb069be2d6cde47e68db57ea619f37ec9",
+        "after": "cfe43f857aa15f5ffdf6557ce311ae494153d89fbadc691475181468a9f9c523",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "publication-chrome",
+      "title": "Publication chrome — headers, footers, borders and figure sets",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/publication-chrome.ddn",
+      "view": "overview",
+      "variants": [
+        {
+          "view": "detail",
+          "title": "Rotated detail variant"
+        }
+      ],
+      "what": "Page furniture declared in the publication block: three-slot header and footer runs with $ variables, a page border, a background, and a publication_set that numbers several views as one ordered figure pack.",
+      "why": "Titles, dates, page numbers and figure numbers belong in the source, not in a post-processing step — one declaration keeps every exported page consistent and reviewable.",
+      "when": "Print packs, release documentation, filings — anything that leaves the screen as a set of numbered pages.",
+      "read": [
+        "Runs resolve $title, $date, $view_id, $figure and $page per emitted page (a literal dollar is $$); an unknown $name fails DDN-PB02.",
+        "The set's figures are numbered in declaration order — $figure and $page are their 1-based positions; publish emits one SVG per figure plus a manifest JSON.",
+        "The border and background paint behind the drawing and never move it: chrome changes no model fact, no layout, no route.",
+        "Pin the wall-clock variables for reproducible output: --publication-date fixes $date, and conformance vectors always pin it."
+      ],
+      "inputs": [
+        "The publication block (size, margins, minimum text)",
+        "The chrome text and which variables it needs",
+        "The ordered figure list for the set"
+      ],
+      "pitfalls": [
+        "Do not hand-maintain titles or page numbers in exported files — declare them once and let each page resolve its own variables.",
+        "Background images and patterns must live inside the workspace (PNG/WebP images, sanitized SVG patterns); absolute paths and URLs are rejected (DDN-PB05)."
+      ],
+      "limits": "Chrome bands reserve space outside the drawing and never overlap it; a publication declaring no chrome renders exactly as before. Print-size lint (DDN-PS01–PS03) runs at check on physical sizes only, and --strict-print promotes it to a gate (DDN-PS04).",
+      "refs": [],
+      "probe": [
+        "service",
+        "database"
+      ],
+      "editTask": "Rename one element, apply, then publish the set with cli.js publish --set release_pack and read the manifest.",
+      "tags": [
+        "technique",
+        "0.8",
+        "publication",
+        "header",
+        "footer",
+        "print"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/publication-chrome.ddn",
+        "view": "overview",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "407e2e8a8e118b1495be6640002a276948c5540d9272c2d46887834c6d6dd8fe",
+        "modelFingerprint": "7028a8b9e541938b",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/publication-chrome.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/publication-chrome.ddn",
+          "roles": [
+            "format",
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view overview \"Billing path overview\" {\n  data: [@model];\n  publication: @shared.filing;\n}",
+      "walkthrough": [
+        "Open field-guide/sources/publication-chrome.ddn and locate view overview. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.pubchrome::model.gateway",
+        "file": "field-guide/sources/publication-chrome.ddn",
+        "before": "Edge gateway",
+        "after": "Edge gateway / review",
+        "expectation": "Only the label of Edge gateway / review changes; chrome, page geometry and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "407e2e8a8e118b1495be6640002a276948c5540d9272c2d46887834c6d6dd8fe",
+        "after": "cf24daeab80994e8a1764de8d5bc92f6687f061162c12a7d28575c00f31fe874",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "text-fit",
+      "title": "Text fit — wrap, grow, shrink and honest overflow",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/text-fit.ddn",
+      "view": "fitted",
+      "variants": [
+        {
+          "view": "overflow",
+          "title": "Residual-overflow variant"
+        }
+      ],
+      "what": "How boxes adapt to their text: wrap fixes the width and grows downward, grow expands both axes to declared bounds, and shrink steps the font down to a floor.",
+      "why": "Hand-tuning box sizes against text that keeps changing is the chore text_fit removes — with bounds and diagnostics so adaptation stays honest instead of silently clipping.",
+      "when": "Long labels, generated text, multilingual content — anywhere text length is not under the author's full control.",
+      "read": [
+        "The renderer measures, resizes and re-lays-out in at most two passes; whatever still overflows after that is a residual overflow and is reported.",
+        "Residual overflow fires DDN-LW07 (wrap/grow) or DDN-LW08 (shrink at its floor) at render time, naming the element, the overflow and the remedy — check stays clean because it never measures.",
+        "Under the default layout { quality: error } a residual overflow refuses the render; the variant declares quality: warn, so it renders with the text clipped at the box edge and a visible ellipsis — never invisible text.",
+        "size: content artboards grow with the post-fit bounds, so wrap/grow results are always fully visible — and --content-size forces that for one render without editing the source."
+      ],
+      "inputs": [
+        "The text and how much it may vary",
+        "The bounds (max_width, max_height, min_font)",
+        "The quality policy for overflow"
+      ],
+      "pitfalls": [
+        "Do not set max_height without reading DDN-LW07 as a design signal — split the content or raise the bound; clipping is a last resort, not a layout style.",
+        "Do not rely on estimated metrics for filings: font_pin records the measurement environment so the same source renders byte-identically anywhere (the 0.7.0 CLI cannot load pin files yet — pins apply through the host API)."
+      ],
+      "limits": "Bounds are 40–4000 px and min_font 6–64 px (never above the base font); violations are DDN-TF02/TF03. Text fit changes geometry only — model fingerprints, endpoints and relation identities are unchanged.",
+      "refs": [],
+      "probe": [
+        "note",
+        "term"
+      ],
+      "editTask": "Lengthen the summary note, apply, and watch the box grow within its bounds; then open the overflow variant to meet the ellipsis and DDN-LW07.",
+      "tags": [
+        "technique",
+        "0.8",
+        "text",
+        "overflow",
+        "sizing"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/text-fit.ddn",
+        "view": "fitted",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "22341c0d50fe147a5d3d3f14f21b2dee18755f4fe80a16270b7076c0e3b9c23a",
+        "modelFingerprint": "a327f7cfa71dae5b",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/text-fit.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/text-fit.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view fitted \"Fitted boxes — wrap, grow and shrink\" {\n  data: [@notes];\n  publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open field-guide/sources/text-fit.ddn and locate view fitted. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.textfit::notes.summary",
+        "file": "field-guide/sources/text-fit.ddn",
+        "before": "Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage.",
+        "after": "Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage. / review",
+        "expectation": "Only the label of Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage. / review changes; fit modes, bounds and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "22341c0d50fe147a5d3d3f14f21b2dee18755f4fe80a16270b7076c0e3b9c23a",
+        "after": "f1408fed6aedef6f45a1c17dd3c414b535f0a64b23591284959dde2102b81fe8",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "markings-metadata",
+      "title": "Markings and metadata — forbidden, tentative, provenance",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/markings.ddn",
+      "view": "main",
+      "variants": [
+        {
+          "view": "mono",
+          "title": "Mono-print variant"
+        }
+      ],
+      "what": "Model-level claims: marks: [forbidden] strikes a prohibited path, marks: [tentative] dashes uncommitted content, and assertions plus source:/generator: provenance travel with the model as authored claims.",
+      "why": "\"This path must not exist\" and \"this box is a draft\" are design facts; keeping them in the model means they export, diff and render under every theme — instead of living in someone's slide notes.",
+      "when": "Migration plans (forbidden legacy paths), drafts under review (tentative scope), machine-generated documents (generator provenance), and audit claims (assertions).",
+      "read": [
+        "The forbidden relation is struck and barred — under mono_print the treatment is hatch and dash, never colour alone, so the signal survives any theme.",
+        "The tentative export renders dashed-grey; both markings are model facts and appear in the model fingerprint.",
+        "The assertion strings and the view's source:/generator: are carried into exports and shown in tooling — in 0.8 they evaluate nothing.",
+        "An unknown marking is DDN-MK01 and a duplicate is DDN-MK02; markings compose, so one element may carry several."
+      ],
+      "inputs": [
+        "The prohibited or draft content",
+        "The claims worth recording",
+        "The upstream document or producing tool, if any"
+      ],
+      "pitfalls": [
+        "Do not read a passing check as proof of an assertion — assertions are inert text in 0.8; a true-looking one is not evidence and a failing-looking one is not a diagnostic.",
+        "Do not mark a path forbidden and leave it routed as the only path — the marking claims prohibition, it does not remove the dependency."
+      ],
+      "limits": "0.8 registers exactly two markings (forbidden, tentative); provenance is excluded from the model fingerprint and validated never. Evaluation semantics for assertions are deferred to 0.9, as are diff views.",
+      "refs": [],
+      "probe": [
+        "service",
+        "database",
+        "export"
+      ],
+      "editTask": "Rename the forbidden relation, apply, and switch to the mono variant to confirm the strike treatment survives without colour.",
+      "tags": [
+        "technique",
+        "0.8",
+        "markings",
+        "provenance",
+        "assertions"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/markings.ddn",
+        "view": "main",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "9de013c3df7e8a503e4f3b944dca75a78eba2befe1406c09fc894072a6924f7c",
+        "modelFingerprint": "fe71ebe648ef7230",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/markings.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/markings.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view main \"Ledger integration — marked\" {\n  data: [@integration];\n  source: \"integration-review.docx §4\";\n  generator: \"ddn-import 0.8.0 (2026-10-04)\";\n  assertions: [\n    \"every ledger write goes through the posting API\",\n    \"the experimental export never feeds back into the ledger\"\n  ];\n  publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open field-guide/sources/markings.ddn and locate view main. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.markings::integration.portal",
+        "file": "field-guide/sources/markings.ddn",
+        "before": "Customer portal",
+        "after": "Customer portal / review",
+        "expectation": "Only the label of Customer portal / review changes; markings, assertions and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "9de013c3df7e8a503e4f3b944dca75a78eba2befe1406c09fc894072a6924f7c",
+        "after": "a93a8f20800665f6e39e325b5c024388610d041d7778938f3f51a7913086eba3",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "cli-power-tools",
+      "title": "CLI power tools — verbs, diagnostics JSON and publish",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/cli-workflow.ddn",
+      "view": "main",
+      "what": "The command-line surface beyond check and render: the verbs legality query, machine-readable diagnostics, one-off render overrides, publication-set publishing and the strict-print gate.",
+      "why": "Scripts and CI need answers, not pictures: which verb may connect these kinds, which diagnostics fired and where, and whether the page survives print rules — all without opening a tool.",
+      "when": "Authoring assistance (verbs), CI gates (--diagnostics json, --strict-print), documentation pipelines (publish) and quick previews (--content-size).",
+      "read": [
+        "cli.js verbs --from service --to database lists the verbs whose registered endpoint contract admits the pair (add --json for the machine form); an unknown kind fails DDN-WS01, and an empty list means no legal verb — still exit 0.",
+        "check --diagnostics json emits the stable shape {code, severity, file, line, view, message}; file is the workspace-relative POSIX path and line is 1-based, so CI can deep-link any finding.",
+        "publish --set pack --outdir out/ emits one SVG per figure (entry--view.svg) plus a manifest with figure/page numbers; --publication-date pins $date for reproducible runs.",
+        "--strict-print promotes print-size lint to failure (DDN-PS04) — the filing-workflow gate; --content-size forces a content-sized render for one run without touching the source."
+      ],
+      "inputs": [
+        "The workspace (entry file plus its import closure)",
+        "The question to automate",
+        "The gate the CI must enforce"
+      ],
+      "pitfalls": [
+        "verbs answers endpoint legality only — a profile may still reject the relation, and it predicts nothing about layout or rendering.",
+        "Consume diagnostics by code, never by message text; messages may be reworded between versions, codes and severities may not."
+      ],
+      "limits": "Workspace rules are conventions with teeth: imports resolve relative to the importing file, must stay inside the workspace root, and absolute paths, URL schemes and symlink escapes are rejected. A ddn.workspace.json manifest may pin the entry file; a malformed one is DDN-WS02.",
+      "refs": [],
+      "probe": [
+        "service",
+        "database",
+        "queue"
+      ],
+      "editTask": "Run verbs --from service --to queue, add the relation it suggests, apply, then publish the pack and read the manifest.",
+      "tags": [
+        "technique",
+        "0.8",
+        "cli",
+        "automation",
+        "ci"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/cli-workflow.ddn",
+        "view": "main",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "c13d438f2e8c5707791ddb3e9de189f104afafd4d32b87b4e11dfc0fb4cbecd1",
+        "modelFingerprint": "89fc61caea4fb9da",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/cli-workflow.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/cli-workflow.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view main \"Order service — print target\" {\n  data: [@model];\n  publication {\n    size: a4; orientation: landscape; margin: 10mm; minimum_text: 7pt;\n    footer { center { text: \"Figure $figure — $title\"; size: 8pt; } }\n  }\n}",
+      "walkthrough": [
+        "Open field-guide/sources/cli-workflow.ddn and locate view main. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.clitools::model.api",
+        "file": "field-guide/sources/cli-workflow.ddn",
+        "before": "Order API",
+        "after": "Order API / review",
+        "expectation": "Only the label of Order API / review changes; the publication set and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "c13d438f2e8c5707791ddb3e9de189f104afafd4d32b87b4e11dfc0fb4cbecd1",
+        "after": "c03581c38fe1aeb1b4196d59ef6832908c468a6940b2d14523596853b25e128e",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14312,10 +14963,9 @@
         "view": "d",
         "profile": "ladder.basic@1",
         "projection": "graph",
-        "sha256": "e741b4d814a59efafacc7668e2896a03c88900c5552f52553e69a2028e86c9fb",
+        "sha256": "64c266e69da0f83938b345cafbdaf397416fb1bde7b4e100fd8b6e07150b693b",
         "modelFingerprint": "904fc8ff4a532b8d",
         "warnings": [
-          "DDN-LW05",
           "DDN-TW01"
         ]
       },
@@ -14348,8 +14998,8 @@
         "expectation": "Only the label of START / review changes; rungs, contacts and the coil are untouched."
       },
       "exerciseEvidence": {
-        "before": "e741b4d814a59efafacc7668e2896a03c88900c5552f52553e69a2028e86c9fb",
-        "after": "3c10d5ebc02e0032eafda5609626c8a241efb78254d80ed54a86ab6f7ae99b3a",
+        "before": "64c266e69da0f83938b345cafbdaf397416fb1bde7b4e100fd8b6e07150b693b",
+        "after": "96f6990db51bbdc32b6dc4ccca19c018a1c32a27a6f0097a49bbf17162c7735e",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,

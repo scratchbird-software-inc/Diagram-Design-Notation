@@ -6,6 +6,136 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **DDN 0.8 release cleanup: reconcile spec, runtime and docs.** Closes the
+  three `DDN-GAPS.md` "known 0.8 tooling gaps" and removes the stale
+  pre-implementation banners from the 0.8 chapters:
+  - Ch. 51 now documents `DDN012` for an unsupported version header
+    (pre-existing runtime code; behavior unchanged — was `DDN010` in text).
+  - Chapters 51/52/53/54/55/57 drop the "not yet parsed by the 0.7 runtime"
+    banners and per-example notes: the reference runtime implements the 0.6
+    dialect, and `notation/tests/doc-snippets.js` parse-checks every
+    ```ddn-0.8 fence of chapters 51–55 and 57 under a `ddn "0.6";` header
+    (chapter 57 added to `V08_SOURCES`).
+  - `numeral`/`marks`/`assertion` join the reserved-property list in
+    `notation/runtime/ddn-contracts.js`, ending the spurious DDN-W106
+    "retained, not validated" warnings on properties their dedicated 0.8
+    codes already validate.
+  - Ch. 55 §55.4 now states normatively that `ref:` anchors are
+    block-scoped (anchor and target must share a data block; cross-block is
+    `DDN-MK05`). Ch. 54 §54.2/§54.3 corrected: `DDN-LW07`/`LW08` are
+    render-time only, and the clipped-text ellipsis marker appears only
+    under `layout { quality: warn; }` (default `quality: error` refuses the
+    render).
+  - `notation/cli/cli.js` side-loads `font_pin` metrics files (UTF-8 JSON)
+    through the same containment-checked asset walker as background
+    images/patterns, so `cli.js check/render` no longer fails DDN-PB05 on
+    `font_pin` sources; covered by new tests in
+    `notation/tests/cli-tooling.js`. AI-reference §14 notes regenerated to
+    match both fixes.
+- **DDN 0.8 designer phase (chapter 57 D2–D6 in the unified tool).**
+  `?mode=design` now implements the 0.8 viewer/designer contract: an explicit
+  *New document…* command with a template picker keyed to the registered view
+  kinds (blank `ddn "0.6"` skeleton, ddn-native, flowchart, c4-container,
+  patent-figure with the chrome preset — content files under
+  `notation/tool/templates/`, inlined at build time); design mode starts
+  EMPTY unless passed a `.ddn`. Multi-pane editing: one editor tab per
+  workspace file, add-file with kebab-case sibling defaults plus an offered
+  `import "…" as …;` line, *Jump to definition* on `@refs`
+  (`DDNLive.authoring.definitionAt`), and a diagnostics list consuming the
+  stable chapter 56 §X4 JSON shape with click-to-file:line. *Tidy* re-runs
+  placement+routing with authored pins respected and writes `place` pins only
+  on confirmed "pin result" (`DDNLive.authoring.pinAll`, one undoable
+  transaction). The inspector *Duplicate* follows chapter 55 §S5: a fresh uid
+  (`<id>_copy`, `_copy2`, …), unconnected, numeral dropped
+  (`DDNLive.authoring.duplicate`); moves preserve uids by construction.
+  Export stays SVG/PNG client-side; no PDF/PPTX anywhere (commercial);
+  Mermaid import is deferred to 0.9. `DDNLive.viewProfiles` exposes the
+  chapter 52 registry tables to the designer. Zero new dependencies.
+
+- **DDN 0.8 website + AI-reference phase (docs only; runtime frozen).**
+  `website/download/DDN-AI-REFERENCE.md` (generated from
+  `tools/ai-reference-core.md`) gains §14 "DDN 0.8 features (source version
+  0.6)": the version contract (accepted headers 0.2–0.6, DDN-V04 gating),
+  view kinds/strictness/themes with the registered-kind table, reference
+  numerals and `ref:` anchors, markings (`forbidden`/`tentative` with
+  per-theme paint), inert assertions, `source:`/`generator:` provenance, uid
+  semantics, publication chrome (header/footer variables, border,
+  backgrounds + path rules, publication sets, print-size lint), text-fit
+  modes + overflow diagnostics + `font_pin`, and the 0.8 CLI surface
+  (`verbs`, `--diagnostics json`, `--content-size`, `--strict-print`,
+  `--publication-date`, `--figure/--page`, `publish --set`). Every new
+  ```ddn recipe is executed by the generator (check AND render, 64 runs, 29
+  blocks, all pass); size budget raised 420→440 KiB for the new section.
+  §2.1 and §11 updated for the 0.6 header and new verbs/flags. Two behavior
+  findings are documented as-is (runtime frozen): `font_pin` is not
+  CLI-loadable (DDN-PB05 via CLI; API only), and `numeral`/`marks`/
+  `assertion` additionally warn DDN-W106 under logical validation — both
+  recorded in `DDN-GAPS.md` together with the ch. 51 DDN010-vs-DDN012 drift
+  and the 0.8→0.9 deferrals (diff views, assertion evaluation, Mermaid
+  import). New runnable examples `website/examples/basics/
+  111-publication-chrome.ddn` (patent-style figure set: chrome variables,
+  border, numerals, `publication_set` — verified via `publish`) and
+  `112-markings-metadata.ddn` (markings, assertions, provenance, `ref:`
+  anchors, `mono_print`). Developer docs: `authoring-sources.md` gains a 0.8
+  tour, `migration-0.5-to-0.6.md` a naming-note clarifying packaging 0.7.0
+  vs source 0.6, examples README lists the new pair. Tooling fix:
+  `tools/normalize-ddn.mjs` no longer downgrades `ddn "0.6";` headers to
+  0.5 (legacy bump now applies to 0.2–0.4 only) — previously it corrupted
+  0.6 files and the corpus gate would have rejected any 0.8 example.
+
+- **DDN 0.8 specification draft — Phase 1 (spec only, no runtime code).**
+  Eight new normative chapters under `standard/specification/` define the
+  agreed 0.8 scope (workplan of 2026-10-04), gated on a new source version
+  `ddn "0.6";` (packaging stamps 0.6.0-beta.1/0.7.0 introduced no source
+  version; `ddn-core@0.3` unchanged):
+  - `51-version-and-compatibility.md` — the version/compatibility contract
+    (V1): accepted header values 0.2–0.6, per-version meaning in an 0.8
+    processor, feature gating (`DDN-V04`), deprecation policy and stability
+    promises. New codes `DDN-V01`–`V06`.
+  - `52-view-profiles.md` — view kinds and strictness (V2; `kind:` /
+    `strictness:` on views, permissive info `DDN-VP03` vs strict error
+    `DDN-VP04`), the patent/legal profile pack `patent.legal@1` with
+    reference-numeral field boxes (V3), and accessibility themes
+    `colorblind_safe` / `mono_print` (V4). Codes `DDN-VP01`–`VP09`.
+  - `53-publication-chrome.md` — header/footer records with `$title`/`$page`/
+    `$date`/`$view_id`/`$figure` variables (P1), page border (P2),
+    backgrounds with workspace-relative path-resolution/security rules —
+    no absolute paths, no URLs (P3), multi-view publication sets (P4) and
+    print-size lint (P5). Codes `DDN-PB01`–`PB09`, `DDN-PS01`–`PS04`.
+  - `54-text-fit.md` — `wrap`/`grow`/`shrink` text-fit modes with growth
+    bounds (T1), residual-overflow diagnostics `DDN-LW07`/`LW08` (T2), the
+    capped two-pass measure→resize→re-layout pipeline (T3), font/metric
+    pinning for byte-stable rendering (T4) and the documented
+    `size: content` default path plus `--content-size` flag (T5). Codes
+    `DDN-TF01`–`TF05`, `DDN-LW07`–`LW08`.
+  - `55-markings-and-metadata.md` — general markings incl. `forbidden`
+    negation with theme-independent rendering (S1), explicitly inert
+    assertions (S2), `source:`/`generator:` provenance (S3), `ref:`
+    cross-reference anchors (S4) and uid duplication/move semantics (S5).
+    Diff views (S6) deferred to 0.9. Codes `DDN-MK01`–`MK06`.
+  - `56-tooling-and-workspace.md` — CLI `verbs --from --to` legality query
+    (X1), diagnostic-hint conventions (X2), workspace entry-file/module-
+    resolution conventions written down from the 0.7 CLI (X3) and the
+    stable `{code,severity,file,line,view,message}` cross-file diagnostic
+    shape (X4). Codes `DDN-WS01`–`WS04`.
+  - `57-viewer-and-designer-contract.md` — viewer render-only + navigation
+    contract (D1), designer empty-document skeleton + profile-keyed
+    templates (D2), multi-pane workspace editing (D3), client-side SVG/PNG
+    export boundary with PDF/PPTX as commercial superset (D4), tidy/
+    re-layout (D5) and the OSS-footprint/no-fork guardrail (D6).
+  - `58-conformance-vectors.md` — reference vector suite with the two-class
+    hash policy (full-fidelity under font pins vs geometry-only) and the
+    degenerate corpus: empty view, single node, 500-node stress, unicode
+    labels, max-nesting frames, empty chrome, overflow floor, ref-cycle
+    labels (C1–C2).
+  - Surgical 0.8 amendments marked in-place in chapters 00 (status), 03
+    (resolution order), 06 (publication) and 44 (view chrome). New 0.8
+    examples are fenced ` ```ddn-0.8 ` so the doc-snippet parse gate (0.7
+    runtime) skips them; flip to ` ```ddn ` when the 0.8 parser lands.
+  - Phase 1 scope discipline: no runtime/CLI/viewer/designer code changes,
+    no registry or grammar changes; website, field-guide and AI-REFERENCE
+    updates are later phases.
+
 - **Art pack discovery: art viewer, reference pointers, how-to-use/add
   docs** (owner gap report — "where do I find the presentation images, and
   how do I use and add them?"). New generated page `website/icons/art.html`:

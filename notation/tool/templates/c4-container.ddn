@@ -1,0 +1,19 @@
+ddn "0.6";
+module "untitled";
+
+// Empty C4 container starter (view kind c4-container, c4.container@1
+// defaults): one system boundary frame scoped to a c4.system, with the
+// interior containers as members.
+data model {
+    object system "Software system" { kind: "c4.system"; }
+    object app "Application container" { kind: "c4.container"; }
+    object store "Data store" { kind: "c4.store"; }
+    relation uses @app -> @store { kind: "c4.rel"; }
+}
+
+view main {
+    data: [@model];
+    kind: c4-container;
+    frame system_boundary { scope: @model.system; members: [@model.app, @model.store]; }
+    publication { size: content; fit: none; }
+}

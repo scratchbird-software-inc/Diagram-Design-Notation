@@ -1,7 +1,8 @@
 # Authoring `.ddn` sources
 
 A `.ddn` file is plain text in the DDN language (current versions `0.3`,
-`0.4`, `0.5`; `0.2` reads for compatibility). The grammar lives in
+`0.4`, `0.5`, `0.6`; `0.2` reads for compatibility). `0.6` is the DDN 0.8
+dialect — a strict superset of `0.5`; see *0.8 additions* below. The grammar lives in
 `standard/grammar/`; the normative chapters are `standard/specification/`.
 This page is the tour; each section names the chapter with the full rules.
 
@@ -26,7 +27,9 @@ view overview "Orders / shared model" {
 }
 ```
 
-- `ddn "0.5";` — language version stamp. See spec `01-language.md`.
+- `ddn "0.5";` — language version stamp (accepted: `0.2`–`0.6`; write `0.6`
+  when using the 0.8 features below). See spec `01-language.md` and
+  `51-version-and-compatibility.md`.
 - `module` — namespace; every declaration id is module-qualified. See
   `01-language.md` and `02-data-model.md`. A file may hold several
   `module "…";` sections, so a full design can live in one
@@ -134,6 +137,44 @@ in the gallery (`website/examples/gallery/index.html`). The projection chapters:
 `16-profiles-and-projections.md` through `42-family-trees.md` (matrices and
 panels 18, charts/time 19 + 22, lifecycles/rule tables 23, sequence 27,
 BPMN 32, SysML 36, ArchiMate 37, and so on).
+
+## 0.8 additions (source version `0.6`)
+
+Files stamped `ddn "0.6";` can use the DDN 0.8 surface (normative chapters
+`51-`…`58-`; everything in 0.5 keeps working, and an 0.8 construct in a ≤0.5
+file is error DDN-V04):
+
+- **View kinds and strictness** — `kind: flowchart; strictness: strict;` on a
+  view declares the diagram family, attaches default profile/theme, and
+  optionally enforces the family's vocabulary (ch. 52). Registered kinds:
+  `ddn-native`, `flowchart`, `c4-context/container/component`, the five
+  `uml-*` kinds, `chart-bar`/`chart-line`, `ladder`, `patent-figure`.
+- **Themes** — `theme: colorblind_safe;` / `theme: mono_print;` re-skin paint
+  only, never geometry or semantics (ch. 52).
+- **Publication chrome** — `header`/`footer` runs with `$title`/`$page`/
+  `$date`/`$view_id`/`$figure` variables, page `border`, page `background`
+  (colour, PNG/WebP image, sanitized SVG pattern — workspace-relative paths
+  only), and multi-view `publication_set` figure sets published with
+  `cli.js publish … --set <name>` (ch. 53). Print-size lint (DDN-PS01–PS04,
+  `--strict-print`) catches text/line weights that would be illegible at the
+  declared paper size.
+- **Text fit** — `text_fit: wrap|grow|shrink;` with `max_width`/`max_height`/
+  `min_font` bounds, residual-overflow diagnostics (DDN-LW07/LW08), and
+  `font_pin` for byte-stable cross-machine rendering (ch. 54).
+- **Markings and metadata** — `marks: [forbidden|tentative]`, inert
+  `assertion`/`assertions` claim text, `source:`/`generator:` provenance,
+  `ref:` cross-reference anchors that render an element's `numeral` or label,
+  and defined uid move/duplicate semantics (ch. 55).
+- **CLI** — `verbs --from <kind> --to <kind>` endpoint-legality query,
+  `--diagnostics json` with stable `{code,severity,file,line,view,message}`
+  locations, `--content-size`, `--strict-print`, `--publication-date`,
+  `publish --set` (ch. 56).
+
+Runnable tours: `website/examples/basics/111-publication-chrome.ddn` (a
+patent-style figure set with header/footer/border and reference numerals) and
+`website/examples/basics/112-markings-metadata.ddn` (markings, assertions,
+provenance, `ref:` anchors). The full authoring surface with verified
+recipes: `website/download/DDN-AI-REFERENCE.md` §14.
 
 ## Checking your work
 

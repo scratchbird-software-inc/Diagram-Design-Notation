@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>53. Publication chrome: header/footer, page border, backgrounds, figure sets (DDN 0.8 draft) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../icons/index.html">Icons</a>
+      <a href="../../guide/index.html">Guide</a>
+      <a href="../../reference/index.html">Reference</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>53. Publication chrome: header/footer, page border, backgrounds, figure sets (DDN 0.8 draft)</h1>
+<blockquote>Examples in this chapter use 0.8 (0.6-dialect) syntax, fenced ``<code>ddn-0.8. The reference runtime implements this chapter's language constructs; the doc-snippet parse gate (</code>notation/tests/doc-snippets.js<code>) parse-checks every fence under a </code>ddn &quot;0.6&quot;;` header.</blockquote>
+<p>Status: draft for the 0.8 standard revision (source version <code>ddn &quot;0.6&quot;;</code>). This chapter extends chapter 06 (publication) and chapter 44 (view chrome). Everything here is <strong>page furniture</strong>: chrome MUST NOT change model semantics, layout, routing, or the <code>modelFingerprint</code>. A publication that declares no 0.8 chrome property renders byte-identically to 0.7. Chapter 44's <code>legend</code>/<code>title</code>/<code>footer</code> visibility switches still govern whether the emission sites exist at all; this chapter defines what authored content they carry.</p>
+<h2>53.1 Header and footer records (P1)</h2>
+<p>A <code>publication</code> gains optional <code>header { … }</code> and <code>footer { … }</code> groups. Each holds up to three <em>runs</em> — <code>left</code>, <code>center</code>, <code>right</code> — and each run is a record:</p>
+<pre><code>format shared {
+  publication filing {
+    size: letter;
+    orientation: portrait;
+    margin: 18mm;
+    header {
+      left   { text: &quot;$title&quot;; size: 9pt; }
+      right  { text: &quot;CONFIDENTIAL — $date&quot;; size: 8pt; }
+    }
+    footer {
+      left   { text: &quot;$view_id&quot;; size: 8pt; }
+      center { text: &quot;FIG. $figure&quot;; size: 10pt; font: serif; }
+      right  { text: &quot;Page $page&quot;; size: 8pt; }
+    }
+  }
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>header</code>/<code>footer</code> groups in <code>publication</code>.)</p>
+<p>Run properties: <code>text</code> (string, required), <code>align</code> (<code>left|center|right</code>, defaulting to the run's slot), <code>font</code> (family keyword as in <code>style.font</code>), <code>size</code> (4–24 pt), and <code>lines</code> (integer 1–4; multi-line runs split <code>text</code> on <code>\n</code>). Missing slots emit nothing and reserve nothing.</p>
+<p><strong>Variables</strong>, resolved at publication time, per emitted page:</p>
+<table><thead><tr><th>Variable</th><th>Value</th></tr></thead><tbody><tr><td><code>$title</code></td><td><code>publication.title</code> if set, else the view label, else the view id</td></tr><tr><td><code>$page</code></td><td>1-based page index within the publication set (§53.4)</td></tr><tr><td><code>$date</code></td><td>publication date, ISO <code>YYYY-MM-DD</code>, in the renderer's local timezone</td></tr><tr><td><code>$view_id</code></td><td>the view's source identifier</td></tr><tr><td><code>$figure</code></td><td>the view's 1-based index in its publication set (§53.4); equals <code>$page</code> in a single-view publication</td></tr></tbody></table>
+<p>Unknown <code>$name</code> is <code>DDN-PB02</code>; a literal dollar sign is written <code>$$</code>. Variables resolve to plain text before measurement — no nesting, no expressions. <code>$date</code> output is <strong>exempt</strong> from the byte-stability promise of chapter 51 §51.5; conformance vectors (chapter 58) pin <code>$date</code> to a fixed value via the render option <code>publicationDate</code>.</p>
+<p>Header/footer text participates in the existing minimum-text checks of chapter 06 (it is a &quot;footer run&quot; for DDN071 purposes). Chrome bands reserve space outside the drawing area; they never overlap drawing or legend.</p>
+<h2>53.2 Page border (P2)</h2>
+<pre><code>publication framed {
+  size: a4;
+  border { style: single; weight: 1pt; inset: 6mm; corner_marks: true; }
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>border</code> group in <code>publication</code>.)</p>
+<ul><li><code>style: single | double | dashed</code> (required when <code>border</code> is present).</li><li><code>weight</code>: 0.25–8 pt, default 1 pt. <code>double</code> draws two rules at 2.5×weight</li></ul>
+<p>  total thickness.</p>
+<ul><li><code>inset</code>: distance from the paper edge, default 0; the border sits inside</li></ul>
+<p>  <code>margin</code> arithmetic independently — it neither shrinks nor grows the   drawing area.</p>
+<ul><li><code>corner_marks: true</code> adds registration/crop corner marks outside the</li></ul>
+<p>  border; default <code>false</code>.</p>
+<p>This is a <strong>page</strong> frame, distinct from a model <code>frame</code> element (chapter 15): it carries no semantics, contains no members, and is unaffected by <code>frame_overflow</code>. Invalid style/weight values are <code>DDN-PB03</code>.</p>
+<h2>53.3 Backgrounds and path-resolution rules (P3)</h2>
+<pre><code>publication branded {
+  size: content;
+  background { color: &quot;#f7f4ee&quot;; }
+}
+publication watermarked {
+  size: letter;
+  background { image: &quot;wm-draft.png&quot;; opacity: 0.15; }
+}
+publication graphpaper {
+  size: content;
+  background { pattern: &quot;grid.svg&quot;; opacity: 0.4; }
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>background</code> group in <code>publication</code>.)</p>
+<p>Exactly one of <code>color</code>, <code>image</code>, <code>pattern</code> per background group (<code>DDN-PB04</code> otherwise). <code>opacity</code> 0–1, default 1. A background paints the whole page behind drawing and chrome; it never intercepts hit-testing and never changes measured bounds.</p>
+<p><strong>Path resolution and security (normative):</strong></p>
+<ol><li>A bare filename (<code>&quot;wm-draft.png&quot;</code>) resolves in the same directory as the</li></ol>
+<p>   <code>.ddn</code> file that declares it.</p>
+<ol><li>A relative path (<code>&quot;art/wm.png&quot;</code>, <code>&quot;../shared/wm.png&quot;</code>) resolves relative</li></ol>
+<p>   to the declaring <code>.ddn</code> file's directory, and MUST resolve inside the    workspace root; an escape outside the workspace root is <code>DDN-PB05</code>.</p>
+<ol><li><strong>Absolute paths and URLs are forbidden</strong> (<code>/…</code>, <code>C:\…</code>, <code>https://…</code>,</li></ol>
+<p>   <code>data:</code>): <code>DDN-PB05</code>. This keeps documents portable and keeps renderers    from making network fetches, per chapter 08.</p>
+<ol><li>Image formats: PNG and WebP only (<code>DDN-PB06</code> otherwise). A missing or</li></ol>
+<p>   undecodable image is <code>DDN-PB07</code> (error under <code>overflow: error</code> policy;    warning plus plain background otherwise).</p>
+<ol><li>Patterns: SVG only, sanitized with the same rules as icon/art packs</li></ol>
+<p>   (chapter 49/50: no script, no <code>foreignObject</code>, no event handlers, no    external references — internal <code>url(#…)</code> fragment references allowed).    A pattern failing sanitization is <code>DDN-PB08</code>, never a render.</p>
+<ol><li>A <code>background</code> on a <code>view</code> overrides the referenced publication's for that</li></ol>
+<p>   view only; view-level backgrounds follow the same rules.</p>
+<p>Rasters embedded in exported SVG are base64 data URIs of the resolved file; the exported document is self-contained and never references the original path.</p>
+<h2>53.4 Multi-view publication sets (P4)</h2>
+<p>One <code>.ddn</code> file may publish several views as one ordered figure set with shared chrome:</p>
+<pre><code>publication_set figures &quot;Patent figures&quot; {
+  publication: @shared.filing;
+  figures: [@fig1, @fig2, @fig3];
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>publication_set</code> top-level declaration.)</p>
+<p>Grammar supplement:</p>
+<pre><code>PublicationSet = &quot;publication_set&quot;, identifier, [ string ], block ;</code></pre>
+<ul><li><code>figures</code> is an ordered array of 1–64 view references declared in the same</li></ul>
+<p>  workspace (<code>DDN-PB09</code> for a missing or non-view reference; the array must   be non-empty). Order is authorial and stable; <code>$figure</code>/<code>$page</code> are the   1-based positions.</p>
+<ul><li>The set's <code>publication</code> supplies shared chrome (header/footer/border/</li></ul>
+<p>  background) to every figure. A figure's own view may still override   individual concerns; the set cannot reach into a view's model selection.</p>
+<ul><li>Rendering a set emits one SVG per figure, named <code>&lt;entry&gt;--&lt;view_id&gt;.svg</code>,</li></ul>
+<p>  plus a manifest JSON (<code>{ set, figures: [{view_id, file, figure, page}] }</code>)   in declaration order. Determinism per chapter 51 holds per figure.</p>
+<ul><li>CLI: <code>node notation/cli/cli.js publish &lt;entry.ddn&gt; --set figures --outdir out/</code>.</li></ul>
+<p>  A view belonging to two sets is legal; each set numbers independently.</p>
+<h2>53.5 Print-size lint (P5)</h2>
+<p>A check-time diagnostic family catches output that would be illegible at the declared physical size, without waiting for render overflow:</p>
+<ul><li><code>DDN-PS01</code> (warning): any text run whose <em>effective</em> size at 1:1 print</li></ul>
+<p>  scale — declared size × <code>embedding_scale</code> × any <code>fit: contain</code> factor   computable before routing — falls below <code>publication.minimum_text</code> (default   8 pt). Message names the smallest offender and the implied minimum base   font, mirroring the DDN071 remedy idiom.</p>
+<ul><li><code>DDN-PS02</code> (warning): any relation line weight below 0.5 pt effective, or</li></ul>
+<p>  any border/weight below 0.25 pt.</p>
+<ul><li><code>DDN-PS03</code> (info): declared <code>size</code> is a physical paper size but no</li></ul>
+<p>  <code>minimum_text</code> is declared; the default is being relied on.</p>
+<ul><li><code>DDN-PS04</code> (error): lint requested under <code>--strict-print</code> and any PS</li></ul>
+<p>  warning fired — the gate mode for filing workflows.</p>
+<p>Print-size lint runs under <code>check</code> only; it never blocks or alters rendering, and it never fires for <code>size: content</code> publications (no physical target).</p>
+<h2>53.6 Diagnostic codes allocated by this chapter</h2>
+<table><thead><tr><th>Code</th><th>Severity</th><th>Meaning</th></tr></thead><tbody><tr><td><code>DDN-PB01</code></td><td>error</td><td>Malformed <code>header</code>/<code>footer</code> run (missing <code>text</code>, bad <code>align</code>/<code>font</code>/<code>size</code>/<code>lines</code>).</td></tr><tr><td><code>DDN-PB02</code></td><td>error</td><td>Unknown <code>$variable</code> in a chrome text string.</td></tr><tr><td><code>DDN-PB03</code></td><td>error</td><td>Invalid <code>border</code> style/weight/inset.</td></tr><tr><td><code>DDN-PB04</code></td><td>error</td><td><code>background</code> declares more than one of color/image/pattern.</td></tr><tr><td><code>DDN-PB05</code></td><td>error</td><td>Forbidden path: absolute path, URL, <code>data:</code> URI, or workspace-root escape.</td></tr><tr><td><code>DDN-PB06</code></td><td>error</td><td>Unsupported background image format (not PNG/WebP) or pattern (not SVG).</td></tr><tr><td><code>DDN-PB07</code></td><td>error/warning</td><td>Background image missing or undecodable (severity follows <code>overflow</code> policy).</td></tr><tr><td><code>DDN-PB08</code></td><td>error</td><td>Background SVG pattern failed sanitization; message names the rejected construct.</td></tr><tr><td><code>DDN-PB09</code></td><td>error</td><td><code>publication_set</code> figure reference missing, not a view, or array empty/too large.</td></tr><tr><td><code>DDN-PS01</code></td><td>warning</td><td>Effective text size below <code>minimum_text</code> at declared print size.</td></tr><tr><td><code>DDN-PS02</code></td><td>warning</td><td>Effective line weight below print floor.</td></tr><tr><td><code>DDN-PS03</code></td><td>info</td><td>Physical paper size with default <code>minimum_text</code>.</td></tr><tr><td><code>DDN-PS04</code></td><td>error</td><td>Strict-print gate: PS warnings promoted to failure.</td></tr></tbody></table>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

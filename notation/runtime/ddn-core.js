@@ -5,13 +5,15 @@
 import {publishNamespace} from './ddn-module-registry.js';
 import Contracts from './ddn-contracts.js';
 import Profiles from './ddn-profiles.js';
+import ViewProfiles from './ddn-view-profiles.js';
 import RegistryCatalogue from './assets/catalogue.js';
 import ICONLIBS from './assets/icon-libraries.js';
 import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIconPack,registerArtPack,unregisterArtPack,hostArtPacks,validateArtPack} from './ddn-icon-sanitize.js';
 import {namespace as ddnNamespace} from './ddn-module-registry.js';
   'use strict';
   const VERSION = '0.7.0';
-  const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5']);
+  const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5','0.6']);
+  const V06=SOURCE_VERSIONS.indexOf('0.6');
   class DDNError extends Error {
     constructor(code, message, source, offset) {
       super(message); this.name='DDNError'; this.code=code; this.source=source||'';
@@ -625,7 +627,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       if(!n.group&&!['place','route'].includes(n.type)){let key=d.module+'::'+n.path;if(symbols.has(key))throw new DDNError(d.archBase?'DDN-PJ216':'DDN024',(d.archBase?'Identity collision across architecture bases: ':'Duplicate declaration ')+n.path,d.source,n.start);symbols.set(key,n);}
       for(const c of n.children)index(c,d,n.group?parent:n.path);
     }
-    for(const d of modules.values())for(const n of d.declarations){if(!['data','format','view','architecture',...PRESET_DEFS].includes(n.type))throw new DDNError('DDN025','Top-level declaration must be data, format, view, an architecture container, or a reuse definition (fields, ports, relation_props, preset, fragment)',d.source,n.start);index(n,d);}
+    for(const d of modules.values())for(const n of d.declarations){if(!['data','format','view','architecture','publication_set',...PRESET_DEFS].includes(n.type))throw new DDNError('DDN025','Top-level declaration must be data, format, view, an architecture container, a publication_set, or a reuse definition (fields, ports, relation_props, preset, fragment)',d.source,n.start);index(n,d);}
     const uidMap=new Map();for(const n of symbols.values()){if(uidMap.has(n.uid))throw new DDNError(n.doc?.archBase?'DDN-PJ216':'DDN026',(n.doc?.archBase?'Identity collision across architecture bases (uid ':'Duplicate stable uid ')+n.uid+')',n.source,n.start);uidMap.set(n.uid,n);}
     function resolve(r,context){if(!r||!r.$ref)throw new DDNError('DDN030','Expected a reference',context?.source,context?.start);const parts=r.$ref.split('.');let doc=context.doc;
       if(doc.imported.has(parts[0])){const f=doc.imported.get(parts.shift());for(const rec of f.moduleRecords){let node=symbols.get(rec.module+'::'+parts.join('.'));if(node)return node;}}
@@ -672,7 +674,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
   const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic','ladder'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved','string'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens','none'],placement:['right','bottom','none']},chrome:{legend:['auto','on','off'],title:['on','off'],footer:['on','off']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
   const PROPERTIES={
     projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','x_completeness','traces','geography','method','graticule','iso','depth'],
-    notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure'],
+    notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure','font_pin','text_fit','max_width','max_height','min_font'],
     layout:['algorithm','auto_place','center','grid_step','optimize','endpoint_ordering','frame_overflow','direction','routing','curve','curve_tension','curve_radius','crossings','gap','columns','port_clearance','object_clearance','edge_clearance','junctions','shared_segments','row_gap','route_policy','quality','root','hierarchy','group_by'],
     display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
     publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','metrics'],
@@ -680,8 +682,8 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     chrome:['legend','title','footer'],
     validation:['mode','unknown_extensions'],
     export:['mode','elements','fields','properties','include_samples','identifier_mode','title','format'],
-    bundle:['projection','notation','style','layout','display','publication','legend','chrome','title','footer','validation','export','spacing'],
-    view:['projection','data','format','notation','style','layout','display','publication','legend','chrome','title','footer','select','exclude','description','uid','validation','export','spacing'],
+    bundle:['projection','notation','style','layout','display','publication','legend','chrome','title','footer','validation','export','spacing','kind','strictness'],
+    view:['projection','data','format','notation','style','layout','display','publication','legend','chrome','title','footer','select','exclude','description','uid','validation','export','spacing','kind','strictness','theme','source','generator','assertions','diff'],
     place:['at','size'],route:['via','source_side','target_side','callout','policy','source_fraction','target_fraction','routing','curve','curve_tension','curve_radius'],
     subdiagram:['view','mode','at','size','label','binding','uid'],
     frame:['scope','members','at','size','label','dimension'],
@@ -691,6 +693,129 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     architecture:['files','views','description','uid'],
   };
   function validateKnown(n,allowed){for(const key of Object.keys(n.props))if(!allowed.includes(key)&&!key.startsWith('x_'))throw new DDNError('DDN033',`Unknown ${n.type} property ${key}`,n.source,n.start);}
+  /* 0.8 (chapter 53): publication chrome — header/footer runs, page border and
+   * page background, extracted from the child groups of a publication profile
+   * or a view-local publication override group. Page furniture only: chrome
+   * never changes model semantics, layout, routing or the modelFingerprint,
+   * and a publication with no 0.8 chrome renders byte-identically to 0.7.
+   * Sizes resolve to pt (header/footer/border), lengths to px (inset). */
+  const CHROME_CONCERNS=['header','footer','border','background'];
+  const CHROME_VARS=['title','page','date','view_id','figure'];
+  function chromeGate(node,what){
+    if(SOURCE_VERSIONS.indexOf(node.doc?.file?.version??'0.6')<V06)
+      throw new DDNError('DDN-V04',what+' in publication is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+node.doc.file.source+' declares ddn "'+node.doc.file.version+'"',node.source,node.start);
+  }
+  function scanChromeVars(str,node){
+    for(const m of String(str).matchAll(/\$\$|\$([A-Za-z_][A-Za-z0-9_]*)/g)){
+      if(m[0]==='$$')continue;
+      if(!CHROME_VARS.includes(m[1]))throw new DDNError('DDN-PB02','Unknown $variable $'+m[1]+' in a chrome text string; registered variables: '+CHROME_VARS.map(v=>'$'+v).join(', ')+' (a literal dollar sign is written $$)',node.source,node.start);
+    }
+  }
+  function chromePt(v,def){
+    if(v===undefined)return def;
+    if(typeof v==='number')return v;
+    if(v&&v.$quantity!==undefined){if(v.unit==='pt')return v.$quantity;if(v.unit==='px')return v.$quantity*72/96;}
+    return NaN;
+  }
+  function chromeRun(slot,node){
+    for(const k of Object.keys(node.props))if(!['text','align','font','size','lines'].includes(k))throw new DDNError('DDN-PB01','Unknown '+slot+' run property '+k+'; runs accept text, align, font, size and lines',node.source,node.start);
+    const p=node.props;
+    if(typeof p.text!=='string'||!p.text.length)throw new DDNError('DDN-PB01',slot+' run requires a nonempty text string',node.source,node.start);
+    scanChromeVars(p.text,node);
+    const align=p.align??slot;
+    if(!['left','center','right'].includes(align))throw new DDNError('DDN-PB01',slot+' run align must be left, center or right; found '+JSON.stringify(p.align),node.source,node.start);
+    if(p.font!==undefined&&!CHOICES.style.font.includes(p.font))throw new DDNError('DDN-PB01',slot+' run font must be one of '+CHOICES.style.font.join(', ')+'; found '+JSON.stringify(p.font),node.source,node.start);
+    const size=chromePt(p.size,9);
+    if(!Number.isFinite(size)||size<4||size>24)throw new DDNError('DDN-PB01',slot+' run size must be 4-24pt; found '+JSON.stringify(p.size),node.source,node.start);
+    const lines=p.lines??1;
+    if(!Number.isSafeInteger(lines)||lines<1||lines>4)throw new DDNError('DDN-PB01',slot+' run lines must be an integer 1-4; found '+JSON.stringify(p.lines),node.source,node.start);
+    return {text:p.text,align,...(p.font!==undefined?{font:p.font}:{}),size,lines};
+  }
+  function chromeBand(kind,node){
+    const out={};
+    for(const c of node.children){
+      if(!c.group||!['left','center','right'].includes(c.type))throw new DDNError('DDN-PB01',kind+' may contain only left, center and right run groups; found '+(c.group?c.type:'property '+(c.type||'?')),c.source,c.start);
+      if(out[c.type])throw new DDNError('DDN-PB01','Duplicate '+c.type+' run in '+kind,c.source,c.start);
+      if(c.children.length)throw new DDNError('DDN-PB01',kind+' '+c.type+' run does not accept nested declarations',c.source,c.start);
+      out[c.type]=chromeRun(c.type,c);
+    }
+    return out;
+  }
+  function chromeBorder(node){
+    for(const k of Object.keys(node.props))if(!['style','weight','inset','corner_marks'].includes(k))throw new DDNError('DDN-PB03','Unknown border property '+k+'; border accepts style, weight, inset and corner_marks',node.source,node.start);
+    const p=node.props;
+    if(!['single','double','dashed'].includes(p.style))throw new DDNError('DDN-PB03','border requires style single, double or dashed; found '+JSON.stringify(p.style),node.source,node.start);
+    const weight=chromePt(p.weight,1);
+    if(!Number.isFinite(weight)||weight<0.25||weight>8)throw new DDNError('DDN-PB03','border weight must be 0.25-8pt; found '+JSON.stringify(p.weight),node.source,node.start);
+    const inset=p.inset===undefined?0:quantity(p.inset,NaN);
+    if(!Number.isFinite(inset)||inset<0||inset>2000)throw new DDNError('DDN-PB03','border inset must be a length from 0 to 2000px; found '+JSON.stringify(p.inset),node.source,node.start);
+    const corner=p.corner_marks??false;
+    if(typeof corner!=='boolean')throw new DDNError('DDN-PB03','corner_marks must be boolean',node.source,node.start);
+    return {style:p.style,weight,inset,corner_marks:corner};
+  }
+  /* Pattern sanitization (chapter 53 §53.3 rule 5): the icon/art-pack rules of
+   * chapters 49/50 with the one documented relaxation — internal url(#…) and
+   * href="#…" fragment references are allowed; everything external is not. */
+  function sanitizePattern(svg){
+    if(typeof svg!=='string'||!svg.trimStart().startsWith('<svg'))return 'not an SVG document';
+    if(svg.length>20480)return 'exceeds the 20 KiB asset budget';
+    const bad=svg.match(/<script|foreignObject|<iframe|<embed|<object|<image|\bon[a-z]+\s*=|javascript:|<!doctype|<!entity/i);
+    if(bad)return 'forbidden construct '+JSON.stringify(bad[0])+' (script, foreignObject, event handler or external reference)';
+    for(const m of svg.matchAll(/\b(?:xlink:)?href\s*=\s*"([^"]*)"/gi))if(!m[1].startsWith('#'))return 'external reference '+JSON.stringify(m[1]);
+    for(const m of svg.matchAll(/url\s*\(\s*['"]?([^)'"]*)['"]?\s*\)/gi))if(!m[1].startsWith('#'))return 'external reference '+JSON.stringify(m[1]);
+    return null;
+  }
+  function chromeBackground(node,files,overflow,diags){
+    for(const k of Object.keys(node.props))if(!['color','image','pattern','opacity'].includes(k))throw new DDNError('DDN-PB04','Unknown background property '+k+'; background accepts exactly one of color, image or pattern, plus opacity',node.source,node.start);
+    const p=node.props,kinds=['color','image','pattern'].filter(k=>p[k]!==undefined);
+    if(kinds.length!==1)throw new DDNError('DDN-PB04','background declares '+kinds.length+' of color/image/pattern; exactly one is required',node.source,node.start);
+    const opacity=p.opacity??1;
+    if(typeof opacity!=='number'||!(opacity>=0&&opacity<=1))throw new DDNError('DDN-PB04','background opacity must be a number from 0 to 1; found '+JSON.stringify(p.opacity),node.source,node.start);
+    if(kinds[0]==='color'){
+      if(typeof p.color!=='string')throw new DDNError('DDN-PB04','background color must be a colour string',node.source,node.start);
+      return {kind:'color',color:p.color,opacity};
+    }
+    const raw=p[kinds[0]];
+    if(typeof raw!=='string'||!raw.length||raw.length>512)throw new DDNError('DDN-PB05','background '+kinds[0]+' must name a workspace-relative file (1-512 characters)',node.source,node.start);
+    if(/^(?:[a-z]+:|\/|\\)/i.test(raw)||raw.includes('\\'))throw new DDNError('DDN-PB05','background '+kinds[0]+' '+JSON.stringify(raw)+' is an absolute path or URL; only workspace-relative paths are allowed',node.source,node.start);
+    let path;
+    try{path=normalizePath(node.doc.file.source,raw);}catch(e){throw new DDNError('DDN-PB05','background '+kinds[0]+' '+JSON.stringify(raw)+' escapes the workspace root',node.source,node.start);}
+    const ext=path.split('.').pop().toLowerCase();
+    const missing=(why)=>{
+      const d={code:'DDN-PB07',severity:overflow==='error'?'error':'warning',message:'background '+kinds[0]+' '+path+' '+why+'; painting a plain background instead',source:node.source,offset:node.start};
+      if(overflow==='error')throw new DDNError('DDN-PB07','background '+kinds[0]+' '+path+' '+why,node.source,node.start);
+      diags.push(d);return null;};
+    if(kinds[0]==='image'){
+      if(!['png','webp'].includes(ext))throw new DDNError('DDN-PB06','background image must be PNG or WebP; found '+path,node.source,node.start);
+      const data=files[path];
+      if(typeof data!=='string')return missing('is not in the workspace');
+      const compact=data.replace(/\s+/g,'');
+      if(!compact.length||compact.length%4||!/^[A-Za-z0-9+/]*={0,2}$/.test(compact))return missing('is not decodable base64 image data');
+      return {kind:'image',path,mime:'image/'+ext,data:compact,opacity};
+    }
+    if(ext!=='svg')throw new DDNError('DDN-PB06','background pattern must be SVG; found '+path,node.source,node.start);
+    const svg=files[path];
+    if(typeof svg!=='string')return missing('is not in the workspace');
+    const rejected=sanitizePattern(svg);
+    if(rejected)throw new DDNError('DDN-PB08','background pattern '+path+' failed sanitization: '+rejected,node.source,node.start);
+    return {kind:'pattern',path,svg,opacity};
+  }
+  /* Concern-layered extraction: later layers replace whole concerns (header,
+   * footer, border, background) — the view-local group wins over the
+   * referenced publication profile. Nodes without chrome children contribute
+   * nothing, so a 0.7-era publication resolves exactly nothing here. */
+  function extractPublicationChrome(nodes,files,overflow){
+    const diags=[],out={};
+    for(const node of nodes){
+      if(!node)continue;
+      for(const c of node.children||[]){
+        if(!c.group||!CHROME_CONCERNS.includes(c.type))continue;
+        chromeGate(c,c.type);
+        out[c.type]=c.type==='border'?chromeBorder(c):c.type==='background'?chromeBackground(c,files,overflow,diags):chromeBand(c.type,c);
+      }
+    }
+    return {chrome:out,diagnostics:diags};
+  }
   function build(files,entry,viewName,registry,stack=[]){
     registry=Profiles.registry(registry);
     const ws=createWorkspace(files,entry,typedKindWords(registry),relationKindWords(registry));const all=[...ws.symbols.values()];const view=all.find(n=>n.type==='view'&&((viewName&&(n.id===viewName||n.path===viewName||n.uid===viewName))||(!viewName&&n.doc===ws.main)));
@@ -699,6 +824,21 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     validateKnown(view,PROPERTIES.view);
     for(const child of view.children)if(child.group&&!Object.hasOwn(DEFAULTS,child.type))throw new DDNError('DDN900','Unsupported view override group '+child.type,child.source,child.start);
     for(const n of all)if(PROPERTIES[n.type])validateKnown(n,PROPERTIES[n.type]);
+    /* 0.8 (chapter 51 §51.3): every 0.8 construct is gated on source version
+     * 0.6 per FILE — an 0.8 keyword or property in a file declaring <=0.5 is
+     * DDN-V04 naming the construct and the minimum version. `diff` views are
+     * deferred to 0.9 (chapter 55 §S6): rejected as unknown even in 0.6. */
+    for(const n of ws.symbols.values()){
+      const v06=SOURCE_VERSIONS.indexOf(n.doc.file.version)>=V06;
+      const gate=k=>{throw new DDNError('DDN-V04',k+' on '+n.type+' '+n.id+' is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+n.doc.file.source+' declares ddn "'+n.doc.file.version+'"',n.source,n.start);};
+      if(n.type==='view'){
+        if(Object.hasOwn(n.props,'diff'))throw new DDNError('DDN-V04','diff views are deferred to the 0.9 standard revision; diff is an unknown property in the 0.6 dialect',n.source,n.start);
+        if(!v06)for(const k of ['kind','strictness','theme','source','generator','assertions'])if(Object.hasOwn(n.props,k))gate(k);
+      }
+      else if(n.type==='publication_set'){if(!v06)gate('publication_set');}
+      else if(n.type==='bundle'){if(!v06)for(const k of ['kind','strictness'])if(Object.hasOwn(n.props,k))gate(k);}
+      else if(!['data','format','architecture',...PRESET_DEFS].includes(n.type)&&!v06)for(const k of ['marks','assertion','numeral','text_fit','max_width','max_height','min_font','font_pin'])if(Object.hasOwn(n.props,k))gate(k);
+    }
     const usedData=(Array.isArray(view.props.data)?view.props.data:[view.props.data]).filter(Boolean).map(r=>ws.resolve(r,view));
     if(!usedData.length||usedData.some(n=>n.type!=='data'))throw new DDNError('DDN041','View data must reference one or more data blocks',view.source,view.start);
     const raw=usedData.flatMap(n=>n.children.filter(c=>!c.group));
@@ -710,14 +850,29 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     const p={};for(const k of Object.keys(DEFAULTS))p[k]=JSON.parse(JSON.stringify(DEFAULTS[k]));
     let bundle=null;
     if(view.props.format){bundle=ws.resolve(view.props.format,view);if(bundle.type!=='bundle')throw new DDNError('DDN043','format must reference a bundle',view.source,view.start);}
+    let pubDefNode=null,pubOverrideNode=null;
     for(const type of Object.keys(p)){
       const r=view.props[type]||(bundle&&bundle.props[type]);let def=null;
       // B1-045 (D2/D3): a string `legend: auto|on|off` is the chrome shorthand,
       // not a legend profile reference; it is applied to p.chrome below.
       if(r&&!(type==='legend'&&typeof r==='string')){def=ws.resolve(r,view.props[type]?view:bundle);if(def.type!==type)throw new DDNError('DDN044',`Expected ${type} profile, found ${def.type}`,view.source,view.start);p[type]={...p[type],...resolveValue(def.props,def)};}
       const overrides=group(view,type);if(overrides){validateKnown(overrides,PROPERTIES[type]);p[type]={...p[type],...resolveValue(overrides.props,overrides)};}
+      if(type==='publication'){pubDefNode=def;pubOverrideNode=overrides;}
       if(type==='legend'&&def&&def.props.keyset){let keyset=ws.resolve(def.props.keyset,def);if(keyset.type!=='keyset')throw new DDNError('DDN044','Expected keyset',def.source,def.start);p.legend.keys={...keyset.props.keys,...p.legend.keys};}
     }
+    /* 0.8 (chapter 53): publication chrome rides the resolved publication
+     * profile bag as plain JSON records (header/footer/border/background) so
+     * exports and the redaction copy carry it untouched. */
+    let chrome08Diags=[];
+    {
+      const {chrome:chrome08,diagnostics:chromeDiags}=extractPublicationChrome([pubDefNode,pubOverrideNode],files,p.publication.overflow);
+      for(const k of Object.keys(chrome08))if(chrome08[k])p.publication[k]=chrome08[k];
+      chrome08Diags=chromeDiags;
+    }
+    /* chapter 53 §53.5: print-size lint needs to know whether minimum_text was
+     * author-declared at any layer (PS03 fires only on the default). */
+    p.publication.minimum_text_declared=Object.hasOwn(pubOverrideNode?.props||{},'minimum_text')
+      ||[view.props.publication,bundle?.props.publication].some(r=>{if(!r)return false;try{return Object.hasOwn(ws.resolve(r,view.props.publication?view:bundle).props,'minimum_text');}catch{return false;}});
     /* B1-045 (D2/D3): view chrome visibility. Flat keywords legend:/title:/footer:
      * on the view (or its format bundle) mirror into the chrome profile bag; the
      * view beats the bundle. A {$ref} legend value still names a legend profile.
@@ -733,6 +888,37 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       }
     }
     if(quantity(p.style.font_size,16)<8||quantity(p.style.font_size,16)>64)throw new DDNError('DDN046','font_size must be between 8px and 64px',view.source,view.start);
+    /* 0.8 (chapter 54 §54.1/§54.6): text-fit declarations, checked at build so
+     * `check` catches them before any render. Defaults live on the style
+     * profile bag; element declarations win over them at render time. */
+    const TF_MODES=['wrap','grow','shrink'];
+    const baseFont08=quantity(p.style.font_size,16);
+    function tfCheck(props,src,off){
+      if(!props)return;
+      if(props.text_fit!==undefined&&!TF_MODES.includes(props.text_fit))throw new DDNError('DDN-TF01','Unknown text_fit mode '+JSON.stringify(props.text_fit)+'; expected wrap, grow or shrink',src,off);
+      for(const k of ['max_width','max_height'])if(props[k]!==undefined){const v=quantity(props[k],NaN);if(!Number.isFinite(v)||v<40||v>4000)throw new DDNError('DDN-TF02',k+' must be a length from 40px to 4000px and within the 50000px drawing extent budget; found '+JSON.stringify(props[k]),src,off);}
+      if(props.min_font!==undefined){const v=quantity(props.min_font,NaN);if(!Number.isFinite(v)||v<6||v>64)throw new DDNError('DDN-TF03','min_font must be a length from 6px to 64px; found '+JSON.stringify(props.min_font),src,off);if(v>baseFont08)throw new DDNError('DDN-TF03','min_font '+v+'px is above the effective base font '+baseFont08+'px',src,off);}
+    }
+    tfCheck(p.style,view.source,view.start);
+    /* 0.8 (chapter 54 §54.4): font_pin names a metrics file resolved by the
+     * background path rules (chapter 53 §53.3): relative to the declaring
+     * .ddn, inside the workspace, no absolute paths or URLs (DDN-PB05 family).
+     * The pin rides the IR; the render phase pins the measurement cache,
+     * checks the recorded engine (DDN-TF05) and polices unknown runs
+     * (DDN-TF04). */
+    let fontPin08=null;
+    if(p.style.font_pin!==undefined){
+      const styleGroup=group(view,'style');
+      const pinOwner=styleGroup&&Object.hasOwn(styleGroup.props,'font_pin')?view:(view.props.style?ws.resolve(view.props.style,view):(bundle?.props.style?ws.resolve(bundle.props.style,bundle):view));
+      const pinName=p.style.font_pin;
+      if(typeof pinName!=='string'||!pinName.length||pinName.length>512)throw new DDNError('DDN-PB05','font_pin must name a workspace-relative metrics file (1-512 characters)',pinOwner.source,pinOwner.start);
+      let pinPath;try{pinPath=normalizePath(pinOwner.source,pinName);}catch(e){throw new DDNError('DDN-PB05','font_pin '+JSON.stringify(pinName)+' violates the workspace path rules: '+e.message,pinOwner.source,pinOwner.start);}
+      const rawPin=files[pinPath];
+      if(typeof rawPin!=='string')throw new DDNError('DDN-PB05','font_pin file is not in the workspace: '+pinPath,pinOwner.source,pinOwner.start);
+      let pinData;try{pinData=JSON.parse(rawPin);}catch{throw new DDNError('DDN-PB05','font_pin file '+pinPath+' is not valid JSON',pinOwner.source,pinOwner.start);}
+      if(!pinData||typeof pinData!=='object'||Array.isArray(pinData)||typeof pinData.engine!=='string'||!pinData.measurements||typeof pinData.measurements!=='object'||Array.isArray(pinData.measurements))throw new DDNError('DDN-PB05','font_pin file '+pinPath+' must record the measurement engine and a per-run measurements table',pinOwner.source,pinOwner.start);
+      fontPin08={path:pinPath,engine:pinData.engine,...(typeof pinData.version==='string'?{version:pinData.version}:{}),measurements:pinData.measurements};
+    }
     // Spacing hint: view declaration wins over the referenced format (bundle);
     // absent means normal. Additive optional enum, so a bad value is an unknown
     // property value and fails with DDN033 rather than a version gate.
@@ -802,6 +988,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       return {id:n.uid,ref:n.path,local:n.id,name:n.label||n.id,type:n.type,kind:k.keyword,kindCode:k.code,properties,fields,ports,source:{file:n.source,start:n.start,end:n.end}};
     });
     const elementIds=new Set(elements.map(n=>n.id));
+    for(const n of elements)tfCheck(n.properties,n.source.file,n.source.start);
     function endpoint(r,n){let t=ws.resolve(r,n);if(['field','port'].includes(t.type)){const path=t.path.split('.');path.pop();let owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));while(owner?.type==='field'){path.pop();owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));}if(!owner||!elementIds.has(owner.uid)&&!ws.archPaths.has(owner.doc?.source))throw new DDNError('DDN054','Endpoint owner is outside the selected data modules',n.source,n.start);return {element:owner.uid,member:t.uid,role:t.type};}if(!elementIds.has(t.uid)&&!ws.archPaths.has(t.doc?.source))throw new DDNError('DDN054','Relation endpoint is not a data element in scope',n.source,n.start);return {element:t.uid};}
     const relations=rawRelations.map(n=>{if(!n.from||!n.to)throw new DDNError('DDN055','Relation requires two endpoints',n.source,n.start);let r=relationEntry(registry,n.props.kind||'assoc');if(!r)throw new DDNError('DDN056','Unknown relationship kind '+n.props.kind,n.source,n.start);return{id:n.uid,ref:n.path,name:n.label||r.name,kind:r.keyword,kindCode:r.code,from:endpoint(n.from,n),to:endpoint(n.to,n),properties:resolveValue(n.props,n),source:{file:n.source,start:n.start,end:n.end}};});
     // B1-033: declarative motion vocabulary (D2). Values are validated here;
@@ -893,9 +1080,123 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       }
       else throw new DDNError('DDN900','Reference renderer does not implement view declaration '+n.type,n.source,n.start);
     }
-    const diagnostics=[...motionDiagnostics,...xrefDiags];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
-    const currentLanguage=[...ws.docs.values()].some(d=>d.version==='0.5')?'0.5':[...ws.docs.values()].some(d=>d.version==='0.4')?'0.4':'0.3';
+    /* 0.8 core language (chapters 52 and 55): view kinds and strictness,
+     * registered themes, reference numerals, markings, inert assertions,
+     * provenance and ref: anchors. Vocabulary membership governs nothing but
+     * the DDN-VP03/04 lint; assertions evaluate nothing; anchors resolve to
+     * text at render time (render phase). */
+    const diags08=[];
+    const kind08=view.props.kind??bundle?.props.kind,kind08Src=view.props.kind!==undefined?view:bundle;
+    const strict08=view.props.strictness??bundle?.props.strictness,strict08Src=view.props.strictness!==undefined?view:bundle;
+    if(kind08!==undefined&&(typeof kind08!=='string'||!ViewProfiles.VIEW_KINDS[kind08]))throw new DDNError('DDN-VP01','Unknown view kind '+JSON.stringify(kind08)+'; registered kinds: '+Object.keys(ViewProfiles.VIEW_KINDS).join(', '),kind08Src.source,kind08Src.start);
+    if(strict08!==undefined){
+      if(kind08===undefined)throw new DDNError('DDN-VP02','strictness declared without a view kind; strictness has nothing to bind to',strict08Src.source,strict08Src.start);
+      if(!['strict','permissive'].includes(strict08))throw new DDNError('DDN046','strictness must be strict or permissive',strict08Src.source,strict08Src.start);
+    }
+    const strictness08=strict08||'permissive';
+    let theme08=view.props.theme;
+    if(theme08!==undefined&&(typeof theme08!=='string'||!ViewProfiles.THEMES[theme08]))throw new DDNError('DDN-VP08','Unknown theme name '+JSON.stringify(theme08)+'; registered themes: '+Object.keys(ViewProfiles.THEMES).join(', '),view.source,view.start);
+    /* Kind-attached theme (chapter 52 §52.4, layer 2): applies only when the
+     * author declared no theme; unregistered attachment tokens are ignored. */
+    if(theme08===undefined&&kind08!==undefined){const att=ViewProfiles.VIEW_KINDS[kind08].attachment?.theme;if(att&&ViewProfiles.THEMES[att])theme08=att;}
+    if(kind08!==undefined){
+      const vk=ViewProfiles.VIEW_KINDS[kind08];
+      /* Kind-derived default profile (chapter 52 §52.4, layer 2): applies only
+       * when the view declares no projection itself (header, bundle or body). */
+      if(vk.attachment.profile&&!view.props.projection&&!bundle?.props.projection&&!group(view,'projection')&&!view.headerProjection){
+        const att=Profiles.get(vk.attachment.profile);
+        if(att){p.projection.profile=att.id;p.projection.kind=att.projection;}
+      }
+      if(kind08.startsWith('chart-')&&p.projection.kind!=='chart')throw new DDNError('DDN-VP09','View kind '+kind08+' conflicts with an explicit incompatible projection kind '+p.projection.kind+' (chart kinds require a chart projection)',view.source,view.start);
+      if(vk.vocabulary!=='core.full'){
+        const outside=(what,word,name,src)=>{const msg=(what==='kind'?'element '+name+' (kind: '+word+')':'relation '+name+' (verb: '+word+')')+' is outside the '+kind08+' vocabulary (subset '+vk.vocabulary+')';
+          if(strictness08==='strict')throw new DDNError('DDN-VP04',msg+' — change the element kind/verb or change the view kind (ddn-native admits the full core registry)',src.file,src.start);
+          diags08.push({code:'DDN-VP03',severity:'info',message:msg+'.',source:src.file,offset:src.start});};
+        for(const n of elements)if(shown.has(n.id)&&!n.id.includes('::__external')&&!ViewProfiles.subsetAdmits(vk.vocabulary,'kind',n.kind))outside('kind',n.kind,n.local,n.source);
+        for(const r of visibleRelations)if(!ViewProfiles.subsetAdmits(vk.vocabulary,'verb',r.kind))outside('verb',r.kind,r.name||r.ref,r.source);
+      }
+      /* patent.legal@1 (chapter 52 §52.5): every decision branch labelled. */
+      if(kind08==='patent-figure'){
+        /* Document chrome defaults (chapter 52 §52.5): title block with
+         * $title/$date, FIG./Page footer, single page border — layer-2
+         * defaults; any authored concern (already merged into p.publication)
+         * wins. */
+        const pl=ViewProfiles.PATENT_LEGAL.chromeDefaults;
+        if(!p.publication.header)p.publication.header=JSON.parse(JSON.stringify(pl.header));
+        if(!p.publication.footer)p.publication.footer=JSON.parse(JSON.stringify(pl.footer));
+        if(!p.publication.border)p.publication.border={...pl.border};
+        const byId=new Map(elements.map(n=>[n.id,n]));
+        for(const r of visibleRelations){
+          if(byId.get(r.from.element)?.kind!=='flow.decision')continue;
+          const raw=ws.uidMap.get(r.id),branch=r.properties.x_diagram?.branch??r.properties.label??raw?.label;
+          if(typeof branch!=='string'||!branch.trim())diags08.push({code:'DDN-VP07',severity:'warning',message:'Decision branch '+(r.ref||r.id)+' has no label under patent.legal@1; examiners require every branch to be labelled.',source:r.source.file,offset:r.source.start});
+        }
+      }
+    }
+    /* Reference numerals (chapter 52 §52.5): any element may declare one;
+     * shape and per-view uniqueness are validated regardless of profile. */
+    const numerals08=new Map();
+    for(const n of elements){
+      const num=n.properties.numeral;if(num===undefined)continue;
+      if(!Number.isSafeInteger(num)||num<1||num>99999)throw new DDNError('DDN-VP05','numeral on '+n.local+' must be an integer in 1-99999; found '+JSON.stringify(num),n.source.file,n.source.start);
+      const prev=numerals08.get(num);
+      if(prev)throw new DDNError('DDN-VP06','Duplicate numeral '+num+' within one view: elements '+prev.local+' and '+n.local,n.source.file,n.source.start);
+      numerals08.set(num,n);
+    }
+    /* Markings (chapter 55 §55.1): registered names, no duplicates per site. */
+    for(const n of raw){const m=n.props.marks;if(m===undefined)continue;
+      if(!Array.isArray(m))throw new DDNError('DDN-MK01','marks on '+n.id+' must be an array of registered marking names ('+Object.keys(ViewProfiles.MARKINGS).join(', ')+')',n.source,n.start);
+      const seen=new Set();
+      for(const entry of m){
+        if(typeof entry!=='string'||!ViewProfiles.MARKINGS[entry])throw new DDNError('DDN-MK01','Unknown marking '+JSON.stringify(entry)+' on '+n.id+'; registered markings: '+Object.keys(ViewProfiles.MARKINGS).join(', '),n.source,n.start);
+        if(seen.has(entry))throw new DDNError('DDN-MK02','Duplicate marking '+entry+' in one marks array on '+n.id,n.source,n.start);
+        seen.add(entry);
+      }
+    }
+    /* Assertions (chapter 55 §55.2): inert claim text, shape-validated only. */
+    for(const n of rawRelations){const a=n.props.assertion;if(a===undefined)continue;
+      if(typeof a!=='string'||a.length<1||a.length>500)throw new DDNError('DDN-MK04','assertion on relation '+n.id+' must be plain text of 1-500 characters',n.source,n.start);}
+    let assertions08;
+    if(view.props.assertions!==undefined){
+      const list=view.props.assertions;
+      if(!Array.isArray(list)||list.length<1||list.length>32)throw new DDNError('DDN-MK03','assertions on view '+view.id+' must be an array of 1-32 strings; found '+(Array.isArray(list)?list.length:'non-array'),view.source,view.start);
+      for(const a of list)if(typeof a!=='string'||a.length<1||a.length>500)throw new DDNError('DDN-MK04','assertion text on view '+view.id+' must be 1-500 characters',view.source,view.start);
+      assertions08=[...list];
+    }
+    /* Provenance (chapter 55 §55.3): metadata claims, never required. */
+    const provenance08={};
+    if(view.props.source!==undefined){if(typeof view.props.source!=='string'||view.props.source.length<1||view.props.source.length>300)throw new DDNError('DDN046','source provenance must be text of 1-300 characters',view.source,view.start);provenance08.source=view.props.source;}
+    if(view.props.generator!==undefined){if(typeof view.props.generator!=='string'||!view.props.generator.length)throw new DDNError('DDN046','generator provenance must be nonempty text',view.source,view.start);provenance08.generator=view.props.generator;}
+    /* ref: anchors (chapter 55 §S4): parsed and validated here; the anchor
+     * resolves to the target's numeral or label at render time (render phase). */
+    const refAnchors08=[],REF_RE=/\bref:([A-Za-z_][A-Za-z0-9_-]*)/g;
+    const scanRefs=(text,siteUid,siteNode)=>{
+      if(typeof text!=='string'||!text.includes('ref:'))return;
+      for(const m of text.matchAll(REF_RE)){
+        const anchor=m[1];let target=null;
+        try{target=ws.resolve({$ref:anchor,$offset:siteNode.start},siteNode);}catch(e){if(e.code!=='DDN031')throw e;}
+        if(!target||!elementIds.has(target.uid))throw new DDNError('DDN-MK05','ref:'+anchor+' names a missing element (anchor site '+siteUid+')',siteNode.source,siteNode.start);
+        if(target.uid===siteUid)throw new DDNError('DDN-MK06','ref:'+anchor+' is a self-reference within its own element\'s text',siteNode.source,siteNode.start);
+        refAnchors08.push({site:siteUid,target:target.uid,anchor});
+      }
+    };
+    for(const n of rawNodes){scanRefs(n.label,n.uid,n);scanRefs(n.props.text,n.uid,n);scanRefs(n.props.label,n.uid,n);}
+    for(const n of rawRelations){scanRefs(n.label,n.uid,n);scanRefs(n.props.text,n.uid,n);scanRefs(n.props.label,n.uid,n);}
+    scanRefs(view.label,view.uid,view);scanRefs(view.props.title,view.uid,view);scanRefs(view.props.footer,view.uid,view);
+    scanRefs(p.publication.title,view.uid,view);scanRefs(p.publication.caption,view.uid,view);
+    /* DDN-V06: informational when a file declares older than the workspace's
+     * newest source version; never a failure. */
+    const maxDocVersion=Math.max(...[...ws.docs.values()].map(d=>SOURCE_VERSIONS.indexOf(d.version)));
+    for(const d of ws.docs.values())if(SOURCE_VERSIONS.indexOf(d.version)<maxDocVersion)diags08.push({code:'DDN-V06',severity:'info',message:'File '+d.source+' declares ddn "'+d.version+'", older than the workspace\'s newest source version '+SOURCE_VERSIONS[maxDocVersion]+' (informational only).',source:d.source});
+    const diagnostics=[...motionDiagnostics,...xrefDiags,...chrome08Diags,...diags08];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
+    const currentLanguage=[...ws.docs.values()].some(d=>d.version==='0.6')?'0.6':[...ws.docs.values()].some(d=>d.version==='0.5')?'0.5':[...ws.docs.values()].some(d=>d.version==='0.4')?'0.4':'0.3';
     const ir={format:'ddn-resolved@'+currentLanguage,language:currentLanguage,registry:'ddn-core@0.3',entry,view:{id:view.uid,name:view.label||view.id,local:view.id,selected,relations:visibleRelations.map(r=>r.id),profiles:p,keys,placements,routes,subdiagrams,frames,flows,source:{file:view.source,start:view.start,end:view.end,bodyEnd:view.bodyEnd}},elements,relations,diagnostics};
+    if(kind08!==undefined){ir.view.kind=kind08;ir.view.strictness=strictness08;}
+    if(theme08!==undefined)ir.view.theme=theme08;
+    if(assertions08)ir.view.assertions=assertions08;
+    if(fontPin08)ir.view.fontPin=fontPin08;
+    if(Object.keys(provenance08).length)ir.view.provenance=provenance08;
+    if(refAnchors08.length)ir.view.refAnchors=refAnchors08;
     if(p.projection.kind==='panels' && Array.isArray(p.projection.panels)){
       ir.view.children=[];
       for(const panel of p.projection.panels){if(!panel.view)continue;
@@ -1006,6 +1307,37 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     ir.diagnostics.push(...Profiles.validate(ir,registry,DDNError));
     return {ir,workspace:ws,viewNode:view};
   }
+  /* 0.8 (chapter 53 §53.4): multi-view publication sets. One ordered figure
+   * set with shared chrome; order is authorial and stable. Figure references
+   * must resolve to views declared in the same workspace (DDN-PB09). Returns
+   * the validated sets in declaration order; rendering is the render phase's
+   * job (one SVG per figure plus a manifest). */
+  function publicationSets(files,entry,registry){
+    registry=Profiles.registry(registry);
+    const ws=createWorkspace(files,entry,typedKindWords(registry),relationKindWords(registry));
+    const sets=[];
+    for(const n of ws.symbols.values()){
+      if(n.type!=='publication_set')continue;
+      if(n.path!==n.id)throw new DDNError('DDN-PB09','publication_set '+n.id+' must be a top-level declaration',n.source,n.start);
+      if(SOURCE_VERSIONS.indexOf(n.doc.file.version)<V06)throw new DDNError('DDN-V04','publication_set on '+n.id+' is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+n.doc.file.source+' declares ddn "'+n.doc.file.version+'"',n.source,n.start);
+      for(const k of Object.keys(n.props))if(!['publication','figures'].includes(k))throw new DDNError('DDN-PB09','Unknown publication_set property '+k+'; expected publication and figures',n.source,n.start);
+      let pubNode=null;
+      if(n.props.publication!==undefined){
+        pubNode=ws.resolve(n.props.publication,n);
+        if(pubNode.type!=='publication')throw new DDNError('DDN-PB09','publication_set '+n.id+' publication must reference a publication profile; found '+pubNode.type,n.source,n.start);
+      }
+      const figs=n.props.figures;
+      if(!Array.isArray(figs)||!figs.length||figs.length>64)throw new DDNError('DDN-PB09','publication_set '+n.id+' figures must be an array of 1-64 view references; found '+(Array.isArray(figs)?figs.length:'non-array'),n.source,n.start);
+      const figures=figs.map(r=>{
+        let t;
+        try{t=ws.resolve(r,n);}catch(e){if(e.code==='DDN031')throw new DDNError('DDN-PB09','publication_set '+n.id+' figure @'+r.$ref+' does not resolve in this workspace',n.source,r.$offset||n.start);throw e;}
+        if(t.type!=='view')throw new DDNError('DDN-PB09','publication_set '+n.id+' figure @'+r.$ref+' is not a view (found '+t.type+')',n.source,r.$offset||n.start);
+        return {uid:t.uid,local:t.id,name:t.label||t.id,file:t.doc.file.source};
+      });
+      sets.push({uid:n.uid,local:n.id,name:n.label||n.id,publication:pubNode?{uid:pubNode.uid,node:pubNode}:null,figures});
+    }
+    return sets;
+  }
   function semanticJSON(ir){function canon(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(canon);const o={};for(const k of Object.keys(v).sort())if(!['source','ref','local'].includes(k))o[k]=canon(v[k]);return o;}const es=new Map(),rs=new Map();function visit(x){x.elements.forEach(n=>es.set(n.id,n));x.relations.forEach(n=>rs.set(n.id,n));for(const c of x.view?.children||[])visit(c.ir);}visit(ir);return {format:ir.format,elements:[...es.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon),relations:[...rs.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon)};}
   /* B1-088: host-supplied icon packs — validated and sanitized exactly like
    * shipped packs before they can render. */
@@ -1013,6 +1345,6 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
    * namespace (first publish wins); never touch the module-local copy. */
   const Packs=ddnNamespace('DDNPacks');
   const registerIconPack=pack=>Packs.registerIconPack(pack,ICONLIBS.libraries);
-  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
+  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles,viewProfiles:ViewProfiles,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
   publishNamespace('DDN',api);
   export default api;

@@ -106,7 +106,7 @@ function refineEndpointOrder(nodes,rels,ir,best,hints,run){
    }
    // A crossing between distinct fields cannot be fixed by pretending their
    // rows have exchanged identities. Try legal sides jointly instead.
-   const alternates=e=>!e.sideFree?[]:(e.row||e.ep.role==='field'?['west','east']:['west','east','north','south']).filter(s=>s!==e.side);
+   const alternates=e=>!e.sideFree?[]:(e.row||e.ep.role==='field'||p.layout.algorithm==='mindmap'?['west','east']:['west','east','north','south']).filter(s=>s!==e.side);
    const xs=alternates(x),ys=alternates(y);
    const options=[...xs.map(s=>[[x,s]]),...ys.map(s=>[[y,s]]),...xs.flatMap(s=>ys.map(t=>[[x,s],[y,t]]))];
    for(const edits of options){const h=clone(current);for(const [e,side]of edits){h[e.id]={...(h[e.id]||{}),[e.which+'_side']:side};delete h[e.id]['_'+e.which+'_order'];}
@@ -142,7 +142,9 @@ function route(nodes,rels,ir,labelMeasure,obstacles,placed){
  const needsWork=()=>!best||best.crossings.length>0||best.routes.some(inefficient);
  const initial=best?score(best):null,stages=[{stage:'initial-clear-routing',...(initial||{failure:lastError?.code})}];
  let trials=0,portChanges=0,nodeMoves=0,endpointOrdering=null;
- const budget=rels.length<=12?24:rels.length<=32?8:0;
+ // Whole-graph re-route trials are affordable up to 96 relations; beyond that
+ // the historical zero budget keeps large-graph cost bounded (DDN-LW06).
+ const budget=rels.length<=12?24:rels.length<=32?8:rels.length<=96?Math.min(8,Math.max(4,Math.ceil(128/rels.length))):0;
  const eligible=e=>!['DDN073','DDN-I030','DDN223'].includes(e?.code);
  if(p.layout.optimize!=='none'&&(!lastError||eligible(lastError))){
   const improves=r=>{if(!best)return true;const a=score(best),b=score(r);return b.crossings<a.crossings&&b.length<=a.length*1.35+52 || b.crossings===a.crossings&&b.length+b.bends*20<a.length+a.bends*20-1;};
@@ -166,7 +168,9 @@ function route(nodes,rels,ir,labelMeasure,obstacles,placed){
      if(fraction>=.12&&fraction<=.88)candidates.push({[sideKey]:currentSide,[fracKey]:fraction});
     }
     if(authored[sideKey]===undefined&&!port?.properties.side){
-     const sides=ep.member&&n.n.fields.some(f=>f.id===ep.member)?['east','west']:['east','west','south','north'];
+     // B1-100: a mind map owns its attachment rule — branches never leave the
+     // top or bottom edge, so the optimizer may not offer those sides.
+     const sides=ep.member&&n.n.fields.some(f=>f.id===ep.member)||p.layout.algorithm==='mindmap'?['east','west']:['east','west','south','north'];
      for(const side of sides)if(side!==currentSide)candidates.push({[sideKey]:side});
     }
     for(const candidate of candidates){if(trials>=budget||!needsWork())break;
@@ -179,19 +183,23 @@ function route(nodes,rels,ir,labelMeasure,obstacles,placed){
   if(best){const local=refineEndpointOrder(nodes,rels,ir,best,currentHints,run);best=local.best;currentHints=local.hints;endpointOrdering=local.telemetry;stages.push({stage:'local-endpoint-ordering',...endpointOrdering.after,trials:endpointOrdering.trials,accepted:endpointOrdering.accepted});}
   const slots=placed.pattern?.slots||{},protectedIds=new Set(placed.pinned);
   for(const r of rels)if((ir.view.routes[r.id]?.via?.length||0)>0){protectedIds.add(r.from.element);protectedIds.add(r.to.element);}
-  // Frames and inline views add ownership/placement constraints. Do not move
-  // their members in a post-layout pass that could invalidate those bounds.
-  const canMove=!placed.telemetry.retentionActive&&!ir.view.frames.length&&!ir.view.subdiagrams.length;
+  // Frames add ownership constraints: swaps stay inside one frame (or outside
+  // every frame), and fixed-frame interior bounds are re-checked after a swap.
+  const frameKey=n=>JSON.stringify(ir.view.frames.filter(f=>f.members.includes(n.id)).map(f=>f.id).sort());
+  const canMove=!placed.telemetry.retentionActive;
   if(canMove&&(!best||score(best).crossings>0)){
    const free=nodes.filter(n=>!protectedIds.has(n.id)),remaining=new Set((best?.crossings||[]).flatMap(c=>[c.under,c.over]));let nt=0;
-   const originalBy=new Map(nodes.map(n=>[n.id,[n.x,n.y]]));
+   const horizontal=['right','left'].includes(p.layout.direction);
    for(let i=0;i<free.length&&nt<Math.min(12,budget);i++)for(let j=i+1;j<free.length&&nt<Math.min(12,budget);j++){
     if(best&&score(best).crossings===0)break;
     const a=free[i],b=free[j],sa=slots[a.id],sb=slots[b.id];
+    if(frameKey(a)!==frameKey(b))continue;
     if(placed.pattern&&(!sa||!sb||sa.key!==sb.key))continue;
-    if(!placed.pattern&&['mindmap','tree','layered','grouped','ladder'].includes(p.layout.algorithm))continue;
+    if(!placed.pattern&&['mindmap','tree','grouped','ladder'].includes(p.layout.algorithm))continue;
+    // Layered swaps stay inside one rank; exchanging ranks would re-order the flow.
+    if(!placed.pattern&&p.layout.algorithm==='layered'&&Math.abs((horizontal?a.x:a.y)-(horizontal?b.x:b.y))>.01)continue;
     const oldA=[a.x,a.y],oldB=[b.x,b.y],ca=center(a),cb=center(b);a.x=cb[0]-a.w/2;a.y=cb[1]-a.h/2;b.x=ca[0]-b.w/2;b.y=ca[1]-b.h/2;
-    const clear=nodes.every((x,k)=>nodes.slice(k+1).every(y=>!Layout.overlap(x,y,16)));
+    const clear=nodes.every((x,k)=>nodes.slice(k+1).every(y=>!Layout.overlap(x,y,16)))&&Patterns.fits(a,placed.constraints.get(a.id))&&Patterns.fits(b,placed.constraints.get(b.id));
     nt++;
     let accepted=false;if(clear)try{const trial=run(currentHints);if(improves(trial)){best=trial;accepted=true;nodeMoves+=2;lastError=null;}}catch(e){}
     if(!accepted){[a.x,a.y]=oldA;[b.x,b.y]=oldB;}
@@ -204,7 +212,7 @@ function route(nodes,rels,ir,labelMeasure,obstacles,placed){
  if(!best)throw lastError||new ErrorClass('DDN215','No valid route under the authored constraints.');
  stages.push({stage:'residual-short-routes-and-crossing-marks',...score(best)});
  if(best.crossings.length)best.diagnostics.push({code:'DDN-LW05',severity:'warning',message:`${best.crossings.length} disconnected crossings remain after bounded routing; rendered with ${p.layout.crossings}.`});
- if(!budget&&rels.length>32&&p.layout.optimize!=='none')best.diagnostics.push({code:'DDN-LW06',severity:'info',message:'Larger graph: native obstacle routing runs, but expensive whole-graph crossing trials are skipped.'});
+ if(rels.length>32&&p.layout.optimize!=='none')best.diagnostics.push({code:'DDN-LW06',severity:'info',message:rels.length>96?'Larger graph: native obstacle routing runs, but expensive whole-graph crossing trials are skipped.':'Larger graph: native obstacle routing runs with a reduced whole-graph crossing-trial budget.'});
  if(placed.pattern)for(const n of nodes)if(placed.pattern.slots[n.id]){placed.pattern.slots[n.id].center=center(n);placed.pattern.slots[n.id].finalCenter=center(n);}
  return{...best,telemetry:{portChanges,nodeMoves,portTrials:trials,endpointOrdering,stages,pattern:placed.pattern,remainingCrossings:best.crossings.length}};
 }

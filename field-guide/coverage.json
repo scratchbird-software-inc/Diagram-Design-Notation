@@ -1,10 +1,10 @@
 {
   "meta": {
-    "edition": "field-guide-0.7",
+    "edition": "field-guide-0.8",
     "runtime": "0.7.0",
-    "reviewed": "2026-09-30",
-    "chapterCount": 148,
-    "plannedChapterCount": 148,
+    "reviewed": "2026-10-04",
+    "chapterCount": 155,
+    "plannedChapterCount": 155,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -222,7 +222,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/25-c4-views.ddn",
       "view": "container",
-      "sha256": "b0b3a0cb3b09317afdcd46f58682669976d721e1bca532b0ff351f8dfce4224c"
+      "sha256": "18fa713a574a31e074b498c3b92a3b85b7a7e1fe77b0ec7c19f9fffd7a447ee7"
     },
     {
       "id": "c4-components",
@@ -240,7 +240,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/54-network-diagram.ddn",
       "view": "lan",
-      "sha256": "53d05a1222a583794e078e65cc73829f926397ce671507cdfa2e799de9c81101"
+      "sha256": "e4d57a84f161bc6e580d33cd6333f036704f3dbba60a0c42f158a8fad2183dd8"
     },
     {
       "id": "network-symbols",
@@ -249,7 +249,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/103-network-symbols.ddn",
       "view": "net",
-      "sha256": "6ed5ac0b6a8561f042dddf45cd0d8738f5d760326ed507844a3d3a83d4ba0883"
+      "sha256": "99c74c7121acc2857ee12f99df951ebe0895a57bdb23b5fc0755783bde1c1d5b"
     },
     {
       "id": "uml-deployment",
@@ -285,7 +285,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/92-c4-epc.ddn",
       "view": "dynamic",
-      "sha256": "22d55e81ec03a0970fe63fc3b763f7637309d6cc19f275b216b05cb79bc12795"
+      "sha256": "d86921e5e135b2e9dd4ad2d0b4dba129092dde4c71c37ce690caf983c54eec5c"
     },
     {
       "id": "sequence-fragments",
@@ -609,7 +609,7 @@
       "projection": "panels",
       "entry": "website/examples/quality/views.ddn",
       "view": "dashboard_quality",
-      "sha256": "f19132cb82ce239b66b7759aaf2bf51232485fd4a985433334d1688397fd49a0"
+      "sha256": "7ddf7ca09070db47f89c89a670148d33fd522f7843fabe8ff910418a9c3d4bc6"
     },
     {
       "id": "lifecycle-trace",
@@ -618,7 +618,7 @@
       "projection": "graph",
       "entry": "website/examples/quality/views.ddn",
       "view": "lifecycle_trace",
-      "sha256": "6b200f4ccf6e8ec35696052145c17149c54acfe31da348a507a9ebe011773cd6"
+      "sha256": "151bbbc642991d79d337b0c857e0c0bf7c6f3be0c336e7ae8122f526dd152de1"
     },
     {
       "id": "dfd-yourdon",
@@ -663,7 +663,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/79-uml-composite.ddn",
       "view": "components",
-      "sha256": "bd9c2f68fe356bd8cdaf7aabdbcf449755320c8ef5097384bb0b4ab988f389d6"
+      "sha256": "78257b60a06d141e37b015c4ff60647cd4f8f08cbc390dd875802b29ca5b7e34"
     },
     {
       "id": "umlremainder",
@@ -690,7 +690,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/80-uml-activity.ddn",
       "view": "pins",
-      "sha256": "0944483293e622e610fa5bbeab02ce1f5e4e948063aa67c28b7effd93be8108a"
+      "sha256": "0994538f779b798e39531cabbdc92dbd59f91466adbc5cf3d31d82559a7177ac"
     },
     {
       "id": "swimlane",
@@ -708,7 +708,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/42-communication-diagram.ddn",
       "view": "communication",
-      "sha256": "230c4cae7b3d7c93ce7c1f9c4d2a7282bcdc43366b6e352942fa5566046cb5f7"
+      "sha256": "e7067bde3c90c5440fdb167b358606b56968ff107fb60449925886e5e68baf38"
     },
     {
       "id": "interaction-overview",
@@ -753,7 +753,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/83-cmmn-complete.ddn",
       "view": "v",
-      "sha256": "41b99cb996e1029e29afa710d766bbdf2f738325acd886531f18e709ab1dfb2b"
+      "sha256": "112d93a41e1d572cf3c19b2154885e56c090e2e368b9d0a5c486167db0b3cc2e"
     },
     {
       "id": "sysml-bdd",
@@ -762,7 +762,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/85-sysml-blocks.ddn",
       "view": "bdd",
-      "sha256": "d956f2f9972f7d9425f710e9519b0256cce3660d490b35d82bd535c8594b429a"
+      "sha256": "01d36c68910d0973674b5e076270c87e15212c61b88c9527e51809f75dd3acac"
     },
     {
       "id": "sysml-ibd",
@@ -780,7 +780,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/85-sysml-blocks.ddn",
       "view": "parametric",
-      "sha256": "da748fd1a3f4ae4793e73da05750875eb8dad2333294f3db271d377db363e009"
+      "sha256": "76c649442033d6908c4fa1a3ce0c52846693763eae9a95fab3dc7d979c7dee43"
     },
     {
       "id": "requirements",
@@ -789,7 +789,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/84-sysml-requirements.ddn",
       "view": "requirements",
-      "sha256": "39bfa4c6aa08ea0eeb713ec1323b208b62583d3ea0ae8bf17d0302a3ce591d87"
+      "sha256": "53ef3d3a7d6a66face7a11a64196ba5e28755a2b258429d5ac2a73115bc7e638"
     },
     {
       "id": "dmn-drd",
@@ -798,7 +798,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/87-dmn-drd.ddn",
       "view": "drd",
-      "sha256": "30b9fdb62f6274afa764f41e1c083e07746a18fa8cadd447043743c890bff28a"
+      "sha256": "8a44723ab134ff97a39c7aae27e9c5c930aeed1d8f184389b074d79fe1e7c268"
     },
     {
       "id": "soaml-services",
@@ -852,7 +852,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/100-fbd.ddn",
       "view": "d",
-      "sha256": "1accdb566bdd183d20cbc99a2124a13447fe17c88c963a1dfa1a217b46a83a85"
+      "sha256": "cc534a6c42610f28d8cbc493193dc61ffc7e3bc510ccb3782641b203d5ab5f2f"
     },
     {
       "id": "petri",
@@ -861,7 +861,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/95-petrinet.ddn",
       "view": "net",
-      "sha256": "e39f6001d9a31f397f252ef230d678d5c9ac835a6a2f7655b9ec2ced0c69e246"
+      "sha256": "aecc481f58fa522249f5355ebd2838ea5fd9a439876311eae34b85e525b3400a"
     },
     {
       "id": "orm",
@@ -879,7 +879,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/97-vsm.ddn",
       "view": "map",
-      "sha256": "7589d223b2942ef41e4ecdad3fb3e2c02f4e915e2c7cfb405f2b37009dc67bbf"
+      "sha256": "09c640eff7d2e407daa5b0c0a6cecd91dc0f385526569dc4e63d03c69136b56b"
     },
     {
       "id": "vsm-symbols",
@@ -888,7 +888,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/102-vsm-symbols.ddn",
       "view": "map",
-      "sha256": "85c212101d7b44129b06a8c11c712e071a1bbb9c11d17157edf279daefcc08e7"
+      "sha256": "a66d942d6d6fdac7d840a86fd3e4ff7bc22dfa7559954ccfcfea1fa288da9732"
     },
     {
       "id": "idef0",
@@ -924,7 +924,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/28-mind-map.ddn",
       "view": "mindmap",
-      "sha256": "b0981efb144c19d423297cac820bd7acca6ae406db5e582ca49c57174f52dd13"
+      "sha256": "3b49b52d9f6c4b60bb839b8542c78fac7b920a36220ed68aea1b56431ce09578"
     },
     {
       "id": "concept-map",
@@ -933,7 +933,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/29-concept-map.ddn",
       "view": "concepts",
-      "sha256": "ebec552e45e49f1978084bceb34d6b4e06378d7c300015742a53e5cbccb3ef60"
+      "sha256": "c0442fd3417cd6712533edaf8cd854754e36cc307e6eb6512521d0c41d74a449"
     },
     {
       "id": "organization",
@@ -969,7 +969,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/98-icons.ddn",
       "view": "net",
-      "sha256": "1f40e36fd5c54574988bdc93ca7d16da4df6a6aef9dedefd1f7f480b9aa9f1a6"
+      "sha256": "ae2a4ddd073054d60723810161d87b21a0962704244eab27b838b2e19f94ac3e"
     },
     {
       "id": "icons-vendor",
@@ -978,7 +978,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/106-tabler-icons.ddn",
       "view": "net",
-      "sha256": "712971be47d63a6378db7341a218706972ca6f7031a24e619868e3c44786849a"
+      "sha256": "155774ca02e3d9ff1260af5075794f43ebbb3399521e93b56694eb5eef79325c"
     },
     {
       "id": "pid-symbols",
@@ -987,7 +987,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/104-pid-symbols.ddn",
       "view": "pid",
-      "sha256": "585c999f71dfbcb909f5a23ab12b5bbb3783eb1f1789177942b97680b373a88e"
+      "sha256": "4b550f4a1a816e6570f28e605710a1e35e028a6bb5358de23171b76798379ffe"
     },
     {
       "id": "electrical-symbols",
@@ -996,7 +996,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/105-electrical-symbols.ddn",
       "view": "sch",
-      "sha256": "49936088fcf301cce9886f76f8a5e67ba810967f5d6cf6bd99206ff010fb9aab"
+      "sha256": "e97c59b98b1f3ab299b63ae825d922f68db092d2465e06c62c7c2487f24fbf11"
     },
     {
       "id": "iso-charts",
@@ -1014,7 +1014,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/73-iso-architecture.ddn",
       "view": "iso_map",
-      "sha256": "33ac616b253850e0177075679e60623abef99ad9d755929e0568313cb6850703"
+      "sha256": "5b6d6f9a6d9d8e68a8ab939822027b8d276d69d285fabcf829b8d7a9265f9211"
     },
     {
       "id": "geo",
@@ -1041,7 +1041,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/37-crows-foot-erd.ddn",
       "view": "erd",
-      "sha256": "a49aa9bd26b2e9899e6c917354e9a22a8af75f7dc8a862638070a17bfa806c20"
+      "sha256": "566b5b616d5b912098c1469c2d5463c958e49fd3bcd34066a2b8def306858274"
     },
     {
       "id": "cross-file",
@@ -1050,7 +1050,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/108-uaf-traceability.ddn",
       "view": "sv",
-      "sha256": "fc42b415650b5050849f71bde0a3a0a74579bbadc5556c8614b3c3dc2fede51c"
+      "sha256": "aabbd0cea607b1efb7d8b59c830c1abe2e5da72643f93ce0d31f2da2eaf9ae70"
     },
     {
       "id": "linked-views",
@@ -1122,7 +1122,7 @@
       "projection": "graph",
       "entry": "field-guide/sources/event-contract.ddn",
       "view": "diagram",
-      "sha256": "ddb20b1fb9eb93b56986d3c7c420c1893e5be87fc6d15c0e7414e7ceb06e36d7"
+      "sha256": "e3cc09b06911349b967d28a7d851ac06769580f4eb6e215159ddab19ced844f1"
     },
     {
       "id": "shards-replicas",
@@ -1131,7 +1131,7 @@
       "projection": "graph",
       "entry": "field-guide/sources/shards-replicas.ddn",
       "view": "diagram",
-      "sha256": "3471d1a39d5d6860bd2fa17466e56629a8b62058d832f01c35ffdd63ceeb4979"
+      "sha256": "df7ceea0949ed35574369f4324a7e5a7b871695b22ceb8030be5348eff9912fa"
     },
     {
       "id": "thumbnails",
@@ -1239,7 +1239,7 @@
       "projection": "graph",
       "entry": "website/examples/live/pinned-patterns.ddn",
       "view": "circular",
-      "sha256": "8bda9a4a7285253440ff46bb2dc7d38c3454cb48212c7211f9a7e42de3b3548a"
+      "sha256": "436246ff46c9cb84f945843009fce6632f2f065ce5e34959ec1074c742f31863"
     },
     {
       "id": "pause-placement",
@@ -1248,7 +1248,7 @@
       "projection": "graph",
       "entry": "website/examples/live/pinned-patterns.ddn",
       "view": "paused",
-      "sha256": "de0ad83a6fe1bdab4c10ffa9e3bda20235f9fb2d7a2ebc6aa3a519051443a20d"
+      "sha256": "76e1faa257a7485ae10af6eea07a5f23c1236cb9d66cc3b964d7579a802e06c0"
     },
     {
       "id": "night-palettes",
@@ -1293,7 +1293,70 @@
       "projection": "graph",
       "entry": "website/examples/basics/110-presentation-architecture.ddn",
       "view": "overview",
-      "sha256": "8347def81b9535221850e510a4e69f6a7aa3fdb6f2a68aa67d5f949940923f2b"
+      "sha256": "057668b9c90b2120137d0c0bc47779284e5eb9d35fede335e2de8ef909abfa80"
+    },
+    {
+      "id": "version-06",
+      "status": "technique",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/version-06.ddn",
+      "view": "main",
+      "sha256": "7c34f144defe2bc84c756fa6065a41ba24a2e29a69aaff257271c6dfe7fa8f37"
+    },
+    {
+      "id": "view-profiles",
+      "status": "technique",
+      "profile": "flow.documented@2",
+      "projection": "graph",
+      "entry": "field-guide/sources/view-profiles.ddn",
+      "view": "flow_strict",
+      "sha256": "b09655df798e114ad7776abba465645264006cdc37a8bfe8776f53fc41123cad"
+    },
+    {
+      "id": "patent-figures",
+      "status": "technique",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/patent-figure.ddn",
+      "view": "fig1",
+      "sha256": "73600e4a01595c02a52b5175fbb9567eb069be2d6cde47e68db57ea619f37ec9"
+    },
+    {
+      "id": "publication-chrome",
+      "status": "technique",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/publication-chrome.ddn",
+      "view": "overview",
+      "sha256": "407e2e8a8e118b1495be6640002a276948c5540d9272c2d46887834c6d6dd8fe"
+    },
+    {
+      "id": "text-fit",
+      "status": "technique",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/text-fit.ddn",
+      "view": "fitted",
+      "sha256": "22341c0d50fe147a5d3d3f14f21b2dee18755f4fe80a16270b7076c0e3b9c23a"
+    },
+    {
+      "id": "markings-metadata",
+      "status": "technique",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/markings.ddn",
+      "view": "main",
+      "sha256": "9de013c3df7e8a503e4f3b944dca75a78eba2befe1406c09fc894072a6924f7c"
+    },
+    {
+      "id": "cli-power-tools",
+      "status": "technique",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/cli-workflow.ddn",
+      "view": "main",
+      "sha256": "c13d438f2e8c5707791ddb3e9de189f104afafd4d32b87b4e11dfc0fb4cbecd1"
     },
     {
       "id": "whiteboard",
@@ -1338,7 +1401,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/101-ladder.ddn",
       "view": "d",
-      "sha256": "e741b4d814a59efafacc7668e2896a03c88900c5552f52553e69a2028e86c9fb"
+      "sha256": "64c266e69da0f83938b345cafbdaf397416fb1bde7b4e100fd8b6e07150b693b"
     },
     {
       "id": "decision-first",
@@ -1551,8 +1614,8 @@
     },
     {
       "id": "c4-container",
-      "before": "b0b3a0cb3b09317afdcd46f58682669976d721e1bca532b0ff351f8dfce4224c",
-      "after": "59733e642217f6c9a388886eb2df25bc5c9e6a3ddb428be9ac02b08785031c5a",
+      "before": "18fa713a574a31e074b498c3b92a3b85b7a7e1fe77b0ec7c19f9fffd7a447ee7",
+      "after": "8d0330ef6d9aac7424c24c9f549746fe6c2c68dcada5876ac60fb8ba59bf15df",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -1569,8 +1632,8 @@
     },
     {
       "id": "network",
-      "before": "53d05a1222a583794e078e65cc73829f926397ce671507cdfa2e799de9c81101",
-      "after": "9b7be62fd531203058e890935bb9c561115d125591d34726d7f32e87db8afd85",
+      "before": "e4d57a84f161bc6e580d33cd6333f036704f3dbba60a0c42f158a8fad2183dd8",
+      "after": "726af6aebde165551cd50f85bc9bbbcaeff3840039ffe8bcdfcbf4bb95b0b22a",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -1578,8 +1641,8 @@
     },
     {
       "id": "network-symbols",
-      "before": "6ed5ac0b6a8561f042dddf45cd0d8738f5d760326ed507844a3d3a83d4ba0883",
-      "after": "5b9bd05dd15f0a93397eccccef2a19bd0317723835c16ddb51b833efe65972e1",
+      "before": "99c74c7121acc2857ee12f99df951ebe0895a57bdb23b5fc0755783bde1c1d5b",
+      "after": "5fb45659b735470dafb5dad55e26964fc23d2c4f7946156298ef837ba0f577ea",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -1614,8 +1677,8 @@
     },
     {
       "id": "c4-dynamic",
-      "before": "22d55e81ec03a0970fe63fc3b763f7637309d6cc19f275b216b05cb79bc12795",
-      "after": "d2edaa225ddbb7b151914560a16d9de37df2ac227ac4deb062fd444bb175f495",
+      "before": "d86921e5e135b2e9dd4ad2d0b4dba129092dde4c71c37ce690caf983c54eec5c",
+      "after": "2cc0f1c1bfc0a5c0c469cbddb31d462265ac06a2ec9c4c774af67e577b798357",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -1938,8 +2001,8 @@
     },
     {
       "id": "dashboard",
-      "before": "f19132cb82ce239b66b7759aaf2bf51232485fd4a985433334d1688397fd49a0",
-      "after": "50da5394d75a43e7ee1b5e94b3ed602ceb1cd3175630e5bedda8d4f3f718f890",
+      "before": "7ddf7ca09070db47f89c89a670148d33fd522f7843fabe8ff910418a9c3d4bc6",
+      "after": "924cb495f468e8a0bd5a7f39c67fe87b17e9e918dbf4880db0920eace226d338",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -1947,8 +2010,8 @@
     },
     {
       "id": "lifecycle-trace",
-      "before": "6b200f4ccf6e8ec35696052145c17149c54acfe31da348a507a9ebe011773cd6",
-      "after": "c120f198a065b2c2ae0e38d82d8e6c05626922647b3a70f1707b853ea8351f73",
+      "before": "151bbbc642991d79d337b0c857e0c0bf7c6f3be0c336e7ae8122f526dd152de1",
+      "after": "5b2dd0a370acb86d6e23c4a92fde297718fda58a35d8f93d363cb2a174cd62fd",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -1992,8 +2055,8 @@
     },
     {
       "id": "umlcomposite",
-      "before": "bd9c2f68fe356bd8cdaf7aabdbcf449755320c8ef5097384bb0b4ab988f389d6",
-      "after": "54aabc503788977793b16e173e1f5b24d100059aa11caee90b4b80b6d316e1fa",
+      "before": "78257b60a06d141e37b015c4ff60647cd4f8f08cbc390dd875802b29ca5b7e34",
+      "after": "5f5da04f8948c504dd081b4c94d27c5c3575a0034d6f9d814246a381f42edc31",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2019,8 +2082,8 @@
     },
     {
       "id": "activity",
-      "before": "0944483293e622e610fa5bbeab02ce1f5e4e948063aa67c28b7effd93be8108a",
-      "after": "e0f2182e757f38b6f43494101bce1e6ed8963b1bab47017af5e4a9c5fb34b58c",
+      "before": "0994538f779b798e39531cabbdc92dbd59f91466adbc5cf3d31d82559a7177ac",
+      "after": "29c59bbcdebca2919c0997d125b4e3231652fb9a08b0c438a1570722d1a2d764",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2037,8 +2100,8 @@
     },
     {
       "id": "communication",
-      "before": "230c4cae7b3d7c93ce7c1f9c4d2a7282bcdc43366b6e352942fa5566046cb5f7",
-      "after": "73fe8eb348982d4931c31d19517cbbc15fbb6b3cbb7fb71d34bda65a4516b264",
+      "before": "e7067bde3c90c5440fdb167b358606b56968ff107fb60449925886e5e68baf38",
+      "after": "86339bde6079364d21d8ac19483535b1bdbb1be86c4c4e8b847971b6f6344348",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2082,8 +2145,8 @@
     },
     {
       "id": "cmmn-case",
-      "before": "41b99cb996e1029e29afa710d766bbdf2f738325acd886531f18e709ab1dfb2b",
-      "after": "0b0426dc85a1d35a57157ee5f02536a62dbb73a07a62a795cd57c4e3c99f9902",
+      "before": "112d93a41e1d572cf3c19b2154885e56c090e2e368b9d0a5c486167db0b3cc2e",
+      "after": "df657b7c0c315b5651ea92c221dedfba021021396937d17dd06f0f84469c4c93",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2091,8 +2154,8 @@
     },
     {
       "id": "sysml-bdd",
-      "before": "d956f2f9972f7d9425f710e9519b0256cce3660d490b35d82bd535c8594b429a",
-      "after": "dec0a6fdb41946dc95f9827c3b759f8bd3cd1a26bed4be282fd4bc94201b026d",
+      "before": "01d36c68910d0973674b5e076270c87e15212c61b88c9527e51809f75dd3acac",
+      "after": "eaf3849c099682d151304e59e9900940659a09db1e1b297c0575b1a0dd54c362",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2109,8 +2172,8 @@
     },
     {
       "id": "sysml-parametric",
-      "before": "da748fd1a3f4ae4793e73da05750875eb8dad2333294f3db271d377db363e009",
-      "after": "43670b5c68d3d66ae1c2acc8d15762cd073e88fbd6024b0baec67d88efeeaf1d",
+      "before": "76c649442033d6908c4fa1a3ce0c52846693763eae9a95fab3dc7d979c7dee43",
+      "after": "c14f37d5559325a59b0716d723523565ea5d1cc009eb2842c77a7082f92f9e3e",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2118,8 +2181,8 @@
     },
     {
       "id": "requirements",
-      "before": "39bfa4c6aa08ea0eeb713ec1323b208b62583d3ea0ae8bf17d0302a3ce591d87",
-      "after": "20e7404129f73fd9de12a93a4d94cc5d3c85b68115527a914062bb0d6a6f5c82",
+      "before": "53ef3d3a7d6a66face7a11a64196ba5e28755a2b258429d5ac2a73115bc7e638",
+      "after": "9927a4eedb2fbe23a7d993190f7400fd623880a982b02ff3b1c12ba4ecee745f",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2127,8 +2190,8 @@
     },
     {
       "id": "dmn-drd",
-      "before": "30b9fdb62f6274afa764f41e1c083e07746a18fa8cadd447043743c890bff28a",
-      "after": "28d4b66c718f986073dbe8f9e00ee3b62d7364599758729c3064fa3723834e21",
+      "before": "8a44723ab134ff97a39c7aae27e9c5c930aeed1d8f184389b074d79fe1e7c268",
+      "after": "69f600806311a21ec0f1c5b6475ae0a7bac34e4d7bada796b322bbce89b214bf",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2181,8 +2244,8 @@
     },
     {
       "id": "fbd",
-      "before": "1accdb566bdd183d20cbc99a2124a13447fe17c88c963a1dfa1a217b46a83a85",
-      "after": "d875a3ef0a0fc7462aa502e71d38697dc86f68d74475c99775c8418c2fa0505b",
+      "before": "cc534a6c42610f28d8cbc493193dc61ffc7e3bc510ccb3782641b203d5ab5f2f",
+      "after": "f50776f74e687d21760bcd0070cc8571db08b2d3a1c31a09d95fcc171f772bb3",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2190,8 +2253,8 @@
     },
     {
       "id": "petri",
-      "before": "e39f6001d9a31f397f252ef230d678d5c9ac835a6a2f7655b9ec2ced0c69e246",
-      "after": "40441ef79b3e747cf7777df148b55f43c49a285882fa3d006caf0434b6811658",
+      "before": "aecc481f58fa522249f5355ebd2838ea5fd9a439876311eae34b85e525b3400a",
+      "after": "342784ea8a4f28393b978d5c7d78fe1d9b69c48f4cf26eac293f895b609d4011",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2208,8 +2271,8 @@
     },
     {
       "id": "vsm",
-      "before": "7589d223b2942ef41e4ecdad3fb3e2c02f4e915e2c7cfb405f2b37009dc67bbf",
-      "after": "de70b54162cdbe61d77ece8e89c783bdb0ddfa3313cf8515306059b41aeaf6be",
+      "before": "09c640eff7d2e407daa5b0c0a6cecd91dc0f385526569dc4e63d03c69136b56b",
+      "after": "f1fea7693fa94202b451d6dae3a85c3b21b0ec4dd6256396a4b12bd403a782b5",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2217,8 +2280,8 @@
     },
     {
       "id": "vsm-symbols",
-      "before": "85c212101d7b44129b06a8c11c712e071a1bbb9c11d17157edf279daefcc08e7",
-      "after": "cdec4c3917c4eb8c01971d1274f486b595698779c8e974d324c16ca54d39d6f1",
+      "before": "a66d942d6d6fdac7d840a86fd3e4ff7bc22dfa7559954ccfcfea1fa288da9732",
+      "after": "76dfecd2896960d749707a552b82855e05f8474cba3d8e5eafeb7bd1baa60954",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2253,8 +2316,8 @@
     },
     {
       "id": "mindmap",
-      "before": "b0981efb144c19d423297cac820bd7acca6ae406db5e582ca49c57174f52dd13",
-      "after": "251a7f8d1731afe727fd92f31b4b402f6530a9a9e78ebe9a5f7d833f42aeba42",
+      "before": "3b49b52d9f6c4b60bb839b8542c78fac7b920a36220ed68aea1b56431ce09578",
+      "after": "bc1d4c30180bb8b3842a7aa39f9ac9031bc971e2e6ff64c4b15945f985bd38f0",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2262,8 +2325,8 @@
     },
     {
       "id": "concept-map",
-      "before": "ebec552e45e49f1978084bceb34d6b4e06378d7c300015742a53e5cbccb3ef60",
-      "after": "c9b7e460a9edbe2371bbc138f013f9617b3cc80b12cd99c5ade8319279a08d60",
+      "before": "c0442fd3417cd6712533edaf8cd854754e36cc307e6eb6512521d0c41d74a449",
+      "after": "ec36f79f8a98d23059bc404cba9155e2087953e53b883b75d19846ac9e51e2fa",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2298,8 +2361,8 @@
     },
     {
       "id": "icons",
-      "before": "1f40e36fd5c54574988bdc93ca7d16da4df6a6aef9dedefd1f7f480b9aa9f1a6",
-      "after": "7d13bd98dc57d020bf477f1519147ccf1fcf3651e1e83cb4b3d7a8d05ad0e27d",
+      "before": "ae2a4ddd073054d60723810161d87b21a0962704244eab27b838b2e19f94ac3e",
+      "after": "a33ee23b006105ff3747e2d0435df9da133bbba5f6f6dc8d65e6060dae8238ab",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2307,8 +2370,8 @@
     },
     {
       "id": "icons-vendor",
-      "before": "712971be47d63a6378db7341a218706972ca6f7031a24e619868e3c44786849a",
-      "after": "82a696b73c494a935892adb592267ac3c00bb2934ca891c94b82b4b0f2351d7c",
+      "before": "155774ca02e3d9ff1260af5075794f43ebbb3399521e93b56694eb5eef79325c",
+      "after": "682591b02577bb0aac42a4e86e1fc82a85dfa45cf0e4ce46f7d47017eaa4882c",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2316,8 +2379,8 @@
     },
     {
       "id": "pid-symbols",
-      "before": "585c999f71dfbcb909f5a23ab12b5bbb3783eb1f1789177942b97680b373a88e",
-      "after": "37b8386b322e77c8f321b22ebbc592b2d01072081fcc622a4b316aab7c94f801",
+      "before": "4b550f4a1a816e6570f28e605710a1e35e028a6bb5358de23171b76798379ffe",
+      "after": "0be4229afa727d9560bfa3127e1a46e4dcd186c1c08074c362495521881ad46a",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2325,8 +2388,8 @@
     },
     {
       "id": "electrical-symbols",
-      "before": "49936088fcf301cce9886f76f8a5e67ba810967f5d6cf6bd99206ff010fb9aab",
-      "after": "62cc96a6db205aeff1bd54c5b70654cbd26fbb4d6970ffe8ea88a78edd457e90",
+      "before": "e97c59b98b1f3ab299b63ae825d922f68db092d2465e06c62c7c2487f24fbf11",
+      "after": "010abe9b70eb9abb66386ffa87bb6a757f389880d3f94cbc8618ba668a49a301",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2343,8 +2406,8 @@
     },
     {
       "id": "iso-graph",
-      "before": "33ac616b253850e0177075679e60623abef99ad9d755929e0568313cb6850703",
-      "after": "66e534dfcb472c0d354ae0fc71963dd6b5fdc50a943796a4fcfdc963e163226a",
+      "before": "5b6d6f9a6d9d8e68a8ab939822027b8d276d69d285fabcf829b8d7a9265f9211",
+      "after": "747fa9c0982f88277d3a09de84b52385e5e9abc94f88b70f1b08dbd00a6e535d",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2370,8 +2433,8 @@
     },
     {
       "id": "crows-foot",
-      "before": "a49aa9bd26b2e9899e6c917354e9a22a8af75f7dc8a862638070a17bfa806c20",
-      "after": "c5279f42bbc1a5acf6448ce6937ba6c949f67e75392177393560d1772ba195c9",
+      "before": "566b5b616d5b912098c1469c2d5463c958e49fd3bcd34066a2b8def306858274",
+      "after": "b8978aad122240245fbf0c6acaf72c1614855f41a361bd2e788f933bed77e907",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2379,8 +2442,8 @@
     },
     {
       "id": "cross-file",
-      "before": "fc42b415650b5050849f71bde0a3a0a74579bbadc5556c8614b3c3dc2fede51c",
-      "after": "29e29c49c5c66db68bb9280c45543658b7868d1ba8859375ac078797e16f186c",
+      "before": "aabbd0cea607b1efb7d8b59c830c1abe2e5da72643f93ce0d31f2da2eaf9ae70",
+      "after": "b815b7fe0ab1ea7c5451d96162510d5c388c991c815428dad8d91ebea66d8f8d",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2451,8 +2514,8 @@
     },
     {
       "id": "event-contract",
-      "before": "ddb20b1fb9eb93b56986d3c7c420c1893e5be87fc6d15c0e7414e7ceb06e36d7",
-      "after": "c0ea8ed2c864e3759e7d747405425bae3f48cf1f9e6677d6775f4bd288ed0652",
+      "before": "e3cc09b06911349b967d28a7d851ac06769580f4eb6e215159ddab19ced844f1",
+      "after": "7d71568249d955533a8b10926cde2d952462f85697d183bcc28f2f8c64d4c481",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2460,8 +2523,8 @@
     },
     {
       "id": "shards-replicas",
-      "before": "3471d1a39d5d6860bd2fa17466e56629a8b62058d832f01c35ffdd63ceeb4979",
-      "after": "ef8e531d9e8113486c8a3b1189ed6565fe9493790c864a2f07f4d90c2c183fb6",
+      "before": "df7ceea0949ed35574369f4324a7e5a7b871695b22ceb8030be5348eff9912fa",
+      "after": "584bdc4210b01c00efea10bf910260e5e3d62b23eea37d5525cd6385969ef84c",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2568,8 +2631,8 @@
     },
     {
       "id": "pinned-placement",
-      "before": "8bda9a4a7285253440ff46bb2dc7d38c3454cb48212c7211f9a7e42de3b3548a",
-      "after": "0ded0b35ac168cd27e1d2ccd3f24b5b336d354c774356e4f2ce3979fac25d0ca",
+      "before": "436246ff46c9cb84f945843009fce6632f2f065ce5e34959ec1074c742f31863",
+      "after": "fb7f4a9c81a98be7c664d4c4757aaa49e517d92de3c351e2e24a261c55f8a179",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2577,8 +2640,8 @@
     },
     {
       "id": "pause-placement",
-      "before": "de0ad83a6fe1bdab4c10ffa9e3bda20235f9fb2d7a2ebc6aa3a519051443a20d",
-      "after": "f3f0da2d6691b7c0f4b550fb054fd9f1d7d412c0a61968c3df535e02e0780fee",
+      "before": "76e1faa257a7485ae10af6eea07a5f23c1236cb9d66cc3b964d7579a802e06c0",
+      "after": "d8130ed18e6d98508c43f2f8f62d40600c38d758932159b046deb09568e69766",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2622,8 +2685,71 @@
     },
     {
       "id": "presentation-art",
-      "before": "8347def81b9535221850e510a4e69f6a7aa3fdb6f2a68aa67d5f949940923f2b",
-      "after": "a0e820ead030b61d13360d252f72ce0eaccd6e20595c787ac7b460db7ebac90a",
+      "before": "057668b9c90b2120137d0c0bc47779284e5eb9d35fede335e2de8ef909abfa80",
+      "after": "70254e8d1241e72d8d6e0925709a4c1ad6c685de7a118addeedea86953e3a1d4",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "version-06",
+      "before": "7c34f144defe2bc84c756fa6065a41ba24a2e29a69aaff257271c6dfe7fa8f37",
+      "after": "a0f7fc658680ce9e8b936bc7082833ee39a0502d2c798d0dcf927b867612b1d0",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "view-profiles",
+      "before": "b09655df798e114ad7776abba465645264006cdc37a8bfe8776f53fc41123cad",
+      "after": "b7a6bda4256ccb6fed45b6d419823e8d141088b0b3711b1b1e1a17a8ed78cb59",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "patent-figures",
+      "before": "73600e4a01595c02a52b5175fbb9567eb069be2d6cde47e68db57ea619f37ec9",
+      "after": "cfe43f857aa15f5ffdf6557ce311ae494153d89fbadc691475181468a9f9c523",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "publication-chrome",
+      "before": "407e2e8a8e118b1495be6640002a276948c5540d9272c2d46887834c6d6dd8fe",
+      "after": "cf24daeab80994e8a1764de8d5bc92f6687f061162c12a7d28575c00f31fe874",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "text-fit",
+      "before": "22341c0d50fe147a5d3d3f14f21b2dee18755f4fe80a16270b7076c0e3b9c23a",
+      "after": "f1408fed6aedef6f45a1c17dd3c414b535f0a64b23591284959dde2102b81fe8",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "markings-metadata",
+      "before": "9de013c3df7e8a503e4f3b944dca75a78eba2befe1406c09fc894072a6924f7c",
+      "after": "a93a8f20800665f6e39e325b5c024388610d041d7778938f3f51a7913086eba3",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "cli-power-tools",
+      "before": "c13d438f2e8c5707791ddb3e9de189f104afafd4d32b87b4e11dfc0fb4cbecd1",
+      "after": "c03581c38fe1aeb1b4196d59ef6832908c468a6940b2d14523596853b25e128e",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2667,8 +2793,8 @@
     },
     {
       "id": "ladder",
-      "before": "e741b4d814a59efafacc7668e2896a03c88900c5552f52553e69a2028e86c9fb",
-      "after": "3c10d5ebc02e0032eafda5609626c8a241efb78254d80ed54a86ab6f7ae99b3a",
+      "before": "64c266e69da0f83938b345cafbdaf397416fb1bde7b4e100fd8b6e07150b693b",
+      "after": "96f6990db51bbdc32b6dc4ccca19c018a1c32a27a6f0097a49bbf17162c7735e",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

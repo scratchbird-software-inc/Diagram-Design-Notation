@@ -10,6 +10,7 @@ import Text from './ddn-text.js';
 import Placement from './ddn-placement.js';
 import Palette from './ddn-palette.js';
 import Shapes from './ddn-shapes.js';
+import ViewProfiles from './ddn-view-profiles.js';
 import './ddn-core.js'; // sibling bundle: load order only; the namespace comes from the module registry
 import './ddn-export.js'; // sibling bundle: load order only; the namespace comes from the module registry
 import {namespace} from './ddn-module-registry.js';
@@ -44,12 +45,36 @@ function styleLine(x1,y1,x2,y2,colour,width,dash,p,id){
 function badge(s,x,y,fill,stroke){let w=Math.max(32,s.length*6.5+12);return {svg:`<rect x="${x}" y="${y}" width="${w}" height="20" rx="4" fill="${esc(fill)}" stroke="${esc(stroke)}" stroke-width=".8"/>`+text(x+w/2,y+14,s,10,stroke,650,'text-anchor="middle"'),w};}
 function pretty(v){if(v===null)return 'null';if(v?.$missing)return '∅ missing';if(v?.$state)return v.$state.replaceAll('_',' ');if(v?.$ref)return '@'+v.$ref.split('::').at(-1);if(v?.$quantity!==undefined)return v.$quantity+v.unit;if(Array.isArray(v))return v.map(pretty).join(', ');if(v&&typeof v==='object')return JSON.stringify(v);return String(v??'');}
 const themes=Palette.themes;
-function measureNode(n,registry,profiles,placement={},context={}){
- const k=DDN.kindEntry(registry,n.kind),s=q(profiles.style.font_size,16)/16,font=profiles.style.font;
+/* 0.8 (chapter 52 §52.6): registered accessibility themes re-skin paint only.
+ * colorblind_safe hue-maps kind/verb colours onto the Okabe-Ito palette
+ * (nearest circular-hue match; near-grey inputs pass through). Geometry,
+ * layout, routing and label text never change under a theme. */
+function hueOf(hex){const m=/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex||'');if(!m)return null;
+ const r=parseInt(m[1],16)/255,g=parseInt(m[2],16)/255,b=parseInt(m[3],16)/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;
+ if(d<.08)return null;let h;
+ if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;
+ return (h*60+360)%360;}
+function cbRemap(hex){const h=hueOf(hex);if(h===null)return hex;
+ const palette=ViewProfiles.THEME_PAINT.colorblind_safe.palette;let best=palette[0],bd=Infinity;
+ for(const c of palette){const ch=hueOf(c);if(ch===null)continue;const d=Math.min(Math.abs(ch-h),360-Math.abs(ch-h));if(d<bd){bd=d;best=c;}}
+ return best;}
+const FONT_STACKS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'};
+const PT=96/72;
+/* 0.8 (chapter 55 §55.1): marking paint resolves per registered theme, so a
+ * forbidden/tentative signal keeps a non-colour rendering under every theme. */
+function markingPaint(name,theme08){const t=ViewProfiles.MARKING_PAINT[name];return (theme08&&t?.[theme08])||t?.default||null;}
+function measureNode(n,registry,profiles,placement={},context={},fit=null){
+ /* 0.8 (chapter 54): fit may force the box width (wrap/grow bound) or the base
+  * font size (shrink step); both re-run the identical measurement path. */
+ const k=DDN.kindEntry(registry,n.kind),s=q(fit?.fontSize??profiles.style.font_size,16)/16,font=profiles.style.font;
  const visible=profiles.display.fields==='none'?[]:n.fields.filter(f=>(f.depth||0)<profiles.display.depth);
- let w=Math.max(placement.size?q(placement.size[0]):270*s,160*s);
+ let w=fit?.width??Math.max(placement.size?q(placement.size[0]):270*s,160*s);
  const titleLines=Text.wrap(n.name,w-96*s,16*s,font,650);if(profiles.display.kind==='text')w=Math.max(w,Text.measure(k.name,11*s,font,650).width+28*s);const headerH=Math.max(64*s,40*s+titleLines.length*21*s);
- let y=headerH,rows=[];
+ /* 0.8 (chapter 52 §52.5): a reference numeral renders in a boxed field row
+  * directly under the element header; the row reserves height like a field. */
+ let numeralRow=null;
+ if(n.properties?.numeral!==undefined&&!k.profileKind)numeralRow={value:n.properties.numeral,top:headerH,h:26*s};
+ let y=headerH+(numeralRow?numeralRow.h:0),rows=[];
  for(const f of visible){const depth=f.depth||0;let label=f.name;if(f.properties.x_part){const xp=f.properties.x_part;label+=(xp.classifier?': '+xp.classifier:'')+(xp.multiplicity?' ['+xp.multiplicity+']':'');}if(f.properties.x_unit)label+=': '+f.properties.x_unit.unit;if(f.properties.shape==='array')label+=' []';else if(f.properties.shape==='object')label+=' {}';else if(f.properties.shape==='variant')label+=' <variant>';else if(f.properties.shape==='map')label+=' <map>';else if(f.properties.shape==='set')label+=' <set>';
   const prefix=(f.properties.presence==='optional'?'? ':'')+(f.properties.nullable===true?'nullable · ':'');
   const labelLines=Text.wrap(prefix+label,w-(40+depth*16)*s,13.5*s,font,400),details=[];
@@ -102,11 +127,77 @@ function measureNode(n,registry,profiles,placement={},context={}){
  const footer=[];if(profiles.display.badges!=='none')for(const key of ['workload','role','temporal','distribution','location'])if(n.properties[key]!==undefined)footer.push(pretty(n.properties[key]));
  if(footer.length)y+=38*s;
  let h=Math.max(y+14*s,100*s,placement.size?q(placement.size[1]):0,(context.degrees?.[n.id]||1)>4?(context.degrees[n.id]*44+40):((context.degrees?.[n.id]||1)*20+40));
- const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample,...(_art?{_art}:{}),...(mindRows?{mindRows}:{})}; return k.profileKind?Shapes.measure(g,profiles):g;
+ const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample,...(numeralRow?{numeralRow}:{}),...(_art?{_art}:{}),...(mindRows?{mindRows}:{})}; return k.profileKind?Shapes.measure(g,profiles):g;
 }
-/* Icon binding shared by every node path (B1-082 + general-pack): resolve the
- * explicit x_icon or the first default kind binding across shipped and
- * host-registered packs; DDN-PJ206 on an unresolved explicit reference. */
+/* 0.8 (chapter 54): text fit. Mode resolution follows §54.1 precedence —
+ * element > style-profile/bundle default > mode inferred from a width
+ * constraint > legacy fixed box. The adaptation loop (§54.2) is measure →
+ * resize → re-layout with a HARD cap of two passes (never a fixpoint solver);
+ * placement and routing downstream see the post-fit boxes exactly as if the
+ * author had declared the new sizes. Residual overflow after pass two is
+ * diagnosed (§54.3), never silently clipped: under `layout { quality: warn; }`
+ * the box keeps its bounded size and the text clips at the box edge with a
+ * visible ellipsis marker; under the default `quality: error` the render is
+ * refused with the DDN-LW07/LW08 error. Geometry
+ * only — modelFingerprint, endpoints and relation identities are untouched,
+ * and a place pin's origin never moves (growth extends away from it). */
+function textFit(geoms,registry,p,ir,context){
+ const placements=ir.view.placements||{};
+ const fits=geoms.map(g=>{const el=g.n.properties||{};
+  const mode=el.text_fit??p.style.text_fit??((el.max_width??p.style.max_width)!==undefined?'wrap':null);
+  if(!mode)return null;
+  const mw=q(el.max_width??p.style.max_width,NaN),mh=q(el.max_height??p.style.max_height,NaN),mf=q(el.min_font??p.style.min_font,NaN);
+  return {mode,maxW:Number.isFinite(mw)?mw:null,maxH:Number.isFinite(mh)?mh:null,minFont:Number.isFinite(mf)?mf:8};});
+ if(!fits.some(Boolean))return{geoms,scene:null,diags:[]};
+ const diags=[],scene={passes:0,resized:[],deltas:[]},baseFont=q(p.style.font_size,16);
+ const remeasure=(g,opt)=>{const g2=measureNode(g.n,registry,p,placements[g.id]||{},context,opt);g2.x=g.x;g2.y=g.y;return g2;};
+ for(let pass=1;pass<=2;pass++){
+  scene.passes=pass;let changed=false;
+  for(let i=0;i<geoms.length;i++){
+   const fit=fits[i];if(!fit)continue;
+   let g=geoms[i];const before=[g.w,g.h];
+   if(fit.mode==='wrap'||fit.mode==='grow'){
+    if(fit.maxW!==null&&g.w>fit.maxW+.01)g=remeasure(g,{width:fit.maxW});
+    if(fit.maxW!==null&&g.w>fit.maxW+.01)g.tfClipW={px:Layout.round(g.w-fit.maxW),bound:fit.maxW};
+    if(fit.maxH!==null&&g.h>fit.maxH){g.tfClip={px:Layout.round(g.h-fit.maxH),bound:fit.maxH};g.h=fit.maxH;}
+   }else{ /* shrink: font steps down 1px per step from the base to the floor; first size that fits wins */
+    const placement=placements[g.id]||{};
+    const tw=placement.size?q(placement.size[0]):fit.maxW,th=placement.size?q(placement.size[1]):fit.maxH;
+    if(tw!==null||th!==null){
+     const fitsAt=(g2)=>(tw===null||g2.w<=tw+.01)&&(th===null||g2.h<=th+.01);
+     if(!fitsAt(g)){
+      let chosen=null;
+      for(let size=baseFont-1;size>=fit.minFont;size--){const g2=remeasure(g,{fontSize:size});if(fitsAt(g2)){chosen=g2;break;}chosen=g2;}
+      g=chosen||remeasure(g,{fontSize:fit.minFont}); /* min_font == base font: no step exists */
+      if(!fitsAt(g)){ /* reached the floor and still overflows: residual, diagnosed after pass two */
+       let smallestFit=null;
+       for(let size=Math.max(9,fit.minFont+1);size<baseFont;size++){if(fitsAt(remeasure(g,{fontSize:size}))){smallestFit=size;break;}}
+       const px=Layout.round(Math.max(tw!==null?g.w-tw:0,th!==null?g.h-th:0));
+       g.tfShrinkOver={floor:fit.minFont,smallestFit,px};
+       if(tw!==null&&g.w>tw+.01)g.tfClipW={px:Layout.round(g.w-tw),bound:tw};
+       if(th!==null&&g.h>th+.01){g.tfClip={px:Layout.round(g.h-th),bound:th};g.h=th;}
+      }
+     }
+    }
+   }
+   geoms[i]=g;
+   if(g.w!==before[0]||g.h!==before[1]){changed=true;if(!scene.resized.includes(g.id))scene.resized.push(g.id);scene.deltas.push({id:g.id,pass,from:before,to:[g.w,g.h]});}
+  }
+  if(!changed)break;
+ }
+ const qualityError=p.layout.quality!=='warn';
+ const report=(code,message)=>{if(qualityError)throw new DDN.DDNError(code,message);diags.push({code,severity:'warning',message});};
+ for(let i=0;i<geoms.length;i++){
+  const fit=fits[i];if(!fit)continue;const g=geoms[i],local=g.n.local||g.id;
+  if(fit.mode==='shrink'){
+   if(g.tfShrinkOver)report('DDN-LW08','shrink on element `'+local+'` reached min_font '+g.tfShrinkOver.floor+'px and the text still overflows by '+g.tfShrinkOver.px+'px; '+(g.tfShrinkOver.smallestFit?'the smallest fitting size is '+g.tfShrinkOver.smallestFit+'px (above the absolute floor 8px) — lower min_font or shorten the label.':'no fitting size exists above the absolute floor 8px — shorten the label or widen the box.'));
+  }else{
+   if(g.tfClip)report('DDN-LW07','element `'+local+'` overflows by '+g.tfClip.px+'px vertically — raise `max_height` (currently '+g.tfClip.bound+'px) or shorten the label.');
+   if(g.tfClipW)report('DDN-LW07','element `'+local+'` overflows by '+g.tfClipW.px+'px horizontally — raise `max_width` (currently '+g.tfClipW.bound+'px) or shorten the label.');
+  }
+ }
+ return{geoms,scene,diags};
+}
 function iconFor(g,registry){
  const baseLibs=registry.icon_libraries||(registry._iconLibsSanitized??(registry._iconLibsSanitized=sanitizedLibraries(ICONLIBS.libraries)));
  const Packs=namespace('DDNPacks'),hostLibs=Packs.hostIconPacks();
@@ -161,7 +252,7 @@ function emitArt(g,found,p){
  return`<g class="ddn-art" data-art="${esc(xa.library+'/'+xa.item)}">`+inner+'</g>';
 }
 function renderNode(g,p,theme,registry){
- if(g.k.profileKind){let shaped=Shapes.render(g,p,theme);
+ if(g.k.profileKind){let shaped=Shapes.render(p.theme08==='colorblind_safe'?{...g,k:{...g.k,colour:cbRemap(g.k.colour)}}:g,p,theme);
   /* B1-082: icon binding — draw the referenced (pre-sanitized) library icon
    * inside the node's top area; ids namespaced per node. Host-registered
    * packs (B1-088) append after the shipped registry. */
@@ -197,11 +288,30 @@ function renderNode(g,p,theme,registry){
    if(xu.arguments?.length)shaped=shaped.slice(0,-4)+`<g class="ddn-io-arguments">`+text(g.x+g.w/2,g.y+g.h-8*s2,'('+xu.arguments.join(', ')+')',11*s2,theme.muted,500,'text-anchor="middle"')+'</g></g>';
    for(const [gi,gname]of (xu.gates||[]).entries()){
     shaped=shaped.slice(0,-4)+`<g class="ddn-io-gate" data-gate="${esc(gname)}"><rect x="${fmt(g.x-5*s2)}" y="${fmt(g.y+(24+gi*22)*s2)}" width="${fmt(10*s2)}" height="${fmt(10*s2)}" fill="${esc(theme.surface)}" stroke="${esc(theme.accent)}" stroke-width="1.4"/>`+text(g.x+8*s2,g.y+(32+gi*22)*s2,gname,10.5*s2,theme.muted,500)+'</g></g>';}}
+  /* 0.8 (chapter 52 §52.5): shaped (profileKind) nodes carry their reference
+   * numeral as a boxed chip at the top of the shape, the profileKind analogue
+   * of the plain path's under-header field row. */
+  if(g.n.properties?.numeral!==undefined&&p.detail!=='shapes'){const b=badge(String(g.n.properties.numeral),0,0,theme.surface,theme.accent);
+   shaped=shaped.slice(0,-4)+`<g class="ddn-numeral" data-numeral="${esc(g.n.properties.numeral)}" transform="translate(${fmt(g.x+g.w/2-b.w*g.scale/2)} ${fmt(g.y+3*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}
+  /* 0.8 (chapter 55 §55.1): element markings over the shape outline — same
+   * theme-painted contract as the plain path. */
+  for(const mk of (g.n.properties?.marks||[])){const paint=markingPaint(mk,p.theme08);if(!paint)continue;
+   let mo=`<g class="ddn-mark ddn-mark-${esc(mk)}" data-mark="${esc(mk)}"><rect x="${fmt(g.x)}" y="${fmt(g.y)}" width="${fmt(g.w)}" height="${fmt(g.h)}" rx="${fmt(4*g.scale)}" fill="none" stroke="${esc(paint.stroke)}" stroke-width="2.2"${paint.dash?` stroke-dasharray="${esc(paint.dash)}"`:''}/>`;
+   if(paint.strike)mo+=`<path d="M${fmt(g.x)} ${fmt(g.y)}L${fmt(g.x+g.w)} ${fmt(g.y+g.h)}" stroke="${esc(paint.stroke)}" stroke-width="2.2" fill="none"/>`;
+   if(paint.hatch)mo+=`<path data-hatch="true" d="M${fmt(g.x+g.w)} ${fmt(g.y)}L${fmt(g.x)} ${fmt(g.y+g.h)}" stroke="${esc(paint.stroke)}" stroke-width="1.6" fill="none"/>`;
+   shaped+=mo+'</g>';}
   return shaped;}
- const{n,k,x,y,w,h,titleLines,footer}=g,s=g.scale,font=p.style.font,mono=p.style.theme==='neutral',look=p.style.look;
- const nc=Palette.node(k,theme),ink=mono?'#333333':nc.ink,fill=mono?'#FAFAFA':nc.fill,bodyInk=nc.text;
+ const{n,k,x,y,w,h,titleLines,footer}=g,s=g.scale,font=p.style.font,mono=p.style.theme==='neutral'||p.theme08==='mono_print',monoPrint=p.theme08==='mono_print',look=p.style.look;
+ const kc=p.theme08==='colorblind_safe'?{...k,colour:cbRemap(k.colour)}:k;
+ const nc=Palette.node(kc,theme),ink=monoPrint?'#000000':mono?'#333333':nc.ink,fill=monoPrint?'#FFFFFF':mono?'#FAFAFA':nc.fill,bodyInk=monoPrint?'#000000':nc.text;
  const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
- let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-ref="${esc(n.ref||n.id)}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
+ let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-ref="${esc(n.ref||n.id)}"${g.tfClip||g.tfClipW?' data-textfit-overflow="true"':''} tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
+ /* 0.8 (chapter 54 §54.2): residual overflow renders with the text clipped at
+  * the box edge and a visible ellipsis marker — never invisible text. The clip
+  * rect is the box inflated by the border stroke so the frame stays whole. */
+ const tfClip=g.tfClip||g.tfClipW?'tfclip-'+hash(n.id):null;
+ if(tfClip)out+=`<clipPath id="${tfClip}"><rect x="${fmt(x-2)}" y="${fmt(y-2)}" width="${fmt(w+4)}" height="${fmt(h+4)}"/></clipPath><g class="ddn-textfit-clip" clip-path="url(#${tfClip})">`;
+ const tfClose=()=>(tfClip?'</g>'+text(x+w-14*s,y+h-5*s,'…',13*s,ink,650,'class="ddn-textfit-ellipsis"'):'');
  if(k.shape==='note.sticky'){
   /* B1-101: sticky note (collaborative whiteboard idiom) — a coloured,
    * optionally taped/pinned free-form note. No name header, no kind chip, no
@@ -215,7 +325,7 @@ function renderNode(g,p,theme,registry){
    out+=`<g class="ddn-sticky-pin"><path d="M${fmt(px)} ${fmt(py)}L${fmt(px)} ${fmt(py+12*s)}" stroke="${ink}" stroke-width="1.8"/><circle cx="${fmt(px)}" cy="${fmt(py)}" r="${fmt(6*s)}" fill="#DC2626" stroke="${ink}" stroke-width="1.4"/><circle cx="${fmt(px-2*s)}" cy="${fmt(py-2*s)}" r="${fmt(1.8*s)}" fill="#fff" opacity=".7"/></g>`;}
   /* The sticky note is self-contained: no kind glyph/chip, no title, no field
    * or meaning rows (line 201 would also re-draw the note lines). */
-  return out+'</g>';
+  return out+tfClose()+'</g>';
  }else if(k.shape==='note'){
   if(look==='handDrawn')out+=Sketch.polygon([[x,y],[x+w-16*s,y],[x+w,y+16*s],[x+w,y+h],[x,y+h]],{...p.style,id:n.id,stroke:ink,fill});
   else out+=`<path d="M${x} ${y}H${x+w-16*s}L${x+w} ${y+16*s}V${y+h}H${x}Z" fill="${esc(fill)}" stroke="${esc(ink)}" stroke-width="1.8"/>`;
@@ -239,6 +349,12 @@ function renderNode(g,p,theme,registry){
  if(artBind)out+=emitArt(g,artBind,p);
  if(m&&p.display.maturity!=='none')out+=`<rect x="${x+w-46*s}" y="${y+8*s}" width="${38*s}" height="${22*s}" rx="4" fill="${esc(fill)}" stroke="${esc(ink)}"/>`+text(x+w-27*s,y+24*s,m,11*s,ink,650,'text-anchor="middle"');
  if(n.properties&&n.properties.x_subdiagram){const b=badge('↗ ref',0,0,theme.surface,theme.accent);out+=`<g class="ddn-ref-badge" transform="translate(${fmt(x+w-b.w*s)} ${fmt(y-10*s)}) scale(${s})">`+b.svg+'</g>';}
+ if(g.numeralRow){const nr=g.numeralRow,ny=y+nr.top,bw=Math.max(48*s,String(nr.value).length*8.5*s+16*s);
+  /* 0.8 (chapter 52 §52.5): reference-numeral field box directly under the
+   * element header; ref: anchors resolve to this numeral. */
+  out+=styleLine(x,ny-4*s,x+w,ny-4*s,ink,1,'',p,n.id+':numeral-top');
+  out+=`<g class="ddn-numeral" data-numeral="${esc(nr.value)}"><rect x="${fmt(x+12*s)}" y="${fmt(ny+3*s)}" width="${fmt(bw)}" height="${fmt(nr.h-8*s)}" rx="${fmt(2*s)}" fill="${esc(fill)}" stroke="${esc(ink)}" stroke-width="1.2"/>`+text(x+12*s+bw/2,ny+nr.h-9*s,String(nr.value),12*s,ink,650,'text-anchor="middle"')+'</g>';
+  out+=styleLine(x,ny+nr.h-1,x+w,ny+nr.h-1,ink,.6,'',p,n.id+':numeral');}
  if(g.fieldRows.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':fields');
   for(const row of g.fieldRows){const xx=x+(16+row.depth*16)*s,yy=y+row.top+18*s;
    out+=`<g class="ddn-field" data-member="${esc(row.id)}">`+multilines(xx,yy,row.labelLines,13.5*s,bodyInk,18*s);
@@ -269,7 +385,15 @@ function renderNode(g,p,theme,registry){
   out+=text(x+13*s,y+h-12*s,(n.properties.mode||'example')+' · illustrative, not a constraint'+(sm.omitted?' · +'+sm.omitted+' rows not rendered':''),11*s,ink);
  }
  if(footer.length){let bx=x+12*s;for(const value of footer){let st=value.toUpperCase(),width=Text.measure(st,11*s,font,650).width+14*s;if(bx+width>x+w-10*s){out+=text(bx,y+h-14*s,'+ detail',11*s,ink);break;}out+=`<rect x="${bx}" y="${y+h-29*s}" width="${width}" height="${22*s}" rx="4" fill="${esc(fill)}" stroke="${esc(ink)}" stroke-width=".8"/>`+text(bx+width/2,y+h-13*s,st,11*s,ink,650,'text-anchor="middle"');bx+=width+7*s;}}
- return out+'</g>';
+ /* 0.8 (chapter 55 §55.1): element markings — theme-painted annotation over
+  * the element outline; forbidden adds strike (plus hatch under mono_print)
+  * so the signal never rides on colour alone. */
+ for(const mk of (n.properties.marks||[])){const paint=markingPaint(mk,p.theme08);if(!paint)continue;
+  out+=`<g class="ddn-mark ddn-mark-${esc(mk)}" data-mark="${esc(mk)}"><rect x="${fmt(x)}" y="${fmt(y)}" width="${fmt(w)}" height="${fmt(h)}" rx="${fmt(4*s)}" fill="none" stroke="${esc(paint.stroke)}" stroke-width="2.2"${paint.dash?` stroke-dasharray="${esc(paint.dash)}"`:''}/>`;
+  if(paint.strike)out+=`<path d="M${fmt(x)} ${fmt(y)}L${fmt(x+w)} ${fmt(y+h)}" stroke="${esc(paint.stroke)}" stroke-width="2.2" fill="none"/>`;
+  if(paint.hatch)out+=`<path data-hatch="true" d="M${fmt(x+w)} ${fmt(y)}L${fmt(x)} ${fmt(y+h)}" stroke="${esc(paint.stroke)}" stroke-width="1.6" fill="none"/>`;
+  out+='</g>';}
+ return out+tfClose()+'</g>';
 }
 function endpoint(g,member,side){let x=g.x+g.w/2,y=g.y+g.h/2;
  if(member){const index=g.fields.findIndex(f=>f.id===member);if(index>=0)y=g.y+65+(g.titleLines.length-1)*20+index*25;}
@@ -337,14 +461,47 @@ function visibleRoutePieces(points,holes,radius=7){
  flush();return pieces;
 }
 let activeFont='sans';
-function render(ir,registry,glyphDefs='',options={}){const before=activeFont;activeFont=ir.view.profiles.style.font;try{return renderInner(ir,registry,glyphDefs,options);}finally{activeFont=before;}}
+function render(ir,registry,glyphDefs='',options={}){const before=activeFont;activeFont=ir.view.profiles.style.font;
+ /* 0.8 (chapter 54 §54.4): an active font pin replaces the measurement cache
+  * for this render only (engine match was checked against Text.engine). */
+ const pin=ir.view.fontPin&&ir.view.fontPin.engine===Text.engine?ir.view.fontPin:null;
+ const prevMetrics=pin?Text.getMetrics():null;
+ if(pin)Text.setMetrics(pin.measurements);
+ try{return renderInner(ir,registry,glyphDefs,options);}finally{if(pin)Text.setMetrics(prevMetrics);activeFont=before;}}
 function renderInner(ir,registry,glyphDefs='',options={}){
  if(!Layout||!Text||!Export)throw new DDN.DDNError('DDN099','Load layout/text/export modules before rendering');
  ir=Export.project(ir);
  const textBefore=Text.stats();
+ /* 0.8 (chapter 55 §S4): ref: anchors resolve to the target element's numeral
+  * (else its display label) at render time, before measurement, so renumbering
+  * an element updates every anchor consistently. The IR is copied shallowly —
+  * anchors are a render-time text substitution, never a model edit. */
+ const refText=new Map();
+ for(const n of ir.elements)if(!refText.has(n.local))refText.set(n.local,n.properties?.numeral!==undefined?String(n.properties.numeral):n.name);
+ const REF_RE=/\bref:([A-Za-z_][A-Za-z0-9_-]*)/g;
+ const resolveRefs=s=>typeof s==='string'&&s.includes('ref:')?s.replace(REF_RE,(m,id)=>refText.has(id)?refText.get(id):m):s;
+ if(ir.view.refAnchors?.length){
+  const subProps=props=>{const o={...props};for(const k of ['description','text','label'])if(typeof o[k]==='string')o[k]=resolveRefs(o[k]);return o;};
+  ir={...ir,
+   elements:ir.elements.map(n=>({...n,name:resolveRefs(n.name),properties:subProps(n.properties)})),
+   relations:ir.relations.map(r=>({...r,name:resolveRefs(r.name),properties:subProps(r.properties)})),
+   view:{...ir.view,name:resolveRefs(ir.view.name)}};
+ }
  /* B1-074 : options.detail — 'full' (default) renders text as
   * always; 'shapes' (drill-down thumbnails) suppresses every text run. */
- const p={...ir.view.profiles,detail:options.detail||'full'},t=themes[p.style.theme],mono=p.style.theme==='neutral';
+ const p={...ir.view.profiles,detail:options.detail||'full'};
+ /* 0.8 (chapter 52 §52.6): a registered view theme re-skins paint only.
+  * mono_print collapses to pure black/white/grayscale with white fills;
+  * colorblind_safe remaps kind/verb colours onto the Okabe-Ito palette at the
+  * paint sites (nodes below, routes further down). */
+ const theme08=ir.view.theme;p.theme08=theme08;
+ let t=themes[p.style.theme];
+ if(theme08==='mono_print')t={...ViewProfiles.THEME_PAINT.mono_print};
+ const mono=p.style.theme==='neutral'||theme08==='mono_print';
+ /* 0.8 (chapter 54 §54.5): the content-size render override (CLI --content-size)
+  * forces size: content for one render on the existing render-override channel —
+  * never a source rewrite. The artboard grows with the final post-fit bounds. */
+ if(options.contentSize)p.publication={...p.publication,size:'content'};
  /* B1-045 (D2): view chrome visibility. Defaults (auto/on) reproduce the
   * pre-option emission rules exactly. legend off behaves like placement none
   * for layout and emission; title off drops the header block and its reserved
@@ -360,13 +517,29 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  /* labels 'none' behaves like 'text' for the legend: nothing to decode, so
   * the key disappears unless the author explicitly asks for it ('on'). */
  const legendPlacement=chrome.legend==='off'||p.detail==='shapes'||((p.legend.mode==='text'||p.legend.mode==='none')&&chrome.legend!=='on')?'none':p.legend.placement;
- const headBlock=titleOn?110:20;
+ /* 0.8 (chapter 53 §53.1): publication header/footer chrome bands reserve
+  * space outside the drawing area; variables resolve to plain text before
+  * measurement. $date is exempt from byte stability (chapter 51 §51.5);
+  * conformance pins it via the publicationDate render option. */
+ const chromeVars={title:p.publication.title||ir.view.name||ir.view.local,page:options.page??1,figure:options.figure??1,view_id:ir.view.local,date:options.publicationDate||(()=>{const d=new Date(),p2=v=>String(v).padStart(2,'0');return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());})()};
+ const resolveChrome=str=>resolveRefs(String(str).replace(/\$\$|\$([A-Za-z_][A-Za-z0-9_]*)/g,(m,name)=>m==='$$'?'$':(Object.hasOwn(chromeVars,name)?String(chromeVars[name]):m)));
+ const bandRuns=band=>['left','center','right'].map(slot=>band?.[slot]).filter(Boolean);
+ const bandLines=run=>resolveChrome(run.text).split('\n').slice(0,run.lines);
+ const bandHeight=band=>{let h=0;for(const r of bandRuns(band))h=Math.max(h,bandLines(r).length*r.size*PT*1.35);return h?Math.ceil(h+8):0;};
+ const headerBand=p.publication.header&&titleOn?bandHeight(p.publication.header):0;
+ const footerBand=p.publication.footer&&footerOn?bandHeight(p.publication.footer):0;
+ const headBlock=(titleOn?110:20)+headerBand;
  const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
  const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
  const context={byId:new Map(ir.elements.map(n=>[n.id,n])),members:new Map(ir.elements.flatMap(n=>[...n.fields,...n.ports].map(f=>[f.id,f]))),degrees:{}};
  const portIds=new Set(ir.elements.flatMap(n=>n.ports.map(pt=>pt.id)));
  for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
  let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
+ /* 0.8 (chapter 54): text fit — measure → resize (≤2 passes), then the
+  * placement/routing below re-lays out with the post-fit boxes. */
+ const tf=textFit(geoms,registry,p,ir,context);geoms=tf.geoms;
+ /* 0.8 (chapter 54 §54.4 DDN-TF05): pin/engine mismatch — pin ignored. */
+ const pinDiags=ir.view.fontPin&&ir.view.fontPin.engine!==Text.engine?[{code:'DDN-TF05',severity:'warning',message:'font_pin '+ir.view.fontPin.path+' was produced by '+ir.view.fontPin.engine+' but this renderer measures with '+Text.engine+'; pinned metrics ignored for this render.'}]:[];
  /* B1-061 : interaction-overview inline expansion. Child views render
   * through the same recursive render() as inline subdiagrams; the owning node
   * grows to fit. */
@@ -444,13 +617,13 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const qualifiers=['enforcement','capture','transport','delivery','scope'];for(const prop of qualifiers)if(r.properties[prop]!==undefined)detail+=`; ${prop}: ${pretty(r.properties[prop])}`;
   return {id:r.id,key:ir.view.keys[r.id],name:r.name,reg,lines:Text.wrap(detail,Math.max(legendW,300)-42,12,p.style.font,400)};
  });
- const legendHeight=50+legendEntries.reduce((n,e)=>n+Math.max(44,e.lines.length*18+16),0),bottomH=legendPlacement==='bottom'?legendHeight:0;
+ const legendHeight=50+legendEntries.reduce((n,e)=>n+Math.max(44,e.lines.length*18+16),0),bottomH=(legendPlacement==='bottom'?legendHeight:0)+footerBand;
  const pageTitle=p.publication.title||ir.view.name;
  if(p.publication.size==='content'){pageW=Math.max(640,Text.measure(pageTitle,24,p.style.font,650).width+2*margin,width+2*margin+(legendW?legendW+25:0));pageH=Math.max(360,height+2*margin+headBlock+bottomH,legendPlacement==='right'?legendHeight+headBlock+60:0);}
  const titleLines=titleOn?Text.wrap(pageTitle,pageW-2*margin,24,p.style.font,650):[],captionLines=titleOn&&p.publication.caption?Text.wrap(p.publication.caption,pageW-2*margin,13,p.style.font,400):[],extraHeader=titleOn?(titleLines.length-1)*28+(captionLines.length?captionLines.length*18+8:0):0;
  const availW=pageW-2*margin-(legendW?legendW+25:0),availH=pageH-2*margin-(headBlock-10)-bottomH-extraHeader;
  let scale=p.publication.fit==='none'?1:Math.min(1,availW/width,availH/height);
- const diags=[...ir.diagnostics,...placed.diagnostics,...routed.diagnostics];
+ const diags=[...ir.diagnostics,...tf.diags,...pinDiags,...placed.diagnostics,...routed.diagnostics];
  if(scale<=0)throw new DDN.DDNError('DDN070','Page has no usable drawing area');
  const embeddingScale=q(p.publication.embedding_scale,1);if(embeddingScale<=0||embeddingScale>4)throw new DDN.DDNError('DDN070','embedding_scale must be >0 and <=4');
  const fontSize=Math.min(11*q(p.style.font_size,16)/16*scale,rels.length?12*scale:Infinity,11)*embeddingScale,minFont=q(p.publication.minimum_text,10.66);
@@ -480,7 +653,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   diagram+=`</g>`;}
  const routeColours={};
  const gensets=new Map();
- for(const a of routes){const colour=mono?'#383838':Palette.semantic(a.reg.colour,t);routeColours[a.id]=colour;
+ for(const a of routes){const colour=mono?(theme08==='mono_print'?'#000000':'#383838'):theme08==='colorblind_safe'?cbRemap(Palette.semantic(a.reg.colour,t)):Palette.semantic(a.reg.colour,t);routeColours[a.id]=colour;
   /* B1-055 : n-ary association — the binary route is suppressed and
    * replaced by the UML diamond junction at the member centroid with one
    * straight spoke per end, each carrying its role/multiplicity labels. */
@@ -576,6 +749,16 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     if(xo.type||xo.conjugated||xo.multiplicity)diagram+=`<g class="ddn-port-label">`+text(pt[0]+12*s,pt[1]-8*s,(xo.type?'«'+xo.type+'» ':'')+portNote,10.5*s,colour,500)+'</g>';
     for(const [ni,np]of (xo.nested||[]).entries())diagram+=`<rect data-nested-port="${esc(np.name)}" x="${fmt(pt[0]-3*s+ni*7*s)}" y="${fmt(pt[1]-3*s)}" width="${fmt(6*s)}" height="${fmt(6*s)}" fill="${np.type==='full'?esc(colour):esc(t.surface)}" stroke="${esc(colour)}" stroke-width="1.2"/>`;
     if(xp.set)diagram+=`<g class="ddn-pin-set">`+text(pt[0]+12*s,pt[1]-8*s,xp.set,10.5*s,colour,500)+'</g>';}}
+  /* 0.8 (chapter 55 §55.1): relation markings. forbidden = struck-through
+   * with a dashed, theme-supplied prohibition treatment (mono_print adds a
+   * hatch cross so the signal survives pure B/W); tentative = dashed-grey.
+   * Paint only — the routed geometry is untouched. */
+  for(const mk of (a.r.properties.marks||[])){const paint=markingPaint(mk,theme08);if(!paint)continue;
+   const[mx,my]=midpoint(a.points),ang=Layout.curveDirection(a)*Math.PI/180,nx=-Math.sin(ang),ny=Math.cos(ang);
+   diagram+=`<g class="ddn-mark ddn-mark-${esc(mk)}" data-mark="${esc(mk)}" data-relation="${esc(a.id)}">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc(paint.stroke)}" stroke-width="${a.reg.width+0.6}"${paint.dash?` stroke-dasharray="${esc(paint.dash)}"`:''}/>`).join('');
+   if(paint.strike)diagram+=`<path d="M${fmt(mx-nx*13)} ${fmt(my-ny*13)}L${fmt(mx+nx*13)} ${fmt(my+ny*13)}" stroke="${esc(paint.stroke)}" stroke-width="2.4" fill="none"/>`;
+   if(paint.hatch)diagram+=`<path data-hatch="true" d="M${fmt(mx-nx*13-Math.cos(ang)*10)} ${fmt(my-ny*13-Math.sin(ang)*10)}L${fmt(mx+nx*13-Math.cos(ang)*10)} ${fmt(my+ny*13-Math.sin(ang)*10)}M${fmt(mx-nx*13+Math.cos(ang)*10)} ${fmt(my-ny*13+Math.sin(ang)*10)}L${fmt(mx+nx*13+Math.cos(ang)*10)} ${fmt(my+ny*13+Math.sin(ang)*10)}" stroke="${esc(paint.stroke)}" stroke-width="1.4" fill="none"/>`;
+   diagram+='</g>';}
   diagram+='</g>';
  }
  /* B1-060 : pins with no incident edge still render on the action
@@ -722,25 +905,139 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   labels.push(text(maxX+8*ls,bot+16*ls,'Σ '+totNVA,11*ls,t.muted,650,''));
   diagram+=`<g class="ddn-vsm-ladder"><path d="${path}" fill="none" stroke="${esc(t.ink)}" stroke-width="2"/>`+labels.join('')+text(lx,bot+34*ls,'VA / NVA timeline',10.5*ls,t.muted,500,'')+'</g>';
  }
- const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:Layout.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:headBlock-20+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
- const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font]||'DejaVu Sans, Arial, sans-serif';
+ const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:Layout.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN.VERSION,...(tf.scene?{textFit:tf.scene}:{})},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:headBlock-20+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
+ const font=FONT_STACKS[p.style.font]||'DejaVu Sans, Arial, sans-serif';
  const fontClass='ddn-font-'+hash(font);
  const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);
  let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc(p.publication.caption||'')} ${esc(p.style.look)} look; ${esc(p.style.theme)} presentation. Crossings are not connections.${legendPlacement==='none'?'':' Relationship details are in the adjacent legend.'}</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
- if(titleOn)out+=text(margin,margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,margin+34,titleLines,24,t.ink,28,650)+multilines(margin,margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text(pageW-margin,margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
+ /* 0.8 (chapter 53 §53.3): page background paints the whole page behind
+  * drawing and chrome. Rasters embed as base64 data URIs of the resolved
+  * workspace file (the export is self-contained); patterns inline the
+  * pre-sanitized SVG with ids namespaced per page. */
+ const bg08=p.publication.background;
+ if(bg08){
+  if(bg08.kind==='color')out+=`<rect class="ddn-pub-background" width="100%" height="100%" fill="${esc(bg08.color)}"${bg08.opacity<1?` opacity="${bg08.opacity}"`:''}/>`;
+  else if(bg08.kind==='image')out+=`<image class="ddn-pub-background" href="data:${bg08.mime};base64,${bg08.data}" xlink:href="data:${bg08.mime};base64,${bg08.data}" width="${fmt(pageW)}" height="${fmt(pageH)}" preserveAspectRatio="xMidYMid slice"${bg08.opacity<1?` opacity="${bg08.opacity}"`:''}/>`;
+  else if(bg08.kind==='pattern'){const pid='bgp-'+hash(bg08.path+bg08.svg);
+   let inner=bg08.svg.replace(/<\?xml[^>]*>/,'').replace(/ id="([^"]+)"/g,(m,id)=>` id="${pid}-${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${pid}-${id})`);
+   const vb=(bg08.svg.match(/viewBox="([^"]+)"/)||[])[1]?.trim().split(/[\s,]+/).map(Number);
+   const tw=vb?.length===4&&vb[2]>0?vb[2]:80,th=vb?.length===4&&vb[3]>0?vb[3]:80;
+   inner=inner.replace(/^[\s\S]*?<svg\b[^>]*>/,'').replace(/<\/svg>\s*$/,'');
+   out+=`<defs><pattern id="${pid}" width="${fmt(tw)}" height="${fmt(th)}" patternUnits="userSpaceOnUse">${inner}</pattern></defs><rect class="ddn-pub-background" width="100%" height="100%" fill="url(#${pid})"${bg08.opacity<1?` opacity="${bg08.opacity}"`:''}/>`;}}
+ /* 0.8 (chapter 53 §53.2): page border/frame — a page frame with no model
+  * semantics; it neither shrinks nor grows the drawing area. */
+ const border08=p.publication.border;
+ if(border08){
+  const bw=border08.weight*PT,ix=border08.inset,rw=pageW-2*ix,rh=pageH-2*ix,dash=border08.style==='dashed'?` stroke-dasharray="${fmt(6*bw)} ${fmt(4*bw)}"`:'';
+  out+=`<g class="ddn-pub-border" data-style="${border08.style}">`;
+  if(rw>0&&rh>0){
+   out+=`<rect x="${fmt(ix)}" y="${fmt(ix)}" width="${fmt(rw)}" height="${fmt(rh)}" fill="none" stroke="${esc(t.ink)}" stroke-width="${fmt(bw)}"${dash}/>`;
+   if(border08.style==='double'){const off=1.5*bw;out+=`<rect x="${fmt(ix+off)}" y="${fmt(ix+off)}" width="${fmt(rw-2*off)}" height="${fmt(rh-2*off)}" fill="none" stroke="${esc(t.ink)}" stroke-width="${fmt(bw)}"${dash}/>`;}
+  }
+  if(border08.corner_marks){const L=18,G=6;
+   for(const[cx,cy,sx,sy]of[[ix,ix,-1,-1],[pageW-ix,ix,1,-1],[ix,pageH-ix,-1,1],[pageW-ix,pageH-ix,1,1]])
+    out+=`<path class="ddn-pub-corner" d="M${fmt(cx+sx*G)} ${fmt(cy)}L${fmt(Math.max(2,Math.min(pageW-2,cx+sx*(G+L))))} ${fmt(cy)}M${fmt(cx)} ${fmt(cy+sy*G)}L${fmt(cx)} ${fmt(Math.max(2,Math.min(pageH-2,cy+sy*(G+L))))}" stroke="${esc(t.ink)}" stroke-width="${fmt(bw)}" fill="none"/>`;}
+  out+='</g>';}
+ /* 0.8 (chapter 53 §53.1): header/footer runs. Slots position the run
+  * (left/center/right across the page); align overrides the anchor. */
+ const emitBand=(band,y0,clsName)=>{
+  let s=`<g class="${clsName}">`;
+  for(const slot of ['left','center','right']){const r=band[slot];if(!r)continue;
+   const sizePx=r.size*PT,anchor=r.align==='center'?'middle':r.align==='right'?'end':'start';
+   const bx=r.align==='center'?pageW/2:r.align==='right'?pageW-margin:margin;
+   const fontExtra=r.font?` font-family="${esc(FONT_STACKS[r.font]||font)}"`:'';
+   bandLines(r).forEach((ln,i)=>{s+=text(bx,y0+sizePx+i*sizePx*1.35,ln,fmt(sizePx),t.muted,slot==='center'?600:400,`text-anchor="${anchor}"${fontExtra}`);});}
+  return s+'</g>';};
+ if(headerBand)out+=emitBand(p.publication.header,6,'ddn-pub-header');
+ if(titleOn)out+=text(margin,headerBand+margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,headerBand+margin+34,titleLines,24,t.ink,28,650)+multilines(margin,headerBand+margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text(pageW-margin,headerBand+margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
  out+=`<g id="drawing" transform="translate(${fmt(tx)} ${fmt(ty)}) scale(${fmt(scale)})">${diagram}</g>`;
- if(legendPlacement!=='none'&&legendEntries.length){let lx=legendPlacement==='right'?pageW-margin-legendW:margin,ly=legendPlacement==='right'?headBlock-15+extraHeader:pageH-margin-legendHeight;out+=line(lx-12,ly-12,lx-12,legendPlacement==='right'?pageH-margin-40:ly+legendHeight,t.rule,1);out+=text(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
+ if(legendPlacement!=='none'&&legendEntries.length){let lx=legendPlacement==='right'?pageW-margin-legendW:margin,ly=legendPlacement==='right'?headBlock-15+extraHeader:pageH-margin-footerBand-legendHeight;out+=line(lx-12,ly-12,lx-12,legendPlacement==='right'?pageH-margin-footerBand-40:ly+legendHeight,t.rule,1);out+=text(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
   for(const entry of legendEntries){const key=p.legend.mode==='numbers'?entry.key:entry.reg.code;if(p.legend.mode==='numbers')out+=`<circle cx="${lx+12}" cy="${ly-4}" r="12" fill="${t.surface}" stroke="${t.ink}"/>`+text(lx+12,ly,String(key),11,t.ink,700,'text-anchor="middle"');else out+=text(lx,ly,String(key),11,t.muted,650);
    out+=multilines(lx+34,ly,entry.lines,12,t.ink,18);ly+=Math.max(44,entry.lines.length*18+16);}
  }
- if(footerOn)out+=line(margin,pageH-39,pageW-margin,pageH-39,t.rule,1)+text(margin,pageH-20,'Same data · independent view · fixed semantics · presentation only',11,t.muted)+text(pageW-margin,pageH-20,ir.view.local+' / '+ir.registry,11,t.muted,400,'text-anchor="end"');
+ /* 0.8 (chapter 53 §53.1): an authored footer replaces the default footer
+  * content at the chapter 44 emission site; without one the legacy footer is
+  * byte-identical to 0.7. */
+ if(footerBand)out+=emitBand(p.publication.footer,pageH-margin-footerBand+2,'ddn-pub-footer');
+ else if(footerOn)out+=line(margin,pageH-39-footerBand,pageW-margin,pageH-39-footerBand,t.rule,1)+text(margin,pageH-20-footerBand,'Same data · independent view · fixed semantics · presentation only',11,t.muted)+text(pageW-margin,pageH-20-footerBand,ir.view.local+' / '+ir.registry,11,t.muted,400,'text-anchor="end"');
  out+='</svg>';
  const textAfter=Text.stats(),estimated=textAfter.estimated-textBefore.estimated;
- if(estimated){if(p.publication.metrics==='required')throw new DDN.DDNError('DDN077','Required measured fonts unavailable; supply text metrics or a browser provider');diags.push({code:'DDN-TW01',severity:'warning',message:'Some text runs used estimated metrics; this is not a typography-certified publication.'});}
+ if(estimated){const pinActive=ir.view.fontPin&&ir.view.fontPin.engine===Text.engine;
+  /* 0.8 (chapter 54 §54.4): with a pin active, unknown runs are DDN-TF04 under
+   * metrics: required; otherwise the grapheme estimate plus DDN-TW01. */
+  if(p.publication.metrics==='required')throw new DDN.DDNError(pinActive?'DDN-TF04':'DDN077',pinActive?'One or more text runs are missing from the active font_pin '+ir.view.fontPin.path+' under metrics: required':'Required measured fonts unavailable; supply text metrics or a browser provider');
+  diags.push({code:'DDN-TW01',severity:'warning',message:'Some text runs used estimated metrics; this is not a typography-certified publication.'});}
  scene.layoutState={format:'ddn-layout-state@1',view:options.viewKey||ir.view.id,positions:Object.fromEntries(geoms.map(g=>[g.id,[g.x,g.y]]))};
- scene.textMeasurement={mode:estimated?'estimated':'measured',requestedFont:p.style.font,provider:textAfter.canvas>textBefore.canvas?'browser-canvas':'pinned-cache'};
+ scene.textMeasurement={mode:estimated?'estimated':'measured',requestedFont:p.style.font,provider:textAfter.canvas>textBefore.canvas?'browser-canvas':'pinned-cache',...(ir.view.fontPin&&ir.view.fontPin.engine===Text.engine?{pin:ir.view.fontPin.path}:{})};
  return{svg:out,scene,diagnostics:diags,_drawing:diagram,_defs:glyphDefs,_ir:ir};
 }
-const api={palette:Palette,render,measureNode,visibleRoutePieces,esc,hash,wrap,text,multilines,line,glyph,rect,badge,pretty,themes,pathD,endMark,cls,slug};
+/* 0.8 (chapter 53 §53.4): render a multi-view publication set — one SVG per
+ * figure named <entry>--<view_id>.svg, plus a manifest JSON in declaration
+ * order. The set's publication supplies shared chrome (header/footer/border/
+ * background) to every figure; a figure's own declared concern wins. $figure
+ * and $page are the 1-based positions. Determinism per chapter 51 holds per
+ * figure (pin options.publicationDate for byte-stable $date). */
+function renderPublicationSet(files,entry,setName,registry,glyphDefs='',options={}){
+ const sets=DDN.publicationSets(files,entry,registry);
+ const set=sets.find(s=>s.local===setName||s.uid===setName||s.name===setName);
+ if(!set)throw new DDN.DDNError('DDN-PB09','Publication set not found: '+JSON.stringify(setName)+'; declared sets: '+(sets.map(s=>s.local).join(', ')||'(none)'),entry);
+ const entryBase=entry.split('/').pop().replace(/\.ddn$/,'');
+ const out={},manifest={set:set.name,figures:[]};
+ set.figures.forEach((f,i)=>{
+  const ir=DDN.build(files,f.file,f.uid,registry).ir;
+  if(set.publication){
+   const {chrome}=DDN.extractPublicationChrome([set.publication.node],files,ir.view.profiles.publication.overflow);
+   for(const k of ['header','footer','border','background'])if(chrome[k]&&!ir.view.profiles.publication[k])ir.view.profiles.publication[k]=chrome[k];
+  }
+  const r=render(ir,registry,glyphDefs,{...options,figure:i+1,page:i+1});
+  const file=entryBase+'--'+f.local+'.svg';
+  out[file]=r.svg;
+  manifest.figures.push({view_id:f.local,file,figure:i+1,page:i+1});
+ });
+ return {files:out,manifest};
+}
+/* 0.8 (chapter 53 §53.5): print-size lint — a check-time diagnostic family
+ * that never blocks or alters rendering and never fires for size: content.
+ * Effective sizes are computed against the deterministic render scale (the
+ * contain factor) with overflow/quality policies relaxed so lint cannot fail
+ * on the very overflow it reports. */
+function printSizeLint(ir,registry,glyphDefs='',options={}){
+ const p=ir.view.profiles;
+ if(p.publication.size==='content')return [];
+ const diags=[],embed=q(p.publication.embedding_scale,1);
+ const minPx=q(p.publication.minimum_text,8*PT),minPt=minPx/PT;
+ let scale=1,smallestPx=null;
+ try{
+  const clone=JSON.parse(JSON.stringify(ir));
+  clone.view.profiles.publication.overflow='warn';
+  clone.view.profiles.layout={...clone.view.profiles.layout,quality:'warn'};
+  const r=renderInner(clone,registry,glyphDefs,{...options,noMotion:true});
+  scale=r.scene.scale;smallestPx=r.scene.smallestText;
+ }catch(e){/* lint never blocks rendering; on an unrenderable view it reports nothing */}
+ const offenders=[];
+ if(smallestPx!==null&&smallestPx<minPx-.001)offenders.push({what:'smallest text role',eff:smallestPx/PT});
+ for(const band of [p.publication.header,p.publication.footer])
+  for(const slot of ['left','center','right']){const run=band?.[slot];if(run&&run.size*embed<minPt-.001)offenders.push({what:(band===p.publication.header?'header':'footer')+' '+slot+' chrome run',eff:run.size*embed});}
+ if(offenders.length){
+  offenders.sort((a,b)=>a.eff-b.eff);
+  const impliedPt=16*minPx/(11*scale*embed)/PT;
+  diags.push({code:'DDN-PS01',severity:'warning',message:'Effective text size below minimum_text '+minPt.toFixed(2)+'pt at the declared print size: '+offenders[0].what+' ('+offenders[0].eff.toFixed(2)+'pt effective); increase base font to ≥'+(impliedPt*PT).toFixed(1)+'px or raise publication.minimum_text.'});
+ }
+ const relFloor=0.5*PT;let worst=null;
+ for(const rid of ir.view.relations){
+  const r=ir.relations.find(x=>x.id===rid);if(!r)continue;
+  const reg=DDN.relationEntry(registry,r.kind);if(!reg)continue;
+  const eff=reg.width*scale*embed;
+  if(eff<relFloor-.001&&(!worst||eff<worst.eff))worst={name:r.name||r.ref,eff};
+ }
+ if(worst)diags.push({code:'DDN-PS02',severity:'warning',message:'Relation '+worst.name+' line weight is '+(worst.eff/PT).toFixed(2)+'pt effective at the declared print size, below the 0.5pt print floor.'});
+ if(p.publication.border&&p.publication.border.weight*embed<0.25)diags.push({code:'DDN-PS02',severity:'warning',message:'Page border weight '+(p.publication.border.weight*embed).toFixed(2)+'pt effective is below the 0.25pt print floor.'});
+ if(['a4','letter'].includes(p.publication.size)&&!p.publication.minimum_text_declared)
+  diags.push({code:'DDN-PS03',severity:'info',message:'Declared size '+p.publication.size+' is a physical paper size but no minimum_text is declared; the 8pt default is being relied on.'});
+ if(options.strictPrint&&diags.some(d=>d.severity==='warning'))
+  diags.push({code:'DDN-PS04',severity:'error',message:'Strict-print gate: print-size warnings fired ('+diags.filter(d=>d.severity==='warning').map(d=>d.code).join(', ')+'); resolve them or drop --strict-print.'});
+ return diags;
+}
+const api={palette:Palette,render,renderPublicationSet,printSizeLint,measureNode,textFit,visibleRoutePieces,esc,hash,wrap,text,multilines,line,glyph,rect,badge,pretty,themes,pathD,endMark,cls,slug};
 publishNamespace('DDNRender',api);
 export default api;

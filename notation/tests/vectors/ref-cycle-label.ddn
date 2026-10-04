@@ -1,0 +1,11 @@
+ddn "0.6";
+module "ddn.vectors.refcycle";
+// C2 degenerate corpus (0.8): two notes whose texts anchor each other via ref:.
+// Expected: renders — anchors resolve to numerals, not text (no infinite regress);
+// a literal self-anchor is DDN-MK06.
+// Active since 0.8 core-language landing (ref: anchors + DDN-MK06 in parser).
+data m {
+  note n1 "See ref:n2 for the other note.";
+  note n2 "See ref:n1 for the other note.";
+}
+view main { data: [@m]; }

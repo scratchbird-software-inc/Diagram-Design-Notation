@@ -41,8 +41,14 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
     'ddn-settings', 'ddn-settings-popup', 'ddn-stage', 'ddn-diagram', 'ddn-tool-status',
     'ddn-source', 'ddn-apply', 'ddn-discard', 'ddn-live-apply', 'ddn-undo', 'ddn-redo',
     'ddn-catalogue', 'ddn-file-list', 'ddn-paste', 'ddn-load-paste',
-    'ddn-export-svg', 'ddn-export-png', 'ddn-export-webp', 'ddn-save-example'])
+    'ddn-export-svg', 'ddn-export-png', 'ddn-export-webp', 'ddn-save-example',
+    /* 0.8 (ch. 57): D2 new-document picker, D3 tabs/diagnostics/jump, D5 tidy, S5 duplicate */
+    'ddn-new-project', 'ddn-template-popup', 'ddn-template-list',
+    'ddn-source-tabs', 'ddn-jump-def', 'ddn-diagnostics', 'ddn-diagnostics-count',
+    'ddn-tidy', 'ddn-duplicate'])
     assert.ok(html.includes('id="' + id + '"'), 'control #' + id + ' missing');
+  assert.ok(html.includes('globalThis.DDN_TOOL_TEMPLATES'), 'inlined new-document templates missing');
+  assert.ok(!/pdf|pptx/i.test(html), 'OSS export surface must not offer or advertise PDF/PPTX (chapter 57 §D4)');
   for (const name of ['files', 'appearance', 'source', 'export'])
     assert.ok(html.includes('data-drawer="' + name + '"'), 'toolbar icon for drawer ' + name + ' missing');
   assert.ok(html.includes('window.DDNTool') || html.includes('host.DDNTool'), 'DDNTool surface missing');
@@ -530,6 +536,53 @@ test('options.js drift guard: FONT_STACKS equals runtime DDNText.FONTS', () => {
   const FONTS = globalThis.__DDN_MODULE_REGISTRY__.namespaces.DDNText.FONTS;
   assert.deepEqual(O.FONT_STACKS, FONTS);
   assert.deepEqual(O.ROUTING_VALUES, ['orthogonal', 'straight', 'curved', 'rounded', 'string']);
+});
+
+/* ---- DDN 0.8 (standard chapter 57): designer contract surface ---- */
+
+test('D2: every new-document template is a valid .ddn that renders its main view', () => {
+  const dir = path.join(root, 'notation/tool/templates');
+  const names = fs.readdirSync(dir).filter(f => f.endsWith('.ddn')).sort();
+  assert.deepEqual(names, ['blank.ddn', 'c4-container.ddn', 'ddn-native.ddn', 'flowchart.ddn', 'patent-figure.ddn']);
+  for (const f of names) {
+    const src = fs.readFileSync(path.join(dir, f), 'utf8');
+    assert.match(src, /^ddn "0\.6";/, f + ' is a 0.6 skeleton');
+    const w = A.createWorkspace({ 'main.ddn': src });
+    const r = w.renderSync({ entry: 'main.ddn', view: 'main' });
+    assert.ok(r.svg.includes('<svg'), f + ' renders');
+    w.destroy();
+  }
+  // The blank skeleton is the chapter 57 §D2 empty document: header, module,
+  // one view, publication defaults with size: content.
+  const blank = fs.readFileSync(path.join(dir, 'blank.ddn'), 'utf8');
+  assert.match(blank, /data model \{\s*\}/, 'blank data block is empty');
+  assert.match(blank, /publication \{ size: content; fit: none; \}/, 'blank publication defaults');
+});
+
+test('D2: template picker list is keyed to the registered view kinds', () => {
+  const F = require('../tool/src/files.js');
+  const list = F.templateList({ blank: '', flowchart: '', 'c4-container': '' }, A.viewProfiles.VIEW_KINDS);
+  assert.strictEqual(list[0].id, 'blank');
+  assert.ok(list.find(t => t.id === 'flowchart').label.includes('view kind flowchart'));
+});
+
+test('D3: add-file naming conventions — kebab sibling, import line, alias', () => {
+  const F = require('../tool/src/files.js');
+  assert.strictEqual(F.suggestFileName('model/billing.ddn', {}), 'model/new-module.ddn');
+  assert.strictEqual(F.suggestFileName('model/billing.ddn', { 'model/new-module.ddn': '' }), 'model/new-module-2.ddn');
+  assert.strictEqual(F.suggestFileName('main.ddn', {}), 'new-module.ddn');
+  assert.strictEqual(F.importLineFor('model/billing.ddn', 'model/views.ddn'), 'import "views.ddn" as views;');
+  assert.strictEqual(F.importLineFor('main.ddn', 'model/order-entry.ddn'), 'import "model/order-entry.ddn" as order_entry;');
+  assert.strictEqual(F.importLineFor('a/b/c.ddn', 'a/x.ddn'), 'import "../x.ddn" as x;');
+  assert.strictEqual(F.aliasForFile('x/order-entry.ddn'), 'order_entry');
+});
+
+test('D3/X4: stableDiagnostic produces the contract shape, line from offset', () => {
+  const F = require('../tool/src/files.js');
+  const d = F.stableDiagnostic({ code: 'DDN-PJ104', severity: 'error', source: 'model/billing.ddn', start: 6, message: 'broken' }, { 'model/billing.ddn': 'one\ntwo\nthree' }, 'billing');
+  assert.deepEqual(d, { code: 'DDN-PJ104', severity: 'error', file: 'model/billing.ddn', line: 2, view: 'billing', message: 'broken' });
+  const siteless = F.stableDiagnostic({ code: 'DDN-LW06', severity: 'warning', message: 'no site' }, {});
+  assert.ok(!('file' in siteless) && !('line' in siteless), 'site-less diagnostics omit file/line');
 });
 
 const n = results.length;

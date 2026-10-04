@@ -1,0 +1,6 @@
+ddn "0.6";
+module "ddn.vectors.empty";
+// C2 degenerate corpus: data block with no elements; one view.
+// Expected: empty artboard, no diagnostics beyond text-metric estimation.
+data m {}
+view main { data: [@m]; }

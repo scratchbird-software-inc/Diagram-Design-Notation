@@ -26,6 +26,39 @@ test('Add object creates a local shared data section and selection',()=>{A.autho
 test('Add relationship resolves imported endpoints',()=>{A.authoring.addRelation(ws,'main.ddn','graph',{id:'new_link',name:'Related',kind:'ref',from:'tests.views::editor_data.new_object',to:'tests.data::model.source'});assert.equal(ws.resolve('main.ddn','graph').relations.length,2);});
 test('Delete referenced definition blocked without partial mutation',()=>{const b=ws.getFiles();error(()=>A.authoring.deleteDefinition(ws,'main.ddn','graph','tests.data::model.source'));assert.deepEqual(ws.getFiles(),b);});
 test('Hide occurrence preserves semantic definition',()=>{A.authoring.hide(ws,'main.ddn','graph','tests.views::editor_data.new_object');const b=ws.resolve('main.ddn','graph');assert.equal(b.elements.length,3);assert.equal(b.view.selected.length,2);ws.undo();});
+/* DDN 0.8 (ch. 55 §S5, ch. 57 §D3/D5) authoring additions. */
+test('View-profiles table is exposed for the designer template picker',()=>{assert.ok(A.viewProfiles&&A.viewProfiles.VIEW_KINDS);for(const k of ['ddn-native','flowchart','c4-container','patent-figure'])assert.ok(A.viewProfiles.VIEW_KINDS[k],k);});
+test('S5: duplicate mints a new uid, drops numeral, copies no relations, undoes atomically',()=>{
+ const w2=A.createWorkspace({'m.ddn':'ddn "0.6"; module "dup"; data model { object a "Alpha" {kind: component; numeral: 100;} object b "Beta" {kind: component;} relation r @a -> @b {kind: assoc;} } view v {data:[@model]; publication{size:content;fit:none;} }'});
+ const before=w2.getFiles(),id=w2.resolve('m.ddn','v').elements.find(e=>e.id.endsWith('.a')).id;
+ A.authoring.duplicate(w2,'m.ddn','v',id);
+ const ir=w2.resolve('m.ddn','v');
+ assert.deepEqual(ir.elements.map(e=>e.id).sort(),['dup::model.a','dup::model.a_copy','dup::model.b']);
+ assert.equal(ir.relations.length,1,'duplicate starts unconnected');
+ const copy=w2.getFiles()['m.ddn'].match(/object a_copy[^\n]*/)[0];
+ assert.doesNotMatch(copy,/numeral/,'numeral is never duplicated (DDN-VP06)');
+ A.authoring.duplicate(w2,'m.ddn','v',id);
+ assert.ok(w2.resolve('m.ddn','v').elements.some(e=>e.id==='dup::model.a_copy2'),'second duplicate mints _copy2');
+ w2.undo();w2.undo();assert.deepEqual(w2.getFiles(),before);w2.destroy();
+});
+test('D5: pinAll writes free-element pins in one undoable transaction',()=>{
+ const w2=A.createWorkspace({'m.ddn':'ddn "0.6"; module "pins"; data model { object a "A" {kind: component;} object b "B" {kind: component;} relation r @a -> @b {kind: assoc;} } view v {data:[@model]; publication{size:content;fit:none;} }'});
+ const before=w2.getFiles(),ids=w2.resolve('m.ddn','v').elements.map(e=>e.id);
+ A.authoring.pinAll(w2,'m.ddn','v',{[ids[0]]:{x:12,y:34},[ids[1]]:{x:400,y:78}});
+ const text=w2.getFiles()['m.ddn'];
+ assert.equal((text.match(/place @/g)||[]).length,2);
+ const g=w2.renderSync({entry:'m.ddn',view:'v'}).scene.nodes;
+ assert.deepEqual(g.find(n=>n.id===ids[0]).x,12);assert.deepEqual(g.find(n=>n.id===ids[1]).y,78);
+ w2.undo();assert.deepEqual(w2.getFiles(),before,'single undo reverts the whole batch');w2.destroy();
+});
+test('D3: definitionAt jumps an @ref to its declaring span, null off-reference',()=>{
+ const w2=A.createWorkspace({'main.ddn':'ddn "0.6"; module "j.main"; import "data.ddn" as d; view v {data:[@d.model]; publication{size:content;fit:none;} }','data.ddn':'ddn "0.6"; module "j.data"; data model { object thing "Thing" {kind: component;} }'});
+ const text=w2.getFiles()['main.ddn'],at=text.indexOf('@d.model')+2;
+ const def=A.authoring.definitionAt(w2,'main.ddn','v','main.ddn',at);
+ assert.ok(def&&def.file==='data.ddn',JSON.stringify(def));
+ assert.equal(w2.getFiles()['data.ddn'].slice(def.start,def.end).startsWith('data model'),true);
+ assert.equal(A.authoring.definitionAt(w2,'main.ddn','v','main.ddn',2),null);w2.destroy();
+});
 ws=A.createWorkspace(files);
 test('Domains and nested fields use v0.3 decoder',()=>{const f={'n.ddn':`ddn "0.3";module "nested";data m { domain id "Identifier"; object a {kind:record;fields{field profile { fields {field nested_id {domain:@id;} } }}}} view v{data:[@m];display{domains:show;}publication{size:content;fit:none;}}`};const w=A.createWorkspace(f),n=w.renderSync({entry:'n.ddn',view:'v'});assert.match(n.svg,/Identifier/);assert.ok(w.resolve('n.ddn','v').elements.some(n=>n.fields?.length>1));});
 test('Invalid replication endpoint rejected by public SDK',()=>{const f={'bad.ddn':`ddn "0.3";module "invalid";data m{object team{kind:team;}object tbl{kind:table;}relation r @team -> @tbl{kind:replicate;}}view v{data:[@m];}`};error(()=>A.createWorkspace(f).renderSync({entry:'bad.ddn',view:'v'}));});

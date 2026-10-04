@@ -1,0 +1,43 @@
+ddn "0.5";
+
+module "fig14.model";
+
+data model {
+    service decision_service "Decision service 110" { }
+
+    application txn_finality "Transaction finality 310" { }
+    application route_pub "Route publication 312" { }
+    application fence_issue "Fence issuance 314" { }
+    application cleanup_lwm "Cleanup low-water marks 316" { }
+    application reconciliation "Reconciliation 318" { }
+
+    service mga "Storage authority 120" { }
+    application apply_effects "Apply effects only on verified proofs" { }
+
+    relation d1 @decision_service -> @txn_finality { kind: assoc; }
+    relation d2 @decision_service -> @route_pub { kind: assoc; }
+    relation d3 @decision_service -> @fence_issue { kind: assoc; }
+    relation d4 @decision_service -> @cleanup_lwm { kind: assoc; }
+    relation d5 @decision_service -> @reconciliation { kind: assoc; }
+
+    relation proofs "Verified decision proofs" @decision_service -> @apply_effects { kind: deliver; }
+    relation mga_apply @mga -> @apply_effects { kind: mem; }
+}
+
+module "fig14.views";
+
+view fig14 "FIG. 14 - Database embodiment" {
+    data: [@fig14.model.model];
+    projection { kind: graph; profile: "ddn@1"; }
+    layout { direction: down; }
+    publication { size: content; }
+    frame ds_frame "Decision service 110" {
+        members: [@fig14.model.model.decision_service, @fig14.model.model.txn_finality,
+                  @fig14.model.model.route_pub, @fig14.model.model.fence_issue,
+                  @fig14.model.model.cleanup_lwm, @fig14.model.model.reconciliation];
+    }
+    frame mga_frame "Storage authority 120" {
+        members: [@fig14.model.model.mga, @fig14.model.model.apply_effects];
+    }
+    description: "FIG. 14. Database embodiment: decision service 110 applies the mechanism to transaction finality 310, route publication 312, fence issuance 314, cleanup low-water marks 316 and reconciliation 318; storage authority 120 applies publication, recovery and cleanup effects only when the corresponding decision proof is verified.";
+}

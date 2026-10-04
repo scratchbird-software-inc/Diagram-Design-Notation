@@ -1,0 +1,25 @@
+ddn "0.6";
+module "untitled";
+
+// Empty patent figure starter (view kind patent-figure, patent.legal@1 +
+// theme.mono.print@1 defaults): monochrome chrome preset with a title block
+// and a FIG. footer. Give elements reference numerals with `numeral: 102;`
+// inside the object body and reference them in text with ref: anchors.
+data model {
+    object start "Start" { kind: "flow.start"; }
+    object step "Process step" { kind: "flow.process"; }
+    object done "End" { kind: "flow.end"; }
+    relation f1 @start -> @step { kind: "flow.next"; }
+    relation f2 @step -> @done { kind: "flow.next"; }
+}
+
+view main "Untitled figure" {
+    data: [@model];
+    kind: patent-figure;
+    publication {
+        size: content; fit: none;
+        title: "Untitled figure";
+        header { left { text: "$title"; size: 9pt; } right { text: "$date"; size: 8pt; } }
+        footer { center { text: "FIG. $figure"; size: 10pt; } right { text: "Page $page"; size: 8pt; } }
+    }
+}

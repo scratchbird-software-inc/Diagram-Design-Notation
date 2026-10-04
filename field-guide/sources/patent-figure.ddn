@@ -1,0 +1,42 @@
+ddn "0.6";
+module "ddn.fieldguide.patent";
+
+// kind: patent-figure attaches the patent.legal@1 profile and the mono-print
+// document conventions: reference-numeral boxes under each element header,
+// ref: anchors that render as the target's numeral, and page chrome with
+// FIG. numbering. Drawing conventions only — not legal advice and not a
+// patent-office compliance certification.
+
+data method {
+  object begin "Start" { kind: "flow.start"; numeral: 100; }
+  object receive "Receive reading" { kind: "flow.process"; numeral: 102; }
+  object compare "Above threshold?" { kind: "flow.decision"; numeral: 104; }
+  object actuate "Actuate valve" { kind: "flow.process"; numeral: 106; }
+  object end "End" { kind: "flow.end"; numeral: 110; }
+  relation f1 "tick" @begin -> @receive { kind: "flow.next"; }
+  relation f2 "read" @receive -> @compare { kind: "flow.next"; }
+  relation f3 "yes" @compare -> @actuate { kind: "flow.next"; x_diagram: { branch: "above" }; }
+  relation f4 "no" @compare -> @end { kind: "flow.next"; x_diagram: { branch: "below" }; }
+  relation f5 "close" @actuate -> @end { kind: "flow.next"; }
+  note ops "ref:actuate latches until ref:receive reports two normal readings.";
+}
+
+view fig1 "FIG. 1 — shutoff control method" {
+  data: [@method];
+  kind: patent-figure;
+  // A tall, narrow flow fits a portrait page without shrinking text below
+  // the declared minimum — direction is a readability choice here.
+  layout { direction: down; }
+  publication {
+    size: a4; orientation: portrait; margin: 10mm; minimum_text: 7pt;
+    header { right { text: "$date"; size: 8pt; } }
+    footer { center { text: "FIG. $figure"; size: 10pt; font: serif; } right { text: "Page $page"; size: 8pt; } }
+    border { style: single; weight: 1pt; inset: 6mm; }
+  }
+}
+
+view fig2 "FIG. 2 — same method with narration note, content-sized" {
+  data: [@method];
+  kind: patent-figure;
+  publication { size: content; fit: none; }
+}

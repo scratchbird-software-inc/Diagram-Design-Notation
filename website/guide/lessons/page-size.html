@@ -24,12 +24,12 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
 </head><body>
-<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.8 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
 
 <main>
 <div class="lesson-title"><p class="eyebrow">Techniques</p><h2>Publication — page size, fit and minimum text</h2><p class="subtitle">website/examples/basics/13-publication.ddn # paper</p><span class="pill technique">technique</span></div>
 <div class="explain"><section class="card"><h3>What this diagram shows</h3><p>The same semantic model published two ways: an A4 page with explicit minimum text size, and a content-sized screen render.</p></section><section class="card"><h3>Why use it?</h3><p>The publication block is the contract with the reader's medium — the engine warns instead of shipping unreadable text.</p></section><section class="card"><h3>When is it useful?</h3><p>Anything leaving the screen: print packs, PDF reports, ISO-style documentation sets.</p></section></div>
-<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>The paper variant fits the model to A4 and declares the smallest text allowed; the screen variant sizes to content.</li><li>Overflow is a diagnostic, not a silent crop — read the warnings before exporting.</li></ol></section>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>The paper variant fits the model to A4 and declares the smallest text allowed; the screen variant sizes to content.</li><li>Overflow is a diagnostic, not a silent crop — read the warnings before exporting.</li><li>Headers, footers, borders and backgrounds live in the same publication block (see the Publication chrome chapter), and --content-size forces the content-sized form for one render without editing the source.</li></ol></section>
 <section class="card"><h3>Information to gather first</h3><ul><li>The model</li><li>The publication declaration (size, fit, orientation, minimum text)</li></ul></section></div>
 <h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
 <div class="actions" style="margin:.3rem 0"><label for="variant">Variant <select id="variant"><option value="paper">paper</option><option value="screen">Content-sized variant</option></select></label></div>
@@ -55,7 +55,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/13-publication.ddn</td><td>data, view</td></tr><tr><td>website/examples/basics/shared.ddn</td><td>format</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared publication rules with overflow/minimum-text diagnostics; print-driver behaviour is outside the model.</p><ul><li>Do not raise the scale by shrinking text below the declared minimum — split the view instead.</li><li>A fit: none choice means you own the extents; check the page in the export, not the preview.</li></ul></section>
 </main>
-<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../dist/ddn.global.js"></script>
 <script src="../../dist/ddn-graph.js"></script>
 <script src="../../dist/ddn-iso.js"></script>

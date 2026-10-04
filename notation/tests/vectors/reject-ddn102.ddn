@@ -1,0 +1,10 @@
+ddn "0.6";
+module "ddn.vectors.reject102";
+// C1 rejection vector: reports_to requires org.unit/person endpoints (registry
+// endpoint contract); table endpoints must raise DDN102.
+data m {
+  object a "Alpha" {kind: table;}
+  object b "Beta" {kind: table;}
+  relation r @a -> @b {kind: reports_to;}
+}
+view main { data: [@m]; }

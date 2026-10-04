@@ -1,5 +1,15 @@
 # Migration: 0.5 → 0.7.0
 
+> **Naming note (DDN 0.8):** this page predates the 0.8 standard revision —
+> despite the file name, it describes the 0.7.0 *packaging* release, which
+> introduced **no** source-language version. DDN 0.8 adds the first new
+> source version since 0.5: `ddn "0.6";`. Migrating a 0.5 source to 0.6 is
+> optional and one-line: restamp the header. 0.6 is a strict superset, so the
+> restamped file renders byte-identically until you opt into 0.8 features
+> (view kinds, publication chrome, text fit, markings — see
+> [authoring-sources.md](authoring-sources.md) *0.8 additions*). Files left at
+> `ddn "0.5";` are fully supported and never silently upgraded.
+
 The 0.7.0 line (designer 0.2.0) is additive over 0.5.x: every
 0.5 source still parses, and renders that opt into nothing are byte-identical
 to their 0.5 output (the determinism goldens in `notation/tests/` prove it).

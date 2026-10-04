@@ -7,7 +7,14 @@ node../../notation/cli/cli.js render basics/05-flow.ddn --workspace. --out /tmp/
 node../../notation/cli/cli.js render projections/views.ddn --workspace. --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 74 numbered examples (01-customer … 74-reusable-presets)
+- `basics/` — 74 numbered examples (01-customer … 74-reusable-presets),
+  later numbered additions through `110-presentation-architecture`, and the
+  DDN 0.8 pair `111-publication-chrome.ddn` (patent-style figure set:
+  header/footer with `$title`/`$date`/`FIG. $figure`/`Page $page`, page
+  border, reference-numeral boxes, `publication_set`) and
+  `112-markings-metadata.ddn` (`marks: [forbidden|tentative]`, inert
+  assertions, `source:`/`generator:` provenance, `ref:` anchors, `mono_print`
+  theme) — both stamped `ddn "0.6";`,
   plus shared modules (`shared.ddn`, `customer-data.ddn`). (The import-era
   `manifest.json` was removed in  it covered only examples 01–18,
   pointed at nonexistent `website/examples/rendered/` paths, was stamped

@@ -1,0 +1,38 @@
+ddn "0.6";
+module "ddn.fieldguide.markings";
+
+// Markings are authored claims that travel with the model: forbidden marks
+// a prohibited path (struck and hatched, never colour-only), tentative marks
+// uncommitted content. Assertions and provenance are carried and exported
+// but evaluate nothing in 0.8.
+
+data integration {
+  service portal "Customer portal";
+  service legacy "Legacy billing";
+  database ledger "General ledger";
+  relation current "posts via API" @portal -> @ledger { kind: flow; }
+  relation old_path "direct table write" @legacy -> @ledger {
+    kind: flow;
+    marks: [forbidden];
+    assertion: "no component writes the ledger outside the posting API";
+  }
+  object experimental "Experimental export" { kind: export; marks: [tentative]; }
+  relation feed "nightly extract" @ledger -> @experimental { kind: flow; }
+}
+
+view main "Ledger integration — marked" {
+  data: [@integration];
+  source: "integration-review.docx §4";
+  generator: "ddn-import 0.8.0 (2026-10-04)";
+  assertions: [
+    "every ledger write goes through the posting API",
+    "the experimental export never feeds back into the ledger"
+  ];
+  publication { size: content; fit: none; }
+}
+
+view mono "Same model — mono print theme" {
+  data: [@integration];
+  theme: mono_print;
+  publication { size: content; fit: none; }
+}

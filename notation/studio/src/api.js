@@ -1,4 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Public SDK on the consolidated DDN 0.3 core. */
+import {optionalNamespace} from '../../runtime/ddn-module-registry.js';
 export function makeLiveAPI(backend,assets){
 'use strict';
 const VERSION='0.7.0',D=backend.DDN,clone=x=>JSON.parse(JSON.stringify(x)),Q=n=>({$quantity:n,unit:'px'});
@@ -384,6 +385,10 @@ const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,
  resolvePath,replaceSpans,
  kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),
  relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),
+ /* DDN 0.8 (ch. 52/55): registered view kinds, vocabulary subsets, markings
+  * and themes — the data table the designer's template picker is keyed to
+  * (chapter 57 §D2). Read-only; null in a bundle without ddn-view-profiles. */
+ viewProfiles:optionalNamespace('DDNViewProfiles'),
  setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider,
  glyphs:{forKind:glyphForKind}};
 return api;

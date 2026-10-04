@@ -1314,6 +1314,62 @@
       ]
     },
     {
+      "chapter": "version-06",
+      "entry": "field-guide/sources/version-06.ddn",
+      "view": "main",
+      "files": [
+        "field-guide/sources/version-06.ddn"
+      ]
+    },
+    {
+      "chapter": "view-profiles",
+      "entry": "field-guide/sources/view-profiles.ddn",
+      "view": "flow_strict",
+      "files": [
+        "field-guide/sources/view-profiles.ddn"
+      ]
+    },
+    {
+      "chapter": "patent-figures",
+      "entry": "field-guide/sources/patent-figure.ddn",
+      "view": "fig1",
+      "files": [
+        "field-guide/sources/patent-figure.ddn"
+      ]
+    },
+    {
+      "chapter": "publication-chrome",
+      "entry": "field-guide/sources/publication-chrome.ddn",
+      "view": "overview",
+      "files": [
+        "field-guide/sources/publication-chrome.ddn"
+      ]
+    },
+    {
+      "chapter": "text-fit",
+      "entry": "field-guide/sources/text-fit.ddn",
+      "view": "fitted",
+      "files": [
+        "field-guide/sources/text-fit.ddn"
+      ]
+    },
+    {
+      "chapter": "markings-metadata",
+      "entry": "field-guide/sources/markings.ddn",
+      "view": "main",
+      "files": [
+        "field-guide/sources/markings.ddn"
+      ]
+    },
+    {
+      "chapter": "cli-power-tools",
+      "entry": "field-guide/sources/cli-workflow.ddn",
+      "view": "main",
+      "files": [
+        "field-guide/sources/cli-workflow.ddn"
+      ]
+    },
+    {
       "chapter": "whiteboard",
       "entry": "website/examples/use-cases/01-whiteboard.ddn",
       "view": "diagram",

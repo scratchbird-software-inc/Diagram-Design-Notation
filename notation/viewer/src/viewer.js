@@ -67,6 +67,34 @@ function overrideRuleFor(target, value) {
   throw new Error('unknown override type: ' + target.type);
 }
 
+/* D1 element focus (spec 57 §57.1.2): stroke ring on the focused element's own
+ * shapes using the renderer's data-ddn-id hook; fill and text are untouched.
+ * Session-only CSS like the colour overrides — never enters the source, and
+ * enters an export only when the user explicitly exports the styled view. */
+function focusRuleFor(id) {
+  if (typeof id !== 'string' || !id) throw new Error('element id required');
+  const sel = '.ddn-svg [data-ddn-id="' + cssString(id) + '"]';
+  return sel + ' > path, ' + sel + ' > rect, ' + sel + ' > circle, ' + sel + ' > ellipse, ' + sel + ' > polygon { stroke: #1d4ed8; stroke-width: 2.5px; }';
+}
+
+/* D1 link following (spec 57 §57.1.3): resolve a subdiagram / x_subdiagram
+ * link target to a viewList index. Targets arrive as a resolved view uid
+ * ("module::path", subdiagram data-view), a local view id, or a dotted path
+ * (x_subdiagram.view). Exact uid wins, then exact local id, then the uid path
+ * tail, then an unambiguous local-id tail match. Returns -1 when nothing
+ * matches — links resolve through the workspace only, never to URLs. */
+function matchViewTarget(list, uids, target) {
+  if (!Array.isArray(list) || typeof target !== 'string' || !target) return -1;
+  const u = uids || [];
+  for (let i = 0; i < list.length; i++) if (u[i] === target) return i;
+  for (let i = 0; i < list.length; i++) if (list[i] && list[i].view === target) return i;
+  const tail = target.split('::').pop();
+  for (let i = 0; i < list.length; i++) if (typeof u[i] === 'string' && u[i].split('::').pop() === tail) return i;
+  const last = tail.split('.').pop(), hits = [];
+  for (let i = 0; i < list.length; i++) if (list[i] && list[i].view === last) hits.push(i);
+  return hits.length === 1 ? hits[0] : -1;
+}
+
 /* Per-kind typography CSS overlay (B1-011 D2). `style` is
  * {family:'source'|sans|serif|mono|handwriting, size:'source'|<px 8-24>}.
  * This is a viewer stylesheet overlay: it does NOT re-run layout, so long
@@ -234,7 +262,7 @@ function srcImportClosure(src, pageHref, fetchFn, parseImports, resolvePath) {
   return pull(new URL(src, pageHref), entryName).then(() => ({ files, entryName }));
 }
 
-const pure = { computeFitScale, overrideRuleFor, typographyRuleFor, relationOverrideState, viewerOverrides, viewListFrom, isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, FONT_SIZES, ROUTING_VALUES, CROSSING_VALUES, ENDPOINT_ORDERING_VALUES };
+const pure = { computeFitScale, overrideRuleFor, focusRuleFor, matchViewTarget, typographyRuleFor, relationOverrideState, viewerOverrides, viewListFrom, isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, FONT_SIZES, ROUTING_VALUES, CROSSING_VALUES, ENDPOINT_ORDERING_VALUES };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNViewer = pure; return; }
 
@@ -273,7 +301,7 @@ function emptyPresentation() {
   };
 }
 const state = {
-  files: {}, entry: null, view: null, ws: null, viewList: [],
+  files: {}, entry: null, view: null, ws: null, viewList: [], viewUids: [],
   fit: 'page', zoom: null,
   presentation: emptyPresentation(),
   selected: null, selectedRelation: null,
@@ -300,6 +328,10 @@ function loadFiles(files, entry) {
     syncTypographyControls(); syncRelationControls();
     const first = list.find(v => v.entry === entry) || list[0];
     state.viewList = list;
+    /* Resolved view uids per picker row, for link following (subdiagram
+     * data-view targets are uids). A view that fails to resolve keeps null —
+     * it can still be picked and will surface its own render error. */
+    state.viewUids = list.map(v => { try { return ws.resolve(v.entry, v.view).view.id; } catch { return null; } });
     els.picker.innerHTML = '';
     list.forEach((v, i) => {
       const o = document.createElement('option');
@@ -415,6 +447,7 @@ function overrideCss() {
   for (const [code, col] of Object.entries(p.verbColours)) rules.push(overrideRuleFor({ type: 'verb', code }, col));
   for (const [id, col] of Object.entries(p.objectColours)) rules.push(overrideRuleFor({ type: 'object', id }, col));
   if (state.selectedRelation) rules.push('.ddn-svg [data-id="' + cssString(state.selectedRelation) + '"] path { stroke: #d97706; stroke-width: 2.5px; }');
+  if (state.selected) rules.push(focusRuleFor(state.selected));
   return rules.join('\n');
 }
 
@@ -498,8 +531,42 @@ function updateRelationPanel() {
   els.relationRouting.value = has ? (state.presentation.relations.relationRouting[state.selectedRelation] || 'source') : 'source';
 }
 
+/* D1 link following (spec 57 §57.1.3): switch to a linked view, resolved
+ * through the loaded workspace only — never to a network URL (the renderer's
+ * <a href="…svg"> hooks are stripped by safeSVG; this is the only path). */
+function navigateToView(target) {
+  const i = matchViewTarget(state.viewList, state.viewUids, target);
+  if (i < 0) { status('link target "' + target + '" is not a view in the loaded workspace'); return; }
+  const v = state.viewList[i];
+  state.entry = v.entry; state.view = v.view;
+  els.picker.value = String(i);
+  state.selected = null; state.selectedRelation = null;
+  render();
+  status('followed link to ' + v.label);
+}
+
+/* x_subdiagram badge drill-down target for a rendered element id, or null. */
+function subdiagramViewOf(elementId) {
+  try {
+    const ir = state.ws.resolve(state.entry, state.view);
+    const el = (ir.elements || []).find(n => n.id === elementId);
+    const x = el && el.properties && el.properties.x_subdiagram;
+    return x && typeof x.view === 'string' && x.view ? x.view : null;
+  } catch { return null; }
+}
+
 els.paper.addEventListener('click', e => {
   if (!e.target || !e.target.closest) return;
+  /* Subdiagram reference frames and frozen drill-down thumbnails carry
+   * data-view hooks; x_subdiagram badges resolve via the IR. */
+  const link = e.target.closest('.ddn-subdiagram[data-view], .ddn-io-inline.ddn-frozen[data-view]');
+  if (link && els.paper.contains(link)) { navigateToView(link.getAttribute('data-view')); return; }
+  const badge = e.target.closest('.ddn-ref-badge');
+  if (badge && els.paper.contains(badge)) {
+    const g = badge.closest('[data-ddn-id]');
+    const t = g && els.paper.contains(g) && subdiagramViewOf(g.getAttribute('data-ddn-id'));
+    if (t) { navigateToView(t); return; }
+  }
   const rel = e.target.closest('.ddn-relation[data-id]');
   if (rel && els.paper.contains(rel)) {
     state.selectedRelation = rel.getAttribute('data-id');
@@ -508,10 +575,18 @@ els.paper.addEventListener('click', e => {
     return;
   }
   const g = e.target.closest('[data-ddn-id]');
-  if (!g || !els.paper.contains(g)) return;
-  state.selected = g.getAttribute('data-ddn-id');
-  updateObjectPanel();
-  status('selected object ' + state.selected);
+  if (g && els.paper.contains(g)) {
+    /* D1 element focus (spec 57 §57.1.2): highlight via data-ddn-id hook. */
+    state.selected = g.getAttribute('data-ddn-id');
+    updateObjectPanel(); applyOverrides();
+    status('focused object ' + state.selected);
+    return;
+  }
+  /* Background click clears the focus. */
+  if (state.selected || state.selectedRelation) {
+    state.selected = null; state.selectedRelation = null;
+    updateObjectPanel(); updateRelationPanel(); applyOverrides();
+  }
 });
 els.objectColour.addEventListener('input', () => {
   if (!state.selected) return;

@@ -1,0 +1,29 @@
+ddn "0.6";
+module "ddn.fieldguide.clitools";
+
+// Companion source for the CLI power-tools chapter. Try:
+//   node notation/cli/cli.js verbs --from service --to database
+//   node notation/cli/cli.js check field-guide/sources/cli-workflow.ddn --view main --diagnostics json
+//   node notation/cli/cli.js check field-guide/sources/cli-workflow.ddn --view main --strict-print
+//   node notation/cli/cli.js publish field-guide/sources/cli-workflow.ddn --set pack --outdir out/ --publication-date 2026-10-04
+//   node notation/cli/cli.js render field-guide/sources/cli-workflow.ddn --view main --content-size --out main.svg
+
+data model {
+  service api "Order API";
+  database store "Order store";
+  queue events "Order events";
+  relation persist "persists" @api -> @store { kind: flow; }
+  relation publish "publishes" @api -> @events { kind: flow; }
+}
+
+view main "Order service — print target" {
+  data: [@model];
+  publication {
+    size: a4; orientation: landscape; margin: 10mm; minimum_text: 7pt;
+    footer { center { text: "Figure $figure — $title"; size: 8pt; } }
+  }
+}
+
+publication_set pack "Order service pack" {
+  figures: [@main];
+}

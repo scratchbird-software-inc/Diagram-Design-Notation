@@ -1,0 +1,162 @@
+{
+  "suite": "ddn-0.8-vectors@0.8.0-draft.1",
+  "conformance": "geometry-only",
+  "note": "Fonts are not pinned (ch. 58 §58.1 hash policy 2). geometry_sha256 is a SHA-256 over the canonicalized geometry projection of the scene; diagnostics follow the ch. 56 §X4 contract. Regenerate with: node tests/vectors.js --record",
+  "vectors": [
+    {
+      "id": "accept-basic",
+      "source": "accept-basic.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "706e4f8a0ad344e81d8a79aca718aec3c0bb1dd133dbfe90756064bd4fbbc7c2"
+      }
+    },
+    {
+      "id": "reject-ddn102",
+      "source": "reject-ddn102.ddn",
+      "view": "main",
+      "expect": {
+        "reject": "DDN102",
+        "diagnostics": [
+          {
+            "code": "DDN102",
+            "severity": "error",
+            "file": "reject-ddn102.ddn",
+            "line": 8
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-view",
+      "source": "empty-view.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "537937f42c1f3c7b5ef84cc19ea80a1382ede57f6a95752ad27218e9c64b5ccb"
+      }
+    },
+    {
+      "id": "single-node",
+      "source": "single-node.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "c3e1dc43a657d2a2728c3dafc00c3b5e2b49c34c9735c36f33ab67c6ed890ef3"
+      }
+    },
+    {
+      "id": "stress-500",
+      "source": "stress-500.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-LW01",
+            "severity": "info"
+          },
+          {
+            "code": "DDN-LW05",
+            "severity": "warning"
+          },
+          {
+            "code": "DDN071",
+            "severity": "warning"
+          },
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "7a7e3104ea332f48b2826a831522c1896c57099de8f2fd7b1af3108a3c3dac80"
+      }
+    },
+    {
+      "id": "unicode-labels",
+      "source": "unicode-labels.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "4580b6db6f1dc9ae912bfbf9def61d80dc9da9198f87f19fc6aeb3eacfc32097"
+      }
+    },
+    {
+      "id": "max-nesting",
+      "source": "max-nesting.ddn",
+      "view": "main",
+      "status": "deferred",
+      "reason": "0.8 core-language work: frame nesting (within:) and the coded depth error are not in the 0.7.0 parser",
+      "expect": {
+        "diagnostics": [],
+        "geometry_sha256": ""
+      }
+    },
+    {
+      "id": "empty-chrome",
+      "source": "empty-chrome.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "2eb965769e70658f2ac597c23ab0ea85779273ca68a0f228d8c5f9e171f8692a"
+      }
+    },
+    {
+      "id": "overflow-floor",
+      "source": "overflow-floor.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-LW08",
+            "severity": "warning"
+          },
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "4558a7be16cf1b5462d13a7f2d10f956660827900ee7bed8a1b20fb65db5d398"
+      }
+    },
+    {
+      "id": "ref-cycle-label",
+      "source": "ref-cycle-label.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "cece96e35ee88182f3593cbf7bab01587600b94a512283ae9d0792069722a0ce"
+      }
+    }
+  ]
+}

@@ -112,6 +112,78 @@ test('overrideRuleFor: kind, verb, object, font rules match the rendered hooks',
   assert.ok(V.overrideRuleFor({ type: 'object', id: 'a"b' }, '#fff').includes('a\\"b'), 'quote escaped in selector');
 });
 
+/* --- D1 navigation contract (spec 57 §57.1): focus + link following --- */
+
+test('focusRuleFor: element focus ring via the data-ddn-id hook', () => {
+  assert.equal(V.focusRuleFor('demo::demo.alpha'),
+    '.ddn-svg [data-ddn-id="demo::demo.alpha"] > path, .ddn-svg [data-ddn-id="demo::demo.alpha"] > rect, .ddn-svg [data-ddn-id="demo::demo.alpha"] > circle, .ddn-svg [data-ddn-id="demo::demo.alpha"] > ellipse, .ddn-svg [data-ddn-id="demo::demo.alpha"] > polygon { stroke: #1d4ed8; stroke-width: 2.5px; }');
+  assert.throws(() => V.focusRuleFor(''), /element id required/);
+  assert.throws(() => V.focusRuleFor(null), /element id required/);
+  assert.ok(V.focusRuleFor('a"b').includes('a\\"b'), 'quote escaped in selector');
+  const src = fs.readFileSync(path.join(root, 'notation/viewer/src/viewer.js'), 'utf8');
+  assert.ok(src.includes('if (state.selected) rules.push(focusRuleFor(state.selected));'), 'overrideCss does not emit the focus rule');
+});
+
+test('matchViewTarget: uid, local id, path tail, unambiguous tail; misses return -1', () => {
+  const list = [
+    { entry: 'a.ddn', view: 'overview', label: 'a.ddn · Overview' },
+    { entry: 'a.ddn', view: 'compact', label: 'a.ddn · Compact' },
+    { entry: 'b.ddn', view: 'detail', label: 'b.ddn · Detail' }
+  ];
+  const uids = ['demo::overview', 'demo::compact', 'other::sub.detail'];
+  assert.equal(V.matchViewTarget(list, uids, 'demo::overview'), 0, 'exact uid');
+  assert.equal(V.matchViewTarget(list, uids, 'compact'), 1, 'exact local id');
+  assert.equal(V.matchViewTarget(list, uids, 'other::sub.detail'), 2, 'uid path tail');
+  assert.equal(V.matchViewTarget(list, uids, 'sub.detail'), 2, 'dotted tail resolves to the uid owner');
+  assert.equal(V.matchViewTarget(list, uids, 'missing'), -1);
+  assert.equal(V.matchViewTarget(list, uids, ''), -1);
+  assert.equal(V.matchViewTarget(list, uids, null), -1);
+  assert.equal(V.matchViewTarget(null, uids, 'compact'), -1);
+  const dupe = list.concat([{ entry: 'c.ddn', view: 'detail', label: 'c.ddn · Detail' }]);
+  assert.equal(V.matchViewTarget(dupe, uids.concat(['x::detail']), 'zzz.detail'), -1, 'ambiguous tail never guesses');
+});
+
+test('link following: click handler resolves subdiagram/badge hooks through the workspace only', () => {
+  const src = fs.readFileSync(path.join(root, 'notation/viewer/src/viewer.js'), 'utf8');
+  assert.ok(src.includes("e.target.closest('.ddn-subdiagram[data-view], .ddn-io-inline.ddn-frozen[data-view]')"), 'subdiagram data-view hook not followed');
+  assert.ok(src.includes("e.target.closest('.ddn-ref-badge')"), 'x_subdiagram badge hook not followed');
+  assert.ok(src.includes('matchViewTarget(state.viewList, state.viewUids, target)'), 'link targets do not resolve through the workspace view list');
+  assert.ok(src.includes('is not a view in the loaded workspace'), 'unresolved link targets need an in-workspace refusal, not navigation');
+  assert.ok(!/window\.open|location\.href\s*=|location\.assign/.test(src), 'viewer must never navigate to a URL');
+  const built = fs.readFileSync(path.join(root, 'notation/viewer/ddn-viewer.html'), 'utf8');
+  assert.ok(built.includes('function navigateToView(target)'), 'built ddn-viewer.html is stale — run npm --prefix notation run build:viewer');
+});
+
+test('fixture renders: subdiagram reference frames expose the data-view link hook', () => {
+  const linked = fixture.replace('view compact "Compact" {', `view child "Child" {
+    data: [@demo]; format: @f.b;
+}
+view compact "Compact" {
+    subdiagram s1 { view: @demo.child; mode: reference; }
+`);
+  const ws = A.createWorkspace({ 'fixture.ddn': linked });
+  const r = ws.renderSync({ entry: 'fixture.ddn', view: 'compact' });
+  const m = r.svg.match(/<g class="ddn-subdiagram" data-view="([^"]+)">/);
+  assert.ok(m, 'subdiagram reference frame lacks the data-view hook');
+  const list = V.viewListFrom(ws.entries());
+  const uids = list.map(v => { try { return ws.resolve(v.entry, v.view).view.id; } catch { return null; } });
+  const i = V.matchViewTarget(list, uids, m[1]);
+  assert.ok(i >= 0 && list[i].view === 'child', 'data-view hook does not resolve to the child view in the workspace list');
+  ws.destroy();
+});
+
+test('0.8 themes render through the viewer-bundled runtime surface (mono_print, colorblind_safe)', () => {
+  for (const theme of ['mono_print', 'colorblind_safe']) {
+    const themed = fixture.replace('ddn "0.5";', 'ddn "0.6";').replace('data: [@demo]; format: @f.b;\n}', 'data: [@demo]; format: @f.b; theme: ' + theme + ';\n}');
+    assert.ok(themed.includes('theme: ' + theme + ';'), 'fixture splice failed');
+    const ws = A.createWorkspace({ 'fixture.ddn': themed });
+    const r = ws.renderSync({ entry: 'fixture.ddn', view: 'overview' });
+    assert.ok(r.svg.includes('<svg'), theme + ' did not render');
+    assert.ok(!r.diagnostics.some(d => d.severity === 'error'), theme + ' render has errors');
+    ws.destroy();
+  }
+});
+
 test('viewListFrom flattens ws.entries() into picker rows', () => {
   const ws = A.createWorkspace({ 'fixture.ddn': fixture });
   const list = V.viewListFrom(ws.entries());

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>51. Version and compatibility contract (DDN 0.8 draft) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../icons/index.html">Icons</a>
+      <a href="../../guide/index.html">Guide</a>
+      <a href="../../reference/index.html">Reference</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>51. Version and compatibility contract (DDN 0.8 draft)</h1>
+<blockquote>Examples in this chapter use 0.8 (0.6-dialect) syntax, fenced ``<code>ddn-0.8. The reference runtime implements this chapter; the doc-snippet parse gate (</code>notation/tests/doc-snippets.js<code>) parse-checks every fence under a </code>ddn &quot;0.6&quot;;` header.</blockquote>
+<p>Status: <strong>draft specification for the 0.8 standard revision</strong>; the reference runtime implements this contract (its packaging stamp remains 0.7.0 ahead of the 0.8 release). This chapter is the conformance prerequisite for every other 0.8 chapter (52–58): it fixes which source versions exist, what an 0.8 processor owes each of them, and what may change under which process. Nothing here outranks <code>governance/VERSIONING.md</code>; this chapter restates the layered rules as an implementer-facing contract.</p>
+<h2>51.1 Accepted header values</h2>
+<p>Every <code>.ddn</code> file begins with a source-language declaration:</p>
+<pre><code>ddn &quot;0.6&quot;;</code></pre>
+<p>An 0.8 processor MUST accept exactly the source versions <code>&quot;0.2&quot;</code>, <code>&quot;0.3&quot;</code>, <code>&quot;0.4&quot;</code>, <code>&quot;0.5&quot;</code>, and <code>&quot;0.6&quot;</code>. Any other value — including <code>&quot;0.7&quot;</code>, <code>&quot;0.8&quot;</code>, <code>&quot;1.0&quot;</code>, an unquoted token, or a missing declaration — is a coded parse error (<code>DDN012</code>, existing). The version string is a scalar claim about the file's source dialect, not a negotiation: a processor never rewrites the header, and a mixed-version workspace keeps each file's own declared version.</p>
+<p>The layers stay distinct, per <code>governance/VERSIONING.md</code>:</p>
+<table><thead><tr><th>Layer</th><th>0.8 value</th></tr></thead><tbody><tr><td>Language source version (<code>ddn &quot;x&quot;;</code>)</td><td>accepted set 0.2–0.6; <strong>0.6 is new in the 0.8 standard</strong></td></tr><tr><td>Runtime / notation package semver</td><td>0.8.x (packaging release; 0.6.0-beta.1 and 0.7.0 introduced <strong>no</strong> source version)</td></tr><tr><td>Core registry identity</td><td><code>ddn-core@0.3</code> (unchanged)</td></tr><tr><td>Standard document set</td><td>chapters 00–58, stamped 0.8</td></tr></tbody></table>
+<p>A document written <code>ddn &quot;0.5&quot;;</code> remains a 0.5 document forever; it is never silently upgraded. A processor MUST NOT infer a newer dialect from file content and MUST NOT rewrite headers during normalization or bundling.</p>
+<h2>51.2 What each accepted version means in an 0.8 processor</h2>
+<ul><li><strong>0.2</strong> — original compat baseline; accepted through the disclosed 0.2</li></ul>
+<p>  compatibility path (chapter 00). No new features apply.</p>
+<ul><li><strong>0.3 / 0.4 / 0.5</strong> — the current production dialects. An 0.8 processor MUST</li></ul>
+<p>  parse, validate and render them with the same semantics the 0.7 processor   produced. New 0.8 syntax (chapters 52–58) is <strong>not available</strong> in these   dialects: encountering an 0.8 keyword or property in a <code>ddn &quot;0.5&quot;;</code> file is   <code>DDN-V04</code> (unknown in declared dialect), never silent acceptance.</p>
+<ul><li><strong>0.6</strong> — the 0.8 dialect. Everything in 0.5 plus: view <code>kind</code> declarations</li></ul>
+<p>  and profile strictness (52), publication chrome records, page border,   backgrounds and publication sets (53), text-fit modes (54), markings,   assertions, provenance and <code>ref:</code> anchors (55). A <code>ddn &quot;0.6&quot;;</code> file that   uses none of the new constructs MUST produce output byte-identical to the   same file re-stamped <code>ddn &quot;0.5&quot;;</code> — the version line itself is the only   permitted difference in rendered output.</p>
+<h2>51.3 Feature-gating rule</h2>
+<p>Every normative 0.8 construct is gated on source version 0.6. The gate is checked at parse/validation time:</p>
+<ul><li>0.8 construct in a ≤0.5 file → <code>DDN-V04</code>, error, naming the construct and</li></ul>
+<p>  the minimum source version.</p>
+<ul><li>≤0.5 construct in a 0.6 file → accepted unchanged; 0.6 removes nothing.</li><li>A workspace mixing versions (via <code>import</code>) assembles each module under its</li></ul>
+<p>  own declared version; constructs introduced by an imported 0.6 module are   visible to a 0.5 importer only through ordinary references — the importing   file cannot <em>spell</em> 0.8 syntax itself.</p>
+<h2>51.4 Deprecation policy</h2>
+<p>Within the pre-1.0 draft series:</p>
+<ol><li>Nothing accepted in a published source version is removed from a later</li></ol>
+<p>   accepted source version. Obsolete spellings MAY be marked <em>deprecated</em> in    the standard text; deprecated constructs keep their meaning and MUST keep    working, with an info-level diagnostic <code>DDN-V05</code> pointing at the    replacement.</p>
+<ol><li>Tightening validation of previously accepted <strong>invalid</strong> metadata is</li></ol>
+<p>   permitted with new error codes and fixtures covering both acceptance and    rejection (<code>VERSIONING.md</code> rule 2). Tightening that rejects previously    <em>valid</em> documents is a language change requiring an RFC.</p>
+<ol><li>Profiles remain immutable per published <code>name@version</code>; changed profiles</li></ol>
+<p>   ship under a new version number.</p>
+<ol><li>A deprecation becomes a removal only at 1.0, by explicit RFC, with the</li></ol>
+<p>   removal noted in this chapter.</p>
+<h2>51.5 Stability promises an implementer may rely on</h2>
+<p>Given identical inputs — same source bytes, same declared view, same pinned font metrics (chapter 54 §T4), same renderer version — an 0.8 processor MUST produce byte-identical SVG and identical diagnostics across runs and across platforms. Diagnostic codes and their severity are part of the contract: rewording a message is allowed, changing a code or its severity is not, except through the tightening path of §51.4.2.</p>
+<p>Not promised (unchanged from 0.7): stable coordinates across arbitrary source edits; byte-identity across different renderer versions; byte-identity when font metrics are estimated rather than pinned (<code>DDN-TW01</code>); byte-identity of outputs that embed wall-clock data such as the <code>$date</code> publication variable (chapter 53).</p>
+<h2>51.6 Diagnostic codes allocated by this chapter</h2>
+<table><thead><tr><th>Code</th><th>Severity</th><th>Meaning</th></tr></thead><tbody><tr><td><code>DDN-V01</code></td><td>error</td><td>Mixed workspace declares an entry version newer than any imported module can supply (a 0.6 construct is referenced from a 0.5 file through an alias that hides its origin).</td></tr><tr><td><code>DDN-V02</code></td><td>error</td><td>File declares <code>ddn &quot;0.6&quot;;</code> but a construct's semantics depend on a profile version not installed.</td></tr><tr><td><code>DDN-V03</code></td><td>warning</td><td>A construct is newly introduced in 0.6 and has no 0.5 spelling; emitted by tooling that must round-trip older dialects.</td></tr><tr><td><code>DDN-V04</code></td><td>error</td><td>0.8 (0.6-dialect) keyword or property used in a file declaring source version ≤ 0.5; message names the construct and the minimum version.</td></tr><tr><td><code>DDN-V05</code></td><td>info</td><td>Deprecated construct used; message names the replacement spelling.</td></tr><tr><td><code>DDN-V06</code></td><td>info</td><td>File declares a source version older than the workspace's newest; informational only, never a failure.</td></tr></tbody></table>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

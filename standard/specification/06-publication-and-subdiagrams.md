@@ -2,6 +2,8 @@
 
 A publication specifies `size:figure|content|a4|letter`, optional width/height, paper orientation, margins, `fit:contain|none|reflow`, minimum text size, optional final `embedding_scale`, overflow policy and metric requirements. Unsupported pagination is rejected rather than emitting an incomplete first page.
 
+> **0.8 draft amendment:** chapter 53 extends `publication` with header/footer records and variables, a page-level border, backgrounds with workspace-relative path rules, multi-view publication sets and print-size lint; chapter 54 extends measurement with text-fit modes and font pins. All additions are page furniture gated on source version `ddn "0.6";`; publications declaring no 0.8 property render as specified here, byte-identically.
+
 ## Actual behavior
 
 `content` allocates a natural-size SVG artboard for drawing and legend. `figure` uses specified dimensions. A4/Letter use physical dimensions converted to CSS pixels; landscape swaps axes. `none` retains 1:1 drawing scale and fails on overflow when requested. `contain` uniformly fits, then checks the final minimum. `reflow` adjusts automatic grid columns for available width before routing and fitting; it is not an arbitrary-layout pagination engine.

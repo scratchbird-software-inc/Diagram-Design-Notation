@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>55. Markings, assertions, provenance and cross-references (DDN 0.8 draft) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../icons/index.html">Icons</a>
+      <a href="../../guide/index.html">Guide</a>
+      <a href="../../reference/index.html">Reference</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>55. Markings, assertions, provenance and cross-references (DDN 0.8 draft)</h1>
+<blockquote>Examples in this chapter use 0.8 (0.6-dialect) syntax, fenced ``<code>ddn-0.8. The reference runtime implements this chapter's language constructs; the doc-snippet parse gate (</code>notation/tests/doc-snippets.js<code>) parse-checks every fence under a </code>ddn &quot;0.6&quot;;` header.</blockquote>
+<p>Status: draft for the 0.8 standard revision (source version <code>ddn &quot;0.6&quot;;</code>). This chapter adds declarative markings and metadata that travel with the model but, in 0.8, <strong>evaluate nothing</strong>: no marking fires a rule engine, no assertion is checked against data, no provenance field authenticates anything. They are authored claims carried, rendered and exported — no more.</p>
+<h2>55.1 Markings: the general mechanism (S1)</h2>
+<p>A <em>marking</em> is a named, theme-rendered annotation on an element or relation, declared with <code>marks</code>:</p>
+<pre><code>relation legacy_path @old_api -&gt; @db {
+  kind: flow;
+  marks: [forbidden];
+}
+object draft_feature &quot;Experimental export&quot; {
+  kind: component;
+  marks: [tentative];
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>marks</code>.)</p>
+<ul><li><code>marks</code> is an array of registered marking names. Unknown markings are</li></ul>
+<p>  <code>DDN-MK01</code>; duplicates in one array are <code>DDN-MK02</code>. Markings compose: an   element may carry several.</p>
+<ul><li>0.8 registers two markings:</li><li><code>forbidden</code> — negation/prohibition. On a relation it renders</li></ul>
+<p>    struck-through with a dashed, theme-supplied prohibition treatment (red     under the default theme; hatched-strike under <code>mono_print</code>, dash-heavy     under <code>colorblind_safe</code>) so the signal never rides on colour alone     (chapter 52 §52.6). On an element it renders the element's outline with     the same treatment. Semantically it asserts <strong>absence or prohibition by     the author's claim only</strong> — the runtime does not verify that the     forbidden path is unreachable.</p>
+<ul><li><code>tentative</code> — draft/uncommitted content, rendered dashed-grey per theme.</li><li>Negated prose uses the ordinary note idiom plus a marking:</li></ul>
+<p>  <code>note n1 &quot;Not permitted during lockdown&quot; { marks: [forbidden]; }</code>.   There is no separate &quot;negation note&quot; element kind.</p>
+<ul><li>Markings are part of the model: they appear in <code>modelFingerprint</code>, exports</li></ul>
+<p>  and diffs. Removing a marking is a model edit, not a view option.</p>
+<ul><li>Extensibility: new markings register additively in the registry with a</li></ul>
+<p>  rendering contract per theme; profiles MUST NOT reuse <code>forbidden</code> to mean   anything other than negation/prohibition.</p>
+<h2>55.2 Assertions (S2)</h2>
+<p>An <em>assertion</em> is optional machine-readable claim text attached to a view or relation:</p>
+<pre><code>relation pay @order -&gt; @ledger {
+  kind: flow;
+  assertion: &quot;every order posts exactly one ledger entry&quot;;
+}
+view billing &quot;Billing overview&quot; {
+  data: [@model];
+  assertions: [
+    &quot;no cycle contains a payment gateway&quot;,
+    &quot;every refund references an order&quot;
+  ];
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>assertion</code> / <code>assertions</code>.)</p>
+<ul><li><code>assertion</code> (single string, on a relation) and <code>assertions</code> (array of 1–32</li></ul>
+<p>  strings on a view; overflow <code>DDN-MK03</code>). Strings are plain text, 1–500   characters (<code>DDN-MK04</code>).</p>
+<ul><li><strong>Inert in 0.8.</strong> Assertions are parsed, validated for shape, carried in the</li></ul>
+<p>  resolved IR, shown in exports (<code>export { … }</code> includes them in JSON), and   surfaced in the designer inspector. They are <strong>never evaluated</strong>: no   assertion influences <code>check</code> results, rendering, or conformance. A failing-   looking assertion is not a diagnostic; a true-looking one is not evidence.   Evaluation semantics are deferred to 0.9 (chapter 58 records the   conformance hook).</p>
+<ul><li>Assertions are not executable in any dialect: they run no expression</li></ul>
+<p>  language (chapter 16 §16.2 discipline).</p>
+<h2>55.3 Provenance metadata (S3)</h2>
+<p>Optional view-level provenance:</p>
+<pre><code>view arch &quot;System context&quot; {
+  data: [@model];
+  source: &quot;system-overview.docx §3&quot;;
+  generator: &quot;ddn-import 0.8.0 (2026-10-04)&quot;;
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>source</code> / <code>generator</code> on a view.)</p>
+<ul><li><code>source</code>: free text (1–300 chars) naming the upstream document the view</li></ul>
+<p>  derives from. Convention: <code>document §locator</code>; no URL fetching is implied   and the runtime never resolves it.</p>
+<ul><li><code>generator</code>: free text naming the producing tool, its version and date,</li></ul>
+<p>  for machine-authored documents. Hand-authored views omit it.</p>
+<ul><li>Both are metadata only: excluded from <code>modelFingerprint</code> (they describe</li></ul>
+<p>  the document, not the model), included in JSON export, shown in the   designer's document properties. They are claims, not signatures — chapter   08's trust rules are unchanged.</p>
+<ul><li>Generators SHOULD write both fields on every machine-authored view;</li></ul>
+<p>  validators MUST NOT require them.</p>
+<h2>55.4 Cross-reference anchors: <code>ref:</code> (S4)</h2>
+<p>Notes and labels may embed references to other elements' reference numerals (chapter 52 §52.5) or ids:</p>
+<pre><code>object valve &quot;Shutoff valve&quot; { kind: component; numeral: 112; }
+note ops &quot;Service interval&quot; {
+  text: &quot;Drain via ref:valve before opening ref:pump.&quot;;
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>ref:</code> anchors in text.)</p>
+<ul><li>Syntax: <code>ref:&lt;element-id&gt;</code> inside any rendered text run (labels, note text,</li></ul>
+<p>  header/footer chrome strings). The anchor renders as the target element's   <code>numeral</code> when it has one, else its display label. The rendered text is   computed at render time, so numerals stay consistent under edits —   renumbering an element updates every anchor automatically.</p>
+<ul><li>An anchor naming a missing element is <code>DDN-MK05</code> (error) — references</li></ul>
+<p>  break loudly (§55.5). Anchors are <strong>block-scoped</strong>: the anchor site and its   target MUST be elements of the same data block (the view's selected data   scope); an anchor that resolves in the workspace but whose target lies in   another data block fires <code>DDN-MK05</code> exactly like a missing element. An   anchor to an element with no numeral renders its   label; an anchor inside its own element's text is <code>DDN-MK06</code>.</p>
+<ul><li>Anchors resolve to <strong>text only</strong>; they carry no hyperlink. Viewer</li></ul>
+<p>  navigation hooks for them are specified in chapter 57 §D1.</p>
+<h2>55.5 uid duplication semantics (S5)</h2>
+<p>Every element carries a stable <code>uid</code> (source id or assigned). Editing operations observe:</p>
+<ul><li><strong>Move</strong> (cut/paste, drag across groups or frames, reorder): the uid is</li></ul>
+<p>  <strong>preserved</strong>. All relations, <code>ref:</code> anchors, <code>marks</code>, assertions and   bindings follow the element. A move is not a delete-plus-create.</p>
+<ul><li><strong>Duplicate</strong> (copy/paste, designer &quot;duplicate&quot;): a <strong>new uid is minted</strong></li></ul>
+<p>  (<code>&lt;id&gt;_copy</code>, then <code>&lt;id&gt;_copy2</code>, …, first free name). The duplicate is a   new identity:</p>
+<ul><li>relations of the original are NOT copied (the duplicate starts</li></ul>
+<p>    unconnected) unless the designer gesture explicitly selected them;</p>
+<ul><li><code>ref:</code> anchors elsewhere still point at the <strong>original</strong> — they are</li></ul>
+<p>    never silently retargeted;</p>
+<ul><li><code>numeral</code>, when present, is not duplicated (a collision would be</li></ul>
+<p>    <code>DDN-VP06</code>); the duplicate's numeral field starts empty.</p>
+<ul><li><strong>References break loudly</strong>: deleting an element that is the target of a</li></ul>
+<p>  <code>ref:</code> anchor, a relation endpoint, a binding or a publication-set figure   fails the next <code>check</code> with the relevant coded error (<code>DDN-MK05</code>,   <code>DDN022</code>, <code>DDN-PB09</code>). No tool repairs a dangling reference by guessing.</p>
+<ul><li>uid stability across file saves: uids are source ids; a rename of the id</li></ul>
+<p>  is a delete-plus-create at the language level, and tools that rename must   offer to rewrite referencing sites (anchors, bindings, relations) in the   same undo transaction.</p>
+<h2>55.6 Deferred: diff views (S6)</h2>
+<p><code>diff: [@viewA, @viewB]</code> with added/removed/changed styling by uid (geometry ignored; label/kind/marks compared) is <strong>deferred to 0.9</strong>. 0.8 processors MUST reject <code>diff</code> as an unknown property (<code>DDN-V04</code> in 0.6 files) rather than half-implement it. The uid semantics of §55.5 are written so diff can build on them without amendment.</p>
+<h2>55.7 Diagnostic codes allocated by this chapter</h2>
+<table><thead><tr><th>Code</th><th>Severity</th><th>Meaning</th></tr></thead><tbody><tr><td><code>DDN-MK01</code></td><td>error</td><td>Unknown marking name in <code>marks</code>; message lists registered markings.</td></tr><tr><td><code>DDN-MK02</code></td><td>error</td><td>Duplicate marking in one <code>marks</code> array.</td></tr><tr><td><code>DDN-MK03</code></td><td>error</td><td>More than 32 assertions on one view.</td></tr><tr><td><code>DDN-MK04</code></td><td>error</td><td>Assertion text empty or over 500 characters.</td></tr><tr><td><code>DDN-MK05</code></td><td>error</td><td><code>ref:</code> anchor names a missing element; message names the anchor site.</td></tr><tr><td><code>DDN-MK06</code></td><td>error</td><td><code>ref:</code> self-reference within an element's own text.</td></tr></tbody></table>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -32,6 +32,7 @@
 <h1>44. View chrome: legend, title and footer visibility</h1>
 <p>Status: implemented in runtime 0.7.0. Source grammar remains DDN 0.5; views that declare no chrome option render byte-identical SVG to previous releases, and the use-cases manifest is unchanged.</p>
 <p>Page chrome is presentation: the relationship key, the view title/header block, and the footer line. None of it carries model facts — the same data with the same semantics renders with or without it — so visibility is a view-level option, not a renderer decision.</p>
+<blockquote><strong>0.8 draft amendment:</strong> chapter 53 defines what authored content the<br>header/footer emission sites can carry (runs, <code>$variables</code>, page border,<br>backgrounds) and adds multi-view publication sets. The visibility options<br>of this chapter keep their meaning: <code>title: off</code>/<code>footer: off</code> suppress<br>the emission site regardless of any 0.8 header/footer record, and<br>suppressing a site reclaims its band exactly as specified here.</blockquote>
 <h2>Options (D2)</h2>
 <p>Three properties, available at three equivalent sites: as flat view-level keywords, as properties of a <code>chrome</code> group inside a view, and as properties of a named <code>chrome</code> declaration inside a <code>format</code> block (referenced directly or through a <code>bundle</code>):</p>
 <pre><code>view embedded &quot;Minimal chrome for embedding&quot; {

@@ -24,3 +24,41 @@ on substituted instances, and (c) equivalence-gate fixtures against the
 handwritten expansion. Related deferral inside phase 5: definitions are
 closed templates (`use:` inside a definition body is DDN-E017); nested
 presets/fragments can be reconsidered together with parameterization.
+
+## DDN 0.8 deferrals to 0.9 (2026-10-04)
+
+The 0.8 standard (spec chapters 51–58, source version `ddn "0.6";`)
+consciously deferred three items; none is a gap in what shipped, each has a
+named hook:
+
+- **Diff views** (`diff: [@viewA, @viewB]`, ch. 55 §55.6) — deferred so the
+  uid move/duplicate semantics (§55.5) could settle first. 0.8 processors
+  reject `diff` as DDN-V04 rather than half-implementing it. Revisiting: 0.9,
+  building on the uid contract without amendment.
+- **Assertion evaluation** (ch. 55 §55.2) — 0.8 assertions are parsed,
+  shape-validated, carried and exported but never evaluated; chapter 58
+  reserves the conformance hook. Revisiting: 0.9 evaluation semantics.
+- **Mermaid import** (ch. 57 §57.4) — the 0.8 surface only fixes where it
+  will live (a designer "Import…" command producing ordinary 0.6 source).
+  Revisiting: 0.9.
+
+## Known 0.8 tooling gaps (2026-10-04)
+
+Behavior verified against the frozen runtime; documented as-is in
+`website/download/DDN-AI-REFERENCE.md` §14 until fixed:
+
+- **`font_pin` is not CLI-loadable.** ~~The CLI side-loads background
+  images/patterns into the workspace file map but not `font_pin` metrics
+  files~~ **CLOSED 2026-10-04:** `notation/cli/cli.js`'s asset walker now
+  side-loads `font_pin` JSON (UTF-8 text) under the same containment rules
+  as background assets; covered by `notation/tests/cli-tooling.js`.
+- **DDN-W106 noise on 0.8 element/relation properties.** ~~`numeral`,
+  `marks` and `assertion` are absent from the legacy reserved-property list
+  in `notation/runtime/ddn-contracts.js`, so default logical validation also
+  warns DDN-W106 for each~~ **CLOSED 2026-10-04:** the three keys are now
+  registered in the reserved-property list; their dedicated codes
+  (DDN-VP05/06, DDN-MK01/02) remain the only diagnostics.
+- **Spec-vs-runtime code drift in ch. 51.** ~~Chapter 51 says an unsupported
+  version header is DDN010; the runtime raises DDN012~~ **CLOSED
+  2026-10-04:** chapter 51 amended to document DDN012 (the pre-existing,
+  correct runtime code); behavior unchanged.

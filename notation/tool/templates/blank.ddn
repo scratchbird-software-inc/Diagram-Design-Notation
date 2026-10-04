@@ -1,0 +1,12 @@
+ddn "0.6";
+module "untitled";
+
+// New document (standard chapter 57 §D2): an empty document is a valid
+// skeleton — an empty data block and an empty view render an empty artboard.
+data model {
+}
+
+view main {
+    data: [@model];
+    publication { size: content; fit: none; }
+}

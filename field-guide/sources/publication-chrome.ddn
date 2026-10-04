@@ -1,0 +1,52 @@
+ddn "0.6";
+module "ddn.fieldguide.pubchrome";
+
+// Publication chrome is page furniture: headers, footers, a page border and
+// backgrounds. It never changes the model, layout or routing — a publication
+// with no chrome properties renders exactly as before.
+
+format shared {
+  publication filing {
+    size: a4;
+    orientation: landscape;
+    margin: 15mm;
+    minimum_text: 7pt;
+    header {
+      left { text: "$title"; size: 9pt; }
+      right { text: "Release pack — $date"; size: 8pt; }
+    }
+    footer {
+      left { text: "$view_id"; size: 8pt; }
+      center { text: "Figure $figure"; size: 9pt; }
+      right { text: "Page $page"; size: 8pt; }
+    }
+    border { style: single; weight: 1pt; inset: 5mm; corner_marks: true; }
+    background { color: "#f7f4ee"; }
+  }
+}
+
+data model {
+  service gateway "Edge gateway";
+  service billing "Billing service";
+  database ledger "Ledger";
+  relation charge "charges" @gateway -> @billing { kind: calls; }
+  relation post "posts" @billing -> @ledger { kind: flow; }
+}
+
+view overview "Billing path overview" {
+  data: [@model];
+  publication: @shared.filing;
+}
+
+view detail "Billing path detail — rotated" {
+  data: [@model];
+  publication: @shared.filing;
+  layout { direction: down; }
+}
+
+// One ordered figure set with shared chrome: `cli.js publish` emits one SVG
+// per figure plus a manifest; $figure/$page are the 1-based positions here.
+publication_set release_pack "Release documentation pack" {
+  publication: @shared.filing;
+  figures: [@overview, @detail];
+}

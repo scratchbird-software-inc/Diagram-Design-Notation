@@ -24,12 +24,12 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
 </head><body>
-<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.8 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
 
 <main>
 <div class="lesson-title"><p class="eyebrow">Techniques</p><h2>Crossings — gaps, bridges and square jumps</h2><p class="subtitle">website/examples/basics/17-curved-relations.ddn # crossing_gap</p><span class="pill technique">technique</span></div>
 <div class="explain"><section class="card"><h3>What this diagram shows</h3><p>How disconnected lines cross: a gap, a rounded jump, or a local square jump — the mark that says &quot;not connected&quot;.</p></section><section class="card"><h3>Why use it?</h3><p>A crossing misread as a junction is a defect that ships; the crossing mark is the honest &quot;no connection here&quot;.</p></section><section class="card"><h3>When is it useful?</h3><p>Any routed diagram where unrelated lines must cross — bus layouts, networks, wiring.</p></section></div>
-<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>Find the crossing: the mark (gap, bridge or square) belongs to the line that hops, and it means exactly one thing.</li><li>Connected lines join at a node; crossed lines pass — the mark removes the ambiguity.</li></ol></section>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>Find the crossing: the mark (gap, bridge or square) belongs to the line that hops, and it means exactly one thing.</li><li>Connected lines join at a node; crossed lines pass — the mark removes the ambiguity.</li><li>The router minimizes crossings first (optimize: crossings is the default and keeps improving); the mark disambiguates the crossings that remain, it does not excuse a tangled layout.</li></ol></section>
 <section class="card"><h3>Information to gather first</h3><ul><li>The model</li><li>The crossing style declaration</li></ul></section></div>
 <h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
 <div class="actions" style="margin:.3rem 0"><label for="variant">Variant <select id="variant"><option value="crossing_gap">crossing_gap</option><option value="crossing_bridge">Bridge variant</option><option value="crossing_square">Square-jump variant</option></select></label></div>
@@ -57,7 +57,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/17-curved-relations.ddn</td><td>data, format, view</td></tr><tr><td>website/examples/basics/shared.ddn</td><td>format</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Crossing marks are presentation disambiguation; connectivity is declared in the model, never inferred from geometry.</p><ul><li>Do not rely on colour alone to separate crossing lines — marks survive print and colour-blindness.</li><li>One crossing style per diagram; mixed marks reintroduce the ambiguity.</li></ul></section>
 </main>
-<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../dist/ddn.global.js"></script>
 <script src="../../dist/ddn-graph.js"></script>
 <script src="../../dist/ddn-iso.js"></script>

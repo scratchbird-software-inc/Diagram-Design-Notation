@@ -1,0 +1,15 @@
+ddn "0.6";
+module "untitled";
+
+// Unrestricted vocabulary starter (view kind ddn-native, classic theme).
+data model {
+    object first "First element" { kind: component; }
+    object second "Second element" { kind: component; }
+    relation link "Related to" @first -> @second { kind: assoc; }
+}
+
+view main {
+    data: [@model];
+    kind: ddn-native;
+    publication { size: content; fit: none; }
+}

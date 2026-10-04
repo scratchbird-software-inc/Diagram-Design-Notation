@@ -9,6 +9,13 @@ block, and the footer line. None of it carries model facts — the same data
 with the same semantics renders with or without it — so visibility is a
 view-level option, not a renderer decision.
 
+> **0.8 draft amendment:** chapter 53 defines what authored content the
+> header/footer emission sites can carry (runs, `$variables`, page border,
+> backgrounds) and adds multi-view publication sets. The visibility options
+> of this chapter keep their meaning: `title: off`/`footer: off` suppress
+> the emission site regardless of any 0.8 header/footer record, and
+> suppressing a site reclaims its band exactly as specified here.
+
 ## Options (D2)
 
 Three properties, available at three equivalent sites: as flat view-level

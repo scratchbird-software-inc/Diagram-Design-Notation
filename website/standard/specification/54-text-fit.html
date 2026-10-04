@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>54. Text fit: modes, two-pass re-layout and font pinning (DDN 0.8 draft) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../icons/index.html">Icons</a>
+      <a href="../../guide/index.html">Guide</a>
+      <a href="../../reference/index.html">Reference</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>54. Text fit: modes, two-pass re-layout and font pinning (DDN 0.8 draft)</h1>
+<blockquote>Examples in this chapter use 0.8 (0.6-dialect) syntax, fenced ``<code>ddn-0.8. The reference runtime implements this chapter's language constructs; the doc-snippet parse gate (</code>notation/tests/doc-snippets.js<code>) parse-checks every fence under a </code>ddn &quot;0.6&quot;;` header.</blockquote>
+<p>Status: draft for the 0.8 standard revision (source version <code>ddn &quot;0.6&quot;;</code>). This chapter supersedes no 0.5 rule: elements that declare no text-fit mode behave exactly as in 0.7 (fixed-size boxes, <code>size: content</code> measurement). The chapter defines how boxes adapt to their text, what happens when they cannot, and how font metrics are pinned so the result is reproducible.</p>
+<h2>54.1 Text-fit modes (T1)</h2>
+<p><code>text_fit</code> is a property of an element declaration, and of a profile or format bundle as a default:</p>
+<pre><code>object summary &quot;Quarterly summary&quot; {
+  kind: note;
+  text_fit: wrap;
+  max_width: 320px;
+}
+object badge &quot;OK&quot; {
+  kind: note;
+  text_fit: grow;
+  max_width: 240px;
+  max_height: 120px;
+}
+object tight &quot;A rather long legend label&quot; {
+  kind: term;
+  text_fit: shrink;
+  min_font: 9px;
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>text_fit</code>, <code>max_width</code>, <code>max_height</code>, <code>min_font</code>.)</p>
+<table><thead><tr><th>Mode</th><th>Behavior</th></tr></thead><tbody><tr><td><code>wrap</code> (default when a width constraint exists)</td><td>Width fixed at declared/measured width; text wraps; the box <strong>grows downward</strong> to fit.</td></tr><tr><td><code>grow</code></td><td>Box expands with content in both axes until <code>max_width</code> is hit, then wraps; growth stops at <code>max_height</code>.</td></tr><tr><td><code>shrink</code></td><td>Font steps down in fixed decrements (1 px per step) from the base size to the declared <code>min_font</code> floor; first size that fits wins.</td></tr></tbody></table>
+<ul><li><code>max_width</code> / <code>max_height</code>: 40–4000 px. Bounds over the drawing extent</li></ul>
+<p>  budget (50,000 px, chapter 16) are <code>DDN-TF02</code>.</p>
+<ul><li><code>min_font</code>: 6–64 px, must be ≤ the effective base font (<code>DDN-TF03</code>).</li><li><code>shrink</code> with no <code>min_font</code> uses the absolute floor 8 px. <code>shrink</code> never</li></ul>
+<p>  falls below the floor: residual overflow is diagnosed (§54.3), never   silently clipped.</p>
+<ul><li>Precedence: element &gt; profile/bundle default &gt; mode inferred from width</li></ul>
+<p>  constraint &gt; legacy fixed box. A bundle <code>text_fit</code> applies only to elements   that declare no mode.</p>
+<ul><li>Changing <code>text_fit</code> changes geometry, not semantics: <code>modelFingerprint</code>,</li></ul>
+<p>  endpoints and relation identities are unchanged. Pins (<code>place</code>) freeze the   box origin; growth extends away from the pinned corner per the element's   anchor rules.</p>
+<h2>54.2 Two-pass measure → resize → re-layout (T3)</h2>
+<p>The render pipeline gains a bounded adaptation loop:</p>
+<ol><li><strong>Measure</strong> all text with the active metric source (§54.4).</li><li><strong>Resize</strong> boxes per their mode and bounds (§54.1).</li><li><strong>Re-layout</strong>: placement, port reservation and routing re-run with the new</li></ol>
+<p>   boxes, exactly as if the author had declared the new sizes.</p>
+<ol><li>If any box changed size in step 3's re-measure (e.g. a wrap decision</li></ol>
+<p>   shifted by a scaled gap), run <strong>one</strong> more pass — measure, resize,    re-layout.</p>
+<ol><li>Stop. The pipeline runs <strong>at most two passes</strong>; it is not a fixpoint</li></ol>
+<p>   solver. Any text still overflowing its box after pass two is a residual    overflow and is diagnosed (§54.3). Under <code>layout { quality: warn; }</code> the    render proceeds with the box at its bounded size and the text clipped at    the box edge with a visible ellipsis marker, never with invisible text;    under the default <code>quality: error</code> the render is refused with the    <code>DDN-LW07</code>/<code>DDN-LW08</code> error instead.</p>
+<p>Two passes are sufficient for every convergent case in the reference corpus; the cap exists so pathological oscillation (grow → route detour → shrink) terminates deterministically. <code>scene.layout.textFit</code> records passes run, resized element ids, and per-pass size deltas.</p>
+<h2>54.3 Overflow diagnostics (T2)</h2>
+<p>Residual overflow is reported at <strong>render time</strong> (the two-pass pipeline of §54.2 runs inside the render phase; <code>check</code> alone never raises these codes):</p>
+<ul><li><code>DDN-LW07</code> (warning): text exceeds its box after both passes in <code>wrap</code> or</li></ul>
+<p>  <code>grow</code> mode; message names the element, the overflow in px, and the   bounding property, e.g. &quot;element <code>summary</code> overflows by 18px vertically —   raise <code>max_height</code> (currently 120px) or shorten the label.&quot;</p>
+<ul><li><code>DDN-LW08</code> (warning): <code>shrink</code> hit <code>min_font</code> and still overflows; message</li></ul>
+<p>  names the floor and the smallest fitting size if one exists above the   absolute floor.</p>
+<ul><li>Severity follows <code>layout { quality: … }</code> (chapter 05): under the default</li></ul>
+<p>  <code>quality: error</code>, <code>DDN-LW07</code>/<code>DDN-LW08</code> are raised as errors and the render   is refused — no SVG is produced and no ellipsis marker is painted. Only   under <code>quality: warn</code> do they downgrade to warning diagnostics; that is   also the only configuration in which the clipped-text ellipsis marker of   §54.2 appears.</p>
+<h2>54.4 Font and metric pinning (T4)</h2>
+<p>Byte-stable rendering requires a pinned metric environment. 0.8 formalizes the 0.5 measurement cache (chapter 06) as a <em>font pin</em>:</p>
+<pre><code>format shared {
+  style pinned { font: sans; font_pin: &quot;metrics-2026-09.json&quot;; }
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>font_pin</code> on a style.)</p>
+<ul><li><code>font_pin</code> names a metrics file resolved by the same path rules as</li></ul>
+<p>  backgrounds (chapter 53 §53.3: relative to the declaring <code>.ddn</code>, inside   the workspace, no absolute paths or URLs — <code>DDN-PB05</code> family applies).</p>
+<ul><li>The pin file records, per font stack: family names, per-run widths for the</li></ul>
+<p>  corpus of measured strings, the measurement engine and version, and a   SHA-256 of the producing font files. It is evidence for those runs, not   proof another machine has the fonts (chapter 06, unchanged).</p>
+<ul><li>With a pin active, <strong>all</strong> text measurement uses pinned values; unknown</li></ul>
+<p>  runs are <code>DDN-TF04</code> (error under <code>metrics: required</code>; the conservative   grapheme estimate plus <code>DDN-TW01</code> otherwise). A pin whose recorded engine   differs from the renderer's is <code>DDN-TF05</code> (warning; pin ignored).</p>
+<ul><li><code>font_pin</code> plus <code>metrics: required</code> is the reproducibility configuration:</li></ul>
+<p>  same source + same pin + same renderer ⇒ byte-identical SVG on any   platform (chapter 51 §51.5). Conformance vectors (chapter 58) are authored   under this configuration, or fall back to geometry-only hashes.</p>
+<h2>54.5 <code>size: content</code> as the documented default path (T5)</h2>
+<p><code>size: content</code> remains the recommended default publication for authored diagrams and is the skeleton default for new designer documents (chapter 57 §D2). The CLI render flag <code>--content-size</code> forces <code>size: content</code> for one render without editing source — an override on the existing render-override channel, never a source rewrite. Interaction with text fit: <code>size: content</code> artboards grow with the final post-fit bounds (§54.2), so <code>wrap</code>/<code>grow</code> results are always fully visible; print-size lint (chapter 53 §53.5) does not fire on content-sized output.</p>
+<h2>54.6 Diagnostic codes allocated by this chapter</h2>
+<table><thead><tr><th>Code</th><th>Severity</th><th>Meaning</th></tr></thead><tbody><tr><td><code>DDN-TF01</code></td><td>error</td><td>Unknown <code>text_fit</code> mode; message lists `wrap\</td><td>grow\</td><td>shrink`.</td></tr><tr><td><code>DDN-TF02</code></td><td>error</td><td><code>max_width</code>/<code>max_height</code> outside 40–4000 px or beyond the extent budget.</td></tr><tr><td><code>DDN-TF03</code></td><td>error</td><td><code>min_font</code> out of range or above the effective base font.</td></tr><tr><td><code>DDN-TF04</code></td><td>error</td><td>Text run missing from an active <code>font_pin</code> under <code>metrics: required</code>.</td></tr><tr><td><code>DDN-TF05</code></td><td>warning</td><td>Pin/engine mismatch; pinned metrics ignored for this render.</td></tr><tr><td><code>DDN-LW07</code></td><td>warning</td><td>Residual text overflow after two passes (wrap/grow); message names the remedy.</td></tr><tr><td><code>DDN-LW08</code></td><td>warning</td><td><code>shrink</code> reached <code>min_font</code> and still overflows.</td></tr></tbody></table>
+<p><code>DDN-LW07/08</code> continue the existing layout-warning family (<code>DDN-LW01</code>–<code>LW06</code>).</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

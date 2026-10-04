@@ -202,7 +202,61 @@ api.authoring={
   const owner=[...b.workspace.symbols.values()].filter(x=>x.source===d.source&&x.start<=t.start&&x.end>=t.end).sort((a,b)=>(a.end-a.start)-(b.end-b.start))[0];if(!owner)continue;
   const tail=files[d.source].slice(t.end).match(/^[A-Za-z_][A-Za-z0-9_-]*(?:\.[A-Za-z_][A-Za-z0-9_-]*)*/);if(tail)try{const target=b.workspace.resolve({$ref:tail[0]},owner);if(target.uid===id||target.uid.startsWith(id+'.'))references++;}catch{}
  }if(references)fail('DDN-E004',references+' references depend on this definition. Remove/reassign them in source first, or hide its appearance.');return apply(ws,b,[{file:n.source,start:n.start,end:n.end,text:''}],entry,view);},
- sourceOf(ws,entry,view,id){const b=build(ws,entry,view),n=find(b,id);return{file:n.source,start:n.start,end:n.end,type:n.type,id:n.id,name:n.label||n.id,properties:clone(n.props)};}
+ sourceOf(ws,entry,view,id){const b=build(ws,entry,view),n=find(b,id);return{file:n.source,start:n.start,end:n.end,type:n.type,id:n.id,name:n.label||n.id,properties:clone(n.props)};},
+ /* DDN 0.8 (ch. 55 §S5) duplicate semantics: copy/paste mints a NEW uid
+  * (<id>_copy, then <id>_copy2, …, first free name). The duplicate is a new
+  * identity — the original's relations are NOT copied, ref: anchors keep
+  * pointing at the original, and a `numeral` is never duplicated (a collision
+  * would be DDN-VP06). The copy lands in the same data block as the original;
+  * a move (cut/paste, drag across groups) never goes through here — moves edit
+  * placement and keep the uid by construction. */
+ duplicate(ws,entry,view,id){
+  const b=build(ws,entry,view),n=find(b,id);
+  if(n.type!=='object')fail('DDN-E001','Only elements can be duplicated.');
+  const taken=new Set();for(const s of b.workspace.symbols.values())taken.add(s.path);
+  const parent=n.path.includes('.')?n.path.slice(0,n.path.lastIndexOf('.')):'';
+  let copyId=n.id+'_copy',i=2;while(taken.has(parent?parent+'.'+copyId:copyId))copyId=n.id+'_copy'+(i++);
+  const kind=n.props.kind?JSON.stringify(n.props.kind):JSON.stringify('object');
+  const code='object '+copyId+' '+JSON.stringify((n.label||n.id)+' copy')+' { kind: '+kind+'; }';
+  return apply(ws,b,[{file:n.source,start:n.end,end:n.end,text:'\n    '+code+'\n'}],entry,view);
+ },
+ /* DDN 0.8 (ch. 57 §D5) "pin result": after a Tidy re-layout, write the
+  * computed positions of the FREE elements as place pins in one undoable
+  * transaction. positions maps element uid → {x, y} world coordinates; the
+  * caller passes free elements only — authored pins are never rewritten. */
+ pinAll(ws,entry,view,positions){
+  if(!positions||typeof positions!=='object'||Array.isArray(positions))fail('DDN-E001','pinAll needs a {uid: {x, y}} record.');
+  const ids=Object.keys(positions);if(!ids.length)return ws.revision;
+  if(ids.length>128)fail('DDN-E001','pinAll is limited to 128 positions per transaction.');
+  const b=build(ws,entry,view),v=b.viewNode,files=ws.getFiles(),edits=[];
+  for(const id of ids){
+   const p=positions[id];
+   if(!p||!Number.isFinite(p.x)||!Number.isFinite(p.y)||Math.abs(p.x)>1e7||Math.abs(p.y)>1e7)fail('DDN-E001','Positions must be finite, bounded world coordinates.');
+   const ref=refFor(b,v.doc,id),pl=v.children.find(n=>n.type==='place'&&b.workspace.resolve(n.target,n).uid===id);
+   const at=[{$quantity:Math.round(p.x*1000)/1000,unit:'px'},{$quantity:Math.round(p.y*1000)/1000,unit:'px'}];
+   edits.push(pl?property(files[pl.source],pl,'at',at):{file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    place @'+ref+' { at: '+value(at)+'; }\n'});
+  }
+  return apply(ws,b,edits,entry,view);
+ },
+ /* DDN 0.8 (ch. 57 §D3) jump-to-definition: resolve the @ref (or plain
+  * identifier) at a source offset to its declaring file:line span, using the
+  * same indexed-owner resolution deleteDefinition uses. Returns null when the
+  * offset is not on a resolvable reference. */
+ definitionAt(ws,entry,view,file,offset){
+  const b=build(ws,entry,view),files=ws.getFiles();
+  if(!Object.hasOwn(files,file)||!Number.isInteger(offset)||offset<0||offset>files[file].length)fail('DDN-E001','definitionAt needs a workspace file and a valid text offset.');
+  const doc=[...b.workspace.docs.values()].find(d=>d.source===file);if(!doc)return null;
+  const text=files[file];
+  for(const t of D.lex(text,file)){
+   if(t.type!=='@')continue;
+   const tail=text.slice(t.end).match(/^[A-Za-z_][A-Za-z0-9_-]*(?:\.[A-Za-z_][A-Za-z0-9_-]*)*/);
+   if(!tail||offset<t.start||offset>t.end+tail[0].length)continue;
+   const owner=[...b.workspace.symbols.values()].filter(x=>x.source===file&&x.start<=t.start&&x.end>=t.end).sort((a,c)=>(a.end-a.start)-(c.end-c.start))[0];
+   if(!owner)return null;
+   try{const target=b.workspace.resolve({$ref:tail[0]},owner);return{file:target.source,start:target.start,end:target.end,type:target.type,id:target.id,name:target.label||target.id};}catch{return null;}
+  }
+  return null;
+ }
 };
 function clone(v){return JSON.parse(JSON.stringify(v));}
 }

@@ -1,0 +1,143 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Publication chrome — headers, footers, borders and figure sets: a source-editable DDN field-guide chapter."><title>Publication chrome — headers, footers, borders and figure sets · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style><link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+</head><body>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.8 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
+
+<main>
+<div class="lesson-title"><p class="eyebrow">Techniques</p><h2>Publication chrome — headers, footers, borders and figure sets</h2><p class="subtitle">field-guide/sources/publication-chrome.ddn # overview</p><span class="pill technique">technique</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>Page furniture declared in the publication block: three-slot header and footer runs with $ variables, a page border, a background, and a publication_set that numbers several views as one ordered figure pack.</p></section><section class="card"><h3>Why use it?</h3><p>Titles, dates, page numbers and figure numbers belong in the source, not in a post-processing step — one declaration keeps every exported page consistent and reviewable.</p></section><section class="card"><h3>When is it useful?</h3><p>Print packs, release documentation, filings — anything that leaves the screen as a set of numbered pages.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>Runs resolve $title, $date, $view_id, $figure and $page per emitted page (a literal dollar is $$); an unknown $name fails DDN-PB02.</li><li>The set's figures are numbered in declaration order — $figure and $page are their 1-based positions; publish emits one SVG per figure plus a manifest JSON.</li><li>The border and background paint behind the drawing and never move it: chrome changes no model fact, no layout, no route.</li><li>Pin the wall-clock variables for reproducible output: --publication-date fixes $date, and conformance vectors always pin it.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The publication block (size, margins, minimum text)</li><li>The chrome text and which variables it needs</li><li>The ordered figure list for the set</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="actions" style="margin:.3rem 0"><label for="variant">Variant <select id="variant"><option value="overview">overview</option><option value="detail">Rotated detail variant</option></select></label></div>
+<div class="views"><div><p class="viewer-label">ddn@1 · graph</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
+<p class="expected">Only the label of Edge gateway / review changes; chrome, page geometry and identities are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 407e2e8a8e11… → cf24daeab809…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Rename one element, apply, then publish the set with cli.js publish --set release_pack and read the manifest.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open field-guide/sources/publication-chrome.ddn and locate view overview. This selects existing data; it is not a stored SVG.</li><li>Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view overview &quot;Billing path overview&quot; {
+  data: [@model];
+  publication: @shared.filing;
+}</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>field-guide/sources/publication-chrome.ddn</td><td>format, data, view</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>Chrome bands reserve space outside the drawing and never overlap it; a publication declaring no chrome renders exactly as before. Print-size lint (DDN-PS01–PS03) runs at check on physical sizes only, and --strict-print promotes it to a gate (DDN-PS04).</p><ul><li>Do not hand-maintain titles or page numbers in exported files — declare them once and let each page resolve its own variables.</li><li>Background images and patterns must live inside the workspace (PNG/WebP images, sanitized SVG patterns); absolute paths and URLs are rejected (DDN-PB05).</li></ul></section>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../dist/ddn.global.js"></script>
+<script src="../../dist/ddn-graph.js"></script>
+<script src="../../dist/ddn-iso.js"></script>
+<script src="../../dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"field-guide/sources/publication-chrome.ddn":"ddn \"0.6\";\nmodule \"ddn.fieldguide.pubchrome\";\n\n// Publication chrome is page furniture: headers, footers, a page border and\n// backgrounds. It never changes the model, layout or routing — a publication\n// with no chrome properties renders exactly as before.\n\nformat shared {\n  publication filing {\n    size: a4;\n    orientation: landscape;\n    margin: 15mm;\n    minimum_text: 7pt;\n    header {\n      left { text: \"$title\"; size: 9pt; }\n      right { text: \"Release pack — $date\"; size: 8pt; }\n    }\n    footer {\n      left { text: \"$view_id\"; size: 8pt; }\n      center { text: \"Figure $figure\"; size: 9pt; }\n      right { text: \"Page $page\"; size: 8pt; }\n    }\n    border { style: single; weight: 1pt; inset: 5mm; corner_marks: true; }\n    background { color: \"#f7f4ee\"; }\n  }\n}\n\ndata model {\n  service gateway \"Edge gateway\";\n  service billing \"Billing service\";\n  database ledger \"Ledger\";\n  relation charge \"charges\" @gateway -> @billing { kind: calls; }\n  relation post \"posts\" @billing -> @ledger { kind: flow; }\n}\n\nview overview \"Billing path overview\" {\n  data: [@model];\n  publication: @shared.filing;\n}\n\nview detail \"Billing path detail — rotated\" {\n  data: [@model];\n  publication: @shared.filing;\n  layout { direction: down; }\n}\n\n// One ordered figure set with shared chrome: `cli.js publish` emits one SVG\n// per figure plus a manifest; $figure/$page are the 1-based positions here.\npublication_set release_pack \"Release documentation pack\" {\n  publication: @shared.filing;\n  figures: [@overview, @detail];\n}\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"publication-chrome","entry":"field-guide/sources/publication-chrome.ddn","view":"overview","files":["field-guide/sources/publication-chrome.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.fieldguide.pubchrome::model.gateway","file":"field-guide/sources/publication-chrome.ddn","before":"Edge gateway","after":"Edge gateway / review","expectation":"Only the label of Edge gateway / review changes; chrome, page geometry and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
+
+
+<script>window.__guideInit = function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
+const sel = document.getElementById('file');
+sel.innerHTML = '';
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
+}
+redraw();
+};</script>
+<script>window.__guideInit();</script>
+</body></html>

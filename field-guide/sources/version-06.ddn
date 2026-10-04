@@ -1,0 +1,20 @@
+ddn "0.6";
+module "ddn.fieldguide.version06";
+
+// The ddn "0.6"; header admits the 0.8 constructs (view kinds, publication
+// chrome, text fit, markings). A 0.6 file that uses none of them — like this
+// one — renders byte-identically to the same file stamped ddn "0.5"; only
+// the version line differs. Upgrade a file when it, or a module it authors,
+// needs a 0.8 construct; a mixed workspace keeps each file's own version.
+data model {
+  service api "Order API";
+  database store "Order store";
+  queue events "Order events";
+  relation read "persists" @api -> @store { kind: flow; }
+  relation emit "publishes" @api -> @events { kind: flow; }
+}
+
+view main "Order service outline" {
+  data: [@model];
+  publication { size: content; fit: none; }
+}

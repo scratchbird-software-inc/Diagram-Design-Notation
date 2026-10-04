@@ -102,7 +102,73 @@ function srcImportClosure(src, pageHref, fetchFn, parseImports, resolvePath) {
   return pull(new URL(src, pageHref), entryName).then(() => ({ files, entryName }));
 }
 
-const api = { pickEntryView, viewListFrom, isPlausibleSourceFile, freshLocalId, srcFromQuery, srcFetchErrorMessage, srcImportClosure };
+/* DDN 0.8 (ch. 57 §D2): the "New document" template picker. `templates` is the
+ * build-inlined {name: source} map (content files under notation/tool/templates/);
+ * `viewKinds` is the runtime's DDNViewProfiles.VIEW_KINDS table when reachable.
+ * The blank document always leads; every template whose name matches a
+ * registered view kind is labelled from the registry so the picker stays keyed
+ * to chapter 52 as kinds are added. */
+function templateList(templates, viewKinds) {
+  const names = Object.keys(templates || {}).sort();
+  const label = name => {
+    if (name === 'blank') return 'Blank document — empty artboard';
+    const kind = viewKinds && viewKinds[name];
+    return name + (kind ? ' — view kind ' + name : ' — starter');
+  };
+  return names.map(name => ({ id: name, label: label(name) }));
+}
+
+/* DDN 0.8 (ch. 57 §D3): add-file naming convention — a kebab-case .ddn
+ * sibling of the current (importing) file, first free name. */
+function suggestFileName(currentFile, existingFiles) {
+  const dir = String(currentFile || '').includes('/') ? String(currentFile).slice(0, String(currentFile).lastIndexOf('/')) : '';
+  const has = (p) => !!(existingFiles && Object.prototype.hasOwnProperty.call(existingFiles, p));
+  let base = 'new-module', name = (dir ? dir + '/' : '') + base + '.ddn', n = 2;
+  while (has(name)) name = (dir ? dir + '/' : '') + base + '-' + (n++) + '.ddn';
+  return name;
+}
+
+/* Module alias for an added file: its kebab-case basename as an identifier. */
+function aliasForFile(path) {
+  const base = String(path || '').split('/').pop().replace(/\.ddn$/i, '');
+  return base.replace(/[^A-Za-z0-9_]/g, '_').replace(/^([0-9])/, '_$1') || 'added';
+}
+
+/* The `import "…" as …;` line a new file's importer should gain: path relative
+ * to the importing file, per chapter 56 §X3. Returns null for bad input. */
+function importLineFor(importerFile, newFile) {
+  if (typeof importerFile !== 'string' || typeof newFile !== 'string' || !/\.ddn$/i.test(newFile)) return null;
+  const from = importerFile.split('/').slice(0, -1), to = newFile.split('/');
+  while (from.length && to.length && from[0] === to[0]) { from.shift(); to.shift(); }
+  const rel = [...from.map(() => '..'), ...to].join('/');
+  return 'import "' + rel + '" as ' + aliasForFile(newFile) + ';';
+}
+
+/* DDN 0.8 (ch. 56 §X4): normalize any diagnostic/error carrying a code into
+ * the stable machine shape {code, severity, file?, line?, view?, message}.
+ * line is 1-based, computed from an offset when the diagnostic does not carry
+ * one; site-less diagnostics omit file/line rather than fabricating them. */
+function stableDiagnostic(d, files, view) {
+  if (!d || typeof d !== 'object') return { code: 'DDN-T100', severity: 'error', message: String(d) };
+  const out = { code: d.code || 'DDN-T100', severity: d.severity || 'error' };
+  const file = d.file !== undefined ? d.file : d.source;
+  if (typeof file === 'string' && file) {
+    out.file = file;
+    const text = files && files[file];
+    const offset = d.line !== undefined ? null : (d.offset !== undefined ? d.offset : d.start);
+    if (text && typeof offset === 'number') {
+      let line = 1;
+      for (let i = 0; i < offset && i < text.length; i++) if (text[i] === '\n') line++;
+      out.line = line;
+    } else if (typeof d.line === 'number') out.line = d.line;
+  }
+  if (view) out.view = view;
+  out.message = String(d.message !== undefined ? d.message : d);
+  return out;
+}
+
+const api = { pickEntryView, viewListFrom, isPlausibleSourceFile, freshLocalId, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
+  templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic };
 if (typeof module === 'object' && module.exports) module.exports = api;
 host.DDNToolFiles = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

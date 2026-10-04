@@ -1,0 +1,16 @@
+ddn "0.6";
+module "ddn.vectors.nesting";
+// C2 degenerate corpus (0.8): frames nested to the registry depth limit.
+// DEFERRED: 0.7.0 frames have no nesting property; the 0.8 core-language work
+// (frame `within:` + coded depth error one level beyond) lands with ddn-core 0.8.
+data m {
+  object a "A" {kind: table;}
+  object b "B" {kind: table;}
+}
+view main {
+  data: [@m];
+  frame f1 "L1" { members: [@m.a, @m.b]; }
+  frame f2 "L2" { within: @f1; }
+  frame f3 "L3" { within: @f2; }
+  frame f4 "L4" { within: @f3; }
+}

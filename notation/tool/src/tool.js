@@ -34,7 +34,7 @@ const BRG = __req('DDNToolBridge', './bridge.js');
 const { DRAWERS, DRAWER_STATES, GEAR_STATES, STORAGE_KEY, MODES, DEFAULT_MODE, parseMode, parseDrawersParam, cleanDrawerConfig, parseToolbarParam, resolveDrawerConfig } = PAR;
 const { computeFitScale, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem, pageDims, pageScaleFloor, artboardProblem } = PGF;
 const { slug, cssString, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord } = PRE;
-const { pickEntryView, viewListFrom, isPlausibleSourceFile, freshLocalId, srcFromQuery, srcFetchErrorMessage, srcImportClosure } = FIL;
+const { pickEntryView, viewListFrom, isPlausibleSourceFile, freshLocalId, srcFromQuery, srcFetchErrorMessage, srcImportClosure, templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic } = FIL;
 const { rasterCanvasSize, exportSvgWithOverrides, hopWindowsFromMarkers, nextHopTime, scaledDuration } = EXP;
 const { parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, workerBridgeError, createRenderBridge } = BRG;
 const { FONT_STACKS, ROUTING_VALUES, MIN_TEXT_PX, MAX_FILE_BYTES, MAX_RASTER_PX } = OPT;
@@ -44,6 +44,7 @@ const pure = {
   computeFitScale, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, viewListFrom,
   overrideProfileWrites, cssOverlayRecord, pickEntryView,
   isPlausibleSourceFile, freshLocalId, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
+  templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic,
   exportSvgWithOverrides, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, ROUTING_VALUES,
   MIN_TEXT_PX, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem,
   pageDims, pageScaleFloor, artboardProblem,
@@ -60,6 +61,9 @@ const DATA = globalThis.DDNLiveData || { files: {}, catalogue: { entries: [] } }
 
 const freshSource = `ddn "0.5";\nmodule "my.design";\n\n// Definitions are shared; layout and appearance belong to the view.\ndata model {\n    object client "Client application" { kind: application; }\n    object service "Order service" { kind: application; }\n    object orders "Orders" {\n        kind: table;\n        fields { field order_id; field customer_id; field status; }\n    }\n    relation request "Submit order" @client -> @service { kind: flow; }\n    relation write "Persist accepted order" @service -> @orders { kind: flow; }\n}\n\nview overview "Order processing" {\n    data: [@model];\n    layout { algorithm: auto; routing: curved; crossings: gap; }\n    style { look: classic; theme: night; }\n    publication { size: content; fit: none; }\n    legend { mode: tokens; placement: right; }\n}\n`;
 
+const TEMPLATES = globalThis.DDN_TOOL_TEMPLATES || { blank: freshSource };
+const BLANK_SKELETON = TEMPLATES.blank || freshSource;
+
 const els = {
   toolbar: $('ddn-toolbar'), picker: $('ddn-view-picker'),
   busy: $('ddn-busy'),
@@ -70,6 +74,7 @@ const els = {
   stage: $('ddn-stage'), diagramHost: $('ddn-diagram'), hint: $('ddn-hint'), status: $('ddn-tool-status'),
   appearanceBody: $('ddn-appearance-body'),
   open: $('ddn-open'), openFolder: $('ddn-open-folder'), merge: $('ddn-merge'), newProject: $('ddn-new-project'),
+  templatePopup: $('ddn-template-popup'), templateList: $('ddn-template-list'),
   fileInput: $('ddn-file-input'), folderInput: $('ddn-folder-input'),
   catalogue: $('ddn-catalogue'), catalogueSearch: $('ddn-catalogue-search'),
   fileList: $('ddn-file-list'), fileCount: $('ddn-file-count'),
@@ -77,6 +82,8 @@ const els = {
   downloadFile: $('ddn-download-file'), downloadZip: $('ddn-download-zip'), downloadJson: $('ddn-download-json'),
   paste: $('ddn-paste'), loadPaste: $('ddn-load-paste'),
   sourceFile: $('ddn-source-file'), source: $('ddn-source'), sourceError: $('ddn-source-error'),
+  sourceTabs: $('ddn-source-tabs'), jumpDef: $('ddn-jump-def'),
+  diagnostics: $('ddn-diagnostics'), diagnosticsCount: $('ddn-diagnostics-count'),
   apply: $('ddn-apply'), discard: $('ddn-discard'), liveApply: $('ddn-live-apply'), dirty: $('ddn-dirty'),
   undo: $('ddn-undo'), redo: $('ddn-redo'), find: $('ddn-find'), replace: $('ddn-replace'), goto: $('ddn-goto'),
   inspector: $('ddn-inspector'), inspectorControls: $('ddn-inspector-controls'), selectionSummary: $('ddn-selection-summary'),
@@ -84,9 +91,9 @@ const els = {
   iconCurrent: $('ddn-icon-current'), iconBrowse: $('ddn-icon-browse'), iconClear: $('ddn-icon-clear'),
   iconPopup: $('ddn-icon-popup'), iconSearch: $('ddn-icon-search'), iconList: $('ddn-icon-list'),
   posX: $('ddn-pos-x'), posY: $('ddn-pos-y'), pin: $('ddn-pin'), unpin: $('ddn-unpin'), hide: $('ddn-hide'),
-  addField: $('ddn-add-field'), goSource: $('ddn-go-source'), deleteDef: $('ddn-delete-def'),
+  addField: $('ddn-add-field'), goSource: $('ddn-go-source'), deleteDef: $('ddn-delete-def'), duplicate: $('ddn-duplicate'),
   addElement: $('ddn-add-element'), addRelation: $('ddn-add-relation'),
-  designBar: $('ddn-design-bar'), designHint: $('ddn-design-hint'),
+  designBar: $('ddn-design-bar'), designHint: $('ddn-design-hint'), tidy: $('ddn-tidy'),
   paletteToggle: $('ddn-palette-toggle'), palettePopup: $('ddn-palette-popup'),
   paletteSearch: $('ddn-palette-search'), paletteList: $('ddn-palette-list'),
   connect: $('ddn-connect'), connectPopup: $('ddn-connect-popup'),
@@ -302,6 +309,7 @@ function mount() {
     attachDesign();
     updateDesignBar();
     refreshAnimation();
+    diagnosticsUI();
     status();
   });
   diagram.addEventListener('ddn-error', e => {
@@ -309,6 +317,7 @@ function mount() {
     if (els.busy) els.busy.hidden = true;
     els.diagramHost.removeAttribute('data-ddn-rendered');
     els.sourceError.textContent = e.detail.code + ': ' + e.detail.message;
+    diagnosticsUI();
     fail(e.detail.code + ': ' + e.detail.message);
   });
   diagram.addEventListener('ddn-select', e => guard(() => onSelect(e.detail)));
@@ -805,6 +814,20 @@ els.deleteDef.addEventListener('click', () => guard(() => {
   if (confirm('Delete this semantic definition? Referenced definitions are blocked; use Hide for appearance-only removal.'))
     guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, state.selected || state.selectedRelation));
 }));
+/* DDN 0.8 (ch. 55 §S5): duplicate mints a NEW uid (<id>_copy, then _copy2, …)
+ * — the copy starts unconnected, its numeral field empty, and ref: anchors
+ * keep pointing at the original. A move (drag / cut+paste in source) never
+ * mints: it edits placement only, so the uid is preserved by construction. */
+els.duplicate.addEventListener('click', () => guard(() => {
+  if (!state.selected) { status('select an element to duplicate'); return; }
+  guided(() => {
+    A.authoring.duplicate(state.ws, state.entry, state.view, state.selected);
+    const after = state.ws.resolve(state.entry, state.view);
+    const copy = after.elements.map(n => n.id).filter(u => /_copy\d*$/.test(u)).sort().at(-1);
+    if (copy) { state.selected = copy; state.selectedRelation = null; }
+    status('duplicated as ' + (copy || 'a new uid') + ' — new identity, unconnected; ref: anchors still point at the original');
+  });
+}));
 els.addField.addEventListener('click', () => guard(() => {
   const id = prompt('Stable field identifier', 'new_field');
   if (!id) return;
@@ -1178,10 +1201,46 @@ function updateDesignBar() {
   const ok = graphEditable();
   els.paletteToggle.disabled = !ok;
   els.connect.disabled = !ok;
+  els.tidy.disabled = !ok;
   els.paletteToggle.title = ok ? 'Add element — pick a kind, then click on the diagram to place it' : 'Element placement needs a graph projection — this view is data-bound';
   els.connect.title = ok ? 'Connect two elements — click source, click target, pick a verb' : 'Connecting needs a graph projection — this view is data-bound';
+  els.tidy.title = ok ? 'Tidy — re-run placement and routing; authored pins keep their positions' : 'Tidy needs a graph projection — this view is data-bound';
   if (!ok && (design.placing || design.connecting)) cancelDesignGesture();
 }
+
+/* DDN 0.8 (ch. 57 §D5) Tidy: re-runs placement and routing on the active view
+ * with all authored pins respected (the runtime's normal render honours them;
+ * endpoint_ordering, route policies and geometry checks are never relaxed).
+ * Source is untouched unless the user confirms "pin result" — then the
+ * computed positions of the FREE elements are written as place pins in one
+ * undoable transaction; authored pins are never rewritten. */
+function tidy() {
+  const d = state.diagram;
+  if (!d || !d.result) throw new Error('nothing rendered yet');
+  flush();
+  /* Same semantics as the component's "Auto-layout now": drop retained layout
+   * state, re-enable automatic placement — authored pins are honoured by the
+   * runtime's normal render. */
+  d.action('relayout');
+  return d.ready.then(() => {
+    const scene = d.result && d.result.scene;
+    const nodes = (scene && scene.nodes) || [];
+    const pinned = new Set((scene && scene.layout && scene.layout.pinned) || []);
+    const free = nodes.filter(n => !pinned.has(n.id));
+    status('tidied — ' + pinned.size + ' pin(s) kept exactly, ' + free.length + ' free element(s) re-placed; routes recomputed');
+    if (!free.length || !graphEditable()) return;
+    if (!confirm('Pin result? Write the computed positions of the ' + free.length + ' unpinned element(s) as place pins in the source (one undoable edit). Cancel keeps the new layout as session state only.')) return;
+    guard(() => {
+      const positions = {};
+      for (const n of free) positions[n.id] = { x: n.x, y: n.y };
+      A.authoring.pinAll(state.ws, state.entry, state.view, positions);
+      showSource(state.currentFile);
+      updateHistory();
+      status('pin result written for ' + free.length + ' element(s) — undo restores the previous source');
+    });
+  }, () => {});
+}
+els.tidy.addEventListener('click', () => guard(() => tidy()));
 
 /* ------------------------------------------------ animation drawer (B1-033, D5)
  * SMIL playback controls over the rendered SVG. Default state is playing;
@@ -1349,6 +1408,17 @@ function filesUI() {
   }));
   els.sourceFile.replaceChildren(...Object.keys(fs).sort().map(n => new Option(n, n)));
   if (Object.prototype.hasOwnProperty.call(fs, state.currentFile)) els.sourceFile.value = state.currentFile;
+  /* DDN 0.8 (ch. 57 §D3): multi-pane editing — one editor tab per workspace
+   * file; the tab set mirrors the entry's import closure plus added files. */
+  els.sourceTabs.replaceChildren(...Object.keys(fs).sort().map(n => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.role = 'tab';
+    b.textContent = n; b.title = n;
+    b.className = n === state.currentFile ? 'selected' : '';
+    b.setAttribute('aria-selected', String(n === state.currentFile));
+    b.addEventListener('click', () => guard(() => showSource(n)));
+    return b;
+  }));
 }
 
 function showSource(file, range) {
@@ -1400,6 +1470,7 @@ els.apply.addEventListener('click', () => guard(() => {
   if (before !== state.entry + '#' + state.view) mount();
   else { state.diagram.ready = state.diagram.redraw(); state.diagram.ready.catch(() => {}); }
   updateHistory();
+  diagnosticsUI();
 }));
 els.discard.addEventListener('click', () => guard(() => showSource(state.currentFile)));
 els.undo.addEventListener('click', () => guard(() => { flush(); state.ws.undo(); entriesUI(state.view); showSource(Object.prototype.hasOwnProperty.call(state.ws.getFiles(), state.currentFile) ? state.currentFile : Object.keys(state.ws.getFiles())[0]); updateHistory(); }));
@@ -1426,11 +1497,70 @@ els.replace.addEventListener('click', () => {
 els.goto.addEventListener('click', () => {
   const n = Number(prompt('Line number', '1'));
   if (!Number.isInteger(n) || n < 1) return;
+  gotoLine(n);
+});
+function gotoLine(n) {
   const t = els.source, lines = t.value.split('\n'), at = lines.slice(0, n - 1).reduce((x, l) => x + l.length + 1, 0);
   t.focus();
   t.setSelectionRange(Math.min(at, t.value.length), Math.min(at, t.value.length));
   t.scrollTop = Math.max(0, (n - 4) * 19);
-});
+}
+
+/* DDN 0.8 (ch. 57 §D3) jump-to-definition: the @ref under the cursor resolves
+ * to its declaring file:line through the workspace (never to a network URL). */
+els.jumpDef.addEventListener('click', () => guard(() => {
+  flush();
+  const target = A.authoring.definitionAt(state.ws, state.entry, state.view, state.currentFile, els.source.selectionStart);
+  if (!target) { status('no resolvable @ref at the cursor — place it on an @reference'); return; }
+  showSource(target.file, { start: target.start, end: target.end });
+  status('definition of ' + target.id + ' — ' + target.file + ':' + target.start);
+}));
+
+/* DDN 0.8 (ch. 57 §D3 + ch. 56 §X4) diagnostics list: every check diagnostic
+ * in the stable JSON shape {code, severity, file?, line?, view?, message},
+ * regenerated on each check (never accumulated); clicking navigates to
+ * file:line. Sources: per-file parse of the current workspace text plus the
+ * last render's diagnostic stream for the active view. */
+function collectDiagnostics() {
+  const files = state.ws ? state.ws.getFiles() : {};
+  const out = [];
+  for (const [name, text] of Object.entries(files)) {
+    try { A.parse(text, name); }
+    catch (e) { out.push(stableDiagnostic({ code: e && e.code, message: e && e.message || String(e), file: name, offset: e && (e.offset !== undefined ? e.offset : e.start) }, files)); }
+  }
+  const result = state.diagram && state.diagram.result;
+  for (const d of (result && result.diagnostics) || []) out.push(stableDiagnostic(d, files, state.view));
+  return out;
+}
+function diagnosticsUI() {
+  const list = collectDiagnostics();
+  const rank = { error: 0, warning: 1, info: 2 };
+  list.sort((a, b) => (rank[a.severity] !== undefined ? rank[a.severity] : 0) - (rank[b.severity] !== undefined ? rank[b.severity] : 0) || String(a.file || '').localeCompare(String(b.file || '')) || (a.line || 0) - (b.line || 0));
+  const errors = list.filter(d => d.severity === 'error').length;
+  els.diagnosticsCount.textContent = list.length ? '(' + list.length + (errors ? ', ' + errors + ' error' + (errors === 1 ? '' : 's') : '') + ')' : '(clean)';
+  if (!list.length) {
+    const li = document.createElement('li');
+    li.className = 'none';
+    li.textContent = 'No diagnostics — source parses and the active view rendered.';
+    els.diagnostics.replaceChildren(li);
+    return;
+  }
+  els.diagnostics.replaceChildren(...list.map(d => {
+    const li = document.createElement('li'), b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'sev-' + d.severity;
+    const site = d.file ? ' ' + d.file + (d.line ? ':' + d.line : '') : '';
+    b.textContent = d.severity.toUpperCase() + ' ' + d.code + site + ' — ' + d.message;
+    b.title = JSON.stringify(d);
+    b.addEventListener('click', () => guard(() => {
+      if (!d.file || !state.ws || !Object.prototype.hasOwnProperty.call(state.ws.getFiles(), d.file)) return;
+      showSource(d.file);
+      if (d.line) gotoLine(d.line);
+    }));
+    li.append(b);
+    return li;
+  }));
+}
 
 function load(files, entry, view, options) {
   flush();
@@ -1531,19 +1661,53 @@ els.merge.addEventListener('click', () => { state.mergeNext = true; els.fileInpu
 els.openFolder.addEventListener('click', () => { state.mergeNext = false; els.folderInput.value = ''; els.folderInput.click(); });
 els.fileInput.addEventListener('change', () => guard(() => openFiles(els.fileInput.files)));
 els.folderInput.addEventListener('change', () => guard(() => openFiles(els.folderInput.files, true)));
+/* DDN 0.8 (ch. 57 §D2): explicit "New document" — always visible; the document
+ * starts EMPTY (a valid .ddn skeleton) or from a template keyed to the
+ * registered view kinds (chapter 52). Templates are content files inlined at
+ * build time; after creation the document is ordinary .ddn. */
+function templatePickerUI() {
+  const viewKinds = A.viewProfiles && A.viewProfiles.VIEW_KINDS;
+  els.templateList.replaceChildren(...templateList(TEMPLATES, viewKinds).map(t => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = t.label;
+    b.setAttribute('role', 'option');
+    b.addEventListener('click', () => guard(() => {
+      els.templatePopup.hidden = true;
+      if (dirty() && !confirm('Replace current workspace? Download unsaved changes first.')) return;
+      state.catalogueIndex = -1;
+      load({ 'main.ddn': TEMPLATES[t.id] }, 'main.ddn', 'main');
+      status('new document from template "' + t.id + '" — ordinary .ddn from here on');
+    }));
+    return b;
+  }));
+}
 els.newProject.addEventListener('click', () => {
-  if (!dirty() || confirm('Replace current workspace? Download unsaved changes first.')) {
-    state.catalogueIndex = -1;
-    load({ 'main.ddn': freshSource }, 'main.ddn', 'overview');
-  }
+  templatePickerUI();
+  els.templatePopup.hidden = !els.templatePopup.hidden;
 });
+/* DDN 0.8 (ch. 57 §D3): add-file defaults follow the workspace naming
+ * conventions (chapter 56 §X3) — a kebab-case .ddn sibling of the importing
+ * file — and the tool offers to insert the matching `import "…" as …;` line
+ * rather than leaving a dangling file. */
 els.fileNew.addEventListener('click', () => guard(() => {
-  const path = prompt('Workspace-relative filename', 'data/new.ddn');
+  const existing = state.ws.getFiles();
+  const path = prompt('Workspace-relative filename (kebab-case .ddn)', suggestFileName(state.currentFile, existing));
   if (!path) return;
   A.pathChecked(path);
-  if (Object.prototype.hasOwnProperty.call(state.ws.getFiles(), path)) throw new Error('File exists.');
-  const m = 'user.' + path.replace(/[^A-Za-z0-9]/g, '_');
-  state.ws.updateFiles({ [path]: 'ddn "0.5";\nmodule "' + m + '";\n\ndata model {\n    // Add definitions here.\n}\n' });
+  if (!/^[a-z0-9][a-z0-9-]*(\/[a-z0-9][a-z0-9-]*)*\.ddn$/.test(path))
+    throw new Error('Naming convention: kebab-case .ddn path (got ' + path + ')');
+  if (Object.prototype.hasOwnProperty.call(existing, path)) throw new Error('File exists.');
+  const m = 'user.' + path.replace(/\.ddn$/i, '').replace(/[^A-Za-z0-9]/g, '_');
+  state.ws.updateFiles({ [path]: 'ddn "0.6";\nmodule "' + m + '";\n\ndata model {\n    // Add definitions here.\n}\n' });
+  /* Offer the matching import line in the current file (the importer). */
+  const importer = state.currentFile, line = importLineFor(importer, path);
+  if (line && importer !== path && confirm('Insert `' + line + '` into ' + importer + ' so the new file joins the workspace?')) {
+    const text = state.ws.getFiles()[importer];
+    const headerEnd = text.indexOf('\n', text.indexOf('module '));
+    const at = headerEnd > 0 ? headerEnd + 1 : 0;
+    state.ws.applyEdits([{ file: importer, start: at, end: at, text: line + '\n' }], { expectedRevision: state.ws.revision });
+  }
   setDrawer('source', 'open', true);
   showSource(path);
   updateHistory();
@@ -1853,10 +2017,18 @@ function boot() {
     }
   }
   if (!booted) {
-    let initial = DATA.catalogue.entries.findIndex(e => e.entry.endsWith('adaptive-lab.ddn') && e.view === 'automatic');
-    if (initial < 0) initial = 0;
-    if (DATA.catalogue.entries.length) { state.catalogueIndex = initial; const ex = DATA.catalogue.entries[initial]; guard(() => load(catalogueClosure(ex.entry), ex.entry, ex.view)); }
-    else load({ 'main.ddn': freshSource }, 'main.ddn', 'overview');
+    /* DDN 0.8 (ch. 57 §D2): the designer starts EMPTY — a valid blank .ddn
+     * skeleton — unless it was passed a .ddn to open (?src=/?entry= handled
+     * above). Viewer mode keeps the catalogue landing example. */
+    if (state.config.design === true) {
+      state.catalogueIndex = -1;
+      load({ 'main.ddn': BLANK_SKELETON }, 'main.ddn', 'main');
+    } else {
+      let initial = DATA.catalogue.entries.findIndex(e => e.entry.endsWith('adaptive-lab.ddn') && e.view === 'automatic');
+      if (initial < 0) initial = 0;
+      if (DATA.catalogue.entries.length) { state.catalogueIndex = initial; const ex = DATA.catalogue.entries[initial]; guard(() => load(catalogueClosure(ex.entry), ex.entry, ex.view)); }
+      else load({ 'main.ddn': freshSource }, 'main.ddn', 'overview');
+    }
   }
   catalogueUI();
 }
@@ -1890,6 +2062,9 @@ host.DDNTool = Object.assign({}, pure, {
   placeElement, connectElements,
   getDesignGesture: () => ({ placing: design.placing, connecting: design.connecting, from: design.from, to: design.to }),
   updateDesignBar,
+  /* 0.8 (ch. 57 §D2/D3/D5): tidy re-layout, the diagnostics list data, and the
+   * new-document template sources — programmatic counterparts for hosts/tests. */
+  tidy, collectDiagnostics, templates: () => ({ ...TEMPLATES }),
   renderMode, getRenderWorkerState: () => ({ mode: renderMode(), disabledReason: workerState.reason, degraded: !!(workerState.bridge && workerState.bridge.degraded), verifiedMetrics: workerState.bridge ? workerState.bridge.verifiedMetrics : 0 }),
   state
 });

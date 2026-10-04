@@ -33,7 +33,17 @@ const workerSource = runtime.trimEnd() + '\n;\n' + read(WORKER_BOOT_SRC).trimEnd
 const brandSvg = read('assets/brand/ddn.svg').replace(/<\?xml[^?]*\?>\s*/, '').replace(/<!--[\s\S]*?-->\s*/, '').trim();
 const brandFavicon = 'data:image/svg+xml;base64,' + Buffer.from(brandSvg).toString('base64');
 
-for (const [name, src] of [['runtime', runtime], ['workspaces data', data], ['tool.js', js], ['worker source', workerSource]]) {
+/* DDN 0.8 (ch. 57 §D2): "New document" templates are content files under
+ * notation/tool/templates/ — ordinary .ddn sources, keyed by template id
+ * (the view kind where one applies). Inlined verbatim so the picker works
+ * from file:// with zero fetches. */
+const TEMPLATES_DIR = 'notation/tool/templates';
+const templates = {};
+for (const f of fs.readdirSync(path.join(root, TEMPLATES_DIR)).filter(f => f.endsWith('.ddn')).sort())
+  templates[f.replace(/\.ddn$/, '')] = read(TEMPLATES_DIR + '/' + f);
+const templatesJs = '/* Inlined from ' + TEMPLATES_DIR + '/ (*.ddn content files) by tools/build-tool.js — "New document" template sources (chapter 57 §D2). */\nglobalThis.DDN_TOOL_TEMPLATES=' + JSON.stringify(templates, null, 0) + ';';
+
+for (const [name, src] of [['runtime', runtime], ['workspaces data', data], ['tool.js', js], ['worker source', workerSource], ['templates', templatesJs]]) {
   if (src.includes('</script')) throw new Error(name + ' contains </script; inlining would break the page');
 }
 const out = template
@@ -43,6 +53,7 @@ const out = template
   .replace('{{DDN_RUNTIME}}', () => '/* Inlined from ' + RUNTIME_SRC + ' (minified production build; readable ddn.global.js ships alongside in notation/dist). */\n' + runtime.trimEnd())
   .replace('{{DDN_WORKER_SOURCE}}', () => '/* B1-043: Blob-URL render worker source — ' + RUNTIME_SRC + ' + ' + WORKER_BOOT_SRC + ', as one string literal. */\nglobalThis.DDN_WORKER_SOURCE=' + JSON.stringify(workerSource) + ';')
   .replace('{{DDN_DATA}}', () => '/* Inlined from notation/studio/assets/workspaces.js — the example corpus the studio pages carry. */\n' + data.trimEnd())
+  .replace('{{DDN_TEMPLATES}}', () => templatesJs)
   .replace('{{TOOL_JS}}', () => js.trimEnd());
 if (out.includes('{{')) throw new Error('template placeholder left unsubstituted');
 

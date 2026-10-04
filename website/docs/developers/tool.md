@@ -103,8 +103,43 @@ editing affordances layered on top of `explore`:
     (and optional label): one relation is created between them. Connect stays
     armed after a creation so chains of relations are quick; Esc cancels any
     armed gesture.
+  - **Tidy** (0.8, standard chapter 57 §D5) — re-runs placement and routing on
+    the active view with every authored pin respected. The source is untouched
+    unless you confirm **Pin result**, which writes the computed positions of
+    the unpinned elements as `place` pins in one undoable transaction.
 
-Both gestures need a graph projection; on data-bound projections (charts,
+### DDN 0.8 designer contract surface (standard chapter 57)
+
+- **New document (§D2).** The files drawer's *New document…* command is
+  explicit and always visible. In design mode the tool starts **empty** — a
+  valid `ddn "0.6"` skeleton (header, module, one view, `size: content`
+  publication defaults) — unless it was passed a `.ddn` to open. The template
+  picker is keyed to the registered view kinds (chapter 52): blank, ddn-native,
+  flowchart, c4-container, patent-figure (with the chapter 53 chrome preset).
+  Templates are content files (`notation/tool/templates/*.ddn`), not code;
+  after creation the document is ordinary `.ddn` with no template dependency.
+- **Multi-pane workspace editing (§D3).** One editor tab per workspace file in
+  the source drawer; *New file* defaults to a kebab-case `.ddn` sibling of the
+  importing file and offers to insert the matching `import "…" as …;` line;
+  *Jump to definition* resolves the `@ref` under the cursor to its declaring
+  file:line; a diagnostics list shows every check diagnostic in the stable
+  chapter 56 §X4 shape (`{code, severity, file?, line?, view?, message}`) and
+  clicking navigates — the list regenerates on each check, never accumulates;
+  the active view re-renders debounced while typing, and render failures keep
+  the last good picture dimmed.
+- **Export boundary (§D4).** Client-side SVG and PNG (2×) are always
+  available, fully in the browser, `file://` included. PDF/PPTX are
+  commercial/service features and appear nowhere in this page. Foreign-format
+  import (e.g. a Mermaid subset) is **deferred to 0.9**; it will land as a
+  designer *Import…* command producing ordinary `0.6` source through the same
+  skeleton/template path as *New document*.
+- **uid semantics (chapter 55 §S5).** The inspector's *Duplicate* mints a new
+  uid (`<id>_copy`, then `_copy2`, …): the copy starts unconnected, its
+  numeral field empty, and `ref:` anchors keep pointing at the original. A
+  move (drag-to-pin, cut/paste in source) edits placement only, so the uid is
+  preserved by construction — a move is never a delete-plus-create.
+
+Both creation gestures (and Tidy) need a graph projection; on data-bound projections (charts,
 timelines, sequence, …) the buttons disable with an explaining tooltip — the
 same rule drag-to-pin already follows. The programmatic counterparts
 (`DDNTool.placeElement`, `DDNTool.connectElements`, `startPlacement`,

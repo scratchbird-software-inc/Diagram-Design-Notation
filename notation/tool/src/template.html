@@ -64,7 +64,11 @@
         <button id="ddn-open" type="button" title="Open .ddn files, a workspace .zip or .json">Open…</button>
         <button id="ddn-open-folder" type="button" title="Open a folder of .ddn files">Folder…</button>
         <button id="ddn-merge" type="button" title="Add files to the current workspace">Merge…</button>
-        <button id="ddn-new-project" type="button" class="ddn-mini" title="Start a fresh single-file design">New</button>
+        <button id="ddn-new-project" type="button" class="ddn-mini" title="New document — start empty from a template (blank, flowchart, C4 container, patent figure…)">New document…</button>
+        <div id="ddn-template-popup" hidden>
+          <p class="ddn-dim">A new document starts EMPTY — a valid .ddn skeleton. Templates scaffold a view kind's starter content; after creation the document is ordinary .ddn with no template dependency.</p>
+          <div id="ddn-template-list" role="listbox" aria-label="Document templates"></div>
+        </div>
       </div>
       <input id="ddn-file-input" type="file" accept=".ddn,.zip,.json,text/plain" multiple hidden>
       <input id="ddn-folder-input" type="file" webkitdirectory hidden>
@@ -104,6 +108,10 @@
           <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="12.5" r="2" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12.5" cy="3.5" r="2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 10.8 10.8 5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
           Connect
         </button>
+        <button id="ddn-tidy" type="button" title="Tidy — re-run placement and routing on this view; authored pins keep their positions exactly">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4.5h11M4.5 8h7M6.5 11.5h3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Tidy
+        </button>
         <span id="ddn-design-hint" class="ddn-dim"></span>
         <div id="ddn-palette-popup" hidden>
           <input id="ddn-palette-search" type="search" placeholder="Find a kind…" aria-label="Find an object kind">
@@ -127,6 +135,7 @@
       <div class="ddn-drawer-head"><h2>Source</h2><button class="ddn-mini" data-close type="button" title="Close source drawer">×</button></div>
       <div class="ddn-drawer-body">
         <div class="ddn-source-main">
+          <div id="ddn-source-tabs" role="tablist" aria-label="Workspace files — one tab per file"></div>
           <div class="ddn-row">
             <select id="ddn-source-file" aria-label="Workspace source file"></select>
             <button id="ddn-apply" type="button" title="Apply edits (Ctrl+Enter)">Apply</button>
@@ -139,9 +148,14 @@
             <button id="ddn-find" type="button" class="ddn-mini">Find</button>
             <button id="ddn-replace" type="button" class="ddn-mini">Replace</button>
             <button id="ddn-goto" type="button" class="ddn-mini">Go to line</button>
+            <button id="ddn-jump-def" type="button" class="ddn-mini" title="Jump to the definition of the @ref under the cursor (in its declaring file)">Jump to definition</button>
           </div>
           <textarea id="ddn-source" spellcheck="false" aria-label="DDN source code"></textarea>
           <pre id="ddn-source-error" role="alert"></pre>
+          <div id="ddn-diagnostics-wrap">
+            <h3>Diagnostics <span id="ddn-diagnostics-count" class="ddn-dim"></span></h3>
+            <ul id="ddn-diagnostics" aria-label="Check diagnostics — click to go to file:line"></ul>
+          </div>
         </div>
         <div class="ddn-inspector" id="ddn-inspector">
           <h3>Inspector</h3>
@@ -172,6 +186,7 @@
             </div>
             <div class="ddn-row">
               <button id="ddn-add-field" type="button" class="ddn-mini">Add field</button>
+              <button id="ddn-duplicate" type="button" class="ddn-mini" title="Duplicate — a new element with a fresh uid (unconnected, no numeral); the original is untouched">Duplicate</button>
               <button id="ddn-go-source" type="button" class="ddn-mini">Go to source</button>
               <button id="ddn-delete-def" type="button" class="ddn-mini">Delete</button>
             </div>
@@ -234,6 +249,9 @@
 </script>
 <script>
 {{DDN_DATA}}
+</script>
+<script>
+{{DDN_TEMPLATES}}
 </script>
 <script>
 {{TOOL_JS}}

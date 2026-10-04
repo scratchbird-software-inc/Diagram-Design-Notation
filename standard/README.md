@@ -6,10 +6,11 @@ implements this directory; anything here outranks the implementation.
 
 ## Contents
 
-- `specification/` — the standard itself, numbered chapters `00–26`
-  (status/scope, language, data model, views/reuse, looks, routing,
-  publication, security, governance, profiles/projections, quality, field
-  guide). Start at `00-status-and-scope.md`.
+- `specification/` — the standard itself, numbered chapters `00–50`, plus the
+  **0.8 draft** chapters `51–58` (version/compatibility contract, view
+  profiles and themes, publication chrome, text fit, markings and metadata,
+  tooling/workspace conventions, viewer/designer contract, conformance
+  vectors). Start at `00-status-and-scope.md`.
 - `grammar/ddn.ebnf` — formal EBNF grammar of the syntactic core.
 - `schemas/` — JSON Schemas (draft 2020-12): resolved IR, scene, value,
   extension, publication manifest, layout state, workspace.

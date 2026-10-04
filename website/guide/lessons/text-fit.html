@@ -1,0 +1,143 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Text fit — wrap, grow, shrink and honest overflow: a source-editable DDN field-guide chapter."><title>Text fit — wrap, grow, shrink and honest overflow · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style><link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+</head><body>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.8 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
+
+<main>
+<div class="lesson-title"><p class="eyebrow">Techniques</p><h2>Text fit — wrap, grow, shrink and honest overflow</h2><p class="subtitle">field-guide/sources/text-fit.ddn # fitted</p><span class="pill technique">technique</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>How boxes adapt to their text: wrap fixes the width and grows downward, grow expands both axes to declared bounds, and shrink steps the font down to a floor.</p></section><section class="card"><h3>Why use it?</h3><p>Hand-tuning box sizes against text that keeps changing is the chore text_fit removes — with bounds and diagnostics so adaptation stays honest instead of silently clipping.</p></section><section class="card"><h3>When is it useful?</h3><p>Long labels, generated text, multilingual content — anywhere text length is not under the author's full control.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>The renderer measures, resizes and re-lays-out in at most two passes; whatever still overflows after that is a residual overflow and is reported.</li><li>Residual overflow fires DDN-LW07 (wrap/grow) or DDN-LW08 (shrink at its floor) at render time, naming the element, the overflow and the remedy — check stays clean because it never measures.</li><li>Under the default layout { quality: error } a residual overflow refuses the render; the variant declares quality: warn, so it renders with the text clipped at the box edge and a visible ellipsis — never invisible text.</li><li>size: content artboards grow with the post-fit bounds, so wrap/grow results are always fully visible — and --content-size forces that for one render without editing the source.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The text and how much it may vary</li><li>The bounds (max_width, max_height, min_font)</li><li>The quality policy for overflow</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="actions" style="margin:.3rem 0"><label for="variant">Variant <select id="variant"><option value="fitted">fitted</option><option value="overflow">Residual-overflow variant</option></select></label></div>
+<div class="views"><div><p class="viewer-label">ddn@1 · graph</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
+<p class="expected">Only the label of Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage. / review changes; fit modes, bounds and identities are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 22341c0d50fe… → f1408fed6aed…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Lengthen the summary note, apply, and watch the box grow within its bounds; then open the overflow variant to meet the ellipsis and DDN-LW07.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open field-guide/sources/text-fit.ddn and locate view fitted. This selects existing data; it is not a stored SVG.</li><li>Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view fitted &quot;Fitted boxes — wrap, grow and shrink&quot; {
+  data: [@notes];
+  publication { size: content; fit: none; }
+}</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>field-guide/sources/text-fit.ddn</td><td>data, view</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>Bounds are 40–4000 px and min_font 6–64 px (never above the base font); violations are DDN-TF02/TF03. Text fit changes geometry only — model fingerprints, endpoints and relation identities are unchanged.</p><ul><li>Do not set max_height without reading DDN-LW07 as a design signal — split the content or raise the bound; clipping is a last resort, not a layout style.</li><li>Do not rely on estimated metrics for filings: font_pin records the measurement environment so the same source renders byte-identically anywhere (the 0.7.0 CLI cannot load pin files yet — pins apply through the host API).</li></ul></section>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../dist/ddn.global.js"></script>
+<script src="../../dist/ddn-graph.js"></script>
+<script src="../../dist/ddn-iso.js"></script>
+<script src="../../dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"field-guide/sources/text-fit.ddn":"ddn \"0.6\";\nmodule \"ddn.fieldguide.textfit\";\n\n// text_fit adapts boxes to their text: wrap fixes the width and grows the\n// box downward; grow expands both axes up to the bounds; shrink steps the\n// font down to a floor. Bounds keep adaptation honest — residual overflow\n// after two measure/resize/re-layout passes is diagnosed (DDN-LW07/LW08),\n// never silently clipped.\n\ndata notes {\n  object summary \"Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage.\" {\n    kind: note;\n    text_fit: wrap;\n    max_width: 300px;\n    max_height: 340px;\n  }\n  object badge \"OK\" {\n    kind: note;\n    text_fit: grow;\n    max_width: 240px;\n    max_height: 120px;\n  }\n  object caption \"A rather long caption that must still fit its box\" {\n    kind: term;\n    text_fit: shrink;\n    min_font: 10px;\n  }\n}\n\ndata tight {\n  object cramped \"This note carries far more text than its declared bounds can ever hold, so the overflow diagnostic fires and the render clips at the box edge with a visible ellipsis marker instead of hiding text.\" {\n    kind: note;\n    text_fit: wrap;\n    max_width: 160px;\n    max_height: 64px;\n  }\n}\n\nview fitted \"Fitted boxes — wrap, grow and shrink\" {\n  data: [@notes];\n  publication { size: content; fit: none; }\n}\n\nview overflow \"Residual overflow — diagnosed, marked, not hidden\" {\n  data: [@tight];\n  publication { size: content; fit: none; }\n  // Default policy is layout { quality: error }, which refuses a render that\n  // would overflow; warn reports DDN-LW07 and renders with the ellipsis.\n  layout { quality: warn; }\n}\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"text-fit","entry":"field-guide/sources/text-fit.ddn","view":"fitted","files":["field-guide/sources/text-fit.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.fieldguide.textfit::notes.summary","file":"field-guide/sources/text-fit.ddn","before":"Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage.","after":"Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage. / review","expectation":"Only the label of Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage. / review changes; fit modes, bounds and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
+
+
+<script>window.__guideInit = function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
+const sel = document.getElementById('file');
+sel.innerHTML = '';
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
+}
+redraw();
+};</script>
+<script>window.__guideInit();</script>
+</body></html>

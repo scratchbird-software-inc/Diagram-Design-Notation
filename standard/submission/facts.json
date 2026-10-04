@@ -98,7 +98,7 @@
   },
   "docs": {
     "specChapters": {
-      "value": 54,
+      "value": 62,
       "source": "standard/specification/*.md"
     },
     "schemas": {

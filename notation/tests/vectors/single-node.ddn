@@ -1,0 +1,5 @@
+ddn "0.6";
+module "ddn.vectors.single";
+// C2 degenerate corpus: one element, no relations. Expected: single centered node.
+data m { object only "Lonely" {kind: table;} }
+view main { data: [@m]; }

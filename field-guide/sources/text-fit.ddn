@@ -1,0 +1,50 @@
+ddn "0.6";
+module "ddn.fieldguide.textfit";
+
+// text_fit adapts boxes to their text: wrap fixes the width and grows the
+// box downward; grow expands both axes up to the bounds; shrink steps the
+// font down to a floor. Bounds keep adaptation honest — residual overflow
+// after two measure/resize/re-layout passes is diagnosed (DDN-LW07/LW08),
+// never silently clipped.
+
+data notes {
+  object summary "Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage." {
+    kind: note;
+    text_fit: wrap;
+    max_width: 300px;
+    max_height: 340px;
+  }
+  object badge "OK" {
+    kind: note;
+    text_fit: grow;
+    max_width: 240px;
+    max_height: 120px;
+  }
+  object caption "A rather long caption that must still fit its box" {
+    kind: term;
+    text_fit: shrink;
+    min_font: 10px;
+  }
+}
+
+data tight {
+  object cramped "This note carries far more text than its declared bounds can ever hold, so the overflow diagnostic fires and the render clips at the box edge with a visible ellipsis marker instead of hiding text." {
+    kind: note;
+    text_fit: wrap;
+    max_width: 160px;
+    max_height: 64px;
+  }
+}
+
+view fitted "Fitted boxes — wrap, grow and shrink" {
+  data: [@notes];
+  publication { size: content; fit: none; }
+}
+
+view overflow "Residual overflow — diagnosed, marked, not hidden" {
+  data: [@tight];
+  publication { size: content; fit: none; }
+  // Default policy is layout { quality: error }, which refuses a render that
+  // would overflow; warn reports DDN-LW07 and renders with the ellipsis.
+  layout { quality: warn; }
+}

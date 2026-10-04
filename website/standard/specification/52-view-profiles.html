@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>52. View profiles, strictness and registered themes (DDN 0.8 draft) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../icons/index.html">Icons</a>
+      <a href="../../guide/index.html">Guide</a>
+      <a href="../../reference/index.html">Reference</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>52. View profiles, strictness and registered themes (DDN 0.8 draft)</h1>
+<blockquote>Examples in this chapter use 0.8 (0.6-dialect) syntax, fenced ``<code>ddn-0.8. The reference runtime implements this chapter's language constructs; the doc-snippet parse gate (</code>notation/tests/doc-snippets.js<code>) parse-checks every fence under a </code>ddn &quot;0.6&quot;;` header.</blockquote>
+<p>Status: draft for the 0.8 standard revision (source version <code>ddn &quot;0.6&quot;;</code>; see chapter 51). A view profile names <strong>what kind of diagram a view is</strong> and derives three things from that declaration: a default presentation (theme and property defaults), an allowed element/relation vocabulary, and a validation strictness. Profiles are declarations of intent checked at <code>check</code> time; they never add semantics to the model and never change routing or layout results beyond the documented property defaults they set.</p>
+<h2>52.1 Declaring a view kind</h2>
+<p>A 0.6 view may declare a <code>kind</code> and a <code>strictness</code>:</p>
+<pre><code>ddn &quot;0.6&quot;;
+module &quot;example.onboarding&quot;;
+data model {
+  object start &quot;Request received&quot; { kind: task; }
+  object review &quot;Manager review&quot; { kind: decision; }
+  object done &quot;Approved&quot; { kind: task; }
+  flow step1 @start -&gt; @review;
+  flow step2 @review -&gt; @done;
+}
+view process &quot;Onboarding flow&quot; {
+  data: [@model];
+  kind: flowchart;
+  strictness: strict;
+  publication { size: content; fit: none; }
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>kind:</code> and <code>strictness:</code> on a view.)</p>
+<p>Grammar supplement (extends the <code>property</code> production; both are ordinary view-level properties, also legal inside a <code>format</code> <code>bundle</code>):</p>
+<pre><code>ViewKind       = &quot;kind&quot;, &quot;:&quot;, identifier, &quot;;&quot; ;
+ViewStrictness = &quot;strictness&quot;, &quot;:&quot;, ( &quot;strict&quot; | &quot;permissive&quot; ), &quot;;&quot; ;</code></pre>
+<ul><li><code>kind</code> is a single identifier from the registered view-kind table (§52.2).</li></ul>
+<p>  Unknown kinds are <code>DDN-VP01</code>. <code>kind</code> on a non-view declaration, or repeated,   follows the existing duplicate/misplacement rules (<code>DDN011</code>).</p>
+<ul><li><code>strictness</code> defaults to <code>permissive</code> when omitted. <code>strictness</code> without a</li></ul>
+<p>  <code>kind</code> is <code>DDN-VP02</code> (strictness has nothing to bind to).</p>
+<ul><li>A bundle-supplied <code>kind</code>/<code>strictness</code> loses to a view-local declaration,</li></ul>
+<p>  following the standard concern-resolution order (chapter 03).</p>
+<h2>52.2 Registered view kinds</h2>
+<p>The 0.8 registry ships these view kinds. Each names a vocabulary subset (the object kinds and relation verbs the view is expected to use) and a default profile/theme attachment. Vocabulary subsets are named registry entries, not hard-coded lists in processors; the table is normative at the subset-name level.</p>
+<table><thead><tr><th>View kind</th><th>Vocabulary subset</th><th>Default attachment</th></tr></thead><tbody><tr><td><code>ddn-native</code></td><td>full core registry (no restriction)</td><td>no profile constraint; classic theme</td></tr><tr><td><code>flowchart</code></td><td><code>flow.*</code> process/task/decision/terminator kinds + <code>flow</code> verb</td><td><code>flow.documented@2</code>-compatible defaults</td></tr><tr><td><code>c4-context</code> / <code>c4-container</code> / <code>c4-component</code></td><td><code>c4.*</code> kinds + <code>c4.rel</code></td><td><code>c4.context@1</code> / <code>c4.container@1</code> / <code>c4.component@1</code></td></tr><tr><td><code>uml-class</code>, <code>uml-sequence</code>, <code>uml-state</code>, <code>uml-activity</code>, <code>uml-usecase</code></td><td>the matching <code>uml.*</code> vocabulary</td><td>the corresponding installed <code>uml.*</code> profile</td></tr><tr><td><code>chart-bar</code>, <code>chart-line</code></td><td>record projections only</td><td><code>chart.basic@1</code> defaults</td></tr><tr><td><code>ladder</code></td><td>ladder rung/coil/contact kinds</td><td>ladder profile defaults</td></tr><tr><td><code>patent-figure</code></td><td>§52.5</td><td><code>patent.legal@1</code> + <code>theme.mono.print@1</code></td></tr></tbody></table>
+<p>A view kind pins <strong>defaults</strong>, never locks: an author may still override <code>style</code>, <code>layout</code>, <code>projection.profile</code> explicitly. Explicit author declarations always win over kind-derived defaults (§52.4).</p>
+<h2>52.3 Strictness semantics</h2>
+<ul><li><code>permissive</code> (default): vocabulary outside the kind's subset renders</li></ul>
+<p>  normally; each out-of-subset element kind or relation verb produces one   info diagnostic <code>DDN-VP03</code> naming the element, its kind/verb, and the view   kind. Aggregation is allowed per code (one diagnostic per offending   element, not per view).</p>
+<ul><li><code>strict</code>: out-of-subset vocabulary is a validation <strong>error</strong> <code>DDN-VP04</code>;</li></ul>
+<p>  the view fails <code>check</code>. The message names the offending identity and the   subset that would admit it, e.g. &quot;object <code>db</code> (kind: database) is outside   the <code>flowchart</code> vocabulary — use kind <code>task</code>/<code>process</code> or change the view   kind to <code>ddn-native</code>.&quot;</p>
+<ul><li>Strictness governs <strong>vocabulary membership only</strong>. It never relaxes any</li></ul>
+<p>  existing validation (profile contracts, endpoint rules, DDN2xx geometry   checks all still apply), and it never changes rendering.</p>
+<h2>52.4 Profile and theme attachment</h2>
+<p>Attachment is a <em>defaults cascade</em>, resolved in this order (later wins):</p>
+<ol><li>language defaults;</li><li>view-kind default profile and theme (this chapter);</li><li>referenced <code>format</code> bundle concerns;</li><li>view-local declarations.</li></ol>
+<p>Because kind-derived values sit at layer 2, any explicit 0.5-era declaration reproduces its 0.7 rendering byte-identically even when a kind is declared. A kind declaration MUST NOT change the <code>modelFingerprint</code> or any semantic validation outcome; it is a composition-time default and lint axis.</p>
+<h2>52.5 The patent/legal profile pack (<code>patent.legal@1</code>)</h2>
+<p>Registered as an ordinary installed profile plus the <code>patent-figure</code> view kind. It packages the conventions of patent and legal-figure drawings:</p>
+<ul><li><strong>Reference-numeral field boxes.</strong> Any element may declare</li></ul>
+<p>  <code>numeral: 102;</code> (integer 1–99999). The profile renders the numeral in a   boxed field row directly under the element header, and <code>ref:</code> anchors   (chapter 55 §S4) resolve to it. Duplicate numerals within a view are   <code>DDN-VP06</code>; a non-integer or out-of-range numeral is <code>DDN-VP05</code>.</p>
+<ul><li><strong>Flowchart-with-decision blocks.</strong> The <code>flowchart</code> vocabulary with the</li></ul>
+<p>  profile's decision styling: decisions render as labelled diamonds with   branch labels on outgoing edges; an unlabelled decision branch is   <code>DDN-VP07</code> under this profile (warning), because examiners require every   branch to be labelled.</p>
+<ul><li><strong>Document chrome defaults.</strong> The profile's default bundle sets the</li></ul>
+<p>  publication chrome of chapter 53: title block with <code>$title</code> and <code>$date</code>,   footer with <code>FIG. $figure</code> and <code>$page</code>, single page border, monochrome   theme (§52.6).</p>
+<p>The profile claims drawing conventions only. It is not legal advice, not a patent-office compliance certification, and it does not validate claim text.</p>
+<h2>52.6 Accessibility themes</h2>
+<p>Two themes ship as named, registered themes attachable to any profile or declared directly:</p>
+<pre><code>view poster &quot;Release poster&quot; {
+  data: [@model];
+  theme: colorblind_safe;
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>theme:</code> on a view.)</p>
+<ul><li><code>theme: colorblind_safe;</code> (<code>theme.a11y.cb@1</code>) — a palette whose kind/verb</li></ul>
+<p>  colour pairs are distinguishable under deuteranopia/protanopia/tritanopia   simulation, with redundant non-colour encoding (dash patterns, marker   shapes) preserved so meaning never rides on hue alone.</p>
+<ul><li><code>theme: mono_print;</code> (<code>theme.mono.print@1</code>) — pure black/white/grayscale</li></ul>
+<p>  for B/W filing and print: fills restricted to white, hatching and line   styles carry distinctions, minimum effective contrast 4.5:1 for text   against its background.</p>
+<p>Theme rules: a theme re-skins colours, fills, dash patterns and line weights <strong>only</strong>. It MUST NOT change geometry, layout, routing, label text or semantics — the same source under two themes differs only in paint attributes. Unknown theme names are <code>DDN-VP08</code>. A <code>forbidden</code> marking (chapter 55 §S1) keeps a non-colour rendering (strike/dash) under every theme, including <code>mono_print</code>.</p>
+<h2>52.7 Diagnostic codes allocated by this chapter</h2>
+<table><thead><tr><th>Code</th><th>Severity</th><th>Meaning</th></tr></thead><tbody><tr><td><code>DDN-VP01</code></td><td>error</td><td>Unknown view <code>kind</code>; message lists registered kinds.</td></tr><tr><td><code>DDN-VP02</code></td><td>error</td><td><code>strictness</code> declared without a view <code>kind</code>.</td></tr><tr><td><code>DDN-VP03</code></td><td>info</td><td>Element/verb outside the view kind's vocabulary (permissive mode).</td></tr><tr><td><code>DDN-VP04</code></td><td>error</td><td>Element/verb outside the view kind's vocabulary (strict mode); message names the fix.</td></tr><tr><td><code>DDN-VP05</code></td><td>error</td><td><code>numeral</code> not an integer in 1–99999.</td></tr><tr><td><code>DDN-VP06</code></td><td>error</td><td>Duplicate <code>numeral</code> within one view; message names both elements.</td></tr><tr><td><code>DDN-VP07</code></td><td>warning</td><td>Decision branch without a label under <code>patent.legal@1</code>.</td></tr><tr><td><code>DDN-VP08</code></td><td>error</td><td>Unknown theme name; message lists registered themes.</td></tr><tr><td><code>DDN-VP09</code></td><td>error</td><td>View kind conflicts with an explicit incompatible projection kind (e.g. <code>kind: chart-bar</code> with <code>projection { kind: graph; }</code>).</td></tr></tbody></table>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

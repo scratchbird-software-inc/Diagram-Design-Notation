@@ -1,0 +1,15 @@
+ddn "0.6";
+module "ddn.vectors.unicode";
+// C2 degenerate corpus: CJK, RTL Arabic, combining marks, emoji and ZWJ sequences.
+// Expected: no mojibake, no crash; estimated metrics raise DDN-TW01 at most.
+data m {
+  object cjk "顧客マスター" {kind: table;}
+  object rtl "جدول الطلبات" {kind: table;}
+  object combining "Cafe\u0301 re\u0308sume\u0301" {kind: table;}
+  object emoji "🚀 launch" {kind: table;}
+  object zwj "👩🏽‍💻 engineer" {kind: table;}
+  relation r1 @cjk -> @rtl {kind: ref;}
+  relation r2 @combining -> @emoji {kind: ref;}
+  relation r3 @emoji -> @zwj {kind: ref;}
+}
+view main { data: [@m]; }

@@ -59,6 +59,7 @@ import BATCH2 from './field-guide-batch2.mjs';
 import BATCH3 from './field-guide-batch3.mjs';
 import BATCH4 from './field-guide-batch4.mjs';
 import BATCH5 from './field-guide-batch5.mjs';
+import BATCH6 from './field-guide-batch6.mjs';
 const F = k => k.split('.').reduce((o, x) => o[x], facts).value;
 const sha256 = s => crypto.createHash('sha256').update(s).digest('hex');
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -67,7 +68,7 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 // Curated pilot chapters (6). Each fixture is a real repo example; the
 // experiment target is resolved programmatically (first element in the view
 // whose kind matches the chapter's probe), so ids never drift.
-const CHAPTERS = [...BATCH2, ...BATCH3, ...BATCH4, ...BATCH5,
+const CHAPTERS = [...BATCH2, ...BATCH3, ...BATCH4, ...BATCH5, ...BATCH6,
   {
     id: 'whiteboard', title: 'Whiteboard / discovery sketch', category: 'Data structures and meaning',
     status: 'native', entry: 'website/examples/use-cases/01-whiteboard.ddn', view: 'diagram',
@@ -518,9 +519,9 @@ function lessonHtml(ch) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="${esc(ch.title)}: a source-editable DDN field-guide chapter."><title>${esc(ch.title)} · DDN field guide</title>
 <style>${GUIDE_CSS}</style></head><body>
-<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.8 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
 ${lessonMain(ch)}
-<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script src="../../notation/dist/ddn-graph.js"></script>
 <script src="../../notation/dist/ddn-iso.js"></script>
@@ -538,8 +539,8 @@ function indexHtml(chapters, meta) {
   const byCat = {};
   for (const c of chapters) (byCat[c.category] ??= []).push(c);
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DDN Diagram Field Guide · 0.7 edition</title><style>${GUIDE_CSS}</style></head><body>
-<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="#paths">Learning paths</a><a href="#chapters">All chapters</a><a href="#coverage">Coverage</a><a href="portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
+<title>DDN Diagram Field Guide · 0.8 edition</title><style>${GUIDE_CSS}</style></head><body>
+<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>0.8 edition</small><nav><a href="#paths">Learning paths</a><a href="#chapters">All chapters</a><a href="#coverage">Coverage</a><a href="portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
 <main>
 <section class="hero card"><h1>Understand the diagram.<br>Change the actual design.</h1>
 <p>Choose a question, read the diagram, inspect its shared source, and try a real edit. Every chapter includes a live example, a bounded capability statement, and a shipped, undoable first edit. The whole guide also ships as <a href="portable.html">one self-contained file</a>.</p>
@@ -561,13 +562,13 @@ function indexHtml(chapters, meta) {
 <section id="coverage" class="card"><h3>Coverage and honesty</h3>
 <p>Support levels: <span class="pill native">native</span> a directly implemented DDN capability within its declared limits; <span class="pill equivalent">equivalent</span> a constructive DDN teaching template for the same information, no external certification implied; <span class="pill subset">subset</span> an explicitly bounded implementation of a wider family; <span class="pill technique">technique</span> an authoring or publication practice chapter. This edition ships ${meta.chapters} chapters (${meta.byStatus}) — every entry in <code>chapter-plan.json</code> is delivered.</p>
 <p>Registry facts are generated, never hand-written: ${F('registry.totalKinds')} element kinds, ${F('registry.totalRelations')} relation verbs, ${F('profiles.installed')} profiles, ${F('profiles.projectionKinds')} projection kinds, ${F('icons.packs')} icon packs (${F('icons.icons')} icons) — source: standard/submission/facts.json.</p></section>
-</main><footer>DDN 0.7.0 · field-guide 0.7 edition · every chapter's fixture is checked and rendered at build time; every exercise is executed and undone, hashes recorded.</footer>
+</main><footer>DDN 0.7.0 · field-guide 0.8 edition · every chapter's fixture is checked and rendered at build time; every exercise is executed and undone, hashes recorded.</footer>
 <script>document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();for(const a of document.querySelectorAll('#nav-list a'))a.style.display=a.dataset.text.includes(q)?'':'none';});</script>
 </body></html>`;
 }
 
 function fieldGuideMd(chapters, meta) {
-  const lines = [`# DDN Diagram Field Guide — 0.7 edition`,
+  const lines = [`# DDN Diagram Field Guide — 0.8 edition`,
     ``,
     `Generated by \`tools/build-field-guide.mjs\` from the registry, the example corpus and`,
     `\`standard/submission/facts.json\`. Every chapter fixture is checked and rendered at build`,
@@ -613,7 +614,7 @@ function portableHtml(chapters, meta) {
   const byCat = {};
   for (const c of payload) (byCat[c.category] ??= []).push(c);
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="The DDN Diagram Field Guide as one self-contained file: ${meta.chapters} chapters, live examples, guided edits — no network, no account."><title>DDN Diagram Field Guide · portable 0.7 edition</title>
+<meta name="description" content="The DDN Diagram Field Guide as one self-contained file: ${meta.chapters} chapters, live examples, guided edits — no network, no account."><title>DDN Diagram Field Guide · portable 0.8 edition</title>
 <style>${GUIDE_CSS}
 #layout{display:grid;grid-template-columns:300px 1fr;gap:1rem;align-items:start}
 #sidebar{position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow:auto}
@@ -621,13 +622,13 @@ function portableHtml(chapters, meta) {
 #lesson{min-width:0}
 @media(max-width:900px){#layout{grid-template-columns:1fr}#sidebar{position:static;max-height:none}}
 </style></head><body>
-<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>portable 0.7 edition · one file · works offline</small><nav><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
+<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>portable 0.8 edition · one file · works offline</small><nav><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
 <div id="layout"><aside id="sidebar" class="card"><input id="search" class="search" type="search" placeholder="Search chapters…" aria-label="Search chapters">
 <div class="nav-list">${Object.entries(byCat).map(([cat, cs]) => `<h4>${esc(cat)}</h4>` + cs.map(c => `<a href="#/${c.id}" data-id="${c.id}" data-text="${esc((c.title + ' ' + cat).toLowerCase())}">${esc(c.title)}</a>`).join('')).join('')}</div></aside>
 <div id="lesson"><main><section class="hero card"><h1>Understand the diagram.<br>Change the actual design.</h1>
-<p>This single file carries the whole 0.7 field guide: <strong>${meta.chapters} chapters</strong>, every live example, every guided first edit, the full rendering runtime — no network, no account, no external reference. Pick a chapter on the left; the URL hash deep-links it.</p>
+<p>This single file carries the whole 0.8 field guide: <strong>${meta.chapters} chapters</strong>, every live example, every guided first edit, the full rendering runtime — no network, no account, no external reference. Pick a chapter on the left; the URL hash deep-links it.</p>
 <p class="minor">Registry facts are generated, never hand-written: ${F('registry.totalKinds')} element kinds, ${F('registry.totalRelations')} relation verbs, ${F('profiles.installed')} profiles, ${F('profiles.projectionKinds')} projection kinds, ${F('icons.packs')} icon packs (${F('icons.icons')} icons) — source: standard/submission/facts.json.</p></section></main></div></div>
-<footer>DDN ${A.VERSION} · field-guide 0.7 portable edition · original documentation and synthetic examples · everything on this page runs locally.</footer>
+<footer>DDN ${A.VERSION} · field-guide 0.8 portable edition · original documentation and synthetic examples · everything on this page runs locally.</footer>
 ${runtimes}
 <script>window.GUIDE_SHARED_FILES = ${safe(JSON.stringify(sharedFiles))};</script>
 <script>window.GUIDE_PORTABLE = ${safe(JSON.stringify(payload.map(c => ({ id: c.id, main: c.main, files: c.files, chapter: c.chapter, geography: c.geography, artPacks: !!c.artPacks }))))};</script>
@@ -669,7 +670,7 @@ const meta = {
   byStatus: [...new Set(chapters.map(c => c.status))].join('/'),
 };
 const catalogue = {
-  meta: { edition: 'field-guide-0.7', runtime: A.VERSION, reviewed: '2026-09-30',
+  meta: { edition: 'field-guide-0.8', runtime: A.VERSION, reviewed: '2026-10-04',
     chapterCount: chapters.length, plannedChapterCount: PLAN.length,
     facts: {
       profiles: F('profiles.installed'), projectionKinds: F('profiles.projectionKinds'),

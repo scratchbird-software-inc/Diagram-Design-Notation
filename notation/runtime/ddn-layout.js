@@ -96,8 +96,24 @@ function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
    }
   }const comp=new Map();components.forEach((c,i)=>c.forEach(id=>comp.set(id,i)));const rank=components.map(()=>0);for(let i=0;i<components.length;i++)for(const e of edges){const a=comp.get(e.from.element),b=comp.get(e.to.element);if(a!==b)rank[b]=Math.max(rank[b],rank[a]+1);}
   const layers=[];nodes.forEach(n=>(layers[rank[comp.get(n.id)]]??=[]).push(n));
-  const pred=new Map(nodes.map(n=>[n.id,[]]));edges.forEach(e=>pred.get(e.to.element).push(e.from.element));
-  for(let sweep=0;sweep<3;sweep++)for(let i=1;i<layers.length;i++){const pos=new Map(layers[i-1].map((n,j)=>[n.id,j]));const bary=n=>{const ps=pred.get(n.id).filter(id=>pos.has(id));return ps.length?ps.reduce((s,id)=>s+pos.get(id),0)/ps.length:order.get(n.id);};layers[i].sort((a,b)=>bary(a)-bary(b)||order.get(a.id)-order.get(b.id));}
+  const pred=new Map(nodes.map(n=>[n.id,[]])),succ=new Map(nodes.map(n=>[n.id,[]]));edges.forEach(e=>{pred.get(e.to.element).push(e.from.element);succ.get(e.from.element).push(e.to.element);});
+  /* Two-sided Sugiyama sweeps: alternate predecessor and successor barycenter
+   * passes, keep the ordering with the fewest crossings between adjacent
+   * ranks. Bounded iterations, deterministic tie-breaks on declaration order. */
+  const layerCrossings=()=>{let c=0;
+   for(let i=0;i<layers.length-1;i++){const up=new Map(layers[i].map((n,j)=>[n.id,j])),down=new Map(layers[i+1].map((n,j)=>[n.id,j]));
+    const es=edges.filter(e=>up.has(e.from.element)&&down.has(e.to.element));
+    for(let a=0;a<es.length;a++)for(let b=a+1;b<es.length;b++)if((up.get(es[a].from.element)-up.get(es[b].from.element))*(down.get(es[a].to.element)-down.get(es[b].to.element))<0)c++;}
+   return c;};
+  const sweep=(peer,range)=>{for(const i of range){const pos=new Map(layers[i+(peer===pred?-1:1)].map((n,j)=>[n.id,j]));const bary=n=>{const ps=peer.get(n.id).filter(id=>pos.has(id));return ps.length?ps.reduce((s,id)=>s+pos.get(id),0)/ps.length:order.get(n.id);};layers[i].sort((a,b)=>bary(a)-bary(b)||order.get(a.id)-order.get(b.id));}};
+  const forward=[],backward=[];for(let i=1;i<layers.length;i++)forward.push(i);for(let i=layers.length-2;i>=0;i--)backward.push(i);
+  let bestC=layerCrossings(),bestOrder=layers.map(l=>l.map(n=>n.id));
+  for(let it=0;it<8&&bestC>0;it++){
+   sweep(pred,forward);sweep(succ,backward);
+   const c=layerCrossings();
+   if(c<bestC){bestC=c;bestOrder=layers.map(l=>l.map(n=>n.id));}else break;
+  }
+  layers.forEach((l,i)=>{const at=new Map(bestOrder[i].map((id,j)=>[id,j]));l.sort((a,b)=>at.get(a.id)-at.get(b.id));});
   let major=0;for(const layer of layers){let minor=0,extent=0;for(const n of layer){if(horizontal){n.x=major;n.y=minor;minor+=n.h+rowGap;extent=Math.max(extent,n.w);}else{n.x=minor;n.y=major;minor+=n.w+gap;extent=Math.max(extent,n.h);}}major+=extent+(horizontal?gap:rowGap);}
   if(components.some(c=>c.length>1))diag.push({code:'DDN-LW01',severity:'info',message:'Directed cycles retained as same-rank strongly connected groups; no model edge reversed.'});
  }else if(['tree','mindmap'].includes(p.algorithm)){
@@ -461,7 +477,33 @@ function routing(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Error,extr
  const degree=new Map();for(const r of rels)for(const e of [r.from,r.to])degree.set(e.element,(degree.get(e.element)||0)+1);
  const distance=r=>{const a=nodes.find(n=>n.id===r.from.element),b=nodes.find(n=>n.id===r.to.element);return Math.abs(a.x-b.x)+Math.abs(a.y-b.y);};
  const orders=[rels,[...rels].sort((a,b)=>(degree.get(b.from.element)+degree.get(b.to.element))-(degree.get(a.from.element)+degree.get(a.to.element))||distance(b)-distance(a)||a.id.localeCompare(b.id)),[...rels].reverse(),[...rels].sort((a,b)=>distance(a)-distance(b)||a.id.localeCompare(b.id))];
- let last;const failures=[];for(let attempt=0;attempt<orders.length;attempt++)try{const r=routingAttempt(nodes,orders[attempt],profiles,hints,labelMeasure,ErrorClass,extraObstacles);r.strategy=attempt;if(attempt)r.diagnostics.push({code:'DDN-LW04',severity:'info',message:'Deterministic congestion retry selected routing strategy '+attempt});return curvedRouting(r,nodes,profiles,hints,ErrorClass,extraObstacles);}catch(e){if(!['DDN212','DDN215','DDN216','DDN217','DDN218','DDN220','DDN221'].includes(e.code))throw e;last=e;failures.push({strategy:attempt,code:e.code,message:e.message});}last.attempts=failures;throw last;
+ /* Every feasible deterministic ordering is evaluated for small and medium
+  * graphs, then the best drawing wins on (crossings, bends, length) with the
+  * ordering index as the final tie-break. A zero-crossing ordering is
+  * unbeatable, so the search stops there. Large graphs (>96 relations) keep
+  * the historical first-feasible selection: a full extra routing pass per
+  * ordering is not bounded cheaply at that size. Scoring happens before the
+  * curved pass: all four orderings share that pass, and curve-specific checks
+  * (B1-100 side rules, tension) belong to its own candidates. */
+ const score=r=>({crossings:r.crossings.length,bends:r.routes.reduce((n,rt)=>n+Math.max(0,rt.points.length-2),0),length:r.routes.reduce((n,rt)=>n+segs(rt.points).reduce((m,s)=>m+length(s),0),0)});
+ const better=(a,b)=>!b||a.crossings<b.crossings||a.crossings===b.crossings&&(a.bends<b.bends||a.bends===b.bends&&a.length<b.length-EPS);
+ const wantsCurved=rels.some(r=>['curved'].includes(hints[r.id]?.routing||profiles.layout.routing));
+ const FIRST=rels.length>96;
+ let best=null,bestScore=null,bestAttempt=-1,last;const failures=[],candidates=[];
+ for(let attempt=0;attempt<orders.length;attempt++)try{
+  const r=routingAttempt(nodes,orders[attempt],profiles,hints,labelMeasure,ErrorClass,extraObstacles),s=score(r);
+  // Curved routing checks each relation against the other orderings' final
+  // curves, so its pass runs once the orthogonal winner is known; when the
+  // winner cannot be curved safely the next-best ordering takes its place.
+  if(wantsCurved){candidates.push({r,s,attempt});if(!FIRST&&!s.crossings)break;}
+  else{const checked=curvedRouting(r,nodes,profiles,hints,ErrorClass,extraObstacles);if(FIRST){best=checked;bestAttempt=attempt;break;}if(better(s,bestScore)){best=checked;bestScore=s;bestAttempt=attempt;if(!s.crossings)break;}}
+ }catch(e){if(!['DDN212','DDN215','DDN216','DDN217','DDN218','DDN220','DDN221'].includes(e.code))throw e;last=e;failures.push({strategy:attempt,code:e.code,message:e.message});}
+ if(wantsCurved){
+  if(FIRST)candidates.sort((a,b)=>a.attempt-b.attempt);else candidates.sort((a,b)=>better(a.s,b.s)?-1:better(b.s,a.s)?1:a.attempt-b.attempt);
+  for(const c of candidates)try{best=curvedRouting(c.r,nodes,profiles,hints,ErrorClass,extraObstacles);bestAttempt=c.attempt;break;}catch(e){if(!['DDN220','DDN221'].includes(e.code))throw e;last=e;failures.push({strategy:c.attempt,code:e.code,message:e.message});}
+ }
+ if(best){best.strategy=bestAttempt;if(bestAttempt)best.diagnostics.push({code:'DDN-LW04',severity:'info',message:'Deterministic congestion retry selected routing strategy '+bestAttempt});return best;}
+ last.attempts=failures;throw last;
 }
 function inspect(nodes,routes,labels=[],routeRecs=null){const errors=[],overlaps=[],through=[],shared=[],masking=[];
  const recs=routeRecs||routes.map(r=>routeSegRecs(r.points)),nodeBoxes=nodes.map(n=>box(n,1)),labelBoxes=labels.map(l=>box(l,2));

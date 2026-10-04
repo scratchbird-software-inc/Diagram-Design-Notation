@@ -160,6 +160,26 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 }
 #ddn-source-error { margin: 4px 0 0; color: #912e1e; font: 11px/1.4 ui-monospace, monospace; white-space: pre-wrap; max-height: 54px; overflow: auto; }
 #ddn-source-error:empty { display: none; }
+/* source drawer: one tab per workspace file (chapter 57 §D3) */
+#ddn-source-tabs { display: flex; flex-wrap: wrap; gap: 2px; margin: 0 0 6px; }
+#ddn-source-tabs button {
+  border: 1px solid #cbd5e3; border-bottom: 0; border-radius: 6px 6px 0 0;
+  background: #f3f6fb; padding: 4px 10px; font: 11.5px ui-monospace, monospace; cursor: pointer;
+}
+#ddn-source-tabs button.selected { background: #fff; font-weight: 700; color: #244fa9; }
+/* diagnostics list (chapter 56 §X4 stable shape; regenerated on each check) */
+#ddn-diagnostics-wrap h3 { font-size: 12px; margin: 8px 0 2px; color: #44597a; }
+#ddn-diagnostics { list-style: none; margin: 0; padding: 0; max-height: 130px; overflow: auto; font: 11px/1.5 ui-monospace, monospace; }
+#ddn-diagnostics li button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 2px 4px; cursor: pointer; white-space: pre-wrap; overflow-wrap: anywhere; }
+#ddn-diagnostics li button:hover { background: #eef4ff; }
+#ddn-diagnostics .sev-error { color: #912e1e; }
+#ddn-diagnostics .sev-warning { color: #885513; }
+#ddn-diagnostics .sev-info { color: #245ac8; }
+#ddn-diagnostics .none { color: #5a6d85; padding: 2px 4px; }
+/* new-document template picker (chapter 57 §D2) */
+#ddn-template-popup { border: 1px solid #cbd5e3; border-radius: 8px; background: #fff; padding: 10px; margin: 6px 0; }
+#ddn-template-list { display: flex; flex-direction: column; gap: 3px; }
+#ddn-template-list button { text-align: left; font-size: 12px; }
 .ddn-inspector { flex: 0 0 240px; border-left: 1px solid #e3eaf3; padding-left: 14px; overflow: auto; }
 .ddn-inspector h3 { font-size: 12px; margin: 4px 0; color: #44597a; }
 .ddn-inspector label { display: block; font-size: 12px; margin: 6px 0 2px; }

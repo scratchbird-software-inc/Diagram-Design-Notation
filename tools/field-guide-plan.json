@@ -1172,5 +1172,61 @@
     "support": "native",
     "entry": "website/examples/basics/110-presentation-architecture.ddn",
     "view": "overview"
+  },
+  {
+    "id": "version-06",
+    "title": "Source versions — the 0.6 dialect and when to upgrade",
+    "status": "pilot",
+    "support": "technique",
+    "entry": "field-guide/sources/version-06.ddn",
+    "view": "main"
+  },
+  {
+    "id": "view-profiles",
+    "title": "View kinds and strictness — declaring what a view is",
+    "status": "pilot",
+    "support": "technique",
+    "entry": "field-guide/sources/view-profiles.ddn",
+    "view": "flow_strict"
+  },
+  {
+    "id": "patent-figures",
+    "title": "Patent and legal figures — numerals, refs and mono print",
+    "status": "pilot",
+    "support": "technique",
+    "entry": "field-guide/sources/patent-figure.ddn",
+    "view": "fig1"
+  },
+  {
+    "id": "publication-chrome",
+    "title": "Publication chrome — headers, footers, borders and figure sets",
+    "status": "pilot",
+    "support": "technique",
+    "entry": "field-guide/sources/publication-chrome.ddn",
+    "view": "overview"
+  },
+  {
+    "id": "text-fit",
+    "title": "Text fit — wrap, grow, shrink and honest overflow",
+    "status": "pilot",
+    "support": "technique",
+    "entry": "field-guide/sources/text-fit.ddn",
+    "view": "fitted"
+  },
+  {
+    "id": "markings-metadata",
+    "title": "Markings and metadata — forbidden, tentative, provenance",
+    "status": "pilot",
+    "support": "technique",
+    "entry": "field-guide/sources/markings.ddn",
+    "view": "main"
+  },
+  {
+    "id": "cli-power-tools",
+    "title": "CLI power tools — verbs, diagnostics JSON and publish",
+    "status": "pilot",
+    "support": "technique",
+    "entry": "field-guide/sources/cli-workflow.ddn",
+    "view": "main"
   }
 ]

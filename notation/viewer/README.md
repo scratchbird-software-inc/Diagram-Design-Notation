@@ -36,6 +36,14 @@ Once loaded:
 - **Zoom** — *Fit page*, *Fit width*, *Fit height*, *100%*, *−* / *+* buttons;
   the current percentage is shown next to them. Fits recompute on window
   resize; pressing *−* / *+* switches to an explicit scale.
+- **Element focus** (0.8, spec 57 §57.1) — click an object in the diagram to
+  focus it: a blue stroke ring highlights the element via the renderer's
+  `data-ddn-id` hook. Focus is session-only (it enters an export only when
+  you explicitly export the styled view). Click the background to clear.
+- **Link following** (0.8, spec 57 §57.1) — subdiagram reference frames,
+  frozen drill-down thumbnails, and `x_subdiagram` badges navigate to their
+  target views inside the loaded workspace (the view picker follows along).
+  Links resolve through the workspace only — never to network URLs.
 - **Font family / size dropdowns** (top bar) — pick one of the four runtime
   font stacks (`sans`, `serif`, `mono`, `handwriting`, shown with their real
   rendered names) and a size (8–24 px), or *source default*. These go through

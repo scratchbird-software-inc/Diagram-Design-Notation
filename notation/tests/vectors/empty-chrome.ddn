@@ -1,0 +1,9 @@
+ddn "0.6";
+module "ddn.vectors.chrome";
+// C2 degenerate corpus: header/footer runs with an empty title — no label,
+// bare view id. Expected: chrome falls back to the view id; no DDN-PB error.
+data m { object a "A" {kind: table;} }
+view main {
+  data: [@m];
+  chrome { title: on; footer: on; }
+}

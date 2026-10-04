@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>57. Viewer and designer contract (DDN 0.8 draft) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../icons/index.html">Icons</a>
+      <a href="../../guide/index.html">Guide</a>
+      <a href="../../reference/index.html">Reference</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>57. Viewer and designer contract (DDN 0.8 draft)</h1>
+<blockquote>Examples in this chapter use 0.8 (0.6-dialect) syntax, fenced ``<code>ddn-0.8. The reference runtime implements this chapter's language constructs; the doc-snippet parse gate (</code>notation/tests/doc-snippets.js<code>) parse-checks every fence under a </code>ddn &quot;0.6&quot;;` header.</blockquote>
+<p>Status: draft for the 0.8 standard revision. This chapter fixes the product boundary between the open-source viewer, the open-source designer, and any commercial superset. It is a contract over existing components (the unified tool in <code>notation/tool/</code>, the designer in <code>designer/</code>), not a UI specification: implementations may realize the surface differently but MUST honor every MUST here. Runtime behavior is governed by chapters 51–55; this chapter adds no language features.</p>
+<h2>57.1 Viewer: render-only plus navigation (D1)</h2>
+<p>The viewer renders <code>.ddn</code> to SVG and offers <strong>no</strong> editing capability. Its normative surface is:</p>
+<ol><li><strong>Zoom-to-fit</strong>: fit page / fit width / fit height / 100% as pure</li></ol>
+<p>   viewport transforms of the finished SVG. Zoom never re-layouts, never    re-routes, and never changes the exported artifact.</p>
+<ol><li><strong>Element focus</strong>: clicking a node focuses it (highlight plus optional</li></ol>
+<p>   neighborhood emphasis) using the renderer's <code>data-ddn-id</code> hooks. Focus    state is session-only and never enters the source or exports unless the    user explicitly exports a styled view.</p>
+<ol><li><strong>Link following</strong>: subdiagram references and <code>x_subdiagram</code> badges</li></ol>
+<p>   navigate to their target views; <code>ref:</code> anchors (chapter 55 §S4) expose a    navigation hook (<code>href</code>-style) that focuses the referenced element. Link    targets resolve through the workspace only — never to network URLs    (chapter 08; <code>DDN078</code> rules unchanged).</p>
+<ol><li>The viewer MUST NOT mutate source: no inspector edits, no drag-to-pin,</li></ol>
+<p>   no save. Presentation overrides (chrome, palette) are session-only.</p>
+<h2>57.2 Designer: new document and templates (D2)</h2>
+<ul><li><strong>Explicit &quot;New document&quot;</strong>: a dedicated, always-visible command. A new</li></ul>
+<p>  document starts <strong>EMPTY</strong> unless the user opened an existing <code>.ddn</code>.</p>
+<ul><li>The empty document is a valid <code>.ddn</code> skeleton:</li></ul>
+<pre><code>ddn &quot;0.6&quot;;
+module &quot;untitled&quot;;
+data model {
+}
+view main {
+  data: [@model];
+  publication { size: content; fit: none; }
+}</code></pre>
+<p>  (0.8 dialect; a 0.7 designer writes the same skeleton with <code>ddn &quot;0.5&quot;;</code>.)   An empty <code>data</code> block and an empty view selection are legal and render an   empty artboard (degenerate corpus, chapter 58 §C2).</p>
+<ul><li><strong>Template picker</strong>: optional, keyed to the registered view kinds of</li></ul>
+<p>  chapter 52 — picking <code>flowchart</code> scaffolds a <code>kind: flowchart</code> view with   starter elements from that vocabulary. Templates are source generators,   not runtime features: after creation the document is ordinary <code>.ddn</code> with   no template dependency.</p>
+<h2>57.3 Designer: multi-pane workspace editing (D3)</h2>
+<ul><li>One editor tab per workspace file for multi-file workspaces (chapter 56</li></ul>
+<p>  §X3); the tab set is the entry's import closure plus explicitly added   files.</p>
+<ul><li><strong>Add file</strong> defaults follow the naming conventions: sibling of the</li></ul>
+<p>  importing file, kebab-case, <code>.ddn</code>; the tool offers to insert the   matching <code>import &quot;…&quot; as …;</code> line rather than leaving a dangling file.</p>
+<ul><li><strong>Jump-to-definition</strong> on <code>@refs</code> (and on <code>ref:</code> anchors) navigates to the</li></ul>
+<p>  declaring file:line using the diagnostic location contract (chapter 56   §X4).</p>
+<ul><li><strong>Diagnostic list</strong>: every check diagnostic listed with code, severity,</li></ul>
+<p>  file:line; clicking navigates. The list is regenerated on each check, not   accumulated.</p>
+<ul><li><strong>Live re-render</strong>: the active view re-renders debounced (≤ 500 ms after</li></ul>
+<p>  last keystroke) while editing; render failures show the last good picture   dimmed plus the diagnostics, never a blank stage.</p>
+<h2>57.4 Designer: export boundary (D4)</h2>
+<ul><li>Client-side, always available: <strong>SVG</strong> (the renderer's native output) and</li></ul>
+<p>  <strong>PNG</strong> (canvas rasterization, 2×, capped 16384 px/side). Both run fully   in the browser from <code>file://</code>; no server, no telemetry.</p>
+<ul><li><strong>PDF and PPTX are commercial/service features.</strong> The OSS designer offers</li></ul>
+<p>  no PDF/PPTX button, not even a disabled one advertising them; the formats   are a hosted superset consuming the same runtime (§57.6).</p>
+<ul><li><strong>Importers</strong> (e.g. a Mermaid subset) are a designer feature, never a</li></ul>
+<p>  viewer one. Mermaid import is deferred to 0.9; the 0.8 surface only fixes   where it will live (a designer &quot;Import…&quot; command producing ordinary 0.6   source through the same skeleton/template path as §57.2).</p>
+<h2>57.5 Designer: tidy / re-layout (D5)</h2>
+<p>A <strong>Tidy</strong> command re-runs placement and routing on the active view with all authored pins respected: pinned elements keep their positions exactly, free elements are re-placed by the view's declared (or default) layout algorithm, and routes are recomputed under the existing quality gates. Tidy is an ordinary undoable source/workspace operation — it writes computed <code>place</code> pins for free elements only when the user confirms &quot;pin result&quot;; otherwise it changes the session layout state, not the source. It never relaxes <code>endpoint_ordering</code>, route policies or geometry checks to force a result (chapters 05/26).</p>
+<h2>57.6 Guardrail: OSS footprint vs commercial superset (D6)</h2>
+<ul><li>The open-source footprint is exactly: the existing runtime bundles plus</li></ul>
+<p>  the editor component. No 0.8 feature may add a server dependency, a   build-time codegen step for end users, or a third-party runtime   dependency.</p>
+<ul><li>A commercial offering is a **hosted superset consuming the same runtime</li></ul>
+<p>  bundles** — additional formats (PDF/PPTX), storage, collaboration —   delivered around, never as a fork of, the runtime. Any divergence in   check/render behavior between OSS and hosted use of the same source is a   defect, and the conformance vectors (chapter 58) run against both.</p>
+<ul><li>Feature-gating in the superset happens at the application layer (export</li></ul>
+<p>  formats, hosting), never by patching runtime diagnostics or rendering.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

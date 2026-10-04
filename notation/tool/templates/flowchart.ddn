@@ -1,0 +1,19 @@
+ddn "0.6";
+module "untitled";
+
+// Empty flowchart starter (view kind flowchart, flow.documented@2-compatible
+// defaults): a closed flow needs a start and an end; add process/decision
+// steps between them. Decision branches must be labelled.
+data model {
+    object start "Start" { kind: "flow.start"; }
+    object step "Process step" { kind: "flow.process"; }
+    object done "End" { kind: "flow.end"; }
+    relation f1 @start -> @step { kind: "flow.next"; }
+    relation f2 @step -> @done { kind: "flow.next"; }
+}
+
+view main {
+    data: [@model];
+    kind: flowchart;
+    publication { size: content; fit: none; }
+}

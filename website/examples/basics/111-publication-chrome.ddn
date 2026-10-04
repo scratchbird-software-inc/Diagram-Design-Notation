@@ -1,0 +1,44 @@
+ddn "0.6";
+module "examples.publication.chrome";
+format shared {
+    publication filing {
+        size: letter;
+        margin: 18mm;
+        minimum_text: 6pt;
+        embedding_scale: 2;
+        header {
+            left { text: "$title"; size: 9pt; }
+            right { text: "$date"; size: 9pt; }
+        }
+        footer {
+            center { text: "FIG. $figure"; size: 10pt; font: serif; }
+            right { text: "Page $page"; size: 8pt; }
+        }
+        border { style: single; weight: 1pt; inset: 6mm; }
+    }
+}
+data model {
+    object start "Start" { kind: "flow.start"; numeral: 100; }
+    object read "Read sensor" { kind: "flow.process"; numeral: 102; }
+    object decide "Threshold exceeded?" { kind: "flow.decision"; numeral: 104; }
+    object stop "Stop" { kind: "flow.end"; numeral: 106; }
+    relation f1 @start -> @read { kind: "flow.next"; }
+    relation f2 @read -> @decide { kind: "flow.next"; }
+    relation f3 "yes" @decide -> @stop { kind: "flow.next"; }
+    relation f4 "no" @decide -> @stop { kind: "flow.next"; }
+}
+view fig1 "Sensor monitor" {
+    data: [@model];
+    kind: patent-figure;
+    publication: @shared.filing;
+}
+view fig2 "Sensor monitor (detail)" {
+    data: [@model];
+    kind: patent-figure;
+    publication: @shared.filing;
+    select: [@model.read, @model.decide, @model.stop];
+}
+publication_set figures "Patent figures" {
+    publication: @shared.filing;
+    figures: [@fig1, @fig2];
+}

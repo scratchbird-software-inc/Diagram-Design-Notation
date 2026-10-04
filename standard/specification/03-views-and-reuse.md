@@ -6,6 +6,8 @@ A view is the composition point. It references one or more data modules, a notat
 
 Language defaults → referenced bundle → directly referenced concern → view-local concern properties. This is explicit component replacement/override, not import-order mutation of semantic facts. References resolve to stable identities. Conflicting IDs or properties fail rather than allowing a last-import-wins design.
 
+> **0.8 draft amendment:** a 0.6 view may also declare a `kind` (view profile) and `strictness` (chapter 52). Kind-derived profile/theme defaults insert between language defaults and the referenced bundle in this order; explicit concerns still win. Kind and strictness are lint/composition axes only — they never change selection, semantics or rendering beyond their documented defaults.
+
 ```ddn
 format formats {
  layout dataflow {algorithm: layered;direction: right;routing: orthogonal;}

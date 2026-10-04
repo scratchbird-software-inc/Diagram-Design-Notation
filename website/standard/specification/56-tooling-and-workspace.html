@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>56. Tooling and workspace conventions (DDN 0.8 draft) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../icons/index.html">Icons</a>
+      <a href="../../guide/index.html">Guide</a>
+      <a href="../../reference/index.html">Reference</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>56. Tooling and workspace conventions (DDN 0.8 draft)</h1>
+<p>Status: draft for the 0.8 standard revision. X1–X2 specify new CLI surface; X3–X4 write down, as normative convention, behavior the 0.7 CLI already implements (<code>notation/cli/cli.js</code>) so third-party tools can rely on it. Nothing in this chapter changes the language; it standardizes the tool interface around it.</p>
+<h2>56.1 CLI legality query (X1)</h2>
+<pre><code>node notation/cli/cli.js verbs --from &lt;kind&gt; --to &lt;kind&gt;</code></pre>
+<p>prints, one per line, the relation verbs whose registered endpoint contract (<code>standard/registry/relation-constraints.json</code>) admits a relation from an element of kind <code>&lt;kind&gt;</code> to an element of kind <code>&lt;kind&gt;</code>:</p>
+<pre><code>$ node notation/cli/cli.js verbs --from task --to decision
+flow
+ref</code></pre>
+<ul><li>Kinds and verbs are registry identifiers; unknown kinds are <code>DDN-WS01</code></li></ul>
+<p>  (message lists close matches by edit distance when any exist).</p>
+<ul><li>The answer is computed from the installed registry plus any <code>--pack</code>/</li></ul>
+<p>  profile extensions registered for the run — the same data <code>check</code>   validates against. There is no cached static list.</p>
+<ul><li>Output is plain text, one verb per line, sorted in registry order; empty</li></ul>
+<p>  result = no legal verb (exit code 0, empty stdout). Machine form:   <code>--json</code> emits <code>{&quot;from&quot;:&quot;…&quot;,&quot;to&quot;:&quot;…&quot;,&quot;verbs&quot;:[&quot;…&quot;]}</code>.</p>
+<ul><li>The query answers <strong>endpoint legality only</strong>. It does not predict layout,</li></ul>
+<p>  profile-specific restrictions (a profile may still reject the relation,   e.g. <code>DDN-PF007</code>), or rendering success.</p>
+<h2>56.2 Diagnostic hints (X2)</h2>
+<p>Where a failing rule has one obvious fix, the diagnostic message MUST carry it. Conventions, already followed by DDN071/DDN047 and now normative:</p>
+<ol><li>The message names the offending identity, the violated constraint, and</li></ol>
+<p>   the concrete remedy with its current value where applicable:    &quot;… below minimum 10.67px — increase base font to ≥15.5px …&quot;.</p>
+<ol><li>When more than one remedy exists, name the least destructive one first;</li></ol>
+<p>   never list remedies the author's own declarations rule out (e.g. do not    suggest raising a bound the author pinned).</p>
+<ol><li>Hints are advisory text, never applied automatically. A tool that fixes</li></ol>
+<p>   source does so through an explicit, undoable edit (designer, chapter 57).</p>
+<ol><li>Machine consumers use the <code>code</code>, never message text; messages may be</li></ol>
+<p>   reworded between versions (chapter 51 §51.5).</p>
+<h2>56.3 Workspace manifest conventions (X3)</h2>
+<p>A DDN workspace is a directory tree of <code>.ddn</code> files. The conventions below record what the 0.7 CLI does and are normative for 0.8 tools:</p>
+<ol><li><strong>Entry file.</strong> The entry is named explicitly (CLI argument, tool</li></ol>
+<p>   <code>?entry=</code> parameter). When a tool must guess, it looks for    <code>main.ddn</code>, then <code>index.ddn</code>, then the single <code>.ddn</code> file if exactly one    exists at the root; ambiguity is reported, never resolved by mtime.</p>
+<ol><li><strong>Workspace root.</strong> The root is <code>--workspace DIR</code> (default: current</li></ol>
+<p>   directory). The entry MUST resolve inside the root; an entry outside is    rejected. Imports resolve <strong>relative to the importing file's directory</strong>,    must stay inside the root, and absolute paths, <code>..</code> escapes above the    root, scheme URLs and symlink escapes are rejected (&quot;Unsafe import    path&quot;). Import cycles are visited once.</p>
+<ol><li><strong>Module resolution.</strong> Within the assembled file set, references resolve</li></ol>
+<p>   by module-qualified identity (chapter 01/03): sibling sections of one    multi-module file without import, imported modules by alias. Conflicting    identities fail (<code>DDN013/014/023/024</code>); there is no import-order shadowing.</p>
+<ol><li><strong>Side-loaded assets.</strong> Architecture <code>files</code> and <code>x_link.file</code> join the</li></ol>
+<p>   workspace under the same path-safety rules. Optional packs are registered    per run with <code>--pack</code> (never inlined into runtimes).</p>
+<ol><li><strong>Manifest file.</strong> A workspace MAY carry <code>ddn.workspace.json</code> at the root:</li></ol>
+<p>   <code>{ &quot;format&quot;: &quot;ddn-workspace@1&quot;, &quot;entry&quot;: &quot;main.ddn&quot;, &quot;packs&quot;: [] }</code>.    Tools that find one prefer its <code>entry</code> over the guessing order. Absence    of the manifest is normal and never an error; a malformed manifest is    <code>DDN-WS02</code>.</p>
+<h2>56.4 Cross-file diagnostic stability (X4)</h2>
+<p>Every diagnostic that concerns source text carries a stable, machine-parseable location:</p>
+<pre><code>{&quot;code&quot;:&quot;DDN-PJ104&quot;,&quot;severity&quot;:&quot;error&quot;,&quot;file&quot;:&quot;model/billing.ddn&quot;,&quot;line&quot;:42,&quot;view&quot;:&quot;billing&quot;,&quot;message&quot;:&quot;…&quot;}</code></pre>
+<ul><li><code>file</code> is the workspace-root-relative POSIX path (<code>/</code> separators, no</li></ul>
+<p>  leading <code>./</code>), exactly as the import graph spells it — stable across   machines mounting the workspace at different absolute paths.</p>
+<ul><li><code>line</code> is 1-based in that file's UTF-8 text. Diagnostics without a single</li></ul>
+<p>  source site (cross-file identity conflicts, render-stage quality reports)   carry <code>file</code>/<code>line</code> of the primary site plus the other site named in the   message; truly site-less diagnostics (e.g. <code>DDN-LW06</code>) omit both fields   rather than fabricating one.</p>
+<ul><li>The JSON shape <code>{code, severity, file?, line?, view?, message}</code> is the</li></ul>
+<p>  contract. Fields are never renamed; new fields may be added additively.   <code>severity</code> is one of <code>info|warning|error</code>.</p>
+<ul><li>Designer diagnostic lists (chapter 57 §D3) and CI gates consume this shape</li></ul>
+<p>  directly; line stability follows source stability — tools that rewrite   source (normalization, bundle) are exempt and say so.</p>
+<h2>56.5 Diagnostic codes allocated by this chapter</h2>
+<table><thead><tr><th>Code</th><th>Severity</th><th>Meaning</th></tr></thead><tbody><tr><td><code>DDN-WS01</code></td><td>error</td><td><code>verbs</code> query with an unknown kind; message lists close matches.</td></tr><tr><td><code>DDN-WS02</code></td><td>error</td><td>Malformed <code>ddn.workspace.json</code> (bad JSON, unknown <code>format</code>, entry not a <code>.ddn</code> in the root).</td></tr><tr><td><code>DDN-WS03</code></td><td>error</td><td>Entry guessing found multiple candidate entry files and no manifest; message lists them.</td></tr><tr><td><code>DDN-WS04</code></td><td>error</td><td>Entry file missing or unreadable.</td></tr></tbody></table>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

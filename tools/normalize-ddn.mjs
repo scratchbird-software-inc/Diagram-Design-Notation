@@ -2,7 +2,8 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
  * B1-021 corpus normalizer (D2). Zero-dependency Node ESM; uses the runtime
  * sources directly (notation/runtime is ESM). For every .ddn file:
- *   - bumps legacy source headers (0.2/0.3/0.4) to the newest dialect (0.5);
+ *   - bumps legacy source headers (0.2/0.3/0.4) to the 0.5 dialect (0.5 and
+ *     0.6 headers are left untouched);
  *   - removes declaration properties whose value equals the effective default
  *     (global DEFAULTS in ddn-core, merged through the view's format bundle and
  *     referenced profile declarations, incl. the layout.center pinned-pattern
@@ -228,7 +229,10 @@ function normalizeFile(abs) {
     const tokens = DDN.lex(text, abs);
     const edits = [];
 
-    if (iter === 0 && ast.version !== NEWEST) {
+    /* Bump only LEGACY headers (0.2/0.3/0.4). 0.5 stays 0.5 and 0.6 (the 0.8
+     * dialect) stays 0.6 — rewriting a 0.6 header to 0.5 would break the file
+     * (0.8 constructs are DDN-V04 under a 0.5 stamp). */
+    if (iter === 0 && ['0.2', '0.3', '0.4'].includes(ast.version)) {
       const vtok = tokens.find(t => t.type === 'string');
       edits.push({ start: vtok.start + 1, end: vtok.end - 1, text: NEWEST });
       stats.header = ast.version + '->' + NEWEST;

@@ -30,7 +30,7 @@
 <main class="site-main">
 <article class="md-body">
 <h1>Authoring <code>.ddn</code> sources</h1>
-<p>A <code>.ddn</code> file is plain text in the DDN language (current versions <code>0.3</code>, <code>0.4</code>, <code>0.5</code>; <code>0.2</code> reads for compatibility). The grammar lives in <code>standard/grammar/</code>; the normative chapters are <code>standard/specification/</code>. This page is the tour; each section names the chapter with the full rules.</p>
+<p>A <code>.ddn</code> file is plain text in the DDN language (current versions <code>0.3</code>, <code>0.4</code>, <code>0.5</code>, <code>0.6</code>; <code>0.2</code> reads for compatibility). <code>0.6</code> is the DDN 0.8 dialect — a strict superset of <code>0.5</code>; see <em>0.8 additions</em> below. The grammar lives in <code>standard/grammar/</code>; the normative chapters are <code>standard/specification/</code>. This page is the tour; each section names the chapter with the full rules.</p>
 <h2>File skeleton</h2>
 <pre><code>ddn &quot;0.5&quot;;
 module &quot;shop.orders&quot;;
@@ -48,7 +48,9 @@ view overview &quot;Orders / shared model&quot; {
     data: [@model];
     format: @shared.styles.technical;
 }</code></pre>
-<ul><li><code>ddn &quot;0.5&quot;;</code> — language version stamp. See spec <code>01-language.md</code>.</li><li><code>module</code> — namespace; every declaration id is module-qualified. See</li></ul>
+<ul><li><code>ddn &quot;0.5&quot;;</code> — language version stamp (accepted: <code>0.2</code>–<code>0.6</code>; write <code>0.6</code></li></ul>
+<p>  when using the 0.8 features below). See spec <code>01-language.md</code> and   <code>51-version-and-compatibility.md</code>.</p>
+<ul><li><code>module</code> — namespace; every declaration id is module-qualified. See</li></ul>
 <p>  <code>01-language.md</code> and <code>02-data-model.md</code>. A file may hold several   <code>module &quot;…&quot;;</code> sections, so a full design can live in one   self-contained file; sibling sections reference each other by   module-qualified id (<code>@otherModule.name</code>) with no import between them.</p>
 <ul><li><code>import &quot;…&quot; as alias</code> — pulls another file's declarations in as</li></ul>
 <p>  <code>@alias.name</code>. See <code>03-views-and-reuse.md</code>. Imports are file-level: they   precede the first module header (canonical), or immediately follow the   FIRST header in the legacy position. <code>DDNLive.io.bundle(files, entry)</code> and   the CLI <code>bundle</code> command merge a workspace into one multi-section file with   byte-identical rendering.</p>
@@ -93,6 +95,21 @@ data model {
 <ul><li>Publication sizes, subdiagrams, legends: <code>06-publication-and-subdiagrams.md</code>.</li></ul>
 <h2>Projections and profiles</h2>
 <p><code>projection { kind: …; profile: &quot;…&quot;; … }</code> turns a view into a specific diagram family: <code>chen</code>, <code>matrix</code>, <code>panels</code>, <code>table</code>, <code>chart</code>, <code>timeline</code>, <code>fishbone</code>, <code>decision</code>, <code>sequence</code>, <code>timing</code>, <code>geo</code>, or a specialised <code>graph</code> profile. All 150 installed profiles (12 projection kinds) are listed in <code>standard/registry/profiles/catalogue.json</code> and each has a rendered example in the gallery (<code>website/examples/gallery/index.html</code>). The projection chapters: <code>16-profiles-and-projections.md</code> through <code>42-family-trees.md</code> (matrices and panels 18, charts/time 19 + 22, lifecycles/rule tables 23, sequence 27, BPMN 32, SysML 36, ArchiMate 37, and so on).</p>
+<h2>0.8 additions (source version <code>0.6</code>)</h2>
+<p>Files stamped <code>ddn &quot;0.6&quot;;</code> can use the DDN 0.8 surface (normative chapters <code>51-</code>…<code>58-</code>; everything in 0.5 keeps working, and an 0.8 construct in a ≤0.5 file is error DDN-V04):</p>
+<ul><li><strong>View kinds and strictness</strong> — <code>kind: flowchart; strictness: strict;</code> on a</li></ul>
+<p>  view declares the diagram family, attaches default profile/theme, and   optionally enforces the family's vocabulary (ch. 52). Registered kinds:   <code>ddn-native</code>, <code>flowchart</code>, <code>c4-context/container/component</code>, the five   <code>uml-*</code> kinds, <code>chart-bar</code>/<code>chart-line</code>, <code>ladder</code>, <code>patent-figure</code>.</p>
+<ul><li><strong>Themes</strong> — <code>theme: colorblind_safe;</code> / <code>theme: mono_print;</code> re-skin paint</li></ul>
+<p>  only, never geometry or semantics (ch. 52).</p>
+<ul><li><strong>Publication chrome</strong> — <code>header</code>/<code>footer</code> runs with <code>$title</code>/<code>$page</code>/</li></ul>
+<p>  <code>$date</code>/<code>$view_id</code>/<code>$figure</code> variables, page <code>border</code>, page <code>background</code>   (colour, PNG/WebP image, sanitized SVG pattern — workspace-relative paths   only), and multi-view <code>publication_set</code> figure sets published with   <code>cli.js publish … --set &lt;name&gt;</code> (ch. 53). Print-size lint (DDN-PS01–PS04,   <code>--strict-print</code>) catches text/line weights that would be illegible at the   declared paper size.</p>
+<ul><li><strong>Text fit</strong> — <code>text_fit: wrap|grow|shrink;</code> with <code>max_width</code>/<code>max_height</code>/</li></ul>
+<p>  <code>min_font</code> bounds, residual-overflow diagnostics (DDN-LW07/LW08), and   <code>font_pin</code> for byte-stable cross-machine rendering (ch. 54).</p>
+<ul><li><strong>Markings and metadata</strong> — <code>marks: [forbidden|tentative]</code>, inert</li></ul>
+<p>  <code>assertion</code>/<code>assertions</code> claim text, <code>source:</code>/<code>generator:</code> provenance,   <code>ref:</code> cross-reference anchors that render an element's <code>numeral</code> or label,   and defined uid move/duplicate semantics (ch. 55).</p>
+<ul><li><strong>CLI</strong> — <code>verbs --from &lt;kind&gt; --to &lt;kind&gt;</code> endpoint-legality query,</li></ul>
+<p>  <code>--diagnostics json</code> with stable <code>{code,severity,file,line,view,message}</code>   locations, <code>--content-size</code>, <code>--strict-print</code>, <code>--publication-date</code>,   <code>publish --set</code> (ch. 56).</p>
+<p>Runnable tours: <code>website/examples/basics/111-publication-chrome.ddn</code> (a patent-style figure set with header/footer/border and reference numerals) and <code>website/examples/basics/112-markings-metadata.ddn</code> (markings, assertions, provenance, <code>ref:</code> anchors). The full authoring surface with verified recipes: <code>website/download/DDN-AI-REFERENCE.md</code> §14.</p>
 <h2>Checking your work</h2>
 <pre><code>node notation/cli/cli.js check your.ddn --workspace.
 node notation/cli/cli.js render your.ddn --view overview --workspace. --out /tmp/o.svg</code></pre>

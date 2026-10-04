@@ -336,8 +336,12 @@ function buildCombinedVariants() {
       continue;
     }
     for (const view of views) {
-      const a = path.join(OUT, '.verify-original.svg');
-      const b = path.join(OUT, '.verify-combined.svg');
+      /* Unique per entry+view: the fixed .verify-*.svg pair is not safe under
+       * two concurrent build-gallery runs (they clobber each other's temp
+       * files and report phantom "renders differently" mismatches). */
+      const tag = entry.replace(/[^A-Za-z0-9]+/g, '-') + '--' + view;
+      const a = path.join(OUT, '.verify-' + tag + '-original.svg');
+      const b = path.join(OUT, '.verify-' + tag + '-combined.svg');
       render(entry, view, a);
       render(out, view, b);
       if (!fs.readFileSync(a).equals(fs.readFileSync(b)))

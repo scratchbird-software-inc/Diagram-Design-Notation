@@ -1,0 +1,13 @@
+ddn "0.6";
+module "ddn.vectors.overflow";
+// C2 degenerate corpus: shrink element whose text cannot fit even at the
+// absolute 8 px floor. Expected: DDN-LW08, render completes with ellipsis marker.
+// layout quality: warn keeps DDN-LW08 on the warning channel (ch. 54 §54.4).
+data m {
+  object a "SupercalifragilisticexpialidociousAntidisestablishmentarianism" {kind: table;}
+}
+view main {
+  data: [@m];
+  style { text_fit: shrink; max_width: 60px; }
+  layout { quality: warn; }
+}

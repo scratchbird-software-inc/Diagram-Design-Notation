@@ -1,0 +1,59 @@
+ddn "0.5";
+
+module "fig01.model";
+
+data model {
+    // Voter set 100: nodes N1..N5, each with processor 102, durable store 104
+    // (promise/acceptance store 106) and network interface 108.
+    service voter_set "Voter node set 100" { }
+
+    host n1 "Voter node N1" { }
+    host n2 "Voter node N2" { }
+    host n3 "Voter node N3" { }
+    host n4 "Voter node N4" { }
+    host n5 "Voter node N5" { }
+
+    application proc102 "Processor 102" { }
+    log store104 "Durable store 104" { }
+    log store106 "Promise/acceptance store 106" { }
+    endpoint net108 "Network interface 108" { }
+
+    // Separate storage authority (MGA) 120 with its own durable structures.
+    service mga "Storage authority (MGA) 120" { }
+    log mga_struct "MGA durable structures" { }
+
+    // Decision proofs flow 110 -> 120; page mutations never flow 120 -> 110.
+    relation proofs_flow "Decision proofs (110 to 120)" @store106 -> @mga { kind: deliver; }
+    relation mga_own "has durable structures" @mga -> @mga_struct { kind: mem; }
+    relation no_pages "Page mutations never flow 120 to 110" @mga -> @voter_set { kind: depends; }
+
+    relation n1_mem @voter_set -> @n1 { kind: mem; }
+    relation n2_mem @voter_set -> @n2 { kind: mem; }
+    relation n3_mem @voter_set -> @n3 { kind: mem; }
+    relation n4_mem @voter_set -> @n4 { kind: mem; }
+    relation n5_mem @voter_set -> @n5 { kind: mem; }
+
+    relation proc_store @proc102 -> @store104 { kind: uses; }
+    relation store_sub @store104 -> @store106 { kind: mem; }
+    relation proc_net @proc102 -> @net108 { kind: exposes; }
+    relation node_parts @n1 -> @proc102 { kind: mem; }
+}
+
+module "fig01.views";
+
+view fig1 "FIG. 1 - System overview" {
+    data: [@fig01.model.model];
+    projection { kind: graph; profile: "ddn@1"; }
+    layout { direction: down; }
+    publication { size: content; }
+    frame decision_boundary "Decision service boundary 110" {
+        members: [@fig01.model.model.voter_set, @fig01.model.model.n1, @fig01.model.model.n2,
+                  @fig01.model.model.n3, @fig01.model.model.n4, @fig01.model.model.n5,
+                  @fig01.model.model.proc102, @fig01.model.model.store104,
+                  @fig01.model.model.store106, @fig01.model.model.net108];
+    }
+    frame mga_boundary "Storage authority 120 (separate)" {
+        members: [@fig01.model.model.mga, @fig01.model.model.mga_struct];
+    }
+    description: "FIG. 1. Decision service 110 of voter nodes N1-N5 (each: processor 102, durable store 104 with promise/acceptance store 106, network interface 108) separated from storage authority (MGA) 120; decision proofs flow 110 to 120, page mutations never flow 120 to 110.";
+}

@@ -25,7 +25,7 @@ together; anyone may implement DDN from the documents alone.
 
 ## 2. Normative core (mapped to specification chapters)
 
-The normative core lives in `standard/specification/` — **54**
+The normative core lives in `standard/specification/` — **62**
 chapters covering: status and conformance scope (ch. 00); the language and
 decoding rules (ch. 01); the data model and executable contracts (ch. 02);
 views, selection and reuse definitions; routing and layout; publication;

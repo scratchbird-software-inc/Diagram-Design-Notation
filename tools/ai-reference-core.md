@@ -1,6 +1,6 @@
 # DDN (Diagram Design Notation) — AI Authoring Reference
 
-Single self-contained authoring specification. An AI given ONLY this file plus a natural-language diagram request must be able to produce correct, current-dialect `.ddn` source for any diagram the runtime supports. Derived entirely from the authoritative repository sources of DDN runtime **{{RUNTIME_VERSION}}** (`notation/runtime/*`, `notation/cli/cli.js`) and standard 0.3/0.5 (`standard/grammar/ddn.ebnf`, `standard/registry/*`); vocabulary and property tables are machine-extracted, not paraphrased. (DDN = the open-source language and project: reference runtime, CLI, free ddn-viewer and ddn-designer. ScratchWeaver sponsors the project; ScratchRobin owns backend evaluation (KEEL) — never in scope here.)
+Single self-contained authoring specification. An AI given ONLY this file plus a natural-language diagram request must be able to produce correct, current-dialect `.ddn` source for any diagram the runtime supports. Derived entirely from the authoritative repository sources of DDN runtime **{{RUNTIME_VERSION}}** (`notation/runtime/*`, `notation/cli/cli.js`) and standard 0.3/0.5/0.8 (`standard/grammar/ddn.ebnf`, `standard/registry/*`, `standard/specification/51–58` for the 0.8 dialect, §14); vocabulary and property tables are machine-extracted, not paraphrased. (DDN = the open-source language and project: reference runtime, CLI, free ddn-viewer and ddn-designer. ScratchWeaver sponsors the project; ScratchRobin owns backend evaluation (KEEL) — never in scope here.)
 
 <!-- @gen:counts -->
 
@@ -41,7 +41,7 @@ module "shop.views";                // further sections (multi-module)
 <top-level declarations>
 ```
 
-- **Version header**: `ddn "<version>";` — accepted versions are exactly `"0.2"`, `"0.3"`, `"0.4"`, `"0.5"` (DDN012 otherwise). Write `"0.5"` for new files. `0.2` sources are accepted through a compatibility reader and add warning DDN-W012. All files are UTF-8 (reader accepts BOM and CRLF; formatter convention is LF, no BOM). A source file may be at most 2,000,000 characters (DDN001).
+- **Version header**: `ddn "<version>";` — accepted versions are exactly `"0.2"`, `"0.3"`, `"0.4"`, `"0.5"`, `"0.6"` (DDN012 otherwise; `"0.6"` is the DDN 0.8 dialect, see §14). Write `"0.6"` for new files that use any 0.8 feature, `"0.5"` otherwise — an 0.8 construct in a ≤0.5 file is a DDN-V04 error, and 0.6 removes nothing. `0.2` sources are accepted through a compatibility reader and add warning DDN-W012. All files are UTF-8 (reader accepts BOM and CRLF; formatter convention is LF, no BOM). A source file may be at most 2,000,000 characters (DDN001).
 - **Module**: `module "<id>";` — the module is a stable namespace, not a file path. Id syntax: `/^[A-Za-z0-9][A-Za-z0-9._:/-]*$/` (DDN013). Module identity must be unique across the whole workspace (DDN023). Declaration identities must be unique across sections (symbol keys are `module::path`; DDN024).
 - **Imports**: `import "<path>" as <alias>;` — file-level only. Canonical position: before the FIRST module header. Legacy position: immediately after the FIRST module header, before that section's first declaration. Both sets merge into one file-level import list; alias uniqueness applies across the merged list (DDN014). An import anywhere else is DDN015. Older runtimes reject multi-section files cleanly with DDN010. Import paths must be workspace-relative POSIX paths: no scheme (`http:`), no leading `/` or `\`, no `\`, and `..` may not escape the workspace root (DDN020).
 - **Sibling visibility**: sections of the SAME file see each other through module-qualified references (`@shop.model.model`) with no import. Importing a multi-module file imports ALL its modules; `@alias.path` resolves against each section in order; module ids may be dotted, so the resolver matches the LONGEST module-id prefix first.
@@ -471,6 +471,8 @@ Per-profile:
 
 ```
 node notation/cli/cli.js <check|render|resolve|bundle> <entry.ddn> [--view NAME] [--out FILE] [--workspace DIR]
+node notation/cli/cli.js verbs --from <kind> --to <kind> [--json]
+node notation/cli/cli.js publish <entry.ddn> --set <name> --outdir <dir> [--workspace DIR] [--publication-date YYYY-MM-DD]
 ```
 
 - `--workspace DIR` (default `.`): ALL files (entry + transitive imports) must live under this directory; an entry outside → `Entry is outside workspace`; symlinks escaping it are rejected. Imports are resolved POSIX-relative to the importing file inside the workspace.
@@ -478,6 +480,10 @@ node notation/cli/cli.js <check|render|resolve|bundle> <entry.ddn> [--view NAME]
 - `render`: additionally runs layout/routing/publication and writes/prints the SVG (needs `--out` or prints to stdout). Use it to catch geometry errors (DDN200–224) that `check` does not reach.
 - `resolve`: prints the serialized resolved IR (JSON), honoring the `export` profile (redacted allowlist / SQL DDL).
 - `bundle`: merges the workspace into one self-contained multi-module file (§2.1).
+- `verbs --from <kind> --to <kind>` (0.8): prints the relation verbs whose registered endpoint contract admits a relation between the two kinds, one per line in registry order, empty output when none is legal; `--json` emits `{"from":…,"to":…,"verbs":[…]}`. Unknown kind → DDN-WS01 (close matches listed). Endpoint legality only — a profile may still reject the relation.
+- `--diagnostics json` (0.8, on `check`/`render`): prints diagnostics as a JSON array of `{code, severity, file, line, view?, message}` — `file` is the workspace-root-relative POSIX path, `line` 1-based; site-less diagnostics omit `file`/`line`. Machine consumers use `code`, never message text.
+- 0.8 render/check flags: `--content-size` forces `size: content` for one render (override channel, never a source rewrite); `--strict-print` promotes print-size lint warnings (DDN-PS01/PS02) to the failing DDN-PS04 gate; `--publication-date YYYY-MM-DD` pins the `$date` chrome variable (invalid format → usage error, exit 2); `--figure N` / `--page N` override the `$figure`/`$page` chrome variables for one render.
+- `publish` (0.8): renders a `publication_set` (§14.5) — one SVG per figure named `<entry>--<view_id>.svg` plus `<entry>--<set>.manifest.json` (`{set, figures:[{view_id, file, figure, page}]}`). Unknown set → DDN-PB09; missing `--set`/`--outdir` → usage error (exit 2).
 - `DDNLive` in-browser equivalent: `api.parse`, `ws.resolve`, `ws.renderSync`.
 
 Self-check recipe for an AI: write `file.ddn` (+ any imported files) into a fresh tmp dir, then
@@ -1262,7 +1268,200 @@ View-local overrides stack over the bundle (e.g. add `display { fields: none; }`
 
 Check with an explicit view: `cli.js check main.ddn --workspace <dir> --view overview`. Without `--view`, the CLI builds the first view of the entry file's FIRST module — `shop.model` declares no view, so a bare `check` fails with DDN040 even though the file is valid.
 
-## 14. Embedding / runtime API summary
+## 14. DDN 0.8 features (source version `ddn "0.6";`)
+
+Everything in this section requires the `ddn "0.6";` header. 0.6 is a strict superset of 0.5: every 0.5 construct works unchanged, and a 0.6 file that uses none of these features renders byte-identically to the same file stamped `ddn "0.5";`. Using any 0.8 construct in a file stamped ≤0.5 is an error: **DDN-V04** names the construct and the minimum version. Normative chapters: `standard/specification/51-…-58-…`.
+
+### 14.1 View kinds, strictness and themes (ch. 52)
+
+A 0.6 view may declare a `kind` (what kind of diagram it is) and a `strictness`. The kind derives a default profile/theme attachment and a vocabulary subset (the element kinds and relation verbs the view is expected to use); it never changes semantics, layout or routing beyond those defaults, and explicit author declarations always win over kind-derived defaults.
+
+Registered view kinds: `ddn-native` (full registry, no restriction), `flowchart`, `c4-context`, `c4-container`, `c4-component`, `uml-class`, `uml-sequence`, `uml-state`, `uml-activity`, `uml-usecase`, `chart-bar`, `chart-line`, `ladder`, `patent-figure`. Unknown kind → **DDN-VP01**; `strictness` without `kind` → **DDN-VP02**; a kind conflicting with an explicit incompatible projection → **DDN-VP09**.
+
+- `strictness: permissive` (default): out-of-subset vocabulary renders normally with one info diagnostic **DDN-VP03** per offending element/verb.
+- `strictness: strict`: out-of-subset vocabulary is error **DDN-VP04** and the view fails `check`. Strictness governs vocabulary membership only — every other validation still applies.
+
+Two registered themes re-skin paint only (never geometry, layout, routing, label text or semantics — the same source under two themes differs only in paint attributes): `theme: colorblind_safe;` (Okabe-Ito palette, redundant non-colour encoding preserved) and `theme: mono_print;` (pure black/white/grayscale, white fills, for B/W filing and print). Unknown theme → **DDN-VP08**.
+
+```ddn
+ddn "0.6";
+module "recipes.viewkind";
+data model {
+  object start "Request received" { kind: "flow.start"; }
+  object review "Manager review" { kind: "flow.decision"; }
+  object done "Approved" { kind: "flow.end"; }
+  object rework "Return for rework" { kind: "flow.process"; }
+  relation s1 @start -> @review { kind: "flow.next"; }
+  relation s2 "yes" @review -> @done { kind: "flow.next"; x_diagram: { branch: "yes"; }; }
+  relation s3 "no" @review -> @rework { kind: "flow.next"; x_diagram: { branch: "no"; }; }
+  relation s4 @rework -> @done { kind: "flow.next"; }
+}
+view process "Onboarding flow" {
+  data: [@model];
+  kind: flowchart;
+  strictness: strict;
+  theme: colorblind_safe;
+  publication { size: content; fit: none; }
+}
+```
+
+Note what the kind attachment pulls in: `kind: flowchart` defaults to the `flow.documented@2` profile, whose structural rules apply (DDN-PF007–PF010: a start cannot have incoming control, every decision needs at least two explicitly named distinct branches — the `x_diagram: { branch: "…"; }` property on each outgoing relation — and every symbol must be reachable from a start and reach an end). Override the projection explicitly if you want the vocabulary without those rules.
+
+### 14.2 Reference numerals and `ref:` anchors (ch. 52 §52.5, ch. 55 §55.4)
+
+Any element may declare `numeral: N;` (integer 1–99999; bad shape **DDN-VP05**, duplicate within one view **DDN-VP06**). The renderer draws the numeral in a boxed field row under the element header. Any rendered text run (note text, labels, chrome strings) may embed `ref:<element-id>`: it renders as the target's numeral when it has one, else its display label, computed at render time so renumbering updates every anchor. Anchor naming a missing element → **DDN-MK05**; an anchor inside its own element's text → **DDN-MK06**. Anchors are text only, no hyperlinks.
+
+### 14.3 Markings, assertions, provenance (ch. 55)
+
+- `marks: [ … ]` on an element or relation — registered markings: `forbidden` (negation/prohibition by the author's claim only; the runtime does not verify unreachability) renders struck-through and dashed (red `#B42318` dash `7 4` under the default theme, black dash `2 3` under `colorblind_safe`, black dash `3 2` plus a hatch strike under `mono_print` — the signal never rides on colour alone); `tentative` (draft/uncommitted) renders dashed-grey. Unknown marking → **DDN-MK01**, duplicate in one array → **DDN-MK02**. Markings are part of the model (they appear in `modelFingerprint`, exports, diffs).
+- `assertion: "…"` (single string on a relation) and `assertions: [ … ]` (1–32 strings on a view; overflow **DDN-MK03**; each string 1–500 chars, **DDN-MK04**) are machine-readable claim text. **Inert in 0.8**: parsed, shape-validated, carried in the IR and JSON export, never evaluated — an assertion never influences `check`, rendering, or conformance.
+- `source: "…"` (1–300 chars, convention `document §locator`) and `generator: "…"` (tool, version, date) on a view are provenance metadata: excluded from `modelFingerprint`, included in export, never resolved or authenticated.
+
+uid semantics (ch. 55 §55.5): a move preserves an element's uid (relations, anchors, marks follow); a duplicate mints a new uid (`<id>_copy`, …), starts unconnected and numeral-free, and never retargets existing `ref:` anchors; deleting a referenced element breaks loudly at the next `check` (DDN-MK05 / DDN022 / DDN-PB09). `diff:` views are deferred to 0.9 — writing `diff` is DDN-V04.
+
+```ddn
+ddn "0.6";
+module "recipes.markings";
+data model {
+  object gateway "Payment gateway" { kind: service; numeral: 110; }
+  object ledger "Ledger" { kind: database; numeral: 112; }
+  object export_api "Experimental export" { kind: api; marks: [tentative]; }
+  relation charge @gateway -> @ledger {
+    kind: flow;
+    assertion: "every charge posts exactly one ledger entry";
+  }
+  relation legacy @export_api -> @ledger { kind: flow; marks: [forbidden]; }
+  object note1 "Drain via ref:gateway before opening ref:ledger." { kind: note; }
+}
+view overview "Billing overview" {
+  data: [@model];
+  source: "billing-design.docx §4";
+  generator: "ddn-import 0.8.0 (2026-10-04)";
+  assertions: [
+    "no cycle contains a payment gateway",
+    "every refund references an order"
+  ];
+  publication { size: content; fit: none; }
+}
+```
+
+The element/relation-level 0.8 properties `numeral`, `marks`, `assertion` are reserved semantic properties (registered in the reserved-property list alongside `text_fit`/`max_width`/`max_height`/`min_font`/`font_pin`), validated by their dedicated 0.8 codes above; default logical validation emits no DDN-W106 for them.
+
+### 14.4 Publication chrome: header/footer, border, backgrounds (ch. 53)
+
+A `publication` (inline or in a `format` block) gains three optional groups. Chrome is page furniture: it never changes model semantics, layout, routing or `modelFingerprint`, and a publication with no 0.8 chrome property renders byte-identically to 0.5.
+
+- `header { … }` / `footer { … }`: up to three runs each — `left`, `center`, `right`. Run properties: `text` (string, required), `align` (`left|center|right`, defaults to the slot), `font` (family keyword), `size` (4–24pt), `lines` (1–4; multi-line runs split `text` on `\n`). Missing slots reserve nothing. Malformed runs → **DDN-PB01**. Variables resolved per emitted page: `$title` (`publication.title`, else the view label, else the view id), `$page` (1-based page index in the set), `$date` (ISO `YYYY-MM-DD` local; pin it with `--publication-date` for reproducible output), `$view_id`, `$figure` (1-based index in the publication set). Unknown `$name` → **DDN-PB02**; a literal dollar sign is `$$`.
+- `border { style: single|double|dashed; weight: 0.25–8pt; inset: <len>; corner_marks: true|false; }` — a page frame (unrelated to a model `frame` element); invalid values → **DDN-PB03**.
+- `background { color|image|pattern: …; opacity: 0–1; }` — exactly one of the three kinds (**DDN-PB04**). Path rules (normative): bare filenames and relative paths resolve against the declaring `.ddn` file's directory and must stay inside the workspace root; absolute paths, URLs and `data:` URIs are forbidden (**DDN-PB05**). Images are PNG/WebP only (**DDN-PB06**) and embed as base64 data URIs (exports are self-contained); patterns are SVG only, sanitized like icon packs (**DDN-PB08**). A missing/undecodable image is **DDN-PB07** (error under `overflow: error`, warning + plain background otherwise). A view-level `background` overrides the referenced publication's for that view only.
+
+```ddn
+ddn "0.6";
+module "recipes.patent";
+data model {
+  object start "Start" { kind: "flow.start"; numeral: 100; }
+  object read "Read sensor" { kind: "flow.process"; numeral: 102; }
+  object stop "Stop" { kind: "flow.end"; numeral: 104; }
+  relation f1 @start -> @read { kind: "flow.next"; }
+  relation f2 @read -> @stop { kind: "flow.next"; }
+}
+view fig1 "Sensor monitor" {
+  data: [@model];
+  kind: patent-figure;
+  publication {
+    size: letter;
+    margin: 18mm;
+    minimum_text: 6pt;
+    embedding_scale: 1.5;
+    header { left { text: "$title"; size: 9pt; } right { text: "$date"; size: 9pt; } }
+    footer { center { text: "FIG. $figure"; size: 10pt; font: serif; } right { text: "Page $page"; size: 8pt; } }
+    border { style: single; weight: 1pt; inset: 6mm; }
+  }
+}
+```
+
+`kind: patent-figure` attaches the `mono_print` theme and the `patent.legal@1` chrome defaults (title block with `$title`/`$date`, `FIG. $figure` + `Page $page` footer, single border) as layer-2 defaults — any authored header/footer/border wins. The `embedding_scale` above is the DDN071 remedy idiom in action: a small drawing on a physical page must scale UP so the smallest text role clears `minimum_text` at 1:1 print scale.
+
+### 14.5 Publication sets (ch. 53 §53.4) and print-size lint (§53.5)
+
+`publication_set <id> ["label"] { publication: @ref; figures: [@v1, @v2, …]; }` publishes 1–64 views of the same workspace as one ordered figure set with shared chrome. `figures` order is authorial; `$figure`/`$page` are the 1-based positions. A missing/non-view/empty figure list → **DDN-PB09**. A figure's own view-level concerns beat the set chrome. Publish with `cli.js publish entry.ddn --set figures --outdir out/ --publication-date 2026-10-04` — one SVG per figure (`<entry>--<view_id>.svg`) plus `<entry>--<set>.manifest.json`.
+
+```ddn
+ddn "0.6";
+module "recipes.pubset";
+format shared {
+  publication filing {
+    size: letter;
+    margin: 18mm;
+    minimum_text: 6pt;
+    header { left { text: "$title"; size: 9pt; } right { text: "$date"; size: 8pt; } }
+    footer { center { text: "FIG. $figure"; size: 10pt; font: serif; } right { text: "Page $page"; size: 8pt; } }
+    border { style: single; }
+  }
+}
+data model {
+  object a "Alpha" { kind: component; }
+  object b "Beta" { kind: component; }
+  relation r1 @a -> @b { kind: assoc; }
+}
+view fig1 "Overview" { data: [@model]; publication: @shared.filing; }
+view fig2 "Detail" { data: [@model]; publication: @shared.filing; }
+publication_set figures "Patent figures" {
+  publication: @shared.filing;
+  figures: [@fig1, @fig2];
+}
+```
+
+Print-size lint runs under `check` for physical paper sizes (never for `size: content`): **DDN-PS01** (warning) effective text size below `minimum_text` (default 8pt) at 1:1 print scale, with the implied minimum base font in the message; **DDN-PS02** (warning) relation/border line weight below the print floor; **DDN-PS03** (info) physical size with the default `minimum_text` relied on; **DDN-PS04** (error) the `--strict-print` gate promoting any PS warning. `check` still exits 0 with PS warnings unless `--strict-print` is passed.
+
+### 14.6 Text fit, font pinning, `size: content` (ch. 54)
+
+`text_fit` on an element (or as a profile/bundle default) controls how boxes adapt to text. Bounds: `max_width`/`max_height` 40–4000px (**DDN-TF02**), `min_font` 6–64px and ≤ the effective base font (**DDN-TF03**), unknown mode **DDN-TF01**.
+
+| Mode | Behavior |
+|---|---|
+| `wrap` | Width fixed; text wraps; the box grows downward. Default when a width constraint exists. |
+| `grow` | Box expands in both axes to `max_width`, then wraps; growth stops at `max_height`. |
+| `shrink` | Font steps down 1px at a time to `min_font` (absolute floor 8px); first fitting size wins. |
+
+The render pipeline runs at most two measure → resize → re-layout passes; residual overflow is never silently clipped — it renders with a visible ellipsis marker plus **DDN-LW07** (wrap/grow, names the overflow and remedy) or **DDN-LW08** (shrink at the floor), and fails the render under `quality: error`. Text fit changes geometry, never semantics. `size: content` artboards grow with post-fit bounds, so wrap/grow output is always fully visible; `--content-size` forces it for one render.
+
+```ddn
+ddn "0.6";
+module "recipes.textfit";
+data model {
+  object summary "Quarterly summary with a long descriptive label that wraps" {
+    kind: note;
+    text_fit: wrap;
+    max_width: 200px;
+  }
+  object badge "OK" { kind: note; text_fit: grow; max_width: 240px; max_height: 120px; }
+  object tight "A rather long legend label" { kind: term; text_fit: shrink; min_font: 9px; }
+  relation r1 @summary -> @badge { kind: assoc; }
+  relation r2 @badge -> @tight { kind: assoc; }
+}
+view main "Text fit" {
+  data: [@model];
+  publication { size: content; fit: none; }
+}
+```
+
+`font_pin: "<file.json>"` on a `style` pins the text-measurement environment for byte-stable rendering across machines (same source + same pin + same renderer ⇒ byte-identical SVG). The pin resolves under the background path rules (relative to the declaring `.ddn`, inside the workspace, no absolute paths/URLs — **DDN-PB05** family) and must be JSON of shape `{"engine":"ddn-text@1","version":"…","measurements":{ … }}`. A pin/engine mismatch warns **DDN-TF05** and the pin is ignored; a text run missing from the pin under `publication { metrics: required; }` is **DDN-TF04**, otherwise unpinned runs fall back to the conservative estimate with DDN-TW01.
+
+```text
+format shared {
+  style pinned { font: sans; font_pin: "metrics-2026-09.json"; }
+}
+```
+
+Tooling note (verified behavior): the CLI side-loads `font_pin` metrics files exactly like background images/patterns — the asset walker resolves the workspace-relative path under the same containment rules (no absolute paths, no URLs, no escapes) and supplies it as UTF-8 text, so `cli.js check/render` works on `font_pin` sources directly. Pins are equally usable through the embedder API (supply the pin file in the `createWorkspace`/`build` files map, as the conformance vectors do).
+
+### 14.7 Workspace conventions and conformance (ch. 56, 58)
+
+- Entry discovery for tools that must guess: `main.ddn`, then `index.ddn`, then the single `.ddn` at the root; ambiguity is reported (DDN-WS03), never resolved by mtime. A workspace MAY carry `ddn.workspace.json`: `{ "format": "ddn-workspace@1", "entry": "main.ddn", "packs": [] }` — malformed → DDN-WS02; missing entry file → DDN-WS04.
+- The 0.8 conformance vector suite ships at `notation/tests/vectors/` with `manifest.json`: acceptance and rejection vectors per 0.8 diagnostic code plus the degenerate corpus (empty view, single node, 500-node stress, unicode labels, max-nesting frames, empty chrome, overflow floor, ref-cycle labels). Full-fidelity vectors pin fonts and `publicationDate`; geometry-only vectors hash canonicalized layout.
+
+## 15. Embedding / runtime API summary
 
 Runtime modules (`notation/runtime/`, dependency-free ES modules sharing namespaces via an explicit module registry; `notation/runtime/assets/` is generated — do not hand-edit):
 

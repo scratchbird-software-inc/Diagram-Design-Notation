@@ -14,6 +14,9 @@ if(typeof process!=='undefined'&&process.getBuiltinModule){
  }catch{}
 }
 const FONTS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'};
+/* 0.8 (chapter 54 §54.4): measurement-engine identity. A font_pin records the
+ * producing engine; a mismatch is DDN-TF05 (pin ignored) at render time. */
+const ENGINE='ddn-text@1';
 let cache=initial?.measurements||{},provider=null,providerName=null,context=null;const requests=new Map();const counts={estimated:0,canvas:0,cache:0,provider:0};
 const key=(s,size,font,weight)=>JSON.stringify([String(s),+size,font,weight]);
 const segments=typeof Intl!=='undefined'&&Intl.Segmenter?new Intl.Segmenter('und',{granularity:'grapheme'}):null;
@@ -41,6 +44,6 @@ function wrap(s,maxWidth,size=14,font='sans',weight=400){
 if(typeof process!=='undefined'&&process.env?.DDN_METRICS_CAPTURE){process.on('exit',()=>{const fs=process.getBuiltinModule('node:fs'),p=process.env.DDN_METRICS_CAPTURE;let old={};try{old=JSON.parse(fs.readFileSync(p,'utf8'));}catch{}for(const[k,v]of requests)old[k]=v;fs.writeFileSync(p,JSON.stringify(old));});}
 function pending(){return [...requests.values()];}
 function clearRequests(){requests.clear();}
-const api={stats:()=>({...counts}),FONTS,key,measure,wrap,graphemes,setMetrics,setProvider,pending,clearRequests};
+const api={stats:()=>({...counts}),FONTS,ENGINE,engine:ENGINE,key,measure,wrap,graphemes,setMetrics,getMetrics:()=>cache,setProvider,pending,clearRequests};
 publishNamespace('DDNText',api);
 export default api;

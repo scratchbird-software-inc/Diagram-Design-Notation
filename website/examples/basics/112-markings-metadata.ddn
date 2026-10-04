@@ -1,0 +1,28 @@
+ddn "0.6";
+module "examples.markings.metadata";
+data model {
+    object gateway "Payment gateway" { kind: service; numeral: 110; }
+    object ledger "Ledger" { kind: database; numeral: 112; }
+    object export_api "Experimental export" { kind: api; marks: [tentative]; }
+    relation charge @gateway -> @ledger {
+        kind: flow;
+        assertion: "every charge posts exactly one ledger entry";
+    }
+    relation legacy @export_api -> @ledger { kind: flow; marks: [forbidden]; }
+    object ops_note "Drain via ref:gateway before opening ref:ledger." { kind: note; }
+}
+view overview "Billing overview" {
+    data: [@model];
+    source: "billing-design.docx §4";
+    generator: "ddn-import 0.8.0 (2026-10-04)";
+    assertions: [
+        "no cycle contains a payment gateway",
+        "every refund references an order"
+    ];
+    publication { size: content; fit: none; }
+}
+view filing "Billing overview (print)" {
+    data: [@model];
+    theme: mono_print;
+    publication { size: content; fit: none; }
+}

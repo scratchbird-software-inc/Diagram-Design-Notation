@@ -1,0 +1,12 @@
+ddn "0.6";
+module "ddn.vectors.basic";
+// C1 reference vector: small acceptance model exercising kinds, relations and a frame.
+data m {
+  object a "Alpha" {kind: table; fields { field id; field name; } }
+  object b "Beta" {kind: table; fields { field id; } }
+  relation r @a -> @b {kind: ref;}
+}
+view main {
+  data: [@m];
+  frame scope "SCOPE" { members: [@m.a, @m.b]; }
+}

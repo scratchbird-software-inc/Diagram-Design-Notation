@@ -53,6 +53,10 @@ p { margin: 0; }
 #ddn-stage { overflow: auto; position: relative; background: radial-gradient(#ced9e4 .7px, transparent .7px); background-size: 18px 18px; background-color: #f3f6fa; }
 #ddn-paper { transform-origin: 0 0; margin: 24px; background: #fff; box-shadow: 0 6px 26px #27435b14; width: max-content; }
 #ddn-paper svg { display: block; }
+/* D1 navigation affordances (spec 57 §57.1): elements focus on click;
+ * subdiagram references, frozen drill-downs and ref badges follow links. */
+#ddn-paper [data-ddn-id] { cursor: pointer; }
+#ddn-paper .ddn-subdiagram, #ddn-paper .ddn-ref-badge, #ddn-paper .ddn-io-inline.ddn-frozen { cursor: pointer; }
 #ddn-hint { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); pointer-events: none; text-align: center; }
 
 .ddn-statusbar { display: flex; justify-content: space-between; gap: 10px; padding: 6px 14px; border-top: 1px solid var(--line); background: #fff; font-size: 11px; color: var(--muted); }
