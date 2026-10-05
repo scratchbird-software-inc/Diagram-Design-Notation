@@ -35,22 +35,32 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
   assert.ok(html.includes('Inlined from notation/dist/ddn.global.min.js'), 'inlined minified runtime missing');
   assert.ok(html.includes('globalThis.DDNLiveData'), 'inlined example corpus missing');
   assert.ok(!html.includes('<script src='), 'external script reference defeats file:// single-file use');
-  for (const id of ['ddn-toolbar', 'ddn-view-picker', 'ddn-icon-files', 'ddn-icon-style', 'ddn-icon-document', 'ddn-icon-source', 'ddn-icon-export',
-    'ddn-drawer-files', 'ddn-drawer-style', 'ddn-drawer-document', 'ddn-drawer-source', 'ddn-drawer-export',
+  for (const id of ['ddn-toolbar', 'ddn-view-picker', 'ddn-icon-files', 'ddn-icon-style', 'ddn-icon-document', 'ddn-icon-inspector', 'ddn-icon-source', 'ddn-icon-export',
+    'ddn-drawer-files', 'ddn-drawer-style', 'ddn-drawer-document', 'ddn-drawer-inspector', 'ddn-drawer-source', 'ddn-drawer-export',
     'ddn-fit-page', 'ddn-fit-width', 'ddn-fit-height', 'ddn-fit-100', 'ddn-zoom', 'ddn-zoom-pct', 'ddn-drag-mode',
     'ddn-settings', 'ddn-settings-popup', 'ddn-stage', 'ddn-diagram', 'ddn-tool-status',
     'ddn-source', 'ddn-apply', 'ddn-discard', 'ddn-live-apply', 'ddn-undo', 'ddn-redo',
     'ddn-catalogue', 'ddn-file-list', 'ddn-paste', 'ddn-load-paste',
     'ddn-export-svg', 'ddn-export-png', 'ddn-export-webp', 'ddn-save-example',
-    /* 0.8 (ch. 57): D2 new-document picker, D3 tabs/diagnostics/jump, D5 tidy, S5 duplicate */
+    /* 0.8 (ch. 57): D2 new-document picker, D3 tabs/diagnostics/jump, D5 tidy */
     'ddn-new-project', 'ddn-template-popup', 'ddn-template-list',
     'ddn-source-tabs', 'ddn-jump-def', 'ddn-diagnostics', 'ddn-diagnostics-count',
-    'ddn-tidy', 'ddn-duplicate'])
+    'ddn-tidy',
+    /* Designer phase 3: the Inspector right drawer (Meaning/This view/Details
+     * tabs), its adjacent error slot, and the add-element/add-relation modals. */
+    'ddn-inspector-body', 'ddn-inspector-controls', 'ddn-inspector-tabs',
+    'ddn-inspector-tab-meaning', 'ddn-inspector-tab-view', 'ddn-inspector-tab-details', 'ddn-inspector-error',
+    'ddn-add-element-modal', 'ddn-ae-kind', 'ddn-ae-create',
+    'ddn-add-relation-modal', 'ddn-ar-from', 'ddn-ar-to', 'ddn-ar-kind', 'ddn-ar-create'])
     assert.ok(html.includes('id="' + id + '"'), 'control #' + id + ' missing');
   assert.ok(html.includes('globalThis.DDN_TOOL_TEMPLATES'), 'inlined new-document templates missing');
   assert.ok(!/pdf|pptx/i.test(html), 'OSS export surface must not offer or advertise PDF/PPTX (chapter 57 §D4)');
-  for (const name of ['files', 'style', 'document', 'source', 'export'])
+  for (const name of ['files', 'style', 'document', 'inspector', 'source', 'export'])
     assert.ok(html.includes('data-drawer="' + name + '"'), 'toolbar icon for drawer ' + name + ' missing');
+  /* Phase 3: the Source drawer carries text editing + diagnostics only — the
+   * inspector controls moved to the right-side Inspector drawer. */
+  const srcDrawer = html.slice(html.indexOf('id="ddn-drawer-source"'), html.indexOf('id="ddn-drawer-inspector"'));
+  assert.ok(!srcDrawer.includes('ddn-inspector-controls'), 'inspector controls must not live in the Source drawer anymore');
   assert.ok(html.includes('window.DDNTool') || html.includes('host.DDNTool'), 'DDNTool surface missing');
 });
 
@@ -630,6 +640,132 @@ test('paletteFilter: profiled graph views offer only the profile kinds; showAll 
   /* kinds without allowed_in metadata degrade to the graph default. */
   const legacy = T.paletteFilter([{ id: 'x.custom' }], { kind: 'graph', profile: 'ddn@1' }, false);
   assert.deepEqual(legacy, [], 'unknown profile kinds stay out of the unprofiled shelf');
+});
+
+/* Designer phase 3: Inspector drawer promotion, relation editing, modals. */
+
+test('design mode preset includes the inspector drawer (closed until a selection)', () => {
+  const d = T.resolveDrawerConfig('design', null, null);
+  assert.equal(d.drawers.inspector, 'closed');
+  assert.equal(T.resolveDrawerConfig('explore', null, null).drawers.inspector, 'closed');
+  assert.equal(T.resolveDrawerConfig('diagram', null, null).drawers.inspector, 'none');
+  assert.deepEqual(T.parseDrawersParam('inspector:open'), { inspector: 'open' });
+  assert.deepEqual(T.cleanDrawerConfig({ inspector: 'closed' }), { inspector: 'closed' });
+});
+
+test('inspector drawer joins the right-side exclusivity set in the tool source', () => {
+  const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
+  assert.ok(tool.includes("const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector']"), 'RIGHT_EXCLUSIVE must include inspector');
+  assert.ok(tool.includes("state.config.drawers.inspector = 'open'"), 'selection must open the inspector drawer');
+  for (const frag of ['setRelationProps', 'setRelationExtension'])
+    assert.ok(tool.includes('A.authoring.' + frag), 'relation editing not wired to authoring.' + frag);
+  assert.ok(!/prompt\('Stable (relation )?identifier'/.test(tool), 'prompt()-based add dialogs must be gone');
+});
+
+test('cardinalityText/cardinalitySentence: the spec-05 sentence preview', () => {
+  assert.equal(T.cardinalityText(undefined, undefined), null);
+  assert.equal(T.cardinalityText(1, 1), 'one');
+  assert.equal(T.cardinalityText(0, undefined), 'zero or more');
+  assert.equal(T.cardinalityText(1, undefined), 'one or more');
+  assert.equal(T.cardinalityText(0, 1), '0..1');
+  assert.equal(T.cardinalityText(2, 2), '2');
+  assert.equal(T.cardinalityText(undefined, 3), 'up to 3');
+  assert.equal(T.cardinalitySentence('Customer', 'Orders', { source_min: 1, source_max: 1, target_min: 0 }),
+    'For one Customer, zero or more Orders.');
+  assert.equal(T.cardinalitySentence('Customer', 'Orders', {}), null, 'nothing asserted → no sentence');
+});
+
+test('markCardinality seeds the sentence from visual endpoint marks', () => {
+  assert.deepEqual(T.markCardinality('one'), { min: 1, max: 1 });
+  assert.deepEqual(T.markCardinality('zeromany'), { min: 0 });
+  assert.equal(T.markCardinality('filled'), null, 'non-cardinality marks do not seed');
+  assert.ok(T.ENDPOINT_MARKS.includes('crow') === false && T.ENDPOINT_MARKS.includes('zeromany'));
+});
+
+test('umlMultiplicityOk: the DDN-PJ149 grammar (1, 0..1, 0..*, 1..*, *)', () => {
+  for (const ok of ['1', '0..1', '0..*', '1..*', '*', '7', '2..9']) assert.ok(T.umlMultiplicityOk(ok), ok + ' must pass');
+  for (const bad of ['', 'many', '1..', '..*', '1..2..3', '0,*', '-1']) assert.ok(!T.umlMultiplicityOk(bad), JSON.stringify(bad) + ' must fail');
+});
+
+test('groupDetails groups a definition property record per data-properties.json groups', () => {
+  const groups = T.groupDetails({ kind: 'assoc', enforcement: 'database', source_min: 1, owner: 'team-a', x_custom: { a: 1 }, description: 'd' }, 'relation');
+  const byGroup = new Map(groups.map(g => [g.group, g.entries.map(e => e[0])]));
+  assert.deepEqual(byGroup.get('Relations'), ['kind', 'enforcement', 'source_min'], 'relation kind belongs to the Relations group');
+  assert.deepEqual(byGroup.get('Governance and SQL metadata'), ['owner']);
+  assert.deepEqual(byGroup.get('Identity and evidence'), ['description']);
+  assert.deepEqual(byGroup.get('Extensions and other'), ['x_custom']);
+  const elGroups = T.groupDetails({ kind: 'table', level: 'definition' }, 'element');
+  assert.deepEqual(new Map(elGroups.map(g => [g.group, g.entries.map(e => e[0])])).get('Element identity'), ['kind', 'level'], 'element kind belongs to Element identity');
+  assert.deepEqual(T.groupDetails({}, 'element'), [], 'empty record → no groups');
+});
+
+test('mixedValue / multiSelection: intersect controls, never coerce (spec 05)', () => {
+  assert.deepEqual(T.mixedValue(['a', 'a']), { mixed: false, value: 'a' });
+  assert.deepEqual(T.mixedValue(['a', 'b']), { mixed: true, value: undefined });
+  assert.deepEqual(T.mixedValue([undefined, undefined]), { mixed: false, value: undefined });
+  const m = T.multiSelection([{ id: 'x', kind: 'table', isRelation: false }, { id: 'y', kind: 'table', isRelation: false }]);
+  assert.equal(m.count, 2); assert.equal(m.kind, 'table'); assert.equal(m.kindMixed, false);
+  assert.equal(m.meaningEditable, false, 'single-identity edits are never offered on multi-selection');
+  assert.equal(m.allElements, true);
+  const mixed = T.multiSelection([{ id: 'x', kind: 'table', isRelation: false }, { id: 'r', kind: 'assoc', isRelation: true }]);
+  assert.equal(mixed.kindMixed, true); assert.equal(mixed.occurrenceEditable, false, 'mixed element/relation selection intersects to nothing');
+  const single = T.multiSelection([{ id: 'x', kind: 'table', isRelation: false }]);
+  assert.equal(single.meaningEditable, true);
+});
+
+test('usedInViews lists the views whose resolved model contains a uid', () => {
+  const views = [
+    { entry: 'a.ddn', view: 'v1', ids: ['m::d.x', 'm::d.r'] },
+    { entry: 'a.ddn', view: 'v2', ids: ['m::d.x'] },
+    { entry: 'b.ddn', view: 'w', ids: ['m::d.y'] }
+  ];
+  assert.deepEqual(T.usedInViews(views, 'm::d.x'), [{ entry: 'a.ddn', view: 'v1' }, { entry: 'a.ddn', view: 'v2' }]);
+  assert.deepEqual(T.usedInViews(views, 'm::d.zzz'), []);
+});
+
+/* Phase 3 authoring APIs (dist ddn.global.js): relation batch property writes
+ * and x_* extension merge-writes, both validated + undoable. */
+test('authoring.setRelationProps: one undoable transaction for cardinality/enforcement/marks', () => {
+  const src = 'ddn "0.5"; module "t"; data m { object a "A" { kind: table; } object b "B" { kind: table; } relation r "R" @a -> @b { kind: ref; } } view v { data: [@m]; }';
+  const w = A.createWorkspace({ 'main.ddn': src });
+  const uid = w.resolve('main.ddn', 'v').relations[0].id;
+  A.authoring.setRelationProps(w, 'main.ddn', 'v', uid, { source_min: 1, target_max: 4, enforcement: 'database', source_mark: 'one' });
+  const text = w.getFiles()['main.ddn'];
+  for (const frag of ['source_min: 1;', 'target_max: 4;', 'enforcement: "database";', 'source_mark: "one";'])
+    assert.ok(text.includes(frag), 'missing ' + frag + ' in ' + text);
+  const rel = w.resolve('main.ddn', 'v').relations[0];
+  assert.equal(rel.properties.source_min, 1);
+  assert.equal(rel.properties.enforcement, 'database');
+  A.authoring.setRelationProps(w, 'main.ddn', 'v', uid, { source_min: undefined });
+  assert.equal(w.resolve('main.ddn', 'v').relations[0].properties.source_min, undefined, 'undefined removes the property');
+  assert.throws(() => A.authoring.setRelationProps(w, 'main.ddn', 'v', uid, { source_min: -1 }), e => e.code === 'DDN-E001');
+  assert.throws(() => A.authoring.setRelationProps(w, 'main.ddn', 'v', uid, { bogus: 1 }), e => e.code === 'DDN-E001');
+  const elUid = w.resolve('main.ddn', 'v').elements[0].id;
+  assert.throws(() => A.authoring.setRelationProps(w, 'main.ddn', 'v', elUid, { enforcement: 'none' }), e => e.code === 'DDN-E006', 'element targets are refused');
+  w.undo(); w.undo();
+  assert.equal(w.resolve('main.ddn', 'v').relations[0].properties.enforcement, undefined, 'undo restores the previous source');
+});
+
+test('authoring.setRelationExtension: per-key merge of x_endlabels, PJ149 judged at commit', () => {
+  const src = 'ddn "0.5"; module "t"; data m { object a "A" { kind: "uml.class"; } object b "B" { kind: "uml.class"; } relation r "R" @a -> @b { kind: "uml.association"; } } view v { data: [@m]; }';
+  const w = A.createWorkspace({ 'main.ddn': src });
+  const uid = w.resolve('main.ddn', 'v').relations[0].id;
+  A.authoring.setRelationExtension(w, 'main.ddn', 'v', uid, 'x_endlabels', { source: { multiplicity: '1', role: 'owner' } });
+  A.authoring.setRelationExtension(w, 'main.ddn', 'v', uid, 'x_endlabels', { target: { multiplicity: '0..*' } });
+  const el = w.resolve('main.ddn', 'v').relations[0].properties.x_endlabels;
+  assert.deepEqual(el, { source: { multiplicity: '1', role: 'owner' }, target: { multiplicity: '0..*' } }, 'per-end merge preserves sibling ends');
+  /* sub-record null removes that end */
+  A.authoring.setRelationExtension(w, 'main.ddn', 'v', uid, 'x_endlabels', { target: null });
+  assert.deepEqual(w.resolve('main.ddn', 'v').relations[0].properties.x_endlabels, { source: { multiplicity: '1', role: 'owner' } });
+  /* PJ149 grammar is the commit-time authority: a bad multiplicity fails coded. */
+  assert.throws(() => A.authoring.setRelationExtension(w, 'main.ddn', 'v', uid, 'x_endlabels', { source: { multiplicity: 'many' } }),
+    e => e.code === 'DDN-PJ149', 'PJ149 rejects a non-UML multiplicity');
+  /* PJ149 kind legality: end labels on a non-UML verb fail coded. */
+  const w2 = A.createWorkspace({ 'main.ddn': 'ddn "0.5"; module "t"; data m { object a "A" { kind: table; } object b "B" { kind: table; } relation r "R" @a -> @b { kind: ref; } } view v { data: [@m]; }' });
+  const uid2 = w2.resolve('main.ddn', 'v').relations[0].id;
+  assert.throws(() => A.authoring.setRelationExtension(w2, 'main.ddn', 'v', uid2, 'x_endlabels', { source: { multiplicity: '1' } }),
+    e => e.code === 'DDN-PJ149', 'PJ149 confines end labels to UML association verbs');
+  assert.throws(() => A.authoring.setRelationExtension(w, 'main.ddn', 'v', uid, 'kind', {}), e => e.code === 'DDN-E001', 'non-x_* keys refused');
 });
 
 const n = results.length;

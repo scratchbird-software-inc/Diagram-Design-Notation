@@ -27,7 +27,10 @@
   <button id="ddn-icon-document" class="ddn-icon" type="button" data-drawer="document" title="Document drawer — publication, chrome, legend, header/footer, border, background and view metadata saved to source (right)">
     <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M9.5 1.5V5H13M6 8h5M6 10.5h5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
   </button>
-  <button id="ddn-icon-source" class="ddn-icon" type="button" data-drawer="source" title="Source drawer — DDN text editing, apply/discard, inspector (bottom)">
+  <button id="ddn-icon-inspector" class="ddn-icon" type="button" data-drawer="inspector" title="Inspector drawer — selection properties: Meaning / This view / Details (right)">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M10.2 10.2 14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  </button>
+  <button id="ddn-icon-source" class="ddn-icon" type="button" data-drawer="source" title="Source drawer — DDN text editing, apply/discard, diagnostics (bottom)">
     <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 4 2 8l3.5 4M10.5 4 14 8l-3.5 4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
   <button id="ddn-icon-export" class="ddn-icon" type="button" data-drawer="export" title="Export drawer — SVG, PNG, WebP, workspace snapshot (right)">
@@ -159,49 +162,60 @@
             <ul id="ddn-diagnostics" aria-label="Check diagnostics — click to go to file:line"></ul>
           </div>
         </div>
-        <div class="ddn-inspector" id="ddn-inspector">
-          <h3>Inspector</h3>
-          <p id="ddn-selection-summary" class="ddn-dim">Click an object or relation in the diagram.</p>
-          <div id="ddn-inspector-controls" hidden>
-            <label>Label <input id="ddn-label-value" type="text"></label>
-            <p><button id="ddn-set-label" type="button" class="ddn-mini">Set label</button></p>
-            <label>Kind <select id="ddn-kind-value"></select></label>
-            <p><button id="ddn-set-kind" type="button" class="ddn-mini">Set kind</button></p>
-            <label>Icon <span id="ddn-icon-current" class="ddn-dim">none</span></label>
-            <div class="ddn-row" style="position:relative">
-              <button id="ddn-icon-browse" type="button" class="ddn-mini">Browse icons…</button>
-              <button id="ddn-icon-clear" type="button" class="ddn-mini">Clear</button>
-              <div id="ddn-icon-popup" hidden>
-                <input id="ddn-icon-search" type="search" placeholder="Find an icon…" aria-label="Find an icon">
-                <div id="ddn-icon-list" role="listbox" aria-label="Icons"></div>
-                <a id="ddn-icon-viewer" class="ddn-mini-link" href="../icons/index.html" target="_blank" rel="noopener" title="Open the full icon pack viewer — multi-size previews and a copyable x_icon reference">Full icon viewer ↗</a>
-              </div>
-            </div>
-            <div class="ddn-row">
-              <input id="ddn-pos-x" type="number" step="1" aria-label="Pin x (px)" title="Pin x (px)">
-              <input id="ddn-pos-y" type="number" step="1" aria-label="Pin y (px)" title="Pin y (px)">
-            </div>
-            <div class="ddn-row">
-              <button id="ddn-pin" type="button" class="ddn-mini">Pin</button>
-              <button id="ddn-unpin" type="button" class="ddn-mini">Unpin</button>
-              <button id="ddn-hide" type="button" class="ddn-mini">Hide</button>
-            </div>
-            <div class="ddn-row">
-              <button id="ddn-add-field" type="button" class="ddn-mini">Add field</button>
-              <button id="ddn-duplicate" type="button" class="ddn-mini" title="Duplicate — a new element with a fresh uid (unconnected, no numeral); the original is untouched">Duplicate</button>
-              <button id="ddn-go-source" type="button" class="ddn-mini">Go to source</button>
-              <button id="ddn-delete-def" type="button" class="ddn-mini">Delete</button>
-            </div>
-          </div>
-          <h3>Add</h3>
-          <div class="ddn-row">
-            <button id="ddn-add-element" type="button" class="ddn-mini">Element</button>
-            <button id="ddn-add-relation" type="button" class="ddn-mini">Relation</button>
-          </div>
-        </div>
       </div>
     </aside>
   </div>
+  <aside id="ddn-drawer-inspector" class="ddn-drawer ddn-right" data-state="closed" aria-label="Inspector drawer">
+    <div class="ddn-drawer-head"><h2>Inspector</h2><button class="ddn-mini" data-close type="button" title="Close inspector drawer">×</button></div>
+    <div class="ddn-drawer-body" id="ddn-inspector-body">
+      <p id="ddn-selection-summary" class="ddn-dim">Click an object or relation in the diagram.</p>
+      <div id="ddn-inspector-controls" hidden>
+        <div id="ddn-inspector-tabs" role="tablist" aria-label="Inspector tabs">
+          <button type="button" role="tab" data-tab="meaning" aria-selected="true">Meaning</button>
+          <button type="button" role="tab" data-tab="view" aria-selected="false">This view</button>
+          <button type="button" role="tab" data-tab="details" aria-selected="false">Details</button>
+        </div>
+        <div id="ddn-inspector-tab-meaning" class="ddn-inspector-tab" role="tabpanel"></div>
+        <div id="ddn-inspector-tab-view" class="ddn-inspector-tab" role="tabpanel" hidden></div>
+        <div id="ddn-inspector-tab-details" class="ddn-inspector-tab" role="tabpanel" hidden></div>
+        <pre id="ddn-inspector-error" class="ddn-inspector-error" role="alert"></pre>
+      </div>
+      <div id="ddn-icon-popup" hidden>
+        <input id="ddn-icon-search" type="search" placeholder="Find an icon…" aria-label="Find an icon">
+        <div id="ddn-icon-list" role="listbox" aria-label="Icons"></div>
+        <a id="ddn-icon-viewer" class="ddn-mini-link" href="../icons/index.html" target="_blank" rel="noopener" title="Open the full icon pack viewer — multi-size previews and a copyable x_icon reference">Full icon viewer ↗</a>
+      </div>
+      <h3>Add</h3>
+      <div class="ddn-row">
+        <button id="ddn-add-element" type="button" class="ddn-mini" title="Add an element — small form with a capability-filtered kind list">Element…</button>
+        <button id="ddn-add-relation" type="button" class="ddn-mini" title="Add a relation — endpoint pickers with a legality-filtered verb list">Relation…</button>
+      </div>
+      <div id="ddn-add-element-modal" class="ddn-modal" hidden role="dialog" aria-label="Add element">
+        <h3>Add element</h3>
+        <label class="ddn-field"><span>Label</span><input id="ddn-ae-name" type="text" placeholder="New element"></label>
+        <label class="ddn-field"><span>Identifier</span><input id="ddn-ae-id" type="text" placeholder="stable_identifier"></label>
+        <label class="ddn-field"><span>Kind</span><select id="ddn-ae-kind"></select></label>
+        <p id="ddn-ae-note" class="ddn-dim" hidden></p>
+        <div class="ddn-row">
+          <button id="ddn-ae-create" type="button">Add element</button>
+          <button id="ddn-ae-cancel" type="button" class="ddn-mini">Cancel</button>
+        </div>
+      </div>
+      <div id="ddn-add-relation-modal" class="ddn-modal" hidden role="dialog" aria-label="Add relation">
+        <h3>Add relation</h3>
+        <label class="ddn-field"><span>Label</span><input id="ddn-ar-name" type="text" placeholder="Related to"></label>
+        <label class="ddn-field"><span>Identifier</span><input id="ddn-ar-id" type="text" placeholder="stable_identifier"></label>
+        <label class="ddn-field"><span>Source</span><select id="ddn-ar-from"></select></label>
+        <label class="ddn-field"><span>Target</span><select id="ddn-ar-to"></select></label>
+        <label class="ddn-field"><span>Verb</span><select id="ddn-ar-kind"></select></label>
+        <p id="ddn-ar-note" class="ddn-dim" hidden></p>
+        <div class="ddn-row">
+          <button id="ddn-ar-create" type="button">Add relation</button>
+          <button id="ddn-ar-cancel" type="button" class="ddn-mini">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </aside>
   <aside id="ddn-drawer-style" class="ddn-drawer ddn-right" data-state="closed" aria-label="Style and Layout drawer">
     <div class="ddn-drawer-head"><h2>Style &amp; Layout</h2><button class="ddn-mini" data-close type="button" title="Close style &amp; layout drawer">×</button></div>
     <div class="ddn-drawer-body" id="ddn-style-body"></div>

@@ -4767,6 +4767,46 @@ api.authoring={
   return result({committed:true,revision,added:addedIds,removed:removed.map(n=>n.id),updated:pairs.map(([n])=>n.id),diagnostics});
  },
  setAssignment(ws,entry,view,id,code){const b=build(ws,entry,view),n=find(b,id);if(n.type!=='relation'||!n.props.x_assignment)fail('DDN-E006','Not an assignment relationship');return apply(ws,b,[property(ws.getFiles()[n.source],n,'x_assignment',{code})],entry,view);},
+ /* Designer phase 3 (spec 05 cardinality/contract controls): batch property
+  * write on a RELATION definition — one validated, undoable transaction for
+  * the endpoint cardinality (source_min/source_max/target_min/target_max),
+  * enforcement, scope and the visual endpoint marks (source_mark/target_mark).
+  * `undefined` removes a property. The tool does light shape checks here; the
+  * commit-time authority is core validation (DDN114 marks, property contracts)
+  * re-run by apply(). */
+ setRelationProps(ws,entry,view,id,props){
+  const ALLOWED=['kind','description','source_min','source_max','target_min','target_max','enforcement','scope','source_mark','target_mark'];
+  if(!props||typeof props!=='object'||Array.isArray(props))fail('DDN-E001','Relation property writes need a {key: value} record.');
+  for(const k of Object.keys(props))if(!ALLOWED.includes(k))fail('DDN-E001','Unknown relation property: '+k+' (allowed: '+ALLOWED.join(', ')+')');
+  const numOK=v=>v===undefined||Number.isInteger(v)&&v>=0&&v<=1e6;
+  for(const k of ['source_min','source_max','target_min','target_max'])if(!numOK(props[k]))fail('DDN-E001',k+' must be a nonnegative integer (or undefined to remove).');
+  const b=build(ws,entry,view),n=find(b,id);
+  if(n.type!=='relation')fail('DDN-E006','setRelationProps targets a relation definition.');
+  const text=ws.getFiles()[n.source];
+  const edits=Object.entries(props).map(([k,v])=>property(text,n,k,v)).filter(Boolean);
+  if(!edits.length)return ws.revision;
+  return apply(ws,b,edits,entry,view);
+ },
+ /* Designer phase 3 (spec 05 UML association ends, DDN-PJ149 authority):
+  * merge-write an EXTENSION record property (x_*) on a relation definition —
+  * x_endlabels.source/target carry {role, multiplicity, qualifier}. The merge
+  * is per top-level key so writing source.multiplicity preserves target.role;
+  * a sub-record set to null removes that key; the whole extension set to
+  * undefined removes it. Core validation (DDN-PJ149 grammar/kind legality)
+  * re-runs on commit via apply(). */
+ setRelationExtension(ws,entry,view,id,key,rec){
+  if(!/^x_[A-Za-z0-9_]+$/.test(key))fail('DDN-E001','Extension properties are x_* records (got '+key+').');
+  if(rec!==undefined&&(rec===null||typeof rec!=='object'||Array.isArray(rec)))fail('DDN-E001','Extension writes need a record, or undefined to remove.');
+  const b=build(ws,entry,view),n=find(b,id);
+  if(n.type!=='relation')fail('DDN-E006','setRelationExtension targets a relation definition.');
+  let next;
+  if(rec===undefined)next=undefined;
+  else {
+   next=clone(n.props[key]||{});
+   for(const [k,v]of Object.entries(rec)){if(v===null)delete next[k];else next[k]=v;}
+  }
+  return apply(ws,b,[property(ws.getFiles()[n.source],n,key,next)],entry,view);
+ },
  value,
  setLabel(ws,entry,view,id,label){if(typeof label!=='string'||label.length>4096)fail('DDN-E001','Label must be text up to 4096 characters.');const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[labelEdit(ws.getFiles()[n.source],n,label)],entry,view);},
  setProperty(ws,entry,view,id,key,v){idOK(key);const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[property(ws.getFiles()[n.source],n,key,v)],entry,view);},

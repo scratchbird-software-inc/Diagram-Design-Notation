@@ -62,6 +62,14 @@ export interface Authoring {
   * route members, x_tool_presentation extension record) as one validated
   * transaction; the canonical value serializer is reused. */
  setViewProfile(ws:Workspace,entry:string,view:string,groups:Record<string,Record<string,unknown>>,options?:{routes?:Record<string,Record<string,unknown>>;presentation?:Record<string,unknown>|null}):number;
+ /** Designer phase 1: flat view-level metadata (title, description, source, generator); undefined removes. */
+ setViewProperties(ws:Workspace,entry:string,view:string,props:Record<string,unknown>):number;
+ /** Designer phase 1: publication chrome child groups (header/footer run bands, page border, page background); null removes a concern. */
+ setViewChrome(ws:Workspace,entry:string,view:string,concerns:Record<string,unknown>):number;
+ /** Designer phase 3: batch property write on a RELATION definition (kind, description, cardinality source_/target_ min/max, enforcement, scope, source_mark/target_mark); undefined removes a property. Core validation re-runs at commit. */
+ setRelationProps(ws:Workspace,entry:string,view:string,id:string,props:Record<string,unknown>):number;
+ /** Designer phase 3: merge-write an x_* extension record on a relation (e.g. x_endlabels.source/target); a sub-record of null removes that key, undefined removes the extension. DDN-PJ149 is judged at commit. */
+ setRelationExtension(ws:Workspace,entry:string,view:string,id:string,key:string,rec:Record<string,unknown>|undefined):number;
  pin(ws:Workspace,entry:string,view:string,id:string,x:number,y:number):number;unpin(ws:Workspace,entry:string,view:string,id:string):number|false;hide(ws:Workspace,entry:string,view:string,id:string):number|false;
  addElement(ws:Workspace,entry:string,view:string,data:{id:string;name?:string;kind?:string}):number;
  addField(ws:Workspace,entry:string,view:string,parent:string,data:{id:string;name?:string}):number;

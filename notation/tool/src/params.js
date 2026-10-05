@@ -8,7 +8,10 @@
  * now two right-side drawers — `style` (Style & Layout) and `document`
  * (Document). `appearance` remains accepted as a legacy alias of `style` in
  * ?drawers= and saved settings so existing links keep working. */
-const DRAWERS = ['style', 'document', 'source', 'files', 'export', 'animation'];
+/* Phase 3 (2026-10 redesign): `inspector` joins as a right-side drawer —
+ * selection opens it (and closes Document/Style & Layout), deselection returns
+ * to Document. */
+const DRAWERS = ['style', 'document', 'inspector', 'source', 'files', 'export', 'animation'];
 const DRAWER_ALIASES = { appearance: 'style' };
 
 /* B1-049: `api` = icon hidden and not user-openable, but openable by host code
@@ -24,10 +27,10 @@ const STORAGE_KEY = 'ddn-tool-drawers';
  * icons=false shows only the viewport controls. Explicit ?drawers= pairs and
  * saved localStorage settings override the preset drawer states. */
 const MODES = {
-  diagram: { toolbar: false, icons: false, drawers: { style: 'none', document: 'none', source: 'none', files: 'none', export: 'none', animation: 'none' } },
-  view: { toolbar: true, icons: false, drawers: { style: 'none', document: 'none', source: 'none', files: 'none', export: 'none', animation: 'none' } },
-  explore: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'closed', source: 'closed', files: 'closed', export: 'closed', animation: 'closed' } },
-  edit: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'closed', source: 'open', files: 'closed', export: 'closed', animation: 'closed' } },
+  diagram: { toolbar: false, icons: false, drawers: { style: 'none', document: 'none', inspector: 'none', source: 'none', files: 'none', export: 'none', animation: 'none' } },
+  view: { toolbar: true, icons: false, drawers: { style: 'none', document: 'none', inspector: 'none', source: 'none', files: 'none', export: 'none', animation: 'none' } },
+  explore: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'closed', inspector: 'closed', source: 'closed', files: 'closed', export: 'closed', animation: 'closed' } },
+  edit: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'closed', inspector: 'closed', source: 'open', files: 'closed', export: 'closed', animation: 'closed' } },
   /* B1-051 (D1): design mode — the designer IS the viewer with more
    * functionality. Everything from explore PLUS the editing affordances on by
    * default: source drawer open (like edit), the Document drawer open (nothing
@@ -35,7 +38,7 @@ const MODES = {
    * (still toggleable), and the design bar visible (kind palette
    * click-to-place, connect-two-elements). Embeddable as
    * ?mode=design&toolbar=off + host I/O. */
-  design: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'open', source: 'open', files: 'closed', export: 'closed', animation: 'closed' } }
+  design: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'open', inspector: 'closed', source: 'open', files: 'closed', export: 'closed', animation: 'closed' } }
 };
 
 const DEFAULT_MODE = 'explore';

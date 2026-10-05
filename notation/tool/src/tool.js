@@ -1,13 +1,14 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. B1-027 unified DDN diagram tool.
  * One page replacing the end-user viewer (B1-007), the studio gallery and the
  * studio editor: a diagram stage with pan/zoom, an icon toolbar, and pop-in
- * drawers (style & layout right, document right, source bottom, files left,
- * export right, animation right) whose open/closed/none/api state is
- * configurable per drawer via ?drawers=, a settings popup persisted to
- * localStorage, and ?mode= presets (D2-D4). The two right-side working drawers
- * (document, style) are exclusive — opening one closes the other — and follow
- * the selection: selecting an element opens the Source-drawer inspector,
- * deselecting (empty-canvas click / Escape) opens the Document drawer.
+ * drawers (style & layout right, document right, inspector right, source
+ * bottom, files left, export right, animation right) whose open/closed/none/api
+ * state is configurable per drawer via ?drawers=, a settings popup persisted to
+ * localStorage, and ?mode= presets (D2-D4). The three right-side working
+ * drawers (document, style, inspector) are exclusive — opening one closes the
+ * others — and follow the selection: selecting an element or relation opens
+ * the Inspector drawer, deselecting (empty-canvas click / Escape) opens the
+ * Document drawer.
  *
  * Rendering reuses the shared <ddn-example> component (DDNLive.mount) as the
  * render nucleus (D1); its internal chrome is hidden with an injected shadow
@@ -34,6 +35,7 @@ const PRE = __req('DDNToolPresentation', './presentation.js');
 const FIL = __req('DDNToolFiles', './files.js');
 const EXP = __req('DDNToolExport', './export.js');
 const BRG = __req('DDNToolBridge', './bridge.js');
+const INSP = __req('DDNToolInspector', './inspector.js');
 
 const { DRAWERS, DRAWER_STATES, GEAR_STATES, STORAGE_KEY, MODES, DEFAULT_MODE, parseMode, parseDrawersParam, cleanDrawerConfig, parseToolbarParam, resolveDrawerConfig } = PAR;
 const { computeFitScale, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem, pageDims, pageScaleFloor, artboardProblem } = PGF;
@@ -42,6 +44,7 @@ const { pickEntryView, viewListFrom, isPlausibleSourceFile, freshLocalId, srcFro
 const { rasterCanvasSize, exportSvgWithOverrides, hopWindowsFromMarkers, nextHopTime, scaledDuration } = EXP;
 const { parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, workerBridgeError, createRenderBridge } = BRG;
 const { FONT_STACKS, ROUTING_VALUES, MIN_TEXT_PX, MAX_FILE_BYTES, MAX_RASTER_PX } = OPT;
+const { cardinalitySentence, cardinalityText, markCardinality, umlMultiplicityOk, groupDetails, mixedValue, multiSelection, usedInViews, ENDPOINT_MARKS, UML_MULTIPLICITY } = INSP;
 
 /* Designer phase 2: which kinds the Add palette offers for a view. `kinds` are
  * DDNLive.kinds entries ({id, label, code, allowed_in}); `projection` is the
@@ -68,7 +71,9 @@ const pure = {
   pageDims, pageScaleFloor, artboardProblem,
   hopWindowsFromMarkers, nextHopTime, scaledDuration,
   parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, createRenderBridge,
-  paletteFilter
+  paletteFilter,
+  cardinalitySentence, cardinalityText, markCardinality, umlMultiplicityOk, groupDetails,
+  mixedValue, multiSelection, usedInViews, ENDPOINT_MARKS, UML_MULTIPLICITY
 };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNTool = pure; return; }
@@ -105,13 +110,16 @@ const els = {
   diagnostics: $('ddn-diagnostics'), diagnosticsCount: $('ddn-diagnostics-count'),
   apply: $('ddn-apply'), discard: $('ddn-discard'), liveApply: $('ddn-live-apply'), dirty: $('ddn-dirty'),
   undo: $('ddn-undo'), redo: $('ddn-redo'), find: $('ddn-find'), replace: $('ddn-replace'), goto: $('ddn-goto'),
-  inspector: $('ddn-inspector'), inspectorControls: $('ddn-inspector-controls'), selectionSummary: $('ddn-selection-summary'),
-  labelValue: $('ddn-label-value'), setLabel: $('ddn-set-label'), kindValue: $('ddn-kind-value'), setKind: $('ddn-set-kind'),
-  iconCurrent: $('ddn-icon-current'), iconBrowse: $('ddn-icon-browse'), iconClear: $('ddn-icon-clear'),
+  inspectorControls: $('ddn-inspector-controls'), selectionSummary: $('ddn-selection-summary'),
+  inspectorTabs: $('ddn-inspector-tabs'),
+  inspectorMeaning: $('ddn-inspector-tab-meaning'), inspectorView: $('ddn-inspector-tab-view'),
+  inspectorDetails: $('ddn-inspector-tab-details'), inspectorError: $('ddn-inspector-error'),
   iconPopup: $('ddn-icon-popup'), iconSearch: $('ddn-icon-search'), iconList: $('ddn-icon-list'),
-  posX: $('ddn-pos-x'), posY: $('ddn-pos-y'), pin: $('ddn-pin'), unpin: $('ddn-unpin'), hide: $('ddn-hide'),
-  addField: $('ddn-add-field'), goSource: $('ddn-go-source'), deleteDef: $('ddn-delete-def'), duplicate: $('ddn-duplicate'),
   addElement: $('ddn-add-element'), addRelation: $('ddn-add-relation'),
+  aeModal: $('ddn-add-element-modal'), aeName: $('ddn-ae-name'), aeId: $('ddn-ae-id'), aeKind: $('ddn-ae-kind'),
+  aeNote: $('ddn-ae-note'), aeCreate: $('ddn-ae-create'), aeCancel: $('ddn-ae-cancel'),
+  arModal: $('ddn-add-relation-modal'), arName: $('ddn-ar-name'), arId: $('ddn-ar-id'), arFrom: $('ddn-ar-from'),
+  arTo: $('ddn-ar-to'), arKind: $('ddn-ar-kind'), arNote: $('ddn-ar-note'), arCreate: $('ddn-ar-create'), arCancel: $('ddn-ar-cancel'),
   designBar: $('ddn-design-bar'), designHint: $('ddn-design-hint'), tidy: $('ddn-tidy'),
   paletteToggle: $('ddn-palette-toggle'), palettePopup: $('ddn-palette-popup'),
   paletteSearch: $('ddn-palette-search'), paletteList: $('ddn-palette-list'),
@@ -125,13 +133,14 @@ const els = {
   animStep: $('ddn-anim-step'), animSpeed: $('ddn-anim-speed'), animFlow: $('ddn-anim-flow'),
   animFlowField: $('ddn-anim-flow-field'), animStatus: $('ddn-anim-status')
 };
-const drawerEls = { files: $('ddn-drawer-files'), style: $('ddn-drawer-style'), document: $('ddn-drawer-document'), source: $('ddn-drawer-source'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation') };
-const iconEls = { files: $('ddn-icon-files'), style: $('ddn-icon-style'), document: $('ddn-icon-document'), source: $('ddn-icon-source'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation') };
-const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Document', source: 'Source', export: 'Export', animation: 'Animation' };
+const drawerEls = { files: $('ddn-drawer-files'), style: $('ddn-drawer-style'), document: $('ddn-drawer-document'), inspector: $('ddn-drawer-inspector'), source: $('ddn-drawer-source'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation') };
+const iconEls = { files: $('ddn-icon-files'), style: $('ddn-icon-style'), document: $('ddn-icon-document'), inspector: $('ddn-icon-inspector'), source: $('ddn-icon-source'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation') };
+const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Document', inspector: 'Inspector', source: 'Source', export: 'Export', animation: 'Animation' };
 /* Right-side working drawers are exclusive (Document / Style & Layout /
- * Inspector): opening one closes the other. The inspector still lives in the
- * Source drawer (bottom) until phase 3, so selection drives it via `source`. */
-const RIGHT_EXCLUSIVE = ['document', 'style'];
+ * Inspector): opening one closes the others. Selection opens the Inspector;
+ * deselection returns to Document (phase 3 — the inspector moved out of the
+ * Source drawer, which now carries text editing + diagnostics only). */
+const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector'];
 
 function emptyPresentation() {
   return { options: {}, typography: {}, kindColours: {}, verbColours: {}, objectColours: {}, verbRouting: {}, relationRouting: {}, mindNodes: {} };
@@ -139,7 +148,7 @@ function emptyPresentation() {
 const state = {
   ws: null, diagram: null, entry: '', view: '', viewList: [],
   currentFile: '', bufferDirty: false, saved: {}, mergeNext: false, search: '',
-  presentation: emptyPresentation(), selected: null, selectedRelation: null,
+  presentation: emptyPresentation(), selected: null, selectedRelation: null, selectedIds: [],
   fit: 'page', config: resolveDrawerConfig(DEFAULT_MODE, null, null),
   catalogueIndex: -1, overrideStyle: null, panning: false
 };
@@ -246,19 +255,19 @@ function setDrawer(name, st, persist) {
   applyDrawerConfig();
   if (persist) saveStoredDrawers();
 }
-/* Selection-driven drawer switching: selecting an element opens the Source
- * drawer (the inspector's phase-1 home) and closes the right-side working
- * drawers; deselecting opens the Document drawer. Only acts when drawer icons
- * are on and the target drawer is available (not none). */
+/* Selection-driven drawer switching (phase 3): selecting an element or
+ * relation opens the Inspector drawer and closes the other right-side working
+ * drawers; deselecting (empty-canvas click / Escape) opens the Document drawer.
+ * Only acts when drawer icons are on and the target drawer is available. */
 function autoDrawerForSelection(hasSelection) {
   if (!state.config.icons) return;
   const avail = n => state.config.drawers[n] !== 'none';
   if (hasSelection) {
-    if (avail('source')) state.config.drawers.source = 'open';
-    for (const n of RIGHT_EXCLUSIVE) if (state.config.drawers[n] === 'open') state.config.drawers[n] = 'closed';
+    if (avail('inspector')) state.config.drawers.inspector = 'open';
+    for (const n of RIGHT_EXCLUSIVE) if (n !== 'inspector' && state.config.drawers[n] === 'open') state.config.drawers[n] = 'closed';
   } else {
     if (avail('document')) state.config.drawers.document = 'open';
-    if (state.config.drawers.style === 'open') state.config.drawers.style = 'closed';
+    for (const n of ['style', 'inspector']) if (state.config.drawers[n] === 'open') state.config.drawers[n] = 'closed';
   }
   applyDrawerConfig();
   saveStoredDrawers();
@@ -353,6 +362,7 @@ function mount() {
     applyMindScroll();
     attachDesign();
     updateDesignBar();
+    refreshInspector();
     refreshAnimation();
     diagnosticsUI();
     status();
@@ -1107,11 +1117,22 @@ function resetAppearance() {
   status('appearance reset');
 }
 
-/* ------------------------------------------------ selection + inspector */
+/* ------------------------------------------------ selection + inspector
+ * Phase 3 (2026-10 redesign): the inspector is its own right-side drawer in
+ * the exclusive set {Document, Style & Layout, Inspector}, structured as the
+ * spec-03 three tabs — Meaning (shared model definition), This view
+ * (occurrence: pin/hide/session overrides), Details (read-oriented grouped
+ * property display with edit-in-source jumps; descriptor-form editing is a
+ * later phase). Relation selections add verb/cardinality/enforcement/scope/
+ * end-label controls writing through authoring.setRelationProps /
+ * setRelationExtension — one validated, undoable transaction per commit, with
+ * coded errors surfaced adjacent to the controls. */
 
 function onSelect(detail) {
   if (state.panning) return;
-  const id = detail.sourceIds && detail.sourceIds.length === 1 ? detail.sourceIds[0] : (detail.sourceId || detail.id);
+  const ids = detail.sourceIds && detail.sourceIds.length ? detail.sourceIds : [detail.sourceId || detail.id];
+  state.selectedIds = ids.filter(Boolean);
+  const id = state.selectedIds.length === 1 ? state.selectedIds[0] : (detail.sourceId || detail.id);
   let ir = null;
   try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
   const relation = ir && ir.relations.find(r => r.id === id);
@@ -1135,10 +1156,11 @@ function onSelect(detail) {
  * view's document settings instead of the inspector. */
 function deselect() {
   const had = state.selected || state.selectedRelation;
-  state.selected = null; state.selectedRelation = null;
+  state.selected = null; state.selectedRelation = null; state.selectedIds = [];
   applyOverrideCss();
   updateSelectedPanel();
   els.inspectorControls.hidden = true;
+  inspectorNote('');
   els.selectionSummary.textContent = 'Click an object or relation in the diagram.';
   if (had) status('selection cleared');
   autoDrawerForSelection(false);
@@ -1161,9 +1183,57 @@ function attachDeselect() {
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (design.placing || design.connecting) return;
-  if (!els.iconPopup.hidden || !els.palettePopup.hidden || !els.connectPopup.hidden || !els.settingsPopup.hidden || !els.templatePopup.hidden) return;
+  if (!els.iconPopup.hidden || !els.palettePopup.hidden || !els.connectPopup.hidden || !els.settingsPopup.hidden || !els.templatePopup.hidden || !els.aeModal.hidden || !els.arModal.hidden) return;
   if (state.selected || state.selectedRelation) deselect();
 }, true);
+
+/* Inspector tab bar. */
+els.inspectorTabs.addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]');
+  if (!b) return;
+  for (const t of els.inspectorTabs.querySelectorAll('[data-tab]')) t.setAttribute('aria-selected', String(t === b));
+  for (const [name, panel] of [['meaning', els.inspectorMeaning], ['view', els.inspectorView], ['details', els.inspectorDetails]])
+    panel.hidden = name !== b.dataset.tab;
+});
+
+function inspectorNote(msg) { els.inspectorError.textContent = msg || ''; }
+/* Inspector commits surface coded errors ADJACENT to the controls (the
+ * inspector error slot) rather than only in the status bar / source drawer —
+ * the commit-time authority is core validation (DDN-PJ149 & friends), and its
+ * coded failure lands here. */
+function guidedInspector(action) {
+  try {
+    flush();
+    action();
+    showSource(state.currentFile);
+    updateHistory();
+    inspectorNote('');
+    status('source edit applied — undo restores the previous source');
+    refreshInspector();
+  } catch (e) {
+    inspectorNote((e && e.code ? e.code + ': ' : '') + (e && e.message || e));
+  }
+}
+function refreshInspector() {
+  if (!state.selected && !state.selectedRelation) return;
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { return; }
+  const id = state.selected || state.selectedRelation;
+  inspector(id, ir, state.selectedRelation ? ir.relations.find(r => r.id === id) : null);
+}
+
+/* "Used in n views" (spec 03 selection header): every workspace view whose
+ * resolved model contains the definition uid. Resolving every view can fail
+ * per view (broken sibling view) — those views are skipped, never fatal. */
+function viewUsageList(uid) {
+  const views = [];
+  for (const e of state.ws.entries()) for (const v of e.views) {
+    let ir = null;
+    try { ir = state.ws.resolve(e.file, v.id); } catch { continue; }
+    views.push({ entry: e.file, view: v.id, ids: [...(ir.elements || []).map(n => n.id), ...(ir.relations || []).map(r => r.id)] });
+  }
+  return usedInViews(views, uid);
+}
 
 function inspector(id, ir, relation) {
   if (!ir) return;
@@ -1171,22 +1241,356 @@ function inspector(id, ir, relation) {
   const fieldItem = ir.elements.flatMap(n => n.fields || []).find(f => f.id === id);
   const item = node || relation || fieldItem;
   if (!item) { els.inspectorControls.hidden = true; els.selectionSummary.textContent = 'Click an object or relation in the diagram.'; return; }
+  els.inspectorControls.hidden = true;
+  inspectorNote('');
+  const multi = multiSelection((state.selectedIds || []).map(u => ({ id: u, kind: null, isRelation: !!ir.relations.find(r => r.id === u) })));
+  els.selectionSummary.textContent = multi.count > 1
+    ? multi.count + ' items selected — ' + (multi.allElements ? 'elements' : multi.allRelations ? 'relations' : 'mixed elements and relations')
+    : item.name + ' · ' + (relation ? 'relationship' : fieldItem ? 'field' : node.kind) + ' — ' + id;
   els.inspectorControls.hidden = false;
-  els.selectionSummary.textContent = item.name + ' · ' + (relation ? 'relationship' : fieldItem ? 'field' : node.kind) + ' — ' + id;
-  els.labelValue.value = item.name || '';
-  const choices = relation ? A.relations : A.kinds;
-  els.kindValue.replaceChildren(...choices.map(k => new Option(k.label, k.id)));
-  els.kindValue.value = item.kind || '';
-  els.kindValue.disabled = els.setKind.disabled = !!fieldItem;
-  const g = state.diagram && state.diagram.result && state.diagram.result.scene.nodes && state.diagram.result.scene.nodes.find(n => n.id === id);
-  els.posX.value = g ? Math.round(g.x) : 0;
-  els.posY.value = g ? Math.round(g.y) : 0;
+  buildMeaningTab(els.inspectorMeaning, id, ir, { node, relation, fieldItem, multi });
+  buildViewTab(els.inspectorView, id, ir, { node, relation, fieldItem, multi });
+  buildDetailsTab(els.inspectorDetails, id, ir, { node, relation, fieldItem });
+}
+
+/* --- shared small builders (local to the inspector; the style/document
+ * drawers use their own static descriptor loops) --- */
+function inField(parent, label, input) {
+  const f = document.createElement('label');
+  f.className = 'ddn-field';
+  const s = document.createElement('span'); s.textContent = label;
+  f.append(s, input);
+  parent.append(f);
+  return input;
+}
+function inButton(parent, label, title, fn) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'ddn-mini'; b.textContent = label;
+  if (title) b.title = title;
+  b.addEventListener('click', () => guard(fn));
+  parent.append(b);
+  return b;
+}
+function inNote(parent, text) { const p = dim(text); parent.append(p); return p; }
+function goToSource(id) {
+  const s = A.authoring.sourceOf(state.ws, state.entry, state.view, id);
+  setDrawer('source', 'open', true);
+  showSource(s.file, s);
+}
+
+/* --- Meaning tab: the shared model definition (spec 03). Edits write the
+ * definition in source; the shared-scope impact note appears when the
+ * definition is used in more than one view. --- */
+function buildMeaningTab(panel, id, ir, ctx) {
+  const { node, relation, fieldItem, multi } = ctx;
+  panel.replaceChildren();
+  const uid = id;
+  const usage = viewUsageList(uid);
+  const head = document.createElement('p');
+  head.className = 'ddn-dim';
+  head.textContent = 'Used in ' + usage.length + ' view' + (usage.length === 1 ? '' : 's') +
+    (usage.length > 1 ? ' — ' + usage.map(u => u.view).join(', ') : '');
+  panel.append(head);
+  if (usage.length > 1)
+    inNote(panel, 'Shared-scope note: edits on this tab rewrite the shared model definition and affect every view that uses it (' + usage.length + ' views). Undo restores the previous source.');
+  if (multi.count > 1) {
+    inNote(panel, 'Multi-selection (' + multi.count + '): single-identity edits (label, description) are not offered; the inspector never coerces distinct meanings to one value.');
+    return;
+  }
+  const label = document.createElement('input');
+  label.type = 'text'; label.value = (node || relation || fieldItem).name || '';
+  label.addEventListener('change', () => guidedInspector(() => A.authoring.setLabel(state.ws, state.entry, state.view, uid, label.value)));
+  inField(panel, 'Label', label);
+
+  /* Kind / verb. Relations: the verb list is filtered by endpoint-pair
+   * legality (phase 2 legalVerbs over the same endpoint contracts the core
+   * validator enforces); when no registered verb admits the pair the full
+   * list stays with a note — filtering is advisory, source stays permissive.
+   * Elements: the full registered kind list (capability-agnostic here — this
+   * tab edits the shared definition, not the palette offer). */
+  if (!fieldItem) {
+    const choices = relation ? A.relations : A.kinds;
+    let options = choices, note = '';
+    if (relation) {
+      const fromKind = (ir.elements.find(n => n.id === relation.from.element) || {}).kind;
+      const toKind = (ir.elements.find(n => n.id === relation.to.element) || {}).kind;
+      const legal = fromKind && toKind ? A.legalVerbs(fromKind, toKind) : [];
+      if (legal.length) options = choices.filter(r => legal.includes(r.id));
+      else note = 'No registered verb admits ' + (fromKind || '?') + ' → ' + (toKind || '?') + ' — showing all installed verbs; the source validator will judge.';
+      if (!options.some(r => r.id === relation.kind)) options = choices; // current verb must stay selectable
+    }
+    const kind = selectInput(options.map(k => [k.id, k.label + ' (' + k.id + ')']), 'Kind');
+    kind.value = (node || relation).kind || '';
+    kind.addEventListener('change', () => guidedInspector(() => A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'kind', kind.value)));
+    inField(panel, relation ? 'Verb' : 'Kind', kind);
+    if (note) inNote(panel, note);
+  }
+
+  const desc = document.createElement('input');
+  desc.type = 'text'; desc.placeholder = 'blank = removed';
+  desc.value = typeof ((node || relation || fieldItem).properties || {}).description === 'string' ? (node || relation || fieldItem).properties.description : '';
+  desc.addEventListener('change', () => guidedInspector(() => A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'description', desc.value.trim() || undefined)));
+  inField(panel, 'Description', desc);
+
+  if (node) {
+    /* Icon (x_icon) — a real model property persisted in source. */
+    const xi = node.properties && node.properties.x_icon;
+    const row = document.createElement('div'); row.className = 'ddn-row';
+    const cur = document.createElement('span'); cur.className = 'ddn-dim';
+    cur.textContent = xi ? xi.library + '/' + xi.icon : 'none';
+    inButton(row, 'Browse icons…', 'Bind an icon to this element (x_icon)', () => { buildIconPicker(); els.iconPopup.hidden = !els.iconPopup.hidden; if (!els.iconPopup.hidden) els.iconSearch.focus(); });
+    inButton(row, 'Clear icon', 'Remove x_icon', () => guidedInspector(() => A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'x_icon', undefined)));
+    const f = document.createElement('div');
+    const lab = document.createElement('span'); lab.textContent = 'Icon: ';
+    f.append(lab, cur, row);
+    panel.append(f);
+
+    /* Fields list (shared definition members). */
+    const fields = node.fields || [];
+    if (fields.length) {
+      const h = document.createElement('h4'); h.textContent = 'Fields';
+      panel.append(h);
+      const ul = document.createElement('ul'); ul.className = 'ddn-fields-list';
+      for (const fld of fields) {
+        const li = document.createElement('li');
+        li.textContent = (fld.name || fld.local) + (fld.properties && fld.properties.datatype ? ' : ' + fld.properties.datatype : '');
+        ul.append(li);
+      }
+      panel.append(ul);
+    }
+    const af = document.createElement('div'); af.className = 'ddn-row';
+    const afId = document.createElement('input'); afId.type = 'text'; afId.placeholder = 'field_id'; afId.setAttribute('aria-label', 'New field identifier');
+    const afName = document.createElement('input'); afName.type = 'text'; afName.placeholder = 'display name (optional)'; afName.setAttribute('aria-label', 'New field name');
+    inButton(af, 'Add field', 'Add a field member to this definition', () => {
+      if (!afId.value.trim()) { inspectorNote('A field needs a stable identifier.'); return; }
+      guidedInspector(() => A.authoring.addField(state.ws, state.entry, state.view, uid, { id: afId.value.trim(), name: afName.value.trim() }));
+    });
+    af.append(afId, afName);
+    panel.append(af);
+  }
+
+  if (relation) buildRelationMeaning(panel, relation, ir);
+
+  /* Source location + definition actions. */
+  let src = null;
+  try { src = A.authoring.sourceOf(state.ws, state.entry, state.view, uid); } catch { /* preset-expanded */ }
+  if (src) inNote(panel, 'Source: ' + src.file + ':' + src.start + ' (' + src.type + ' ' + src.id + ')');
+  const actions = document.createElement('div'); actions.className = 'ddn-row';
+  if (node) inButton(actions, 'Duplicate', 'Duplicate — a new element with a fresh uid (unconnected, no numeral); the original is untouched', () => {
+    guidedInspector(() => {
+      A.authoring.duplicate(state.ws, state.entry, state.view, uid);
+      const after = state.ws.resolve(state.entry, state.view);
+      const copy = after.elements.map(n => n.id).filter(u => /_copy\d*$/.test(u)).sort().at(-1);
+      if (copy) { state.selected = copy; state.selectedRelation = null; state.selectedIds = [copy]; }
+      status('duplicated as ' + (copy || 'a new uid') + ' — new identity, unconnected; ref: anchors still point at the original');
+    });
+  });
+  inButton(actions, 'Go to source', 'Open the Source drawer at this definition', () => goToSource(uid));
+  inButton(actions, 'Delete', 'Delete this semantic definition (referenced definitions are blocked; use Hide for appearance-only removal)', () => {
+    if (confirm('Delete this semantic definition? Referenced definitions are blocked; use Hide for appearance-only removal.'))
+      guidedInspector(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, uid));
+  });
+  panel.append(actions);
+}
+
+/* Relation meaning controls (spec 05 cardinality / spec 07): verb above, plus
+ * cardinality min/max per endpoint with a live sentence preview, enforcement,
+ * scope, and the visual endpoint marks. UML association ends (uml.structure@2
+ * or an existing x_endlabels) get role/multiplicity/qualifier per end writing
+ * x_endlabels.source/target — DDN-PJ149 is the commit-time authority and its
+ * coded errors surface in the inspector error slot. */
+function buildRelationMeaning(panel, relation, ir) {
+  const uid = relation.id;
+  const props = relation.properties || {};
+  const fromEl = ir.elements.find(n => n.id === relation.from.element);
+  const toEl = ir.elements.find(n => n.id === relation.to.element);
+  const fromName = (fromEl && fromEl.name) || relation.from.element;
+  const toName = (toEl && toEl.name) || relation.to.element;
+
+  const h = document.createElement('h4'); h.textContent = 'Cardinality';
+  panel.append(h);
+  const sentence = inNote(panel, '');
+  sentence.className = 'ddn-cardinality-preview';
+  const nums = {};
+  const preview = () => {
+    const card = {
+      source_min: nums.source_min.value === '' ? undefined : Number(nums.source_min.value),
+      source_max: nums.source_max.value === '' ? undefined : Number(nums.source_max.value),
+      target_min: nums.target_min.value === '' ? undefined : Number(nums.target_min.value),
+      target_max: nums.target_max.value === '' ? undefined : Number(nums.target_max.value)
+    };
+    /* Seed from the visual marks when no numeric bounds are asserted, so a
+     * crow's-foot diagram still explains itself. */
+    if (card.source_min === undefined && card.source_max === undefined) Object.assign(card, markCardinality(props.source_mark) ? { source_min: markCardinality(props.source_mark).min, source_max: markCardinality(props.source_mark).max } : {});
+    if (card.target_min === undefined && card.target_max === undefined) Object.assign(card, markCardinality(props.target_mark) ? { target_min: markCardinality(props.target_mark).min, target_max: markCardinality(props.target_mark).max } : {});
+    sentence.textContent = cardinalitySentence(fromName, toName, card) || 'No cardinality asserted — endpoint marks below are the visual shorthand; min/max bounds are optional refinements.';
+  };
+  const commitCard = () => guidedInspector(() => A.authoring.setRelationProps(state.ws, state.entry, state.view, uid, {
+    source_min: nums.source_min.value === '' ? undefined : Number(nums.source_min.value),
+    source_max: nums.source_max.value === '' ? undefined : Number(nums.source_max.value),
+    target_min: nums.target_min.value === '' ? undefined : Number(nums.target_min.value),
+    target_max: nums.target_max.value === '' ? undefined : Number(nums.target_max.value)
+  }));
+  for (const [end, label] of [['source', fromName], ['target', toName]]) {
+    const row = document.createElement('div'); row.className = 'ddn-card-row';
+    const tag = document.createElement('span'); tag.className = 'ddn-dim'; tag.textContent = end;
+    row.append(tag);
+    for (const bound of ['min', 'max']) {
+      const inp = document.createElement('input');
+      inp.type = 'number'; inp.min = 0; inp.max = 1000000; inp.step = 1;
+      inp.placeholder = bound + ' (blank = unset)';
+      inp.setAttribute('aria-label', end + ' ' + bound + ' for ' + label);
+      const v = props[end + '_' + bound];
+      inp.value = typeof v === 'number' ? String(v) : '';
+      inp.addEventListener('input', preview);
+      inp.addEventListener('change', commitCard);
+      nums[end + '_' + bound] = inp;
+      row.append(inp);
+    }
+    panel.append(row);
+  }
+  preview();
+
+  const enf = selectInput([['', 'Not asserted'], ['database', 'database'], ['application', 'application'], ['expected', 'expected'], ['none', 'none']], 'Enforcement');
+  enf.value = typeof props.enforcement === 'string' ? props.enforcement : '';
+  enf.addEventListener('change', () => guidedInspector(() => A.authoring.setRelationProps(state.ws, state.entry, state.view, uid, { enforcement: enf.value || undefined })));
+  inField(panel, 'Enforcement', enf);
+
+  const scope = document.createElement('input');
+  scope.type = 'text'; scope.placeholder = 'blank = not asserted';
+  scope.value = typeof props.scope === 'string' ? props.scope : '';
+  scope.addEventListener('change', () => guidedInspector(() => A.authoring.setRelationProps(state.ws, state.entry, state.view, uid, { scope: scope.value.trim() || undefined })));
+  inField(panel, 'Scope', scope);
+
+  const mh = document.createElement('h4'); mh.textContent = 'Endpoint marks (visual shorthand)';
+  panel.append(mh);
+  for (const end of ['source', 'target']) {
+    const sel = selectInput([['', 'Not asserted'], ...ENDPOINT_MARKS.map(m => [m, m])], end + ' mark');
+    sel.value = typeof props[end + '_mark'] === 'string' ? props[end + '_mark'] : '';
+    sel.addEventListener('change', () => guidedInspector(() => A.authoring.setRelationProps(state.ws, state.entry, state.view, uid, { [end + '_mark']: sel.value || undefined })));
+    inField(panel, (end === 'source' ? fromName : toName) + ' end mark', sel);
+  }
+
+  /* UML association ends (spec 05): uml.structure@2 views, or any relation
+   * already carrying x_endlabels. role/multiplicity/qualifier per end, merged
+   * into x_endlabels.source/target; DDN-PJ149 judges the result at commit. */
+  const proj = viewProjection();
+  const isUmlEnds = !!props.x_endlabels || (proj.profile === 'uml.structure@2' && ['uml.association', 'uml.commpath', 'uml.connector', 'uml.link'].includes(relation.kind));
+  if (isUmlEnds) {
+    const uh = document.createElement('h4'); uh.textContent = 'UML association ends (x_endlabels)';
+    panel.append(uh);
+    inNote(panel, 'Multiplicity grammar: 1, 0..1, 0..*, 1..*, * (DDN-PJ149 judges at commit). Role and qualifier are free text.');
+    const ends = props.x_endlabels || {};
+    const inputs = {};
+    const commitEnds = () => {
+      const rec = {};
+      for (const end of ['source', 'target']) {
+        const role = inputs[end].role.value.trim(), mult = inputs[end].multiplicity.value.trim(), qual = inputs[end].qualifier.value.trim();
+        if (mult && !umlMultiplicityOk(mult)) { inspectorNote('DDN-PJ149 grammar: multiplicity must be 1, 0..1, 0..*, 1..* or * (got "' + mult + '").'); return; }
+        const cur = ends[end] || {};
+        const merged = {};
+        if (role) merged.role = role;
+        if (mult) merged.multiplicity = mult;
+        if (qual) merged.qualifier = qual;
+        rec[end] = (role || mult || qual) ? merged : (cur.role || cur.multiplicity || cur.qualifier ? null : undefined);
+      }
+      const write = {};
+      for (const end of ['source', 'target']) if (rec[end] !== undefined) write[end] = rec[end];
+      if (!Object.keys(write).length) return;
+      guidedInspector(() => A.authoring.setRelationExtension(state.ws, state.entry, state.view, uid, 'x_endlabels', write));
+    };
+    for (const end of ['source', 'target']) {
+      const cur = ends[end] || {};
+      const box = document.createElement('div'); box.className = 'ddn-end-box';
+      const eh = document.createElement('h5'); eh.textContent = end + ' — ' + (end === 'source' ? fromName : toName);
+      box.append(eh);
+      inputs[end] = {};
+      const mk = (label, key, placeholder) => {
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.placeholder = placeholder; inp.value = typeof cur[key] === 'string' ? cur[key] : '';
+        inp.addEventListener('change', commitEnds);
+        inputs[end][key] = inp;
+        inField(box, label, inp);
+      };
+      mk('Role', 'role', 'role name (blank = unset)');
+      mk('Multiplicity', 'multiplicity', '1, 0..1, 0..*, 1..*, *');
+      mk('Qualifier', 'qualifier', 'qualifier (blank = unset)');
+      panel.append(box);
+    }
+  }
+}
+
+/* --- This view tab: occurrence-level state (spec 03). Pin/unpin and hide
+ * write per-view place/exclude records; the relation routing override is the
+ * session-preview channel (never written to source from here). --- */
+function buildViewTab(panel, id, ir, ctx) {
+  const { node, relation, multi } = ctx;
+  panel.replaceChildren();
+  inNote(panel, 'Occurrence state in view "' + state.view + '" — never touches the shared definition.');
+  if (multi.count > 1) {
+    inNote(panel, 'Multi-selection (' + multi.count + '): pin/hide apply per occurrence and are shown for single selections only; nothing is coerced across the selection.');
+    return;
+  }
   const noGraph = state.diagram && state.diagram.capabilities && state.diagram.capabilities.graphControls === false;
-  for (const b of [els.pin, els.unpin, els.hide]) b.disabled = !node || noGraph;
-  els.addField.disabled = !!relation;
-  const xi = node && node.properties && node.properties.x_icon;
-  els.iconCurrent.textContent = xi ? xi.library + '/' + xi.icon : 'none';
-  for (const b of [els.iconBrowse, els.iconClear]) b.disabled = !node;
+  if (node) {
+    const g = state.diagram && state.diagram.result && state.diagram.result.scene.nodes && state.diagram.result.scene.nodes.find(n => n.id === id);
+    const row = document.createElement('div'); row.className = 'ddn-row';
+    const px = document.createElement('input'); px.type = 'number'; px.step = 1; px.value = g ? Math.round(g.x) : 0; px.setAttribute('aria-label', 'Pin x (px)');
+    const py = document.createElement('input'); py.type = 'number'; py.step = 1; py.value = g ? Math.round(g.y) : 0; py.setAttribute('aria-label', 'Pin y (px)');
+    row.append(px, py);
+    panel.append(row);
+    const brow = document.createElement('div'); brow.className = 'ddn-row';
+    const pinB = inButton(brow, 'Pin', 'Pin this occurrence at x,y in the source view', () => guidedInspector(() => A.authoring.pin(state.ws, state.entry, state.view, id, Number(px.value), Number(py.value))));
+    const unpinB = inButton(brow, 'Unpin', 'Remove the place pin for this occurrence', () => guidedInspector(() => A.authoring.unpin(state.ws, state.entry, state.view, id)));
+    const hideB = inButton(brow, 'Hide', 'Exclude this occurrence from this view (appearance-only; the definition stays)', () => guidedInspector(() => A.authoring.hide(state.ws, state.entry, state.view, id)));
+    for (const b of [pinB, unpinB, hideB]) b.disabled = !!noGraph;
+    if (noGraph) inNote(panel, 'This projection fixes coordinates and content — occurrence pin/hide is unavailable here.');
+    panel.append(brow);
+  } else if (relation) {
+    const sel = selectInput(routingOptions(), 'routing for relation ' + id);
+    sel.value = state.presentation.relationRouting[id] || 'source';
+    sel.addEventListener('change', () => {
+      if (sel.value === 'source') delete state.presentation.relationRouting[id];
+      else state.presentation.relationRouting[id] = sel.value;
+      rerender();
+    });
+    inField(panel, 'Routing (session preview)', sel);
+    inNote(panel, 'Session preview only — saved appearance writes go through Style & Layout → Get source, or a route record in source.');
+    const brow = document.createElement('div'); brow.className = 'ddn-row';
+    inButton(brow, 'Hide', 'Exclude this relation from this view (appearance-only; the definition stays)', () => guidedInspector(() => A.authoring.hide(state.ws, state.entry, state.view, id)));
+    panel.append(brow);
+  } else {
+    inNote(panel, 'Fields have no per-view occurrence state of their own; pin/hide the owning element.');
+  }
+}
+
+/* --- Details tab: read-oriented grouped property display from the parsed
+ * model definition, grouped per standard/registry/data-properties.json, with
+ * edit-in-source jumps. Descriptor-driven form editing is a later phase; this
+ * tab deliberately stays honest and lightweight. --- */
+function buildDetailsTab(panel, id, ir, ctx) {
+  const { relation, fieldItem } = ctx;
+  panel.replaceChildren();
+  let src = null;
+  try { src = A.authoring.sourceOf(state.ws, state.entry, state.view, id); } catch { /* preset-expanded */ }
+  if (!src) { inNote(panel, 'This declaration has no editable source of its own (expanded from a shared definition); edit the definition in source.'); return; }
+  const groups = groupDetails(src.properties, relation ? 'relation' : fieldItem ? 'field' : 'element');
+  if (!groups.length) inNote(panel, 'No properties asserted on this definition.');
+  for (const g of groups) {
+    const h = document.createElement('h4'); h.textContent = g.group;
+    panel.append(h);
+    const dl = document.createElement('dl'); dl.className = 'ddn-details';
+    for (const [k, v] of g.entries) {
+      const dt = document.createElement('dt'); dt.textContent = k;
+      const dd = document.createElement('dd');
+      dd.textContent = typeof v === 'string' ? v : JSON.stringify(v);
+      dl.append(dt, dd);
+    }
+    panel.append(dl);
+  }
+  const row = document.createElement('div'); row.className = 'ddn-row';
+  inButton(row, 'Edit in source', 'Open the Source drawer at this definition', () => goToSource(id));
+  panel.append(row);
 }
 
 function guided(action) {
@@ -1196,63 +1600,101 @@ function guided(action) {
   updateHistory();
   status('source edit applied — undo restores the previous source');
 }
-els.setLabel.addEventListener('click', () => guard(() => guided(() => A.authoring.setLabel(state.ws, state.entry, state.view, state.selected || state.selectedRelation, els.labelValue.value))));
-els.setKind.addEventListener('click', () => guard(() => guided(() => A.authoring.setProperty(state.ws, state.entry, state.view, state.selected || state.selectedRelation, 'kind', els.kindValue.value))));
-els.pin.addEventListener('click', () => guard(() => guided(() => A.authoring.pin(state.ws, state.entry, state.view, state.selected, Number(els.posX.value), Number(els.posY.value)))));
-els.unpin.addEventListener('click', () => guard(() => guided(() => A.authoring.unpin(state.ws, state.entry, state.view, state.selected))));
-els.hide.addEventListener('click', () => guard(() => guided(() => A.authoring.hide(state.ws, state.entry, state.view, state.selected))));
-els.goSource.addEventListener('click', () => guard(() => {
-  const s = A.authoring.sourceOf(state.ws, state.entry, state.view, state.selected || state.selectedRelation);
-  setDrawer('source', 'open', true);
-  showSource(s.file, s);
-}));
-els.deleteDef.addEventListener('click', () => guard(() => {
-  if (confirm('Delete this semantic definition? Referenced definitions are blocked; use Hide for appearance-only removal.'))
-    guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, state.selected || state.selectedRelation));
-}));
-/* DDN 0.8 (ch. 55 §S5): duplicate mints a NEW uid (<id>_copy, then _copy2, …)
- * — the copy starts unconnected, its numeral field empty, and ref: anchors
- * keep pointing at the original. A move (drag / cut+paste in source) never
- * mints: it edits placement only, so the uid is preserved by construction. */
-els.duplicate.addEventListener('click', () => guard(() => {
-  if (!state.selected) { status('select an element to duplicate'); return; }
+
+/* ------------------------------------------------ add element / relation modals
+ * Phase 3: the prompt() dialogs are replaced by small modal forms. The element
+ * kind list is capability-filtered like the Add palette (an "all installed"
+ * note appears when the filter would hide the list); the relation form has
+ * source/target pickers and a verb list filtered by endpoint legality. */
+function openAddElementModal() {
+  if (!graphEditable()) { status('this view is data-bound — add records in the Source drawer instead'); return; }
+  const proj = viewProjection();
+  let kinds = paletteFilter(A.kinds, proj, false);
+  let note = 'Kind list filtered by this view’s capabilities (' + (proj.profile || 'graph') + ').';
+  if (!kinds.length) { kinds = A.kinds; note = 'No kind is registered for this view’s capability — showing all installed kinds; the source validator will judge.'; }
+  els.aeKind.replaceChildren(...kinds.map(k => new Option(k.label + ' (' + k.id + ')', k.id)));
+  els.aeNote.textContent = note;
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  els.aeId.value = freshLocalId(ir ? ir.elements.map(n => n.id) : [], kinds[0] ? kinds[0].id : 'object');
+  els.aeName.value = '';
+  els.aeModal.hidden = false;
+  els.aeName.focus();
+}
+function openAddRelationModal() {
+  if (!graphEditable()) { status('connecting needs a graph projection — this view is data-bound'); return; }
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  const els2 = ir ? ir.elements : [];
+  if (els2.length < 1) { status('no elements to connect yet'); return; }
+  const opt = n => new Option((n.name || n.id) + ' — ' + n.id, n.id);
+  els.arFrom.replaceChildren(...els2.map(opt));
+  els.arTo.replaceChildren(...els2.map(opt));
+  if (els2.length > 1) els.arTo.value = els2[1].id;
+  els.arId.value = freshLocalId(ir.relations.map(r => r.id), 'relation');
+  els.arName.value = '';
+  populateAddRelationVerbs();
+  els.arModal.hidden = false;
+  els.arName.focus();
+}
+function populateAddRelationVerbs() {
+  const fromKind = elementKindOf(els.arFrom.value), toKind = elementKindOf(els.arTo.value);
+  let ids = fromKind && toKind ? A.legalVerbs(fromKind, toKind) : [];
+  let note = '';
+  if (!ids.length) {
+    ids = A.relations.map(r => r.id);
+    note = 'No registered verb admits ' + (fromKind || '?') + ' → ' + (toKind || '?') + ' — showing all installed verbs; the source validator will judge.';
+  }
+  els.arKind.replaceChildren(...ids.map(id => {
+    const r = A.relations.find(x => x.id === id) || { label: id };
+    return new Option(r.label + ' (' + id + ')', id);
+  }));
+  els.arKind.value = ids.includes('assoc') ? 'assoc' : ids[0];
+  els.arNote.textContent = note;
+  els.arNote.hidden = !note;
+}
+els.addElement.addEventListener('click', () => guard(openAddElementModal));
+els.addRelation.addEventListener('click', () => guard(openAddRelationModal));
+els.aeKind.addEventListener('change', () => {
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  els.aeId.value = freshLocalId(ir ? ir.elements.map(n => n.id) : [], els.aeKind.value);
+});
+els.aeCancel.addEventListener('click', () => { els.aeModal.hidden = true; });
+els.arCancel.addEventListener('click', () => { els.arModal.hidden = true; });
+els.arFrom.addEventListener('change', populateAddRelationVerbs);
+els.arTo.addEventListener('change', populateAddRelationVerbs);
+els.aeCreate.addEventListener('click', () => guard(() => {
+  const id = els.aeId.value.trim(), name = els.aeName.value.trim() || id, kind = els.aeKind.value;
+  if (!id) { status('the element needs a stable identifier'); return; }
+  els.aeModal.hidden = true;
   guided(() => {
-    A.authoring.duplicate(state.ws, state.entry, state.view, state.selected);
+    A.authoring.addElement(state.ws, state.entry, state.view, { id, name, kind });
     const after = state.ws.resolve(state.entry, state.view);
-    const copy = after.elements.map(n => n.id).filter(u => /_copy\d*$/.test(u)).sort().at(-1);
-    if (copy) { state.selected = copy; state.selectedRelation = null; }
-    status('duplicated as ' + (copy || 'a new uid') + ' — new identity, unconnected; ref: anchors still point at the original');
+    const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id)) || id;
+    state.selected = uid; state.selectedRelation = null; state.selectedIds = [uid];
+    status('added ' + uid + ' — it is selected for further edits');
   });
 }));
-els.addField.addEventListener('click', () => guard(() => {
-  const id = prompt('Stable field identifier', 'new_field');
-  if (!id) return;
-  const name = prompt('Display name (optional)', '') || '';
-  guided(() => A.authoring.addField(state.ws, state.entry, state.view, state.selected, { id, name }));
+els.arCreate.addEventListener('click', () => guard(() => {
+  const id = els.arId.value.trim(), name = els.arName.value.trim() || id;
+  const from = els.arFrom.value, to = els.arTo.value, kind = els.arKind.value;
+  if (!id || !from || !to) { status('relation needs an identifier and both endpoints'); return; }
+  if (from === to) { status('target must differ from the source'); return; }
+  els.arModal.hidden = true;
+  guided(() => {
+    A.authoring.addRelation(state.ws, state.entry, state.view, { id, name, kind, from, to });
+    const after = state.ws.resolve(state.entry, state.view);
+    state.selectedRelation = after.relations.map(r => r.id).find(u => u === id || u.endsWith('.' + id)) || id;
+    state.selected = null; state.selectedIds = [state.selectedRelation];
+    status('connected ' + from + ' → ' + to + ' (' + kind + ') — relation ' + state.selectedRelation);
+  });
 }));
-els.addElement.addEventListener('click', () => guard(() => {
-  const id = prompt('Stable identifier', 'new_element');
-  if (!id) return;
-  const name = prompt('Display name', 'New element') || id;
-  const kind = prompt('Object kind keyword (' + A.kinds.slice(0, 6).map(k => k.id).join(', ') + ', …)', 'object');
-  if (!kind) return;
-  guided(() => A.authoring.addElement(state.ws, state.entry, state.view, { id, name, kind }));
-}));
-els.addRelation.addEventListener('click', () => guard(() => {
-  flush();
-  const ir = state.ws.resolve(state.entry, state.view);
-  const ids = ir.elements.map(n => n.id);
-  const id = prompt('Stable relation identifier', 'new_relation');
-  if (!id) return;
-  const name = prompt('Displayed description', 'Related to') || id;
-  const from = prompt('Source endpoint id (' + ids.slice(0, 4).join(', ') + ', …)', ids[0] || '');
-  if (!from) return;
-  const to = prompt('Destination endpoint id', ids[1] || ids[0] || '');
-  if (!to) return;
-  const kind = prompt('Relationship kind keyword (' + A.relations.slice(0, 6).map(k => k.id).join(', ') + ', …)', 'assoc');
-  if (!kind) return;
-  guided(() => A.authoring.addRelation(state.ws, state.entry, state.view, { id, name, kind, from, to }));
-}));
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (!els.aeModal.hidden) els.aeModal.hidden = true;
+  if (!els.arModal.hidden) els.arModal.hidden = true;
+});
 
 /* Drag-to-pin on the stage (ported from the studio editor): with the toolbar
  * toggle on, dragging a node pins its new position into the source. */
@@ -1511,23 +1953,7 @@ function buildIconPicker() {
   if (!icons.length) els.iconList.append(dim('no icon matches “' + els.iconSearch.value + '”'));
   if (icons.length > 200) els.iconList.append(dim((icons.length - 200) + ' more — refine the search'));
 }
-els.iconBrowse.addEventListener('click', () => {
-  if (!state.selected) { status('select an object first'); return; }
-  buildIconPicker();
-  els.iconPopup.hidden = !els.iconPopup.hidden;
-  if (!els.iconPopup.hidden) els.iconSearch.focus();
-});
 els.iconSearch.addEventListener('input', buildIconPicker);
-els.iconClear.addEventListener('click', () => {
-  if (!state.selected) return;
-  guard(() => {
-    flush();
-    A.authoring.setProperty(state.ws, state.entry, state.view, state.selected, 'x_icon', undefined);
-    showSource(state.currentFile);
-    inspector(state.selected, state.ws.resolve(state.entry, state.view), null);
-    status('icon cleared from the selected occurrence');
-  });
-});
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !els.iconPopup.hidden) els.iconPopup.hidden = true; });
 els.paletteSearch.addEventListener('input', buildPalette);
 els.paletteAll.addEventListener('change', buildPalette);
@@ -2034,8 +2460,7 @@ function load(files, entry, view, options) {
   state.ws = A.createWorkspace(files);
   state.currentFile = '';
   state.bufferDirty = false;
-  state.selected = null; state.selectedRelation = null;
-  state.presentation = emptyPresentation();
+  state.selected = null; state.selectedRelation = null; state.selectedIds = [];
   state.entry = entry || '';
   state.view = view || '';
   state.saved = { ...files };

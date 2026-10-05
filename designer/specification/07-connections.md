@@ -25,6 +25,8 @@ Dragging an endpoint is a `ReconnectRelation` command. If the semantic target ch
 
 Cardinality is authored by endpoint meaning, not which side looks left. Two directions are two separate relations unless a registered symmetric kind explicitly says otherwise. Parallel relations retain identities and independent labels. Self-references are supported with the same endpoint policies and router constraints.
 
+> Implementation status (2026-10 redesign, phase 3): the relation inspector (Inspector drawer, Meaning tab) edits the verb (dropdown filtered by `legalVerbs(from,to)` over the registered endpoint contracts, with an advisory full-list fallback), per-end cardinality min/max with sentence preview, enforcement, scope and the visual endpoint marks (`source_mark`/`target_mark`) — all through `authoring.setRelationProps`/`setRelationExtension`, one validated undoable transaction per commit. The Add-relation prompt() dialogs are replaced by modal forms with endpoint pickers and a legality-filtered verb list (same legality as the Connect popup). Reconnection/inversion gestures remain as above (prototype ED-008).
+
 ## Append and insert
 Add related may atomically create a definition, occurrence and relation with a type-specific template. Dropping a process onto a control-flow edge can propose an explicit split if the profile allows it. Dropping a table onto a field reference must not split that reference. An insert preview lists the removed/retained relation and generated edges, preserving comments/metadata by an explicit mapping.
 

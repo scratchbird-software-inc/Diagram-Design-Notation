@@ -199,6 +199,33 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-inspector input[type="text"], .ddn-inspector select { width: 100%; border: 1px solid #cbd5e3; border-radius: 6px; padding: 4px 6px; font-size: 12.5px; }
 .ddn-inspector input[type="number"] { width: 70px; border: 1px solid #cbd5e3; border-radius: 6px; padding: 4px 6px; font-size: 12.5px; }
 
+/* inspector drawer (2026-10 redesign phase 3): the source-drawer .ddn-inspector
+ * block is retired; the inspector is a right-side drawer with three tabs. */
+#ddn-inspector-body { position: relative; }
+#ddn-inspector-tabs { display: flex; gap: 2px; border-bottom: 1px solid #dbe3ed; margin-bottom: 8px; }
+#ddn-inspector-tabs button { border: 0; background: transparent; padding: 5px 10px; font-size: 12px; color: #40536b; border-bottom: 2px solid transparent; cursor: pointer; }
+#ddn-inspector-tabs button[aria-selected="true"] { border-bottom-color: #2f6fed; color: #1d3557; font-weight: 600; }
+.ddn-inspector-tab h4 { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: #44597a; margin: 10px 0 4px; }
+.ddn-inspector-tab h5 { font-size: 12px; margin: 6px 0 2px; color: #44597a; }
+.ddn-inspector-error { color: #b4232a; font-size: 12px; white-space: pre-wrap; margin: 8px 0 0; }
+.ddn-inspector-error:empty { display: none; }
+.ddn-fields-list { font-size: 12px; margin: 2px 0 6px; padding-left: 18px; color: #2c3e57; }
+.ddn-card-row { display: flex; align-items: center; gap: 6px; margin: 4px 0; }
+.ddn-card-row span { flex: 0 0 44px; font-size: 11px; }
+.ddn-card-row input { width: 90px; }
+.ddn-cardinality-preview { font-style: italic; }
+.ddn-end-box { border: 1px solid #e3eaf3; border-radius: 8px; padding: 6px 8px; margin: 6px 0; }
+.ddn-details { font-size: 12px; margin: 2px 0 8px; }
+.ddn-details dt { font-weight: 600; color: #44597a; }
+.ddn-details dd { margin: 0 0 4px 12px; word-break: break-word; color: #2c3e57; }
+.ddn-modal {
+  position: absolute; top: 24px; left: 0; right: 0; z-index: 7;
+  background: #fff; border: 1px solid #cbd5e3; border-radius: 12px; padding: 12px 14px;
+  box-shadow: 0 12px 32px #243b5933;
+}
+.ddn-modal[hidden] { display: none; }
+.ddn-modal h3 { margin: 0 0 6px; font-size: 13px; }
+
 /* status bar */
 #ddn-statusbar {
   display: flex; justify-content: space-between; gap: 10px; flex: none;

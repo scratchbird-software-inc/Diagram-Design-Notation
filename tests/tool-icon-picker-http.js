@@ -44,13 +44,14 @@ try {
   const st = stage();
   lines.push(st ? 'PASS tool stage reachable' : 'FAIL no stage');
 
-  // select the node so the inspector opens
+  // select the node so the inspector drawer opens (phase 3: right-side drawer)
   const node = st.querySelector('.ddn-node[data-id]');
   lines.push(node ? 'PASS node present' : 'FAIL no node');
   node.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
   await sleep(600);
-  const browse = document.getElementById('ddn-icon-browse');
-  lines.push(browse && !browse.disabled ? 'PASS inspector Icon row enabled after selection' : 'FAIL Icon row not enabled');
+  const meaning = document.getElementById('ddn-inspector-tab-meaning');
+  const browse = meaning && [...meaning.querySelectorAll('button')].find(b => b.textContent === 'Browse icons…');
+  lines.push(browse ? 'PASS inspector Icon row enabled after selection' : 'FAIL Icon row not enabled');
 
   // open the picker, search for the robot icon in the new general pack
   browse.click();
@@ -69,8 +70,9 @@ try {
   await sleep(1500);
   const setIcon = st.querySelector('.ddn-icon[data-icon="ddn-pack-general@1/robot"]');
   lines.push(setIcon ? 'PASS node renders the picked icon' : 'FAIL icon did not render after picking');
-  const cur = document.getElementById('ddn-icon-current');
-  lines.push(cur && cur.textContent === 'ddn-pack-general@1/robot' ? 'PASS inspector shows the bound icon' : 'FAIL inspector icon state wrong: ' + (cur && cur.textContent));
+  const meaning2 = document.getElementById('ddn-inspector-tab-meaning');
+  const curShown = meaning2 && [...meaning2.querySelectorAll('span.ddn-dim')].some(s => s.textContent === 'ddn-pack-general@1/robot');
+  lines.push(curShown ? 'PASS inspector shows the bound icon' : 'FAIL inspector icon state wrong');
   const srcToggle = document.getElementById('ddn-icon-source');
   if (srcToggle) srcToggle.click();
   await sleep(800);
@@ -78,7 +80,10 @@ try {
   lines.push(src1.includes('ddn-pack-general@1') ? 'PASS x_icon persisted into source (model metadata)' : 'FAIL source lacks x_icon: ' + src1.slice(0, 80));
 
   // clear it again
-  document.getElementById('ddn-icon-clear').click();
+  const meaning3 = document.getElementById('ddn-inspector-tab-meaning');
+  const clearBtn = meaning3 && [...meaning3.querySelectorAll('button')].find(b => b.textContent === 'Clear icon');
+  lines.push(clearBtn ? 'PASS Clear icon button present' : 'FAIL Clear icon button missing');
+  clearBtn.click();
   await sleep(1500);
   lines.push(!st.querySelector('.ddn-icon[data-icon="ddn-pack-general@1/robot"]') ? 'PASS clear removes the icon from the node' : 'FAIL icon still rendered after clear');
   const src2 = (document.getElementById('ddn-source') && document.getElementById('ddn-source').value) || '';
