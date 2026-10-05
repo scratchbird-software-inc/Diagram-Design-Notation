@@ -11610,7 +11610,7 @@
         "view": "balanced",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "687af032b62235667a78b56e3f509a94ca8fcf9fcf30b72eac49d66889acad2f",
+        "sha256": "344d8ff73a9afd9e89bd04814075763b9ca97dcc0c749a578b86c704bf8691aa",
         "modelFingerprint": "08372f642c995588",
         "warnings": [
           "DDN-TW01"
@@ -11652,8 +11652,8 @@
         "expectation": "Only the label of Stock-transfer command / review changes; state, verification and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "687af032b62235667a78b56e3f509a94ca8fcf9fcf30b72eac49d66889acad2f",
-        "after": "5bc2ac8e74e9387cd143ef9e116820b3c529534a61812d2f1863ccf786b62cdd",
+        "before": "344d8ff73a9afd9e89bd04814075763b9ca97dcc0c749a578b86c704bf8691aa",
+        "after": "27eacd4bc024e7e4cce3770a681f6c65b13fcaf9e2bf29b1d3a6eaab4faccb48",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11712,7 +11712,7 @@
         "view": "detailed",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "251d1d9a652d96f49699c410dda3d812fe366e8e9ecbbf16e1ff2780e7ea1042",
+        "sha256": "c179db8ea53c57455b799049585643eac7b9a1b5c53b75e3f3ead0e8c34d02aa",
         "modelFingerprint": "0538ea71a3d08065",
         "warnings": [
           "DDN-TW01"
@@ -11754,8 +11754,8 @@
         "expectation": "Only the label of Order / review changes; nested rows, endpoints and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "251d1d9a652d96f49699c410dda3d812fe366e8e9ecbbf16e1ff2780e7ea1042",
-        "after": "d30118301ee089e4d22cbddaa018707f700262d782918dbc441773f48e0d92a5",
+        "before": "c179db8ea53c57455b799049585643eac7b9a1b5c53b75e3f3ead0e8c34d02aa",
+        "after": "a166f374054971c1855212aa3185e59e2a628bb26e97cd98a6b78c8fc0784ca7",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,

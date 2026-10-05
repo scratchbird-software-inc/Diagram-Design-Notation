@@ -773,10 +773,15 @@
    const chrome=p.chrome||{title:'on',footer:'on'},titleOn=chrome.title!=='off',footerOn=chrome.footer!=='off';
    const margin=q(p.publication.margin,32),titleLines=titleOn?wrap(ir.view.name,W,24,650):[],header=titleOn?Math.max(92*s,(titleLines.length*29+48)*s):0,footer=footerOn?46*s:0;
    let pageW=q(p.publication.width,1280),pageH=q(p.publication.height,800);if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:816;pageH=p.publication.size==='a4'?297*96/25.4:1056;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
-   if(p.publication.size==='content'){pageW=W+margin*2;pageH=H+margin*2+header+footer;}
+   /* 0.8 amendment (chapter 06, content scale): the drawing is scaled by
+    * content_scale BEFORE the contain factor is computed, so contain and the
+    * DDN071/DDN074 checks operate on the scaled result. */
+   const contentScale=q(p.publication.content_scale,1);
+   if(!Number.isFinite(contentScale)||contentScale<0.25||contentScale>4)throw new D.DDNError('DDN-PJ063','content_scale must be a finite ratio in [0.25, 4]');
+   if(p.publication.size==='content'){pageW=W*contentScale+margin*2;pageH=H*contentScale+margin*2+header+footer;}
    const aw=pageW-2*margin,ah=pageH-2*margin-header-footer;if(aw<=0||ah<=0)throw new D.DDNError('DDN-PJ061','Page has no remaining drawing area');
-   const scale=p.publication.fit==='none'?1:Math.min(1,aw/W,ah/H),min=q(p.publication.minimum_text,8*96/72),embed=p.publication.embedding_scale??1;
-   if(!Number.isFinite(embed)||embed<=0||embed>100)throw new D.DDNError('DDN-PJ062','embedding_scale must be a positive finite value <= 100');
+   const scale=(p.publication.fit==='none'?1:Math.min(1,aw/(W*contentScale),ah/(H*contentScale)))*contentScale,min=q(p.publication.minimum_text,8*96/72),embed=p.publication.embedding_scale??1;
+   if(!Number.isFinite(embed)||embed<=0||embed>4)throw new D.DDNError('DDN-PJ062','embedding_scale must be a positive finite value <= 4');
    const warnOrFail=(code,msg)=>{if(p.publication.overflow==='error')throw new D.DDNError(code,msg);diagnostics.push({code,severity:'warning',message:msg});};
    if(W*scale>aw+.01||H*scale>ah+.01)warnOrFail('DDN074','Projection exceeds publication page; use content size or a larger page');
    if(smallest*scale*embed<min-.001)warnOrFail('DDN071','Projection text would fall below the final publication minimum');

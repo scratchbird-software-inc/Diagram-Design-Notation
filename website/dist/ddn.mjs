@@ -2900,7 +2900,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure','font_pin','text_fit','max_width','max_height','min_font'],
     layout:['algorithm','auto_place','center','grid_step','optimize','endpoint_ordering','frame_overflow','direction','routing','curve','curve_tension','curve_radius','crossings','gap','columns','port_clearance','object_clearance','edge_clearance','junctions','shared_segments','row_gap','route_policy','quality','root','hierarchy','group_by'],
     display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
-    publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','metrics'],
+    publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','content_scale','metrics'],
     legend:['mode','placement','width','keys','keyset','scope'],
     chrome:['legend','title','footer','banner'],
     validation:['mode','unknown_extensions'],
@@ -3196,6 +3196,9 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     if(quantity(p.publication.margin,32)<0||!Number.isFinite(quantity(p.publication.margin,32))||quantity(p.publication.margin,32)>10000)throw new DDNError('DDN046','Page margin must be a finite length from 0 to 10000px',view.source,view.start);
     for(const prop of ['width','height']){const v=quantity(p.publication[prop],prop==='width'?1280:800);if(!Number.isFinite(v)||v<64||v>100000)throw new DDNError('DDN046','publication.'+prop+' must be a finite length from 64 to 100000px',view.source,view.start);}
     if(p.publication.orientation!==undefined&&!['portrait','landscape'].includes(p.publication.orientation))throw new DDNError('DDN046','Unknown page orientation',view.source,view.start);
+    /* 0.8 amendment (chapter 06): content_scale is a plain ratio (not a
+     * length), applied to the laid-out drawing before fit/contain. */
+    if(p.publication.content_scale!==undefined&&(typeof p.publication.content_scale!=='number'||!Number.isFinite(p.publication.content_scale)||p.publication.content_scale<0.25||p.publication.content_scale>4))throw new DDNError('DDN046','publication.content_scale must be a finite ratio from 0.25 to 4',view.source,view.start);
     for(const prop of ['title','caption'])if(p.publication[prop]!==undefined&&typeof p.publication[prop]!=='string')throw new DDNError('DDN046','Publication '+prop+' must be text',view.source,view.start);
     function validateCurvePolicy(policy,source,offset){
       if(policy.routing!==undefined&&!CHOICES.layout.routing.includes(policy.routing))throw new DDNError('DDN046','Unknown connector routing '+policy.routing,source,offset);
@@ -4793,7 +4796,7 @@ function cross(s,t,margin=0){
 function collinear(s,t,tolerance=.1){const h=Math.abs(s.a[1]-s.b[1])<EPS&&Math.abs(t.a[1]-t.b[1])<EPS,v=Math.abs(s.a[0]-s.b[0])<EPS&&Math.abs(t.a[0]-t.b[0])<EPS;if(h&&Math.abs(s.a[1]-t.a[1])<tolerance)return Math.min(Math.max(s.a[0],s.b[0]),Math.max(t.a[0],t.b[0]))-Math.max(Math.min(s.a[0],s.b[0]),Math.min(t.a[0],t.b[0]))>EPS;if(v&&Math.abs(s.a[0]-t.a[0])<tolerance)return Math.min(Math.max(s.a[1],s.b[1]),Math.max(t.a[1],t.b[1]))-Math.max(Math.min(s.a[1],s.b[1]),Math.min(t.a[1],t.b[1]))>EPS;return false;}
 function distancePointSegment(p,s){const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],l=dx*dx+dy*dy;if(!l)return Math.hypot(p[0]-s.a[0],p[1]-s.a[1]);const t=Math.max(0,Math.min(1,((p[0]-s.a[0])*dx+(p[1]-s.a[1])*dy)/l));return Math.hypot(p[0]-s.a[0]-t*dx,p[1]-s.a[1]-t*dy);}
 function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
- const p=profiles.layout,minGap=2*(q$4(p.object_clearance,16)+Math.max(24,q$4(p.port_clearance,28)))+2*q$4(p.edge_clearance,12),diag=[];let gap=Math.max(q$4(p.gap,100),minGap),rowGap=Math.max(q$4(p.row_gap,100),minGap);if(gap<20||rowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');
+ const p=profiles.layout,minGap=2*(q$4(p.object_clearance,16)+Math.max(24,q$4(p.port_clearance,28)))+2*q$4(p.edge_clearance,12),diag=[];const authoredGap=q$4(p.gap,100),authoredRowGap=q$4(p.row_gap,100);if(authoredGap<20||authoredRowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');let gap=Math.max(authoredGap,minGap),rowGap=Math.max(authoredRowGap,minGap);
  const spread=spacingScale(p);gap=round(gap*spread);rowGap=round(rowGap*spread);
  const order=new Map(nodes.map((n,i)=>[n.id,i])),byId=new Map(nodes.map(n=>[n.id,n])),ids=new Set(byId.keys());
  const edges=rels.filter(r=>ids.has(r.from.element)&&ids.has(r.to.element)&&r.from.element!==r.to.element);
@@ -5403,6 +5406,12 @@ function place(nodes,rels,ir,options={}){
  const usePattern=['auto','fit_grid','circular','radial','spanning_tree','organic'].includes(algorithm)||(algorithm==='layered'&&p.layout.center==='pins');
  let pattern=null;
  const ErrorClass=class extends Error{constructor(code,message){super(message);this.code=code;}};
+ /* DDN200 (spec ch. 15): an AUTHORED gap/row_gap below 20px is rejected, not
+  * silently floored; authored values ≥20 are then raised to the clearance-
+  * derived minGap. Validated here so every algorithm path (pattern and
+  * layoutNodes) enforces it. */
+ const authoredGap=q$3(p.layout.gap,100),authoredRowGap=q$3(p.layout.row_gap,100);
+ if(authoredGap<20||authoredRowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');
  if(usePattern){
   const adapted={...p,layout:{...p.layout,algorithm:patternMode,gap:api$7.round(Math.max(minGap,q$3(p.layout.gap,100))*api$7.spacingScale(p.layout))}};
   const result=Patterns.place(nodes,rels,ir,adapted);pattern=result.pattern;diagnostics.push(...result.diagnostics);
@@ -6172,11 +6181,20 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   }
  }
  const width=maxX-minX+30,height=maxY-minY+30;
+ /* 0.8 amendment (chapter 06, content scale): content_scale grows/shrinks the
+  * laid-out drawing — geometry and every font role together — BEFORE the
+  * fit/contain calculation, so contain scaling and the DDN071/DDN074 checks
+  * operate on the scaled result. Placement and routing are unaffected: they
+  * work in unscaled world space; scaling happens at the same point contain
+  * scaling does (the drawing-group transform). */
+ const contentScale=q$2(p.publication.content_scale,1);
+ if(!Number.isFinite(contentScale)||contentScale<0.25||contentScale>4)throw new DDN$1.DDNError('DDN070','content_scale must be a finite ratio in [0.25, 4]');
+ const scaledW=width*contentScale,scaledH=height*contentScale;
  let pageW=q$2(p.publication.width,1280),pageH=q$2(p.publication.height,800);
  if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:8.5*96;pageH=p.publication.size==='a4'?297*96/25.4:11*96;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
  const margin=q$2(p.publication.margin,32),legendW=legendPlacement==='right'?q$2(p.legend.width,270):0;
  const pageTitle=p.publication.title||ir.view.name;
- if(p.publication.size==='content')pageW=Math.max(640,api$a.measure(pageTitle,24,p.style.font,650).width+2*margin,width+2*margin+(legendW?legendW+25:0));
+ if(p.publication.size==='content')pageW=Math.max(640,api$a.measure(pageTitle,24,p.style.font,650).width+2*margin,scaledW+2*margin+(legendW?legendW+25:0));
  /* Legend text wraps to the space the panel actually owns: entries start at
   * lx+34, so a right panel of legendW holds legendW-42 of text (8px right
   * inset) and never runs past pageW-margin; a bottom panel spans the drawing
@@ -6188,26 +6206,27 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   return {id:r.id,key:ir.view.keys[r.id],name:r.name,reg,lines:api$a.wrap(detail,legendTextW,12,p.style.font,400)};
  });
  const legendHeight=50+legendEntries.reduce((n,e)=>n+Math.max(44,e.lines.length*18+16),0),bottomH=(legendPlacement==='bottom'?legendHeight:0)+footerBand;
- if(p.publication.size==='content'){pageH=Math.max(360,height+2*margin+headBlock+bottomH,legendPlacement==='right'?legendHeight+headBlock+60:0);}
+ if(p.publication.size==='content'){pageH=Math.max(360,scaledH+2*margin+headBlock+bottomH,legendPlacement==='right'?legendHeight+headBlock+60:0);}
  const titleLines=titleOn?api$a.wrap(pageTitle,pageW-2*margin,24,p.style.font,650):[],captionLines=titleOn&&p.publication.caption?api$a.wrap(p.publication.caption,pageW-2*margin,13,p.style.font,400):[],extraHeader=titleOn?(titleLines.length-1)*28+(captionLines.length?captionLines.length*18+8:0):0;
  const availW=pageW-2*margin-(legendW?legendW+25:0),availH=pageH-2*margin-(headBlock-10)-bottomH-extraHeader;
- let scale=p.publication.fit==='none'?1:Math.min(1,availW/width,availH/height);
+ let scale=(p.publication.fit==='none'?1:Math.min(1,availW/scaledW,availH/scaledH))*contentScale;
  const diags=[...ir.diagnostics,...tf.diags,...pinDiags,...placed.diagnostics,...routed.diagnostics];
  if(scale<=0)throw new DDN$1.DDNError('DDN070','Page has no usable drawing area');
  const embeddingScale=q$2(p.publication.embedding_scale,1);if(embeddingScale<=0||embeddingScale>4)throw new DDN$1.DDNError('DDN070','embedding_scale must be >0 and <=4');
- const fontSize=Math.min(11*q$2(p.style.font_size,16)/16*scale,rels.length?12*scale:Infinity,11)*embeddingScale,minFont=q$2(p.publication.minimum_text,10.66);
+ const fontSize=Math.min(11*q$2(p.style.font_size,16)/16*scale,rels.length?12*scale:Infinity,11*contentScale)*embeddingScale,minFont=q$2(p.publication.minimum_text,10.66);
  if(fontSize<minFont){
-  /* B1-046 (D3): name the remedy. smallest = min(11·base/16·scale, rels?12·scale:∞, 11)·embed,
-   * so the implied minimum base font is 16·minFont/(11·scale·embed) — unless a
-   * fixed cap (12·scale with relations, 11 absolute) binds below the minimum,
+  /* B1-046 (D3): name the remedy. smallest = min(11·base/16·scale, rels?12·scale:∞, 11·cs)·embed
+   * (scale is the final page scale, contain factor × content_scale), so the
+   * implied minimum base font is 16·minFont/(11·scale·embed) — unless a
+   * fixed cap (12·scale with relations, 11·cs absolute) binds below the minimum,
    * in which case no base font can fix it and the page must grow. */
-  const relCap=rels.length?12*scale*embeddingScale:Infinity,absCap=11*embeddingScale;
+  const relCap=rels.length?12*scale*embeddingScale:Infinity,absCap=11*contentScale*embeddingScale;
   const remedy=Math.min(relCap,absCap)<minFont
    ?'the page scale already caps the smallest text role below the minimum, so a larger base font cannot fix it — enlarge the page, reduce content, or raise publication.minimum_text/embedding_scale'
    :`increase base font to ≥${(16*minFont/(11*scale*embeddingScale)).toFixed(1)}px or enlarge the smallest text role`;
   let d={code:'DDN071',severity:p.publication.overflow==='error'?'error':'warning',message:`Smallest final text ${fontSize.toFixed(2)}px is below minimum ${minFont.toFixed(2)}px — ${remedy}`};if(d.severity==='error')throw new DDN$1.DDNError(d.code,d.message);diags.push(d);}
  if(legendPlacement==='right'&&legendHeight>pageH-(headBlock+50)-extraHeader)throw new DDN$1.DDNError('DDN072','Legend exceeds page height');
- if(p.publication.fit==='none'&&(width>availW+.1||height>availH+.1)){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
+ if(p.publication.fit==='none'&&(width*scale>availW+.1||height*scale>availH+.1)){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
  const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?headBlock-20+extraHeader+availH/2-pinFocus[1]*scale:headBlock-20+extraHeader-minY*scale+10;
  let diagram='';
  if(ladderRails)diagram+=`<g class="ddn-ladder-rails"><path d="M${fmt$1(ladderRails.x0)} ${fmt$1(ladderRails.y0)}V${fmt$1(ladderRails.y1)}" fill="none" stroke="${t.ink}" stroke-width="2.5"/><path d="M${fmt$1(ladderRails.x1)} ${fmt$1(ladderRails.y0)}V${fmt$1(ladderRails.y1)}" fill="none" stroke="${t.ink}" stroke-width="2.5"/></g>`;
@@ -7615,10 +7634,15 @@ function render(ir,reg,glyphs='',options={}){
  const chrome=p.chrome||{title:'on',footer:'on'},titleOn=chrome.title!=='off',footerOn=chrome.footer!=='off';
  const margin=q(p.publication.margin,32),titleLines=titleOn?wrap(ir.view.name,W,24,650):[],header=titleOn?Math.max(92*s,(titleLines.length*29+48)*s):0,footer=footerOn?46*s:0;
  let pageW=q(p.publication.width,1280),pageH=q(p.publication.height,800);if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:816;pageH=p.publication.size==='a4'?297*96/25.4:1056;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
- if(p.publication.size==='content'){pageW=W+margin*2;pageH=H+margin*2+header+footer;}
+ /* 0.8 amendment (chapter 06, content scale): the drawing is scaled by
+  * content_scale BEFORE the contain factor is computed, so contain and the
+  * DDN071/DDN074 checks operate on the scaled result. */
+ const contentScale=q(p.publication.content_scale,1);
+ if(!Number.isFinite(contentScale)||contentScale<0.25||contentScale>4)throw new D.DDNError('DDN-PJ063','content_scale must be a finite ratio in [0.25, 4]');
+ if(p.publication.size==='content'){pageW=W*contentScale+margin*2;pageH=H*contentScale+margin*2+header+footer;}
  const aw=pageW-2*margin,ah=pageH-2*margin-header-footer;if(aw<=0||ah<=0)throw new D.DDNError('DDN-PJ061','Page has no remaining drawing area');
- const scale=p.publication.fit==='none'?1:Math.min(1,aw/W,ah/H),min=q(p.publication.minimum_text,8*96/72),embed=p.publication.embedding_scale??1;
- if(!Number.isFinite(embed)||embed<=0||embed>100)throw new D.DDNError('DDN-PJ062','embedding_scale must be a positive finite value <= 100');
+ const scale=(p.publication.fit==='none'?1:Math.min(1,aw/(W*contentScale),ah/(H*contentScale)))*contentScale,min=q(p.publication.minimum_text,8*96/72),embed=p.publication.embedding_scale??1;
+ if(!Number.isFinite(embed)||embed<=0||embed>4)throw new D.DDNError('DDN-PJ062','embedding_scale must be a positive finite value <= 4');
  const warnOrFail=(code,msg)=>{if(p.publication.overflow==='error')throw new D.DDNError(code,msg);diagnostics.push({code,severity:'warning',message:msg});};
  if(W*scale>aw+.01||H*scale>ah+.01)warnOrFail('DDN074','Projection exceeds publication page; use content size or a larger page');
  if(smallest*scale*embed<min-.001)warnOrFail('DDN071','Projection text would fall below the final publication minimum');

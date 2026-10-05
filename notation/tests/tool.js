@@ -360,7 +360,7 @@ test('D1: the Document drawer form covers chrome/publication/legend and the anim
   const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
   const docBlock = /const DOCUMENT_FIELDS = \[([\s\S]*?)\n\];/.exec(tool)[1];
   const covered = new Set([...docBlock.matchAll(/'(\w+)'/g)].map(m => m[1]));
-  for (const key of ['size', 'width', 'height', 'margin', 'orientation', 'fit', 'minimum_text', 'overflow', 'embedding_scale', 'title', 'caption',
+  for (const key of ['size', 'width', 'height', 'margin', 'orientation', 'fit', 'minimum_text', 'overflow', 'embedding_scale', 'content_scale', 'title', 'caption',
     'legend', 'footer', 'banner', 'mode', 'placement', 'description', 'source', 'generator'])
     assert.ok(covered.has(key), 'Document form missing ' + key);
   for (const frag of ['setViewChrome', 'setViewProperties', 'setViewProfile'])

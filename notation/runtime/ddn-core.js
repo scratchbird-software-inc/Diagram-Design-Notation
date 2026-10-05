@@ -677,7 +677,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure','font_pin','text_fit','max_width','max_height','min_font'],
     layout:['algorithm','auto_place','center','grid_step','optimize','endpoint_ordering','frame_overflow','direction','routing','curve','curve_tension','curve_radius','crossings','gap','columns','port_clearance','object_clearance','edge_clearance','junctions','shared_segments','row_gap','route_policy','quality','root','hierarchy','group_by'],
     display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
-    publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','metrics'],
+    publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','content_scale','metrics'],
     legend:['mode','placement','width','keys','keyset','scope'],
     chrome:['legend','title','footer','banner'],
     validation:['mode','unknown_extensions'],
@@ -973,6 +973,9 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     if(quantity(p.publication.margin,32)<0||!Number.isFinite(quantity(p.publication.margin,32))||quantity(p.publication.margin,32)>10000)throw new DDNError('DDN046','Page margin must be a finite length from 0 to 10000px',view.source,view.start);
     for(const prop of ['width','height']){const v=quantity(p.publication[prop],prop==='width'?1280:800);if(!Number.isFinite(v)||v<64||v>100000)throw new DDNError('DDN046','publication.'+prop+' must be a finite length from 64 to 100000px',view.source,view.start);}
     if(p.publication.orientation!==undefined&&!['portrait','landscape'].includes(p.publication.orientation))throw new DDNError('DDN046','Unknown page orientation',view.source,view.start);
+    /* 0.8 amendment (chapter 06): content_scale is a plain ratio (not a
+     * length), applied to the laid-out drawing before fit/contain. */
+    if(p.publication.content_scale!==undefined&&(typeof p.publication.content_scale!=='number'||!Number.isFinite(p.publication.content_scale)||p.publication.content_scale<0.25||p.publication.content_scale>4))throw new DDNError('DDN046','publication.content_scale must be a finite ratio from 0.25 to 4',view.source,view.start);
     for(const prop of ['title','caption'])if(p.publication[prop]!==undefined&&typeof p.publication[prop]!=='string')throw new DDNError('DDN046','Publication '+prop+' must be text',view.source,view.start);
     function validateCurvePolicy(policy,source,offset){
       if(policy.routing!==undefined&&!CHOICES.layout.routing.includes(policy.routing))throw new DDNError('DDN046','Unknown connector routing '+policy.routing,source,offset);

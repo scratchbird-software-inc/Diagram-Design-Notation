@@ -717,12 +717,17 @@ function artboardContext(proposedW) {
       chromeH += extra - extraNow;
     }
   }
+  const contentScale = quantityPx(pub.content_scale, 1);
   return {
-    contentW: scene.drawingBounds.w, contentH: scene.drawingBounds.h, chromeW, chromeH,
+    /* content_scale scales the drawing before fit (chapter 06 amendment): the
+     * pre-check folds it into the content bounds and the embedding multiplier
+     * so pageScaleFloor/artboardProblem see the same final text sizes the
+     * renderer enforces. */
+    contentW: scene.drawingBounds.w * contentScale, contentH: scene.drawingBounds.h * contentScale, chromeW, chromeH,
     minTextPx: quantityPx(pub.minimum_text, MIN_TEXT_PX),
     baseFontPx: opts.fontSize != null ? opts.fontSize : quantityPx(style.font_size, 16),
     hasRelations: !!(scene.routes && scene.routes.length),
-    embeddingScale: quantityPx(pub.embedding_scale, 1)
+    embeddingScale: quantityPx(pub.embedding_scale, 1) * contentScale
   };
 }
 function setOption(key, value) {
@@ -831,7 +836,8 @@ const DOCUMENT_FIELDS = [
     ['Fit', 'fit', ['contain', 'none', 'reflow']],
     ['Minimum text (pt)', 'minimum_text', 'quantity-pt', 1, 72],
     ['Overflow', 'overflow', ['error', 'warn']],
-    ['Embedding scale', 'embedding_scale', 'number', 0.01, 100, 0.01],
+    ['Embedding scale', 'embedding_scale', 'number', 0.01, 4, 0.01],
+    ['Content scale', 'content_scale', 'number', 0.25, 4, 0.05],
     ['Title', 'title', 'text'],
     ['Caption', 'caption', 'text']
   ]],
@@ -884,7 +890,7 @@ for (const [group, profile, fields] of DOCUMENT_FIELDS) {
     docInputs[profile + '.' + key] = { input, kind };
     field(g, label, input);
   }
-  if (profile === 'publication') g.append(dim('Embedding scale declares how much the embedding context enlarges the rendered SVG (1 = as-rendered). It never changes geometry or fonts in the file itself — it only scales the effective sizes the minimum-text and print lint checks enforce (DDN071/DDN-PS01/PS02), so a value above 1 asserts "this will be displayed larger". Graph views reject values above 4 (DDN070); geo/data projections allow up to 100. To make the drawing itself bigger relative to the page, use Size preset "content" (the page wraps the drawing at scale 1) or Fit "none" with explicit Width/Height, and tighten Layout gaps.'));
+  if (profile === 'publication') g.append(dim('Content scale grows or shrinks the drawing itself — geometry and all text together (0.25–4, default 1) — before Fit is applied, so Fit "contain" and the minimum-text check (DDN071) judge the scaled result, and Fit "none" renders at exactly that scale with DDN074 overflow rules on the scaled size. Embedding scale is different: it declares how much the embedding context enlarges the rendered SVG (1 = as-rendered). It never changes geometry or fonts in the file itself — it only scales the effective sizes the minimum-text and print lint checks enforce (DDN071/DDN-PS01/PS02), so a value above 1 asserts "this will be displayed larger". All renderers cap embedding scale at 4 (DDN070/DDN-PJ062).'));
 }
 
 /* Chapter 53 publication chrome: header/footer run bands (left/center/right

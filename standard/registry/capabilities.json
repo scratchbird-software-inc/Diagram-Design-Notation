@@ -875,6 +875,14 @@
  "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
  },
  {
+ "id": "publication.content_scale",
+ "scope": "publication",
+ "name": "content_scale",
+ "default": "1",
+ "choices": null,
+ "support": "implemented; 0.8 amendment in spec/06-publication-and-subdiagrams.md (ratio 0.25-4, scales the laid-out drawing before fit/contain)"
+ },
+ {
  "id": "publication.metrics",
  "scope": "publication",
  "name": "metrics",

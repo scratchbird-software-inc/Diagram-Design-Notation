@@ -31,6 +31,8 @@ Renaming the earlier live value `tree` to `spanning_tree` preserves the stronger
 
 `auto_place` is boolean (default true). `center` is `pins` or `content`. New pin-centred patterns default to pins; inherited original patterns keep their explicit centre. `grid_step` is a finite length 8–512 CSS px. The pattern gap is 16–2000 CSS px; the engine may enlarge it to honour element dimensions and native port clearance. `direction` is right/down/left/up where the underlying algorithm supports orientation.
 
+An authored `gap`/`row_gap` below 20 CSS px is rejected with `DDN200` — it is not silently floored. Authored values of 20 px or more are then raised to the clearance-derived minimum (`2·(object_clearance + max(24, port_clearance)) + 2·edge_clearance`) before the spacing factor applies.
+
 ## Frame overflow
 
 `layout.frame_overflow` is `expand` (default) or `confine`. It governs view `frame` rects relative to their members.

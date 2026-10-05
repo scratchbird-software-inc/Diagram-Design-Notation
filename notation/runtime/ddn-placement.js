@@ -26,6 +26,12 @@ function place(nodes,rels,ir,options={}){
  const usePattern=['auto','fit_grid','circular','radial','spanning_tree','organic'].includes(algorithm)||(algorithm==='layered'&&p.layout.center==='pins');
  let pattern=null;
  const ErrorClass=class extends Error{constructor(code,message){super(message);this.code=code;}};
+ /* DDN200 (spec ch. 15): an AUTHORED gap/row_gap below 20px is rejected, not
+  * silently floored; authored values ≥20 are then raised to the clearance-
+  * derived minGap. Validated here so every algorithm path (pattern and
+  * layoutNodes) enforces it. */
+ const authoredGap=q(p.layout.gap,100),authoredRowGap=q(p.layout.row_gap,100);
+ if(authoredGap<20||authoredRowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');
  if(usePattern){
   const adapted={...p,layout:{...p.layout,algorithm:patternMode,gap:Layout.round(Math.max(minGap,q(p.layout.gap,100))*Layout.spacingScale(p.layout))}};
   const result=Patterns.place(nodes,rels,ir,adapted);pattern=result.pattern;diagnostics.push(...result.diagnostics);

@@ -6,6 +6,30 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **`publication.content_scale`: true content scaling (0.8 amendment, spec ch. 06).**
+  A new publication-group ratio key (0.25–4, default 1) scales the laid-out
+  drawing — geometry and all font roles uniformly — *before* the fit/contain
+  calculation, so contain scaling and the DDN071 minimum-text check operate on
+  the scaled result, `fit: none` renders at exactly the declared scale with
+  DDN074 overflow rules on the scaled size, and `size: content` wraps the
+  scaled drawing. Placement/routing work in unscaled space and are unchanged.
+  `embedding_scale` stays declaration-only (lint/enforcement math only), and
+  its range is unified at `0 < embedding_scale ≤ 4` across all renderers
+  (projections/geo previously allowed up to 100 under `DDN-PJ062`; the graph
+  renderer's `DDN070` rule now holds everywhere). Out-of-range/type
+  `content_scale` is `DDN046` at build time with renderer backstops `DDN070`
+  (graph) / `DDN-PJ063` (projections/geo). Wired into the runtime
+  (`ddn-core.js`, `ddn-render.js`, `ddn-projections.js`, `ddn-geo.js`), the
+  registry capabilities list, and the designer Document drawer (with corrected
+  embedding/content scale help text); the Document-drawer artboard pre-check
+  folds `content_scale` into its DDN071 estimate.
+- **DDN200 gap validation fixed (`ddn-layout.js`).** An authored
+  `layout.gap`/`row_gap` below 20px is now rejected with `DDN200` as specified
+  (spec ch. 15 "Parameters and overrides") instead of being silently floored:
+  the previous code applied the clearance-derived `minGap` floor (≥48px)
+  before the `<20` check, which could never fire. Authored values ≥20px are
+  still raised to the clearance floor as before. No shipped example or test
+  relied on sub-20 flooring (minimum authored gap in the corpus is 80px).
 - **Designer UI redesign (unified tool, `?mode=design`).** The pre-0.9
   designer surface is reorganized so every spec-authorable setting is
   editable from forms instead of textareas:

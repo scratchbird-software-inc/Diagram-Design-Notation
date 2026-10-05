@@ -9,7 +9,7 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 - Diagram profiles: **150** (`profiles/catalogue.json .profiles`)
 - Projection kinds: **12** (`graph`, `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`, `fishbone`, `decision`, `sequence`, `timing`, `geo`)
 - Endpoint marks: 12; object families: 12; relation families: 8; facets: 118; view types: 20; registered data properties: 108
-- Diagnostic codes: **473** extracted from the runtime (reference runtime + Studio `src/`)
+- Diagnostic codes: **474** extracted from the runtime (reference runtime + Studio `src/`)
 <!-- /generated (counts) -->
 
 ## 1. Purpose and the generate → check → fix loop
@@ -299,6 +299,7 @@ Labels, reference numerals and callout badges must not overlap each other or unr
   "title",
   "caption",
   "embedding_scale",
+  "content_scale",
   "metrics"
  ],
  "legend": [
@@ -2145,7 +2146,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- generated: do not edit (diagnostics) -->
-## 9. Diagnostics and error recovery (474 codes, machine-extracted from runtime + Studio sources; 124 carry a hand-authored FIX)
+## 9. Diagnostics and error recovery (475 codes, machine-extracted from runtime + Studio sources; 124 carry a hand-authored FIX)
 
 `check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).
 
@@ -2289,7 +2290,8 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-PJ051 | error | Retained graph positions cannot override data-bound projection coordinates | - |
 | DDN-PJ060 | error | Projection extent exceeds bounded publication budget | - |
 | DDN-PJ061 | error | Page has no remaining drawing area | - |
-| DDN-PJ062 | error | embedding_scale must be a positive finite value <= 100 | - |
+| DDN-PJ062 | error | embedding_scale must be a positive finite value <= 4 | - |
+| DDN-PJ063 | error | content_scale must be a finite ratio in [0.25, 4] | - |
 | DDN-PJ070 | error | Quality transforms are native; this optional adapter does not silently flatten them<br>Radar, funnel, gauge, candlestick, treemap and sankey marks have no faithful Vega-Lite mapping in this adapter; use the native SVG projectionpiedonutarcdonut<br>Vega-Lite adapter supports chart/timeline only | - |
 | DDN-PJ071 | error | Radar needs at least 3 distinct x categories (got ); supply more records or use another mark | - |
 | DDN-PJ072 | error | Radar requires finite numeric y >= 0 per point; filter out or explicitly skip unusable records | - |
@@ -2539,7 +2541,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN043 | error | format must reference a bundle | Point format: at a bundle declaration (format x { bundle b {…} }), not at a single concern declaration. |
 | DDN044 | error | Expected ${type} profile, found ${def.type}<br>Expected keyset | Point the concern reference (layout:/display:/…) at a declaration of that same concern type. |
 | DDN045 | error | Unknown notation registryddn-core@0.3 | - |
-| DDN046 | error | Invalid routing policy<br>Layout lengths cannot be negative:<br>Only explicit junction semantics are allowed<br>Page margin must be a finite length from 0 to 10000px<br>Publication  must be text<br>Shared network trunks require an adopted network profile; independent sharing is forbidden<br>Unknown connector routing<br>Unknown curve family<br>Unknown page orientation<br>Unsupported ${cat}.${key}: ${p[cat][key]}<br>curve_radius must be >0 and <=1000px<br>curve_tension must be >0 and <=1<br>display.depth must be 0..64<br>font_size must be between 8px and 64px<br>generator provenance must be nonempty text<br>layout.auto_place must be boolean<br>layout.columns must be 1..100<br>layout.grid_step must be between 8px and 512px<br>metrics must be required or allow_estimated<br>publication. must be a finite length from 64 to 100000px<br>source provenance must be text of 1-300 characters<br>strictness must be strict or permissive<br>style.hachure must be boolean<br>style.roughness must be a number from 0 to 3<br>style.seed must be an integer from 0 to 4294967295 | Use a value from the CHOICES enum table for this property; anything else is rejected. |
+| DDN046 | error | Invalid routing policy<br>Layout lengths cannot be negative:<br>Only explicit junction semantics are allowed<br>Page margin must be a finite length from 0 to 10000px<br>Publication  must be text<br>Shared network trunks require an adopted network profile; independent sharing is forbidden<br>Unknown connector routing<br>Unknown curve family<br>Unknown page orientation<br>Unsupported ${cat}.${key}: ${p[cat][key]}<br>curve_radius must be >0 and <=1000px<br>curve_tension must be >0 and <=1<br>display.depth must be 0..64<br>font_size must be between 8px and 64px<br>generator provenance must be nonempty text<br>layout.auto_place must be boolean<br>layout.columns must be 1..100<br>layout.grid_step must be between 8px and 512px<br>metrics must be required or allow_estimated<br>publication. must be a finite length from 64 to 100000px<br>publication.content_scale must be a finite ratio from 0.25 to 4<br>source provenance must be text of 1-300 characters<br>strictness must be strict or permissive<br>style.hachure must be boolean<br>style.roughness must be a number from 0 to 3<br>style.seed must be an integer from 0 to 4294967295 | Use a value from the CHOICES enum table for this property; anything else is rejected. |
 | DDN047 | error | Numbered relationships require a legend | legend mode numbers requires a visible legend: do not set legend: off / placement: none with mode: numbers. |
 | DDN050 | error | Unknown object kind | - |
 | DDN051 | error | Sample requires columns and rows | Add both columns: [@field,…] and rows: [[…],…] to the sample block. |
@@ -2557,7 +2559,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN063 | error | Route target is not visible | route targets must be visible relations (both endpoints selected); fix the ref or the selection. |
 | DDN064 | error | Subdiagram target must be a view | - |
 | DDN065 | error | Recursive or excessive inline subdiagram expansion | - |
-| DDN070 | error | Page has no usable drawing area<br>embedding_scale must be >0 and <=4 | - |
+| DDN070 | error | Page has no usable drawing area<br>content_scale must be a finite ratio in [0.25, 4]<br>embedding_scale must be >0 and <=4 | - |
 | DDN071 | error | errorerrorwarningSmallest final text ${fontSize.toFixed(2)}px is below minimum ${minFont.toFixed(2)}px — ${remedy} | Text below the publication minimum: enlarge publication width/height, raise minimum_text, reduce content, or drop long labels. Rule of thumb: keep labels short and give dense graphs >=1200px width. |
 | DDN072 | error | Legend exceeds page height | - |
 | DDN073 | error | (code selected dynamically at the raise site; no static literal message) | route via points must be axis-aligned (orthogonal); fix the waypoints or set policy: repair to let the runtime recompute. |
