@@ -8701,6 +8701,9 @@ const SOURCE_FIELDS = [
   ]],
   ['Layout — source-only keys', 'layout', [
     ['Direction', 'direction', ['right', 'down', 'left', 'up']],
+    ['Column gap (px)', 'gap', 'quantity', 20, 2000],
+    ['Row gap (px)', 'row_gap', 'quantity', 20, 2000],
+    ['Grid columns', 'columns', 'number', 1, 64, 1],
     ['Object clearance (px)', 'object_clearance', 'quantity', 0, 2000],
     ['Edge clearance (px)', 'edge_clearance', 'quantity', 0, 2000],
     ['Port clearance (px)', 'port_clearance', 'quantity', 0, 2000],
@@ -8732,7 +8735,7 @@ for (const [group, profile, fields] of SOURCE_FIELDS) {
   const descriptors = fields.map(([label, key, kind, min, max, step]) => {
     const d = { id: 'ddn.view.' + profile + '.' + key, key, label, targets: ['view'], scope: 'view', removable: true, states: ['unset', 'value'] };
     if (Array.isArray(kind)) { d.widget = 'select'; d.choices = kind.slice(); }
-    else if (kind === 'number') { d.widget = 'number'; d.min = min; d.max = max; d.step = step; }
+    else if (kind === 'number') { d.widget = 'number'; d.min = min; d.max = max; d.step = step; if (key === 'columns') d.integer = true; }
     else if (kind === 'quantity') { d.widget = 'quantity'; d.units = ['px']; d.min = min; d.max = max; }
     else if (kind === 'kindlist') { d.widget = 'string-list'; d.help = 'Comma-separated kind keywords.'; }
     else { d.widget = 'text'; }
@@ -8755,6 +8758,7 @@ for (const [group, profile, fields] of SOURCE_FIELDS) {
     note: status
   });
   sourceForms.push(form);
+  if (profile === 'layout') g.append(dim('Gaps floor at 20px and at the clearance-derived minimum (DDN200); the layout engine raises smaller effective gaps to that floor rather than shrinking elements. Tighter gaps keep the fit: contain scale nearer 1, so text renders larger on a fixed page.'));
 }
 function syncSourceInputs() { for (const f of sourceForms) f.sync(); }
 /* Viewport actions + reset live in the style drawer too (the toolbar keeps
@@ -8973,6 +8977,7 @@ for (const [group, profile, fields] of DOCUMENT_FIELDS) {
     docInputs[profile + '.' + key] = { input, kind };
     field(g, label, input);
   }
+  if (profile === 'publication') g.append(dim('Embedding scale declares how much the embedding context enlarges the rendered SVG (1 = as-rendered). It never changes geometry or fonts in the file itself — it only scales the effective sizes the minimum-text and print lint checks enforce (DDN071/DDN-PS01/PS02), so a value above 1 asserts "this will be displayed larger". Graph views reject values above 4 (DDN070); geo/data projections allow up to 100. To make the drawing itself bigger relative to the page, use Size preset "content" (the page wraps the drawing at scale 1) or Fit "none" with explicit Width/Height, and tighten Layout gaps.'));
 }
 
 /* Chapter 53 publication chrome: header/footer run bands (left/center/right
