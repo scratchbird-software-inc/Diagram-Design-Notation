@@ -6,7 +6,7 @@
 
 Sister project: [ScratchBird on GitHub](https://github.com/scratchbird-software-inc/ScratchBird) ([wiki](https://github.com/scratchbird-software-inc/ScratchBird/wiki)).
 
-The product family: **ddn / ddn-viewer / ddn-designer** (this open-source project, sponsored by ScratchWeaver); **[ScratchWeaver](https://scratchbird.ca/weaver)** is also the commercial full diagramming suite (subscription, some on-site licensing) built on ddn as its file format; **[ScratchRobin](https://github.com/scratchbird-software-inc/CDEadmin)** is the commercial database console / BI / analytics package that owns backend capabilities such as KEEL. KEEL is not part of ddn, ddn-viewer, or ddn-designer, and never will be.
+The product family: **ddn / ddn-viewer / ddn-designer** (this open-source project, sponsored by ScratchWeaver); **[ScratchWeaver](https://scratchbird.ca/weaver)** is also the commercial full diagramming suite (subscription, some on-site licensing) built on ddn as its file format; **ScratchRobin** is the open-source database console / BI / analytics project that uses ddn/ddna in its own project and owns backend capabilities such as KEEL. KEEL is not part of ddn, ddn-viewer, or ddn-designer, and never will be.
 
 A simple script language that allows complex diagrams to be created with just a few lines of text.  
 
