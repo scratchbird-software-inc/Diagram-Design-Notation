@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * DDN reference decoder, 0.7.0. No runtime dependencies.
+ * DDN reference decoder, 0.8.0. No runtime dependencies.
  * This is an executable core demonstrator, NOT a complete conformance implementation.
  */
 import {publishNamespace} from './ddn-module-registry.js';
@@ -11,7 +11,7 @@ import ICONLIBS from './assets/icon-libraries.js';
 import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIconPack,registerArtPack,unregisterArtPack,hostArtPacks,validateArtPack} from './ddn-icon-sanitize.js';
 import {namespace as ddnNamespace} from './ddn-module-registry.js';
   'use strict';
-  const VERSION = '0.7.0';
+  const VERSION = '0.8.0';
   const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5','0.6']);
   const V06=SOURCE_VERSIONS.indexOf('0.6');
   class DDNError extends Error {
@@ -667,7 +667,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     display:{fields:'names',kind:'icon_token',maturity:'token',badges:'tokens',relations:'between_selected',samples:'show',domains:'hide',datatypes:'hide',depth:32},
     publication:{size:'figure',width:{$quantity:1280,unit:'px'},height:{$quantity:800,unit:'px'},margin:{$quantity:32,unit:'px'},fit:'contain',minimum_text:{$quantity:8,unit:'pt'},overflow:'error'},
     legend:{mode:'text',placement:'right',width:{$quantity:310,unit:'px'},keys:{}},
-    chrome:{legend:'auto',title:'on',footer:'on'},
+    chrome:{legend:'auto',title:'on',footer:'on',banner:'on'},
     validation:{mode:'logical',unknown_extensions:'warn'},
     export:{mode:'full',elements:[],fields:null,properties:[],include_samples:false,identifier_mode:'opaque',title:'Published data view',format:'json'},
   };
@@ -679,11 +679,11 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
     publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','metrics'],
     legend:['mode','placement','width','keys','keyset','scope'],
-    chrome:['legend','title','footer'],
+    chrome:['legend','title','footer','banner'],
     validation:['mode','unknown_extensions'],
     export:['mode','elements','fields','properties','include_samples','identifier_mode','title','format'],
-    bundle:['projection','notation','style','layout','display','publication','legend','chrome','title','footer','validation','export','spacing','kind','strictness'],
-    view:['projection','data','format','notation','style','layout','display','publication','legend','chrome','title','footer','select','exclude','description','uid','validation','export','spacing','kind','strictness','theme','source','generator','assertions','diff'],
+    bundle:['projection','notation','style','layout','display','publication','legend','chrome','title','footer','banner','validation','export','spacing','kind','strictness'],
+    view:['projection','data','format','notation','style','layout','display','publication','legend','chrome','title','footer','banner','select','exclude','description','uid','validation','export','spacing','kind','strictness','theme','source','generator','assertions','diff'],
     place:['at','size'],route:['via','source_side','target_side','callout','policy','source_fraction','target_fraction','routing','curve','curve_tension','curve_radius'],
     subdiagram:['view','mode','at','size','label','binding','uid'],
     frame:['scope','members','at','size','label','dimension'],
@@ -886,7 +886,14 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
         if(!allowed.includes(raw))throw new DDNError('DDN-E018','Unknown '+k+' chrome value '+JSON.stringify(raw)+'; expected '+allowed.join(', '),src.source,src.start);
         p.chrome[k]=raw;
       }
+      /* 0.8 (chapter 44 amendment): flat banner: on|off|<replacement text> mirrors
+       * into the chrome bag like the other visibility keywords. */
+      if(typeof src.props.banner==='string')p.chrome.banner=src.props.banner;
     }
+    /* 0.8 (chapter 44 amendment): the banner line is the engine-version title
+     * line above the view name; 'on' shows it, 'off' suppresses it, any other
+     * string (1..200 chars) replaces the text. */
+    if(p.chrome.banner!=='on'&&p.chrome.banner!=='off'&&(typeof p.chrome.banner!=='string'||p.chrome.banner.trim()===''||p.chrome.banner.length>200))throw new DDNError('DDN-E018','Unknown banner chrome value '+JSON.stringify(p.chrome.banner)+'; expected on, off, or replacement text of 1..200 characters',view.source,view.start);
     if(quantity(p.style.font_size,16)<8||quantity(p.style.font_size,16)>64)throw new DDNError('DDN046','font_size must be between 8px and 64px',view.source,view.start);
     /* 0.8 (chapter 54 §54.1/§54.6): text-fit declarations, checked at build so
      * `check` catches them before any render. Defaults live on the style

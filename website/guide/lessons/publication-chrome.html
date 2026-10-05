@@ -38,7 +38,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
 <p class="expected">Only the label of Edge gateway / review changes; chrome, page geometry and identities are untouched.</p>
 <div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
-<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 407e2e8a8e11… → cf24daeab809…), model changes (true), undo restores the shipped bytes (true).</p>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 18e81df7447e… → 0807f2e7a4d7…), model changes (true), undo restores the shipped bytes (true).</p>
 <p class="minor">Rename one element, apply, then publish the set with cli.js publish --set release_pack and read the manifest.</p></section>
 <details class="card"><summary>Open the DDN source and edit any definition</summary>
 <div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
@@ -52,7 +52,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>field-guide/sources/publication-chrome.ddn</td><td>format, data, view</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Chrome bands reserve space outside the drawing and never overlap it; a publication declaring no chrome renders exactly as before. Print-size lint (DDN-PS01–PS03) runs at check on physical sizes only, and --strict-print promotes it to a gate (DDN-PS04).</p><ul><li>Do not hand-maintain titles or page numbers in exported files — declare them once and let each page resolve its own variables.</li><li>Background images and patterns must live inside the workspace (PNG/WebP images, sanitized SVG patterns); absolute paths and URLs are rejected (DDN-PB05).</li></ul></section>
 </main>
-<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.8.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../dist/ddn.global.js"></script>
 <script src="../../dist/ddn-graph.js"></script>
 <script src="../../dist/ddn-iso.js"></script>

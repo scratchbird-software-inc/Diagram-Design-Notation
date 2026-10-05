@@ -1,6 +1,6 @@
 # DDN (Diagram Design Notation) — AI Authoring Reference
 
-Single self-contained authoring specification. An AI given ONLY this file plus a natural-language diagram request must be able to produce correct, current-dialect `.ddn` source for any diagram the runtime supports. Derived entirely from the authoritative repository sources of DDN runtime **0.7.0** (`notation/runtime/*`, `notation/cli/cli.js`) and standard 0.3/0.5/0.8 (`standard/grammar/ddn.ebnf`, `standard/registry/*`, `standard/specification/51–58` for the 0.8 dialect, §14); vocabulary and property tables are machine-extracted, not paraphrased. (DDN = the open-source language and project: reference runtime, CLI, free ddn-viewer and ddn-designer. ScratchWeaver sponsors the project; ScratchRobin owns backend evaluation (KEEL) — never in scope here.)
+Single self-contained authoring specification. An AI given ONLY this file plus a natural-language diagram request must be able to produce correct, current-dialect `.ddn` source for any diagram the runtime supports. Derived entirely from the authoritative repository sources of DDN runtime **0.8.0** (`notation/runtime/*`, `notation/cli/cli.js`) and standard 0.3/0.5/0.8 (`standard/grammar/ddn.ebnf`, `standard/registry/*`, `standard/specification/51–58` for the 0.8 dialect, §14); vocabulary and property tables are machine-extracted, not paraphrased. (DDN = the open-source language and project: reference runtime, CLI, free ddn-viewer and ddn-designer. ScratchWeaver sponsors the project; ScratchRobin owns backend evaluation (KEEL) — never in scope here.)
 
 <!-- generated: do not edit (counts) -->
 **Vocabulary counts (generated from the registries + runtime sources):**
@@ -9,7 +9,7 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 - Diagram profiles: **150** (`profiles/catalogue.json .profiles`)
 - Projection kinds: **12** (`graph`, `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`, `fishbone`, `decision`, `sequence`, `timing`, `geo`)
 - Endpoint marks: 12; object families: 12; relation families: 8; facets: 118; view types: 20; registered data properties: 108
-- Diagnostic codes: **472** extracted from the runtime (reference runtime + Studio `src/`)
+- Diagnostic codes: **473** extracted from the runtime (reference runtime + Studio `src/`)
 <!-- /generated (counts) -->
 
 ## 1. Purpose and the generate → check → fix loop
@@ -148,13 +148,15 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 
 **`route`** (optional per-relation geometry, view-specific; never changes endpoints): `via: [[x,y],…]` hard waypoints; `source_side`/`target_side` in `east|west|north|south`; `source_fraction`/`target_fraction` in (0,1) for unbound body anchors (cannot replace a field/port endpoint, DDN-I030); `callout: [x,y]` label position; `policy: strict|repair`; `routing: orthogonal|straight|curved`; `curve: bezier|rounded`; `curve_tension` (0,1]; `curve_radius` (>0, ≤1000px). Route targets must be visible relations (DDN063). `route_policy: repair` (default) recomputes an unsafe `via` hint with info diagnostic DDN-LW02; `strict` rejects it (DDN073 non-orthogonal / DDN213 unsafe).
 
+Labels, reference numerals and callout badges must not overlap each other or unrelated object geometry. The planner keeps clearance where its bounded search admits a position; any residual collision raises `DDN-LW09` under `layout.quality: warn` and fails the render (`DDN218`/`DDN221`) under the default `quality: error`. Findings are recorded in `scene.quality.labelIssues`/`labelPairs`/`labelNodes`.
+
 **`frame`**: `scope:` (ref to the boundary element, optional), `members: [@…]` (refs), `at`, `size`, `label`, `dimension`, plus profile flags like `x_region: true`, `x_pool: true`. Frame-vs-member geometry follows `layout.frame_overflow` (`expand` default, `confine`): under `expand` the frame rect grows to enclose members at the standard padding (a declared `at`/`size` rect that already fits is unchanged); under `confine` a declared `at`+`size` frame is fixed and unpinned members are clamped into its interior.
 
 **`subdiagram`**: `view:` (must resolve to a view, DDN064), `mode: reference|inline` (DDN900 otherwise), `at`, `size`, `label`, `binding`, `uid`. `reference` links; `inline` embeds the child's own selection/presentation — inline recursion or depth > 6 → DDN065.
 
 **`legend` / `keyset`**: numbered mode assigns callout numbers via `keys: { "<relation-id-or-local-name>": n }`; ambiguous/unknown keys → DDN058, non-positive-integer numbers → DDN059, duplicate numbers → DDN060. `mode: numbers` requires a visible legend placement (DDN047) and a number for EVERY visible relation (DDN061); shared `keyset` declarations preserve numbers across views. Numbers identify relations; they are not time order.
 
-**`chrome`**: page-chrome visibility, independent of the legend profile's content settings. Flat view-level keywords `legend: auto|on|off`, `title: on|off`, `footer: on|off` (a string `legend:` value is the chrome shorthand; `legend: @ref` still names a legend profile), or a `chrome { legend: …; title: …; footer: …; }` group / named `chrome` declaration. Defaults (`auto`/`on`/`on`): graph views show the relationship key whenever placement is not `none`; chart series colour keys, matrix encoding keys and geo choropleth/size keys show whenever their data exists; title header and footer lines always show. `off` suppresses and reclaims the reserved band. `legend: off` with `mode: numbers` → DDN047. Invalid flat values → DDN-E018; invalid group/profile values → DDN046.
+**`chrome`**: page-chrome visibility, independent of the legend profile's content settings. Flat view-level keywords `legend: auto|on|off`, `title: on|off`, `footer: on|off`, `banner: on|off|"<text>"` (a string `legend:` value is the chrome shorthand; `legend: @ref` still names a legend profile), or a `chrome { legend: …; title: …; footer: …; banner: …; }` group / named `chrome` declaration. Defaults (`auto`/`on`/`on`/`on`): graph views show the relationship key whenever placement is not `none`; chart series colour keys, matrix encoding keys and geo choropleth/size keys show whenever their data exists; title header and footer lines always show. The **banner** is the `DDN / PROPOSED STANDARD / <engine version>` eyebrow line above the view title: `banner: off` suppresses just that line (the view name/caption block stays), and any other 1–200 character string replaces it (`banner: "CONFIDENTIAL"`); any string is legal replacement text, so a misspelled keyword renders instead of erroring. `title: off` suppresses the whole title block including the banner. `off` suppresses and reclaims the reserved band. `legend: off` with `mode: numbers` → DDN047. Invalid flat values → DDN-E018 (banner included: empty or >200 chars); invalid group/profile values → DDN046.
 
 **`validation { mode: sketch|logical|strict; unknown_extensions: warn|error; }`** — `logical` (default): unregistered `x_*` extensions and unknown semantic properties are preserved with warnings (DDN-W103/DDN-W106); `strict`: unregistered extensions (DDN103) and unknown semantic properties (DDN106) fail; sketch-mode endpoint kind mismatches defer to warnings (DDN-W102).
 
@@ -310,7 +312,8 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
  "chrome": [
   "legend",
   "title",
-  "footer"
+  "footer",
+  "banner"
  ],
  "validation": [
   "mode",
@@ -337,6 +340,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
   "chrome",
   "title",
   "footer",
+  "banner",
   "validation",
   "export",
   "spacing",
@@ -356,6 +360,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
   "chrome",
   "title",
   "footer",
+  "banner",
   "select",
   "exclude",
   "description",
@@ -546,7 +551,8 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
  "chrome": {
   "legend": "auto",
   "title": "on",
-  "footer": "on"
+  "footer": "on",
+  "banner": "on"
  },
  "validation": {
   "mode": "logical",
@@ -775,7 +781,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 <!-- generated: do not edit (vocabulary) -->
 ## 4. Complete vocabulary (machine-extracted)
 
-Every value below was extracted programmatically from `standard/registry/catalogue.json` (version 0.3.0-draft.1) and `standard/registry/profiles/catalogue.json` (runtime 0.7.0). Use these EXACT keywords. Aliases and lowercase registry codes are also accepted by the resolver (`DDN.kindEntry`/`DDN.relationEntry` match keyword, lowercase code, or alias).
+Every value below was extracted programmatically from `standard/registry/catalogue.json` (version 0.3.0-draft.1) and `standard/registry/profiles/catalogue.json` (runtime 0.8.0). Use these EXACT keywords. Aliases and lowercase registry codes are also accepted by the resolver (`DDN.kindEntry`/`DDN.relationEntry` match keyword, lowercase code, or alias).
 
 ### 4.1 Core object kinds (153)
 
@@ -2139,7 +2145,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- generated: do not edit (diagnostics) -->
-## 9. Diagnostics and error recovery (473 codes, machine-extracted from runtime + Studio sources; 124 carry a hand-authored FIX)
+## 9. Diagnostics and error recovery (474 codes, machine-extracted from runtime + Studio sources; 124 carry a hand-authored FIX)
 
 `check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).
 
@@ -2161,7 +2167,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-E015 | error | Ambiguous diagram profile ${JSON.stringify(profile)} in view header; the registry maps it to more than one projection kind — write the canonical projection block instead<br>Body projection block conflicts with the `as` profile in the view header; write either the header form or the canonical projection, not both<br>Body projection property conflicts with the `as` profile in the view header; write either the header form or the canonical projection, not both<br>Unknown diagram profile ${JSON.stringify(profile)} in view header; the header form derives projection.kind from the registry, so the profile must be registered (or write the canonical projection block) | - |
 | DDN-E016 | error | A records block must declare columns before its first row<br>A records block requires a columns declaration<br>Row ${n.id} declares ${vals.length} value(s) but the records block declares ${columns.length} column(s) (${columns.join(', ')})<br>Row ${n.id}: a row body carries extra properties only; nested declarations are not supported<br>Row values must be scalar literals (string, number, quantity, boolean, null, missing, undecided, not_applicable, conflicting, or a bare word)<br>The columns declaration must precede every row of a records block<br>The label_column declaration must precede every row of a records block<br>label_column ${labelColumn} is not one of the declared columns (${columns.join(', ')}) | records row width must equal the columns count; the message names the row and expected/actual counts — fix the row's values. |
 | DDN-E017 | error | A definition body cannot apply presets or fragments (use: is legal at application sites only)<br>Definition version must be an integer (documentary only; expansion ignores it)<br>Presets @ and @ conflict on property ; declare : … locally to resolve the conflict<br>Unknown preset or fragment @<br>is a  definition; a  group applies a  definition<br>is a  definition; a data block applies a fragment definition<br>is a  definition; property position applies a preset or relation_props definition<br>relation_props @ applies to relation declarations only<br>use: is legal only inside a data block (fragments), a fields/ports group (member groups), or an element/relation/flow body (property presets)<br>use: is not legal in a relations batch header; apply property presets inside each entry body<br>use: needs at least one preset or fragment reference | - |
-| DDN-E018 | error | Unknown  chrome value ; expected | - |
+| DDN-E018 | error | Unknown  chrome value ; expected<br>Unknown banner chrome value ; expected on, off, or replacement text of 1..200 characters | - |
 | DDN-I001 | error | Unsupported interaction projection | - |
 | DDN-I002 | error | Interaction 0.1 requires a right-hand numbered relationship key | - |
 | DDN-I003 | error | A nonempty x_sequence is required | - |
@@ -2211,7 +2217,8 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-LW03 | warning/info | (no literal message) | - |
 | DDN-LW04 | warning/info | Deterministic congestion retry selected routing strategy | - |
 | DDN-LW05 | warning/info | ${best.crossings.length} disconnected crossings remain after bounded routing; rendered with ${p.layout.crossings}. | - |
-| DDN-LW06 | warning/info | Larger graph: native obstacle routing runs with a reduced whole-graph crossing-trial budget. | - |
+| DDN-LW06 | warning/info | Larger graph: native obstacle routing runs, but expensive whole-graph crossing trials are skipped.Larger graph: native obstacle routing runs with a reduced whole-graph crossing-trial budget. | - |
+| DDN-LW09 | warning/info | (no literal message) | - |
 | DDN-MK01 | error | Unknown marking ; registered markings:<br>marks on  must be an array of registered marking names ( | - |
 | DDN-MK02 | error | Duplicate marking  in one marks array on | - |
 | DDN-MK03 | error | assertions on view  must be an array of 1-32 strings; found non-array | - |
@@ -3676,7 +3683,7 @@ Runtime modules (`notation/runtime/`, dependency-free ES modules sharing namespa
 | ddn-contracts.js | DDNContracts | semantic/property/extension validation — load before ddn-core |
 | ddn-profiles.js | DDNProfiles | profile catalogue merge + profile validators |
 | ddn-profile-quality.js | DDNProfileQuality | additive profile-completion validators |
-| ddn-core.js | DDN | lex/parse/bundle/createWorkspace/build, DEFAULTS/CHOICES/PROPERTIES, `quantity`, `semanticJSON`, `DDNError`, VERSION 0.7.0 |
+| ddn-core.js | DDN | lex/parse/bundle/createWorkspace/build, DEFAULTS/CHOICES/PROPERTIES, `quantity`, `semanticJSON`, `DDNError`, VERSION 0.8.0 |
 | ddn-text.js | DDNText | text measurement (`FONTS` roles, `setMetrics`, `setProvider`) |
 | ddn-shapes.js | DDNShapes | silhouettes/anchors |
 | ddn-sketch.js | DDNSketch | seeded hand-drawn strokes (needed for `look: handDrawn`) |

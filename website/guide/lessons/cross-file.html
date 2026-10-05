@@ -37,7 +37,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
 <p class="expected">Only the label of Order fulfillment / review changes; traces and identities across the files are untouched.</p>
 <div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
-<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha aabbd0cea607… → b815b7fe0ab1…), model changes (true), undo restores the shipped bytes (true).</p>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 84f943384661… → 3aa1540aeac1…), model changes (true), undo restores the shipped bytes (true).</p>
 <p class="minor">Rename one capability in its owning file, apply, and confirm the trace view picks it up through the import.</p></section>
 <details class="card"><summary>Open the DDN source and edit any definition</summary>
 <div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
@@ -50,7 +50,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/108-uaf-traceability.ddn</td><td>data, view</td></tr><tr><td>website/examples/basics/108-uaf-operations.ddn</td><td>data, view</td></tr><tr><td>website/examples/basics/108-uaf-governance.ddn</td><td>data, view</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Cross-file references resolved at render time; no external repository or versioning semantics are implied.</p><ul><li>Do not duplicate an element id across files &quot;for convenience&quot; — import it.</li><li>A broken import fails the render; check diagnostics before assuming the trace is wrong.</li></ul></section>
 </main>
-<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.8.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../dist/ddn.global.js"></script>
 <script src="../../dist/ddn-graph.js"></script>
 <script src="../../dist/ddn-iso.js"></script>

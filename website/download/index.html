@@ -29,7 +29,7 @@
 </div></header>
 <main class="site-main">
 <h1 class="page-title">Download</h1>
-<p class="lede">ddn 0.7.0 — the open-source Diagram Design Notation project, sponsored by <a href="https://scratchbird.ca/weaver">ScratchWeaver</a> (<a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a>) — is pre-1.0 and <strong>not yet published to the npm registry</strong>. Today you get it by cloning the repository; the runtime bundles below are also served directly from this site, and <code>npm pack</code> in <code>notation/</code> produces the installable <code>@ddn/notation</code> tarball. The publish path is ready: CI runs <code>npm publish --dry-run</code> on every push and would publish on <code>v*</code> tags once the <code>NPM_TOKEN</code> secret is configured (it skips gracefully until then; the committed <code>private: true</code> is an accident guard stripped only by the tag-gated publish job). Embedding? Start from the <a href="../docs/developers/embedding.html">embedding quickstart</a>.</p>
+<p class="lede">ddn 0.8.0 — the open-source Diagram Design Notation project, sponsored by <a href="https://scratchbird.ca/weaver">ScratchWeaver</a> (<a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a>) — is pre-1.0 and <strong>not yet published to the npm registry</strong>. Today you get it by cloning the repository; the runtime bundles below are also served directly from this site, and <code>npm pack</code> in <code>notation/</code> produces the installable <code>@ddn/notation</code> tarball. The publish path is ready: CI runs <code>npm publish --dry-run</code> on every push and would publish on <code>v*</code> tags once the <code>NPM_TOKEN</code> secret is configured (it skips gracefully until then; the committed <code>private: true</code> is an accident guard stripped only by the tag-gated publish job). Embedding? Start from the <a href="../docs/developers/embedding.html">embedding quickstart</a>.</p>
 <h2>Clone the repository</h2>
 <pre><code>git clone &lt;repo-url&gt; data-design-notation
 cd data-design-notation
@@ -40,10 +40,10 @@ npm test          # full verification suite, exit 0 expected</code></pre>
 <thead><tr><th>Bundle</th><th>Bytes</th></tr></thead><tbody>
 <tr><td><a href="../dist/ddn-core.d.mts"><code>ddn-core.d.mts</code></a></td><td>10123</td></tr>
 <tr><td><a href="../dist/ddn-core.d.ts"><code>ddn-core.d.ts</code></a></td><td>10123</td></tr>
-<tr><td><a href="../dist/ddn-core.js"><code>ddn-core.js</code></a></td><td>1122693</td></tr>
-<tr><td><a href="../dist/ddn-core.min.js"><code>ddn-core.min.js</code></a></td><td>938414</td></tr>
-<tr><td><a href="../dist/ddn-core.min.js.map"><code>ddn-core.min.js.map</code></a></td><td>1847265</td></tr>
-<tr><td><a href="../dist/ddn-core.mjs"><code>ddn-core.mjs</code></a></td><td>1113366</td></tr>
+<tr><td><a href="../dist/ddn-core.js"><code>ddn-core.js</code></a></td><td>1123515</td></tr>
+<tr><td><a href="../dist/ddn-core.min.js"><code>ddn-core.min.js</code></a></td><td>938832</td></tr>
+<tr><td><a href="../dist/ddn-core.min.js.map"><code>ddn-core.min.js.map</code></a></td><td>1848473</td></tr>
+<tr><td><a href="../dist/ddn-core.mjs"><code>ddn-core.mjs</code></a></td><td>1114174</td></tr>
 <tr><td><a href="../dist/ddn-geo.d.mts"><code>ddn-geo.d.mts</code></a></td><td>10123</td></tr>
 <tr><td><a href="../dist/ddn-geo.d.ts"><code>ddn-geo.d.ts</code></a></td><td>10123</td></tr>
 <tr><td><a href="../dist/ddn-geo.js"><code>ddn-geo.js</code></a></td><td>24217</td></tr>
@@ -52,10 +52,10 @@ npm test          # full verification suite, exit 0 expected</code></pre>
 <tr><td><a href="../dist/ddn-geo.mjs"><code>ddn-geo.mjs</code></a></td><td>23580</td></tr>
 <tr><td><a href="../dist/ddn-graph.d.mts"><code>ddn-graph.d.mts</code></a></td><td>10123</td></tr>
 <tr><td><a href="../dist/ddn-graph.d.ts"><code>ddn-graph.d.ts</code></a></td><td>10123</td></tr>
-<tr><td><a href="../dist/ddn-graph.js"><code>ddn-graph.js</code></a></td><td>457967</td></tr>
-<tr><td><a href="../dist/ddn-graph.min.js"><code>ddn-graph.min.js</code></a></td><td>347245</td></tr>
-<tr><td><a href="../dist/ddn-graph.min.js.map"><code>ddn-graph.min.js.map</code></a></td><td>792476</td></tr>
-<tr><td><a href="../dist/ddn-graph.mjs"><code>ddn-graph.mjs</code></a></td><td>452113</td></tr>
+<tr><td><a href="../dist/ddn-graph.js"><code>ddn-graph.js</code></a></td><td>461411</td></tr>
+<tr><td><a href="../dist/ddn-graph.min.js"><code>ddn-graph.min.js</code></a></td><td>348678</td></tr>
+<tr><td><a href="../dist/ddn-graph.min.js.map"><code>ddn-graph.min.js.map</code></a></td><td>797931</td></tr>
+<tr><td><a href="../dist/ddn-graph.mjs"><code>ddn-graph.mjs</code></a></td><td>455481</td></tr>
 <tr><td><a href="../dist/ddn-iso.d.mts"><code>ddn-iso.d.mts</code></a></td><td>10123</td></tr>
 <tr><td><a href="../dist/ddn-iso.d.ts"><code>ddn-iso.d.ts</code></a></td><td>10123</td></tr>
 <tr><td><a href="../dist/ddn-iso.js"><code>ddn-iso.js</code></a></td><td>23644</td></tr>
@@ -77,17 +77,17 @@ npm test          # full verification suite, exit 0 expected</code></pre>
 <tr><td><a href="../dist/ddn.css"><code>ddn.css</code></a></td><td>1267</td></tr>
 <tr><td><a href="../dist/ddn.d.mts"><code>ddn.d.mts</code></a></td><td>10123</td></tr>
 <tr><td><a href="../dist/ddn.d.ts"><code>ddn.d.ts</code></a></td><td>10123</td></tr>
-<tr><td><a href="../dist/ddn.global.js"><code>ddn.global.js</code></a></td><td>1542235</td></tr>
-<tr><td><a href="../dist/ddn.global.min.js"><code>ddn.global.min.js</code></a></td><td>1247354</td></tr>
-<tr><td><a href="../dist/ddn.global.min.js.map"><code>ddn.global.min.js.map</code></a></td><td>2704511</td></tr>
-<tr><td><a href="../dist/ddn.mjs"><code>ddn.mjs</code></a></td><td>1525650</td></tr>
+<tr><td><a href="../dist/ddn.global.js"><code>ddn.global.js</code></a></td><td>1546501</td></tr>
+<tr><td><a href="../dist/ddn.global.min.js"><code>ddn.global.min.js</code></a></td><td>1249207</td></tr>
+<tr><td><a href="../dist/ddn.global.min.js.map"><code>ddn.global.min.js.map</code></a></td><td>2711220</td></tr>
+<tr><td><a href="../dist/ddn.mjs"><code>ddn.mjs</code></a></td><td>1529826</td></tr>
 </tbody></table>
 <h2>Field guide</h2>
 <p>The <a href="../guide/index.html">Diagram Field Guide</a> (155 chapters) also ships as <a href="../guide/portable.html">one portable, self-contained HTML file</a> — the whole edition: live examples, guided edits and the full runtime inlined; save it and it works offline.</p>
 <h2>Reference</h2>
 <p>The <a href="../reference/index.html">element kind and relation reference</a> lists every one of the 375 kinds and 185 relations with its rendered symbol, meaning and a paste-ready example — generated from the registry at every site build.</p>
 <h2>AI authoring reference</h2>
-<p><a href="DDN-AI-REFERENCE.md"><strong>DDN-AI-REFERENCE.md</strong></a> (436 KiB, regenerated from the registry at every site build) is the whole DDN dialect in one file — vocabulary, properties, projections, all 473 diagnostic codes with fixes, the full grammar, and two dozen worked recipes — written so a chat AI can author valid DDN from it. How to use it:</p>
+<p><a href="DDN-AI-REFERENCE.md"><strong>DDN-AI-REFERENCE.md</strong></a> (438 KiB, regenerated from the registry at every site build) is the whole DDN dialect in one file — vocabulary, properties, projections, all 474 diagnostic codes with fixes, the full grammar, and two dozen worked recipes — written so a chat AI can author valid DDN from it. How to use it:</p>
 <ol>
   <li>Download <a href="DDN-AI-REFERENCE.md">the reference file</a>.</li>
   <li>Paste it into your AI chat (Claude, ChatGPT, …) or attach it as context.</li>
@@ -98,7 +98,7 @@ npm test          # full verification suite, exit 0 expected</code></pre>
 <p>GPL-2.0-or-later — see the <a href="../license/index.html">license page</a>.</p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span>ddn 0.8.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
   <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
   <a href="../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../docs/index.html">Docs</a>

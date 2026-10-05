@@ -544,6 +544,6 @@ function render(g,p,theme){
   out+=`<g class="ddn-template" data-template="${esc(params.join(','))}"><rect x="${f(px)}" y="${f(py)}" width="${f(pw)}" height="${f(ph)}" fill="${fill}" stroke="${ink}" stroke-width="1.2" stroke-dasharray="5 3"/>`+params.map((v,i)=>text(px+9*s,py+16*s+i*15*s,v,11,400)).join('')+'</g>';}
  return out+'</g>';
 }
-const api={VERSION:'0.7.0',measure,render,anchor,polygon,shapeOf,segmentInterior};
+const api={VERSION:'0.8.0',measure,render,anchor,polygon,shapeOf,segmentInterior};
 publishNamespace('DDNShapes',api);
 export default api;

@@ -38,7 +38,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
 <p class="expected">Only the label of Network block / review changes; channels, transitions and identities are untouched.</p>
 <div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
-<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha af2eec998dfb… → e182ede957a3…), model changes (true), undo restores the shipped bytes (true).</p>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 5366b1d93ada… → a2f096cb4987…), model changes (true), undo restores the shipped bytes (true).</p>
 <p class="minor">Rename one signal to its name in the interface control document, apply, and check both views still agree on it.</p></section>
 <details class="card"><summary>Open the DDN source and edit any definition</summary>
 <div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
@@ -52,7 +52,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/99-sdl.ddn</td><td>data, view</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared SDL with structural validation; no code generation or exhaustive simulation is claimed.</p><ul><li>Do not send a signal over a channel that does not carry it.</li><li>Every decision branch needs a continuation; an unhandled input is a stuck process.</li></ul></section>
 </main>
-<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.8.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../dist/ddn.global.js"></script>
 <script src="../../dist/ddn-graph.js"></script>
 <script src="../../dist/ddn-iso.js"></script>

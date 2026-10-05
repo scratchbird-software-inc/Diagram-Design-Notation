@@ -35,7 +35,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
 <p class="expected">Only the label of Orders source / review changes; crossing marks and identities are untouched.</p>
 <div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
-<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 54199af8db34… → a82bb8df18d6…), model changes (true), undo restores the shipped bytes (true).</p>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha c077cc6ab19b… → 15112979ef68…), model changes (true), undo restores the shipped bytes (true).</p>
 <p class="minor">Rename one element on a crossing line, apply, and confirm the crossing mark still reads as a hop, not a join.</p></section>
 <details class="card"><summary>Open the DDN source and edit any definition</summary>
 <div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
@@ -54,7 +54,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/17-curved-relations.ddn</td><td>data, format, view</td></tr><tr><td>website/examples/basics/shared.ddn</td><td>format</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Crossing marks are presentation disambiguation; connectivity is declared in the model, never inferred from geometry.</p><ul><li>Do not rely on colour alone to separate crossing lines — marks survive print and colour-blindness.</li><li>One crossing style per diagram; mixed marks reintroduce the ambiguity.</li></ul></section>
 </main>
-<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.8.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script src="../../notation/dist/ddn-graph.js"></script>
 <script src="../../notation/dist/ddn-iso.js"></script>

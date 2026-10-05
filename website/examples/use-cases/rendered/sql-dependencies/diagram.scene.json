@@ -189,10 +189,13 @@
   "subdiagrams": [],
   "quality": {
     "errors": [],
+    "labelIssues": [],
     "objectOverlaps": [],
     "routeObjectIntersections": [],
     "sharedTracks": [],
-    "labelRouteIntersections": []
+    "labelRouteIntersections": [],
+    "labelPairs": [],
+    "labelNodes": []
   },
   "layout": {
     "algorithm": "grid",
@@ -265,7 +268,7 @@
     },
     "remainingCrossings": 0,
     "routing": "orthogonal",
-    "engine": "ddn-native@0.7.0"
+    "engine": "ddn-native@0.8.0"
   },
   "drawingBounds": {
     "x": 0,

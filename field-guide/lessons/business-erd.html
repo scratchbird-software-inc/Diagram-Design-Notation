@@ -34,7 +34,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
 <p class="expected">Only the label of Customer / review changes; identities and relationships are untouched.</p>
 <div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
-<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha c0f9737c422c… → 0d405bbdc601…), model changes (true), undo restores the shipped bytes (true).</p>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 26ba41fe076a… → 1cf354205a80…), model changes (true), undo restores the shipped bytes (true).</p>
 <p class="minor">Rename one relationship verb so it reads in the business direction, apply, and check the legend and diagnostics.</p></section>
 <details class="card"><summary>Open the DDN source and edit any definition</summary>
 <div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
@@ -53,7 +53,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/use-cases/02-business-erd.ddn</td><td>view</td></tr><tr><td>website/examples/use-cases/formats.ddn</td><td>format</td></tr><tr><td>website/examples/use-cases/data/commerce.ddn</td><td>data</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Conceptual only: no keys, types or indexes are decided by this view.</p><ul><li>Do not start assigning datatypes here — that is the logical/physical stage.</li><li>A relationship without a business-readable verb is usually a missing entity.</li></ul></section>
 </main>
-<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.8.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script src="../../notation/dist/ddn-graph.js"></script>
 <script src="../../notation/dist/ddn-iso.js"></script>

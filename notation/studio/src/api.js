@@ -2,7 +2,7 @@
 import {optionalNamespace} from '../../runtime/ddn-module-registry.js';
 export function makeLiveAPI(backend,assets){
 'use strict';
-const VERSION='0.7.0',D=backend.DDN,clone=x=>JSON.parse(JSON.stringify(x)),Q=n=>({$quantity:n,unit:'px'});
+const VERSION='0.8.0',D=backend.DDN,clone=x=>JSON.parse(JSON.stringify(x)),Q=n=>({$quantity:n,unit:'px'});
 /* vm-sandboxed hosts (tests, embedded runtimes) may lack structuredClone. */
 const deepClone=typeof structuredClone==='function'?structuredClone:clone;
 assets={...assets,registry:D.profiles.registry(assets.registry)};

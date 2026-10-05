@@ -43,6 +43,7 @@
 <p>DDN200–218 cover hierarchy, pins, port escape, bounded routing, independent lanes and quality failures. <code>quality:error</code> is the default; <code>warn</code> is an explicit exploratory output policy, not a conformance pass. <code>scene.quality</code> records the checks. The enterprise build additionally runs an independent Python geometry scan.</p>
 <h2>Relationship labels</h2>
 <p>Numbered callouts are circles with ordinary digits; no circled-Unicode font dependence. Text/token modes use measured label boxes. Labels avoid objects, other labels, unrelated paths and reserved future ports. A full legend explains visible keys. Number scope is separate from sequence identity, and shared keysets preserve IDs across views.</p>
+<p>Labels, reference numerals and callout badges MUST NOT overlap one another or unrelated object geometry; the planner keeps clearance margins wherever its bounded search admits a position. Any residual collision is reported: <code>DDN-LW09</code> (warning) under <code>quality:warn</code>, and a quality-gate failure (<code>DDN218</code>/<code>DDN221</code>) under the default <code>quality:error</code>. A label may still sit beside — in mind maps, on — its own two endpoint elements. <code>scene.quality.labelIssues</code>, <code>labelPairs</code> and <code>labelNodes</code> record the findings.</p>
 <h2>Publication</h2>
 <p>Post-layout bounds include object bodies, frames, routes and callouts. The legend is measured and space is reserved separately. A full enterprise graph is not silently scaled to unreadable paper. Use linked bounded views or a larger content-sized artboard. Automatic multi-sheet tiling remains an explicit future capability, not a silently accepted <code>fit</code> value.</p>
 <h2>Curved route geometry</h2>
@@ -58,7 +59,7 @@
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span>ddn 0.8.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
   <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>

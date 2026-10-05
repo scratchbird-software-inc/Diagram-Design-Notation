@@ -1,6 +1,6 @@
 {
   "name": "diagram-design-notation",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "description": "ddn, the Diagram Design Notation project (a ScratchWeaver-sponsored open-source project from ScratchBird Software Inc.): a model-first diagram dialect, reference runtime, free ddn-viewer and simple-edits ddn-designer, and open standard draft.",
   "license": "GPL-2.0-or-later",

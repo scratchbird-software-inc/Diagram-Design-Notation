@@ -150,6 +150,6 @@ function draw(plan,ir,c){
  body+=lines(wrap(foot,W-24*s,11),12*s,H-43*s,11)+text(12*s,H-14*s,'Supplied synthetic observations / source-bound marks / finite JavaScript arithmetic, not certified financial computation.',11);
  return{body,W,H};
 }
-const api={VERSION:'0.7.0',draw,encodedColour};
+const api={VERSION:'0.8.0',draw,encodedColour};
 publishNamespace('DDNQualityRender',api);
 export default api;

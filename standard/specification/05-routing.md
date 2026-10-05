@@ -33,6 +33,8 @@ DDN200–218 cover hierarchy, pins, port escape, bounded routing, independent la
 
 Numbered callouts are circles with ordinary digits; no circled-Unicode font dependence. Text/token modes use measured label boxes. Labels avoid objects, other labels, unrelated paths and reserved future ports. A full legend explains visible keys. Number scope is separate from sequence identity, and shared keysets preserve IDs across views.
 
+Labels, reference numerals and callout badges MUST NOT overlap one another or unrelated object geometry; the planner keeps clearance margins wherever its bounded search admits a position. Any residual collision is reported: `DDN-LW09` (warning) under `quality:warn`, and a quality-gate failure (`DDN218`/`DDN221`) under the default `quality:error`. A label may still sit beside — in mind maps, on — its own two endpoint elements. `scene.quality.labelIssues`, `labelPairs` and `labelNodes` record the findings.
+
 ## Publication
 
 Post-layout bounds include object bodies, frames, routes and callouts. The legend is measured and space is reserved separately. A full enterprise graph is not silently scaled to unreadable paper. Use linked bounded views or a larger content-sized artboard. Automatic multi-sheet tiling remains an explicit future capability, not a silently accepted `fit` value.

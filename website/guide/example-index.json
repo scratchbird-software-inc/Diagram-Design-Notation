@@ -1,5 +1,5 @@
 {
-  "runtime": "0.7.0",
+  "runtime": "0.8.0",
   "examples": [
     {
       "chapter": "relational",

@@ -34,7 +34,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
 <p class="expected">Only the label of Integration hub / review changes; retained positions and identities are untouched.</p>
 <div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
-<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 76e1faa257a7… → d8130ed18e6d…), model changes (true), undo restores the shipped bytes (true).</p>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha ab8e8dc191e7… → 292d2d7c2570…), model changes (true), undo restores the shipped bytes (true).</p>
 <p class="minor">Rename one element, apply, and confirm nothing moves — paused placement keeps the scene while the label changes.</p></section>
 <details class="card"><summary>Open the DDN source and edit any definition</summary>
 <div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
@@ -51,7 +51,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/live/pinned-patterns.ddn</td><td>data, format, view</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Retention of declared/current positions with auto_place off; it preserves positions, not model semantics.</p><ul><li>Do not pause early — pausing freezes today's accidents along with today's decisions.</li><li>A new element with no seed position under paused placement is a declaration gap you must fill.</li></ul></section>
 </main>
-<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.8.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script src="../../notation/dist/ddn-graph.js"></script>
 <script src="../../notation/dist/ddn-iso.js"></script>

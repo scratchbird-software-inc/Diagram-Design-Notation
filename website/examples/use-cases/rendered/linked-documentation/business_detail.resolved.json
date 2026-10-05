@@ -109,7 +109,8 @@
           "$quantity": 8,
           "unit": "pt"
         },
-        "overflow": "error"
+        "overflow": "error",
+        "minimum_text_declared": false
       },
       "legend": {
         "mode": "numbers",
@@ -125,7 +126,8 @@
       "chrome": {
         "legend": "auto",
         "title": "on",
-        "footer": "on"
+        "footer": "on",
+        "banner": "on"
       },
       "validation": {
         "mode": "logical",

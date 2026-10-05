@@ -5,7 +5,7 @@
 import {publishNamespace} from './ddn-module-registry.js';
 import Shapes from './ddn-shapes.js';
 'use strict';
-const VERSION='0.7.0',EPS=.01;
+const VERSION='0.8.0',EPS=.01;
 const q=(x,d=0)=>typeof x==='number'?x:x&&Number.isFinite(x.$quantity)?x.$quantity*({px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96}[x.unit]||1):d;
 const round=x=>Math.round(x*1000)/1000;
 /* B1-008 spacing hints: fixed deterministic factors (D2/D4). Applied to inter-node
@@ -471,6 +471,8 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
  const quality=inspect(nodes,routes,labels,routeRecs);
  if(quality.errors.length&&p.quality!=='warn')throw new ErrorClass('DDN218',quality.errors[0]);
  for(const message of quality.errors)diagnostics.push({code:'DDN-LW03',severity:'warning',message});
+ if(quality.labelIssues.length&&p.quality!=='warn')throw new ErrorClass('DDN218',quality.labelIssues[0]);
+ for(const message of quality.labelIssues)diagnostics.push({code:'DDN-LW09',severity:'warning',message});
  return {routes,crossings,labels,diagnostics,quality};
 }
 function routing(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Error,extraObstacles=[]){
@@ -505,14 +507,29 @@ function routing(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Error,extr
  if(best){best.strategy=bestAttempt;if(bestAttempt)best.diagnostics.push({code:'DDN-LW04',severity:'info',message:'Deterministic congestion retry selected routing strategy '+bestAttempt});return best;}
  last.attempts=failures;throw last;
 }
-function inspect(nodes,routes,labels=[],routeRecs=null){const errors=[],overlaps=[],through=[],shared=[],masking=[];
+function inspect(nodes,routes,labels=[],routeRecs=null){const errors=[],overlaps=[],through=[],shared=[],masking=[],labelPairs=[],labelNodes=[];
  const recs=routeRecs||routes.map(r=>routeSegRecs(r.points)),nodeBoxes=nodes.map(n=>box(n,1)),labelBoxes=labels.map(l=>box(l,2));
  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){if(!overlap(nodes[i],nodes[j]))continue; /* B1-063: a boundary event attached to its host's border is not an overlap. */ if(nodes[i].x_boundaryOf===nodes[j].id||nodes[j].x_boundaryOf===nodes[i].id)continue; overlaps.push([nodes[i].id,nodes[j].id]);}
  for(let i=0;i<routes.length;i++){const r=routes[i];for(const s of recs[i])for(let k=0;k<nodes.length;k++){const n=nodes[k];if(n.id===r.r?.from.element||n.id===r.r?.to.element)continue;const b=nodeBoxes[k];if(s.maxx<=b.x+EPS||s.minx>=b.x+b.w-EPS||s.maxy<=b.y+EPS||s.miny>=b.y+b.h-EPS)continue;if(segHitsBox(s.ax,s.ay,s.bx,s.by,b))through.push([r.id,n.id]);}}
  for(let i=0;i<routes.length;i++)for(let j=i+1;j<routes.length;j++)if(recs[i].some(s=>recs[j].some(t=>collinearRec(s,t,.1))))shared.push([routes[i].id,routes[j].id]);
  for(let li=0;li<labels.length;li++)for(let i=0;i<routes.length;i++)if(labels[li].id!==routes[i].id&&recs[i].some(s=>segHitsBox(s.ax,s.ay,s.bx,s.by,labelBoxes[li])))masking.push([labels[li].id,routes[i].id]);
+ /* Label collisions (DDN-LW09 family): relationship labels, reference numerals
+  * and callout badges must never overlap each other or crowd unrelated
+  * geometry. Placement already avoids these with margins wherever a bounded
+  * search admits it; anything left here is a defect worth a diagnostic. A
+  * label may still sit beside (mind maps: on) its own two endpoint nodes. */
+ const labelRoute=new Map(routes.map(r=>[r.id,r]));
+ for(let i=0;i<labels.length;i++){
+  for(let j=i+1;j<labels.length;j++)if(overlap(labels[i],labels[j]))labelPairs.push([labels[i].id,labels[j].id]);
+  const lr=labelRoute.get(labels[i].id);
+  for(let k=0;k<nodes.length;k++){if(lr&&(nodes[k].id===lr.r?.from.element||nodes[k].id===lr.r?.to.element))continue;
+   if(overlap(labels[i],nodes[k]))labelNodes.push([labels[i].id,nodes[k].id]);}
+ }
+ const labelIssues=[];
+ if(labelPairs.length)labelIssues.push(labelPairs.length+' colliding relationship label pairs');
+ if(labelNodes.length)labelIssues.push(labelNodes.length+' relationship labels overlap unrelated objects');
  if(overlaps.length)errors.push(overlaps.length+' overlapping object pairs');if(through.length)errors.push(through.length+' unrelated route/object intersections');if(shared.length)errors.push(shared.length+' independent collinear relation pairs');if(masking.length)errors.push(masking.length+' labels mask unrelated routes');
- return {errors,objectOverlaps:overlaps,routeObjectIntersections:through,sharedTracks:shared,labelRouteIntersections:masking};}
+ return {errors,labelIssues,objectOverlaps:overlaps,routeObjectIntersections:through,sharedTracks:shared,labelRouteIntersections:masking,labelPairs,labelNodes};}
 /* Curved connectors are geometry, never relationship types. The orthogonal
  * router first reserves safe corridors. This pass tries a broad cubic branch,
  * then progressively tighter cubic corner transitions. It rejects a drawing
@@ -629,6 +646,8 @@ function curvedRouting(result,nodes,profiles,hints,ErrorClass=Error,extraObstacl
  quality.sharedTracks=shared;if(shared.length&&!quality.errors.some(s=>s.includes('collinear')))quality.errors.push(shared.length+' independent shared curved/polyline tracks');
  for(let i=0;i<crossings.length;i++)for(let j=i+1;j<crossings.length;j++)if(Math.hypot(crossings[i].point[0]-crossings[j].point[0],crossings[i].point[1]-crossings[j].point[1])<16)quality.errors.push('Closely spaced curve crossings require additional routing clearance');
  if(quality.errors.length&&p.quality!=='warn')throw new ErrorClass('DDN221',quality.errors[0]);
+ if(quality.labelIssues.length&&p.quality!=='warn')throw new ErrorClass('DDN221',quality.labelIssues[0]);
+ for(const message of quality.labelIssues)result.diagnostics.push({code:'DDN-LW09',severity:'warning',message});
  return {...result,routes,crossings,labels,quality,curveTolerance:CURVE_TOLERANCE};
 }
 

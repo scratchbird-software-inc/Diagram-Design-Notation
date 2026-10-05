@@ -1,8 +1,9 @@
 # 44. View chrome: legend, title and footer visibility
 
-Status: implemented in runtime 0.7.0. Source grammar remains
+Status: implemented in runtime 0.8.0. Source grammar remains
 DDN 0.5; views that declare no chrome option render byte-identical SVG to
-previous releases, and the use-cases manifest is unchanged.
+previous releases except where the engine-version banner text changes with
+the engine version itself, and the use-cases manifest is unchanged.
 
 Page chrome is presentation: the relationship key, the view title/header
 block, and the footer line. None of it carries model facts — the same data
@@ -15,6 +16,19 @@ view-level option, not a renderer decision.
 > of this chapter keep their meaning: `title: off`/`footer: off` suppress
 > the emission site regardless of any 0.8 header/footer record, and
 > suppressing a site reclaims its band exactly as specified here.
+
+> **0.8 amendment (banner):** the eyebrow line above the view title (the
+> `DDN / PROPOSED STANDARD / …` line) is the **banner**, controlled by a
+> fourth chrome keyword `banner` (flat or inside a `chrome { … }` group or
+> named chrome profile). `banner: on` (the default) shows the engine-version
+> text `DDN / PROPOSED STANDARD / <engine version>` — the version always
+> tracks the render engine, so the same source renders different banner text
+> under different engine versions. `banner: off` suppresses the line while
+> keeping the rest of the title block (view name, caption, look/theme tag).
+> Any other string value of 1–200 characters **replaces** the text
+> (`banner: "CONFIDENTIAL — ATTORNEY WORK PRODUCT"`); because any string is
+> legal replacement text, a misspelled keyword is rendered, not rejected.
+> `title: off` still suppresses the whole title block including the banner.
 
 ## Options (D2)
 

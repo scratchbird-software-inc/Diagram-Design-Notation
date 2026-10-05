@@ -88,6 +88,20 @@ test('graph: invalid chrome values are coded errors', () => {
   throws(() => build(GRAPH('chrome { legend: sometimes; }')), 'DDN046');
 });
 
+test('graph: banner shows the engine version, and can be suppressed or replaced', () => {
+  const def = render(build(GRAPH('')));
+  assert.ok(def.includes('DDN / PROPOSED STANDARD / ' + DDN.VERSION), 'default banner missing engine version');
+  const off = render(build(GRAPH('chrome { banner: off; }')));
+  assert.ok(!off.includes('PROPOSED STANDARD') && off.includes('Chrome view'), 'banner:off leaked or title lost');
+  const flat = render(build(GRAPH('banner: off;')));
+  assert.ok(!flat.includes('PROPOSED STANDARD'), 'flat banner:off leaked');
+  const rep = render(build(GRAPH('banner: "CONFIDENTIAL";')));
+  assert.ok(rep.includes('CONFIDENTIAL') && !rep.includes('PROPOSED STANDARD'), 'flat banner replacement failed');
+  const grp = render(build(GRAPH('chrome { banner: "ACME CORP"; }')));
+  assert.ok(grp.includes('ACME CORP') && !grp.includes('PROPOSED STANDARD'), 'group banner replacement failed');
+  throws(() => build(GRAPH('banner: "' + 'x'.repeat(201) + '";')), 'DDN-E018');
+});
+
 test('graph: legend profile reference still resolves alongside chrome keywords', () => {
   const src = `ddn "0.5";
 module "m";

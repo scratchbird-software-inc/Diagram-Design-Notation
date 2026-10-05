@@ -30,9 +30,10 @@
 <main class="site-main">
 <article class="md-body">
 <h1>44. View chrome: legend, title and footer visibility</h1>
-<p>Status: implemented in runtime 0.7.0. Source grammar remains DDN 0.5; views that declare no chrome option render byte-identical SVG to previous releases, and the use-cases manifest is unchanged.</p>
+<p>Status: implemented in runtime 0.8.0. Source grammar remains DDN 0.5; views that declare no chrome option render byte-identical SVG to previous releases except where the engine-version banner text changes with the engine version itself, and the use-cases manifest is unchanged.</p>
 <p>Page chrome is presentation: the relationship key, the view title/header block, and the footer line. None of it carries model facts — the same data with the same semantics renders with or without it — so visibility is a view-level option, not a renderer decision.</p>
 <blockquote><strong>0.8 draft amendment:</strong> chapter 53 defines what authored content the<br>header/footer emission sites can carry (runs, <code>$variables</code>, page border,<br>backgrounds) and adds multi-view publication sets. The visibility options<br>of this chapter keep their meaning: <code>title: off</code>/<code>footer: off</code> suppress<br>the emission site regardless of any 0.8 header/footer record, and<br>suppressing a site reclaims its band exactly as specified here.</blockquote>
+<blockquote><strong>0.8 amendment (banner):</strong> the eyebrow line above the view title (the<br><code>DDN / PROPOSED STANDARD / …</code> line) is the <strong>banner</strong>, controlled by a<br>fourth chrome keyword <code>banner</code> (flat or inside a <code>chrome { … }</code> group or<br>named chrome profile). <code>banner: on</code> (the default) shows the engine-version<br>text <code>DDN / PROPOSED STANDARD / &lt;engine version&gt;</code> — the version always<br>tracks the render engine, so the same source renders different banner text<br>under different engine versions. <code>banner: off</code> suppresses the line while<br>keeping the rest of the title block (view name, caption, look/theme tag).<br>Any other string value of 1–200 characters <strong>replaces</strong> the text<br>(<code>banner: &quot;CONFIDENTIAL — ATTORNEY WORK PRODUCT&quot;</code>); because any string is<br>legal replacement text, a misspelled keyword is rendered, not rejected.<br><code>title: off</code> still suppresses the whole title block including the banner.</blockquote>
 <h2>Options (D2)</h2>
 <p>Three properties, available at three equivalent sites: as flat view-level keywords, as properties of a <code>chrome</code> group inside a view, and as properties of a named <code>chrome</code> declaration inside a <code>format</code> block (referenced directly or through a <code>bundle</code>):</p>
 <pre><code>view embedded &quot;Minimal chrome for embedding&quot; {
@@ -79,7 +80,7 @@ view card2 &quot;Card 2&quot; { data: [@model]; chrome { legend: off; } }</code>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span>ddn 0.8.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
   <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>

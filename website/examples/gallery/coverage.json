@@ -1,5 +1,5 @@
 {
-  "version": "0.7.0",
+  "version": "0.8.0",
   "generatedBy": "tools/build-gallery.js (every SVG via notation/cli/cli.js render)",
   "projectionKinds": [
     "chart",

@@ -6,7 +6,7 @@ import {sanitizeIcon,sanitizedLibraries} from './ddn-icon-sanitize.js';
 import Bindings from './ddn-projection-data.js';
 import Extra from './ddn-profile-quality.js';
 'use strict';
-const VERSION='0.7.0';
+const VERSION='0.8.0';
 
 
 const cache=new WeakMap();

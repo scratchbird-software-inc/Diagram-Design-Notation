@@ -38,7 +38,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
 <p class="expected">Only the label of Customer / review changes; keys, references and every identity are untouched.</p>
 <div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
-<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 62f828abde84… → e6d48757d341…), model changes (true), undo restores the shipped bytes (true).</p>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 075a4cf78a77… → eabe0fdeae1f…), model changes (true), undo restores the shipped bytes (true).</p>
 <p class="minor">Pick one relationship and state its cardinality in words in the label, apply, and verify the marks still match your sentence.</p></section>
 <details class="card"><summary>Open the DDN source and edit any definition</summary>
 <div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
@@ -57,7 +57,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/use-cases/03-relational.ddn</td><td>view</td></tr><tr><td>website/examples/use-cases/formats.ddn</td><td>format</td></tr><tr><td>website/examples/use-cases/data/commerce.ddn</td><td>data</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Logical only: datatypes, indexes and platform types are declared in the physical model, not here.</p><ul><li>Do not put a foreign key on both sides.</li><li>A many-to-many without a join table hides a missing entity.</li></ul></section>
 </main>
-<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.8.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../dist/ddn.global.js"></script>
 <script src="../../dist/ddn-graph.js"></script>
 <script src="../../dist/ddn-iso.js"></script>

@@ -29,7 +29,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <main>
 <div class="lesson-title"><p class="eyebrow">Techniques</p><h2>Source versions — the 0.6 dialect and when to upgrade</h2><p class="subtitle">field-guide/sources/version-06.ddn # main</p><span class="pill technique">technique</span></div>
 <div class="explain"><section class="card"><h3>What this diagram shows</h3><p>The first line of every .ddn file declares its source dialect. ddn &quot;0.6&quot; is the 0.8 dialect: it admits view kinds, publication chrome, text fit, markings, provenance and ref: anchors.</p></section><section class="card"><h3>Why use it?</h3><p>The version line is a promise, not a negotiation: a 0.5 file keeps 0.5 semantics forever, and a processor never rewrites the header. Upgrading is a deliberate, per-file decision.</p></section><section class="card"><h3>When is it useful?</h3><p>Stamp ddn &quot;0.6&quot;; when the file itself needs to spell a 0.8 construct. A mixed workspace is normal — each file keeps its own declared version.</p></section></div>
-<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>This file declares 0.6 but uses no 0.8 construct: it renders byte-identically to the same file stamped 0.5 — only the version line differs.</li><li>Using an 0.8 keyword in a 0.5-or-older file fails DDN-V04, naming the construct and the minimum version; nothing is silently accepted.</li><li>The 0.7.0 runtime already implements the 0.8 draft constructs, so a 0.6 file checks and renders today.</li></ol></section>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>This file declares 0.6 but uses no 0.8 construct: it renders byte-identically to the same file stamped 0.5 — only the version line differs.</li><li>Using an 0.8 keyword in a 0.5-or-older file fails DDN-V04, naming the construct and the minimum version; nothing is silently accepted.</li><li>The 0.8.0 runtime implements the 0.8 draft constructs, so a 0.6 file checks and renders today.</li></ol></section>
 <section class="card"><h3>Information to gather first</h3><ul><li>The constructs the file actually needs</li><li>Who consumes the file (older tooling reads 0.5)</li></ul></section></div>
 <h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
 <div class="views"><div><p class="viewer-label">ddn@1 · graph</p><div id="main-view"></div></div></div>
@@ -37,7 +37,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
 <p class="expected">Only the label of Order API / review changes; the version line and every identity are untouched.</p>
 <div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
-<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 7c34f144defe… → a0f7fc658680…), model changes (true), undo restores the shipped bytes (true).</p>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha c4bc8a4f59e3… → cde4eddf0365…), model changes (true), undo restores the shipped bytes (true).</p>
 <p class="minor">Rename one element, apply, then flip the header between &quot;0.5&quot; and &quot;0.6&quot; and confirm the render does not change.</p></section>
 <details class="card"><summary>Open the DDN source and edit any definition</summary>
 <div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
@@ -51,7 +51,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>field-guide/sources/version-06.ddn</td><td>data, view</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Accepted headers are 0.2 through 0.6; anything else (including &quot;0.7&quot;, &quot;0.8&quot; or a missing line) is a parse error. Deprecated spellings keep working with an info diagnostic (DDN-V05).</p><ul><li>Do not re-stamp a file &quot;just in case&quot; — upgrade when a construct demands it, so consumers know what they must parse.</li><li>Do not expect bundling or normalization to rewrite headers; they never do.</li></ul></section>
 </main>
-<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.8.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../dist/ddn.global.js"></script>
 <script src="../../dist/ddn-graph.js"></script>
 <script src="../../dist/ddn-iso.js"></script>

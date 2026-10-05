@@ -1,11 +1,11 @@
-/*! DDN 0.7.0 · GPL-2.0-or-later · modular runtime bundle: ddn-graph — Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. */
+/*! DDN 0.8.0 · GPL-2.0-or-later · modular runtime bundle: ddn-graph — Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. */
 import './ddn-core.js';
 import './ddn-core.js';
 import './ddn-core.js';
 import './ddn-core.js';
 
 var pkg = {
-  "version": "0.7.0"}
+  "version": "0.8.0"}
 ;
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -794,14 +794,14 @@ function render$2(g,p,theme){
   out+=`<g class="ddn-template" data-template="${esc$2(params.join(','))}"><rect x="${f(px)}" y="${f(py)}" width="${f(pw)}" height="${f(ph)}" fill="${fill}" stroke="${ink}" stroke-width="1.2" stroke-dasharray="5 3"/>`+params.map((v,i)=>text(px+9*s,py+16*s+i*15*s,v,11,400)).join('')+'</g>';}
  return out+'</g>';
 }
-const api$7={VERSION:'0.7.0',measure,render: render$2,anchor,polygon,shapeOf,segmentInterior};
+const api$7={VERSION:'0.8.0',measure,render: render$2,anchor,polygon,shapeOf,segmentInterior};
 publishNamespace('DDNShapes',api$7);
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
  * DDN 0.3 deterministic native layout and obstacle-aware orthogonal routing.
  * Bounded search is deliberate: infeasibility produces a diagnostic, never an invisible topology change.
  */
-const VERSION$4='0.7.0',EPS=.01;
+const VERSION$4='0.8.0',EPS=.01;
 const q$3=(x,d=0)=>typeof x==='number'?x:x&&Number.isFinite(x.$quantity)?x.$quantity*({px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96}[x.unit]||1):d;
 const round=x=>Math.round(x*1000)/1000;
 /* B1-008 spacing hints: fixed deterministic factors (D2/D4). Applied to inter-node
@@ -1267,6 +1267,8 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
  const quality=inspect(nodes,routes,labels,routeRecs);
  if(quality.errors.length&&p.quality!=='warn')throw new ErrorClass('DDN218',quality.errors[0]);
  for(const message of quality.errors)diagnostics.push({code:'DDN-LW03',severity:'warning',message});
+ if(quality.labelIssues.length&&p.quality!=='warn')throw new ErrorClass('DDN218',quality.labelIssues[0]);
+ for(const message of quality.labelIssues)diagnostics.push({code:'DDN-LW09',severity:'warning',message});
  return {routes,crossings,labels,diagnostics,quality};
 }
 function routing(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Error,extraObstacles=[]){
@@ -1301,14 +1303,29 @@ function routing(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Error,extr
  if(best){best.strategy=bestAttempt;if(bestAttempt)best.diagnostics.push({code:'DDN-LW04',severity:'info',message:'Deterministic congestion retry selected routing strategy '+bestAttempt});return best;}
  last.attempts=failures;throw last;
 }
-function inspect(nodes,routes,labels=[],routeRecs=null){const errors=[],overlaps=[],through=[],shared=[],masking=[];
+function inspect(nodes,routes,labels=[],routeRecs=null){const errors=[],overlaps=[],through=[],shared=[],masking=[],labelPairs=[],labelNodes=[];
  const recs=routeRecs||routes.map(r=>routeSegRecs(r.points)),nodeBoxes=nodes.map(n=>box(n,1)),labelBoxes=labels.map(l=>box(l,2));
  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){if(!overlap(nodes[i],nodes[j]))continue; /* B1-063: a boundary event attached to its host's border is not an overlap. */ if(nodes[i].x_boundaryOf===nodes[j].id||nodes[j].x_boundaryOf===nodes[i].id)continue; overlaps.push([nodes[i].id,nodes[j].id]);}
  for(let i=0;i<routes.length;i++){const r=routes[i];for(const s of recs[i])for(let k=0;k<nodes.length;k++){const n=nodes[k];if(n.id===r.r?.from.element||n.id===r.r?.to.element)continue;const b=nodeBoxes[k];if(s.maxx<=b.x+EPS||s.minx>=b.x+b.w-EPS||s.maxy<=b.y+EPS||s.miny>=b.y+b.h-EPS)continue;if(segHitsBox(s.ax,s.ay,s.bx,s.by,b))through.push([r.id,n.id]);}}
  for(let i=0;i<routes.length;i++)for(let j=i+1;j<routes.length;j++)if(recs[i].some(s=>recs[j].some(t=>collinearRec(s,t,.1))))shared.push([routes[i].id,routes[j].id]);
  for(let li=0;li<labels.length;li++)for(let i=0;i<routes.length;i++)if(labels[li].id!==routes[i].id&&recs[i].some(s=>segHitsBox(s.ax,s.ay,s.bx,s.by,labelBoxes[li])))masking.push([labels[li].id,routes[i].id]);
+ /* Label collisions (DDN-LW09 family): relationship labels, reference numerals
+  * and callout badges must never overlap each other or crowd unrelated
+  * geometry. Placement already avoids these with margins wherever a bounded
+  * search admits it; anything left here is a defect worth a diagnostic. A
+  * label may still sit beside (mind maps: on) its own two endpoint nodes. */
+ const labelRoute=new Map(routes.map(r=>[r.id,r]));
+ for(let i=0;i<labels.length;i++){
+  for(let j=i+1;j<labels.length;j++)if(overlap(labels[i],labels[j]))labelPairs.push([labels[i].id,labels[j].id]);
+  const lr=labelRoute.get(labels[i].id);
+  for(let k=0;k<nodes.length;k++){if(lr&&(nodes[k].id===lr.r?.from.element||nodes[k].id===lr.r?.to.element))continue;
+   if(overlap(labels[i],nodes[k]))labelNodes.push([labels[i].id,nodes[k].id]);}
+ }
+ const labelIssues=[];
+ if(labelPairs.length)labelIssues.push(labelPairs.length+' colliding relationship label pairs');
+ if(labelNodes.length)labelIssues.push(labelNodes.length+' relationship labels overlap unrelated objects');
  if(overlaps.length)errors.push(overlaps.length+' overlapping object pairs');if(through.length)errors.push(through.length+' unrelated route/object intersections');if(shared.length)errors.push(shared.length+' independent collinear relation pairs');if(masking.length)errors.push(masking.length+' labels mask unrelated routes');
- return {errors,objectOverlaps:overlaps,routeObjectIntersections:through,sharedTracks:shared,labelRouteIntersections:masking};}
+ return {errors,labelIssues,objectOverlaps:overlaps,routeObjectIntersections:through,sharedTracks:shared,labelRouteIntersections:masking,labelPairs,labelNodes};}
 /* Curved connectors are geometry, never relationship types. The orthogonal
  * router first reserves safe corridors. This pass tries a broad cubic branch,
  * then progressively tighter cubic corner transitions. It rejects a drawing
@@ -1425,6 +1442,8 @@ function curvedRouting(result,nodes,profiles,hints,ErrorClass=Error,extraObstacl
  quality.sharedTracks=shared;if(shared.length&&!quality.errors.some(s=>s.includes('collinear')))quality.errors.push(shared.length+' independent shared curved/polyline tracks');
  for(let i=0;i<crossings.length;i++)for(let j=i+1;j<crossings.length;j++)if(Math.hypot(crossings[i].point[0]-crossings[j].point[0],crossings[i].point[1]-crossings[j].point[1])<16)quality.errors.push('Closely spaced curve crossings require additional routing clearance');
  if(quality.errors.length&&p.quality!=='warn')throw new ErrorClass('DDN221',quality.errors[0]);
+ if(quality.labelIssues.length&&p.quality!=='warn')throw new ErrorClass('DDN221',quality.labelIssues[0]);
+ for(const message of quality.labelIssues)result.diagnostics.push({code:'DDN-LW09',severity:'warning',message});
  return {...result,routes,crossings,labels,quality,curveTolerance:CURVE_TOLERANCE};
 }
 
@@ -1436,7 +1455,7 @@ publishNamespace('DDNLayout',api$6);
  * publication and export checks; imports only pin-pattern geometry from Live.
  */
 const Patterns=namespace('DDNPinPlacement');
-const VERSION$3='0.7.0',q$2=api$6.q,clone=x=>JSON.parse(JSON.stringify(x));
+const VERSION$3='0.8.0',q$2=api$6.q,clone=x=>JSON.parse(JSON.stringify(x));
 function fail$1(code,message){throw Object.assign(new Error(message),{code});}
 const center=g=>[g.x+g.w/2,g.y+g.h/2];
 function stateChecked(state,key){
@@ -1779,7 +1798,7 @@ publishNamespace('DDNPacks',api$4);
  * themes, and the patent.legal@1 pack defaults. Later phases (render themes,
  * designer templates) consume these tables; the core parser/validator reads
  * them for the DDN-VP and DDN-MK diagnostic checks. No runtime dependencies. */
-const VERSION$2='0.7.0';
+const VERSION$2='0.8.0';
 /* Vocabulary subsets are named registry entries (chapter 52 §52.2). Membership
  * is prefix-based against resolved kind/verb keywords: an entry 'flow.' admits
  * every 'flow.*' keyword, an entry 'flow' admits the bare verb exactly. */
@@ -2746,7 +2765,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const font=FONT_STACKS[p.style.font]||'DejaVu Sans, Arial, sans-serif';
  const fontClass='ddn-font-'+hash(font);
  const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);
- let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc$1(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc$1(p.publication.caption||'')} ${esc$1(p.style.look)} look; ${esc$1(p.style.theme)} presentation. Crossings are not connections.${legendPlacement==='none'?'':' Relationship details are in the adjacent legend.'}</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
+ let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc$1(ir.view.name)}</title><desc id="ddn-desc">DDN ${DDN$1.VERSION} proposed standard example. ${esc$1(p.publication.caption||'')} ${esc$1(p.style.look)} look; ${esc$1(p.style.theme)} presentation. Crossings are not connections.${legendPlacement==='none'?'':' Relationship details are in the adjacent legend.'}</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
  /* 0.8 (chapter 53 §53.3): page background paints the whole page behind
   * drawing and chrome. Rasters embed as base64 data URIs of the resolved
   * workspace file (the export is self-contained); patterns inline the
@@ -2786,7 +2805,11 @@ function renderInner(ir,registry,glyphDefs='',options={}){
    bandLines(r).forEach((ln,i)=>{s+=text$1(bx,y0+sizePx+i*sizePx*1.35,ln,fmt(sizePx),t.muted,slot==='center'?600:400,`text-anchor="${anchor}"${fontExtra}`);});}
   return s+'</g>';};
  if(headerBand)out+=emitBand(p.publication.header,6,'ddn-pub-header');
- if(titleOn)out+=text$1(margin,headerBand+margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,headerBand+margin+34,titleLines,24,t.ink,28,650)+multilines(margin,headerBand+margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text$1(pageW-margin,headerBand+margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
+ /* 0.8 (chapter 44 amendment): the banner is the engine-version line above the
+  * view title. chrome.banner 'on' shows the engine version, 'off' suppresses
+  * the line, any other string replaces the text. */
+ const bannerText=chrome.banner==='off'?null:(typeof chrome.banner==='string'&&chrome.banner!=='on'?chrome.banner:'DDN / PROPOSED STANDARD / '+DDN$1.VERSION);
+ if(titleOn)out+=(bannerText?text$1(margin,headerBand+margin+5,bannerText,11,t.muted,650):'')+multilines(margin,headerBand+margin+34,titleLines,24,t.ink,28,650)+multilines(margin,headerBand+margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text$1(pageW-margin,headerBand+margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
  out+=`<g id="drawing" transform="translate(${fmt(tx)} ${fmt(ty)}) scale(${fmt(scale)})">${diagram}</g>`;
  if(legendPlacement!=='none'&&legendEntries.length){let lx=legendPlacement==='right'?pageW-margin-legendW:margin,ly=legendPlacement==='right'?headBlock-15+extraHeader:pageH-margin-footerBand-legendHeight;out+=line(lx-12,ly-12,lx-12,legendPlacement==='right'?pageH-margin-footerBand-40:ly+legendHeight,t.rule,1);out+=text$1(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
   for(const entry of legendEntries){const key=p.legend.mode==='numbers'?entry.key:entry.reg.code;if(p.legend.mode==='numbers')out+=`<circle cx="${lx+12}" cy="${ly-4}" r="12" fill="${t.surface}" stroke="${t.ink}"/>`+text$1(lx+12,ly,String(key),11,t.ink,700,'text-anchor="middle"');else out+=text$1(lx,ly,String(key),11,t.muted,650);

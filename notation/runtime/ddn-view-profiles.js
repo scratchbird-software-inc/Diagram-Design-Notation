@@ -6,7 +6,7 @@
  * them for the DDN-VP and DDN-MK diagnostic checks. No runtime dependencies. */
 import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
-const VERSION='0.7.0';
+const VERSION='0.8.0';
 /* Vocabulary subsets are named registry entries (chapter 52 §52.2). Membership
  * is prefix-based against resolved kind/verb keywords: an entry 'flow.' admits
  * every 'flow.*' keyword, an entry 'flow' admits the bare verb exactly. */

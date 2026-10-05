@@ -521,7 +521,7 @@ function lessonHtml(ch) {
 <style>${GUIDE_CSS}</style></head><body>
 <header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.8 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
 ${lessonMain(ch)}
-<footer>DDN 0.7.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<footer>DDN 0.8.0 · field-guide 0.8 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script src="../../notation/dist/ddn-graph.js"></script>
 <script src="../../notation/dist/ddn-iso.js"></script>
@@ -562,7 +562,7 @@ function indexHtml(chapters, meta) {
 <section id="coverage" class="card"><h3>Coverage and honesty</h3>
 <p>Support levels: <span class="pill native">native</span> a directly implemented DDN capability within its declared limits; <span class="pill equivalent">equivalent</span> a constructive DDN teaching template for the same information, no external certification implied; <span class="pill subset">subset</span> an explicitly bounded implementation of a wider family; <span class="pill technique">technique</span> an authoring or publication practice chapter. This edition ships ${meta.chapters} chapters (${meta.byStatus}) — every entry in <code>chapter-plan.json</code> is delivered.</p>
 <p>Registry facts are generated, never hand-written: ${F('registry.totalKinds')} element kinds, ${F('registry.totalRelations')} relation verbs, ${F('profiles.installed')} profiles, ${F('profiles.projectionKinds')} projection kinds, ${F('icons.packs')} icon packs (${F('icons.icons')} icons) — source: standard/submission/facts.json.</p></section>
-</main><footer>DDN 0.7.0 · field-guide 0.8 edition · every chapter's fixture is checked and rendered at build time; every exercise is executed and undone, hashes recorded.</footer>
+</main><footer>DDN 0.8.0 · field-guide 0.8 edition · every chapter's fixture is checked and rendered at build time; every exercise is executed and undone, hashes recorded.</footer>
 <script>document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();for(const a of document.querySelectorAll('#nav-list a'))a.style.display=a.dataset.text.includes(q)?'':'none';});</script>
 </body></html>`;
 }
