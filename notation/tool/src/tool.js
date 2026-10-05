@@ -1062,6 +1062,12 @@ function verbRoutingRow(labelText, keyword) {
 }
 function dim(note) { const p = document.createElement('p'); p.className = 'ddn-dim'; p.textContent = note; return p; }
 
+/* Repopulate a session-preview group's rows without wiping its header (the
+ * appGroup h3 carries the title and the "Session preview" scope pill). */
+function setGroupRows(group, rows) {
+  group.replaceChildren(group.querySelector('h3'), ...rows);
+}
+
 function repopulateOverridePanels() {
   syncOptionInputs();
   syncSourceInputs();
@@ -1085,19 +1091,19 @@ function repopulateOverridePanels() {
       if (v && !verbs.has(v.id)) verbs.set(v.id, v);
     }
   }
-  coloursGroup.replaceChildren(...[...kinds].sort().map(([code, label]) =>
+  setGroupRows(coloursGroup, [...kinds].sort().map(([code, label]) =>
     colourRow(label + ' (' + code + ')', code, state.presentation.kindColours[code],
       (c, col) => { state.presentation.kindColours[c] = col; applyOverrideCss(); },
       c => { delete state.presentation.kindColours[c]; repopulateOverridePanels(); applyOverrideCss(); })));
   if (!kinds.size) coloursGroup.append(dim('none in this view'));
-  verbsGroup.replaceChildren(...[...verbs].sort((a, b) => a[1].code < b[1].code ? -1 : 1).map(([keyword, v]) =>
+  setGroupRows(verbsGroup, [...verbs].sort((a, b) => a[1].code < b[1].code ? -1 : 1).map(([keyword, v]) =>
     colourRow(v.label + ' (' + v.code + ')', v.code, state.presentation.verbColours[v.code],
       (c, col) => { state.presentation.verbColours[c] = col; applyOverrideCss(); },
       c => { delete state.presentation.verbColours[c]; repopulateOverridePanels(); applyOverrideCss(); })));
   if (!verbs.size) verbsGroup.append(dim('none in this view'));
-  typoGroup.replaceChildren(...[...kinds].sort().map(([code, label]) => typographyRow(label + ' (' + code + ')', code)));
+  setGroupRows(typoGroup, [...kinds].sort().map(([code, label]) => typographyRow(label + ' (' + code + ')', code)));
   if (!kinds.size) typoGroup.append(dim('none in this view'));
-  relationsGroup.replaceChildren(...[...verbs].sort((a, b) => a[1].code < b[1].code ? -1 : 1).map(([keyword, v]) => verbRoutingRow(v.label + ' (' + keyword + ')', keyword)));
+  setGroupRows(relationsGroup, [...verbs].sort((a, b) => a[1].code < b[1].code ? -1 : 1).map(([keyword, v]) => verbRoutingRow(v.label + ' (' + keyword + ')', keyword)));
   if (!verbs.size) relationsGroup.append(dim('none in this view'));
   updateSelectedPanel();
 }
@@ -1125,7 +1131,7 @@ function updateSelectedPanel() {
     rows.push(row);
   }
   if (!rows.length) rows.push(dim('click an object or relation in the diagram'));
-  selectedGroup.replaceChildren(...rows);
+  setGroupRows(selectedGroup, rows);
 }
 
 function applyOverrideCss() {

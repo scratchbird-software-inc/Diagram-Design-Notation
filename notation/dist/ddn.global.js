@@ -6180,13 +6180,20 @@
    let pageW=q$2(p.publication.width,1280),pageH=q$2(p.publication.height,800);
    if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:8.5*96;pageH=p.publication.size==='a4'?297*96/25.4:11*96;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
    const margin=q$2(p.publication.margin,32),legendW=legendPlacement==='right'?q$2(p.legend.width,270):0;
+   const pageTitle=p.publication.title||ir.view.name;
+   if(p.publication.size==='content')pageW=Math.max(640,api$a.measure(pageTitle,24,p.style.font,650).width+2*margin,width+2*margin+(legendW?legendW+25:0));
+   /* Legend text wraps to the space the panel actually owns: entries start at
+    * lx+34, so a right panel of legendW holds legendW-42 of text (8px right
+    * inset) and never runs past pageW-margin; a bottom panel spans the drawing
+    * width. The old Math.max(legendW,300) floor let narrow configured widths
+    * wrap 258px lines that escaped the panel and clipped at the page edge. */
+   const legendTextW=legendPlacement==='right'?Math.max(60,legendW-42):Math.max(60,Math.min(258,pageW-2*margin-34));
    let legendEntries=rels.map(r=>{const a=ir.elements.find(n=>n.id===r.from.element),b=ir.elements.find(n=>n.id===r.to.element),reg=DDN$1.relationEntry(registry,r.kind);const fromName=a.name+(r.from.member?'.'+(a.fields.find(f=>f.id===r.from.member)?.name||a.ports.find(f=>f.id===r.from.member)?.name||r.from.member.split('.').at(-1)):'');const toName=b.name+(r.to.member?'.'+(b.fields.find(f=>f.id===r.to.member)?.name||b.ports.find(f=>f.id===r.to.member)?.name||r.to.member.split('.').at(-1)):'');let detail=`${fromName} → ${toName}: ${r.name}`;
     const qualifiers=['enforcement','capture','transport','delivery','scope'];for(const prop of qualifiers)if(r.properties[prop]!==undefined)detail+=`; ${prop}: ${pretty(r.properties[prop])}`;
-    return {id:r.id,key:ir.view.keys[r.id],name:r.name,reg,lines:api$a.wrap(detail,Math.max(legendW,300)-42,12,p.style.font,400)};
+    return {id:r.id,key:ir.view.keys[r.id],name:r.name,reg,lines:api$a.wrap(detail,legendTextW,12,p.style.font,400)};
    });
    const legendHeight=50+legendEntries.reduce((n,e)=>n+Math.max(44,e.lines.length*18+16),0),bottomH=(legendPlacement==='bottom'?legendHeight:0)+footerBand;
-   const pageTitle=p.publication.title||ir.view.name;
-   if(p.publication.size==='content'){pageW=Math.max(640,api$a.measure(pageTitle,24,p.style.font,650).width+2*margin,width+2*margin+(legendW?legendW+25:0));pageH=Math.max(360,height+2*margin+headBlock+bottomH,legendPlacement==='right'?legendHeight+headBlock+60:0);}
+   if(p.publication.size==='content'){pageH=Math.max(360,height+2*margin+headBlock+bottomH,legendPlacement==='right'?legendHeight+headBlock+60:0);}
    const titleLines=titleOn?api$a.wrap(pageTitle,pageW-2*margin,24,p.style.font,650):[],captionLines=titleOn&&p.publication.caption?api$a.wrap(p.publication.caption,pageW-2*margin,13,p.style.font,400):[],extraHeader=titleOn?(titleLines.length-1)*28+(captionLines.length?captionLines.length*18+8:0):0;
    const availW=pageW-2*margin-(legendW?legendW+25:0),availH=pageH-2*margin-(headBlock-10)-bottomH-extraHeader;
    let scale=p.publication.fit==='none'?1:Math.min(1,availW/width,availH/height);

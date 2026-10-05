@@ -407,6 +407,7 @@ function createControl(d, hooks) {
     attachCommit(input, () => hooks.syncOne && hooks.syncOne(d), simpleCommit);
   }
   if (input && d.widget !== 'quantity') head.append(input);
+  root.append(head);
   /* Removing is distinct from blanking: an explicit remove affordance on
    * every removable simple control (blank also removes, per parseDraft). */
   const ctl = {
@@ -432,7 +433,10 @@ function createControl(d, hooks) {
  *         control labeled with its declared write scope (spec 05 scope layers). */
 function renderForm(parent, descriptors, opts) {
   const o = opts || {};
-  parent.replaceChildren();
+  /* Flat mode renders into the caller's own group container (which carries
+   * its header/scope pill) — only the generated controls are replaced. */
+  if (o.flat) for (const n of [...parent.querySelectorAll('.ddn-form-control')]) n.remove();
+  else parent.replaceChildren();
   const controls = [];
   const groups = o.flat ? [{ group: null, descriptors }] : groupDescriptors(descriptors);
   for (const g of groups) {
