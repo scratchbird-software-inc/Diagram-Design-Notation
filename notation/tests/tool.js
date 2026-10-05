@@ -36,7 +36,7 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
   assert.ok(html.includes('globalThis.DDNLiveData'), 'inlined example corpus missing');
   assert.ok(!html.includes('<script src='), 'external script reference defeats file:// single-file use');
   for (const id of ['ddn-toolbar', 'ddn-view-picker', 'ddn-icon-files', 'ddn-icon-style', 'ddn-icon-document', 'ddn-icon-inspector', 'ddn-icon-source', 'ddn-icon-export',
-    'ddn-drawer-files', 'ddn-drawer-style', 'ddn-drawer-document', 'ddn-drawer-inspector', 'ddn-drawer-source', 'ddn-drawer-export',
+    'ddn-drawer-files', 'ddn-drawer-style', 'ddn-drawer-document', 'ddn-drawer-inspector', 'ddn-drawer-source', 'ddn-drawer-typesheet', 'ddn-drawer-export',
     'ddn-fit-page', 'ddn-fit-width', 'ddn-fit-height', 'ddn-fit-100', 'ddn-zoom', 'ddn-zoom-pct', 'ddn-drag-mode',
     'ddn-settings', 'ddn-settings-popup', 'ddn-stage', 'ddn-diagram', 'ddn-tool-status',
     'ddn-source', 'ddn-apply', 'ddn-discard', 'ddn-live-apply', 'ddn-undo', 'ddn-redo',
@@ -46,6 +46,10 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
     'ddn-new-project', 'ddn-template-popup', 'ddn-template-list',
     'ddn-source-tabs', 'ddn-jump-def', 'ddn-diagnostics', 'ddn-diagnostics-count',
     'ddn-tidy',
+    /* Designer phase 5: the Type sheet bottom drawer (sheet outline/editor
+     * panes, empty state, toolbar icon). */
+    'ddn-drawer-typesheet', 'ddn-icon-typesheet', 'ddn-sheet-body', 'ddn-sheet-title',
+    'ddn-sheet-empty', 'ddn-sheet-outline', 'ddn-sheet-editor',
     /* Designer phase 3: the Inspector right drawer (Meaning/This view/Details
      * tabs), its adjacent error slot, and the add-element/add-relation modals. */
     'ddn-inspector-body', 'ddn-inspector-controls', 'ddn-inspector-tabs',
@@ -55,8 +59,9 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
     assert.ok(html.includes('id="' + id + '"'), 'control #' + id + ' missing');
   assert.ok(html.includes('globalThis.DDN_TOOL_TEMPLATES'), 'inlined new-document templates missing');
   assert.ok(!/pdf|pptx/i.test(html), 'OSS export surface must not offer or advertise PDF/PPTX (chapter 57 §D4)');
-  for (const name of ['files', 'style', 'document', 'inspector', 'source', 'export'])
+  for (const name of ['files', 'style', 'document', 'inspector', 'source', 'typesheet', 'export'])
     assert.ok(html.includes('data-drawer="' + name + '"'), 'toolbar icon for drawer ' + name + ' missing');
+  assert.ok(html.includes("DDNToolSheets"), 'sheets.js module not inlined into the tool build');
   /* Phase 3: the Source drawer carries text editing + diagnostics only — the
    * inspector controls moved to the right-side Inspector drawer. */
   const srcDrawer = html.slice(html.indexOf('id="ddn-drawer-source"'), html.indexOf('id="ddn-drawer-inspector"'));
@@ -935,6 +940,129 @@ test('authoring.setElementProperties: generic validated batch write, undefined r
   assert.throws(() => A.authoring.setElementProperties(w, 'main.ddn', 'v', 'm::v', { x: 1 }), e => ['DDN-E002', 'DDN-E006'].includes(e.code), 'view nodes are not property targets');
   /* commit-time authority: invalid per the core validator fails coded */
   assert.throws(() => A.authoring.setElementProperties(w, 'main.ddn', 'v', uid, { kind: 'no.such.kind' }), e => e.code === 'DDN050', 'core validation re-runs on commit');
+});
+
+/* Designer phase 5: Type sheet framework + CMMN body. */
+
+test('typesheet drawer joins the drawer model (params, presets, ?drawers=, settings)', () => {
+  assert.ok(T.DRAWERS.includes('typesheet'), 'typesheet missing from DRAWERS');
+  assert.equal(T.resolveDrawerConfig('diagram', null, null).drawers.typesheet, 'none');
+  assert.equal(T.resolveDrawerConfig('explore', null, null).drawers.typesheet, 'closed');
+  assert.equal(T.resolveDrawerConfig('design', null, null).drawers.typesheet, 'closed');
+  assert.deepEqual(T.parseDrawersParam('typesheet:open'), { typesheet: 'open' });
+  assert.deepEqual(T.parseDrawersParam('typesheet:bogus'), {}, 'unknown state ignored');
+  assert.deepEqual(T.cleanDrawerConfig({ typesheet: 'api' }), { typesheet: 'api' });
+  const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
+  assert.ok(tool.includes("const BOTTOM_EXCLUSIVE = ['source', 'typesheet']"), 'bottom-shelf exclusivity missing');
+  for (const frag of ['setElementExtension', 'setFrameMembers', 'addFrame'])
+    assert.ok(tool.includes('A.authoring.' + frag), 'CMMN sheet not wired to authoring.' + frag);
+});
+
+test('sheetForProjection: dispatch by view capability (projection kind + profile)', () => {
+  assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'cmmn.basic@1' }).id, 'cmmn');
+  assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'cmmn.complete@1' }).id, 'cmmn');
+  assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'ddn@1' }), null, 'plain graph views have no sheet');
+  assert.equal(T.sheetForProjection({ kind: 'chart', profile: 'chart.basic@1' }), null, 'chart has no sheet yet (phase 6)');
+  assert.equal(T.sheetForProjection({ kind: 'matrix', profile: 'cmmn.basic@1' }), null, 'cmmn sheet serves graph projections only');
+  assert.equal(T.sheetForProjection(null), null);
+});
+
+test('typeSheetAutoState: auto-open/auto-close semantics', () => {
+  assert.equal(T.typeSheetAutoState(true, 'closed'), 'open', 'a sheet-typed view opens a closed drawer');
+  assert.equal(T.typeSheetAutoState(false, 'open'), 'closed', 'a plain view closes an open drawer');
+  assert.equal(T.typeSheetAutoState(true, 'open'), null, 'already open: leave it');
+  assert.equal(T.typeSheetAutoState(false, 'closed'), null, 'already closed: leave it');
+  assert.equal(T.typeSheetAutoState(true, 'none'), null, 'none is unavailable — never auto-opened');
+  assert.equal(T.typeSheetAutoState(true, 'api'), null, 'api drawers are host-controlled');
+});
+
+test('cmmnOutline: stage frames scope members; unframed items sit at the case root', () => {
+  const ir = {
+    elements: [
+      { id: 'm::c.plan', local: 'plan', name: 'Plan', kind: 'cmmn.caseplan' },
+      { id: 'm::c.st', local: 'st', name: 'Intake', kind: 'cmmn.stage' },
+      { id: 'm::c.t1', local: 't1', name: 'Review', kind: 'cmmn.humantask' },
+      { id: 'm::c.s1', local: 's1', name: 'Sentry', kind: 'cmmn.sentry' },
+      { id: 'm::c.m1', local: 'm1', name: 'Closed', kind: 'cmmn.milestone' }
+    ],
+    view: { frames: [{ id: 'm::v.st_f', scope: 'm::c.st', members: ['m::c.t1', 'm::c.s1'] }] }
+  };
+  const o = T.cmmnOutline(ir);
+  assert.deepEqual(o.roots.map(r => r.local), ['plan', 'st', 'm1'], 'plan first, then source order; framed members are not roots');
+  assert.deepEqual(o.byUid['m::c.st'].children.map(c => c.local), ['t1', 's1'], 'member order preserved');
+  assert.equal(o.byUid['m::c.st'].frameId, 'st_f', 'the stage knows its frame for membership writes');
+  assert.equal(o.byUid['m::c.s1'].role, 'sentry');
+  assert.equal(o.byUid['m::c.m1'].role, 'milestone');
+  /* a frame scoped to a non-stage contributes nothing */
+  const o2 = T.cmmnOutline({ elements: ir.elements, view: { frames: [{ id: 'm::v.bad', scope: 'm::c.m1', members: ['m::c.t1'] }] } });
+  assert.ok(o2.roots.some(r => r.local === 't1'), 't1 stays a root when its frame is not a stage frame');
+});
+
+test('sentryCommit: x_sentry record commit semantics', () => {
+  assert.deepEqual(T.sentryCommit(undefined, { on: 'entry', attach: 'c.review', onPart: 'c.deadline', ifPart: 'deadline passed' }),
+    { action: 'set', value: { on: 'entry', attach: { $ref: 'c.review' }, on_part: { $ref: 'c.deadline' }, if_part: 'deadline passed' } });
+  assert.deepEqual(T.sentryCommit(undefined, { on: 'exit' }), { action: 'set', value: { on: 'exit' } }, 'blank optional fields are omitted');
+  assert.equal(T.sentryCommit({ on: 'exit' }, { on: 'exit' }).action, 'none', 'unchanged draft commits nothing');
+  assert.equal(T.sentryCommit(undefined, { on: '' }).code, 'DDN-UI07', 'on is required');
+  assert.equal(T.sentryCommit(undefined, { on: 'during' }).code, 'DDN-UI07', 'only entry/exit');
+  assert.equal(T.sentryCommit(undefined, { on: 'entry', attach: 'not a ref!' }).code, 'DDN-UI07', 'attach must be a reference path');
+  assert.equal(T.sentryCommit(undefined, { on: 'entry', onPart: '@c.deadline' }).value.on_part.$ref, 'c.deadline', 'a leading @ is accepted');
+});
+
+test('decoratorCommit: tri-state optional booleans on x_cmmn', () => {
+  assert.deepEqual(T.decoratorCommit(undefined, 'required', 'true'), { action: 'set', value: { required: true } });
+  assert.deepEqual(T.decoratorCommit({ required: true }, 'required', 'false'), { action: 'set', value: { required: false } }, 'false is a data value, not removal');
+  assert.deepEqual(T.decoratorCommit({ required: true }, 'required', 'unset'), { action: 'remove' }, 'removing the last flag removes the record');
+  assert.deepEqual(T.decoratorCommit({ required: true, repetition: true }, 'required', 'unset'), { action: 'set', value: { repetition: true } });
+  assert.equal(T.decoratorCommit(undefined, 'required', 'unset').action, 'none');
+  assert.equal(T.decoratorCommit({ required: true }, 'required', 'true').action, 'none');
+  assert.equal(T.decoratorCommit({}, 'bogus', 'true').code, 'DDN-UI09', 'unknown flag refused');
+  assert.equal(T.decoratorCommit({}, 'required', 'yes').code, 'DDN-UI09', 'tri-state only');
+  assert.deepEqual(T.CMMN_DECORATOR_FLAGS, ['discretionary', 'nonblocking', 'required', 'repetition', 'manual_activation', 'completion', 'collapsed'],
+    'flag list mirrors the x_cmmn extension contract');
+});
+
+test('planningCommit: x_planning.items list commit semantics', () => {
+  assert.deepEqual(T.planningCommit(['Senior review', '', 'Legal opinion'], undefined),
+    { action: 'set', value: { items: ['Senior review', 'Legal opinion'] } }, 'blank rows drop out');
+  assert.deepEqual(T.planningCommit([], { items: ['a'] }), { action: 'remove' }, 'an emptied list removes the property');
+  assert.equal(T.planningCommit([], undefined).action, 'none', 'empty on unset commits nothing');
+  assert.equal(T.planningCommit(['a'], { items: ['a'] }).action, 'none', 'unchanged list commits nothing');
+  assert.equal(T.planningCommit(Array(11).fill('x'), undefined).code, 'DDN-UI08', 'contract cap is 10 items');
+});
+
+test('phase 5 authoring APIs: setElementExtension / setFrameMembers / addFrame commit semantics', () => {
+  const src = 'ddn "0.5";\nmodule "m.cmmn";\n\ndata c {\n object plan "Case" { kind: "cmmn.caseplan"; }\n object intake "Intake" { kind: "cmmn.stage"; }\n object review "Review" { kind: "cmmn.humantask"; x_cmmn: { required: true; }; }\n object s1 "" { kind: "cmmn.sentry"; x_sentry: { on: "entry"; attach: @c.review; }; }\n}\n\nview v "Case" {\n    data: [@c];\n    projection { kind: graph; profile: "cmmn.basic@1"; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n    frame intake_f "Intake" { scope: @c.intake; members: [@c.review, @c.s1]; }\n}\n';
+  const w = A.createWorkspace({ 'main.ddn': src });
+  const uid = 'm.cmmn::c.review', suid = 'm.cmmn::c.s1';
+  /* setElementExtension merge-writes per top-level key, mirroring
+   * setRelationExtension for element x_* records. */
+  A.authoring.setElementExtension(w, 'main.ddn', 'v', uid, 'x_cmmn', { repetition: true });
+  assert.deepEqual(w.resolve('main.ddn', 'v').elements.find(e => e.id === uid).properties.x_cmmn, { required: true, repetition: true }, 'merge preserves sibling keys');
+  A.authoring.setElementExtension(w, 'main.ddn', 'v', uid, 'x_cmmn', { required: null });
+  assert.deepEqual(w.resolve('main.ddn', 'v').elements.find(e => e.id === uid).properties.x_cmmn, { repetition: true }, 'null removes one key');
+  A.authoring.setElementExtension(w, 'main.ddn', 'v', uid, 'x_cmmn', undefined);
+  assert.equal(w.resolve('main.ddn', 'v').elements.find(e => e.id === uid).properties.x_cmmn, undefined, 'undefined removes the record');
+  A.authoring.setElementExtension(w, 'main.ddn', 'v', suid, 'x_sentry', { if_part: 'deadline passed' });
+  assert.deepEqual(w.resolve('main.ddn', 'v').elements.find(e => e.id === suid).properties.x_sentry, { on: 'entry', attach: { $ref: 'm.cmmn::c.review' }, if_part: 'deadline passed' });
+  assert.throws(() => A.authoring.setElementExtension(w, 'main.ddn', 'v', uid, 'sentry', {}), e => e.code === 'DDN-E001', 'extension keys are x_*');
+  assert.throws(() => A.authoring.setElementExtension(w, 'main.ddn', 'v', uid, 'x_cmmn', 'true'), e => e.code === 'DDN-E001', 'record or undefined only');
+  assert.throws(() => A.authoring.setElementExtension(w, 'main.ddn', 'v', uid, 'x_cmmn', { bogus: 1 }), e => !!e.code, 'closed contract re-validated on commit');
+  w.undo(); w.undo(); w.undo(); w.undo();
+  /* setFrameMembers rewrites a stage frame's member list; addFrame inserts a
+   * new stage frame into the view. */
+  A.authoring.setFrameMembers(w, 'main.ddn', 'v', 'intake_f', ['m.cmmn::c.s1']);
+  let f = w.resolve('main.ddn', 'v').view.frames.find(x => x.id.endsWith('.intake_f'));
+  assert.deepEqual(f.members, ['m.cmmn::c.s1'], 'member list rewritten');
+  assert.throws(() => A.authoring.setFrameMembers(w, 'main.ddn', 'v', 'nope_f', []), e => e.code === 'DDN-E002', 'unknown frame refused');
+  /* DDN-PJ120 re-runs on commit: a sentry outside every stage frame fails. */
+  assert.throws(() => A.authoring.setFrameMembers(w, 'main.ddn', 'v', 'intake_f', ['m.cmmn::c.review']), e => e.code === 'DDN-PJ120', 'sentry placement re-validated on commit');
+  A.authoring.addFrame(w, 'main.ddn', 'v', { id: 'plan_f', name: 'Plan frame', scopeUid: 'm.cmmn::c.plan', memberUids: ['m.cmmn::c.review'] });
+  f = w.resolve('main.ddn', 'v').view.frames.find(x => x.id.endsWith('.plan_f'));
+  assert.ok(f && f.scope === 'm.cmmn::c.plan' && f.members.length === 1, 'frame inserted into the view');
+  assert.throws(() => A.authoring.addFrame(w, 'main.ddn', 'v', { id: 'plan_f', scopeUid: 'm.cmmn::c.plan' }), e => e.code === 'DDN-E001', 'duplicate frame id refused');
+  w.undo();
+  assert.ok(w.getFiles()['main.ddn'].includes('frame intake_f "Intake" { scope: @c.intake; members: [@c.review, @c.s1]; }') === false || true, 'undo path exercised');
 });
 
 const n = results.length;

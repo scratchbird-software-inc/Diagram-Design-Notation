@@ -2,7 +2,8 @@
  * One page replacing the end-user viewer (B1-007), the studio gallery and the
  * studio editor: a diagram stage with pan/zoom, an icon toolbar, and pop-in
  * drawers (style & layout right, document right, inspector right, source
- * bottom, files left, export right, animation right) whose open/closed/none/api
+ * bottom, type sheet bottom, files left, export right, animation right) whose
+ * open/closed/none/api
  * state is configurable per drawer via ?drawers=, a settings popup persisted to
  * localStorage, and ?mode= presets (D2-D4). The three right-side working
  * drawers (document, style, inspector) are exclusive — opening one closes the
@@ -39,6 +40,7 @@ const EXP = __req('DDNToolExport', './export.js');
 const BRG = __req('DDNToolBridge', './bridge.js');
 const INSP = __req('DDNToolInspector', './inspector.js');
 const FRM = __req('DDNToolForms', './forms.js');
+const SHT = __req('DDNToolSheets', './sheets.js');
 
 const { DRAWERS, DRAWER_STATES, GEAR_STATES, STORAGE_KEY, MODES, DEFAULT_MODE, parseMode, parseDrawersParam, cleanDrawerConfig, parseToolbarParam, resolveDrawerConfig } = PAR;
 const { computeFitScale, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem, pageDims, pageScaleFloor, artboardProblem } = PGF;
@@ -49,6 +51,7 @@ const { parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, work
 const { FONT_STACKS, ROUTING_VALUES, MIN_TEXT_PX, MAX_FILE_BYTES, MAX_RASTER_PX } = OPT;
 const { cardinalitySentence, cardinalityText, markCardinality, umlMultiplicityOk, groupDetails, mixedValue, multiSelection, usedInViews, ENDPOINT_MARKS, UML_MULTIPLICITY } = INSP;
 const { valueState, evalWhen, widgetForShape, choicesForShape, parseDraft, formatDraft, commitOutcome, commitRecord, descriptorsForTarget, groupDescriptors } = FRM;
+const { sheetForProjection, typeSheetAutoState, cmmnOutline, sentryCommit, decoratorCommit, planningCommit } = SHT;
 
 /* Designer phase 4: the generated property descriptor registry (designer
  * spec 05). Inlined into the single-file build as DDN_FORM_DESCRIPTORS from
@@ -86,7 +89,9 @@ const pure = {
   cardinalitySentence, cardinalityText, markCardinality, umlMultiplicityOk, groupDetails,
   mixedValue, multiSelection, usedInViews, ENDPOINT_MARKS, UML_MULTIPLICITY,
   valueState, evalWhen, widgetForShape, choicesForShape, parseDraft, formatDraft,
-  commitOutcome, commitRecord, descriptorsForTarget, groupDescriptors
+  commitOutcome, commitRecord, descriptorsForTarget, groupDescriptors,
+  sheetForProjection, typeSheetAutoState, cmmnOutline, sentryCommit, decoratorCommit, planningCommit,
+  SHEET_REGISTRY: SHT.SHEETS, CMMN_DECORATOR_FLAGS: SHT.CMMN_DECORATOR_FLAGS
 };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNTool = pure; return; }
@@ -134,6 +139,8 @@ const els = {
   arModal: $('ddn-add-relation-modal'), arName: $('ddn-ar-name'), arId: $('ddn-ar-id'), arFrom: $('ddn-ar-from'),
   arTo: $('ddn-ar-to'), arKind: $('ddn-ar-kind'), arNote: $('ddn-ar-note'), arCreate: $('ddn-ar-create'), arCancel: $('ddn-ar-cancel'),
   designBar: $('ddn-design-bar'), designHint: $('ddn-design-hint'), tidy: $('ddn-tidy'),
+  sheetTitle: $('ddn-sheet-title'), sheetEmpty: $('ddn-sheet-empty'),
+  sheetOutline: $('ddn-sheet-outline'), sheetEditor: $('ddn-sheet-editor'),
   paletteToggle: $('ddn-palette-toggle'), palettePopup: $('ddn-palette-popup'),
   paletteSearch: $('ddn-palette-search'), paletteList: $('ddn-palette-list'),
   paletteHint: $('ddn-palette-hint'), paletteAll: $('ddn-palette-all'), paletteAllWrap: $('ddn-palette-all-wrap'),
@@ -146,14 +153,16 @@ const els = {
   animStep: $('ddn-anim-step'), animSpeed: $('ddn-anim-speed'), animFlow: $('ddn-anim-flow'),
   animFlowField: $('ddn-anim-flow-field'), animStatus: $('ddn-anim-status')
 };
-const drawerEls = { files: $('ddn-drawer-files'), style: $('ddn-drawer-style'), document: $('ddn-drawer-document'), inspector: $('ddn-drawer-inspector'), source: $('ddn-drawer-source'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation') };
-const iconEls = { files: $('ddn-icon-files'), style: $('ddn-icon-style'), document: $('ddn-icon-document'), inspector: $('ddn-icon-inspector'), source: $('ddn-icon-source'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation') };
-const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Document', inspector: 'Inspector', source: 'Source', export: 'Export', animation: 'Animation' };
+const drawerEls = { files: $('ddn-drawer-files'), style: $('ddn-drawer-style'), document: $('ddn-drawer-document'), inspector: $('ddn-drawer-inspector'), source: $('ddn-drawer-source'), typesheet: $('ddn-drawer-typesheet'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation') };
+const iconEls = { files: $('ddn-icon-files'), style: $('ddn-icon-style'), document: $('ddn-icon-document'), inspector: $('ddn-icon-inspector'), source: $('ddn-icon-source'), typesheet: $('ddn-icon-typesheet'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation') };
+const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Document', inspector: 'Inspector', source: 'Source', typesheet: 'Type sheet', export: 'Export', animation: 'Animation' };
 /* Right-side working drawers are exclusive (Document / Style & Layout /
  * Inspector): opening one closes the others. Selection opens the Inspector;
  * deselection returns to Document (phase 3 — the inspector moved out of the
- * Source drawer, which now carries text editing + diagnostics only). */
+ * Source drawer, which now carries text editing + diagnostics only).
+ * Phase 5: the bottom shelf is exclusive too (Source / Type sheet). */
 const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector'];
+const BOTTOM_EXCLUSIVE = ['source', 'typesheet'];
 
 function emptyPresentation() {
   return { options: {}, typography: {}, kindColours: {}, verbColours: {}, objectColours: {}, verbRouting: {}, relationRouting: {}, mindNodes: {} };
@@ -163,7 +172,8 @@ const state = {
   currentFile: '', bufferDirty: false, saved: {}, mergeNext: false, search: '',
   presentation: emptyPresentation(), selected: null, selectedRelation: null, selectedIds: [],
   fit: 'page', config: resolveDrawerConfig(DEFAULT_MODE, null, null),
-  catalogueIndex: -1, overrideStyle: null, panning: false
+  catalogueIndex: -1, overrideStyle: null, panning: false,
+  sheet: null, sheetManual: null
 };
 let timer = null, unsubscribe = null;
 
@@ -265,6 +275,12 @@ function setDrawer(name, st, persist) {
   // Right-side exclusivity: Document and Style & Layout never share the shelf.
   if (st === 'open' && RIGHT_EXCLUSIVE.includes(name))
     for (const other of RIGHT_EXCLUSIVE) if (other !== name && state.config.drawers[other] === 'open') state.config.drawers[other] = 'closed';
+  // Phase 5: the bottom shelf is exclusive too (Source / Type sheet).
+  if (st === 'open' && BOTTOM_EXCLUSIVE.includes(name))
+    for (const other of BOTTOM_EXCLUSIVE) if (other !== name && state.config.drawers[other] === 'open') state.config.drawers[other] = 'closed';
+  /* Phase 5: an explicit user open/close of the Type sheet overrides the
+   * view-driven auto-open/auto-close until the view changes. */
+  if (name === 'typesheet') state.sheetManual = { key: state.entry + '#' + state.view, state: st };
   applyDrawerConfig();
   if (persist) saveStoredDrawers();
 }
@@ -376,6 +392,7 @@ function mount() {
     attachDesign();
     updateDesignBar();
     refreshInspector();
+    refreshTypeSheet();
     refreshAnimation();
     diagnosticsUI();
     status();
@@ -1225,6 +1242,106 @@ function refreshInspector() {
   inspector(id, ir, state.selectedRelation ? ir.relations.find(r => r.id === id) : null);
 }
 
+/* ------------------------------------------------ Type sheet (phase 5)
+ * The bottom Type sheet drawer dispatches its body by view capability
+ * (projection kind + profile) through the sheets.js registry: a view whose
+ * profile has a registered body auto-opens the drawer (and a plain view
+ * auto-closes it) unless the user explicitly opened/closed it for this view.
+ * Every sheet write goes through authoring.js inside one guided, undoable,
+ * core-validated transaction; the sheet re-renders from the fresh IR after
+ * each commit (the ddn-render event drives refreshTypeSheet). */
+function sheetGuided(action, onError) {
+  try {
+    flush();
+    action();
+    showSource(state.currentFile);
+    updateHistory();
+    status('source edit applied — undo restores the previous source');
+    if (onError) onError('');
+    refreshTypeSheet();
+  } catch (e) {
+    const msg = (e && e.code ? e.code + ': ' : '') + (e && e.message || e);
+    if (onError) onError(msg);
+    else fail(msg);
+  }
+}
+function selectFromSheet(uid) {
+  state.selected = uid; state.selectedRelation = null; state.selectedIds = [uid];
+  applyOverrideCss();
+  updateSelectedPanel();
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  if (ir) inspector(uid, ir, null);
+  autoDrawerForSelection(true);
+}
+function refreshTypeSheet() {
+  if (!els.sheetOutline) return;
+  const sheet = sheetForProjection(viewProjection());
+  const has = !!(sheet && SHT.RENDERERS && SHT.RENDERERS[sheet.id]);
+  const key = state.entry + '#' + state.view;
+  if (state.sheetManual && state.sheetManual.key !== key) state.sheetManual = null;
+  if (!state.sheetManual && state.config.icons) {
+    const next = typeSheetAutoState(has, state.config.drawers.typesheet);
+    if (next) { state.config.drawers.typesheet = next; applyDrawerConfig(); }
+  }
+  els.sheetTitle.textContent = has ? sheet.label + ' — view "' + state.view + '"' : '';
+  els.sheetEmpty.hidden = has;
+  els.sheetOutline.hidden = !has;
+  els.sheetEditor.hidden = !has;
+  if (!has) { state.sheet = null; return; }
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  if (!ir) { els.sheetEmpty.hidden = false; els.sheetEmpty.textContent = 'The view does not resolve — fix the source diagnostics first.'; return; }
+  /* Stage-frame helpers shared by the add/reparent hooks. */
+  const frameOfStage = stageUid => ((ir.view && ir.view.frames) || []).find(f => f.scope === stageUid);
+  const frameLocalId = f => f.id.split('.').pop();
+  state.sheet = SHT.RENDERERS[sheet.id]({ outline: els.sheetOutline, editor: els.sheetEditor }, {
+    ir: () => { try { return state.ws.resolve(state.entry, state.view); } catch { return ir; } },
+    guided: sheetGuided,
+    descriptors: () => FORM_DESCRIPTORS,
+    selectedUid: () => state.selected,
+    select: selectFromSheet,
+    candidates: () => ir.elements.map(n => ({ ref: n.ref || n.local, label: n.name, kind: n.kind })),
+    addElement(kind, intoStage) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const id = freshLocalId(cur.elements.map(n => n.id), kind);
+      const label = (A.kinds.find(k => k.id === kind) || {}).label || kind;
+      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: 'New ' + label.toLowerCase(), kind });
+      const after = state.ws.resolve(state.entry, state.view);
+      const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id)) || id;
+      if (kind === 'cmmn.stage') {
+        A.authoring.addFrame(state.ws, state.entry, state.view, { id: id + '_f', name: 'New ' + label.toLowerCase(), scopeUid: uid });
+      } else if (intoStage) {
+        const f = frameOfStage(intoStage);
+        if (f) A.authoring.setFrameMembers(state.ws, state.entry, state.view, frameLocalId(f), [...f.members, uid]);
+      }
+      if (kind === 'cmmn.sentry') A.authoring.setElementExtension(state.ws, state.entry, state.view, uid, 'x_sentry', { on: 'entry' });
+      selectFromSheet(uid);
+    },
+    reparent(uid, stageUid) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      for (const f of (cur.view.frames || [])) {
+        if (f.members.includes(uid)) A.authoring.setFrameMembers(state.ws, state.entry, state.view, frameLocalId(f), f.members.filter(m => m !== uid));
+      }
+      if (stageUid) {
+        const f = frameOfStage(stageUid);
+        if (!f) throw Object.assign(new Error('That stage has no frame in this view.'), { code: 'DDN-E002' });
+        const fresh = state.ws.resolve(state.entry, state.view);
+        const ff = (fresh.view.frames || []).find(x => x.scope === stageUid);
+        A.authoring.setFrameMembers(state.ws, state.entry, state.view, frameLocalId(ff), [...ff.members, uid]);
+      }
+    },
+    removeFromStage(uid) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      for (const f of (cur.view.frames || [])) {
+        if (f.members.includes(uid)) A.authoring.setFrameMembers(state.ws, state.entry, state.view, frameLocalId(f), f.members.filter(m => m !== uid));
+      }
+    },
+    deleteItem(uid) { A.authoring.deleteDefinition(state.ws, state.entry, state.view, uid); },
+    setExtension(uid, key, rec) { A.authoring.setElementExtension(state.ws, state.entry, state.view, uid, key, rec); }
+  });
+}
+
 /* "Used in n views" (spec 03 selection header): every workspace view whose
  * resolved model contains the definition uid. Resolving every view can fail
  * per view (broken sibling view) — those views are skipped, never fatal. */
@@ -1935,7 +2052,16 @@ function buildPalette() {
   els.paletteHint.hidden = !dataBound;
   els.paletteSearch.hidden = dataBound;
   els.paletteAllWrap.hidden = dataBound;
-  if (dataBound) { els.paletteList.replaceChildren(); return; }
+  if (dataBound) {
+    /* Phase 5: when a Type sheet body is registered for this view's type, the
+     * hint names it — the sheet is the structured editing surface for the
+     * records and bindings the palette cannot offer. */
+    const sheet = sheetForProjection(viewProjection());
+    els.paletteHint.textContent = 'This view is generated from data — there is no element palette here. Edit the records and bindings in the Source drawer' +
+      (sheet ? ', or in the ' + sheet.label + ' type sheet (bottom drawer).' : '.');
+    els.paletteList.replaceChildren();
+    return;
+  }
   /* A non-empty search is an escape hatch: it scans every installed kind,
    * beyond the capability filter. */
   const kinds = q

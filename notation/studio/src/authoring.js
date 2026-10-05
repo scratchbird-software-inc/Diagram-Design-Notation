@@ -197,6 +197,54 @@ api.authoring={
   }
   return apply(ws,b,[property(ws.getFiles()[n.source],n,key,next)],entry,view);
  },
+ /* Designer phase 5 (CMMN type sheet, sentry/decorator/planning editors):
+  * merge-write an EXTENSION record property (x_*) on an ELEMENT definition —
+  * x_sentry, x_cmmn, x_planning. The merge is per top-level key so writing
+  * on_part preserves if_part; a sub-record set to null removes that key; the
+  * whole extension set to undefined removes it. Core validation (DDN105
+  * extension contracts, DDN-PJ120 sentry placement) re-runs on commit via
+  * apply(). Mirror of setRelationExtension for element x_* records. */
+ setElementExtension(ws,entry,view,id,key,rec){
+  if(!/^x_[A-Za-z0-9_]+$/.test(key))fail('DDN-E001','Extension properties are x_* records (got '+key+').');
+  if(rec!==undefined&&(rec===null||typeof rec!=='object'||Array.isArray(rec)))fail('DDN-E001','Extension writes need a record, or undefined to remove.');
+  const b=build(ws,entry,view),n=find(b,id);
+  if(n.type!=='object')fail('DDN-E006','setElementExtension targets an element definition.');
+  let next;
+  if(rec===undefined)next=undefined;
+  else{
+   next=clone(n.props[key]||{});
+   for(const [k,v]of Object.entries(rec)){if(v===null)delete next[k];else next[k]=v;}
+  }
+  return apply(ws,b,[property(ws.getFiles()[n.source],n,key,next)],entry,view);
+ },
+ /* Designer phase 5 (CMMN outline reparent/add-to-stage): rewrite the members
+  * list of a view FRAME child (the CMMN stage container). `frameId` is the
+  * frame's local id inside the view; `memberUids` are definition uids, each
+  * serialized as an @ref via refFor. An empty list writes `members: []`.
+  * One validated, undoable transaction; core validation (DDN-PJ120 and frame
+  * rules) re-runs on commit. */
+ setFrameMembers(ws,entry,view,frameId,memberUids){
+  idOK(frameId);
+  if(!Array.isArray(memberUids))fail('DDN-E001','setFrameMembers needs a member uid array.');
+  const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];
+  const node=v.children.find(n=>n.type==='frame'&&n.id===frameId);
+  if(!node)fail('DDN-E002','Frame not found in this view: '+frameId);
+  const members=memberUids.map(uid=>({$ref:refFor(b,v.doc,uid)}));
+  return apply(ws,b,[property(text,node,'members',members)],entry,view);
+ },
+ /* Designer phase 5 (CMMN outline "add stage"): insert a frame child into the
+  * view — `frame id "name" { scope: @stage; members: [...] }`. `scopeUid` is
+  * the stage definition's uid; `memberUids` seed the member list (default
+  * empty). One validated, undoable transaction. */
+ addFrame(ws,entry,view,{id,name,scopeUid,memberUids}){
+  idOK(id);
+  const b=build(ws,entry,view),v=b.viewNode;
+  if(v.children.some(n=>n.type==='frame'&&n.id===id))fail('DDN-E001','Frame identifier already exists in this view: '+id);
+  const scope=refFor(b,v.doc,scopeUid);
+  const members=(memberUids||[]).map(uid=>'@'+refFor(b,v.doc,uid));
+  const code='frame '+id+' '+JSON.stringify(name||id)+' { scope: @'+scope+'; members: ['+members.join(', ')+']; }';
+  return apply(ws,b,[{file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    '+code+'\n'}],entry,view);
+ },
  value,
  setLabel(ws,entry,view,id,label){if(typeof label!=='string'||label.length>4096)fail('DDN-E001','Label must be text up to 4096 characters.');const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[labelEdit(ws.getFiles()[n.source],n,label)],entry,view);},
  setProperty(ws,entry,view,id,key,v){idOK(key);const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[property(ws.getFiles()[n.source],n,key,v)],entry,view);},
