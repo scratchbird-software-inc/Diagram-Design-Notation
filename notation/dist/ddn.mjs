@@ -8479,12 +8479,14 @@ api.authoring={
   * on_part preserves if_part; a sub-record set to null removes that key; the
   * whole extension set to undefined removes it. Core validation (DDN105
   * extension contracts, DDN-PJ120 sentry placement) re-runs on commit via
-  * apply(). Mirror of setRelationExtension for element x_* records. */
+  * apply(). Mirror of setRelationExtension for element x_* records.
+  * Phase 6a: FIELD definitions are accepted too (x_member on UML classifier
+  * members, DDN-PJ154 authority) — same merge semantics. */
  setElementExtension(ws,entry,view,id,key,rec){
   if(!/^x_[A-Za-z0-9_]+$/.test(key))fail('DDN-E001','Extension properties are x_* records (got '+key+').');
   if(rec!==undefined&&(rec===null||typeof rec!=='object'||Array.isArray(rec)))fail('DDN-E001','Extension writes need a record, or undefined to remove.');
   const b=build(ws,entry,view),n=find(b,id);
-  if(n.type!=='object')fail('DDN-E006','setElementExtension targets an element definition.');
+  if(!['object','field'].includes(n.type))fail('DDN-E006','setElementExtension targets an element or field definition.');
   let next;
   if(rec===undefined)next=undefined;
   else {
@@ -8511,15 +8513,112 @@ api.authoring={
  /* Designer phase 5 (CMMN outline "add stage"): insert a frame child into the
   * view — `frame id "name" { scope: @stage; members: [...] }`. `scopeUid` is
   * the stage definition's uid; `memberUids` seed the member list (default
-  * empty). One validated, undoable transaction. */
- addFrame(ws,entry,view,{id,name,scopeUid,memberUids}){
+  * empty). One validated, undoable transaction.
+  * Phase 6a (UML activity lanes / BPMN pools): `scopeUid` is optional — an
+  * unscoped frame is a plain visual group; `at`/`size` ([x, y] / [w, h]
+  * pixel pairs) seed explicit geometry when given. */
+ addFrame(ws,entry,view,{id,name,scopeUid,memberUids,at,size}){
   idOK(id);
   const b=build(ws,entry,view),v=b.viewNode;
   if(v.children.some(n=>n.type==='frame'&&n.id===id))fail('DDN-E001','Frame identifier already exists in this view: '+id);
-  const scope=refFor(b,v.doc,scopeUid);
+  const q=x=>({$quantity:Math.round(x*1000)/1000,unit:'px'});
+  const geom=(key,pair)=>{if(pair===undefined)return '';if(!Array.isArray(pair)||pair.length!==2||!pair.every(Number.isFinite))fail('DDN-E001',key+' is a pair of finite pixel numbers.');return ' '+key+': '+value([q(pair[0]),q(pair[1])])+';';};
+  const scope=scopeUid?refFor(b,v.doc,scopeUid):null;
   const members=(memberUids||[]).map(uid=>'@'+refFor(b,v.doc,uid));
-  const code='frame '+id+' '+JSON.stringify(name||id)+' { scope: @'+scope+'; members: ['+members.join(', ')+']; }';
+  const code='frame '+id+' '+JSON.stringify(name||id)+' {'+(scope?' scope: @'+scope+';':'')+' members: ['+members.join(', ')+'];'+geom('at',at)+geom('size',size)+' }';
   return apply(ws,b,[{file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    '+code+'\n'}],entry,view);
+ },
+ /* Designer phase 6a (UML activity lane editor / frame management): rename a
+  * view frame and/or write its explicit geometry. `name` is the frame label;
+  * `at`/`size` are [x, y] / [w, h] pixel pairs — a pair sets explicit
+  * geometry, null removes the key (the frame auto-fits its members), undefined
+  * leaves it alone. One validated, undoable transaction. */
+ setFrameProperties(ws,entry,view,frameId,{name,at,size}={}){
+  idOK(frameId);
+  const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];
+  const node=v.children.find(n=>n.type==='frame'&&n.id===frameId);
+  if(!node)fail('DDN-E002','Frame not found in this view: '+frameId);
+  const q=x=>({$quantity:Math.round(x*1000)/1000,unit:'px'});
+  const edits=[];
+  if(name!==undefined){if(typeof name!=='string'||!name)fail('DDN-E001','A frame label is non-empty text.');edits.push(labelEdit(text,node,name));}
+  for(const [key,pair]of [['at',at],['size',size]]){
+   if(pair===undefined)continue;
+   if(pair===null){edits.push(property(text,node,key,undefined));continue;}
+   if(!Array.isArray(pair)||pair.length!==2||!pair.every(Number.isFinite))fail('DDN-E001',key+' is a pair of finite pixel numbers (or null to auto-fit).');
+   edits.push(property(text,node,key,[q(pair[0]),q(pair[1])]));
+  }
+  return apply(ws,b,edits.filter(Boolean),entry,view);
+ },
+ /* Designer phase 6a (sequence sheet lifeline/message reorder, ported from the
+  * deprecated prototype's proven moveDeclaration): order in data-bound
+  * projections is DECLARATION order, so a reorder is a span move of the
+  * declaration itself — never a pixel drag and never a view-list rewrite. The
+  * moved declaration's full span (leading line indentation plus the trailing
+  * newline) is cut and inserted immediately before beforeId's span. Both
+  * declarations must live in the same data block: cross-block order is
+  * view-data order, not declaration order (coded rejection, source unchanged).
+  * One validated, undoable transaction; the commit-time build re-validates. */
+ moveDeclaration(ws,entry,view,definitionId,beforeId){
+  if(typeof definitionId!=='string'||!definitionId||typeof beforeId!=='string'||!beforeId)fail('DDN-E001','A declaration move needs a definition id and the declaration it moves before.');
+  if(definitionId===beforeId)fail('DDN-E001','A declaration cannot move before itself.');
+  const b=build(ws,entry,view),from=find(b,definitionId),to=find(b,beforeId);
+  const blockOf=n=>n.doc.module+'::'+n.path.split('.')[0];
+  if(blockOf(from)!==blockOf(to))fail('DDN-E006','Declarations '+definitionId+' and '+beforeId+' are in different data blocks; declaration order is defined per data block. The source is unchanged.');
+  const text=ws.getFiles()[from.source];
+  let start=from.start,end=from.end;
+  const ls=text.lastIndexOf('\n',start-1)+1;
+  if(/^[ \t]*$/.test(text.slice(ls,start)))start=ls;
+  if(text[end]==='\n')end++;
+  const cut=text.slice(start,end),rest=text.slice(0,start)+text.slice(end);
+  const at=to.start>start?to.start-(end-start):to.start;
+  return apply(ws,b,[{file:from.source,start:0,end:text.length,text:rest.slice(0,at)+cut+rest.slice(at)}],entry,view);
+ },
+ /* Designer phase 6a (sequence sheet "add message"): create one shared
+  * uml.message relation in a single transaction — the fixed addRelation body
+  * plus an inline x_return when isReturn is true (x_return is true-or-absent,
+  * never a literal false). Endpoint legality (DDN-PJ110, member_endpoints,
+  * allow_self) is the commit-time build's authority, re-run by apply(). */
+ addSequenceMessage(ws,entry,view,{id,name,from,to,isReturn}){
+  idOK(id);
+  if(isReturn!==undefined&&isReturn!==true)fail('DDN-E001','x_return is written true or omitted, never a literal false.');
+  const b=build(ws,entry,view),v=b.viewNode,src=refFor(b,v.doc,from),dst=refFor(b,v.doc,to);
+  const code='relation '+id+' '+JSON.stringify(name||id)+' @'+src+' -> @'+dst+' { kind: "uml.message";'+(isReturn===true?' x_return: true;':'')+' }';
+  return addLocal(ws,entry,view,code,null);
+ },
+ /* Designer phase 6a (patent numeral editor + renumber pass): batch-write the
+  * `numeral` property on elements — {uid: integer 1..99999, or null to
+  * remove}. Shape is checked here (mirroring DDN-VP05); per-view uniqueness
+  * (DDN-VP06) stays the commit-time build's authority, re-run by apply(), so a
+  * colliding batch commits nothing. One validated, undoable transaction. */
+ setNumerals(ws,entry,view,assignments){
+  if(!assignments||typeof assignments!=='object'||Array.isArray(assignments))fail('DDN-E001','Numeral writes need a {uid: numeral|null} record.');
+  const ids=Object.keys(assignments);
+  if(!ids.length||ids.length>256)fail('DDN-E001','Numeral writes carry 1..256 assignments per transaction.');
+  for(const id of ids){const n=assignments[id];if(n!==null&&(!Number.isSafeInteger(n)||n<1||n>99999))fail('DDN-E001','numeral on '+id+' must be an integer in 1-99999 (or null to remove); found '+JSON.stringify(n)+'.');}
+  const b=build(ws,entry,view),files=ws.getFiles(),edits=[];
+  for(const id of ids){const n=find(b,id);if(n.type!=='object')fail('DDN-E006','Numerals attach to element definitions.');edits.push(property(files[n.source],n,'numeral',assignments[id]===null?undefined:assignments[id]));}
+  return apply(ws,b,edits.filter(Boolean),entry,view);
+ },
+ /* Designer phase 6a (sequence sheet "add existing lifeline"): add one
+  * occurrence of an existing shared definition to a view whose select list is
+  * explicit. A view selecting everything (no select list / 'all') has nothing
+  * to extend — coded rejection, never a silent clone. Adding a definition that
+  * is already selected is a no-op (the current revision answers). */
+ selectInView(ws,entry,view,uid){
+  const b=build(ws,entry,view),v=b.viewNode,sel=v.props.select;
+  if(sel===undefined||sel==='all')fail('DDN-E006','This view selects all data; there is no select list to extend.');
+  if(!Array.isArray(sel))fail('DDN-E006','The view select list is not editable.');
+  if(sel.some(r=>{try{return b.workspace.resolve(r,v).uid===uid;}catch{return false;}}))return ws.revision;
+  return apply(ws,b,[property(ws.getFiles()[v.source],v,'select',[...sel,{$ref:refFor(b,v.doc,uid)}])],entry,view);
+ },
+ /* Designer phase 6a (sheet reference pickers): resolve the @ref path for
+  * targetUid usable at forUid's declaration site (default: the view's own
+  * document) — the same alias-aware path computation every relation/frame
+  * write above uses, so picker records (x_association_class.class, x_nary
+  * ends) serialize with references the commit-time build resolves. */
+ referenceFor(ws,entry,view,targetUid,forUid){
+  const b=build(ws,entry,view),site=forUid?find(b,forUid):b.viewNode;
+  return refFor(b,site.doc||b.viewNode.doc,targetUid);
  },
  value,
  setLabel(ws,entry,view,id,label){if(typeof label!=='string'||label.length>4096)fail('DDN-E001','Label must be text up to 4096 characters.');const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[labelEdit(ws.getFiles()[n.source],n,label)],entry,view);},

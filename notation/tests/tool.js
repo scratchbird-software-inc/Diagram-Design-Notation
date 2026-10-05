@@ -1065,6 +1065,228 @@ test('phase 5 authoring APIs: setElementExtension / setFrameMembers / addFrame c
   assert.ok(w.getFiles()['main.ddn'].includes('frame intake_f "Intake" { scope: @c.intake; members: [@c.review, @c.s1]; }') === false || true, 'undo path exercised');
 });
 
+/* ================= Phase 6a: remaining type sheets ================= */
+
+test('phase 6a sheet registry: dispatch by profile and by view kind', () => {
+  const ids = T.SHEET_REGISTRY.map(s => s.id);
+  for (const id of ['cmmn', 'uml-structure', 'uml-activity', 'uml-sequence', 'bpmn', 'patent']) assert.ok(ids.includes(id), id + ' registered');
+  assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'uml.structure@2' }).id, 'uml-structure');
+  assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'uml.structure@1' }).id, 'uml-structure');
+  assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'uml.activity@1' }).id, 'uml-activity');
+  assert.equal(T.sheetForProjection({ kind: 'sequence', profile: 'uml.sequence@1' }).id, 'uml-sequence');
+  assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'uml.sequence@1' }), null, 'sequence body requires the sequence projection');
+  for (const p of ['bpmn.basic@1', 'bpmn.process@1', 'bpmn.choreography@1', 'bpmn.conversation@1'])
+    assert.equal(T.sheetForProjection({ kind: 'graph', profile: p }).id, 'bpmn', p);
+  /* patent.legal@1 attaches through the view kind, never the projection profile */
+  assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'ddn@1', viewKind: 'patent-figure' }).id, 'patent');
+  assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'ddn@1' }), null, 'plain graph view has no sheet');
+});
+
+test('memberCommit: x_member commit semantics with DDN-PJ154 kind rules', () => {
+  assert.deepEqual(T.memberCommit(undefined, { kind: 'attribute', visibility: 'private', static: true, multiplicity: '0..*', modifiers: ['ordered', 'unique'] }, 'uml.class'),
+    { action: 'set', value: { kind: 'attribute', visibility: 'private', static: true, multiplicity: '0..*', modifiers: ['ordered', 'unique'] } });
+  assert.deepEqual(T.memberCommit(undefined, {}, 'uml.class'), { action: 'none' }, 'all-blank on unset commits nothing');
+  assert.deepEqual(T.memberCommit({ kind: 'attribute' }, {}, 'uml.class'), { action: 'remove' }, 'all-blank removes the record');
+  assert.equal(T.memberCommit({ kind: 'attribute' }, { kind: 'attribute' }, 'uml.class').action, 'none');
+  assert.equal(T.memberCommit(undefined, { kind: 'literal' }, 'uml.class').code, 'DDN-UI10', 'literal is enumeration-only');
+  assert.equal(T.memberCommit(undefined, { kind: 'attribute' }, 'uml.enumeration').code, 'DDN-UI10', 'enumeration members must be literal');
+  assert.deepEqual(T.memberCommit(undefined, { kind: 'literal' }, 'uml.enumeration'), { action: 'set', value: { kind: 'literal' } });
+  assert.equal(T.memberCommit(undefined, { kind: 'field' }, 'uml.class').code, 'DDN-UI10', 'unknown member kind refused');
+  assert.equal(T.memberCommit(undefined, { visibility: 'friend' }, 'uml.class').code, 'DDN-UI10', 'unknown visibility refused');
+  assert.deepEqual(T.memberCommit(undefined, { modifiers: ['ordered', 'ordered', 'bogus'] }, 'uml.class').value.modifiers, ['ordered'], 'modifiers dedupe and drop unknowns');
+});
+
+test('templateCommit / assocClassCommit / naryCommit / gensetCommit', () => {
+  assert.deepEqual(T.templateCommit(['T', ''], undefined), { action: 'set', value: { parameters: ['T'] } });
+  assert.equal(T.templateCommit([], { parameters: ['T'] }).action, 'remove');
+  assert.equal(T.templateCommit(Array(9).fill('x'), undefined).code, 'DDN-UI08', 'parameter cap is 8');
+  assert.deepEqual(T.assocClassCommit(undefined, '@c.detail'), { action: 'set', value: { class: { $ref: 'c.detail' } } });
+  assert.equal(T.assocClassCommit({ class: { $ref: 'c.detail' } }, '').action, 'remove', 'blank removes the attachment');
+  assert.equal(T.assocClassCommit(undefined, 'not a ref!').code, 'DDN-UI13');
+  assert.deepEqual(T.naryCommit(undefined, [{ element: 'c.color', role: 'shade', multiplicity: '0..*' }]),
+    { action: 'set', value: { ends: [{ element: { $ref: 'c.color' }, role: 'shade', multiplicity: '0..*' }] } });
+  assert.equal(T.naryCommit(undefined, [{ element: 'c.a' }, { element: 'c.a' }]).code, 'DDN-UI13', 'duplicate ends rejected');
+  assert.equal(T.naryCommit(undefined, [{ element: 'c.a', multiplicity: 'many' }]).code, 'DDN-UI13', 'UML multiplicity pre-checked');
+  assert.equal(T.naryCommit(undefined, Array(7).fill(0).map((_, i) => ({ element: 'c.e' + i }))).code, 'DDN-UI13', 'at most 6 ends');
+  assert.equal(T.naryCommit(undefined, []).action, 'none');
+  assert.deepEqual(T.gensetCommit(undefined, { name: 'gs', disjoint: 'true', complete: 'unset' }), { action: 'set', value: { name: 'gs', disjoint: true } });
+  assert.equal(T.gensetCommit(undefined, { name: '' }).code, 'DDN-UI13', 'genset name required');
+  assert.equal(T.gensetCommit({ name: 'gs' }, { name: 'gs' }).action, 'none');
+});
+
+test('laneRectCommit + laneMembersPlan: lane geometry and one-lane membership', () => {
+  assert.deepEqual(T.laneRectCommit({ x: '0', y: '10', w: '300', h: '200' }), { action: 'set', at: [0, 10], size: [300, 200] });
+  assert.deepEqual(T.laneRectCommit({ fit: true }), { action: 'fit' });
+  assert.equal(T.laneRectCommit({ x: 0, y: 0, w: 0, h: 10 }).code, 'DDN-UI11', 'positive W/H required');
+  assert.equal(T.laneRectCommit({ x: 'a', y: 0, w: 1, h: 1 }).code, 'DDN-UI11', 'finite numbers required');
+  const frames = [
+    { id: 'm::v.l1', members: ['m::a.t', 'm::a.s'] },
+    { id: 'm::v.l2', members: [] }
+  ];
+  assert.deepEqual(T.laneMembersPlan(frames, 'l2', 'm::a.t', true).writes,
+    [{ frameId: 'l1', members: ['m::a.s'] }, { frameId: 'l2', members: ['m::a.t'] }], 'assign removes from other lanes, then adds to the target');
+  assert.deepEqual(T.laneMembersPlan(frames, 'l1', 'm::a.t', false).writes, [{ frameId: 'l1', members: ['m::a.s'] }], 'unassign removes from the named lane');
+  assert.deepEqual(T.laneMembersPlan(frames, 'l2', 'm::a.s', true).writes, [{ frameId: 'l1', members: ['m::a.t'] }, { frameId: 'l2', members: ['m::a.s'] }]);
+});
+
+test('messageCommit / fragmentCommit: sequence message and fragment semantics', () => {
+  assert.deepEqual(T.messageCommit(undefined, { seq: '1.2', sort: 'asynch', gate: 'source', at: '42' }),
+    { action: 'set', value: { seq: '1.2', sort: 'asynch', gate: 'source', at: 42 } });
+  assert.equal(T.messageCommit(undefined, { sort: 'sync' }).code, 'DDN-UI14', 'sort enum enforced');
+  assert.equal(T.messageCommit(undefined, { at: 'soon' }).code, 'DDN-UI14', 'at must be a finite number');
+  assert.equal(T.messageCommit({ seq: '1' }, {}, undefined).action, 'remove', 'all-blank removes x_message');
+  assert.equal(T.messageCommit({ seq: '1' }, { seq: '1' }).action, 'none');
+  assert.deepEqual(T.fragmentCommit(undefined, { operator: 'alt', operands: [{ guard: 'ok', messages: ['s.m1', 's.m2'] }, { messages: ['s.m3'] }] }),
+    { action: 'set', value: { operator: 'alt', operands: [{ guard: 'ok', messages: [{ $ref: 's.m1' }, { $ref: 's.m2' }] }, { messages: [{ $ref: 's.m3' }] }] } });
+  assert.equal(T.fragmentCommit(undefined, { operator: 'maybe', operands: [{ messages: ['s.m1'] }] }).code, 'DDN-UI15', 'operator enum enforced');
+  assert.equal(T.fragmentCommit(undefined, { operator: 'opt', operands: [{ messages: [] }] }).code, 'DDN-UI15', 'every operand covers a message');
+  assert.equal(T.fragmentCommit(undefined, { operator: 'opt', operands: [] }).code, 'DDN-UI15', 'at least one operand');
+});
+
+test('eventCommit / gatewayCommit / boolPropCommit: BPMN extension semantics', () => {
+  assert.deepEqual(T.eventCommit(undefined, { type: 'timer', position: 'boundary', interrupting: 'true', on: 'b.work' }),
+    { action: 'set', value: { type: 'timer', position: 'boundary', interrupting: true, on: { $ref: 'b.work' } } });
+  assert.deepEqual(T.eventCommit(undefined, { type: 'none' }), { action: 'set', value: { type: 'none' } }, 'blank optionals are omitted');
+  assert.equal(T.eventCommit(undefined, { type: '' }).code, 'DDN-UI16', 'type is required');
+  assert.equal(T.eventCommit(undefined, { type: 'message', position: 'middle' }).code, 'DDN-UI16', 'position enum enforced');
+  assert.equal(T.eventCommit({ type: 'none' }, { type: 'none' }).action, 'none');
+  assert.deepEqual(T.gatewayCommit(undefined, 'parallel'), { action: 'set', value: { type: 'parallel' } });
+  assert.equal(T.gatewayCommit(undefined, 'xor').code, 'DDN-UI16', 'gateway type enum enforced');
+  assert.deepEqual(T.boolPropCommit(undefined, 'true'), { action: 'set', value: true });
+  assert.deepEqual(T.boolPropCommit(true, 'unset'), { action: 'remove' });
+  assert.equal(T.boolPropCommit(true, 'true').action, 'none');
+  assert.equal(T.boolPropCommit(undefined, 'yes').code, 'DDN-UI09');
+});
+
+test('numeralCommit / numeralConflicts / renumberPlan / refAnchorScan: patent sheet model', () => {
+  assert.deepEqual(T.numeralCommit('110', undefined), { action: 'set', value: 110 });
+  assert.deepEqual(T.numeralCommit('', 112), { action: 'remove' });
+  assert.equal(T.numeralCommit('0', undefined).code, 'DDN-UI12');
+  assert.equal(T.numeralCommit('100000', undefined).code, 'DDN-UI12');
+  assert.equal(T.numeralCommit('112', 112).action, 'none');
+  const els = [
+    { id: 'm::p.valve', name: 'Valve', local: 'valve', properties: { numeral: 112 } },
+    { id: 'm::p.pump', name: 'Pump', local: 'pump', properties: { numeral: 112 } },
+    { id: 'm::p.note', name: 'Note', local: 'note', properties: {} }
+  ];
+  assert.deepEqual(T.numeralConflicts(els), [{ numeral: 112, uids: ['m::p.valve', 'm::p.pump'] }], 'duplicate numerals flagged for the DDN-VP06 warning');
+  const plan = T.renumberPlan(els, { start: 10, step: 10 });
+  assert.deepEqual(plan.assignments, { 'm::p.valve': 10, 'm::p.pump': 20 }, 'reading order, numbered elements only');
+  assert.equal(plan.changes.length, 2);
+  assert.equal(plan.skipped, 0);
+  assert.equal(T.renumberPlan(els, { start: 99990, step: 10 }).error.code, 'DDN-UI12', 'the 99999 cap is checked');
+  const sequential = els.map((e, i) => ({ ...e, properties: { numeral: (i + 1) * 10 } }));
+  assert.equal(T.renumberPlan(sequential, { start: 10, step: 10 }).changes.length, 0, 'already-matching numerals commit nothing');
+  const anchors = T.refAnchorScan({ elements: [{ id: 'm::p.n2', name: 'Drain via ref:valve before opening ref:pump.', local: 'n2', properties: { text: 'see ref:valve' } }], relations: [] });
+  assert.deepEqual(anchors.map(a => a.anchor), ['valve', 'pump', 'valve'], 'anchors listed from labels and text');
+});
+
+test('phase 6a authoring APIs: field x_member, association extensions, numerals, lanes, sequence moves', () => {
+  const src = 'ddn "0.5";\nmodule "m.uml";\n\ndata c {\n object order "Order" { kind: "uml.class"; fields { field total; field items; } }\n object line "Line" { kind: "uml.class"; }\n object color "Color" { kind: "uml.enumeration"; fields { field red; } }\n object detail "Detail" { kind: "uml.class"; }\n relation a1 "has" @c.order -> @c.line { kind: "uml.association"; }\n relation g1 "" @c.line -> @c.order { kind: "uml.generalization"; }\n}\n\nview v "Class model" {\n    data: [@c];\n    projection { kind: graph; profile: "uml.structure@2"; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w = A.createWorkspace({ 'main.ddn': src });
+  const uid = l => w.resolve('main.ddn', 'v').elements.find(e => e.local === l).id;
+  /* x_member merge-writes on FIELD definitions (phase 6a widened
+   * setElementExtension beyond objects). */
+  const fieldUid = w.resolve('main.ddn', 'v').elements.find(e => e.local === 'order').fields[0].id;
+  A.authoring.setElementExtension(w, 'main.ddn', 'v', fieldUid, 'x_member', { kind: 'attribute', visibility: 'private' });
+  A.authoring.setElementExtension(w, 'main.ddn', 'v', fieldUid, 'x_member', { modifiers: ['ordered'] });
+  assert.deepEqual(w.resolve('main.ddn', 'v').elements.find(e => e.local === 'order').fields[0].properties.x_member,
+    { kind: 'attribute', visibility: 'private', modifiers: ['ordered'] }, 'per-key merge on a field record');
+  /* PJ154 re-runs on commit: an attribute-kind member on an enumeration fails. */
+  const enumField = w.resolve('main.ddn', 'v').elements.find(e => e.local === 'color').fields[0].id;
+  assert.throws(() => A.authoring.setElementExtension(w, 'main.ddn', 'v', enumField, 'x_member', { kind: 'attribute' }), e => e.code === 'DDN-PJ154');
+  /* referenceFor: alias-aware path for picker writes. */
+  const a1 = w.resolve('main.ddn', 'v').relations.find(r => r.local === 'a1' || r.id.endsWith('.a1')).id;
+  const g1 = w.resolve('main.ddn', 'v').relations.find(r => r.id.endsWith('.g1')).id;
+  A.authoring.setRelationExtension(w, 'main.ddn', 'v', a1, 'x_association_class', { class: { $ref: A.authoring.referenceFor(w, 'main.ddn', 'v', uid('detail'), a1) } });
+  A.authoring.setRelationExtension(w, 'main.ddn', 'v', a1, 'x_nary', { ends: [{ element: { $ref: A.authoring.referenceFor(w, 'main.ddn', 'v', uid('color'), a1) }, role: 'shade', multiplicity: '0..*' }] });
+  A.authoring.setRelationExtension(w, 'main.ddn', 'v', g1, 'x_genset', { name: 'gs', disjoint: true });
+  const rels = w.resolve('main.ddn', 'v').relations;
+  assert.equal(rels.find(r => r.id === a1).properties.x_association_class.class.$ref, uid('detail'), 'association class resolved');
+  assert.equal(rels.find(r => r.id === a1).properties.x_nary.ends[0].element.$ref, uid('color'), 'n-ary end resolved');
+  assert.equal(rels.find(r => r.id === g1).properties.x_genset.name, 'gs');
+  /* PJ150 re-runs on commit: the class cannot be an endpoint of its own association. */
+  assert.throws(() => A.authoring.setRelationExtension(w, 'main.ddn', 'v', a1, 'x_association_class', { class: { $ref: A.authoring.referenceFor(w, 'main.ddn', 'v', uid('order'), a1) } }), e => e.code === 'DDN-PJ150');
+});
+
+test('phase 6a authoring: setNumerals (VP05 shape here, VP06 at commit) and selectInView', () => {
+  const src = 'ddn "0.6";\nmodule "m.pat";\n\ndata p {\n object valve "Shutoff valve" { kind: component; numeral: 112; }\n object pump "Feed pump" { kind: component; numeral: 114; }\n object note2 "Note" { kind: note; }\n}\n\nview v "FIG. 1" {\n    data: [@p];\n    kind: "patent-figure";\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w = A.createWorkspace({ 'p.ddn': src });
+  A.authoring.setNumerals(w, 'p.ddn', 'v', { 'm.pat::p.valve': 110 });
+  assert.equal(w.resolve('p.ddn', 'v').elements.find(e => e.local === 'valve').properties.numeral, 110);
+  assert.throws(() => A.authoring.setNumerals(w, 'p.ddn', 'v', { 'm.pat::p.valve': 114 }), e => e.code === 'DDN-VP06', 'uniqueness re-validated on commit — the batch commits nothing');
+  assert.equal(w.resolve('p.ddn', 'v').elements.find(e => e.local === 'valve').properties.numeral, 110, 'rejected batch left the source unchanged');
+  assert.throws(() => A.authoring.setNumerals(w, 'p.ddn', 'v', { 'm.pat::p.valve': 0 }), e => e.code === 'DDN-E001', 'shape checked before commit');
+  A.authoring.setNumerals(w, 'p.ddn', 'v', { 'm.pat::p.valve': null });
+  assert.equal(w.resolve('p.ddn', 'v').elements.find(e => e.local === 'valve').properties.numeral, undefined, 'null removes the numeral');
+  /* selectInView */
+  const s2 = 'ddn "0.5";\nmodule "m.sel";\n\ndata d {\n object a "A" {}\n object b "B" {}\n}\n\nview v "Sel" {\n    data: [@d];\n    select: [@d.a];\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w2 = A.createWorkspace({ 'd.ddn': s2 });
+  A.authoring.selectInView(w2, 'd.ddn', 'v', 'm.sel::d.b');
+  assert.deepEqual(w2.resolve('d.ddn', 'v').view.selected, ['m.sel::d.a', 'm.sel::d.b'], 'existing definition added as one occurrence');
+  const rev = w2.revision;
+  A.authoring.selectInView(w2, 'd.ddn', 'v', 'm.sel::d.b');
+  assert.equal(w2.revision, rev, 'already-selected is a no-op');
+  assert.throws(() => A.authoring.selectInView(w, 'p.ddn', 'v', 'm.pat::p.pump'), e => e.code === 'DDN-E006', 'a select-everything view has no list to extend');
+});
+
+test('phase 6a authoring: lane frames (addFrame unscoped, setFrameProperties) and sequence declaration moves', () => {
+  const src = 'ddn "0.5";\nmodule "m.act";\n\ndata a {\n object s "Start" { kind: "flow.start"; }\n object t "Do work" { kind: "flow.process"; }\n object e "End" { kind: "flow.end"; }\n relation f1 "" @a.s -> @a.t { kind: "uml.flow"; }\n relation f2 "" @a.t -> @a.e { kind: "uml.flow"; }\n}\n\nview v "Activity" {\n    data: [@a];\n    projection { kind: graph; profile: "uml.activity@1"; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w = A.createWorkspace({ 'a.ddn': src });
+  A.authoring.addFrame(w, 'a.ddn', 'v', { id: 'lane1', name: 'Lane 1', at: [0, 0], size: [300, 200] });
+  A.authoring.setFrameMembers(w, 'a.ddn', 'v', 'lane1', ['m.act::a.t']);
+  A.authoring.setElementExtension(w, 'a.ddn', 'v', 'm.act::a.t', 'x_partition', { lane: 'lane1' });
+  let f = w.resolve('a.ddn', 'v').view.frames[0];
+  assert.equal(f.scope, null, 'an unscoped frame is a plain visual group (lane)');
+  assert.equal(f.members.length, 1);
+  assert.deepEqual(f.size.map(q => q.$quantity), [300, 200], 'explicit geometry seeded');
+  A.authoring.setFrameProperties(w, 'a.ddn', 'v', 'lane1', { name: 'Lane One', at: null, size: null });
+  f = w.resolve('a.ddn', 'v').view.frames[0];
+  assert.equal(f.name, 'Lane One', 'renamed');
+  assert.equal(f.at, undefined, 'null removes explicit geometry (fit to members)');
+  assert.throws(() => A.authoring.setFrameProperties(w, 'a.ddn', 'v', 'nope', { name: 'X' }), e => e.code === 'DDN-E002', 'unknown frame refused');
+  assert.throws(() => A.authoring.setFrameProperties(w, 'a.ddn', 'v', 'lane1', { at: [0] }), e => e.code === 'DDN-E001', 'geometry is a pair');
+  A.authoring.setFrameProperties(w, 'a.ddn', 'v', 'lane1', { at: [10, 20], size: [320, 240] });
+  assert.deepEqual(w.resolve('a.ddn', 'v').view.frames[0].at.map(q => q.$quantity), [10, 20], 'geometry writes commit');
+  /* DDN-PJ114 re-runs on commit: an x_partition lane no frame carries fails. */
+  assert.throws(() => A.authoring.setElementExtension(w, 'a.ddn', 'v', 'm.act::a.s', 'x_partition', { lane: 'ghost' }), e => e.code === 'DDN-PJ114');
+  /* sequence declaration moves */
+  const s3 = 'ddn "0.5";\nmodule "m.seq";\n\ndata s {\n object cli "Client" { kind: application; }\n object srv "Server" { kind: service; }\n relation m1 "request" @s.cli -> @s.srv { kind: "uml.message"; }\n relation m2 "reply" @s.srv -> @s.cli { kind: "uml.message"; x_return: true; }\n}\n\nview v "Sequence" {\n    data: [@s];\n    projection { kind: sequence; profile: "uml.sequence@1"; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w3 = A.createWorkspace({ 's.ddn': s3 });
+  let plan = w3.projectionPlan('s.ddn', 'v');
+  assert.deepEqual(plan.messages.map(m => m.name), ['request', 'reply']);
+  A.authoring.moveDeclaration(w3, 's.ddn', 'v', plan.messages[1].id, plan.messages[0].id);
+  plan = w3.projectionPlan('s.ddn', 'v');
+  assert.deepEqual(plan.messages.map(m => m.name), ['reply', 'request'], 'order is declaration order — a span move, never pixels');
+  assert.equal(plan.messages[0].properties.x_return, true, 'the moved declaration keeps its properties byte-identical');
+  assert.throws(() => A.authoring.moveDeclaration(w3, 's.ddn', 'v', plan.participants[0].id, 'bogus'), e => e.code === 'DDN-E002');
+  assert.throws(() => A.authoring.moveDeclaration(w3, 's.ddn', 'v', plan.messages[0].id, plan.messages[0].id), e => e.code === 'DDN-E001', 'cannot move before itself');
+  /* addSequenceMessage: one transaction, x_return inline, self-message legal. */
+  A.authoring.addSequenceMessage(w3, 's.ddn', 'v', { id: 'm3', name: 'ping', from: 'm.seq::s.cli', to: 'm.seq::s.cli', isReturn: true });
+  plan = w3.projectionPlan('s.ddn', 'v');
+  assert.deepEqual(plan.messages.map(m => m.name), ['reply', 'request', 'ping'], 'appended as the last row');
+  assert.equal(plan.messages[2].properties.x_return, true, 'inline x_return');
+  assert.throws(() => A.authoring.addSequenceMessage(w3, 's.ddn', 'v', { id: 'm4', from: 'm.seq::s.cli', to: 'm.seq::s.missing' }), e => !!e.code, 'unknown endpoint refused');
+});
+
+test('phase 6a authoring: BPMN event/gateway/interrupt writes (PJ175/PJ117 re-checked on commit)', () => {
+  const src = 'ddn "0.5";\nmodule "m.bpmn";\n\ndata b {\n object start "Start" { kind: "flow.start"; x_event: { type: none; }; }\n object work "Work" { kind: "flow.process"; }\n object decide "Ok?" { kind: "flow.gateway"; x_gateway: { type: exclusive; }; }\n object end "End" { kind: "flow.end"; x_event: { type: message; }; }\n relation f1 @b.start -> @b.work { kind: "uml.flow"; }\n relation f2 @b.work -> @b.decide { kind: "uml.flow"; }\n relation f3 @b.decide -> @b.end { kind: "uml.flow"; }\n}\n\nview v "Process" {\n    data: [@b];\n    projection { kind: graph; profile: "bpmn.basic@1"; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w = A.createWorkspace({ 'b.ddn': src });
+  const uid = l => w.resolve('b.ddn', 'v').elements.find(e => e.local === l).id;
+  A.authoring.setElementExtension(w, 'b.ddn', 'v', uid('end'), 'x_event', { type: 'timer', position: 'boundary', interrupting: true, on: { $ref: A.authoring.referenceFor(w, 'b.ddn', 'v', uid('work'), uid('end')) } });
+  assert.deepEqual(w.resolve('b.ddn', 'v').elements.find(e => e.local === 'end').properties.x_event,
+    { type: 'timer', position: 'boundary', interrupting: true, on: { $ref: uid('work') } }, 'boundary event with on reference');
+  /* PJ175: a boundary event without a task/subprocess on-reference fails at commit. */
+  assert.throws(() => A.authoring.setElementExtension(w, 'b.ddn', 'v', uid('start'), 'x_event', { type: 'timer', position: 'boundary' }), e => e.code === 'DDN-PJ175');
+  A.authoring.setElementExtension(w, 'b.ddn', 'v', uid('decide'), 'x_gateway', { type: 'parallel' });
+  assert.equal(w.resolve('b.ddn', 'v').elements.find(e => e.local === 'decide').properties.x_gateway.type, 'parallel');
+  /* PJ117 (bpmn.basic@1): complex is outside the basic set — refused at commit. */
+  assert.throws(() => A.authoring.setElementExtension(w, 'b.ddn', 'v', uid('decide'), 'x_gateway', { type: 'complex' }), e => e.code === 'DDN-PJ117');
+  const f1 = w.resolve('b.ddn', 'v').relations[0].id;
+  A.authoring.setProperty(w, 'b.ddn', 'v', f1, 'x_interrupt', true);
+  assert.equal(w.resolve('b.ddn', 'v').relations[0].properties.x_interrupt, true);
+});
+
 const n = results.length;
 Promise.all(pending).then(() => {
   const ok = results.filter(r => r.pass).length;

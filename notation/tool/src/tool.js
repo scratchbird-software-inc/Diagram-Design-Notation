@@ -51,7 +51,10 @@ const { parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, work
 const { FONT_STACKS, ROUTING_VALUES, MIN_TEXT_PX, MAX_FILE_BYTES, MAX_RASTER_PX } = OPT;
 const { cardinalitySentence, cardinalityText, markCardinality, umlMultiplicityOk, groupDetails, mixedValue, multiSelection, usedInViews, ENDPOINT_MARKS, UML_MULTIPLICITY } = INSP;
 const { valueState, evalWhen, widgetForShape, choicesForShape, parseDraft, formatDraft, commitOutcome, commitRecord, descriptorsForTarget, groupDescriptors } = FRM;
-const { sheetForProjection, typeSheetAutoState, cmmnOutline, sentryCommit, decoratorCommit, planningCommit } = SHT;
+const { sheetForProjection, typeSheetAutoState, cmmnOutline, sentryCommit, decoratorCommit, planningCommit,
+  memberCommit, templateCommit, assocClassCommit, naryCommit, gensetCommit, laneRectCommit, laneMembersPlan,
+  messageCommit, fragmentCommit, eventCommit, gatewayCommit, boolPropCommit,
+  numeralCommit, numeralConflicts, renumberPlan, refAnchorScan } = SHT;
 
 /* Designer phase 4: the generated property descriptor registry (designer
  * spec 05). Inlined into the single-file build as DDN_FORM_DESCRIPTORS from
@@ -91,6 +94,9 @@ const pure = {
   valueState, evalWhen, widgetForShape, choicesForShape, parseDraft, formatDraft,
   commitOutcome, commitRecord, descriptorsForTarget, groupDescriptors,
   sheetForProjection, typeSheetAutoState, cmmnOutline, sentryCommit, decoratorCommit, planningCommit,
+  memberCommit, templateCommit, assocClassCommit, naryCommit, gensetCommit, laneRectCommit, laneMembersPlan,
+  messageCommit, fragmentCommit, eventCommit, gatewayCommit, boolPropCommit,
+  numeralCommit, numeralConflicts, renumberPlan, refAnchorScan,
   SHEET_REGISTRY: SHT.SHEETS, CMMN_DECORATOR_FLAGS: SHT.CMMN_DECORATOR_FLAGS
 };
 if (typeof module === 'object' && module.exports) module.exports = pure;
@@ -1302,11 +1308,11 @@ function refreshTypeSheet() {
     selectedUid: () => state.selected,
     select: selectFromSheet,
     candidates: () => ir.elements.map(n => ({ ref: n.ref || n.local, label: n.name, kind: n.kind })),
-    addElement(kind, intoStage) {
+    addElement(kind, intoStage, opts) {
       const cur = state.ws.resolve(state.entry, state.view);
-      const id = freshLocalId(cur.elements.map(n => n.id), kind);
+      const id = (opts && opts.id) || freshLocalId(cur.elements.map(n => n.id), kind);
       const label = (A.kinds.find(k => k.id === kind) || {}).label || kind;
-      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: 'New ' + label.toLowerCase(), kind });
+      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: (opts && opts.name) || 'New ' + label.toLowerCase(), kind });
       const after = state.ws.resolve(state.entry, state.view);
       const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id)) || id;
       if (kind === 'cmmn.stage') {
@@ -1338,7 +1344,41 @@ function refreshTypeSheet() {
       }
     },
     deleteItem(uid) { A.authoring.deleteDefinition(state.ws, state.entry, state.view, uid); },
-    setExtension(uid, key, rec) { A.authoring.setElementExtension(state.ws, state.entry, state.view, uid, key, rec); }
+    setExtension(uid, key, rec) { A.authoring.setElementExtension(state.ws, state.entry, state.view, uid, key, rec); },
+    /* Phase 6a hooks (UML structure/activity/sequence, BPMN, patent bodies). */
+    setRelationExtension(uid, key, rec) { A.authoring.setRelationExtension(state.ws, state.entry, state.view, uid, key, rec); },
+    setProperty(uid, key, v) { A.authoring.setProperty(state.ws, state.entry, state.view, uid, key, v); },
+    setLabel(uid, label) { A.authoring.setLabel(state.ws, state.entry, state.view, uid, label); },
+    addMember(uid, member) { A.authoring.addField(state.ws, state.entry, state.view, uid, member); },
+    refFor(uid, siteUid) { return A.authoring.referenceFor(state.ws, state.entry, state.view, uid, siteUid); },
+    plan() { return state.ws.projectionPlan(state.entry, state.view); },
+    moveDeclaration(uid, beforeUid) { A.authoring.moveDeclaration(state.ws, state.entry, state.view, uid, beforeUid); },
+    addSequenceMessage(args) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const id = args.id || freshLocalId(cur.relations.map(r => r.id), 'msg');
+      A.authoring.addSequenceMessage(state.ws, state.entry, state.view, { ...args, id });
+    },
+    hide(uid) { A.authoring.hide(state.ws, state.entry, state.view, uid); },
+    selectInView(uid) { A.authoring.selectInView(state.ws, state.entry, state.view, uid); },
+    setNumerals(assignments) { A.authoring.setNumerals(state.ws, state.entry, state.view, assignments); },
+    setFrameProperties(frameId, props) { A.authoring.setFrameProperties(state.ws, state.entry, state.view, frameId, props); },
+    addLane(args) { A.authoring.addFrame(state.ws, state.entry, state.view, args); },
+    /* Lane assignment with the one-lane policy + x_partition maintenance
+     * (uml.activity@1; DDN-PJ114 is re-checked by the commit-time build). */
+    assignToLane(frameLocalId, uid) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const frames = (cur.view.frames || []);
+      const local = f => String(f.id).split('::').pop().split('.').pop();
+      const plan = SHT.laneMembersPlan(frames, frameLocalId, uid, true);
+      for (const w of plan.writes) A.authoring.setFrameMembers(state.ws, state.entry, state.view, w.frameId, w.members);
+      A.authoring.setElementExtension(state.ws, state.entry, state.view, uid, 'x_partition', { lane: frameLocalId });
+    },
+    unassignFromLane(frameLocalId, uid) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const plan = SHT.laneMembersPlan((cur.view.frames || []), frameLocalId, uid, false);
+      for (const w of plan.writes) A.authoring.setFrameMembers(state.ws, state.entry, state.view, w.frameId, w.members);
+      A.authoring.setElementExtension(state.ws, state.entry, state.view, uid, 'x_partition', undefined);
+    }
   });
 }
 
@@ -2031,7 +2071,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && (design.pl
 function viewProjection() {
   try {
     const ir = state.ws.resolve(state.entry, state.view);
-    return (ir && ir.view.profiles.projection) || { kind: 'graph', profile: 'ddn@1' };
+    /* Phase 6a: viewKind joins the dispatch input — patent.legal@1 attaches
+     * through the view kind, never the projection profile. */
+    return { ...((ir && ir.view.profiles.projection) || { kind: 'graph', profile: 'ddn@1' }), viewKind: ir && ir.view.kind };
   } catch { return { kind: 'graph', profile: 'ddn@1' }; }
 }
 function paletteItem(k) {
