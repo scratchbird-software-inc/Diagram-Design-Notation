@@ -18,6 +18,7 @@ try{
  const asset=path.join(__dirname,'../../assets/geo/world-110m.json');
  if(fs.existsSync(asset)){const g=fs.readFileSync(asset,'utf8');Geo.registerGeography('assets/geo/world-110m.json',g);Geo.registerGeography('world-110m',g);}
 }catch{}
+const Capabilities=require('../runtime/ddn-capabilities.js').default;
 function usage(){console.log('Usage: node notation/cli/cli.js check|render|resolve|bundle <entry.ddn> [--view NAME] [--out FILE] [--workspace DIR] [--no-motion] [--content-size] [--publication-date YYYY-MM-DD] [--figure N] [--page N] [--strict-print] [--diagnostics json] [--pack FILE.json]...\n       node notation/cli/cli.js publish <entry.ddn> --set <name> --outdir <dir> [--workspace DIR] [--publication-date YYYY-MM-DD]\n       node notation/cli/cli.js verbs --from <kind> --to <kind> [--json]');}
 function catalogue(){return JSON.parse(fs.readFileSync(path.join(__dirname,'../../standard/registry/catalogue.json'),'utf8'));}
 /* DDN 0.8 (standard ch. 56 §X1): endpoint-legality query. The merged registry
@@ -38,8 +39,9 @@ function verbsCommand(args){
   }
  }
  const source=known.get(from),target=known.get(to);
- const legal=(contract,kinds,kind)=>kinds.includes('*')||kinds.includes(kind);
- const verbs=registry.relationships.filter(r=>{const c=r.endpoint_contract;return c&&legal(c,c.source,source)&&legal(c,c.target,target);}).map(r=>r.keyword);
+ /* Designer phase 2: the legality check itself lives in ddn-capabilities.js —
+  * the live tool's Connect popup filters on the same data. */
+ const verbs=Capabilities.legalVerbs(registry,source,target);
  if(flag('--json'))console.log(JSON.stringify({from,to,verbs}));
  else for(const v of verbs)console.log(v);
 }

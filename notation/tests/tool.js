@@ -603,6 +603,35 @@ test('D3/X4: stableDiagnostic produces the contract shape, line from offset', ()
   assert.ok(!('file' in siteless) && !('line' in siteless), 'site-less diagnostics omit file/line');
 });
 
+/* Designer phase 2: capability-filtered Add palette (pure paletteFilter). */
+test('paletteFilter: unprofiled graph views offer generic kinds only', () => {
+  const kinds = [
+    { id: 'table', allowed_in: ['graph'] },
+    { id: 'object', allowed_in: ['concept.map@1', 'graph', 'mindmap.basic@1'] },
+    { id: 'uml.class', allowed_in: ['graph', 'uml.structure@2'] },
+    { id: 'flow.process', allowed_in: ['flow.basic@1', 'graph'] }
+  ];
+  const out = T.paletteFilter(kinds, { kind: 'graph', profile: 'ddn@1' }, false).map(k => k.id);
+  assert.deepEqual(out, ['table', 'object']);
+  const noProjection = T.paletteFilter(kinds, null, false).map(k => k.id);
+  assert.deepEqual(noProjection, ['table', 'object'], 'absent projection is the unprofiled graph view');
+});
+
+test('paletteFilter: profiled graph views offer only the profile kinds; showAll is the escape hatch', () => {
+  const kinds = [
+    { id: 'table', allowed_in: ['graph'] },
+    { id: 'uml.class', allowed_in: ['graph', 'uml.structure@2'] },
+    { id: 'uml.interface', allowed_in: ['graph', 'uml.structure@2'] },
+    { id: 'flow.process', allowed_in: ['flow.basic@1', 'graph'] }
+  ];
+  const out = T.paletteFilter(kinds, { kind: 'graph', profile: 'uml.structure@2' }, false).map(k => k.id);
+  assert.deepEqual(out, ['uml.class', 'uml.interface']);
+  assert.strictEqual(T.paletteFilter(kinds, { kind: 'graph', profile: 'uml.structure@2' }, true).length, 4, 'showAll bypasses the filter');
+  /* kinds without allowed_in metadata degrade to the graph default. */
+  const legacy = T.paletteFilter([{ id: 'x.custom' }], { kind: 'graph', profile: 'ddn@1' }, false);
+  assert.deepEqual(legacy, [], 'unknown profile kinds stay out of the unprofiled shelf');
+});
+
 const n = results.length;
 Promise.all(pending).then(() => {
   const ok = results.filter(r => r.pass).length;

@@ -1,11 +1,16 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Public SDK on the consolidated DDN 0.3 core. */
 import {optionalNamespace} from '../../runtime/ddn-module-registry.js';
+import Capabilities from '../../runtime/ddn-capabilities.js';
 export function makeLiveAPI(backend,assets){
 'use strict';
 const VERSION='0.8.0',D=backend.DDN,clone=x=>JSON.parse(JSON.stringify(x)),Q=n=>({$quantity:n,unit:'px'});
 /* vm-sandboxed hosts (tests, embedded runtimes) may lack structuredClone. */
 const deepClone=typeof structuredClone==='function'?structuredClone:clone;
 assets={...assets,registry:D.profiles.registry(assets.registry)};
+/* Designer phase 2: per-kind/verb capability metadata (allowed_in), derived
+ * once from the merged registry + profiles catalogue; the palette and the
+ * Connect popup filter on it. */
+const allowedMaps=Capabilities.deriveAllowedIn(assets.registry,D.profiles.catalogue);
 const ENGINES={name:'ddn-consolidated',core:D.VERSION,interaction:backend.Interaction?.VERSION??null,layout:backend.Placement?.VERSION??null,palette:'blue-grey@1'};
 class LiveError extends Error{constructor(code,message){super(message);this.name='DDNLiveError';this.code=code;}}
 const fail=(code,message)=>{throw new LiveError(code,message);};
@@ -383,8 +388,13 @@ const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,
  defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},
  choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,bundle:D.bundle,
  resolvePath,replaceSpans,
- kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),
- relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),
+ kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code,group:Capabilities.paletteGroup(k.keyword),allowed_in:allowedMaps.kinds[k.keyword]||['graph']})),
+ relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code,allowed_in:allowedMaps.relations[k.keyword]||['graph']})),
+ /* Designer phase 2: capability filtering helpers — the palette's allowed_in
+  * tags and the Connect popup's endpoint-pair legality (same endpoint_contract
+  * data as the CLI `verbs` query and the core validator). */
+ capabilities:{viewCapabilities:Capabilities.viewCapabilities,allowedInView:Capabilities.allowedInView,paletteGroups:Capabilities.PALETTE_GROUPS},
+ legalVerbs:(from,to)=>Capabilities.legalVerbs(assets.registry,from,to),
  /* DDN 0.8 (ch. 52/55): registered view kinds, vocabulary subsets, markings
   * and themes — the data table the designer's template picker is keyed to
   * (chapter 57 §D2). Read-only; null in a bundle without ddn-view-profiles. */

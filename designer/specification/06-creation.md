@@ -20,6 +20,8 @@ Dragging a template shows a ghost, applicable drop zones and pin intent. The def
 
 Click-place is a full alternative: choose a template, click a location, then name the item. Keyboard insertion chooses a template from the command menu and either uses automatic placement or opens a position control. Escape cancels. A drop onto an existing node does not replace it. It may offer Add field, Add child, or Create related only when those are explicit valid actions.
 
+> Implementation status (2026-10 redesign, phase 2): in the live unified tool the click-to-place palette is filtered by the active view's capability set (see 03, Left shelf). The Connect gesture's verb picker is filtered by endpoint-pair legality: after source and target are picked, the verb list shows only the relationships whose registry endpoint contracts admit the two endpoint kinds — the same data as the CLI `node notation/cli/cli.js verbs --from <kind> --to <kind>` query and the core DDN102 validator, exposed to the UI as `DDNLive.legalVerbs(from, to)`. When no registered verb admits the pair the full list stays available with an explanatory note; source-authored relations remain permissive regardless.
+
 ## Selection and text
 Click selects an occurrence. Alt/selection-menu resolves a crowded group. Clicking a field selects the field without changing the parent definition selection invisibly. Double-click or Enter enters an HTML text editor aligned to the rendered label. Labels remain plain text; no rich executable markup. Tab follows property controls, not geometry. Selection outlines and hit areas are overlays excluded from export.
 

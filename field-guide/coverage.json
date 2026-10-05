@@ -1320,7 +1320,7 @@
       "projection": "graph",
       "entry": "field-guide/sources/patent-figure.ddn",
       "view": "fig1",
-      "sha256": "79f36bebc4b4a02de646a1d0e3321f11d0c26441f13f609f32c16818b808e20c"
+      "sha256": "dba2271c208f7bbb803584e58f8a75b1be3084e6f65efaeaf8f0bb8101d0f95e"
     },
     {
       "id": "publication-chrome",
@@ -1329,7 +1329,7 @@
       "projection": "graph",
       "entry": "field-guide/sources/publication-chrome.ddn",
       "view": "overview",
-      "sha256": "18e81df7447efedd32428b65de1a257d07e5d8842d5da8a788d5855f1a018999"
+      "sha256": "c7261893a95aaf8ff495896d5ab6ccd836de42e5a7edb58bbdda2377ba76a6a2"
     },
     {
       "id": "text-fit",
@@ -2712,8 +2712,8 @@
     },
     {
       "id": "patent-figures",
-      "before": "79f36bebc4b4a02de646a1d0e3321f11d0c26441f13f609f32c16818b808e20c",
-      "after": "4f5bd00db09030d4eaef2f0ba8f915fdfd26fff4f4d613001f42d915d527622a",
+      "before": "dba2271c208f7bbb803584e58f8a75b1be3084e6f65efaeaf8f0bb8101d0f95e",
+      "after": "e9b24f80a4e2a772f925c1aa045ad15aa05c51dc6bb9c3e61d9afadd8965237c",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2721,8 +2721,8 @@
     },
     {
       "id": "publication-chrome",
-      "before": "18e81df7447efedd32428b65de1a257d07e5d8842d5da8a788d5855f1a018999",
-      "after": "0807f2e7a4d7a9a7600d0bd41f19fb7adc9d28caa0932e817f2a4b8de85224db",
+      "before": "c7261893a95aaf8ff495896d5ab6ccd836de42e5a7edb58bbdda2377ba76a6a2",
+      "after": "98e98e1c597cbee61231378ada5297562566c6913283a55199853825b1188871",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

@@ -43,6 +43,20 @@ const { rasterCanvasSize, exportSvgWithOverrides, hopWindowsFromMarkers, nextHop
 const { parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, workerBridgeError, createRenderBridge } = BRG;
 const { FONT_STACKS, ROUTING_VALUES, MIN_TEXT_PX, MAX_FILE_BYTES, MAX_RASTER_PX } = OPT;
 
+/* Designer phase 2: which kinds the Add palette offers for a view. `kinds` are
+ * DDNLive.kinds entries ({id, label, code, allowed_in}); `projection` is the
+ * view's resolved profiles.projection ({kind, profile}); showAll is the
+ * "all installed" escape hatch. Unprofiled graph views (ddn@1) offer the
+ * generic (unprofiled, no-dot) kinds only; profiled views offer the kinds
+ * whose allowed_in tags include the profile id. Data-bound projections are
+ * decided by the caller (no palette at all there). */
+function paletteFilter(kinds, projection, showAll) {
+  if (showAll) return kinds.slice();
+  const profile = (projection && projection.profile) || 'ddn@1';
+  if (profile === 'ddn@1') return kinds.filter(k => !k.id.includes('.'));
+  return kinds.filter(k => (k.allowed_in && k.allowed_in.length ? k.allowed_in : ['graph']).includes(profile));
+}
+
 const pure = {
   DRAWERS, DRAWER_STATES, GEAR_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig, parseToolbarParam,
   computeFitScale, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, viewListFrom,
@@ -53,7 +67,8 @@ const pure = {
   MIN_TEXT_PX, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem,
   pageDims, pageScaleFloor, artboardProblem,
   hopWindowsFromMarkers, nextHopTime, scaledDuration,
-  parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, createRenderBridge
+  parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, createRenderBridge,
+  paletteFilter
 };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNTool = pure; return; }
@@ -100,8 +115,9 @@ const els = {
   designBar: $('ddn-design-bar'), designHint: $('ddn-design-hint'), tidy: $('ddn-tidy'),
   paletteToggle: $('ddn-palette-toggle'), palettePopup: $('ddn-palette-popup'),
   paletteSearch: $('ddn-palette-search'), paletteList: $('ddn-palette-list'),
+  paletteHint: $('ddn-palette-hint'), paletteAll: $('ddn-palette-all'), paletteAllWrap: $('ddn-palette-all-wrap'),
   connect: $('ddn-connect'), connectPopup: $('ddn-connect-popup'),
-  connectSummary: $('ddn-connect-summary'), connectVerb: $('ddn-connect-verb'),
+  connectSummary: $('ddn-connect-summary'), connectVerb: $('ddn-connect-verb'), connectNote: $('ddn-connect-note'),
   connectName: $('ddn-connect-name'), connectCreate: $('ddn-connect-create'), connectCancel: $('ddn-connect-cancel'),
   exportSvg: $('ddn-export-svg'), exportPng: $('ddn-export-png'), exportWebp: $('ddn-export-webp'), saveExample: $('ddn-save-example'),
   exportMotion: $('ddn-export-motion'),
@@ -1404,23 +1420,61 @@ els.paletteToggle.addEventListener('click', () => {
 els.connect.addEventListener('click', () => { if (design.connecting) cancelDesignGesture(); else armConnect(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && (design.placing || design.connecting || !els.palettePopup.hidden)) cancelDesignGesture(); });
 
-/* Palette: every installed kind with its plate glyph (DDNLive.glyphs.forKind —
- * the 24×24 stroke icons of the notation plates). */
+/* Palette: capability-filtered (designer phase 2). The active view's resolved
+ * projection decides: data-bound projections show no element palette (a hint
+ * points to the Source drawer), unprofiled graph views offer the generic kinds
+ * grouped by the eight palette groups, and profiled graph views offer the
+ * kinds whose allowed_in tags include the profile id. The "all installed"
+ * toggle and a non-empty search are the escape hatches; the DDN source itself
+ * stays permissive — the palette only filters what it offers. */
+function viewProjection() {
+  try {
+    const ir = state.ws.resolve(state.entry, state.view);
+    return (ir && ir.view.profiles.projection) || { kind: 'graph', profile: 'ddn@1' };
+  } catch { return { kind: 'graph', profile: 'ddn@1' }; }
+}
+function paletteItem(k) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'ddn-palette-item';
+  b.title = 'Place a ' + k.label + ' (' + k.id + ') — then click on the diagram';
+  const g = A.glyphs && A.glyphs.forKind(k.id);
+  const icon = document.createElement('span'); icon.className = 'ddn-palette-glyph'; icon.setAttribute('aria-hidden', 'true');
+  if (g) { icon.innerHTML = '<svg viewBox="' + g.viewBox + '">' + g.svg + '</svg>'; } else icon.textContent = k.code;
+  const lab = document.createElement('span'); lab.textContent = k.label;
+  b.append(icon, lab);
+  b.addEventListener('click', () => armPlacement(k.id));
+  return b;
+}
 function buildPalette() {
   const q = els.paletteSearch.value.trim().toLowerCase();
-  const kinds = A.kinds.filter(k => !q || (k.id + ' ' + k.label + ' ' + k.code).toLowerCase().includes(q));
-  els.paletteList.replaceChildren(...kinds.map(k => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'ddn-palette-item';
-    b.title = 'Place a ' + k.label + ' (' + k.id + ') — then click on the diagram';
-    const g = A.glyphs && A.glyphs.forKind(k.id);
-    const icon = document.createElement('span'); icon.className = 'ddn-palette-glyph'; icon.setAttribute('aria-hidden', 'true');
-    if (g) { icon.innerHTML = '<svg viewBox="' + g.viewBox + '">' + g.svg + '</svg>'; } else icon.textContent = k.code;
-    const lab = document.createElement('span'); lab.textContent = k.label;
-    b.append(icon, lab);
-    b.addEventListener('click', () => armPlacement(k.id));
-    return b;
-  }));
+  const dataBound = !graphEditable();
+  els.paletteHint.hidden = !dataBound;
+  els.paletteSearch.hidden = dataBound;
+  els.paletteAllWrap.hidden = dataBound;
+  if (dataBound) { els.paletteList.replaceChildren(); return; }
+  /* A non-empty search is an escape hatch: it scans every installed kind,
+   * beyond the capability filter. */
+  const kinds = q
+    ? A.kinds.filter(k => (k.id + ' ' + k.label + ' ' + k.code).toLowerCase().includes(q))
+    : paletteFilter(A.kinds, viewProjection(), els.paletteAll.checked);
+  const groups = new Map();
+  for (const k of kinds) {
+    const name = k.group || (k.id.includes('.') ? k.id.split('.')[0] : 'Other');
+    if (!groups.has(name)) groups.set(name, []);
+    groups.get(name).push(k);
+  }
+  const order = (A.capabilities && A.capabilities.paletteGroups) || [];
+  const names = [...groups.keys()].sort((a, b) => {
+    const ia = order.indexOf(a), ib = order.indexOf(b);
+    if (ia < 0 && ib < 0) return a.localeCompare(b);
+    if (ia < 0) return 1; if (ib < 0) return -1; return ia - ib;
+  });
+  const out = [];
+  for (const name of names) {
+    const h = document.createElement('div'); h.className = 'ddn-palette-group'; h.textContent = name;
+    out.push(h, ...groups.get(name).map(paletteItem));
+  }
+  els.paletteList.replaceChildren(...out);
   if (!kinds.length) els.paletteList.append(dim('no kind matches “' + els.paletteSearch.value + '”'));
 }
 /* Icon picker (B1-end-user icons): browse every shipped and host-registered
@@ -1476,6 +1530,7 @@ els.iconClear.addEventListener('click', () => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !els.iconPopup.hidden) els.iconPopup.hidden = true; });
 els.paletteSearch.addEventListener('input', buildPalette);
+els.paletteAll.addEventListener('change', buildPalette);
 
 /* World-coordinates of a stage pointer event (same drawing-group inverse CTM
  * as drag-to-pin), or null when the event is outside the rendered drawing. */
@@ -1530,8 +1585,34 @@ function connectElements(from, to, kind, name) {
     });
   });
 }
-els.connectVerb.replaceChildren(...A.relations.map(r => new Option(r.label + ' (' + r.id + ')', r.id)));
-els.connectVerb.value = 'assoc';
+/* Connect verb list: filtered to the verbs whose endpoint contracts admit the
+ * picked source/target kinds (designer phase 2 — the same endpoint_contract
+ * data as the CLI `verbs --from --to` query, via DDNLive.legalVerbs). When no
+ * registered verb admits the pair the full list stays available with a note —
+ * the designer filters offers, it never blocks; source text stays permissive. */
+function elementKindOf(id) {
+  try {
+    const ir = state.ws.resolve(state.entry, state.view);
+    const el = ir.elements.find(n => n.id === id) || ir.elements.find(n => n.id.endsWith('.' + id));
+    return el ? el.kind : null;
+  } catch { return null; }
+}
+function populateConnectVerbs() {
+  const fromKind = elementKindOf(design.from), toKind = elementKindOf(design.to);
+  let ids = fromKind && toKind ? A.legalVerbs(fromKind, toKind) : A.relations.map(r => r.id);
+  let note = '';
+  if (!ids.length) {
+    ids = A.relations.map(r => r.id);
+    note = 'No registered verb admits ' + (fromKind || '?') + ' → ' + (toKind || '?') + ' — showing all installed verbs; the source validator will judge.';
+  }
+  els.connectVerb.replaceChildren(...ids.map(id => {
+    const r = A.relations.find(x => x.id === id) || { label: id };
+    return new Option(r.label + ' (' + id + ')', id);
+  }));
+  els.connectVerb.value = ids.includes('assoc') ? 'assoc' : ids[0];
+  els.connectNote.textContent = note;
+  els.connectNote.hidden = !note;
+}
 els.connectCreate.addEventListener('click', () => {
   const from = design.from, to = design.to, kind = els.connectVerb.value, name = els.connectName.value.trim();
   els.connectPopup.hidden = true;
@@ -1567,6 +1648,7 @@ function attachDesign() {
     design.to = id;
     els.connectSummary.textContent = design.from + ' → ' + design.to;
     els.connectName.value = '';
+    populateConnectVerbs();
     els.connectPopup.hidden = false;
   }, true);
   /* An armed gesture also owns pointer drags: suppress pan and drag-to-pin. */
@@ -1579,10 +1661,12 @@ function updateDesignBar() {
   els.designBar.hidden = !state.config.design;
   if (!state.config.design) return;
   const ok = graphEditable();
-  els.paletteToggle.disabled = !ok;
+  /* The palette button stays live on data-bound projections: the popup shows
+   * the "generated from data" hint instead of kinds (designer phase 2). */
+  els.paletteToggle.disabled = false;
   els.connect.disabled = !ok;
   els.tidy.disabled = !ok;
-  els.paletteToggle.title = ok ? 'Add element — pick a kind, then click on the diagram to place it' : 'Element placement needs a graph projection — this view is data-bound';
+  els.paletteToggle.title = ok ? 'Add element — pick a kind, then click on the diagram to place it' : 'Add element — this view is generated from data; the palette explains where to edit instead';
   els.connect.title = ok ? 'Connect two elements — click source, click target, pick a verb' : 'Connecting needs a graph projection — this view is data-bound';
   els.tidy.title = ok ? 'Tidy — re-run placement and routing; authored pins keep their positions' : 'Tidy needs a graph projection — this view is data-bound';
   if (!ok && (design.placing || design.connecting)) cancelDesignGesture();

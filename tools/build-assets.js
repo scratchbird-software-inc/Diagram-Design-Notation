@@ -17,6 +17,20 @@ const files = {
   'glyphs.js': banner + 'export default ' + json(read('standard/registry/glyph-library.svg').match(/<defs>([\s\S]*?)<\/defs>/)[1]) + ';\n',
   'units.js': banner + 'export default ' + json(JSON.parse(read('standard/registry/units.json'))) + ';\n',
 };
+/* Designer phase 2: palette grouping from the designer kind-ui-map contract
+ * (keyword → palette_group, plus the ordered group list). The capability
+ * derivation (ddn-capabilities.js) reads this asset; the contract JSON stays
+ * the normative source. */
+{
+  const map = JSON.parse(read('designer/contracts/kind-ui-map.json'));
+  const groups = [];
+  const byKind = {};
+  for (const k of map.kinds) {
+    if (!groups.includes(k.palette_group)) groups.push(k.palette_group);
+    byKind[k.kind] = k.palette_group;
+  }
+  files['kind-palette.js'] = banner + 'export default ' + json({ version: map.version, groups, byKind }) + ';\n';
+}
 /* B1-088: icon packs — one ddn-icon-pack@1 file per pack under
  * standard/registry/icon-packs/, ordered by index.json (default-binding
  * precedence). Aggregated here into the runtime asset shape; the packs and

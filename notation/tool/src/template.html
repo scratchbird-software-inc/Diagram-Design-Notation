@@ -114,10 +114,13 @@
         <span id="ddn-design-hint" class="ddn-dim"></span>
         <div id="ddn-palette-popup" hidden>
           <input id="ddn-palette-search" type="search" placeholder="Find a kind…" aria-label="Find an object kind">
+          <p id="ddn-palette-hint" class="ddn-dim" hidden>This view is generated from data — there is no element palette here. Edit the records and bindings in the Source drawer (a dedicated sheet arrives in a later phase).</p>
+          <label id="ddn-palette-all-wrap" class="ddn-palette-all"><input id="ddn-palette-all" type="checkbox"> All installed kinds</label>
           <div id="ddn-palette-list" role="listbox" aria-label="Object kinds"></div>
         </div>
         <div id="ddn-connect-popup" hidden>
           <p id="ddn-connect-summary" class="ddn-dim"></p>
+          <p id="ddn-connect-note" class="ddn-dim" hidden></p>
           <label>Verb <select id="ddn-connect-verb" aria-label="Relationship verb"></select></label>
           <label>Label <input id="ddn-connect-name" type="text" placeholder="optional"></label>
           <div class="ddn-row">

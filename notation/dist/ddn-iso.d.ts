@@ -95,5 +95,13 @@ export interface Glyphs {
  forKind(kind:string):{kind:string;glyph:string;viewBox:string;svg:string;meaning:string}|null;
 }
 export const glyphs:Glyphs;
-declare const DDNLive:{profileCatalogue:typeof profileCatalogue;VERSION:typeof VERSION;runtime:typeof runtime;createWorkspace:typeof createWorkspace;registerWorkspace:typeof registerWorkspace;mount:typeof mount;fromSnapshot:typeof fromSnapshot;authoring:Authoring;io:IO;parse:typeof parse;defaults:Defaults;glyphs:Glyphs;setTextProvider(fn:((text:string,size:number,font:string,weight:number)=>{width:number;ascent?:number;descent?:number})|null,name?:string):void;setTextMetrics(metrics:Record<string,unknown>):void};
+/** Designer phase 2: palette kind choice with capability metadata. */
+export interface KindChoice{id:string;label:string;code:string;group:string|null;allowed_in:string[]}
+export interface VerbChoice{id:string;label:string;code:string;allowed_in:string[]}
+export const kinds:KindChoice[];
+export const relations:VerbChoice[];
+/** Legal verbs for an endpoint kind pair, from the merged registry's endpoint contracts (same data as the CLI verbs query). */
+export function legalVerbs(from:string,to:string):string[];
+export const capabilities:{viewCapabilities(projection:{kind?:string;profile?:string}|null|undefined):string[];allowedInView(allowed:string[],projection:{kind?:string;profile?:string}|null|undefined):boolean;paletteGroups:string[]};
+declare const DDNLive:{profileCatalogue:typeof profileCatalogue;VERSION:typeof VERSION;runtime:typeof runtime;createWorkspace:typeof createWorkspace;registerWorkspace:typeof registerWorkspace;mount:typeof mount;fromSnapshot:typeof fromSnapshot;authoring:Authoring;io:IO;parse:typeof parse;defaults:Defaults;glyphs:Glyphs;kinds:typeof kinds;relations:typeof relations;legalVerbs:typeof legalVerbs;capabilities:typeof capabilities;setTextProvider(fn:((text:string,size:number,font:string,weight:number)=>{width:number;ascent?:number;descent?:number})|null,name?:string):void;setTextMetrics(metrics:Record<string,unknown>):void};
 export default DDNLive;
