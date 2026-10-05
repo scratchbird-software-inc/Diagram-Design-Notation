@@ -138,14 +138,24 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 #ddn-catalogue-search { width: 100%; margin: 4px 0; border: 1px solid #cbd5e3; border-radius: 6px; padding: 5px 8px; }
 #ddn-paste { width: 100%; min-height: 90px; border: 1px solid #cbd5e3; border-radius: 7px; padding: 8px; font: 12px/1.5 ui-monospace, monospace; }
 
-/* appearance drawer */
-#ddn-appearance-body { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: flex-start; }
-.ddn-app-group { min-width: 180px; }
+/* style & layout + document drawers (right side) */
+#ddn-style-body, #ddn-document-body { display: flex; flex-direction: column; gap: 4px; }
+.ddn-app-group { min-width: 0; margin-bottom: 8px; }
 .ddn-app-group h3 { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: #44597a; margin: 0 0 4px; }
+.ddn-scope { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 8px; font-size: 10px; letter-spacing: 0; text-transform: none; font-weight: 400; }
+.ddn-scope-source { background: #e3f0e4; color: #2e6b34; }
+.ddn-scope-session { background: #f4e8d4; color: #885513; }
+.ddn-session-head { margin: 10px 0 2px; padding: 6px 8px; border: 1px dashed #d9c49a; border-radius: 8px; background: #fdf8ee; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: #885513; }
 .ddn-field { display: flex; align-items: center; gap: 6px; font-size: 12px; margin: 3px 0; }
-.ddn-field > span { min-width: 108px; }
-.ddn-field select, .ddn-field input[type="number"] { font-size: 12px; padding: 3px 6px; max-width: 170px; }
+.ddn-field > span { min-width: 108px; flex: none; }
+.ddn-field select, .ddn-field input[type="number"], .ddn-field input[type="text"] { font-size: 12px; padding: 3px 6px; max-width: 170px; }
 .ddn-field input[type="number"] { width: 74px; border: 1px solid #cbd5e3; border-radius: 6px; }
+.ddn-field input[type="text"] { flex: 1; min-width: 0; border: 1px solid #cbd5e3; border-radius: 6px; }
+.ddn-chrome-run { display: flex; align-items: center; gap: 4px; margin: 3px 0; font-size: 12px; }
+.ddn-chrome-run > span { min-width: 46px; flex: none; }
+.ddn-chrome-run input[type="text"] { flex: 1; min-width: 60px; border: 1px solid #cbd5e3; border-radius: 6px; padding: 3px 6px; font-size: 12px; }
+.ddn-chrome-run input[type="number"] { width: 52px; border: 1px solid #cbd5e3; border-radius: 6px; padding: 3px 4px; font-size: 12px; }
+.ddn-chrome-run select { font-size: 12px; padding: 2px 4px; max-width: 92px; }
 .ddn-colour-row { display: flex; align-items: center; gap: 6px; margin: 3px 0; font-size: 12px; }
 .ddn-colour-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ddn-colour-row input[type="color"] { width: 28px; height: 22px; padding: 0; border: 1px solid #cbd5e3; border-radius: 5px; background: #fff; }

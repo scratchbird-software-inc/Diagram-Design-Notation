@@ -43,10 +43,15 @@ The status bar announces the synchronous fallback when it is active.
 ## Layout and drawers
 
 The page is a diagram stage (pointer-drag pan, wheel/slider zoom, fit
-page/width/height/100%) with a slim icon toolbar and four pop-in drawers:
-**appearance** (top), **source** (bottom), **files** (left), **export**
-(right). Drawers overlay the stage, animate open/closed, and close
-independently.
+page/width/height/100%) with a slim icon toolbar and pop-in drawers:
+**files** (left), **style & layout** (right), **document** (right), **source**
+(bottom, with the inspector), **export** (right) and **animation** (right).
+Drawers overlay the stage and animate open/closed. The two right-side working
+drawers are exclusive — opening **document** or **style & layout** closes the
+other — and follow the selection: selecting an element opens the source
+drawer's inspector, deselecting (empty-canvas click or Escape) opens the
+document drawer. (The retired top **appearance** drawer name remains accepted
+as an alias of `style` in `?drawers=` and saved settings.)
 
 Each drawer has four states — `open`, `closed`, `none` (icon hidden,
 unavailable to everyone), `api` (icon hidden, not user-openable, but openable
@@ -60,7 +65,7 @@ ascending precedence:
    plus the editing affordances on by default — see "Design mode" below);
 2. the saved settings in `localStorage` key `ddn-tool-drawers` (gear popup);
 3. the URL parameter, e.g.
-   `?drawers=appearance:closed,source:api,files:none,export:closed`
+   `?drawers=style:closed,source:api,files:none,export:closed`
    (malformed pairs are ignored).
 
 Independently of the mode, `?toolbar=off` hides the whole icon toolbar

@@ -35,8 +35,8 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
   assert.ok(html.includes('Inlined from notation/dist/ddn.global.min.js'), 'inlined minified runtime missing');
   assert.ok(html.includes('globalThis.DDNLiveData'), 'inlined example corpus missing');
   assert.ok(!html.includes('<script src='), 'external script reference defeats file:// single-file use');
-  for (const id of ['ddn-toolbar', 'ddn-view-picker', 'ddn-icon-files', 'ddn-icon-appearance', 'ddn-icon-source', 'ddn-icon-export',
-    'ddn-drawer-files', 'ddn-drawer-appearance', 'ddn-drawer-source', 'ddn-drawer-export',
+  for (const id of ['ddn-toolbar', 'ddn-view-picker', 'ddn-icon-files', 'ddn-icon-style', 'ddn-icon-document', 'ddn-icon-source', 'ddn-icon-export',
+    'ddn-drawer-files', 'ddn-drawer-style', 'ddn-drawer-document', 'ddn-drawer-source', 'ddn-drawer-export',
     'ddn-fit-page', 'ddn-fit-width', 'ddn-fit-height', 'ddn-fit-100', 'ddn-zoom', 'ddn-zoom-pct', 'ddn-drag-mode',
     'ddn-settings', 'ddn-settings-popup', 'ddn-stage', 'ddn-diagram', 'ddn-tool-status',
     'ddn-source', 'ddn-apply', 'ddn-discard', 'ddn-live-apply', 'ddn-undo', 'ddn-redo',
@@ -49,7 +49,7 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
     assert.ok(html.includes('id="' + id + '"'), 'control #' + id + ' missing');
   assert.ok(html.includes('globalThis.DDN_TOOL_TEMPLATES'), 'inlined new-document templates missing');
   assert.ok(!/pdf|pptx/i.test(html), 'OSS export surface must not offer or advertise PDF/PPTX (chapter 57 §D4)');
-  for (const name of ['files', 'appearance', 'source', 'export'])
+  for (const name of ['files', 'style', 'document', 'source', 'export'])
     assert.ok(html.includes('data-drawer="' + name + '"'), 'toolbar icon for drawer ' + name + ' missing');
   assert.ok(html.includes('window.DDNTool') || html.includes('host.DDNTool'), 'DDNTool surface missing');
 });
@@ -57,17 +57,21 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
 /* ---- D3/D4 drawer configuration ---- */
 
 test('parseDrawersParam: valid pairs kept, malformed pairs and unknown names/states ignored', () => {
-  assert.deepEqual(T.parseDrawersParam('appearance:closed,source:none'), { appearance: 'closed', source: 'none' });
+  assert.deepEqual(T.parseDrawersParam('style:closed,source:none'), { style: 'closed', source: 'none' });
   assert.deepEqual(T.parseDrawersParam('files:open'), { files: 'open' });
-  assert.deepEqual(T.parseDrawersParam('appearance'), {});
-  assert.deepEqual(T.parseDrawersParam('appearance:'), {});
+  assert.deepEqual(T.parseDrawersParam('style'), {});
+  assert.deepEqual(T.parseDrawersParam('style:'), {});
   assert.deepEqual(T.parseDrawersParam(':open'), {});
-  assert.deepEqual(T.parseDrawersParam('appearance:open,,source:closed'), { appearance: 'open', source: 'closed' });
-  assert.deepEqual(T.parseDrawersParam('bogus:open,appearance:bogus,export:closed'), { export: 'closed' });
-  assert.deepEqual(T.parseDrawersParam(' appearance : closed , source : none '), { appearance: 'closed', source: 'none' });
-  assert.deepEqual(T.parseDrawersParam('appearance:closed;source:none'), {});
+  assert.deepEqual(T.parseDrawersParam('style:open,,source:closed'), { style: 'open', source: 'closed' });
+  assert.deepEqual(T.parseDrawersParam('bogus:open,style:bogus,export:closed'), { export: 'closed' });
+  assert.deepEqual(T.parseDrawersParam(' style : closed , source : none '), { style: 'closed', source: 'none' });
+  assert.deepEqual(T.parseDrawersParam('style:closed;source:none'), {});
   assert.deepEqual(T.parseDrawersParam(null), {});
   assert.deepEqual(T.parseDrawersParam(''), {});
+  /* Phase 1 split: the retired top `appearance` drawer is a legacy alias of
+   * the right-side `style` drawer, in both ?drawers= and saved settings. */
+  assert.deepEqual(T.parseDrawersParam('appearance:open'), { style: 'open' }, 'legacy appearance alias resolves to style');
+  assert.deepEqual(T.cleanDrawerConfig({ appearance: 'closed', document: 'open' }), { style: 'closed', document: 'open' }, 'alias applies to stored config');
 });
 
 test('mode presets (D4): diagram/view/explore/edit', () => {
@@ -82,7 +86,8 @@ test('mode presets (D4): diagram/view/explore/edit', () => {
   for (const k of T.DRAWERS) assert.equal(e.drawers[k], 'closed');
   const ed = T.resolveDrawerConfig('edit', null, null);
   assert.equal(ed.drawers.source, 'open');
-  assert.equal(ed.drawers.appearance, 'closed');
+  assert.equal(ed.drawers.style, 'closed');
+  assert.equal(ed.drawers.document, 'closed');
   assert.equal(T.parseMode('bogus'), null, 'unknown mode rejected');
   assert.equal(T.resolveDrawerConfig('bogus', null, null).mode, T.DEFAULT_MODE, 'unknown mode falls back to the default');
 });
@@ -96,7 +101,8 @@ test('design mode preset (D1): explore drawers plus source open, design flag, ed
   assert.equal(d.toolbar, true, 'toolbar on');
   assert.equal(d.icons, true, 'drawer icons on');
   assert.equal(d.drawers.source, 'open', 'source drawer open per preset (like edit)');
-  for (const k of ['appearance', 'files', 'export', 'animation']) assert.equal(d.drawers[k], 'closed');
+  assert.equal(d.drawers.document, 'open', 'document drawer open at boot — nothing is selected');
+  for (const k of ['style', 'files', 'export', 'animation']) assert.equal(d.drawers[k], 'closed');
   assert.equal(d.design, true, 'design flag marks the mode for the design bar + drag-pin default');
   for (const m of ['diagram', 'view', 'explore', 'edit'])
     assert.equal(T.resolveDrawerConfig(m, null, null).design, false, m + ' is not design');
@@ -126,7 +132,7 @@ test('precedence (D3): URL param > localStorage > preset defaults', () => {
   const c = T.resolveDrawerConfig('explore', { files: 'open', source: 'open' }, 'source:none,bogus:x');
   assert.equal(c.drawers.source, 'none', 'URL beats localStorage');
   assert.equal(c.drawers.files, 'open', 'localStorage beats preset');
-  assert.equal(c.drawers.appearance, 'closed', 'preset default fills the rest');
+  assert.equal(c.drawers.style, 'closed', 'preset default fills the rest');
   const dirty = T.resolveDrawerConfig('explore', { files: 'wide-open', source: 3, export: 'open' }, null);
   assert.equal(dirty.drawers.files, 'closed', 'malformed stored state ignored');
   assert.equal(dirty.drawers.source, 'closed', 'non-string stored state ignored');
@@ -144,7 +150,7 @@ test('api drawer state (D1): accepted in URL param, localStorage config, and DRA
   assert.equal(c.drawers.source, 'api', 'api accepted from localStorage');
   assert.equal(c.drawers.files, 'api');
   assert.equal(c.drawers.export, 'api', 'api accepted from URL');
-  assert.equal(c.drawers.appearance, 'closed', 'preset default fills the rest');
+  assert.equal(c.drawers.style, 'closed', 'preset default fills the rest');
 });
 
 test('?toolbar=off (D2): hides the toolbar without touching drawer states; beats preset toolbar:true', () => {
@@ -323,18 +329,30 @@ test('D1 mapping: every override-channel option in the live API has a drawer con
   /* relationRouting is not a single select: the "Routing per relation class"
    * panel drives it per verb (verbRouting) and per clicked relation
    * (relationRouting), merged in toolOverrides. mindNodes is gesture-driven:
-   * the on-canvas resize handle (attachMindmap) writes it — no drawer. */
+   * the on-canvas resize handle (attachMindmap) writes it — no drawer.
+   * Phase 1 drawer split: publication/chrome/legend settings (page, width,
+   * height, legend, title, footer, labels → legend.mode) moved to the
+   * source-backed Document drawer form (DOCUMENT_FIELDS), which writes the
+   * view block directly instead of previewing via the session channel. */
   const panelCovered = { relationRouting: 'state.presentation.verbRouting', mindNodes: 'state.presentation.mindNodes' };
-  const missing = keys.filter(k => !covered.has(k) && !(k in panelCovered && tool.includes(panelCovered[k])));
+  const documentCovered = ['page', 'width', 'height', 'legend', 'title', 'footer'];
+  const missing = keys.filter(k => !covered.has(k) && !documentCovered.includes(k) && !(k in panelCovered && tool.includes(panelCovered[k])));
   assert.deepEqual(missing, [], 'override options without a drawer control');
+  assert.ok(tool.includes('ddn-document-body'), 'document drawer body missing');
 });
 
-test('D1: the B1-045 Chrome section and the animation drawer are present', () => {
+test('D1: the Document drawer form covers chrome/publication/legend and the animation drawer is present', () => {
   const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
-  for (const frag of ["['Chrome', [", "['Legend', 'legend'", "['Title block', 'title'", "['Footer line', 'footer'", "['Field depth (levels)', 'depth'"])
-    assert.ok(tool.includes(frag), 'missing ' + frag);
+  const docBlock = /const DOCUMENT_FIELDS = \[([\s\S]*?)\n\];/.exec(tool)[1];
+  const covered = new Set([...docBlock.matchAll(/'(\w+)'/g)].map(m => m[1]));
+  for (const key of ['size', 'width', 'height', 'margin', 'orientation', 'fit', 'minimum_text', 'overflow', 'embedding_scale', 'title', 'caption',
+    'legend', 'footer', 'banner', 'mode', 'placement', 'description', 'source', 'generator'])
+    assert.ok(covered.has(key), 'Document form missing ' + key);
+  for (const frag of ['setViewChrome', 'setViewProperties', 'setViewProfile'])
+    assert.ok(tool.includes('A.authoring.' + frag), 'Document drawer not wired to authoring.' + frag);
   const html = fs.readFileSync(path.join(root, 'notation/tool/ddn-tool.html'), 'utf8');
-  for (const id of ['ddn-drawer-animation', 'ddn-icon-animation', 'ddn-anim-toggle', 'ddn-anim-step', 'ddn-anim-speed', 'ddn-anim-flow'])
+  for (const id of ['ddn-drawer-animation', 'ddn-icon-animation', 'ddn-anim-toggle', 'ddn-anim-step', 'ddn-anim-speed', 'ddn-anim-flow',
+    'ddn-drawer-document', 'ddn-icon-document', 'ddn-document-body', 'ddn-drawer-style', 'ddn-icon-style', 'ddn-style-body'])
     assert.ok(html.includes('id="' + id + '"'), '#' + id + ' missing from the built tool');
 });
 

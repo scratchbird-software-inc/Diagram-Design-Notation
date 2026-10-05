@@ -208,12 +208,16 @@ test('tool: toolOverrides passes chrome options through; choices expose As autho
   for (const k of ['legend', 'title', 'footer']) assert.deepEqual(A.choices[k], ['source', 'on', 'off'], k + ' choices');
 });
 
-test('tool: appearance drawer declares a Chrome section wired to the override keys', () => {
+test('tool: the Document drawer declares a Chrome section wired to the source profile keys', () => {
   const src = fs.readFileSync(path.join(root, 'tool/src/tool.js'), 'utf8');
-  const i = src.indexOf("['Chrome', [");
-  assert.ok(i > 0, 'Chrome section missing from SELECT_FIELDS');
-  const section = src.slice(i, src.indexOf(']]', i));
-  for (const key of ["'legend'", "'title'", "'footer'"]) assert.ok(section.includes(key), 'Chrome section missing ' + key);
+  const i = src.indexOf("['Chrome', 'chrome', [");
+  assert.ok(i > 0, 'Chrome section missing from DOCUMENT_FIELDS (document drawer)');
+  const section = src.slice(i, i + 600);
+  for (const key of ["'legend'", "'title'", "'footer'", "'banner'"]) assert.ok(section.includes(key), 'Chrome section missing ' + key);
+  /* The session override channel (legend/title/footer presentation options)
+   * remains available to hosts via setOptions; the drawer now writes chrome
+   * straight into the source view block via authoring.setViewProfile. */
+  assert.ok(src.includes('setViewProfile'), 'document drawer not wired to authoring.setViewProfile');
 });
 
 console.log(JSON.stringify({ tests: results.length, failures: results.filter(r => !r.pass).length }));

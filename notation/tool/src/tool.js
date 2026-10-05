@@ -1,9 +1,13 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. B1-027 unified DDN diagram tool.
  * One page replacing the end-user viewer (B1-007), the studio gallery and the
  * studio editor: a diagram stage with pan/zoom, an icon toolbar, and pop-in
- * drawers (appearance top, source bottom, files left, export right) whose
- * open/closed/none/api state is configurable per drawer via ?drawers=, a settings
- * popup persisted to localStorage, and ?mode= presets (D2-D4).
+ * drawers (style & layout right, document right, source bottom, files left,
+ * export right, animation right) whose open/closed/none/api state is
+ * configurable per drawer via ?drawers=, a settings popup persisted to
+ * localStorage, and ?mode= presets (D2-D4). The two right-side working drawers
+ * (document, style) are exclusive — opening one closes the other — and follow
+ * the selection: selecting an element opens the Source-drawer inspector,
+ * deselecting (empty-canvas click / Escape) opens the Document drawer.
  *
  * Rendering reuses the shared <ddn-example> component (DDNLive.mount) as the
  * render nucleus (D1); its internal chrome is hidden with an injected shadow
@@ -72,7 +76,7 @@ const els = {
   dragMode: $('ddn-drag-mode'), settings: $('ddn-settings'), settingsPopup: $('ddn-settings-popup'),
   settingsRows: $('ddn-settings-rows'),
   stage: $('ddn-stage'), diagramHost: $('ddn-diagram'), hint: $('ddn-hint'), status: $('ddn-tool-status'),
-  appearanceBody: $('ddn-appearance-body'),
+  styleBody: $('ddn-style-body'), documentBody: $('ddn-document-body'),
   open: $('ddn-open'), openFolder: $('ddn-open-folder'), merge: $('ddn-merge'), newProject: $('ddn-new-project'),
   templatePopup: $('ddn-template-popup'), templateList: $('ddn-template-list'),
   fileInput: $('ddn-file-input'), folderInput: $('ddn-folder-input'),
@@ -105,8 +109,13 @@ const els = {
   animStep: $('ddn-anim-step'), animSpeed: $('ddn-anim-speed'), animFlow: $('ddn-anim-flow'),
   animFlowField: $('ddn-anim-flow-field'), animStatus: $('ddn-anim-status')
 };
-const drawerEls = { files: $('ddn-drawer-files'), appearance: $('ddn-drawer-appearance'), source: $('ddn-drawer-source'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation') };
-const iconEls = { files: $('ddn-icon-files'), appearance: $('ddn-icon-appearance'), source: $('ddn-icon-source'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation') };
+const drawerEls = { files: $('ddn-drawer-files'), style: $('ddn-drawer-style'), document: $('ddn-drawer-document'), source: $('ddn-drawer-source'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation') };
+const iconEls = { files: $('ddn-icon-files'), style: $('ddn-icon-style'), document: $('ddn-icon-document'), source: $('ddn-icon-source'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation') };
+const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Document', source: 'Source', export: 'Export', animation: 'Animation' };
+/* Right-side working drawers are exclusive (Document / Style & Layout /
+ * Inspector): opening one closes the other. The inspector still lives in the
+ * Source drawer (bottom) until phase 3, so selection drives it via `source`. */
+const RIGHT_EXCLUSIVE = ['document', 'style'];
 
 function emptyPresentation() {
   return { options: {}, typography: {}, kindColours: {}, verbColours: {}, objectColours: {}, verbRouting: {}, relationRouting: {}, mindNodes: {} };
@@ -215,8 +224,28 @@ function setDrawer(name, st, persist) {
   if (st === 'open' && state.config.drawers[name] === 'none')
     throw new Error('drawer "' + name + '" is none — unavailable; set it to closed or api before opening');
   state.config.drawers[name] = st;
+  // Right-side exclusivity: Document and Style & Layout never share the shelf.
+  if (st === 'open' && RIGHT_EXCLUSIVE.includes(name))
+    for (const other of RIGHT_EXCLUSIVE) if (other !== name && state.config.drawers[other] === 'open') state.config.drawers[other] = 'closed';
   applyDrawerConfig();
   if (persist) saveStoredDrawers();
+}
+/* Selection-driven drawer switching: selecting an element opens the Source
+ * drawer (the inspector's phase-1 home) and closes the right-side working
+ * drawers; deselecting opens the Document drawer. Only acts when drawer icons
+ * are on and the target drawer is available (not none). */
+function autoDrawerForSelection(hasSelection) {
+  if (!state.config.icons) return;
+  const avail = n => state.config.drawers[n] !== 'none';
+  if (hasSelection) {
+    if (avail('source')) state.config.drawers.source = 'open';
+    for (const n of RIGHT_EXCLUSIVE) if (state.config.drawers[n] === 'open') state.config.drawers[n] = 'closed';
+  } else {
+    if (avail('document')) state.config.drawers.document = 'open';
+    if (state.config.drawers.style === 'open') state.config.drawers.style = 'closed';
+  }
+  applyDrawerConfig();
+  saveStoredDrawers();
 }
 function setToolbar(visible) {
   state.config.toolbar = !!visible;
@@ -238,7 +267,7 @@ for (const name of DRAWERS) {
 function settingsUI() {
   els.settingsRows.replaceChildren(...DRAWERS.map(name => {
     const label = document.createElement('label');
-    label.textContent = name[0].toUpperCase() + name.slice(1) + ' drawer ';
+    label.textContent = (DRAWER_LABELS[name] || name) + ' drawer ';
     const sel = document.createElement('select');
     sel.dataset.drawer = name;
     for (const st of GEAR_STATES) sel.add(new Option(st, st));
@@ -324,6 +353,7 @@ function mount() {
   diagram.addEventListener('ddn-navigate', e => guard(() => navigate(e.detail.view || e.detail.target)));
   diagram.ready.catch(() => {});
   attachPan();
+  attachDeselect();
 }
 
 function sceneSize() {
@@ -396,14 +426,30 @@ function attachPan() {
   stage.addEventListener('click', e => { if (state.panning) { e.stopPropagation(); e.preventDefault(); } }, true);
 }
 
-/* ------------------------------------------------ appearance drawer */
+/* ------------------------------------------------ style & layout drawer (right)
+ * Two write scopes, labeled on every group header:
+ *  · "View override (saved to source)" — the session render-override channel
+ *    (diagram.setOptions; serialized into the source view block by
+ *    overrideProfileWrites on getSource({includeAppearance:true})) PLUS the
+ *    source-backed controls for the style/layout/display keys the override
+ *    channel cannot express (SOURCE_FIELDS), which write straight into the
+ *    source via authoring.setViewProfile, one undoable transaction per change.
+ *  · "Session preview (not saved)" — the CSS-overlay cosmetics (per-kind and
+ *    per-relation-class colours, per-kind typography, per-selection routing)
+ *    under their own header at the bottom. */
 
-function appGroup(title) {
+function appGroup(parent, title, scope) {
   const g = document.createElement('div');
   g.className = 'ddn-app-group';
   const h = document.createElement('h3'); h.textContent = title;
+  if (scope) {
+    const s = document.createElement('span');
+    s.className = 'ddn-scope ' + (scope === 'session' ? 'ddn-scope-session' : 'ddn-scope-source');
+    s.textContent = scope === 'session' ? 'Session preview (not saved)' : 'View override (saved to source)';
+    h.append(s);
+  }
   g.append(h);
-  els.appearanceBody.append(g);
+  parent.append(g);
   return g;
 }
 function field(parent, label, input) {
@@ -424,27 +470,30 @@ const titled = v => [v, v === 'source' ? 'As authored' : v.replace(/_/g, ' ')];
 
 /* Option-field descriptors driven through diagram.setOptions (component
  * render override channel — these reflow correctly). */
+/* Option-field descriptors driven through diagram.setOptions (component
+ * render override channel — these reflow correctly). Publication, chrome and
+ * legend settings moved to the source-backed Document drawer. */
 const SELECT_FIELDS = [
   ['Style', [
     ['Drawing style', 'look', [['classic', 'Standard'], ['handDrawn', 'Hand-drawn'], ['neo', 'Neo']]],
     ['Palette', 'theme', () => A.choices.theme.map(titled)],
     ['Font role', 'font', () => A.choices.font.map(titled)],
-    ['Routing', 'routing', () => A.choices.routing.map(titled)],
-    ['Curve tension', 'curveTension', 'number', 0, 1, 0.05],
-    ['Curve radius (px)', 'curveRadius', 'number', 0, 512, 1],
-    ['Crossings', 'crossings', () => A.choices.crossings.map(titled)],
-    ['Endpoint ordering', 'endpointOrdering', () => A.choices.endpointOrdering.map(titled)]
+    ['Base font (px)', 'fontSize', 'number', baseFontFloor(), 64, 1],
+    ['Pen roughness', 'roughness', 'number', 0, 3, 0.2],
+    ['Hatch shading', 'hachure', 'checkbox']
   ]],
   ['Layout', [
     ['Placement', 'placement', () => A.choices.placement.map(titled)],
     ['Auto-place', 'autoPlace', 'checkbox'],
     ['Layout centre', 'center', () => A.choices.center.map(titled)],
     ['Grid step (px)', 'gridStep', 'number', 8, 512, 8],
-    ['Base font (px)', 'fontSize', 'number', baseFontFloor(), 64, 1],
-    ['Pen roughness', 'roughness', 'number', 0, 3, 0.2],
-    ['Hatch shading', 'hachure', 'checkbox']
+    ['Routing', 'routing', () => A.choices.routing.map(titled)],
+    ['Curve tension', 'curveTension', 'number', 0, 1, 0.05],
+    ['Curve radius (px)', 'curveRadius', 'number', 0, 512, 1],
+    ['Crossings', 'crossings', () => A.choices.crossings.map(titled)],
+    ['Endpoint ordering', 'endpointOrdering', () => A.choices.endpointOrdering.map(titled)]
   ]],
-  ['Content', [
+  ['Display', [
     ['Detail', 'fields', () => A.choices.fields.map(titled)],
     ['Field depth (levels)', 'depth', 'number', 0, 64, 1],
     ['Relation labels', 'labels', () => A.choices.labels.map(titled)],
@@ -452,21 +501,11 @@ const SELECT_FIELDS = [
     ['Datatypes', 'datatypes', () => A.choices.datatypes.map(titled)],
     ['Kind indicator', 'kind', () => A.choices.kind.map(titled)],
     ['Chart mark', 'mark', () => A.choices.mark.map(titled)]
-  ]],
-  ['Chrome', [
-    ['Legend', 'legend', () => A.choices.legend.map(titled)],
-    ['Title block', 'title', () => A.choices.title.map(titled)],
-    ['Footer line', 'footer', () => A.choices.footer.map(titled)]
-  ]],
-  ['Page', [
-    ['Page / artboard', 'page', () => A.choices.page.map(titled)],
-    ['Width (px)', 'width', 'number', 400, 32000, 100],
-    ['Height (px)', 'height', 'number', 400, 32000, 100]
   ]]
 ];
 const optionInputs = {};
 for (const [group, fields] of SELECT_FIELDS) {
-  const g = appGroup(group);
+  const g = appGroup(els.styleBody, group, 'source');
   for (const [label, key, kind, min, max, step] of fields) {
     let input;
     if (kind === 'checkbox') {
@@ -484,10 +523,91 @@ for (const [group, fields] of SELECT_FIELDS) {
     field(g, label, input);
   }
 }
-/* Viewport actions + reset live in the appearance drawer too (the toolbar
- * keeps the quick fit/zoom subset). */
+
+/* Source-backed controls for the spec-authorable style/layout/display keys
+ * the component override channel cannot express (its session options cover
+ * only the SELECT_FIELDS keys). Each change is one undoable setViewProfile
+ * source write; the blank / "default" choice removes the key from the source. */
+const SOURCE_FIELDS = [
+  ['Style — source-only keys', 'style', [
+    ['Seed', 'seed', 'number', 0, 4294967295, 1],
+    ['Text fit', 'text_fit', ['wrap', 'grow', 'shrink']],
+    ['Max text width (px)', 'max_width', 'quantity', 16, 32000],
+    ['Max text height (px)', 'max_height', 'quantity', 8, 32000],
+    ['Minimum font (px)', 'min_font', 'quantity', 4, 512]
+  ]],
+  ['Layout — source-only keys', 'layout', [
+    ['Direction', 'direction', ['right', 'down', 'left', 'up']],
+    ['Object clearance (px)', 'object_clearance', 'quantity', 0, 2000],
+    ['Edge clearance (px)', 'edge_clearance', 'quantity', 0, 2000],
+    ['Port clearance (px)', 'port_clearance', 'quantity', 0, 2000],
+    ['Junctions', 'junctions', ['explicit']],
+    ['Route policy', 'route_policy', ['repair', 'strict']],
+    ['Hierarchy relation kinds', 'hierarchy', 'kindlist'],
+    ['Group by', 'group_by', 'text']
+  ]],
+  ['Display — source-only keys', 'display', [
+    ['Maturity', 'maturity', ['token', 'none']],
+    ['Badges', 'badges', ['tokens', 'none']],
+    ['Relations', 'relations', ['between_selected', 'none']],
+    ['Samples', 'samples', ['show', 'hide']]
+  ]]
+];
+const pxOf = v => v == null ? null : (typeof v === 'number' ? v : (v.$quantity !== undefined ? quantityPx(v, null) : null));
+const ptOf = v => v == null ? null : (typeof v === 'number' ? v : (v.$quantity !== undefined ? (v.unit === 'pt' ? v.$quantity : quantityPx(v, null) * 0.75) : null));
+function sourceProfileWrite(group, key, val) {
+  guided(() => A.authoring.setViewProfile(state.ws, state.entry, state.view, { [group]: { [key]: val } }));
+}
+const sourceInputs = {};
+for (const [group, profile, fields] of SOURCE_FIELDS) {
+  const g = appGroup(els.styleBody, group, 'source');
+  for (const [label, key, kind, min, max, step] of fields) {
+    let input;
+    const commit = () => {
+      let val;
+      if (kind === 'number') val = input.value === '' ? undefined : Number(input.value);
+      else if (kind === 'quantity') val = input.value === '' ? undefined : { $quantity: Number(input.value), unit: 'px' };
+      else if (kind === 'kindlist') { const t = input.value.trim(); val = t ? t.split(/[,\s]+/).filter(Boolean) : undefined; }
+      else if (kind === 'text') val = input.value.trim() ? input.value.trim() : undefined;
+      else val = input.value === '' ? undefined : input.value;
+      sourceProfileWrite(profile, key, val);
+    };
+    if (Array.isArray(kind)) {
+      input = selectInput([['', 'As authored / default'], ...kind.map(v => [v, v])], label);
+      input.addEventListener('change', commit);
+    } else if (kind === 'number' || kind === 'quantity') {
+      input = document.createElement('input'); input.type = 'number';
+      input.min = min; input.max = max; input.step = step || 1; input.placeholder = 'source';
+      input.addEventListener('change', commit);
+    } else {
+      input = document.createElement('input'); input.type = 'text';
+      input.placeholder = kind === 'kindlist' ? 'comma-separated kinds (blank = source)' : 'blank = source';
+      input.addEventListener('change', commit);
+    }
+    sourceInputs[profile + '.' + key] = { input, kind };
+    field(g, label, input);
+  }
+}
+function syncSourceInputs() {
+  const node = viewSourceNode();
+  const propsOf = g => { const c = node && (node.children || []).find(x => x.group && x.type === g); return (c && c.props) || {}; };
+  for (const [, profile, fields] of SOURCE_FIELDS) {
+    const p = propsOf(profile);
+    for (const [, key, kind] of fields) {
+      const rec = sourceInputs[profile + '.' + key];
+      if (!rec) continue;
+      const v = p[key];
+      if (kind === 'quantity') { const n = pxOf(v); rec.input.value = n == null ? '' : String(Math.round(n * 100) / 100); }
+      else if (kind === 'number') rec.input.value = v == null ? '' : String(v);
+      else if (kind === 'kindlist') rec.input.value = Array.isArray(v) ? v.join(', ') : '';
+      else rec.input.value = typeof v === 'string' ? v : '';
+    }
+  }
+}
+/* Viewport actions + reset live in the style drawer too (the toolbar keeps
+ * the quick fit/zoom subset). Session state only — nothing here writes source. */
 {
-  const g = appGroup('Viewport');
+  const g = appGroup(els.styleBody, 'Viewport', 'session');
   const row = document.createElement('div'); row.className = 'ddn-row';
   const mk = (label, title, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ddn-mini'; b.textContent = label; b.title = title; b.addEventListener('click', () => guard(fn)); row.append(b); return b; };
   mk('Auto-layout now', 'Reflow unpinned elements', () => state.diagram && state.diagram.action('relayout'));
@@ -495,11 +615,17 @@ for (const [group, fields] of SELECT_FIELDS) {
   mk('Reset appearance', 'Clear every presentation override', resetAppearance);
   g.append(row);
 }
-const coloursGroup = appGroup('Colours — kinds');
-const verbsGroup = appGroup('Colours — relation classes');
-const typoGroup = appGroup('Typography per kind');
-const relationsGroup = appGroup('Routing per relation class');
-const selectedGroup = appGroup('Clicked object / relation');
+{
+  const head = document.createElement('div');
+  head.className = 'ddn-session-head';
+  head.textContent = 'Session preview (not saved to source)';
+  els.styleBody.append(head);
+}
+const coloursGroup = appGroup(els.styleBody, 'Colours — kinds', 'session');
+const verbsGroup = appGroup(els.styleBody, 'Colours — relation classes', 'session');
+const typoGroup = appGroup(els.styleBody, 'Typography per kind', 'session');
+const relationsGroup = appGroup(els.styleBody, 'Routing per relation class', 'session');
+const selectedGroup = appGroup(els.styleBody, 'Clicked object / relation', 'session');
 
 /* D5 (B1-052): geometry context for artboardProblem, from the last rendered
  * scene — unscaled drawing bounds plus fixed chrome overhead (page minus
@@ -568,6 +694,7 @@ function setOption(key, value) {
         for (const k of ['page', 'width', 'height']) {
           const committed = opts[k];
           const input = optionInputs[k];
+          if (!input) continue; // page/width/height moved to the Document drawer (source-backed)
           if (k === 'page') input.value = committed == null ? 'source' : String(committed);
           else input.value = committed == null ? (k === 'width' ? '1600' : '1000') : String(committed);
         }
@@ -607,6 +734,221 @@ function syncOptionInputs() {
       input.min = String(baseFontFloor(mt));
     }
   }
+}
+
+/* ------------------------------------------------ document drawer (right)
+ * The view's publication/chrome/legend profiles, the 0.8 publication chrome
+ * child groups (header/footer run bands, page border, page background —
+ * chapter 53) and the view's own metadata (title, description, provenance
+ * source/generator). Every field writes straight into the source view block
+ * through the authoring channel — setViewProfile for flat profile properties,
+ * setViewChrome for the chrome child groups (nested run bands are not
+ * expressible as flat properties), setViewProperties for view-level metadata —
+ * one undoable, validated transaction per change. Everything here is a "View
+ * override (saved to source)"; the session-preview cosmetics live in the
+ * Style & Layout drawer. */
+
+function viewSourceNode() {
+  try {
+    const files = state.ws && state.ws.getFiles();
+    if (!files || !state.entry || !Object.prototype.hasOwnProperty.call(files, state.entry)) return null;
+    const ast = A.parse(files[state.entry], state.entry);
+    return (ast.declarations || []).find(n => n.type === 'view' && n.id === state.view) || null;
+  } catch { return null; }
+}
+
+const DOCUMENT_FIELDS = [
+  ['Publication', 'publication', [
+    ['Size preset', 'size', ['figure', 'content', 'a4', 'letter']],
+    ['Width (px)', 'width', 'quantity', 100, 32000],
+    ['Height (px)', 'height', 'quantity', 100, 32000],
+    ['Margin (px)', 'margin', 'quantity', 0, 2000],
+    ['Orientation', 'orientation', ['portrait', 'landscape']],
+    ['Fit', 'fit', ['contain', 'none', 'reflow']],
+    ['Minimum text (pt)', 'minimum_text', 'quantity-pt', 1, 72],
+    ['Overflow', 'overflow', ['error', 'warn']],
+    ['Embedding scale', 'embedding_scale', 'number', 0.01, 100, 0.01],
+    ['Title', 'title', 'text'],
+    ['Caption', 'caption', 'text']
+  ]],
+  ['Chrome', 'chrome', [
+    ['Legend', 'legend', ['auto', 'on', 'off']],
+    ['Title block', 'title', ['on', 'off']],
+    ['Footer line', 'footer', ['on', 'off']],
+    ['Banner', 'banner', ['on', 'off']],
+    ['Banner replacement text', 'banner_text', 'text']
+  ]],
+  ['Legend', 'legend', [
+    ['Mode', 'mode', ['numbers', 'text', 'tokens', 'none']],
+    ['Placement', 'placement', ['right', 'bottom', 'none']],
+    ['Width (px)', 'width', 'quantity', 100, 2000]
+  ]],
+  ['View', 'view', [
+    ['View title', 'title', 'text'],
+    ['Description', 'description', 'text'],
+    ['Provenance source', 'source', 'text'],
+    ['Provenance generator', 'generator', 'text']
+  ]]
+];
+const docInputs = {};
+for (const [group, profile, fields] of DOCUMENT_FIELDS) {
+  const g = appGroup(els.documentBody, group, 'source');
+  for (const [label, key, kind, min, max, step] of fields) {
+    let input;
+    const writeKey = key === 'banner_text' ? 'banner' : key;
+    const commit = () => {
+      let val;
+      if (kind === 'number') val = input.value === '' ? undefined : Number(input.value);
+      else if (kind === 'quantity') val = input.value === '' ? undefined : { $quantity: Number(input.value), unit: 'px' };
+      else if (kind === 'quantity-pt') val = input.value === '' ? undefined : { $quantity: Number(input.value), unit: 'pt' };
+      else if (kind === 'text') val = input.value.trim() ? input.value.trim() : undefined;
+      else val = input.value === '' ? undefined : input.value;
+      if (profile === 'view') guided(() => A.authoring.setViewProperties(state.ws, state.entry, state.view, { [writeKey]: val }));
+      else sourceProfileWrite(profile, writeKey, val);
+    };
+    if (Array.isArray(kind)) {
+      input = selectInput([['', 'As authored / default'], ...kind.map(v => [v, v])], label);
+      input.addEventListener('change', commit);
+    } else if (kind === 'text') {
+      input = document.createElement('input'); input.type = 'text'; input.placeholder = 'blank = removed';
+      input.addEventListener('change', commit);
+    } else {
+      input = document.createElement('input'); input.type = 'number';
+      input.min = min; input.max = max; input.step = step || 1; input.placeholder = 'source';
+      input.addEventListener('change', commit);
+    }
+    docInputs[profile + '.' + key] = { input, kind };
+    field(g, label, input);
+  }
+}
+
+/* Chapter 53 publication chrome: header/footer run bands (left/center/right
+ * runs of text/align/font/size/lines, with the $title/$page/$date/$view_id/
+ * $figure variables), page border and page background. One setViewChrome
+ * transaction per band change; an empty band removes the group. */
+const bandInputs = {};
+for (const band of ['header', 'footer']) {
+  const g = appGroup(els.documentBody, band[0].toUpperCase() + band.slice(1) + ' runs', 'source');
+  const note = dim('Variables: $title $page $date $view_id $figure ($$ escapes a literal $). Empty text removes the run; all runs empty removes the band.');
+  g.append(note);
+  bandInputs[band] = {};
+  for (const slot of ['left', 'center', 'right']) {
+    const row = document.createElement('div'); row.className = 'ddn-chrome-run';
+    const lab = document.createElement('span'); lab.textContent = slot;
+    const text = document.createElement('input'); text.type = 'text'; text.placeholder = 'text'; text.setAttribute('aria-label', band + ' ' + slot + ' text');
+    const align = selectInput([['', 'align'], ['left', 'left'], ['center', 'center'], ['right', 'right']], band + ' ' + slot + ' align');
+    const font = selectInput([['', 'font'], ['sans', 'sans'], ['serif', 'serif'], ['mono', 'mono'], ['handwriting', 'handwriting']], band + ' ' + slot + ' font');
+    const size = document.createElement('input'); size.type = 'number'; size.min = 4; size.max = 24; size.step = 0.5; size.placeholder = 'pt'; size.title = band + ' ' + slot + ' size (4–24pt)';
+    const lines = document.createElement('input'); lines.type = 'number'; lines.min = 1; lines.max = 4; lines.step = 1; lines.placeholder = '1'; lines.title = band + ' ' + slot + ' lines (1–4)';
+    const ins = { text, align, font, size, lines };
+    bandInputs[band][slot] = ins;
+    for (const el of [text, align, font, size, lines]) el.addEventListener('change', () => commitBand(band));
+    row.append(lab, text, align, font, size, lines);
+    g.append(row);
+  }
+}
+function commitBand(band) {
+  const spec = {};
+  for (const [slot, ins] of Object.entries(bandInputs[band])) {
+    const t = ins.text.value.trim();
+    if (!t) continue;
+    const run = { text: t };
+    if (ins.align.value) run.align = ins.align.value;
+    if (ins.font.value) run.font = ins.font.value;
+    if (ins.size.value !== '') run.size = Number(ins.size.value);
+    if (ins.lines.value !== '') run.lines = Number(ins.lines.value);
+    spec[slot] = run;
+  }
+  guard(() => guided(() => A.authoring.setViewChrome(state.ws, state.entry, state.view, { [band]: Object.keys(spec).length ? spec : null })));
+}
+const borderInputs = {};
+{
+  const g = appGroup(els.documentBody, 'Page border', 'source');
+  borderInputs.style = field(g, 'Style', selectInput([['', 'none'], ['single', 'single'], ['double', 'double'], ['dashed', 'dashed']], 'border style'));
+  borderInputs.weight = document.createElement('input'); borderInputs.weight.type = 'number'; borderInputs.weight.min = 0.25; borderInputs.weight.max = 8; borderInputs.weight.step = 0.25; borderInputs.weight.placeholder = 'pt';
+  field(g, 'Weight (pt)', borderInputs.weight);
+  borderInputs.inset = document.createElement('input'); borderInputs.inset.type = 'number'; borderInputs.inset.min = 0; borderInputs.inset.max = 2000; borderInputs.inset.step = 1; borderInputs.inset.placeholder = 'px';
+  field(g, 'Inset (px)', borderInputs.inset);
+  borderInputs.corner_marks = field(g, 'Corner marks', selectInput([['', 'As authored / default'], ['on', 'on'], ['off', 'off']], 'corner marks'));
+  const commit = () => {
+    if (!borderInputs.style.value) { guard(() => guided(() => A.authoring.setViewChrome(state.ws, state.entry, state.view, { border: null }))); return; }
+    const spec = { style: borderInputs.style.value };
+    if (borderInputs.weight.value !== '') spec.weight = Number(borderInputs.weight.value);
+    if (borderInputs.inset.value !== '') spec.inset = Number(borderInputs.inset.value);
+    if (borderInputs.corner_marks.value) spec.corner_marks = borderInputs.corner_marks.value === 'on';
+    guard(() => guided(() => A.authoring.setViewChrome(state.ws, state.entry, state.view, { border: spec })));
+  };
+  for (const el of Object.values(borderInputs)) el.addEventListener('change', commit);
+}
+const backgroundInputs = {};
+{
+  const g = appGroup(els.documentBody, 'Page background', 'source');
+  backgroundInputs.kind = field(g, 'Fill', selectInput([['', 'none'], ['color', 'color'], ['image', 'image (png/webp file)'], ['pattern', 'pattern (svg file)']], 'background fill'));
+  backgroundInputs.color = document.createElement('input'); backgroundInputs.color.type = 'text'; backgroundInputs.color.placeholder = '#rrggbb';
+  field(g, 'Colour', backgroundInputs.color);
+  backgroundInputs.image = document.createElement('input'); backgroundInputs.image.type = 'text'; backgroundInputs.image.placeholder = 'workspace path (.png/.webp)';
+  field(g, 'Image file', backgroundInputs.image);
+  backgroundInputs.pattern = document.createElement('input'); backgroundInputs.pattern.type = 'text'; backgroundInputs.pattern.placeholder = 'workspace path (.svg)';
+  field(g, 'Pattern file', backgroundInputs.pattern);
+  backgroundInputs.opacity = document.createElement('input'); backgroundInputs.opacity.type = 'number'; backgroundInputs.opacity.min = 0; backgroundInputs.opacity.max = 1; backgroundInputs.opacity.step = 0.05; backgroundInputs.opacity.placeholder = '1';
+  field(g, 'Opacity', backgroundInputs.opacity);
+  const commit = () => {
+    const kind = backgroundInputs.kind.value;
+    if (!kind) { guard(() => guided(() => A.authoring.setViewChrome(state.ws, state.entry, state.view, { background: null }))); return; }
+    const v = backgroundInputs[kind].value.trim();
+    if (!v) { status('background ' + kind + ' needs a value before it can be written'); return; }
+    const spec = { [kind]: v };
+    if (backgroundInputs.opacity.value !== '') spec.opacity = Number(backgroundInputs.opacity.value);
+    guard(() => guided(() => A.authoring.setViewChrome(state.ws, state.entry, state.view, { background: spec })));
+  };
+  for (const el of Object.values(backgroundInputs)) el.addEventListener('change', commit);
+}
+
+function syncDocumentForm() {
+  const node = viewSourceNode();
+  const groupNode = g => node && (node.children || []).find(x => x.group && x.type === g);
+  const propsOf = g => { const c = groupNode(g); return (c && c.props) || {}; };
+  for (const [, profile, fields] of DOCUMENT_FIELDS) {
+    const p = profile === 'view' ? ((node && node.props) || {}) : propsOf(profile);
+    for (const [, key, kind] of fields) {
+      const rec = docInputs[profile + '.' + key];
+      if (!rec) continue;
+      let v = p[key];
+      if (key === 'banner_text') v = (typeof p.banner === 'string' && !['on', 'off'].includes(p.banner)) ? p.banner : undefined;
+      if (kind === 'quantity') { const n = pxOf(v); rec.input.value = n == null ? '' : String(Math.round(n * 100) / 100); }
+      else if (kind === 'quantity-pt') { const n = ptOf(v); rec.input.value = n == null ? '' : String(Math.round(n * 100) / 100); }
+      else if (kind === 'number') rec.input.value = v == null ? '' : String(v);
+      else if (kind === 'text') rec.input.value = typeof v === 'string' ? v : '';
+      else rec.input.value = typeof v === 'string' && rec.input.querySelector('option[value="' + v + '"]') ? v : '';
+    }
+  }
+  const pub = groupNode('publication');
+  const concernNode = k => pub && (pub.children || []).find(x => x.group && x.type === k);
+  for (const band of ['header', 'footer']) {
+    const n = concernNode(band);
+    for (const slot of ['left', 'center', 'right']) {
+      const ins = bandInputs[band][slot];
+      const run = n && (n.children || []).find(x => x.group && x.type === slot);
+      const p = (run && run.props) || {};
+      ins.text.value = typeof p.text === 'string' ? p.text : '';
+      ins.align.value = typeof p.align === 'string' && p.align !== slot ? p.align : '';
+      ins.font.value = typeof p.font === 'string' ? p.font : '';
+      const sz = ptOf(p.size); ins.size.value = sz == null ? '' : String(Math.round(sz * 100) / 100);
+      ins.lines.value = p.lines == null ? '' : String(p.lines);
+    }
+  }
+  const border = concernNode('border');
+  borderInputs.style.value = border && typeof border.props.style === 'string' ? border.props.style : '';
+  { const w = border && ptOf(border.props.weight); borderInputs.weight.value = w == null ? '' : String(Math.round(w * 100) / 100); }
+  { const i = border && pxOf(border.props.inset); borderInputs.inset.value = i == null ? '' : String(Math.round(i * 100) / 100); }
+  borderInputs.corner_marks.value = border && border.props.corner_marks !== undefined ? (border.props.corner_marks ? 'on' : 'off') : '';
+  const bg = concernNode('background');
+  const bgKind = bg ? ['color', 'image', 'pattern'].find(k => bg.props[k] !== undefined) : '';
+  backgroundInputs.kind.value = bgKind || '';
+  backgroundInputs.color.value = bg && typeof bg.props.color === 'string' ? bg.props.color : '';
+  backgroundInputs.image.value = bg && typeof bg.props.image === 'string' ? bg.props.image : '';
+  backgroundInputs.pattern.value = bg && typeof bg.props.pattern === 'string' ? bg.props.pattern : '';
+  backgroundInputs.opacity.value = bg && bg.props.opacity !== undefined ? String(bg.props.opacity) : '';
 }
 
 /* CSS-overlay panels (per-kind/verb/object colours, per-kind typography,
@@ -662,6 +1004,8 @@ function dim(note) { const p = document.createElement('p'); p.className = 'ddn-d
 
 function repopulateOverridePanels() {
   syncOptionInputs();
+  syncSourceInputs();
+  syncDocumentForm();
   let ir = null;
   try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
   const kindByKeyword = new Map(A.kinds.map(k => [k.id, k]));
@@ -767,7 +1111,43 @@ function onSelect(detail) {
   applyOverrideCss();
   updateSelectedPanel();
   inspector(id, ir, relation);
+  autoDrawerForSelection(true);
 }
+
+/* Deselection (empty-canvas click / Escape): clears the selection and opens
+ * the Document drawer — with nothing selected, the right shelf shows the
+ * view's document settings instead of the inspector. */
+function deselect() {
+  const had = state.selected || state.selectedRelation;
+  state.selected = null; state.selectedRelation = null;
+  applyOverrideCss();
+  updateSelectedPanel();
+  els.inspectorControls.hidden = true;
+  els.selectionSummary.textContent = 'Click an object or relation in the diagram.';
+  if (had) status('selection cleared');
+  autoDrawerForSelection(false);
+}
+function attachDeselect() {
+  const stage = stageEl();
+  if (!stage || stage.dataset.toolDeselect) return;
+  stage.dataset.toolDeselect = 'true';
+  stage.addEventListener('click', e => {
+    if (state.panning || design.placing || design.connecting) return;
+    const path = e.composedPath ? e.composedPath() : [];
+    const hit = path.length && path[0] && path[0].closest ? path[0].closest('[data-id],[data-member],[data-property]') : null;
+    if (hit) return; // a diagram element was clicked — ddn-select owns this click
+    deselect();
+  });
+}
+/* Escape deselects (and opens Document) when no popup or armed gesture owns
+ * the key. Capture phase so the check runs before the popup-closing handlers
+ * mutate their hidden state. */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (design.placing || design.connecting) return;
+  if (!els.iconPopup.hidden || !els.palettePopup.hidden || !els.connectPopup.hidden || !els.settingsPopup.hidden || !els.templatePopup.hidden) return;
+  if (state.selected || state.selectedRelation) deselect();
+}, true);
 
 function inspector(id, ir, relation) {
   if (!ir) return;

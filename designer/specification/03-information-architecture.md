@@ -25,6 +25,8 @@ Selection header: friendly name, semantic kind, source location, and “Used in 
 
 Without a selection the inspector shows the selected view's projection, profile, layout, appearance and publication. Multiple selection exposes only compatible controls, including a mixed-value state; it never replaces distinct meanings with whichever value was read first.
 
+> Implementation status (2026-10 redesign, phase 1): in the live unified tool (`notation/tool/src/`, `?mode=design`) the right shelf now splits into exclusive **Document** and **Style & Layout** drawers, and the no-selection case is wired: deselecting (empty-canvas click or Escape) opens the Document drawer — publication, chrome, legend, header/footer run bands, page border/background and view metadata, all written into the source view block through the authoring channel — while selecting an element opens the inspector (still hosted in the Source drawer until phase 3). Style & Layout carries the view's style/layout/display settings with per-group write-scope labels ("View override (saved to source)" vs "Session preview (not saved)"). Multiple-selection controls and the stable Meaning/This view/Details tab structure remain proposed.
+
 ## Bottom surfaces
 A collapsed Problems strip reports error, warning and incomplete counts separately. Expanding opens a navigable list tied to elements/fields and fixes. An optional source-diff drawer shows the last command's exact changed ranges and affected views. The status line distinguishes “Saved in browser,” “Downloaded,” and “Saved to selected file”; a local cache is not a disk-save guarantee.
 

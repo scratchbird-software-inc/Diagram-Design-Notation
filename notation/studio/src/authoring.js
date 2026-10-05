@@ -179,7 +179,7 @@ api.authoring={
    if(!props||typeof props!=='object'||Array.isArray(props)||Object.keys(props).length>40)fail('DDN-E001','View profile group '+g+' needs a property record of at most 40 entries.');
    const node=v.children.find(n=>n.type===g);
    if(node)for(const [key,val]of Object.entries(props))edits.push(property(text,node,key,val));
-   else if(Object.keys(props).length)edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    '+g+' {\n        '+Object.entries(props).map(([k,x])=>k+': '+value(x)+';').join('\n        ')+'\n    }\n'});
+   else{const entries=Object.entries(props).filter(([,x])=>x!==undefined);if(entries.length)edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    '+g+' {\n        '+entries.map(([k,x])=>k+': '+value(x)+';').join('\n        ')+'\n    }\n'});}
   }
   for(const [id,hint]of Object.entries(routes||{})){
    if(!hint||typeof hint!=='object'||Array.isArray(hint))fail('DDN-E001','Route hints need a {routing, curve?} record.');
@@ -189,6 +189,76 @@ api.authoring={
    else edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    route @'+ref+' {\n        '+Object.entries(hint).map(([k,x])=>k+': '+value(x)+';').join('\n        ')+'\n    }\n'});
   }
   if(presentation!==undefined)edits.push(property(text,v,'x_tool_presentation',presentation===null?undefined:presentation));
+  return apply(ws,b,edits,entry,view);
+ },
+ /* Designer Document drawer: flat view-level metadata properties (title,
+  * description, source, generator — spec chapter 53 provenance). `undefined`
+  * removes the property. One validated source transaction. */
+ setViewProperties(ws,entry,view,props){
+  const ALLOWED=['title','description','source','generator'];
+  if(!props||typeof props!=='object'||Array.isArray(props))fail('DDN-E001','View property writes need a {key: value} record.');
+  for(const k of Object.keys(props))if(!ALLOWED.includes(k))fail('DDN-E001','Unknown view metadata property: '+k+' (allowed: '+ALLOWED.join(', ')+')');
+  const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];
+  const edits=Object.entries(props).map(([k,x])=>property(text,v,k,x)).filter(Boolean);
+  return apply(ws,b,edits,entry,view);
+ },
+ /* Designer Document drawer: publication chrome concerns (0.8, chapter 53) —
+  * header/footer run bands, page border and page background — which are CHILD
+  * GROUPS of the view's publication block, so the flat-property setViewProfile
+  * channel cannot express them. `concerns` maps one or more of
+  * {header, footer, border, background} to a spec record (replace) or null
+  * (remove). Bands take {left?, center?, right?} runs of
+  * {text, align?, font?, size?(pt), lines?}; border takes
+  * {style, weight?(pt), inset?(px), corner_marks?}; background takes exactly
+  * one of {color, image, pattern} plus optional opacity. Values serialize
+  * through the canonical writer; the whole batch is one validated transaction
+  * (the builder re-checks every DDN-PB rule). */
+ setViewChrome(ws,entry,view,concerns){
+  const CONCERNS=['header','footer','border','background'];
+  if(!concerns||typeof concerns!=='object'||Array.isArray(concerns))fail('DDN-E001','View chrome writes need a {concern: spec|null} record.');
+  for(const k of Object.keys(concerns))if(!CONCERNS.includes(k))fail('DDN-E001','Unknown publication chrome concern: '+k+' (allowed: '+CONCERNS.join(', ')+')');
+  const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source],edits=[];
+  const pub=v.children.find(n=>n.group&&n.type==='publication');
+  const blockFor=(kind,spec)=>{
+   if(kind==='header'||kind==='footer'){
+    const runs=[];
+    for(const slot of['left','center','right']){
+     const r=spec[slot];if(!r)continue;
+     const props=['text: '+value(r.text)+';'];
+     if(r.align!==undefined)props.push('align: '+value(r.align)+';');
+     if(r.font!==undefined)props.push('font: '+value(r.font)+';');
+     if(r.size!==undefined)props.push('size: '+value({$quantity:r.size,unit:'pt'})+';');
+     if(r.lines!==undefined)props.push('lines: '+value(r.lines)+';');
+     runs.push(slot+' { '+props.join(' ')+' }');
+    }
+    if(!runs.length)fail('DDN-E001',kind+' needs at least one run with a text (or pass null to remove the band).');
+    return kind+' {\n            '+runs.join('\n            ')+'\n        }';
+   }
+   if(kind==='border'){
+    const props=['style: '+value(spec.style)+';'];
+    if(spec.weight!==undefined)props.push('weight: '+value({$quantity:spec.weight,unit:'pt'})+';');
+    if(spec.inset!==undefined)props.push('inset: '+value({$quantity:spec.inset,unit:'px'})+';');
+    if(spec.corner_marks!==undefined)props.push('corner_marks: '+value(spec.corner_marks)+';');
+    return 'border { '+props.join(' ')+' }';
+   }
+   const k=['color','image','pattern'].find(x=>spec[x]!==undefined);
+   if(!k)fail('DDN-E001','background needs exactly one of color, image or pattern (or pass null to remove it).');
+   const props=[k+': '+value(spec[k])+';'];
+   if(spec.opacity!==undefined)props.push('opacity: '+value(spec.opacity)+';');
+   return 'background { '+props.join(' ')+' }';
+  };
+  for(const [kind,spec]of Object.entries(concerns)){
+   const node=pub&&(pub.children||[]).find(n=>n.group&&n.type===kind);
+   if(spec===null){
+    if(node){let start=node.start;while(start>0&&(text[start-1]===' '||text[start-1]==='\t'))start--;let end=node.end;if(text[end]==='\n')end++;edits.push({file:v.source,start,end,text:''});}
+    continue;
+   }
+   const block=blockFor(kind,spec);
+   if(node)edits.push({file:v.source,start:node.start,end:node.end,text:block});
+   else if(pub&&pub.bodyEnd!==undefined)edits.push({file:v.source,start:pub.bodyEnd,end:pub.bodyEnd,text:'\n        '+block+'\n    '});
+   else edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    publication {\n        '+block+'\n    }\n'});
+  }
+  if(!edits.length)return ws.revision;
   return apply(ws,b,edits,entry,view);
  },
  pin(ws,entry,view,id,x,y){if(!['graph'].includes(ws.resolve(entry,view).view.profiles.projection?.kind||'graph'))fail('DDN-E006','This view uses data-bound coordinates; edit the underlying values rather than pinning a mark.');if(!Number.isFinite(x)||!Number.isFinite(y)||Math.abs(x)>1e7||Math.abs(y)>1e7)fail('DDN-E001','Position must be finite, bounded world coordinates.');const b=build(ws,entry,view),v=b.viewNode,ref=refFor(b,v.doc,id),pl=v.children.find(n=>n.type==='place'&&b.workspace.resolve(n.target,n).uid===id),at=[{$quantity:Math.round(x*1000)/1000,unit:'px'},{$quantity:Math.round(y*1000)/1000,unit:'px'}];const edit=pl?property(ws.getFiles()[pl.source],pl,'at',at):{file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    place @'+ref+' { at: '+value(at)+'; }\n'};return apply(ws,b,[edit],entry,view);},
