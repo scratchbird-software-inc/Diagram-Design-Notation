@@ -34,7 +34,7 @@ const frame = document.getElementById('tool'), status = document.getElementById(
   ta = document.getElementById('ddn'), params = new URLSearchParams(location.search);
 /* Parent query passes through to the tool so the same page demonstrates
  * worker and ?worker=off parity (and the headless checks both). */
-frame.src = '../../tools/index.html?toolbar=off&drawers=source:api,appearance:api,files:none,export:none'
+frame.src = '../../tools/index.html?toolbar=off&drawers=source:api,style:api,files:none,export:none'
   + (params.get('worker') === 'off' ? '&worker=off': '');
 const START = `ddn "0.5";
 module "shop.demo";

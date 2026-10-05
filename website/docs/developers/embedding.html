@@ -84,10 +84,10 @@
 <p>There is <strong>no implicit &quot;session end&quot; event</strong>: an iframe-less web embed cannot know when the host considers the session over — the tool never fires one, and <code>beforeunload</code> is not observable as data. The notification stream plus an explicit final <code>getSource</code> are the whole contract.</p>
 <p>Runnable end-to-end: <a href="../../examples/embed/tool-host-roundtrip.html">examples/embed/tool-host-roundtrip.html</a>.</p>
 <h2>Embedding the designer</h2>
-<p>The designer is not a separate page — <strong>it is the same tool in design mode</strong>: <code>?mode=design</code> gives you everything from <code>explore</code> plus the editing affordances on by default: the source drawer open per preset (like <code>edit</code>), the inspector available, <strong>drag-to-pin armed</strong> (still user-toggleable), and the design bar on the stage — <strong>Add element</strong> (pick a kind from the plate-glyph palette, then click on the diagram to place and pin it there) and <strong>Connect</strong> (click a source element, click a target element, pick a verb — one relation is created). Every creation is a normal undoable source edit through <code>DDNLive.authoring</code>, so <code>onSourceChange</code> / <code>getSource</code> report them exactly like source-drawer edits.</p>
+<p>The designer is not a separate page — <strong>it is the same tool in design mode</strong>: <code>?mode=design</code> gives you everything from <code>explore</code> plus the editing affordances on by default: the source drawer open per preset (like <code>edit</code>), the inspector drawer auto-opening on selection, <strong>drag-to-pin armed</strong> (still user-toggleable), and the design bar on the stage — <strong>Add element</strong> (pick a kind from the capability-filtered plate-glyph palette popup, then click on the diagram to place and pin it there) and <strong>Connect</strong> (click a source element, click a target element, pick a verb from the endpoint-legal list — one relation is created). Every creation is a normal undoable source edit through <code>DDNLive.authoring</code>, so <code>onSourceChange</code> / <code>getSource</code> report them exactly like source-drawer edits.</p>
 <p>The supported embedded-designer shape is <code>?mode=design&amp;toolbar=off</code> plus host-driven I/O: no tool chrome, the creation gestures on the stage, and the host passing DDN in and out through the contract above.</p>
 <pre><code>&lt;iframe id=&quot;designer&quot; style=&quot;width:100%;height:560px;border:0&quot;
-  src=&quot;tools/index.html?mode=design&amp;toolbar=off&amp;drawers=source:api,appearance:api,files:none,export:none&quot;&gt;&lt;/iframe&gt;
+  src=&quot;tools/index.html?mode=design&amp;toolbar=off&amp;drawers=source:api,style:api,files:none,export:none&quot;&gt;&lt;/iframe&gt;
 &lt;script&gt;
   const tool = document.getElementById('designer').contentWindow.DDNTool;
   await tool.setSource(ddnText);            // load variable → designer renders it
@@ -98,7 +98,7 @@
 <p>Runnable end-to-end (load variable → visual edit → host reads the edited DDN back; carries a <code>?selftest=1</code> harness): <a href="../../examples/embed/designer-host.html">examples/embed/designer-host.html</a>.</p>
 <p>Recipe — bare diagram, no toolbar, with a host button that opens the source drawer (runnable as <a href="../../examples/embed/tool-host-control.html">examples/embed/tool-host-control.html</a>):</p>
 <pre><code>&lt;iframe id=&quot;tool&quot; style=&quot;width:100%;height:560px;border:0&quot;
-  src=&quot;tools/index.html?toolbar=off&amp;drawers=source:api,appearance:closed,files:none,export:closed&quot;&gt;&lt;/iframe&gt;
+  src=&quot;tools/index.html?toolbar=off&amp;drawers=source:api,style:closed,files:none,export:closed&quot;&gt;&lt;/iframe&gt;
 &lt;button onclick=&quot;document.getElementById('tool').contentWindow.DDNTool.setDrawer('source','open')&quot;&gt;
   Edit source
 &lt;/button&gt;</code></pre>

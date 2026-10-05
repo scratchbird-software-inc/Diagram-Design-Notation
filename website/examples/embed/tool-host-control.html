@@ -21,7 +21,7 @@ scripting and <code>?src=</code> deep links are not available from
 <button id="showToolbar">Show toolbar via DDNTool.setToolbar(true)</button>
 <div id="status" class="status">waiting for the tool…</div>
 <iframe id="tool" title="DDN tool, toolbar hidden"
-  src="../../tools/index.html?toolbar=off&amp;drawers=source:api,appearance:closed,files:none,export:closed"></iframe>
+  src="../../tools/index.html?toolbar=off&amp;drawers=source:api,style:closed,files:none,export:closed"></iframe>
 <script>
 const frame = document.getElementById('tool'), status = document.getElementById('status');
 function say(msg, isErr) { status.textContent = msg; status.classList.toggle('err', !!isErr); }

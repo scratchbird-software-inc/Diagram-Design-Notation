@@ -110,7 +110,7 @@ dropped only when `legend: off` suppresses that legend.
 
 ## Tool overlay (D4)
 
-The unified tool's appearance drawer carries a **Chrome** section — Legend,
+The unified tool's **Style & Layout** drawer carries a **Chrome** section — Legend,
 Title block and Footer line selects with `As authored / on / off` — wired
 through the same render-override channel as the detail and relation-label
 controls (`setOptions` / workspace `overrides`). Override values are

@@ -44,14 +44,37 @@ The status bar announces the synchronous fallback when it is active.
 
 The page is a diagram stage (pointer-drag pan, wheel/slider zoom, fit
 page/width/height/100%) with a slim icon toolbar and pop-in drawers:
-**files** (left), **style & layout** (right), **document** (right), **source**
-(bottom, with the inspector), **export** (right) and **animation** (right).
-Drawers overlay the stage and animate open/closed. The two right-side working
-drawers are exclusive — opening **document** or **style & layout** closes the
-other — and follow the selection: selecting an element opens the source
-drawer's inspector, deselecting (empty-canvas click or Escape) opens the
-document drawer. (The retired top **appearance** drawer name remains accepted
-as an alias of `style` in `?drawers=` and saved settings.)
+**files** (left), **style & layout** (right), **document** (right),
+**inspector** (right), **type sheet** (bottom), **source** (bottom),
+**export** (right) and **animation** (right). Drawers overlay the stage and
+animate open/closed. The three right-side working drawers are exclusive —
+opening **document**, **style & layout** or **inspector** closes the other
+two — and the two bottom drawers are exclusive likewise. Drawers follow the
+selection: selecting an element or relation opens the **inspector**,
+deselecting (empty-canvas click or Escape) opens the **document** drawer.
+(The retired top **appearance** drawer name remains accepted as an alias of
+`style` in `?drawers=` and saved settings.)
+
+The **inspector** is the selection editor, with three tabs: **Meaning**
+(model identity — label, kind, description, relation endpoints/cardinality,
+with a cardinality sentence preview), **This view** (view-scoped overrides —
+hide, pin, per-occurrence display), and **Details** (a descriptor-generated
+form over the element's registered properties, editable through
+`authoring.setElementProperties`). Every control group across the document,
+style and inspector drawers is labeled with its write scope — **Model**,
+**View override** or **Session preview**.
+
+The **type sheet** is a contextual bottom drawer for the active view's
+projection type. It auto-opens when the view has a registered sheet body —
+CMMN (case-plan outline, sentry editor, planning tables), UML structure
+(members, templates, n-ary, generalization sets), UML activity (lanes), UML
+sequence (lifelines, messages, fragments), BPMN (events/gateways), patent
+(numerals, renumber, ref anchors), and the data-projection sheets: matrix
+(batch cell editor), chart (data-aware bindings and record table), timeline
+(dates/dependencies), decision (typed predicate cells), fishbone (rib tree)
+and panels (grid/child-view slots) — and auto-closes when it has none;
+opening or closing it by hand pins that choice for the view until the view
+changes.
 
 Each drawer has four states — `open`, `closed`, `none` (icon hidden,
 unavailable to everyone), `api` (icon hidden, not user-openable, but openable
@@ -95,19 +118,27 @@ all, yet the host can still open drawers through `DDNTool` — see
 `?mode=design` is the shipping designer: one page, one I/O contract, with the
 editing affordances layered on top of `explore`:
 
-- **Source drawer open per preset** (like `edit`) and the inspector available;
+- **Source drawer open per preset** (like `edit`) and the **inspector**
+  drawer auto-opening on selection;
 - **drag-to-pin armed by default** (the toolbar toggle stays — turn it off any
   time);
 - the **design bar** on the stage:
-  - **Add element** — a palette of every installed object kind drawn with the
+  - **Add element** — a palette popup of the object kinds the active view's
+    projection can actually hold (capability-filtered via the registry's
+    `allowed_in` contract; data-bound projections show a hint naming the
+    matching type sheet instead of an element palette), drawn with the
     notation-plate glyphs (`DDNLive.glyphs.forKind`), searchable; picking a
     kind arms click-to-place, and the next click on the diagram creates the
     element at that spot and pins it there (one undoable source edit; the new
     element stays selected for renaming in the inspector);
   - **Connect** — click a source element, click a target element, pick a verb
-    (and optional label): one relation is created between them. Connect stays
-    armed after a creation so chains of relations are quick; Esc cancels any
-    armed gesture.
+    from the relation kinds legal between the two endpoints (the same
+    legality contract as the CLI `verbs --from --to` query; when no
+    registered verb admits the pair the full list is shown with a note —
+    the designer filters offers, it never blocks) plus an optional label:
+    one relation is created between them. Connect stays armed after a
+    creation so chains of relations are quick; Esc cancels any armed
+    gesture.
   - **Tidy** (0.8, standard chapter 57 §D5) — re-runs placement and routing on
     the active view with every authored pin respected. The source is untouched
     unless you confirm **Pin result**, which writes the computed positions of
@@ -160,14 +191,15 @@ its regression suite.
 ## Feature map (from the retired tools)
 
 - Viewer: fit modes, per-kind/verb/object colour overrides, per-kind
-  typography, click-to-select panels, PNG export — appearance drawer.
-- Studio gallery: example catalogue, appearance + advanced layout/page/pen
-  controls, capability-driven control disabling — files + appearance drawers.
+  typography, click-to-select panels, PNG export — style & layout drawer.
+- Studio gallery: example catalogue, style + advanced layout/page/pen
+  controls, capability-driven control disabling — files + style & layout
+  drawers.
 - Studio editor: per-file source editing with apply/discard and live apply,
   undo/redo, find/replace/go-to-line, guided inspector edits (label, kind,
   pin/unpin, hide, add field, delete, go-to-source, add element/relation),
   drag-to-pin on the stage, workspace new/rename/delete and zip/json I/O,
-  dirty guard on unload — source + files drawers.
+  dirty guard on unload — source + files drawers, inspector drawer.
 - Designer prototype: kind palette with plate glyphs, click-to-place,
   connect-two-elements — the design bar in design mode.
 - Export drawer: SVG, PNG (2×), WebP (2×), example snapshot (workspace JSON).
@@ -178,11 +210,11 @@ surface plus `DDNLive.authoring` / `DDNLive.io`. Presentation overrides are a
 temporary view overlay — the loaded source is only changed by explicit source
 or inspector edits.
 
-## Appearance drawer: override-channel option map
+## Style & Layout drawer: override-channel option map
 
 Every presentation option the live API's override channel accepts
 (`DDNLive.checkOptions` / `api.js` `defaults`) is reachable from the
-appearance drawer. The mapping is guarded by a test in
+style & layout drawer. The mapping is guarded by a test in
 `notation/tests/tool.js`:
 
 | Drawer group | Control | Override key |

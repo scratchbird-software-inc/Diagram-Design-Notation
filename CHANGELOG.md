@@ -6,6 +6,32 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Designer UI redesign (unified tool, `?mode=design`).** The pre-0.9
+  designer surface is reorganized so every spec-authorable setting is
+  editable from forms instead of textareas:
+  - The retired top **appearance** monolith splits into right-side
+    **Style & Layout** and **Document** drawers (`appearance` stays a legacy
+    alias of `style` in `?drawers=` and saved settings); every control group
+    is labeled with its write scope (Model / View override / Session
+    preview).
+  - The **Inspector** is its own right-side drawer (exclusive with Document
+    and Style & Layout, auto-opened on selection) with **Meaning** /
+    **This view** / **Details** tabs; relation editing shows a cardinality
+    sentence preview, and add-element/add-relation are modal forms instead
+    of `prompt()`s.
+  - Forms are generated from property descriptors
+    (`designer/contracts/form-descriptors.json`, built from the runtime's
+    data-property contracts by `build-form-descriptors.mjs`).
+  - The Add palette is capability-filtered by the active view's projection
+    (`allowed_in` registry contract, shared with the CLI); the Connect verb
+    list is filtered by endpoint legality (the CLI `verbs --from --to`
+    rule). Data-bound projections show record/binding guidance instead of
+    an element palette.
+  - A **Type sheet** bottom drawer auto-opens per view type with eleven
+    registered bodies: CMMN, UML structure/activity/sequence, BPMN, patent,
+    matrix, chart, timeline, decision, fishbone and panels — backed by new
+    `authoring.setElementExtension` / `setFrameMembers` / `addFrame` /
+    `setRelationProps` / `setProjectionProperty` / `setViewList` channels.
 - **DDN 0.8 release cleanup: reconcile spec, runtime and docs.** Closes the
   three `DDN-GAPS.md` "known 0.8 tooling gaps" and removes the stale
   pre-implementation banners from the 0.8 chapters:

@@ -147,10 +147,13 @@ Runnable end-to-end:
 The designer is not a separate page — **it is the same tool in design mode**:
 `?mode=design` gives you everything from `explore` plus the editing
 affordances on by default: the source drawer open per preset (like `edit`),
-the inspector available, **drag-to-pin armed** (still user-toggleable), and
-the design bar on the stage — **Add element** (pick a kind from the plate-glyph
-palette, then click on the diagram to place and pin it there) and **Connect**
-(click a source element, click a target element, pick a verb — one relation
+the inspector drawer auto-opening on selection, **drag-to-pin armed** (still
+user-toggleable), and
+the design bar on the stage — **Add element** (pick a kind from the
+capability-filtered plate-glyph palette popup, then click on the diagram to
+place and pin it there) and **Connect**
+(click a source element, click a target element, pick a verb from the
+endpoint-legal list — one relation
 is created). Every creation is a normal undoable source edit through
 `DDNLive.authoring`, so `onSourceChange` / `getSource` report them exactly
 like source-drawer edits.
@@ -161,7 +164,7 @@ host passing DDN in and out through the contract above.
 
 ```html
 <iframe id="designer" style="width:100%;height:560px;border:0"
-  src="tools/index.html?mode=design&toolbar=off&drawers=source:api,appearance:api,files:none,export:none"></iframe>
+  src="tools/index.html?mode=design&toolbar=off&drawers=source:api,style:api,files:none,export:none"></iframe>
 <script>
   const tool = document.getElementById('designer').contentWindow.DDNTool;
   await tool.setSource(ddnText);            // load variable → designer renders it
@@ -189,7 +192,7 @@ drawer (runnable as
 
 ```html
 <iframe id="tool" style="width:100%;height:560px;border:0"
-  src="tools/index.html?toolbar=off&drawers=source:api,appearance:closed,files:none,export:closed"></iframe>
+  src="tools/index.html?toolbar=off&drawers=source:api,style:closed,files:none,export:closed"></iframe>
 <button onclick="document.getElementById('tool').contentWindow.DDNTool.setDrawer('source','open')">
   Edit source
 </button>
