@@ -8,7 +8,9 @@
  * drawers (document, style, inspector) are exclusive — opening one closes the
  * others — and follow the selection: selecting an element or relation opens
  * the Inspector drawer, deselecting (empty-canvas click / Escape) opens the
- * Document drawer.
+ * Document drawer. Phase 4: the Inspector Details tab and the source-backed
+ * Style & Layout groups render through the descriptor-driven form generator
+ * (forms.js + DDN_FORM_DESCRIPTORS).
  *
  * Rendering reuses the shared <ddn-example> component (DDNLive.mount) as the
  * render nucleus (D1); its internal chrome is hidden with an injected shadow
@@ -36,6 +38,7 @@ const FIL = __req('DDNToolFiles', './files.js');
 const EXP = __req('DDNToolExport', './export.js');
 const BRG = __req('DDNToolBridge', './bridge.js');
 const INSP = __req('DDNToolInspector', './inspector.js');
+const FRM = __req('DDNToolForms', './forms.js');
 
 const { DRAWERS, DRAWER_STATES, GEAR_STATES, STORAGE_KEY, MODES, DEFAULT_MODE, parseMode, parseDrawersParam, cleanDrawerConfig, parseToolbarParam, resolveDrawerConfig } = PAR;
 const { computeFitScale, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem, pageDims, pageScaleFloor, artboardProblem } = PGF;
@@ -45,6 +48,14 @@ const { rasterCanvasSize, exportSvgWithOverrides, hopWindowsFromMarkers, nextHop
 const { parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, workerBridgeError, createRenderBridge } = BRG;
 const { FONT_STACKS, ROUTING_VALUES, MIN_TEXT_PX, MAX_FILE_BYTES, MAX_RASTER_PX } = OPT;
 const { cardinalitySentence, cardinalityText, markCardinality, umlMultiplicityOk, groupDetails, mixedValue, multiSelection, usedInViews, ENDPOINT_MARKS, UML_MULTIPLICITY } = INSP;
+const { valueState, evalWhen, widgetForShape, choicesForShape, parseDraft, formatDraft, commitOutcome, commitRecord, descriptorsForTarget, groupDescriptors } = FRM;
+
+/* Designer phase 4: the generated property descriptor registry (designer
+ * spec 05). Inlined into the single-file build as DDN_FORM_DESCRIPTORS from
+ * designer/contracts/form-descriptors.json; in node the JSON is required. */
+const FORM_DESCRIPTORS = ((host.DDN_FORM_DESCRIPTORS) ||
+  (typeof module === 'object' && module.exports ? require('../../../designer/contracts/form-descriptors.json') : null) ||
+  { descriptors: [] }).descriptors;
 
 /* Designer phase 2: which kinds the Add palette offers for a view. `kinds` are
  * DDNLive.kinds entries ({id, label, code, allowed_in}); `projection` is the
@@ -73,7 +84,9 @@ const pure = {
   parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, createRenderBridge,
   paletteFilter,
   cardinalitySentence, cardinalityText, markCardinality, umlMultiplicityOk, groupDetails,
-  mixedValue, multiSelection, usedInViews, ENDPOINT_MARKS, UML_MULTIPLICITY
+  mixedValue, multiSelection, usedInViews, ENDPOINT_MARKS, UML_MULTIPLICITY,
+  valueState, evalWhen, widgetForShape, choicesForShape, parseDraft, formatDraft,
+  commitOutcome, commitRecord, descriptorsForTarget, groupDescriptors
 };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNTool = pure; return; }
@@ -584,52 +597,42 @@ const ptOf = v => v == null ? null : (typeof v === 'number' ? v : (v.$quantity !
 function sourceProfileWrite(group, key, val) {
   guided(() => A.authoring.setViewProfile(state.ws, state.entry, state.view, { [group]: { [key]: val } }));
 }
-const sourceInputs = {};
+/* Phase 4: SOURCE_FIELDS renders through the descriptor form generator
+ * (DDNToolForms.renderForm) — each entry becomes a property descriptor
+ * (scope "view", widget per the table's kind column), proving the generator
+ * generalizes beyond the Inspector. Blank/“default” removes the key from the
+ * source (removal is distinct from blanking; parseDraft maps blank → unset). */
+const sourceForms = [];
 for (const [group, profile, fields] of SOURCE_FIELDS) {
   const g = appGroup(els.styleBody, group, 'source');
-  for (const [label, key, kind, min, max, step] of fields) {
-    let input;
-    const commit = () => {
-      let val;
-      if (kind === 'number') val = input.value === '' ? undefined : Number(input.value);
-      else if (kind === 'quantity') val = input.value === '' ? undefined : { $quantity: Number(input.value), unit: 'px' };
-      else if (kind === 'kindlist') { const t = input.value.trim(); val = t ? t.split(/[,\s]+/).filter(Boolean) : undefined; }
-      else if (kind === 'text') val = input.value.trim() ? input.value.trim() : undefined;
-      else val = input.value === '' ? undefined : input.value;
-      sourceProfileWrite(profile, key, val);
-    };
-    if (Array.isArray(kind)) {
-      input = selectInput([['', 'As authored / default'], ...kind.map(v => [v, v])], label);
-      input.addEventListener('change', commit);
-    } else if (kind === 'number' || kind === 'quantity') {
-      input = document.createElement('input'); input.type = 'number';
-      input.min = min; input.max = max; input.step = step || 1; input.placeholder = 'source';
-      input.addEventListener('change', commit);
-    } else {
-      input = document.createElement('input'); input.type = 'text';
-      input.placeholder = kind === 'kindlist' ? 'comma-separated kinds (blank = source)' : 'blank = source';
-      input.addEventListener('change', commit);
-    }
-    sourceInputs[profile + '.' + key] = { input, kind };
-    field(g, label, input);
-  }
+  const descriptors = fields.map(([label, key, kind, min, max, step]) => {
+    const d = { id: 'ddn.view.' + profile + '.' + key, key, label, targets: ['view'], scope: 'view', removable: true, states: ['unset', 'value'] };
+    if (Array.isArray(kind)) { d.widget = 'select'; d.choices = kind.slice(); }
+    else if (kind === 'number') { d.widget = 'number'; d.min = min; d.max = max; d.step = step; }
+    else if (kind === 'quantity') { d.widget = 'quantity'; d.units = ['px']; d.min = min; d.max = max; }
+    else if (kind === 'kindlist') { d.widget = 'string-list'; d.help = 'Comma-separated kind keywords.'; }
+    else { d.widget = 'text'; }
+    return d;
+  });
+  const form = FRM.renderForm(g, descriptors, {
+    flat: true,
+    getValue(d) {
+      const node = viewSourceNode();
+      const c = node && (node.children || []).find(x => x.group && x.type === profile);
+      return ((c && c.props) || {})[d.key];
+    },
+    commit(d, v) {
+      flush();
+      A.authoring.setViewProfile(state.ws, state.entry, state.view, { [profile]: { [d.key]: v } });
+      showSource(state.currentFile);
+      updateHistory();
+      status('source edit applied — undo restores the previous source');
+    },
+    note: status
+  });
+  sourceForms.push(form);
 }
-function syncSourceInputs() {
-  const node = viewSourceNode();
-  const propsOf = g => { const c = node && (node.children || []).find(x => x.group && x.type === g); return (c && c.props) || {}; };
-  for (const [, profile, fields] of SOURCE_FIELDS) {
-    const p = propsOf(profile);
-    for (const [, key, kind] of fields) {
-      const rec = sourceInputs[profile + '.' + key];
-      if (!rec) continue;
-      const v = p[key];
-      if (kind === 'quantity') { const n = pxOf(v); rec.input.value = n == null ? '' : String(Math.round(n * 100) / 100); }
-      else if (kind === 'number') rec.input.value = v == null ? '' : String(v);
-      else if (kind === 'kindlist') rec.input.value = Array.isArray(v) ? v.join(', ') : '';
-      else rec.input.value = typeof v === 'string' ? v : '';
-    }
-  }
-}
+function syncSourceInputs() { for (const f of sourceForms) f.sync(); }
 /* Viewport actions + reset live in the style drawer too (the toolbar keeps
  * the quick fit/zoom subset). Session state only — nothing here writes source. */
 {
@@ -1121,9 +1124,9 @@ function resetAppearance() {
  * Phase 3 (2026-10 redesign): the inspector is its own right-side drawer in
  * the exclusive set {Document, Style & Layout, Inspector}, structured as the
  * spec-03 three tabs — Meaning (shared model definition), This view
- * (occurrence: pin/hide/session overrides), Details (read-oriented grouped
- * property display with edit-in-source jumps; descriptor-form editing is a
- * later phase). Relation selections add verb/cardinality/enforcement/scope/
+ * (occurrence: pin/hide/session overrides), Details (phase 4: descriptor-
+ * driven editable property form generated from the registry). Relation
+ * selections add verb/cardinality/enforcement/scope/
  * end-label controls writing through authoring.setRelationProps /
  * setRelationExtension — one validated, undoable transaction per commit, with
  * coded errors surfaced adjacent to the controls. */
@@ -1564,30 +1567,69 @@ function buildViewTab(panel, id, ir, ctx) {
   }
 }
 
-/* --- Details tab: read-oriented grouped property display from the parsed
- * model definition, grouped per standard/registry/data-properties.json, with
- * edit-in-source jumps. Descriptor-driven form editing is a later phase; this
- * tab deliberately stays honest and lightweight. --- */
+/* --- Details tab (phase 4): the read-only grouped display is replaced by a
+ * descriptor-driven EDITABLE form generated from FORM_DESCRIPTORS (the
+ * generated registry: standard/registry/data-properties.json property
+ * contracts + ddn-profiles.js closed x_* extension contracts, stamped by
+ * designer/contracts/build-form-descriptors.mjs). Grouping follows the
+ * registry's groups; kind/description stay on the Meaning tab; asserted
+ * properties with no descriptor (free-form extensions) render read-only with
+ * an explicit Remove. Every commit is one guided, undoable
+ * authoring.setElementProperties transaction; coded errors land adjacent to
+ * the control (and in the inspector error slot). Removing a property is
+ * distinct from blanking it: a blank draft commits `undefined` (removal),
+ * never an empty value. --- */
 function buildDetailsTab(panel, id, ir, ctx) {
   const { relation, fieldItem } = ctx;
   panel.replaceChildren();
   let src = null;
   try { src = A.authoring.sourceOf(state.ws, state.entry, state.view, id); } catch { /* preset-expanded */ }
   if (!src) { inNote(panel, 'This declaration has no editable source of its own (expanded from a shared definition); edit the definition in source.'); return; }
-  const groups = groupDetails(src.properties, relation ? 'relation' : fieldItem ? 'field' : 'element');
-  if (!groups.length) inNote(panel, 'No properties asserted on this definition.');
-  for (const g of groups) {
-    const h = document.createElement('h4'); h.textContent = g.group;
+  const target = relation ? 'relation' : fieldItem ? 'field' : 'element';
+  const proj = (ir.view && ir.view.profiles && ir.view.profiles.projection) || {};
+  const capabilities = [proj.profile, proj.kind].filter(Boolean);
+  const ownedByMeaning = ['kind', 'description'];
+  const visible = descriptorsForTarget(FORM_DESCRIPTORS, target, { props: src.properties, capabilities })
+    .filter(d => !ownedByMeaning.includes(d.key));
+  if (visible.length) {
+    inNote(panel, 'Generated from the property registry (data-properties.json ' + '0.3 + extension contracts) — label, kind and description edit on the Meaning tab. Blank a control or use Remove to delete a property from the source.');
+    const form = FRM.renderForm(panel, visible, {
+      scopeLabel: 'Model property (saved to source)',
+      getValue: d => src.properties[d.key],
+      candidates: () => ir.elements.map(n => ({ ref: n.id, label: n.name, kind: n.kind })),
+      note: inspectorNote,
+      commit(d, v) {
+        flush();
+        A.authoring.setElementProperties(state.ws, state.entry, state.view, id, { [d.key]: v });
+        showSource(state.currentFile);
+        updateHistory();
+        inspectorNote('');
+        status('source edit applied — undo restores the previous source');
+        refreshInspector();
+      }
+    });
+    form.sync();
+  }
+  const known = new Set(visible.map(d => d.key));
+  const extras = Object.entries(src.properties).filter(([k]) => !known.has(k) && !ownedByMeaning.includes(k));
+  if (extras.length) {
+    const h = document.createElement('h4'); h.textContent = 'Extension and other asserted properties (read-only)';
     panel.append(h);
     const dl = document.createElement('dl'); dl.className = 'ddn-details';
-    for (const [k, v] of g.entries) {
+    for (const [k, v] of extras) {
       const dt = document.createElement('dt'); dt.textContent = k;
       const dd = document.createElement('dd');
       dd.textContent = typeof v === 'string' ? v : JSON.stringify(v);
+      const rm = document.createElement('button');
+      rm.type = 'button'; rm.className = 'ddn-mini ddn-remove-prop'; rm.textContent = 'Remove';
+      rm.title = 'Remove ' + k + ' from the source (distinct from blanking it)';
+      rm.addEventListener('click', () => guidedInspector(() => A.authoring.setElementProperties(state.ws, state.entry, state.view, id, { [k]: undefined })));
+      dd.append(' ', rm);
       dl.append(dt, dd);
     }
     panel.append(dl);
   }
+  if (!visible.length && !extras.length) inNote(panel, 'No properties asserted on this definition.');
   const row = document.createElement('div'); row.className = 'ddn-row';
   inButton(row, 'Edit in source', 'Open the Source drawer at this definition', () => goToSource(id));
   panel.append(row);

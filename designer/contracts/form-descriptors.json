@@ -1,0 +1,3686 @@
+{
+  "version": 1,
+  "generated_by": "designer/contracts/build-form-descriptors.mjs — do not hand-edit",
+  "sources": [
+    "standard/registry/data-properties.json@0.3.0-draft.2",
+    "notation/runtime/ddn-profiles.js extension_contracts"
+  ],
+  "skipped_extensions": [
+    "x_activation",
+    "x_activity",
+    "x_affinity",
+    "x_association_class",
+    "x_birth",
+    "x_boundary",
+    "x_boxed",
+    "x_chen",
+    "x_constraint",
+    "x_continuation",
+    "x_contract",
+    "x_custody",
+    "x_death",
+    "x_detail_steps",
+    "x_endlabels",
+    "x_estimate",
+    "x_event",
+    "x_evidence",
+    "x_fragment",
+    "x_instance",
+    "x_invariant",
+    "x_jump",
+    "x_member",
+    "x_nary",
+    "x_protocol",
+    "x_protocol_role",
+    "x_reconciliation",
+    "x_record",
+    "x_report",
+    "x_requirement",
+    "x_rule",
+    "x_sdl",
+    "x_sentry",
+    "x_state",
+    "x_states",
+    "x_story",
+    "x_transition",
+    "x_ui",
+    "x_usecase",
+    "x_workflow",
+    "x_zone"
+  ],
+  "descriptors": [
+    {
+      "id": "ddn.prop.description",
+      "key": "description",
+      "label": "Description",
+      "help": "Literal explanatory content, never executable markup.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Identity and evidence",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.aliases",
+      "key": "aliases",
+      "label": "Aliases",
+      "help": "Alternative display/search names; do not introduce duplicate semantic identities.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "string-list",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Identity and evidence",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.kind",
+      "key": "kind",
+      "label": "Kind",
+      "help": "Canonical registry ID after alias resolution; display look cannot change it.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Element identity",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.level",
+      "key": "level",
+      "label": "Level",
+      "help": "Omission is permitted in sketches; a view occurrence is not a data level.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Element identity",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "concept",
+        "definition",
+        "instance",
+        "fragment",
+        "copy"
+      ]
+    },
+    {
+      "id": "ddn.prop.maturity",
+      "key": "maturity",
+      "label": "Maturity",
+      "help": "Independent of style, runtime health and evidence.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Element identity",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "draft",
+        "review",
+        "approved",
+        "deprecated",
+        "retired",
+        "rejected"
+      ]
+    },
+    {
+      "id": "ddn.prop.meaning",
+      "key": "meaning",
+      "label": "Meaning",
+      "help": "Semantic definition; no implicit datatype selection.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Element identity",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.workload",
+      "key": "workload",
+      "label": "Workload",
+      "help": "An explicitly mixed workload may carry multiple compatible values.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "string-list",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Element identity",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.role",
+      "key": "role",
+      "label": "Role",
+      "help": "Include authority or replica scope where claimed; incompatible roles require distinct assertions.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Element identity",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "authoritative",
+        "derived",
+        "cache",
+        "archive",
+        "primary",
+        "follower"
+      ]
+    },
+    {
+      "id": "ddn.prop.location",
+      "key": "location",
+      "label": "Location",
+      "help": "Applicable to deployment scopes and instances; not automatic placement for abstract concepts.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Element identity",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "local",
+        "cloud",
+        "edge"
+      ]
+    },
+    {
+      "id": "ddn.prop.distribution",
+      "key": "distribution",
+      "label": "Distribution",
+      "help": "Requires a declared partition policy before physical implementation claims.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Element identity",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "hash",
+        "range",
+        "list",
+        "composite",
+        "unpartitioned"
+      ]
+    },
+    {
+      "id": "ddn.prop.representation",
+      "key": "representation",
+      "label": "Representation",
+      "help": "Domain-to-platform representation, not a universal datatype.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Element identity",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.shape",
+      "key": "shape",
+      "label": "Shape",
+      "help": "Structural category; optional nested fields do not imply a separate stored object.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.key",
+      "key": "key",
+      "label": "Key",
+      "help": "A shorthand single key role. Composite/multiple roles require referenced key definitions.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "primary",
+        "candidate",
+        "business",
+        "partition",
+        "clustering"
+      ]
+    },
+    {
+      "id": "ddn.prop.domain",
+      "key": "domain",
+      "label": "Domain",
+      "help": "Established meaning binding, not a candidate suggestion or an SQL datatype.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.datatype",
+      "key": "datatype",
+      "label": "Datatype",
+      "help": "Physical profile interprets it; parser never assumes a vendor type universally exists.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.presence",
+      "key": "presence",
+      "label": "Presence",
+      "help": "Required presence and nullable values are independent.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "required",
+        "optional"
+      ]
+    },
+    {
+      "id": "ddn.prop.nullable",
+      "key": "nullable",
+      "label": "Nullable",
+      "help": "True permits null; it does not mean the property can be absent.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "optional-boolean",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.min_items",
+      "key": "min_items",
+      "label": "Min items",
+      "help": "Arrays/sets; must not exceed max_items when finite.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "number",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "integer": true,
+      "min": 0
+    },
+    {
+      "id": "ddn.prop.max_items",
+      "key": "max_items",
+      "label": "Max items",
+      "help": "Arrays/sets; is not maximum rows in a dataset.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "number",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "integer": true,
+      "min": 0
+    },
+    {
+      "id": "ddn.prop.ordered",
+      "key": "ordered",
+      "label": "Ordered",
+      "help": "A set defaults are not invented from examples; ordering scope must be explicit.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "optional-boolean",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.unique",
+      "key": "unique",
+      "label": "Unique",
+      "help": "State whether item identity/value uniqueness is intended; enforcement is separate.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "optional-boolean",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.default",
+      "key": "default",
+      "label": "Default",
+      "help": "Record distinguishes a literal value from code; drawing never evaluates it.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.generated",
+      "key": "generated",
+      "label": "Generated",
+      "help": "Name language, text and evaluation scope; no evaluation during rendering.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.discriminator",
+      "key": "discriminator",
+      "label": "Discriminator",
+      "help": "Union variants must specify unique matching cases where closed/discriminated.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.variants",
+      "key": "variants",
+      "label": "Variants",
+      "help": "Each target is a shape definition; mutual recursion must be represented without infinite expansion.",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Fields and shape",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.allowed_values",
+      "key": "allowed_values",
+      "label": "Allowed values",
+      "help": "Exhaustive only when explicitly declared; never inferred from samples.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Domains and bindings",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.unit",
+      "key": "unit",
+      "label": "Unit",
+      "help": "Quantity meaning, conversion and precision are defined by the unit profile.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Domains and bindings",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.normalization",
+      "key": "normalization",
+      "label": "Normalization",
+      "help": "Does not silently transform identifiers or literal source sample values.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Domains and bindings",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.equality",
+      "key": "equality",
+      "label": "Equality",
+      "help": "Explicit comparison scope; physical collation binding can differ by platform.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Domains and bindings",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.platform",
+      "key": "platform",
+      "label": "Platform",
+      "help": "Binding applicability, not a remote service to contact.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Domains and bindings",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.platform_version",
+      "key": "platform_version",
+      "label": "Platform version",
+      "help": "Physical profile version; cannot be replaced silently by latest.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Domains and bindings",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.precision",
+      "key": "precision",
+      "label": "Precision",
+      "help": "Applicable representation specifies decimal/binary/significant-digit interpretation.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "number",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Domains and bindings",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "integer": true,
+      "min": 0
+    },
+    {
+      "id": "ddn.prop.scale",
+      "key": "scale",
+      "label": "Scale",
+      "help": "Applicable numeric binding supplies units and valid range.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "number",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Domains and bindings",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "integer": true
+    },
+    {
+      "id": "ddn.prop.kind",
+      "key": "kind",
+      "label": "Kind",
+      "help": "Normalizes to a fixed family, verb, orientation and compatible endpoints.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Relations",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.source_mark",
+      "key": "source_mark",
+      "label": "Source mark",
+      "help": "Valid only where relation semantics permit participation or composition.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Relations",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.target_mark",
+      "key": "target_mark",
+      "label": "Target mark",
+      "help": "At target B describes how many B instances per one A; never packet count.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Relations",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.enforcement",
+      "key": "enforcement",
+      "label": "Enforcement",
+      "help": "A drawn relation does not imply database enforcement.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Relations",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "database",
+        "application",
+        "expected",
+        "none"
+      ]
+    },
+    {
+      "id": "ddn.prop.scope",
+      "key": "scope",
+      "label": "Scope",
+      "help": "Authority, delivery, ordering or other qualifier's named scope.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Relations",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.source_min",
+      "key": "source_min",
+      "label": "Source min",
+      "help": "Structural participation lower bound at source; must not exceed finite source_max.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "number",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Relations",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "integer": true,
+      "min": 0
+    },
+    {
+      "id": "ddn.prop.source_max",
+      "key": "source_max",
+      "label": "Source max",
+      "help": "Explicit bounds supersede compact endpoint shorthand only consistently.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "number",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Relations",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "integer": true,
+      "min": 0
+    },
+    {
+      "id": "ddn.prop.target_min",
+      "key": "target_min",
+      "label": "Target min",
+      "help": "Structural participation lower bound at target.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "number",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Relations",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "integer": true,
+      "min": 0
+    },
+    {
+      "id": "ddn.prop.target_max",
+      "key": "target_max",
+      "label": "Target max",
+      "help": "Explicit numeric limits must agree with compact displayed symbols.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "number",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Relations",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "integer": true,
+      "min": 0
+    },
+    {
+      "id": "ddn.prop.capture",
+      "key": "capture",
+      "label": "Capture",
+      "help": "Capture method is separate from transport and transformation.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "cdc",
+        "snapshot",
+        "polling",
+        "application",
+        "manual"
+      ]
+    },
+    {
+      "id": "ddn.prop.transport",
+      "key": "transport",
+      "label": "Transport",
+      "help": "For example kafka; no delivery guarantee is inferred from the name.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.transformation",
+      "key": "transformation",
+      "label": "Transformation",
+      "help": "An overview description should refine to activities when detailed validation is required.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.cadence",
+      "key": "cadence",
+      "label": "Cadence",
+      "help": "Schedule/timezone is additional when relevant.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "continuous",
+        "batch",
+        "microbatch",
+        "on_demand"
+      ]
+    },
+    {
+      "id": "ddn.prop.delivery",
+      "key": "delivery",
+      "label": "Delivery",
+      "help": "Delivery record fields required and verified remain independent assertions.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.payload",
+      "key": "payload",
+      "label": "Payload",
+      "help": "Payload identity/version, not a copy of the schema inside every connector.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.ordering",
+      "key": "ordering",
+      "label": "Ordering",
+      "help": "Total/per-key/per-partition ordering must identify the relevant stream and key.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.initial_load",
+      "key": "initial_load",
+      "label": "Initial load",
+      "help": "Initial snapshot/catch-up coordination is not implied by CDC.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.delete_handling",
+      "key": "delete_handling",
+      "label": "Delete handling",
+      "help": "Explicit deletion/tombstone policy; drawing an arrow does not establish completeness.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.retry",
+      "key": "retry",
+      "label": "Retry",
+      "help": "Attempts, backoff and exhaustion target; not an execution loop inferred from geometry.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.freshness",
+      "key": "freshness",
+      "label": "Freshness",
+      "help": "Duration is measured relative to the declared clock and observation point.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Flow contract",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.temporal",
+      "key": "temporal",
+      "label": "Temporal",
+      "help": "Temporal categories do not imply PITR or complete reconstructability.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Time and recovery",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.time",
+      "key": "time",
+      "label": "Time",
+      "help": "Keyed valid and recorded axes or overview descriptions; production requires field/system/interval details.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Time and recovery",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.time.valid",
+      "key": "time.valid",
+      "label": "Time.valid",
+      "help": "Contains start/end field refs, business clock, interval semantics and open-end representation.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Time and recovery",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.time.recorded",
+      "key": "time.recorded",
+      "label": "Time.recorded",
+      "help": "Contains start/end fields, named recording system and correction semantics.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Time and recovery",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.time.retention",
+      "key": "time.retention",
+      "label": "Time.retention",
+      "help": "Retention scope must identify which axes, rows, logs or snapshots it covers.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Time and recovery",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.time.event",
+      "key": "time.event",
+      "label": "Time.event",
+      "help": "Occurrence time; distinct from arrival and processing timestamps.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Time and recovery",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.time.arrival",
+      "key": "time.arrival",
+      "label": "Time.arrival",
+      "help": "Ingestion timestamp of a named system; not automatically business-valid time.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Time and recovery",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.time.processing",
+      "key": "time.processing",
+      "label": "Time.processing",
+      "help": "Processing timestamp tied to an execution/system.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Time and recovery",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.snapshot_at",
+      "key": "snapshot_at",
+      "label": "Snapshot at",
+      "help": "Consistency scope and source completeness must be explicit for recovery claims.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Time and recovery",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.recovery_window",
+      "key": "recovery_window",
+      "label": "Recovery window",
+      "help": "PITR scope, oldest/newest recoverable state, backup/log evidence.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Time and recovery",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.provider",
+      "key": "provider",
+      "label": "Provider",
+      "help": "Provider identity; never infer region or capabilities from a logo.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Deployment",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.region",
+      "key": "region",
+      "label": "Region",
+      "help": "Scope within provider/account; not a globally unique bare region token.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Deployment",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.environment",
+      "key": "environment",
+      "label": "Environment",
+      "help": "Intended environment; production does not imply healthy.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Deployment",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "string",
+        "reference"
+      ]
+    },
+    {
+      "id": "ddn.prop.partition_key",
+      "key": "partition_key",
+      "label": "Partition key",
+      "help": "All fields belong to the partitioned definition or an explicit mapping.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "string-list",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Deployment",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.partition_rule",
+      "key": "partition_rule",
+      "label": "Partition rule",
+      "help": "Hash/range/version and boundaries are explicit policy information.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Deployment",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.replication_factor",
+      "key": "replication_factor",
+      "label": "Replication factor",
+      "help": "State whether the primary is counted and which fragment/set the count applies to.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "number",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Deployment",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "integer": true,
+      "min": 1
+    },
+    {
+      "id": "ddn.prop.replica_role",
+      "key": "replica_role",
+      "label": "Replica role",
+      "help": "Belongs to a copy with named coordination scope and observation time when observed.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Deployment",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "primary",
+        "follower",
+        "multiwriter"
+      ]
+    },
+    {
+      "id": "ddn.prop.consistency",
+      "key": "consistency",
+      "label": "Consistency",
+      "help": "Scope must specify read/write/replication semantics rather than one unlabeled word.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Deployment",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.residency",
+      "key": "residency",
+      "label": "Residency",
+      "help": "Allowed locations and evidence are separate; a frame alone is not proof.",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Deployment",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.owner",
+      "key": "owner",
+      "label": "Owner",
+      "help": "Responsibility relationship, not physical containment.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Governance and SQL metadata",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.classification",
+      "key": "classification",
+      "label": "Classification",
+      "help": "Inheritance only under an explicitly selected governance profile.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Governance and SQL metadata",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.contract",
+      "key": "contract",
+      "label": "Contract",
+      "help": "Contract version and producer/consumer roles remain resolvable.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "reference",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Governance and SQL metadata",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.quality",
+      "key": "quality",
+      "label": "Quality",
+      "help": "Validation result and requirement are independent.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "string-list",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Governance and SQL metadata",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.dialect",
+      "key": "dialect",
+      "label": "Dialect",
+      "help": "SQL dialect/platform profile; syntax is not executed by the renderer.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Governance and SQL metadata",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.definition",
+      "key": "definition",
+      "label": "Definition",
+      "help": "Explicit content/language; remote content is not fetched without resolver authority.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Governance and SQL metadata",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.parameters",
+      "key": "parameters",
+      "label": "Parameters",
+      "help": "Parameters are not mislabeled as storage columns.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "string-list",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Governance and SQL metadata",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.refresh",
+      "key": "refresh",
+      "label": "Refresh",
+      "help": "Materialized view refresh method, schedule and scope.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Governance and SQL metadata",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.index_method",
+      "key": "index_method",
+      "label": "Index method",
+      "help": "Validated only against the selected platform/version profile.",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Governance and SQL metadata",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.motion",
+      "key": "motion",
+      "label": "Motion",
+      "help": "Declarative SMIL animation of the relation route: flow travels markers along the route; pulse animates edge stroke colour/opacity; none renders a static edge. Renderer-emitted, deterministic, file://-safe.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Motion and flow animation",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "flow",
+        "pulse",
+        "none"
+      ]
+    },
+    {
+      "id": "ddn.prop.marker",
+      "key": "marker",
+      "label": "Marker",
+      "help": "Travelling marker shape for motion:flow and flow blocks.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "select",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Motion and flow animation",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "choices": [
+        "circle",
+        "square",
+        "rect"
+      ]
+    },
+    {
+      "id": "ddn.prop.marker_size",
+      "key": "marker_size",
+      "label": "Marker size",
+      "help": "Travelling marker size in px.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "quantity",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Motion and flow animation",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "units": [
+        "px"
+      ],
+      "max": 128
+    },
+    {
+      "id": "ddn.prop.marker_color",
+      "key": "marker_color",
+      "label": "Marker color",
+      "help": "Travelling marker colour; defaults to the relation colour (accent for flow blocks).",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Motion and flow animation",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.prop.rate",
+      "key": "rate",
+      "label": "Rate",
+      "help": "Markers in flight on the route; >1 is a staggered particle stream (traffic-style). Values beyond the 32 DOM-honest cap warn (DDN-W016) and clamp at render time.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "number",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Motion and flow animation",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "integer": true,
+      "min": 1,
+      "max": 32
+    },
+    {
+      "id": "ddn.prop.speed",
+      "key": "speed",
+      "label": "Speed",
+      "help": "Marker travel speed along the route; hop boundaries are route-length/speed derived.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "quantity",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Motion and flow animation",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      },
+      "units": [
+        "px/s"
+      ]
+    },
+    {
+      "id": "ddn.prop.pulse_color",
+      "key": "pulse_color",
+      "label": "Pulse color",
+      "help": "Pulse peak stroke colour for motion:pulse.",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "text",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Motion and flow animation",
+      "removable": true,
+      "validation": {},
+      "provenance": {
+        "source": "standard/registry/data-properties.json",
+        "version": "0.3.0-draft.2"
+      }
+    },
+    {
+      "id": "ddn.ext.x_art",
+      "key": "x_art",
+      "label": "x_art",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "library",
+          "label": "Library",
+          "widget": "text"
+        },
+        {
+          "key": "item",
+          "label": "Item",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_art (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_assignment",
+      "key": "x_assignment",
+      "label": "x_assignment",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "code",
+          "label": "Code",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_assignment (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_bands",
+      "key": "x_bands",
+      "label": "x_bands",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "string-list",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_bands (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_block",
+      "key": "x_block",
+      "label": "x_block",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "compartment",
+          "label": "Compartment",
+          "widget": "select",
+          "choices": [
+            "values",
+            "parts",
+            "references",
+            "operations",
+            "constraints"
+          ]
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_block (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_c4tag",
+      "key": "x_c4tag",
+      "label": "x_c4tag",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "tags",
+          "label": "Tags",
+          "widget": "string-list"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_c4tag (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_category",
+      "key": "x_category",
+      "label": "x_category",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "axis",
+          "label": "Axis",
+          "widget": "text"
+        },
+        {
+          "key": "level",
+          "label": "Level",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_category (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_cmmn",
+      "key": "x_cmmn",
+      "label": "x_cmmn",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "discretionary",
+          "label": "Discretionary",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "nonblocking",
+          "label": "Nonblocking",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "required",
+          "label": "Required",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "repetition",
+          "label": "Repetition",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "manual_activation",
+          "label": "Manual activation",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "completion",
+          "label": "Completion",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "collapsed",
+          "label": "Collapsed",
+          "widget": "optional-boolean"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_cmmn (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_coil",
+      "key": "x_coil",
+      "label": "x_coil",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "mode",
+          "label": "Mode",
+          "widget": "select",
+          "choices": [
+            "normal",
+            "set",
+            "reset",
+            "negated"
+          ]
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_coil (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_compatibility",
+      "key": "x_compatibility",
+      "label": "x_compatibility",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "mode",
+          "label": "Mode",
+          "widget": "select",
+          "choices": [
+            "same",
+            "specialization",
+            "realization",
+            "operation-coverage"
+          ]
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_compatibility (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_contact",
+      "key": "x_contact",
+      "label": "x_contact",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "form",
+          "label": "Form",
+          "widget": "select",
+          "choices": [
+            "no",
+            "nc"
+          ]
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_contact (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_derive",
+      "key": "x_derive",
+      "label": "x_derive",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "text",
+          "label": "Text",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_derive (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_diagram",
+      "key": "x_diagram",
+      "label": "x_diagram",
+      "targets": [
+        "element",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "number",
+          "label": "Number",
+          "widget": "text"
+        },
+        {
+          "key": "owner",
+          "label": "Owner",
+          "widget": "text"
+        },
+        {
+          "key": "code",
+          "label": "Code",
+          "widget": "text"
+        },
+        {
+          "key": "text",
+          "label": "Text",
+          "widget": "text"
+        },
+        {
+          "key": "branch",
+          "label": "Branch",
+          "widget": "text"
+        },
+        {
+          "key": "stereotype",
+          "label": "Stereotype",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_diagram (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_epc",
+      "key": "x_epc",
+      "label": "x_epc",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "operator",
+          "label": "Operator",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_epc (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_erp",
+      "key": "x_erp",
+      "label": "x_erp",
+      "targets": [
+        "field",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "nullable",
+          "label": "Nullable",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "sql_type",
+          "label": "Sql type",
+          "widget": "select",
+          "choices": [
+            "uuid",
+            "text",
+            "numeric(20,4)",
+            "numeric(24,6)",
+            "numeric(24,10)",
+            "bigint",
+            "numeric(20,3)",
+            "timestamptz",
+            "date",
+            "boolean",
+            "jsonb"
+          ]
+        },
+        {
+          "key": "enforcement",
+          "label": "Enforcement",
+          "widget": "select",
+          "choices": [
+            "database",
+            "application_and_reconciliation",
+            "domain_validation"
+          ]
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_erp (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_exception",
+      "key": "x_exception",
+      "label": "x_exception",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "optional-boolean",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_exception (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_flow",
+      "key": "x_flow",
+      "label": "x_flow",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "rate",
+          "label": "Rate",
+          "widget": "text"
+        },
+        {
+          "key": "probability",
+          "label": "Probability",
+          "widget": "number"
+        },
+        {
+          "key": "continuous",
+          "label": "Continuous",
+          "widget": "optional-boolean"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_flow (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_gate",
+      "key": "x_gate",
+      "label": "x_gate",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "type",
+          "label": "Type",
+          "widget": "select",
+          "choices": [
+            "and",
+            "or"
+          ]
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_gate (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_gateway",
+      "key": "x_gateway",
+      "label": "x_gateway",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "type",
+          "label": "Type",
+          "widget": "select",
+          "choices": [
+            "exclusive",
+            "parallel",
+            "inclusive",
+            "complex",
+            "event",
+            "event_exclusive"
+          ]
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_gateway (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_genset",
+      "key": "x_genset",
+      "label": "x_genset",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "name",
+          "label": "Name",
+          "widget": "text"
+        },
+        {
+          "key": "disjoint",
+          "label": "Disjoint",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "complete",
+          "label": "Complete",
+          "widget": "optional-boolean"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_genset (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_hmscref",
+      "key": "x_hmscref",
+      "label": "x_hmscref",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "params",
+          "label": "Params",
+          "widget": "string-list"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_hmscref (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_icon",
+      "key": "x_icon",
+      "label": "x_icon",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "library",
+          "label": "Library",
+          "widget": "text"
+        },
+        {
+          "key": "icon",
+          "label": "Icon",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_icon (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_idef0",
+      "key": "x_idef0",
+      "label": "x_idef0",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "node",
+          "label": "Node",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_idef0 (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_interrupt",
+      "key": "x_interrupt",
+      "label": "x_interrupt",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "optional-boolean",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_interrupt (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_io",
+      "key": "x_io",
+      "label": "x_io",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "set",
+          "label": "Set",
+          "widget": "optional-boolean"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_io (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_link",
+      "key": "x_link",
+      "label": "x_link",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "file",
+          "label": "File",
+          "widget": "text"
+        },
+        {
+          "key": "target",
+          "label": "Target",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_link (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_message",
+      "key": "x_message",
+      "label": "x_message",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "seq",
+          "label": "Seq",
+          "widget": "text"
+        },
+        {
+          "key": "sort",
+          "label": "Sort",
+          "widget": "select",
+          "choices": [
+            "synch",
+            "asynch",
+            "create",
+            "delete",
+            "reply",
+            "lost",
+            "found"
+          ]
+        },
+        {
+          "key": "gate",
+          "label": "Gate",
+          "widget": "select",
+          "choices": [
+            "source",
+            "target"
+          ]
+        },
+        {
+          "key": "time",
+          "label": "Time",
+          "widget": "text"
+        },
+        {
+          "key": "duration",
+          "label": "Duration",
+          "widget": "text"
+        },
+        {
+          "key": "at",
+          "label": "At",
+          "widget": "number"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_message (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_objectified",
+      "key": "x_objectified",
+      "label": "x_objectified",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "name",
+          "label": "Name",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_objectified (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_pack",
+      "key": "x_pack",
+      "label": "x_pack",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "visibility",
+          "label": "Visibility",
+          "widget": "select",
+          "choices": [
+            "public",
+            "private"
+          ]
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_pack (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_part",
+      "key": "x_part",
+      "label": "x_part",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "classifier",
+          "label": "Classifier",
+          "widget": "text"
+        },
+        {
+          "key": "multiplicity",
+          "label": "Multiplicity",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_part (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_partition",
+      "key": "x_partition",
+      "label": "x_partition",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "lane",
+          "label": "Lane",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_partition (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_petri",
+      "key": "x_petri",
+      "label": "x_petri",
+      "targets": [
+        "element",
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "weight",
+          "label": "Weight",
+          "widget": "number",
+          "integer": true
+        },
+        {
+          "key": "tokens",
+          "label": "Tokens",
+          "widget": "number",
+          "integer": true
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_petri (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_planning",
+      "key": "x_planning",
+      "label": "x_planning",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "items",
+          "label": "Items",
+          "widget": "string-list"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_planning (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_rack",
+      "key": "x_rack",
+      "label": "x_rack",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "units",
+          "label": "Units",
+          "widget": "number",
+          "integer": true
+        },
+        {
+          "key": "unit",
+          "label": "Unit",
+          "widget": "number",
+          "integer": true
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_rack (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_return",
+      "key": "x_return",
+      "label": "x_return",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "optional-boolean",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_return (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_role",
+      "key": "x_role",
+      "label": "x_role",
+      "targets": [
+        "field",
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "uniqueness",
+          "label": "Uniqueness",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "mandatory",
+          "label": "Mandatory",
+          "widget": "optional-boolean"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_role (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_sets",
+      "key": "x_sets",
+      "label": "x_sets",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "string-list",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_sets (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_sticky",
+      "key": "x_sticky",
+      "label": "x_sticky",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "colour",
+          "label": "Colour",
+          "widget": "select",
+          "choices": [
+            "yellow",
+            "pink",
+            "blue",
+            "green",
+            "orange",
+            "purple"
+          ]
+        },
+        {
+          "key": "pin",
+          "label": "Pin",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "tape",
+          "label": "Tape",
+          "widget": "optional-boolean"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_sticky (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_subdiagram",
+      "key": "x_subdiagram",
+      "label": "x_subdiagram",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "view",
+          "label": "View",
+          "widget": "text"
+        },
+        {
+          "key": "display",
+          "label": "Display",
+          "widget": "select",
+          "choices": [
+            "badge",
+            "inline",
+            "thumbnail"
+          ]
+        },
+        {
+          "key": "frozen",
+          "label": "Frozen",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "snapshot",
+          "label": "Snapshot",
+          "widget": "text"
+        },
+        {
+          "key": "snapshot_at",
+          "label": "Snapshot at",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_subdiagram (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_template",
+      "key": "x_template",
+      "label": "x_template",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "parameters",
+          "label": "Parameters",
+          "widget": "string-list"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_template (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_timeconstraint",
+      "key": "x_timeconstraint",
+      "label": "x_timeconstraint",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "string-list",
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_timeconstraint (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_tunnel",
+      "key": "x_tunnel",
+      "label": "x_tunnel",
+      "targets": [
+        "relation"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "start",
+          "label": "Start",
+          "widget": "optional-boolean"
+        },
+        {
+          "key": "end",
+          "label": "End",
+          "widget": "optional-boolean"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_tunnel (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_unit",
+      "key": "x_unit",
+      "label": "x_unit",
+      "targets": [
+        "field"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "unit",
+          "label": "Unit",
+          "widget": "text"
+        },
+        {
+          "key": "quantity",
+          "label": "Quantity",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_unit (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_use",
+      "key": "x_use",
+      "label": "x_use",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "arguments",
+          "label": "Arguments",
+          "widget": "string-list"
+        },
+        {
+          "key": "gates",
+          "label": "Gates",
+          "widget": "string-list"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_use (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_values",
+      "key": "x_values",
+      "label": "x_values",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "values",
+          "label": "Values",
+          "widget": "string-list"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_values (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    },
+    {
+      "id": "ddn.ext.x_vsm",
+      "key": "x_vsm",
+      "label": "x_vsm",
+      "targets": [
+        "element"
+      ],
+      "scope": "model",
+      "widget": "record",
+      "fields": [
+        {
+          "key": "va",
+          "label": "Va",
+          "widget": "number"
+        },
+        {
+          "key": "nva",
+          "label": "Nva",
+          "widget": "number"
+        },
+        {
+          "key": "unit",
+          "label": "Unit",
+          "widget": "text"
+        }
+      ],
+      "states": [
+        "unset",
+        "value"
+      ],
+      "group": "Extensions",
+      "removable": true,
+      "validation": {},
+      "help": "Extension contract x_vsm (ddn-profiles.js).",
+      "provenance": {
+        "source": "notation/runtime/ddn-profiles.js",
+        "version": "0.3.0-draft.1"
+      }
+    }
+  ]
+}

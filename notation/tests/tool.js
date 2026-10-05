@@ -768,6 +768,175 @@ test('authoring.setRelationExtension: per-key merge of x_endlabels, PJ149 judged
   assert.throws(() => A.authoring.setRelationExtension(w, 'main.ddn', 'v', uid, 'kind', {}), e => e.code === 'DDN-E001', 'non-x_* keys refused');
 });
 
+/* ---------------------------------------------------------------- phase 4
+ * Descriptor-driven form generator (spec 05): forms.js pure layer (value
+ * states, visibility AST, draft/commit semantics), the generated descriptor
+ * registry's freshness, and the generic authoring.setElementProperties batch
+ * write the generated forms bind to. */
+
+test('valueState distinguishes unset / null / value (spec 05: null is data)', () => {
+  assert.equal(T.valueState(undefined), 'unset');
+  assert.equal(T.valueState(null), 'null');
+  assert.equal(T.valueState(''), 'value');
+  assert.equal(T.valueState(0), 'value');
+  assert.equal(T.valueState(false), 'value');
+});
+
+test('evalWhen evaluates the visibility AST (all/any/not/equals/hasCapability)', () => {
+  const ctx = { props: { kind: 'uml.class', maturity: 'approved' }, capabilities: ['uml.structure@2', 'graph'] };
+  assert.equal(T.evalWhen(null, ctx), true);
+  assert.equal(T.evalWhen({ equals: { key: 'maturity', value: 'approved' } }, ctx), true);
+  assert.equal(T.evalWhen({ equals: { key: 'maturity', value: 'draft' } }, ctx), false);
+  assert.equal(T.evalWhen({ equals: { key: 'missing', value: undefined } }, ctx), true, 'absent equals undefined');
+  assert.equal(T.evalWhen({ hasCapability: 'uml.structure@2' }, ctx), true);
+  assert.equal(T.evalWhen({ hasCapability: 'bpmn@1' }, ctx), false);
+  assert.equal(T.evalWhen({ all: [{ hasCapability: 'graph' }, { equals: { key: 'kind', value: 'uml.class' } }] }, ctx), true);
+  assert.equal(T.evalWhen({ any: [{ hasCapability: 'bpmn@1' }, { equals: { key: 'kind', value: 'uml.class' } }] }, ctx), true);
+  assert.equal(T.evalWhen({ not: { hasCapability: 'graph' } }, ctx), false);
+  assert.throws(() => T.evalWhen({ executable: 'js()' }, ctx), /unknown visibility predicate/, 'executable JS is not a predicate');
+});
+
+test('widgetForShape maps registry value_shapes to widgets', () => {
+  assert.equal(T.widgetForShape('string'), 'text');
+  assert.equal(T.widgetForShape('string[]'), 'string-list');
+  assert.equal(T.widgetForShape('boolean'), 'optional-boolean');
+  assert.equal(T.widgetForShape('nonnegative integer'), 'number');
+  assert.equal(T.widgetForShape('draft/review/approved/deprecated/retired/rejected or undecided'), 'select');
+  assert.equal(T.widgetForShape('flow | pulse | none'), 'select');
+  assert.equal(T.widgetForShape('enum: north | south | east | west'), 'select');
+  assert.equal(T.widgetForShape('length (px), >0 and <=128px'), 'quantity');
+  assert.equal(T.widgetForShape('reference'), 'reference');
+  assert.equal(T.widgetForShape('scope record'), 'record');
+  assert.deepEqual(T.choicesForShape('flow | pulse | none'), ['flow', 'pulse', 'none']);
+});
+
+test('parseDraft / commitOutcome: blank removes, invalid carries a code, valid sets', () => {
+  const num = { id: 'x.n', key: 'n', label: 'N', widget: 'number', min: 0, max: 10, integer: true };
+  assert.deepEqual(T.parseDraft(num, ''), { ok: true, value: undefined }, 'blank parses to unset (removal, not blanking)');
+  assert.deepEqual(T.parseDraft(num, '4'), { ok: true, value: 4 });
+  assert.equal(T.parseDraft(num, '11').ok, false);
+  assert.equal(T.parseDraft(num, '11').code, 'DDN-UI02');
+  assert.equal(T.parseDraft(num, 'x').ok, false);
+  assert.deepEqual(T.commitOutcome(num, '4', undefined), { action: 'set', value: 4 });
+  assert.deepEqual(T.commitOutcome(num, '', 4), { action: 'remove' });
+  assert.deepEqual(T.commitOutcome(num, '', undefined), { action: 'none' });
+  assert.deepEqual(T.commitOutcome(num, '4', 4), { action: 'none' }, 'unchanged draft is no transaction');
+  assert.equal(T.commitOutcome(num, '99', undefined).action, 'error');
+
+  const tri = { id: 'x.b', key: 'b', label: 'B', widget: 'optional-boolean' };
+  assert.deepEqual(T.parseDraft(tri, ''), { ok: true, value: undefined }, 'tri-state "Not set" is unset, not false');
+  assert.deepEqual(T.parseDraft(tri, 'true'), { ok: true, value: true });
+  assert.deepEqual(T.parseDraft(tri, 'false'), { ok: true, value: false });
+
+  const q = { id: 'x.q', key: 'q', label: 'Q', widget: 'quantity', units: ['px', 'pt'], min: 1 };
+  assert.deepEqual(T.parseDraft(q, { value: '12', unit: 'pt' }), { ok: true, value: { $quantity: 12, unit: 'pt' } }, 'quantities retain their unit');
+  assert.deepEqual(T.parseDraft(q, { value: '', unit: 'px' }), { ok: true, value: undefined });
+  assert.equal(T.parseDraft(q, { value: '0', unit: 'px' }).ok, false);
+
+  const list = { id: 'x.l', key: 'l', label: 'L', widget: 'string-list' };
+  assert.deepEqual(T.parseDraft(list, 'a, b ,, c'), { ok: true, value: ['a', 'b', 'c'] });
+  assert.deepEqual(T.parseDraft(list, '  '), { ok: true, value: undefined });
+
+  const ref = { id: 'x.r', key: 'r', label: 'R', widget: 'reference' };
+  assert.deepEqual(T.parseDraft(ref, '@m.orders'), { ok: true, value: { $ref: 'm.orders' } });
+  assert.equal(T.parseDraft(ref, 'not a ref!').ok, false);
+  assert.equal(T.parseDraft(ref, 'not a ref!').code, 'DDN-UI04');
+
+  /* removing is distinct from blanking: a text draft never produces '' */
+  const txt = { id: 'x.t', key: 't', label: 'T', widget: 'text' };
+  assert.deepEqual(T.parseDraft(txt, '   '), { ok: true, value: undefined });
+  assert.deepEqual(T.parseDraft(txt, 'hello'), { ok: true, value: 'hello' });
+});
+
+test('formatDraft is the display inverse of parseDraft', () => {
+  const q = { id: 'x.q', key: 'q', label: 'Q', widget: 'quantity', units: ['px', 'pt'] };
+  assert.deepEqual(T.formatDraft(q, { $quantity: 12, unit: 'pt' }), { value: '12', unit: 'pt' });
+  assert.deepEqual(T.formatDraft(q, undefined), { value: '', unit: 'px' });
+  assert.equal(T.formatDraft({ id: 'x.l', key: 'l', widget: 'string-list' }, ['a', 'b']), 'a, b');
+  assert.equal(T.formatDraft({ id: 'x.r', key: 'r', widget: 'reference' }, { $ref: 'm.orders' }), '@m.orders');
+  assert.equal(T.formatDraft({ id: 'x.b', key: 'b', widget: 'optional-boolean' }, false), 'false');
+});
+
+test('commitRecord: all-absent removes the record instead of writing {}', () => {
+  const d = { id: 'x.g', key: 'x_genset', widget: 'record' };
+  assert.deepEqual(T.commitRecord(d, { name: 'gs', disjoint: true }), { action: 'set', value: { name: 'gs', disjoint: true } });
+  assert.deepEqual(T.commitRecord(d, { name: undefined, disjoint: undefined }), { action: 'remove' });
+  assert.deepEqual(T.commitRecord(d, {}), { action: 'remove' });
+});
+
+test('descriptorsForTarget filters by target and evaluates visibility', () => {
+  const list = [
+    { id: 'a', key: 'a', targets: ['element'], group: 'G' },
+    { id: 'b', key: 'b', targets: ['relation'], group: 'G' },
+    { id: 'c', key: 'c', targets: ['element'], group: 'H', when: { hasCapability: 'uml.structure@2' } }
+  ];
+  assert.deepEqual(T.descriptorsForTarget(list, 'element', {}).map(d => d.id), ['a']);
+  assert.deepEqual(T.descriptorsForTarget(list, 'element', { capabilities: ['uml.structure@2'] }).map(d => d.id), ['a', 'c']);
+  const grouped = T.groupDescriptors(T.descriptorsForTarget(list, 'element', { capabilities: ['uml.structure@2'] }));
+  assert.deepEqual(grouped.map(g => g.group), ['G', 'H']);
+});
+
+test('form descriptor registry: generated from the data registry + extension contracts, freshness-gated', () => {
+  const r = cp.spawnSync(process.execPath, [path.join(root, 'designer', 'contracts', 'build-form-descriptors.mjs'), '--check'], { encoding: 'utf8' });
+  assert.strictEqual(r.status, 0, 'form descriptors stale: ' + (r.stderr || r.stdout));
+  const REG = require('../../designer/contracts/form-descriptors.json');
+  assert.ok(REG.descriptors.length > 80, 'registry-derived descriptor surface present');
+  const dp = JSON.parse(fs.readFileSync(path.join(root, 'standard/registry/data-properties.json'), 'utf8'));
+  const registryPaths = new Set(REG.descriptors.filter(d => d.id.startsWith('ddn.prop.')).map(d => d.key));
+  for (const p of dp.properties) {
+    if (!p.targets.some(t => ['element', 'relation', 'field'].includes(t)) || p.path === 'uid') continue;
+    assert.ok(registryPaths.has(p.path), 'data-properties path ' + p.path + ' missing a descriptor');
+  }
+  for (const d of REG.descriptors) {
+    assert.ok(d.id && d.key && d.label && d.widget && d.scope && d.group, 'descriptor ' + d.id + ' carries the spec-05 fields');
+    assert.ok(['text', 'number', 'quantity', 'select', 'optional-boolean', 'reference', 'string-list', 'record'].includes(d.widget), d.id + ' widget');
+    assert.ok(d.states.includes('unset'), d.id + ' must admit the unset state (removal ≠ blanking)');
+    if (d.when) T.evalWhen(d.when, { props: {}, capabilities: [] }); // AST parses
+  }
+  const genset = REG.descriptors.find(d => d.key === 'x_genset');
+  assert.ok(genset && genset.widget === 'record' && genset.fields.length === 3, 'closed extension contracts become structured records');
+  assert.ok(REG.skipped_extensions.includes('x_endlabels'), 'free-form/UML-governed extensions stay out of the generated surface');
+});
+
+test('tool build inlines the descriptor registry and the forms module', () => {
+  const html = fs.readFileSync(path.join(root, 'notation/tool/ddn-tool.html'), 'utf8');
+  assert.ok(html.includes('globalThis.DDN_FORM_DESCRIPTORS'), 'descriptor registry not inlined');
+  assert.ok(html.includes('build-form-descriptors.mjs'), 'inlined registry must name its generator');
+  assert.ok(html.includes('DDNToolForms'), 'forms module not inlined');
+  const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
+  assert.ok(tool.includes('A.authoring.setElementProperties'), 'Details tab not wired to the generic batch write');
+});
+
+test('authoring.setElementProperties: generic validated batch write, undefined removes', () => {
+  const src = 'ddn "0.5"; module "t"; data m { object a "A" { kind: table; } object b "B" { kind: table; } relation r "R" @a -> @b { kind: ref; } } view v { data: [@m]; }';
+  const w = A.createWorkspace({ 'main.ddn': src });
+  const uid = w.resolve('main.ddn', 'v').elements[0].id;
+  A.authoring.setElementProperties(w, 'main.ddn', 'v', uid, { maturity: 'approved', owner: 'team-a' });
+  let props = w.resolve('main.ddn', 'v').elements[0].properties;
+  assert.equal(props.maturity, 'approved');
+  assert.equal(props.owner, 'team-a');
+  assert.ok(w.getFiles()['main.ddn'].includes('maturity: "approved";'), 'serialized through the canonical writer');
+  A.authoring.setElementProperties(w, 'main.ddn', 'v', uid, { maturity: undefined });
+  assert.equal(w.resolve('main.ddn', 'v').elements[0].properties.maturity, undefined, 'undefined removes the property');
+  /* extension records (the structured-record widget's payload) write whole */
+  A.authoring.setElementProperties(w, 'main.ddn', 'v', uid, { x_sticky: { colour: 'yellow', pin: true } });
+  assert.deepEqual(w.resolve('main.ddn', 'v').elements[0].properties.x_sticky, { colour: 'yellow', pin: true });
+  w.undo(); w.undo(); w.undo();
+  props = w.resolve('main.ddn', 'v').elements[0].properties;
+  assert.equal(props.owner, undefined, 'undo restores the previous source');
+  /* relations are covered too (the Details tab's single write path) */
+  const rid = w.resolve('main.ddn', 'v').relations[0].id;
+  A.authoring.setElementProperties(w, 'main.ddn', 'v', rid, { enforcement: 'database', cadence: 'batch' });
+  assert.equal(w.resolve('main.ddn', 'v').relations[0].properties.cadence, 'batch');
+  /* guards */
+  assert.throws(() => A.authoring.setElementProperties(w, 'main.ddn', 'v', uid, {}), e => e.code === 'DDN-E001', 'empty batch refused');
+  assert.throws(() => A.authoring.setElementProperties(w, 'main.ddn', 'v', uid, { 'bad key!': 1 }), e => e.code === 'DDN-E001', 'identifier check');
+  assert.throws(() => A.authoring.setElementProperties(w, 'main.ddn', 'v', uid, { n: NaN }), e => e.code === 'DDN-E001', 'non-finite number refused');
+  assert.throws(() => A.authoring.setElementProperties(w, 'main.ddn', 'v', 'm::v', { x: 1 }), e => ['DDN-E002', 'DDN-E006'].includes(e.code), 'view nodes are not property targets');
+  /* commit-time authority: invalid per the core validator fails coded */
+  assert.throws(() => A.authoring.setElementProperties(w, 'main.ddn', 'v', uid, { kind: 'no.such.kind' }), e => e.code === 'DDN050', 'core validation re-runs on commit');
+});
+
 const n = results.length;
 Promise.all(pending).then(() => {
   const ok = results.filter(r => r.pass).length;

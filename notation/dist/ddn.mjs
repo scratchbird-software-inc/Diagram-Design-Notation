@@ -8476,6 +8476,34 @@ api.authoring={
  value,
  setLabel(ws,entry,view,id,label){if(typeof label!=='string'||label.length>4096)fail('DDN-E001','Label must be text up to 4096 characters.');const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[labelEdit(ws.getFiles()[n.source],n,label)],entry,view);},
  setProperty(ws,entry,view,id,key,v){idOK(key);const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[property(ws.getFiles()[n.source],n,key,v)],entry,view);},
+ /* Designer phase 4 (spec 05 descriptor-driven forms): generic batch property
+  * write on an element, relation or field definition — one validated, undoable
+  * transaction for every key in `props`; `undefined` removes the property
+  * (removing is distinct from blanking: a blank draft never reaches here as a
+  * value). Keys are identifier-checked; the commit-time authority is core
+  * validation (data-properties contracts, DDN-PJ* rules) re-run by apply() —
+  * this channel deliberately does not re-implement per-key contracts. Stricter
+  * guarded channels (setRelationProps, setViewProfile, …) keep their own
+  * allowlists; this is the generic escape the descriptor forms bind to. */
+ setElementProperties(ws,entry,view,id,props){
+  if(!props||typeof props!=='object'||Array.isArray(props))fail('DDN-E001','Property writes need a {key: value} record.');
+  const keys=Object.keys(props);
+  if(!keys.length||keys.length>40)fail('DDN-E001','Property writes carry 1..40 keys per transaction.');
+  for(const k of keys)idOK(k);
+  for(const [k,v]of Object.entries(props)){
+   if(v===undefined)continue;
+   if(v===null||typeof v==='string'||typeof v==='boolean')continue;
+   if(typeof v==='number'&&Number.isFinite(v))continue;
+   if(Array.isArray(v)||typeof v==='object')continue; // records/quantities/refs serialize via value(); core judges legality
+   fail('DDN-E001','Property '+k+' must be a finite scalar, record or array (or undefined to remove).');
+  }
+  const b=build(ws,entry,view),n=find(b,id);
+  if(!['object','relation','field'].includes(n.type))fail('DDN-E006','setElementProperties targets an element, relation or field definition.');
+  const text=ws.getFiles()[n.source];
+  const edits=Object.entries(props).map(([k,v])=>property(text,n,k,v)).filter(Boolean);
+  if(!edits.length)return ws.revision;
+  return apply(ws,b,edits,entry,view);
+ },
  /* B1-050 (D2): write presentation state INTO the view's source — the inverse
   * of the runtime override channel (api.js apply()). `groups` maps a view
   * profile group name (layout/style/display/legend/chrome/publication/

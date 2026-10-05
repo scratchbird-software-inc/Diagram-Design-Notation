@@ -218,6 +218,13 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-details { font-size: 12px; margin: 2px 0 8px; }
 .ddn-details dt { font-weight: 600; color: #44597a; }
 .ddn-details dd { margin: 0 0 4px 12px; word-break: break-word; color: #2c3e57; }
+/* Phase 4 descriptor-driven forms (forms.js) */
+.ddn-form-group h4 { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: #44597a; margin: 10px 0 4px; }
+.ddn-form-control { position: relative; margin: 2px 0; }
+.ddn-form-control .ddn-remove-prop { position: absolute; right: 0; top: 2px; }
+.ddn-form-error { color: #a4352c; font-size: 11px; margin: 2px 0 4px; }
+.ddn-form-preview { display: block; font-size: 11px; color: #44597a; background: #f2f6fb; border-radius: 6px; padding: 3px 6px; margin: 3px 0; word-break: break-word; }
+.ddn-form-record { border-left: 2px solid #e3eaf3; padding-left: 8px; margin: 4px 0; }
 .ddn-modal {
   position: absolute; top: 24px; left: 0; right: 0; z-index: 7;
   background: #fff; border: 1px solid #cbd5e3; border-radius: 12px; padding: 12px 14px;
