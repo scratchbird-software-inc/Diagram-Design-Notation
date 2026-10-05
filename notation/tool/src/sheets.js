@@ -7,7 +7,8 @@
  * (cmmn.basic@1 / cmmn.complete@1): case-plan outline tree, sentry editor,
  * decorator flags, planning table editor. Phase 6a registers the UML
  * structure/activity/sequence, BPMN and patent bodies (below); phase 6b adds
- * the data-projection sheets.
+ * the data-projection sheets (matrix, chart, timeline, decision, fishbone,
+ * panels — kind-only dispatch matches every profile of the projection kind).
  *
  * Pure layer (node-testable, no DOM):
  *  · sheetForProjection / typeSheetAutoState — dispatch + auto-open semantics
@@ -37,7 +38,15 @@ const SHEETS = [
   /* patent.legal@1 attaches through the view KIND (patent-figure), never the
    * projection profile — dispatch matches viewKinds (the caller enriches the
    * projection object with viewKind from ir.view.kind). */
-  { id: 'patent', label: 'Patent numerals & anchors', viewKinds: ['patent-figure'], kinds: ['graph'] }
+  { id: 'patent', label: 'Patent numerals & anchors', viewKinds: ['patent-figure'], kinds: ['graph'] },
+  /* Phase 6b bodies: the data-bound projections (the views whose Add palette
+   * shows the "generated from data" hint). */
+  { id: 'matrix', label: 'Matrix (RACI/CRUD)', kinds: ['matrix'] },
+  { id: 'chart', label: 'Chart source & bindings', kinds: ['chart'] },
+  { id: 'timeline', label: 'Timeline', kinds: ['timeline'] },
+  { id: 'decision', label: 'Decision table', kinds: ['decision'] },
+  { id: 'fishbone', label: 'Fishbone ribs', kinds: ['fishbone'] },
+  { id: 'panels', label: 'Panels grid', kinds: ['panels'] }
 ];
 
 function sheetForProjection(projection, sheets) {
@@ -46,6 +55,8 @@ function sheetForProjection(projection, sheets) {
     if (s.kinds && !s.kinds.includes(p.kind || 'graph')) continue;
     if (s.profiles && s.profiles.includes(p.profile)) return s;
     if (s.viewKinds && s.viewKinds.includes(p.viewKind)) return s;
+    /* Kind-only sheets (phase 6b data projections) match on kind alone. */
+    if (!s.profiles && !s.viewKinds) return s;
   }
   return null;
 }
@@ -433,6 +444,166 @@ function refAnchorScan(ir) {
   return out;
 }
 
+/* ================= Phase 6b pure layer =================
+ * Data-projection sheet models, ported from the deprecated prototype's proven
+ * designs (designer/prototype/app.js + commands.js). */
+
+/* Matrix: per-profile cell alphabets (RACI/CRUD; other matrix profiles are
+ * declared-item grids — read-only here). */
+const MATRIX_KEYS = p => p && p.profile === 'matrix.raci@1' ? ['R', 'A', 'C', 'I'] : p && p.profile === 'matrix.crud@1' ? ['C', 'R', 'U', 'D'] : null;
+/* matrixStageChange(profile, batch, cell, rowId, columnId, key): stage one key
+ * against a cell. cell = {value, staged, assignments[]} (the display state with
+ * any staged overlay already resolved by the caller). Returns the new batch —
+ * the existing staged change for this cell is replaced; a null change drops it.
+ * The commit itself is one authoring.setMatrixCells transaction. */
+function matrixStageChange(profile, batch, cell, rowId, columnId, key) {
+  const next = (batch || []).filter(b => !(b.rowId === rowId && b.columnId === columnId));
+  const push = ch => { if (ch) next.push({ rowId, columnId, ...ch }); return next; };
+  if (key === 'clear') { if (!cell.assignments.length && !cell.staged) return batch; return push({ remove: true }); }
+  const k = String(key).toUpperCase();
+  if (profile === 'matrix.crud@1') {
+    const set = new Set((cell.value || '').split(''));
+    if (set.has(k)) set.delete(k); else set.add(k);
+    const v = ['C', 'R', 'U', 'D'].filter(x => set.has(x)).join('');
+    return push(v ? { value: v } : (cell.assignments.length ? { remove: true } : null));
+  }
+  if (!cell.staged && cell.value === k) return batch;
+  return push({ value: k });
+}
+
+/* Chart: data-aware field pickers — keys present on the bound records; numeric
+ * keys are numeric on every record that declares them. */
+const chartRecordKeys = records => { const keys = []; for (const n of records || []) for (const k of Object.keys((n.properties && n.properties.x_record) || {})) if (!keys.includes(k)) keys.push(k); return keys; };
+const chartNumericKeys = (records, keys) => (keys || []).filter(k => (records || []).every(n => { const v = n.properties.x_record[k]; return typeof v === 'number' || v === undefined; }));
+const chartUnitChoices = records => [...new Set((records || []).map(n => n.properties.x_record.unit).filter(u => typeof u === 'string'))];
+/* chartRecordValueCommit(old, raw): typed record-cell commit — numbers never
+ * coerce from strings (blank/non-finite is a coded no-change error). */
+function chartRecordValueCommit(old, raw) {
+  if (typeof old === 'number') {
+    const s = String(raw == null ? '' : raw).trim();
+    if (s === '' || !Number.isFinite(Number(s))) return { action: 'error', code: 'DDN-UI17', message: 'Numeric record keys accept numbers only — numeric strings are not coerced. Nothing was changed.' };
+    const v = Number(s);
+    return v === old ? { action: 'none' } : { action: 'set', value: v };
+  }
+  if (typeof old === 'boolean') { const v = raw === true || raw === 'true'; return v === old ? { action: 'none' } : { action: 'set', value: v }; }
+  const v = String(raw == null ? '' : raw);
+  return v === String(old) ? { action: 'none' } : { action: 'set', value: v };
+}
+
+/* Timeline: ISO date grammar identical to the runtime date() helper — real
+ * calendar dates only; end >= start (equal is a legal zero-length milestone). */
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+function timelineDateOK(s) { if (typeof s !== 'string' || !DATE_RE.test(s)) return false; const t = Date.parse(s + 'T00:00:00Z'); return Number.isFinite(t) && new Date(t).toISOString().slice(0, 10) === s; }
+/* timelineDatesCommit(current, draft): current {start, end} (the record's
+ * current x_record dates), draft {start?, end?}. A one-sided draft merges over
+ * current so a start edit cannot pass through an intermediate end < start. */
+function timelineDatesCommit(current, draft) {
+  const c = current || {}, d = draft || {};
+  const start = d.start !== undefined ? String(d.start) : c.start;
+  const end = d.end !== undefined ? String(d.end) : c.end;
+  for (const [k, v] of [['start', start], ['end', end]]) if (!timelineDateOK(v)) return { action: 'error', code: 'DDN-UI18', message: 'Timeline dates need a real ISO YYYY-MM-DD value; got ' + JSON.stringify(v) + ' for ' + k + '. Nothing was changed.' };
+  if (end < start) return { action: 'error', code: 'DDN-UI18', message: 'Timeline end must be on or after start (equal dates are a legal zero-length milestone). Nothing was changed.' };
+  if (start === c.start && end === c.end) return { action: 'none' };
+  return { action: 'set', start, end };
+}
+
+/* Decision: typed predicate cells per declared input domain — verbatim port of
+ * the prototype's decisionScalar/decisionPredFromCell/checkDecisionRule.
+ * `null`/`missing` operators exist only when the domain declares nullable/
+ * optional; intervals exist only on number domains; `in` on enums is a
+ * multi-select over the declared values. */
+const DECISION_OPS = ['eq', 'in', 'interval', 'null', 'missing'];
+const decisionOpsFor = d => { const ops = d.type === 'number' ? ['interval', 'eq', 'in'] : ['eq', 'in']; if (d.nullable) ops.push('null'); if (d.optional) ops.push('missing'); return ops; };
+function decisionScalar(raw, d) {
+  if (d.type === 'boolean') return raw === true || raw === 'true';
+  if (d.type === 'number') { const n = Number(raw); if (raw === '' || raw === undefined || raw === null || !Number.isFinite(n)) throw Object.assign(new Error('A number-domain predicate needs a finite number; numeric strings are not coerced.'), { code: 'DDN-UI19' }); return n; }
+  return String(raw);
+}
+/* decisionPredicateFromDraft(d, draft) → predicate record. draft: {op, value?,
+ * values?, min?, max?, lowerClosed?, upperClosed?}; values for `in` is an array
+ * of raw picks (enum multi-select) or one comma-separated string (numbers). */
+function decisionPredicateFromDraft(d, draft) {
+  const op = draft && draft.op;
+  if (!decisionOpsFor(d).includes(op)) throw Object.assign(new Error('Operator ' + JSON.stringify(op) + ' is not available for the declared ' + d.type + ' domain (null/missing only when the domain declares them).'), { code: 'DDN-UI19' });
+  if (op === 'null' || op === 'missing') return { op };
+  if (op === 'eq') return { op, value: decisionScalar(draft.value, d) };
+  if (op === 'in') {
+    const values = Array.isArray(draft.values) ? draft.values.map(v => decisionScalar(v, d)) : String(draft.values || '').split(',').filter(s => s.trim() !== '').map(s => decisionScalar(s.trim(), d));
+    return { op, values };
+  }
+  return { op: 'interval', min: decisionScalar(draft.min, d), max: decisionScalar(draft.max, d), lower_closed: draft.lowerClosed !== false, upper_closed: draft.upperClosed !== false };
+}
+function decisionInDomain(v, d) {
+  if (v === undefined) return !!d.optional;
+  if (v === null) return !!d.nullable;
+  if (d.type === 'number') return typeof v === 'number' && Number.isFinite(v) && v >= d.min && v <= d.max;
+  if (d.type === 'boolean') return typeof v === 'boolean';
+  return Array.isArray(d.values) && d.values.some(x => String(x) === String(v));
+}
+/* checkDecisionRule(p, when, then) → null | {code, message} — the DDN-QD002/
+ * QD003 pre-checks; the commit-time re-plan stays the authority. p carries
+ * {inputs, outputs} (the plan's declared domains). */
+function checkDecisionRule(p, when, then) {
+  const fail = (code, message) => ({ code, message });
+  const inputs = (p && p.inputs) || [], outputs = (p && p.outputs) || [];
+  if (!when || typeof when !== 'object' || Array.isArray(when)) return fail('DDN-QD002', 'when must be a conjunction record');
+  for (const [k, c] of Object.entries(when)) {
+    const d = inputs.find(x => x.key === k);
+    if (!d) return fail('DDN-QD002', 'Predicate references unknown input ' + k);
+    if (!c || typeof c !== 'object' || Array.isArray(c) || !DECISION_OPS.includes(c.op)) return fail('DDN-QD002', 'Unsupported predicate operator');
+    if (c.op === 'eq' && !decisionInDomain(c.value, d)) return fail('DDN-QD002', 'Equality value outside input domain');
+    if (c.op === 'in' && (!Array.isArray(c.values) || !c.values.length || c.values.some(v => !decisionInDomain(v, d)) || new Set(c.values.map(String)).size !== c.values.length)) return fail('DDN-QD002', 'Membership values outside input domain or duplicate');
+    if ((c.op === 'null' && !d.nullable) || (c.op === 'missing' && !d.optional)) return fail('DDN-QD002', 'Predicate uses an unavailable null/missing state');
+    if (c.op === 'interval' && (d.type !== 'number' || typeof c.min !== 'number' || typeof c.max !== 'number' || !Number.isFinite(c.min) || !Number.isFinite(c.max) || c.min > c.max || c.min < d.min || c.max > d.max)) return fail('DDN-QD002', 'Invalid numeric predicate interval');
+  }
+  if (!then || typeof then !== 'object' || Array.isArray(then)) return fail('DDN-QD003', 'Every rule must provide every scalar output');
+  const keys = Object.keys(then);
+  if (keys.length !== outputs.length || outputs.some(k => !Object.hasOwn(then, k))) return fail('DDN-QD003', 'Every rule must provide every scalar output');
+  if (keys.some(k => !['string', 'number', 'boolean'].includes(typeof then[k]) || (typeof then[k] === 'number' && !Number.isFinite(then[k])))) return fail('DDN-QD003', 'Every rule must provide every scalar output');
+  return null;
+}
+
+/* Panels: fixed-grid canvas profiles lock the required blocks' title/span/
+ * delete controls (the runtime's DDN-PJ080/081/083 re-plan is the backstop). */
+const CANVAS_REQUIRED = {
+  'canvas.bmc@1': ['kp', 'ka', 'kr', 'vp', 'cr', 'ch', 'cs', 'cost', 'rev'],
+  'canvas.lean@1': ['problem', 'solution', 'keymetrics', 'uvp', 'unfair', 'channels', 'segments', 'cost', 'revenue'],
+  'canvas.pest@1': ['political', 'economic', 'social', 'technological'],
+  'canvas.pestle@1': ['political', 'economic', 'social', 'technological', 'legal', 'environmental'],
+  'canvas.porter5@1': ['entrants', 'supplier', 'rivalry', 'buyer', 'substitutes'],
+  'canvas.empathy@1': ['says', 'thinks', 'persona', 'does', 'feels'],
+  'canvas.scorecard@1': ['financial', 'customer', 'internal', 'learning']
+};
+const PANEL_KEYS = ['id', 'title', 'row', 'column', 'rowspan', 'colspan', 'items', 'view'];
+/* panelGridCheck(columns, candidate) → null | {code, message}: the DDN-PJ020/
+ * PJ021/QP001 candidate pre-checks on a whole replacement panel set. */
+function panelGridCheck(columns, candidate) {
+  const fail = (code, message) => ({ code, message });
+  if (!Array.isArray(candidate) || !candidate.length || candidate.length > 80) return fail('DDN-PJ020', 'Panels need 1..12 columns and 1..80 panels');
+  const used = new Set(), ids = new Set();
+  for (const v of candidate) {
+    if (!v || typeof v !== 'object' || Array.isArray(v) || Object.keys(v).some(k => !PANEL_KEYS.includes(k))) return fail('DDN-PJ020', 'Invalid panel grid span/ID');
+    const rs = v.rowspan ?? 1, cs = v.colspan ?? 1;
+    if (!v.id || ids.has(v.id) || typeof v.title !== 'string' || ![v.row, v.column, rs, cs].every(Number.isInteger) || v.row < 0 || v.row > 100 || v.column < 0 || rs < 1 || cs < 1 || v.row + rs > 101 || v.column + cs > columns) return fail('DDN-PJ020', 'Invalid panel grid span/ID');
+    ids.add(v.id);
+    for (let y = v.row; y < v.row + rs; y++) for (let x = v.column; x < v.column + cs; x++) { const key = y + ':' + x; if (used.has(key)) return fail('DDN-PJ021', 'Overlapping panel spans'); used.add(key); }
+    if (v.view !== undefined && v.items !== undefined) return fail('DDN-QP001', 'A child-view panel requires panels.composed@1 and cannot also contain items');
+  }
+  return null;
+}
+
+/* Fishbone: definition uid → occurrence paths over the rib tree (a reused
+ * cause keeps one identity with distinct occurrences). */
+function fishboneOccurrences(plan) {
+  const m = new Map();
+  (function walk(node) {
+    const id = node.node && node.node.id;
+    if (id) { if (!m.has(id)) m.set(id, []); m.get(id).push(node.occurrence); }
+    for (const c of node.children || []) walk(c);
+  })({ node: { id: plan.effect.id }, occurrence: plan.effect.id, children: plan.categories });
+  return m;
+}
+
 const pure = {
   SHEETS, sheetForProjection, typeSheetAutoState,
   CMMN_ROLES, cmmnRole, cmmnOutline,
@@ -442,7 +613,13 @@ const pure = {
   MULT_RE, memberCommit, templateCommit, assocClassCommit, naryCommit, gensetCommit,
   laneRectCommit, laneMembersPlan, messageCommit, FRAGMENT_OPERATORS, fragmentCommit,
   EVENT_TYPES, EVENT_POSITIONS, eventCommit, GATEWAY_TYPES, gatewayCommit, boolPropCommit,
-  numeralCommit, numeralConflicts, renumberPlan, refAnchorScan
+  numeralCommit, numeralConflicts, renumberPlan, refAnchorScan,
+  /* Phase 6b */
+  MATRIX_KEYS, matrixStageChange,
+  chartRecordKeys, chartNumericKeys, chartUnitChoices, chartRecordValueCommit,
+  DATE_RE, timelineDateOK, timelineDatesCommit,
+  DECISION_OPS, decisionOpsFor, decisionScalar, decisionPredicateFromDraft, decisionInDomain, checkDecisionRule,
+  CANVAS_REQUIRED, PANEL_KEYS, panelGridCheck, fishboneOccurrences
 };
 if (typeof document === 'undefined') {
   if (typeof module === 'object' && module.exports) module.exports = pure;
@@ -1380,6 +1557,836 @@ function renderPatentSheet(target, hooks) {
   return { refresh: paint };
 }
 
+/* ================= Matrix sheet (phase 6b) =================
+ * Ported from the prototype's proven design: batch cell grid — rows/columns
+ * from the projection plan, cell values from the relation/value binding, a
+ * keypad stages letters (RACI assign / CRUD toggle), and the batch commits as
+ * ONE authoring.setMatrixCells transaction. Cells are editable only when the
+ * value binding is an extension property (x_*). */
+function renderMatrixSheet(target, hooks) {
+  const outlineEl = target.outline, editorEl = target.editor;
+  outlineEl.replaceChildren(); editorEl.replaceChildren();
+  let batch = [], sel = null;
+
+  function paint() {
+    const ir = hooks.ir();
+    if (!ir) return;
+    const p = (ir.view.profiles && ir.view.profiles.projection) || {};
+    const err = el('p', 'ddn-sheet-error');
+    const commit = fn => hooks.guided(fn, m => { err.textContent = m || ''; });
+    let plan = null, planError = null;
+    try { plan = hooks.plan(); } catch (e) { planError = (e && e.code ? e.code + ': ' : '') + (e && e.message || e); }
+    if (planError) {
+      outlineEl.replaceChildren(el('p', 'ddn-sheet-error', planError + ' The sheet stays read-only; the source is unchanged.'));
+      editorEl.replaceChildren();
+      return;
+    }
+    if (sel && (sel.r >= plan.rows.length || sel.c >= plan.columns.length)) sel = null;
+    const keys = MATRIX_KEYS(p), editable = String(p.value || '').split('.')[0].startsWith('x_');
+    const stagedFor = (ri, ci) => batch.find(b => b.rowId === plan.rows[ri].id && b.columnId === plan.columns[ci].id) || null;
+    const cellDisplay = (ri, ci) => {
+      const staged = stagedFor(ri, ci);
+      if (staged) return { value: staged.remove ? '' : String(staged.value ?? ''), staged: true, assignments: [] };
+      const cell = plan.cells[ri][ci];
+      return { value: cell.map(a => a.value).join(' '), staged: false, assignments: cell };
+    };
+    const stageKey = key => {
+      if (!sel) return;
+      const d = cellDisplay(sel.r, sel.c);
+      batch = matrixStageChange(p.profile, batch, d, plan.rows[sel.r].id, plan.columns[sel.c].id, key);
+      paint();
+    };
+    /* Grid (outline pane). */
+    outlineEl.replaceChildren();
+    outlineEl.append(el('h4', '', 'Assignment matrix — ' + p.profile));
+    outlineEl.append(el('p', 'ddn-dim', 'Relation ' + p.relation + ' · value ' + p.value + '. Click a cell, then a key; arrows move, Enter commits the batch, Esc discards.'));
+    const table = el('table', 'ddn-sheet-table');
+    table.tabIndex = 0;
+    const head = document.createElement('tr');
+    head.append(el('th', '', ''));
+    for (const c of plan.columns) head.append(el('th', '', c.name));
+    table.append(head);
+    plan.rows.forEach((row, ri) => {
+      const tr = document.createElement('tr');
+      tr.append(el('th', '', row.name));
+      plan.columns.forEach((col, ci) => {
+        const d = cellDisplay(ri, ci);
+        const td = document.createElement('td');
+        const b = mini(d.value || '·', 'Stage an assignment for this cell; commit the batch as one transaction', () => { sel = { r: ri, c: ci }; paint(); });
+        b.setAttribute('aria-label', row.name + ' / ' + col.name);
+        if (sel && sel.r === ri && sel.c === ci) b.setAttribute('aria-selected', 'true');
+        if (d.staged) td.setAttribute('data-staged', 'true');
+        td.append(b); tr.append(td);
+      });
+      table.append(tr);
+    });
+    table.addEventListener('keydown', e => {
+      if (e.key.startsWith('Arrow') && sel) {
+        e.preventDefault();
+        const d = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[e.key];
+        sel = { r: Math.min(plan.rows.length - 1, Math.max(0, sel.r + d[0])), c: Math.min(plan.columns.length - 1, Math.max(0, sel.c + d[1])) };
+        paint(); return;
+      }
+      if (e.key === 'Enter') { e.preventDefault(); commitBatch(); return; }
+      if (e.key === 'Escape') { e.preventDefault(); batch = []; paint(); return; }
+      if (!sel || !editable) return;
+      if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); stageKey('clear'); return; }
+      if (e.key.length === 1 && /[a-z]/i.test(e.key)) {
+        const k = e.key.toUpperCase();
+        if (keys && !keys.includes(k)) return;
+        e.preventDefault(); stageKey(k);
+      }
+    });
+    outlineEl.append(table);
+    const commitBatch = () => commit(() => {
+      if (!batch.length) return;
+      if (plan.rows.length * plan.columns.length > 5000 || plan.columns.length > 40) throw Object.assign(new Error('Matrix limit: 5,000 cells and 40 columns.'), { code: 'DDN-PJ013' });
+      hooks.setMatrixCells(batch.map(b => ({ row: b.rowId, column: b.columnId, ...(b.remove ? { remove: true } : { value: b.value }) })));
+      batch = [];
+    });
+    /* Keypad + batch bar (editor pane). */
+    editorEl.replaceChildren();
+    editorEl.append(err);
+    if (editable && keys) {
+      editorEl.append(el('h4', '', 'Selected cell'));
+      const kp = el('div', 'ddn-row');
+      for (const k of keys) kp.append(mini(k, 'Stage this code letter on the selected cell', () => { if (!sel) { err.textContent = 'DDN-UI17: Select a cell first.'; return; } stageKey(k); }));
+      kp.append(mini('Clear', 'Stage clearing the selected cell', () => { if (sel) stageKey('clear'); }));
+      editorEl.append(kp);
+      editorEl.append(el('p', 'ddn-dim', 'Keys ' + (p.profile === 'matrix.crud@1' ? 'toggle letters' : 'assign') + ' · commit writes one setMatrixCells transaction (DDN-PJ016/017 re-checked on commit).'));
+    } else if (!editable) {
+      editorEl.append(el('p', 'ddn-dim', 'Cell editing needs an extension-property (x_*) value binding; this view binds ' + p.value + '. The sheet is read-only.'));
+    }
+    editorEl.append(el('h4', '', 'Batch — ' + batch.length + ' staged'));
+    const chips = el('div', 'ddn-sheet-flags');
+    batch.forEach((b, i) => {
+      const r = (plan.rows.find(x => x.id === b.rowId) || {}).name || b.rowId;
+      const c = (plan.columns.find(x => x.id === b.columnId) || {}).name || b.columnId;
+      const chip = el('span', 'ddn-chip', r + ' → ' + c + ': ' + (b.remove ? 'clear' : String(b.value)) + ' ');
+      chip.append(mini('×', 'Remove this staged change from the batch', () => { batch.splice(i, 1); paint(); }));
+      chips.append(chip);
+    });
+    if (!batch.length) chips.append(el('span', 'ddn-dim', 'Nothing staged.'));
+    editorEl.append(chips);
+    const bar = el('div', 'ddn-row');
+    const commitB = mini('Commit as one transaction', 'Commit the staged matrix cells as one undoable, core-validated transaction', commitBatch);
+    commitB.disabled = !batch.length;
+    const disc = mini('Discard', 'Discard every staged change; source unchanged', () => { batch = []; paint(); });
+    disc.disabled = !batch.length;
+    bar.append(commitB, disc);
+    editorEl.append(bar);
+  }
+
+  paint();
+  return { refresh: paint };
+}
+
+/* ================= Chart sheet (phase 6b) =================
+ * Ported: binding form (mark/x/y/size/unit/aggregate/missing — view scope,
+ * projection { } group) plus the shared-model record table. Field pickers are
+ * data-aware: only keys present on the bound records; y/size offer keys numeric
+ * on every record that declares them. Numbers never coerce from strings. */
+function renderChartSheet(target, hooks) {
+  const outlineEl = target.outline, editorEl = target.editor;
+  outlineEl.replaceChildren(); editorEl.replaceChildren();
+
+  function paint() {
+    const ir = hooks.ir();
+    if (!ir) return;
+    const p = (ir.view.profiles && ir.view.profiles.projection) || {};
+    const err = el('p', 'ddn-sheet-error');
+    const commit = fn => hooks.guided(fn, m => { err.textContent = m || ''; });
+    const byId = new Map((ir.elements || []).map(n => [n.id, n]));
+    const records = (p.records || []).map(r => byId.get(r.$ref)).filter(n => n && n.properties.x_record && typeof n.properties.x_record === 'object');
+    const keys = chartRecordKeys(records);
+    const numericKeys = chartNumericKeys(records, keys);
+    const units = chartUnitChoices(records);
+    let planError = null;
+    try { hooks.plan(); } catch (e) { planError = (e && e.code ? e.code + ': ' : '') + (e && e.message || e); }
+    /* Record rows (shared model; outline pane). */
+    outlineEl.replaceChildren();
+    outlineEl.append(el('h4', '', 'Source records — shared model (every bound view changes)'));
+    const table = el('table', 'ddn-sheet-table');
+    const head = document.createElement('tr');
+    head.append(el('th', '', 'record'));
+    for (const k of keys) head.append(el('th', '', k));
+    head.append(el('th', '', ''));
+    table.append(head);
+    for (const n of records) {
+      const xr = n.properties.x_record;
+      const tr = document.createElement('tr');
+      if (n.id === (hooks.selectedUid && hooks.selectedUid())) tr.setAttribute('aria-selected', 'true');
+      const th = el('th', '', n.name || n.local);
+      th.addEventListener('click', () => hooks.select(n.id));
+      tr.append(th);
+      for (const k of keys) {
+        const td = document.createElement('td');
+        const v = xr[k];
+        if (v === undefined) td.append(el('span', 'ddn-dim', '—'));
+        else if (typeof v === 'boolean') {
+          const c = document.createElement('input');
+          c.type = 'checkbox'; c.checked = v; c.setAttribute('aria-label', n.name + ' ' + k);
+          c.addEventListener('change', () => commit(() => {
+            const out = chartRecordValueCommit(v, c.checked);
+            if (out.action === 'set') hooks.setRecordValue(n.id, k, out.value);
+          }));
+          td.append(c);
+        } else {
+          const i = document.createElement('input');
+          i.value = String(v); i.setAttribute('aria-label', n.name + ' ' + k);
+          if (typeof v === 'number') { i.type = 'number'; i.step = 'any'; }
+          i.addEventListener('change', () => commit(() => {
+            const out = chartRecordValueCommit(v, i.value);
+            if (out.action === 'error') throw Object.assign(new Error(out.message), { code: out.code });
+            if (out.action === 'set') hooks.setRecordValue(n.id, k, out.value);
+          }));
+          td.append(i);
+        }
+        tr.append(td);
+      }
+      const td = document.createElement('td');
+      td.append(mini('Delete', 'Delete this record and remove its binding in one flow', () => commit(() => hooks.deleteChartRecord(n.id))));
+      tr.append(td);
+      table.append(tr);
+    }
+    outlineEl.append(table);
+    const addBar = el('div', 'ddn-row');
+    addBar.append(mini('＋ Add record', 'Adds a record with this chart’s key set and appends its binding — one flow. Dragging marks is disabled: values set geometry.', () => commit(() => hooks.addChartRecord())));
+    outlineEl.append(addBar);
+    /* Binding form (view scope; editor pane). */
+    editorEl.replaceChildren();
+    editorEl.append(el('h4', '', 'Bindings — this view only (projection { } group)'), err);
+    const caps = ((hooks.capabilities && hooks.capabilities()) || {}).marks || [];
+    const marks = caps.filter(m => m !== 'source');
+    const bindRow = (label, options, current, key) => {
+      const s = selectOf([['', '— unset —'], ...options.map(o => [o, o])], current || '', label);
+      s.addEventListener('change', () => commit(() => hooks.setProjection(key, s.value === '' ? undefined : s.value)));
+      editorEl.append(fieldRow(label + ' ', s));
+    };
+    const paths = ks => ks.map(k => 'x_record.' + k);
+    if (marks.length) bindRow('Mark', marks, p.mark, 'mark');
+    bindRow('x binding', paths(keys), p.x, 'x');
+    bindRow('y binding (numeric keys)', paths(numericKeys), p.y, 'y');
+    bindRow('size binding (numeric keys)', paths(numericKeys), p.size, 'size');
+    bindRow('unit binding', units, p.unit, 'unit');
+    bindRow('Aggregate', ['sum', 'count', 'min', 'max', 'mean'], p.aggregate, 'aggregate');
+    bindRow('Missing policy', ['error', 'skip'], p.missing, 'missing');
+    if (planError) editorEl.append(el('p', 'ddn-sheet-error', planError + ' The source stays committed and saveable; fix the binding above.'));
+    editorEl.append(el('p', 'ddn-dim', 'Field pickers offer only keys present on the bound records; y/size offer keys numeric on every record that declares them. Aggregates never create an editable synthetic total record; edit the input records.'));
+  }
+
+  paint();
+  return { refresh: paint };
+}
+
+/* ================= Timeline sheet (phase 6b) =================
+ * Ported: one row per plan item with validated date controls (shared-model
+ * x_record writes, merged so a start edit never passes through end < start),
+ * plus the dependency link/unlink editor (view-scope projection.dependencies;
+ * the relations stay shared). */
+function renderTimelineSheet(target, hooks) {
+  const outlineEl = target.outline, editorEl = target.editor;
+  outlineEl.replaceChildren(); editorEl.replaceChildren();
+  let sel = null;
+
+  function paint() {
+    const ir = hooks.ir();
+    if (!ir) return;
+    const p = (ir.view.profiles && ir.view.profiles.projection) || {};
+    const err = el('p', 'ddn-sheet-error');
+    const commit = fn => hooks.guided(fn, m => { err.textContent = m || ''; });
+    let plan = null, planError = null;
+    try { plan = hooks.plan(); } catch (e) { planError = (e && e.code ? e.code + ': ' : '') + (e && e.message || e); }
+    if (planError) {
+      outlineEl.replaceChildren(el('p', 'ddn-sheet-error', planError + ' The sheet stays read-only; the source is unchanged.'));
+      editorEl.replaceChildren();
+      return;
+    }
+    if (sel && !plan.items.some(i => i.id === sel)) sel = null;
+    const keys = { start: String(p.start || 'x_record.start').split('.').at(-1), end: String(p.end || 'x_record.end').split('.').at(-1) };
+    outlineEl.replaceChildren();
+    outlineEl.append(el('h4', '', 'Timeline tasks — dates edit the shared model (' + String(p.start) + ' / ' + String(p.end) + ')'), err);
+    const table = el('table', 'ddn-sheet-table');
+    const head = document.createElement('tr');
+    for (const h of ['task', 'start (UTC)', 'end (exclusive, UTC)', '']) head.append(el('th', '', h));
+    table.append(head);
+    for (const it of plan.items) {
+      const tr = document.createElement('tr');
+      if (it.id === sel) tr.setAttribute('aria-selected', 'true');
+      const th = el('th', '', it.label + (it.a === it.b ? ' ◆ milestone' : ''));
+      tr.append(th);
+      const node = ir.elements.find(n => n.id === it.id);
+      const xr = (node && node.properties.x_record) || {};
+      for (const key of ['start', 'end']) {
+        const td = document.createElement('td');
+        const i = document.createElement('input');
+        i.type = 'date'; i.value = it[key]; i.setAttribute('aria-label', it.label + ' ' + key);
+        i.addEventListener('change', () => commit(() => {
+          const out = timelineDatesCommit({ start: xr[keys.start], end: xr[keys.end] }, { [key]: i.value });
+          if (out.action === 'error') throw Object.assign(new Error(out.message), { code: out.code });
+          if (out.action === 'set') hooks.setProperty(it.id, 'x_record', { ...xr, [keys.start]: out.start, [keys.end]: out.end });
+        }));
+        td.append(i); tr.append(td);
+      }
+      const td = document.createElement('td');
+      td.append(mini('deps', 'Edit the dependencies touching this task', () => { sel = it.id; hooks.select(it.id); paint(); }));
+      tr.append(td);
+      table.append(tr);
+    }
+    outlineEl.append(table);
+    const bar = el('div', 'ddn-sheet-toolbar');
+    const idI = textInput('', 'task_id', 'New task identifier');
+    const labelI = textInput('', 'Label', 'New task label');
+    const sI = document.createElement('input'); sI.type = 'date'; sI.setAttribute('aria-label', 'New task start');
+    const eI = document.createElement('input'); eI.type = 'date'; eI.setAttribute('aria-label', 'New task end');
+    bar.append(idI, labelI, sI, eI, mini('＋ Add task', 'Add the task record to the shared model and this view’s bindings', () => commit(() => {
+      if (!idI.value.trim() || !sI.value || !eI.value) throw Object.assign(new Error('A new task needs an identifier and both dates.'), { code: 'DDN-UI18' });
+      const out = timelineDatesCommit({}, { start: sI.value, end: eI.value });
+      if (out.action === 'error') throw Object.assign(new Error(out.message), { code: out.code });
+      hooks.addTimelineRecord({ id: idI.value.trim(), label: labelI.value.trim() || idI.value.trim(), start: out.start, end: out.end, keys });
+    })));
+    outlineEl.append(bar);
+    /* Dependency editor (view scope; editor pane). */
+    editorEl.replaceChildren();
+    editorEl.append(el('h4', '', 'Dependencies — this view only (projection.dependencies); relations stay shared'));
+    if (!sel) editorEl.append(el('p', 'ddn-dim', 'Select a task (deps) to see and edit the dependencies touching it. Contradictions (DDN-PJ042) and cycles (DDN-PJ043) reject on commit.'));
+    else {
+      const it = plan.items.find(i => i.id === sel);
+      const deps = plan.dependencies.filter(r => r.from.element === sel || r.to.element === sel);
+      const chips = el('div', 'ddn-sheet-flags');
+      for (const r of deps) {
+        const chip = el('span', 'ddn-chip', (r.name || String(r.id).split('::').pop()) + ' ');
+        chip.append(mini('×', 'Remove from this view’s dependency list; the shared relation is kept', () => commit(() => hooks.unlinkTimelineDependency(r.id))));
+        chips.append(chip);
+      }
+      if (!deps.length) chips.append(el('span', 'ddn-dim', 'No dependencies touch ' + it.label + '.'));
+      editorEl.append(chips);
+      editorEl.append(el('h4', '', 'Link a new dependency'));
+      const others = plan.items.filter(i => i.id !== sel);
+      const fromS = selectOf(plan.items.map(i => [i.id, i.label]), sel, 'Predecessor');
+      const toS = selectOf(others.map(i => [i.id, i.label]), others[0] && others[0].id, 'Successor');
+      const labI = textInput('Precedes', 'Label', 'Dependency label');
+      editorEl.append(fieldRow('Predecessor ', fromS), fieldRow('Successor ', toS), fieldRow('Label ', labI));
+      editorEl.append(mini('Create dependency', 'Creates one shared analysis.precedes relation and appends it to this view’s projection.dependencies', () => commit(() => {
+        if (!fromS.value || !toS.value || fromS.value === toS.value) throw Object.assign(new Error('A timeline dependency links two different timeline records.'), { code: 'DDN-UI18' });
+        hooks.linkTimelineDependency({ name: labI.value.trim() || 'Precedes', from: fromS.value, to: toS.value });
+      })));
+    }
+  }
+
+  paint();
+  return { refresh: paint };
+}
+
+/* ================= Decision sheet (phase 6b) =================
+ * Ported: rule rows with typed predicate cells per declared input domain (enum
+ * multi-select for `in`, interval min/max + closure for numbers, true/false for
+ * booleans, null/missing only when the domain declares them), typed outcome
+ * cells, hit_policy/coverage (view scope), records-order ↑/↓ (semantic for
+ * first-match policies), the analysis summary, and the read-only fixture
+ * evaluator. Rule rows/x_rule are shared-model edits. */
+function renderDecisionSheet(target, hooks) {
+  const outlineEl = target.outline, editorEl = target.editor;
+  outlineEl.replaceChildren(); editorEl.replaceChildren();
+  let sel = null, fixture = null;
+
+  function paint() {
+    const ir = hooks.ir();
+    if (!ir) return;
+    const p = (ir.view.profiles && ir.view.profiles.projection) || {};
+    const err = el('p', 'ddn-sheet-error');
+    const commit = fn => hooks.guided(fn, m => { err.textContent = m || ''; });
+    let plan = null, planError = null;
+    try { plan = hooks.plan(); } catch (e) { planError = { code: (e && e.code) || 'PLAN', message: String((e && e.message) || e) }; }
+    /* Policy bar (view scope; outline pane top). */
+    outlineEl.replaceChildren();
+    outlineEl.append(el('h4', '', 'Policy — this view only'), err);
+    const policy = plan ? plan.policy : String(p.hit_policy || 'unique');
+    const coverage = plan ? plan.coverage : String(p.coverage || 'report');
+    const polS = selectOf(['unique', 'first', 'collect'].map(v => [v, v]), policy, 'Hit policy');
+    const covS = selectOf(['complete', 'report', 'none'].map(v => [v, v]), coverage, 'Coverage');
+    if (planError) { polS.disabled = true; covS.disabled = true; }
+    else {
+      polS.addEventListener('change', () => commit(() => hooks.setProjection('hit_policy', polS.value)));
+      covS.addEventListener('change', () => commit(() => hooks.setProjection('coverage', covS.value)));
+    }
+    outlineEl.append(fieldRow('Hit policy ', polS), fieldRow('Coverage ', covS));
+    if (policy === 'first') outlineEl.append(el('p', 'ddn-sheet-error', 'Rule order is semantic for first-match policies.'));
+    if (planError) {
+      outlineEl.append(el('p', 'ddn-sheet-error', planError.code + ': ' + planError.message + ' The rules stay committed and saveable as a draft; the failing analysis is displayed, never hidden. The sheet is read-only until the source passes again — use Undo or edit the source.'));
+      editorEl.replaceChildren(el('p', 'ddn-dim', 'Last good table kept stale on the canvas.'));
+      return;
+    }
+    /* Analysis summary. */
+    const a = plan.analysis || {};
+    const an = el('div');
+    an.append(el('p', 'ddn-dim', 'Analysis · ' + a.status + (a.status === 'budget_exceeded'
+      ? ' — UNESTABLISHED: ' + a.combinations + ' partition atoms exceed the budget of ' + a.budget + '.'
+      : ' — ' + String(a.checks || 0) + ' tested partition atoms of ' + String(a.combinations) + '.')));
+    if (a.uncovered && a.uncovered.length) an.append(el('p', 'ddn-sheet-error', 'Uncovered input witnesses: ' + a.uncovered.map(w => JSON.stringify(w)).join(' ')));
+    if (a.overlaps && a.overlaps.length) an.append(el('p', 'ddn-sheet-error', 'Overlapping rules: ' + a.overlaps.map(o => o.rules.map(r => r.split('::').pop()).join(' + ') + ' ← ' + JSON.stringify(o.input)).join(' ')));
+    if (a.shadowed && a.shadowed.length) an.append(el('p', 'ddn-dim', 'Shadowed first-hit rules: ' + a.shadowed.map(r => r.split('::').pop()).join(', ')));
+    if (a.unreachable && a.unreachable.length) an.append(el('p', 'ddn-dim', 'Unreachable rules: ' + a.unreachable.map(r => r.split('::').pop()).join(', ')));
+    outlineEl.append(an);
+    /* Fixture evaluator (read-only): typed controls per declared input domain. */
+    if (hooks.evaluateDecision) {
+      const inputs = plan.inputs;
+      outlineEl.append(el('h4', '', 'Fixture evaluation — read-only'));
+      const fx = el('div');
+      const draft = {};
+      for (const d of inputs) {
+        const extra = (d.nullable ? [['__null', 'null']] : []).concat(d.optional ? [['__missing', 'missing']] : []);
+        let input;
+        if (d.type === 'enum' || d.type === 'boolean') {
+          const base = d.type === 'enum' ? d.values.map(v => [String(v), String(v)]) : [['true', 'true'], ['false', 'false']];
+          input = selectOf([...base, ...extra], String(d.type === 'boolean' ? 'true' : (d.values || [])[0]), d.key);
+          draft[d.key] = () => input.value;
+        } else {
+          const num = document.createElement('input');
+          num.type = 'number'; num.step = 'any'; num.value = String(d.min ?? 0); num.setAttribute('aria-label', d.key);
+          const spec = extra.length ? selectOf([['', 'number'], ...extra], '', d.key + ' state') : null;
+          input = num;
+          draft[d.key] = () => spec && spec.value ? spec.value : num.value;
+          fx.append(fieldRow(d.key + ' ', num));
+          if (spec) fx.append(spec);
+          continue;
+        }
+        fx.append(fieldRow(d.key + ' ', input));
+      }
+      const result = el('p', 'ddn-dim');
+      if (fixture) {
+        result.textContent = fixture.error ? fixture.error
+          : 'status ' + fixture.result.status + ' · matched [' + fixture.result.matched.map(x => x.split('::').pop()).join(', ') + '] · selected [' + fixture.result.selected.map(x => x.split('::').pop()).join(', ') + ']' + (fixture.result.outputs.length ? ' · outputs ' + fixture.result.outputs.map(o => JSON.stringify(o)).join('') : '');
+        if (fixture.error) result.className = 'ddn-sheet-error';
+      }
+      fx.append(mini('Evaluate', 'Evaluate the fixture input against the rules (read-only)', () => {
+        const input = {};
+        try {
+          for (const d of inputs) {
+            const raw = draft[d.key]();
+            if (raw === '__missing') continue;
+            if (raw === '__null') { input[d.key] = null; continue; }
+            input[d.key] = decisionScalar(raw, d);
+          }
+        } catch (e) { fixture = { error: (e.code ? e.code + ': ' : '') + e.message }; paint(); return; }
+        try { fixture = { result: hooks.evaluateDecision(input) }; }
+        catch (e) { fixture = { error: (e.code ? e.code + ': ' : '') + e.message }; }
+        paint();
+      }), result);
+      outlineEl.append(fx);
+    }
+    /* Rules table (editor pane). */
+    editorEl.replaceChildren();
+    const inputs = plan.inputs, outputs = plan.outputs;
+    const writeRule = (rule, when, then) => commit(() => {
+      const bad = checkDecisionRule({ inputs, outputs }, when, then);
+      if (bad) throw Object.assign(new Error(bad.message), { code: bad.code });
+      hooks.setProperty(rule.id, 'x_rule', { when, then });
+    });
+    editorEl.append(el('h4', '', 'Rules — records order (shared model x_rule; order is view scope)'));
+    const table = el('table', 'ddn-sheet-table');
+    const head = document.createElement('tr');
+    head.append(el('th', '', 'order'), el('th', '', 'Rule'));
+    for (const d of inputs) head.append(el('th', '', d.key + ' (' + d.type + ')'));
+    for (const k of outputs) head.append(el('th', '', '→ ' + k));
+    head.append(el('th', '', ''));
+    table.append(head);
+    const numInput = (value, aria) => {
+      const i = document.createElement('input');
+      i.type = 'number'; i.step = 'any'; i.value = String(value); i.setAttribute('aria-label', aria);
+      return i;
+    };
+    plan.rules.forEach((rule, ri) => {
+      const tr = document.createElement('tr');
+      if (rule.id === sel) tr.setAttribute('aria-selected', 'true');
+      const tdOrder = document.createElement('td');
+      const up = mini('↑', 'Move earlier (records order — semantic for first-match policies)', () => commit(() => {
+        const ids = plan.rules.map(r => r.id);
+        [ids[ri - 1], ids[ri]] = [ids[ri], ids[ri - 1]];
+        hooks.reorderDecisionRules(ids);
+      }));
+      const down = mini('↓', 'Move later', () => commit(() => {
+        const ids = plan.rules.map(r => r.id);
+        [ids[ri + 1], ids[ri]] = [ids[ri], ids[ri + 1]];
+        hooks.reorderDecisionRules(ids);
+      }));
+      up.disabled = ri === 0; down.disabled = ri === plan.rules.length - 1;
+      tdOrder.append(up, down); tr.append(tdOrder);
+      const th = el('th', '', rule.node.name || rule.node.local);
+      th.addEventListener('click', () => { sel = rule.id; hooks.select(rule.id); paint(); });
+      tr.append(th);
+      for (const d of inputs) tr.append(predCell(rule, d));
+      for (const k of outputs) {
+        const td = document.createElement('td');
+        const v = rule.then[k];
+        let input;
+        if (typeof v === 'boolean') {
+          input = document.createElement('input');
+          input.type = 'checkbox'; input.checked = v; input.setAttribute('aria-label', k);
+          input.addEventListener('change', () => writeRule(rule, rule.when, { ...rule.then, [k]: input.checked }));
+        } else if (typeof v === 'number') {
+          input = numInput(v, k);
+          input.addEventListener('change', () => {
+            const out = chartRecordValueCommit(v, input.value);
+            if (out.action === 'error') { err.textContent = out.code + ': ' + out.message; input.value = String(v); return; }
+            if (out.action === 'set') writeRule(rule, rule.when, { ...rule.then, [k]: out.value });
+          });
+        } else {
+          input = textInput(String(v), '', k);
+          input.addEventListener('change', () => { if (input.value !== String(v)) writeRule(rule, rule.when, { ...rule.then, [k]: input.value }); });
+        }
+        td.append(input); tr.append(td);
+      }
+      const tdDel = document.createElement('td');
+      tdDel.append(mini('Delete', 'Delete this rule definition and remove it from records in one flow', () => commit(() => { hooks.deleteDecisionRule(rule.id); if (sel === rule.id) sel = null; })));
+      tr.append(tdDel);
+      table.append(tr);
+    });
+    editorEl.append(table);
+    /* Add rule. */
+    const bar = el('div', 'ddn-sheet-toolbar');
+    const idI = textInput('', 'rule_id', 'New rule identifier');
+    const labelI = textInput('', 'Label', 'New rule label');
+    bar.append(idI, labelI, mini('＋ Add rule', 'Creates one shared rule.row definition with a default outcome per declared type and appends its ref to projection.records', () => commit(() => {
+      if (!idI.value.trim()) throw Object.assign(new Error('A new rule needs an identifier.'), { code: 'DDN-UI19' });
+      const first = plan.rules[0], then = {};
+      for (const k of outputs) then[k] = first ? (typeof first.then[k] === 'boolean' ? false : typeof first.then[k] === 'number' ? 0 : 'undecided') : 'undecided';
+      hooks.addDecisionRule({ id: idI.value.trim(), label: labelI.value.trim() || idI.value.trim(), then });
+    })));
+    editorEl.append(bar);
+
+    /* One typed predicate cell (prototype port: op picker + per-op control). */
+    function predCell(rule, d) {
+      const td = document.createElement('td');
+      const c = rule.when[d.key];
+      if (!c) {
+        td.append(el('span', 'ddn-dim', 'Any '), mini('＋', 'Add a condition on ' + d.key, () => writeRule(rule, { ...rule.when, [d.key]: d.type === 'number' ? { op: 'interval', min: d.min, max: d.max } : d.type === 'boolean' ? { op: 'eq', value: true } : { op: 'eq', value: d.values[0] } }, rule.then)));
+        return td;
+      }
+      const draft = { op: c.op, value: c.value, values: c.values ? c.values.slice() : undefined, min: c.min, max: c.max, lowerClosed: c.lower_closed !== false, upperClosed: c.upper_closed !== false };
+      const apply = () => commit(() => {
+        const pred = decisionPredicateFromDraft(d, draft);
+        writeRuleNoWrap(rule, { ...rule.when, [d.key]: pred });
+      });
+      const writeRuleNoWrap = (r, when) => {
+        const bad = checkDecisionRule({ inputs, outputs }, when, r.then);
+        if (bad) throw Object.assign(new Error(bad.message), { code: bad.code });
+        hooks.setProperty(r.id, 'x_rule', { when, then: r.then });
+      };
+      const body = el('span');
+      const paintBody = () => {
+        body.replaceChildren();
+        if (draft.op === 'eq') {
+          if (d.type === 'boolean') {
+            const s = selectOf([['true', 'true'], ['false', 'false']], String(draft.value !== false), 'value');
+            s.addEventListener('change', () => { draft.value = s.value; apply(); });
+            body.append(s);
+          } else if (d.type === 'enum') {
+            const s = selectOf(d.values.map(v => [String(v), String(v)]), String(draft.value), 'value');
+            s.addEventListener('change', () => { draft.value = s.value; apply(); });
+            body.append(s);
+          } else {
+            const i = numInput(draft.value, 'value');
+            i.addEventListener('change', () => { draft.value = i.value; apply(); });
+            body.append(i);
+          }
+        } else if (draft.op === 'in') {
+          if (d.type === 'enum') {
+            const s = document.createElement('select');
+            s.multiple = true; s.size = Math.min(4, d.values.length); s.setAttribute('aria-label', 'values');
+            for (const v of d.values) { const o = new Option(String(v), String(v)); o.selected = (draft.values || []).includes(v); s.add(o); }
+            s.addEventListener('change', () => { draft.values = [...s.selectedOptions].map(o => o.value); apply(); });
+            body.append(s);
+          } else {
+            const i = textInput((draft.values || []).join(', '), 'comma-separated values', 'values');
+            i.addEventListener('change', () => { draft.values = i.value; apply(); });
+            body.append(i);
+          }
+        } else if (draft.op === 'interval') {
+          const minI = numInput(draft.min, 'min'), maxI = numInput(draft.max, 'max');
+          minI.addEventListener('change', () => { draft.min = minI.value; apply(); });
+          maxI.addEventListener('change', () => { draft.max = maxI.value; apply(); });
+          const lc = document.createElement('input'); lc.type = 'checkbox'; lc.checked = draft.lowerClosed; lc.setAttribute('aria-label', 'lower closed [');
+          const uc = document.createElement('input'); uc.type = 'checkbox'; uc.checked = draft.upperClosed; uc.setAttribute('aria-label', 'upper closed ]');
+          lc.addEventListener('change', () => { draft.lowerClosed = lc.checked; apply(); });
+          uc.addEventListener('change', () => { draft.upperClosed = uc.checked; apply(); });
+          const ll = el('label'); ll.append(lc, '[');
+          const ul = el('label'); ul.append(uc, ']');
+          body.append(minI, maxI, ll, ul);
+        }
+      };
+      const opS = selectOf(decisionOpsFor(d).map(o => [o, o]), c.op, 'Predicate operator for ' + d.key);
+      opS.addEventListener('change', () => {
+        draft.op = opS.value;
+        if (draft.op === 'interval') { draft.min = d.min; draft.max = d.max; draft.lowerClosed = draft.upperClosed = true; }
+        else if (draft.op === 'eq') draft.value = d.type === 'boolean' ? true : d.type === 'number' ? (d.min ?? 0) : (d.values || [])[0];
+        else if (draft.op === 'in') draft.values = d.type === 'enum' ? [(d.values || [])[0]] : '';
+        paintBody(); apply();
+      });
+      paintBody();
+      td.append(opS, body, mini('×', 'Remove this condition (the rule matches Any on ' + d.key + ')', () => commit(() => {
+        const when = { ...rule.when };
+        delete when[d.key];
+        writeRuleNoWrap(rule, when);
+      })));
+      return td;
+    }
+  }
+
+  paint();
+  return { refresh: paint };
+}
+
+/* ================= Fishbone sheet (phase 6b) =================
+ * Ported: effect label editor, one section per category rib with its cause
+ * tree, add-cause / attach-existing pickers and remove-rib actions. Every rib
+ * is a relation of the view's named cause verb; attaching an existing cause
+ * creates only a relation — one identity, distinct occurrences. */
+function renderFishboneSheet(target, hooks) {
+  const outlineEl = target.outline, editorEl = target.editor;
+  outlineEl.replaceChildren(); editorEl.replaceChildren();
+  let sel = null, selRib = null;
+
+  function paint() {
+    const ir = hooks.ir();
+    if (!ir) return;
+    const p = (ir.view.profiles && ir.view.profiles.projection) || {};
+    const err = el('p', 'ddn-sheet-error');
+    const commit = fn => hooks.guided(fn, m => { err.textContent = m || ''; });
+    let plan = null, planError = null;
+    try { plan = hooks.plan(); } catch (e) { planError = (e && e.code ? e.code + ': ' : '') + (e && e.message || e); }
+    if (planError) {
+      outlineEl.replaceChildren(el('p', 'ddn-sheet-error', planError + ' Incomplete bones stay saveable; profile checks run at review. Fix the rib set in source.'));
+      editorEl.replaceChildren();
+      return;
+    }
+    const occ = fishboneOccurrences(plan);
+    const occText = id => { const list = occ.get(id) || []; return list.length > 1 ? ' · occurrences (' + list.length + ')' : ''; };
+    /* Rib tree (outline pane). */
+    outlineEl.replaceChildren();
+    outlineEl.append(el('h4', '', 'Fishbone ribs — relation: ' + p.relation), err);
+    const effectRow = el('div', 'ddn-sheet-toolbar');
+    const effI = textInput(plan.effect.name, '', 'Effect statement');
+    effectRow.append(el('span', '', 'EFFECT '), effI, mini('Apply label', 'Rename the fishbone effect (shared definition)', () => commit(() => {
+      if (effI.value !== plan.effect.name) hooks.setLabel(plan.effect.id, effI.value);
+    })));
+    outlineEl.append(effectRow);
+    const ul = el('ul', 'ddn-sheet-tree');
+    ul.setAttribute('role', 'tree');
+    const addRow = (node, relationId, depth, hostUl) => {
+      const li = document.createElement('li');
+      const row = el('div', 'ddn-sheet-node');
+      row.style.paddingLeft = (depth * 1.2) + 'em';
+      row.setAttribute('role', 'treeitem');
+      row.setAttribute('aria-selected', String(node.id === sel || node.id === (hooks.selectedUid && hooks.selectedUid())));
+      const name = el('span', '', node.name + occText(node.id)); name.style.flex = '1';
+      row.append(name, el('span', 'ddn-sheet-kind', node.kind + (relationId ? ' · rib' : '')));
+      row.addEventListener('click', () => { sel = node.id; selRib = relationId; hooks.select(node.id); paint(); });
+      li.append(row);
+      hostUl.append(li);
+      const sub = document.createElement('ul');
+      for (const c of node.children || []) addRow(c.node, c.relationId, depth + 1, sub);
+      if (sub.children.length) li.append(sub);
+    };
+    for (const cat of plan.categories) addRow(cat.node, cat.relationId, 0, ul);
+    outlineEl.append(ul);
+    /* Add category. */
+    const bar = el('div', 'ddn-sheet-toolbar');
+    const catId = textInput('', 'category_id', 'New category identifier');
+    const catLabel = textInput('', 'Label', 'New category label');
+    bar.append(catId, catLabel, mini('＋ Add category', 'Add a category rib (1..12 root categories; DDN-QF003)', () => commit(() => {
+      if (!catId.value.trim()) throw Object.assign(new Error('A new category needs an identifier.'), { code: 'DDN-UI20' });
+      hooks.addFishboneCategory({ id: catId.value.trim(), label: catLabel.value.trim() || catId.value.trim() });
+    })));
+    outlineEl.append(bar);
+    /* Selected rib actions (editor pane). */
+    editorEl.replaceChildren();
+    const node = sel && ir.elements.find(n => n.id === sel);
+    if (!node) { editorEl.append(el('p', 'ddn-dim', 'Select a category or cause to add a cause under it, attach an existing cause, or remove its rib. The definition survives a rib removal.')); return; }
+    editorEl.append(el('h4', '', (node.name || node.local) + ' — ' + node.kind));
+    const causeId = textInput('', 'cause_id', 'New cause identifier');
+    const causeLabel = textInput('', 'Label', 'New cause label');
+    editorEl.append(el('h4', '', 'New cause under ' + (node.name || node.local)), causeId, causeLabel,
+      mini('＋ Add cause', 'Creates one quality.cause definition and one ' + p.relation + ' rib — depth and shape rules (DDN-QF001/002/003) reject on commit', () => commit(() => {
+        if (!causeId.value.trim()) throw Object.assign(new Error('A cause needs an identifier.'), { code: 'DDN-UI20' });
+        hooks.addFishboneCause({ id: causeId.value.trim(), label: causeLabel.value.trim() || causeId.value.trim(), parentId: sel });
+      })));
+    const causes = ir.elements.filter(e => e.kind === 'quality.cause' && e.id !== sel);
+    editorEl.append(el('h4', '', 'Attach existing cause'));
+    if (!causes.length) editorEl.append(el('p', 'ddn-dim', 'No existing quality.cause definitions in this view’s sources to attach.'));
+    else {
+      const pick = selectOf(causes.map(c => [c.id, c.name || c.local]), causes[0].id, 'Existing cause');
+      editorEl.append(fieldRow('Cause ', pick), mini('Attach', 'Creates only the ' + p.relation + ' relation — one identity, a second occurrence', () => commit(() => hooks.attachExistingCause({ causeId: pick.value, parentId: sel }))));
+    }
+    if (selRib) editorEl.append(mini('Remove rib', 'Remove this rib only; the definition and its other occurrences survive', () => commit(() => { hooks.removeFishboneCause(selRib); sel = null; selRib = null; })));
+  }
+
+  paint();
+  return { refresh: paint };
+}
+
+/* ================= Panels sheet (phase 6b) =================
+ * Ported: a grid mirror of the view's panels plus one editor card per panel —
+ * title, grid span, item assignment (move-to-panel picker), add-item, delete,
+ * and the child-view slot binder for panels.composed@1. Fixed-grid canvas
+ * profiles lock the required blocks' controls. Panel/grid writes are
+ * view-scope (projection.panels); item definitions are shared. */
+function renderPanelsSheet(target, hooks) {
+  const outlineEl = target.outline, editorEl = target.editor;
+  outlineEl.replaceChildren(); editorEl.replaceChildren();
+  let sel = null;
+
+  function paint() {
+    const ir = hooks.ir();
+    if (!ir) return;
+    const p = (ir.view.profiles && ir.view.profiles.projection) || {};
+    const err = el('p', 'ddn-sheet-error');
+    const commit = fn => hooks.guided(fn, m => { err.textContent = m || ''; });
+    let plan = null, planError = null;
+    try { plan = hooks.plan(); } catch (e) { planError = (e && e.code ? e.code + ': ' : '') + (e && e.message || e); }
+    const source = p.panels || [];
+    const required = CANVAS_REQUIRED[p.profile] || [];
+    const childCount = source.filter(v => v.view !== undefined).length;
+    /* Grid mirror (outline pane). */
+    outlineEl.replaceChildren();
+    outlineEl.append(el('h4', '', 'Panels grid — ' + p.profile + ' · ' + p.columns + ' column(s)'), err);
+    if (planError) outlineEl.append(el('p', 'ddn-sheet-error', planError + ' The source stays committed and saveable; the checks fire again at render/review.'));
+    if (plan) {
+      const grid = el('div', 'ddn-panel-grid');
+      grid.style.display = 'grid';
+      grid.style.gridTemplateColumns = 'repeat(' + p.columns + ', 1fr)';
+      grid.style.gap = '4px';
+      for (const v of plan.panels) {
+        const fixed = required.includes(v.id), child = !!v.child;
+        const b = el('button', 'ddn-mini');
+        b.type = 'button';
+        b.style.gridRow = (v.row + 1) + ' / span ' + v.rowspan;
+        b.style.gridColumn = (v.column + 1) + ' / span ' + v.colspan;
+        b.textContent = v.title + ' (' + v.id + ' · ' + v.rowspan + '×' + v.colspan + (child ? ' · child: ' + v.child.view.id : ' · ' + v.items.length + ' item(s)') + (fixed ? ' · fixed' : '') + ')';
+        if (v.id === sel) b.setAttribute('aria-selected', 'true');
+        b.addEventListener('click', () => { sel = v.id; paint(); });
+        grid.append(b);
+      }
+      outlineEl.append(grid);
+    }
+    /* Panel cards (editor pane). */
+    editorEl.replaceChildren();
+    editorEl.append(el('h4', '', 'Panel editors — this view only (projection.panels)'), err.cloneNode());
+    const writePanels = candidate => {
+      const bad = panelGridCheck(p.columns, candidate);
+      if (bad) throw Object.assign(new Error(bad.message), { code: bad.code });
+      hooks.setPanels(candidate);
+    };
+    for (const v of source) {
+      const planned = plan && plan.panels.find(x => x.id === v.id);
+      const fixed = required.includes(v.id), isChild = v.view !== undefined;
+      const card = el('div', 'ddn-sheet-node');
+      card.style.display = 'block';
+      card.append(el('h4', '', v.id + (fixed ? ' · FIXED CANVAS BLOCK' : '') + (isChild ? ' · CHILD-VIEW SLOT' : '')));
+      if (fixed) card.append(el('p', 'ddn-dim', 'Fixed canvas block — title, span and delete are locked; the runtime’s DDN-PJ080/081/083 re-plan is the backstop.'));
+      const titleI = textInput(v.title, '', 'Panel ' + v.id + ' title');
+      titleI.disabled = fixed;
+      titleI.addEventListener('change', () => commit(() => {
+        if (titleI.value !== v.title) writePanels(source.map(x => x.id === v.id ? { ...x, title: titleI.value } : x));
+      }));
+      card.append(fieldRow('Title ', titleI));
+      const nums = {};
+      const row = el('div', 'ddn-row');
+      for (const k of ['row', 'column', 'rowspan', 'colspan']) {
+        const i = document.createElement('input');
+        i.type = 'number'; i.min = '0'; i.value = String(v[k] ?? (k === 'rowspan' || k === 'colspan' ? 1 : 0));
+        i.setAttribute('aria-label', 'Panel ' + v.id + ' ' + k);
+        i.style.width = '5em'; i.disabled = fixed;
+        nums[k] = i;
+        row.append(fieldRow(k + ' ', i));
+      }
+      card.append(row);
+      const bar = el('div', 'ddn-row');
+      const spanB = mini('Apply span', 'Apply the grid position for this panel (this view only)', () => commit(() => {
+        const num = k => nums[k].value === '' ? undefined : Number(nums[k].value);
+        const r = num('row'), c = num('column');
+        if (!Number.isInteger(r) || !Number.isInteger(c)) throw Object.assign(new Error('row and column are required integers.'), { code: 'DDN-UI21' });
+        writePanels(source.map(x => x.id === v.id ? { ...x, row: r, column: c, ...(num('rowspan') !== undefined ? { rowspan: num('rowspan') } : {}), ...(num('colspan') !== undefined ? { colspan: num('colspan') } : {}) } : x));
+      }));
+      spanB.disabled = fixed;
+      const delB = mini('Delete panel', 'Remove this panel (this view only)', () => commit(() => {
+        writePanels(source.filter(x => x.id !== v.id));
+        if (sel === v.id) sel = null;
+      }));
+      delB.disabled = fixed;
+      bar.append(spanB, delB);
+      card.append(bar);
+      if (isChild) {
+        const childId = String(v.view && v.view.$ref !== undefined ? v.view.$ref : v.view).split('::').pop();
+        card.append(el('p', 'ddn-dim', 'Bound child view ' + childId + ' — a named-view reference, never an inline copy of child geometry (' + childCount + '/12 child slots).'));
+        const others = (hooks.views ? hooks.views() : []).filter(x => x.id !== ir.view.id.split('::').pop() && x.id !== childId);
+        const pick = selectOf(others.map(x => [x.id, x.id]), others[0] && others[0].id, 'Rebind slot');
+        const rowB = el('div', 'ddn-row');
+        const bindB = mini('Bind view', 'Bind the selected view into this slot (named reference)', () => commit(() => {
+          if (!pick.value) throw Object.assign(new Error('No other view to bind.'), { code: 'DDN-UI21' });
+          writePanels(source.map(x => {
+            if (x.id !== v.id) return x;
+            const { items, ...rest } = x;
+            return { ...rest, view: pick.value };
+          }));
+        }));
+        bindB.disabled = !others.length;
+        const openB = mini('Open child view', 'Open the bound child view', () => { if (hooks.openView) hooks.openView(childId); });
+        rowB.append(pick, bindB, openB);
+        card.append(rowB);
+      } else {
+        const items = el('div', 'ddn-sheet-flags');
+        const itemPanels = source.filter(x => x.view === undefined && x.id !== v.id);
+        if (planned) {
+          for (const it of planned.items) {
+            const chip = el('span', 'ddn-chip', it.node.name + ' ');
+            const mv = selectOf([['', 'move to…'], ...itemPanels.map(x => [x.id, x.title])], '', 'Move ' + it.node.name + ' to another panel');
+            mv.addEventListener('change', () => {
+              if (!mv.value) return;
+              commit(() => writePanels(source.map(x => {
+                if (x.id === v.id) return { ...x, items: (x.items || []).filter(r => String(r.$ref || r) !== it.node.id) };
+                if (x.id === mv.value) return { ...x, items: [...(x.items || []), it.node.id] };
+                return x;
+              })));
+            });
+            chip.append(mv);
+            items.append(chip);
+          }
+          if (!planned.items.length) items.append(el('span', 'ddn-dim', 'No items.'));
+        } else items.append(el('span', 'ddn-dim', 'Items unavailable while the plan is invalid.'));
+        card.append(items);
+        const addRow = el('div', 'ddn-row');
+        const nid = textInput('', 'note_id', 'New note identifier');
+        const nlabel = textInput('', 'Label', 'New note label');
+        const ndesc = textInput('', 'Description', 'New note description');
+        addRow.append(nid, nlabel, ndesc, mini('＋ Add item', 'Add the note to this panel (shared note + view list, one flow)', () => commit(() => {
+          if (!nid.value.trim()) throw Object.assign(new Error('A new item needs an identifier.'), { code: 'DDN-UI21' });
+          hooks.addPanelItem({ panelId: v.id, id: nid.value.trim(), label: nlabel.value.trim() || nid.value.trim(), description: ndesc.value || undefined });
+        })));
+        card.append(addRow);
+      }
+      editorEl.append(card);
+    }
+    /* Add panel. */
+    editorEl.append(el('h4', '', 'Add panel'));
+    const bar = el('div', 'ddn-sheet-toolbar');
+    const idI = textInput('', 'panel_id', 'New panel identifier');
+    const titleI = textInput('', 'Title', 'New panel title');
+    const rowI = textInput('', 'row', 'Row'); rowI.style.width = '5em';
+    const colI = textInput('', 'column', 'Column'); colI.style.width = '5em';
+    const noteI = textInput('', 'First item label (required — empty panels reject DDN-PJ009)', 'First item label');
+    bar.append(idI, titleI, rowI, colI, noteI, mini('＋ Add panel', 'Add the panel with its first item (shared note + new panel, one flow)', () => commit(() => {
+      const r = Number(rowI.value), c = Number(colI.value);
+      if (!idI.value.trim() || !Number.isInteger(r) || !Number.isInteger(c) || !noteI.value.trim()) throw Object.assign(new Error('A new panel needs an identifier, integer row/column and a first item — an empty panel rejects DDN-PJ009.'), { code: 'DDN-UI21' });
+      hooks.addPanel({ id: idI.value.trim(), title: titleI.value.trim() || idI.value.trim(), row: r, column: c, firstItem: noteI.value.trim() });
+    })));
+    editorEl.append(bar);
+  }
+
+  paint();
+  return { refresh: paint };
+}
+
 /* Body renderers by sheet id. Phase 6b registers the data-projection sheets
  * (chart, matrix, decision, timeline, fishbone, panels) here — same hook
  * contract. */
@@ -1389,7 +2396,13 @@ const RENDERERS = {
   'uml-activity': renderActivitySheet,
   'uml-sequence': renderSequenceSheet,
   bpmn: renderBpmnSheet,
-  patent: renderPatentSheet
+  patent: renderPatentSheet,
+  matrix: renderMatrixSheet,
+  chart: renderChartSheet,
+  timeline: renderTimelineSheet,
+  decision: renderDecisionSheet,
+  fishbone: renderFishboneSheet,
+  panels: renderPanelsSheet
 };
 
 const api = { ...pure, RENDERERS, renderCmmnSheet };

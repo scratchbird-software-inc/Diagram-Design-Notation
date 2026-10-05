@@ -97,6 +97,14 @@ const pure = {
   memberCommit, templateCommit, assocClassCommit, naryCommit, gensetCommit, laneRectCommit, laneMembersPlan,
   messageCommit, fragmentCommit, eventCommit, gatewayCommit, boolPropCommit,
   numeralCommit, numeralConflicts, renumberPlan, refAnchorScan,
+  /* Phase 6b data-projection sheet models. */
+  MATRIX_KEYS: SHT.MATRIX_KEYS, matrixStageChange: SHT.matrixStageChange,
+  chartRecordKeys: SHT.chartRecordKeys, chartNumericKeys: SHT.chartNumericKeys, chartUnitChoices: SHT.chartUnitChoices,
+  chartRecordValueCommit: SHT.chartRecordValueCommit,
+  timelineDateOK: SHT.timelineDateOK, timelineDatesCommit: SHT.timelineDatesCommit,
+  decisionOpsFor: SHT.decisionOpsFor, decisionScalar: SHT.decisionScalar, decisionPredicateFromDraft: SHT.decisionPredicateFromDraft,
+  decisionInDomain: SHT.decisionInDomain, checkDecisionRule: SHT.checkDecisionRule,
+  CANVAS_REQUIRED: SHT.CANVAS_REQUIRED, panelGridCheck: SHT.panelGridCheck, fishboneOccurrences: SHT.fishboneOccurrences,
   SHEET_REGISTRY: SHT.SHEETS, CMMN_DECORATOR_FLAGS: SHT.CMMN_DECORATOR_FLAGS
 };
 if (typeof module === 'object' && module.exports) module.exports = pure;
@@ -1281,6 +1289,14 @@ function selectFromSheet(uid) {
   autoDrawerForSelection(true);
 }
 function refreshTypeSheet() {
+  /* Phase 6b: auto-added definitions land in an explicit select list
+   * (addLocal); the chart/decision delete flows drop that ref first so
+   * deleteDefinition does not trip DDN-E004 on the auto-added occurrence. */
+  const dropSelectRef = uid => {
+    const cur = state.ws.resolve(state.entry, state.view);
+    if (!cur.view.selected.includes(uid)) return;
+    A.authoring.setViewList(state.ws, state.entry, state.view, 'select', cur.view.selected.filter(u => u !== uid));
+  };
   if (!els.sheetOutline) return;
   const sheet = sheetForProjection(viewProjection());
   const has = !!(sheet && SHT.RENDERERS && SHT.RENDERERS[sheet.id]);
@@ -1378,6 +1394,159 @@ function refreshTypeSheet() {
       const plan = SHT.laneMembersPlan((cur.view.frames || []), frameLocalId, uid, false);
       for (const w of plan.writes) A.authoring.setFrameMembers(state.ws, state.entry, state.view, w.frameId, w.members);
       A.authoring.setElementExtension(state.ws, state.entry, state.view, uid, 'x_partition', undefined);
+    },
+    /* Phase 6b hooks (matrix/chart/timeline/decision/fishbone/panels bodies). */
+    setProjection(key, value) { A.authoring.setProjectionProperty(state.ws, state.entry, state.view, key, value); },
+    setMatrixCells(changes) { A.authoring.setMatrixCells(state.ws, state.entry, state.view, changes); },
+    setRecordValue(uid, key, value) { A.authoring.setRecordValue(state.ws, state.entry, state.view, uid, key, value); },
+    capabilities() { return A.inspect(state.entry, state.view).capabilities; },
+    views() { return state.ws.views(state.entry); },
+    openView(viewId) {
+      const idx = (state.viewList || []).findIndex(v => v.entry === state.entry && v.view === viewId);
+      if (idx < 0) throw Object.assign(new Error('View ' + viewId + ' is not declared in this workspace.'), { code: 'DDN-E002' });
+      state.view = viewId;
+      mount();
+      syncUrl();
+    },
+    evaluateDecision(input) { return state.ws.evaluateDecision(state.entry, state.view, input); },
+    /* Resolved-IR refs are module-qualified uids; the projection group needs
+     * the view file's source form (alias-aware path). */
+    sourceRefs(uids) { return uids.map(uid => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, uid) })); },
+    addChartRecord() {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const p = cur.view.profiles.projection;
+      const byId = new Map(cur.elements.map(n => [n.id, n]));
+      const first = (p.records || []).map(r => byId.get(r.$ref)).find(n => n && n.properties.x_record && typeof n.properties.x_record === 'object');
+      if (!first) throw Object.assign(new Error('No bound record with an x_record object to clone the key set from. Nothing was changed.'), { code: 'DDN-E006' });
+      const skeleton = {};
+      for (const [k, v] of Object.entries(first.properties.x_record)) skeleton[k] = k === 'unit' ? v : typeof v === 'number' ? 0 : '';
+      const id = freshLocalId(cur.elements.map(n => n.id), 'record');
+      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: 'New record', kind: 'record' });
+      const after = state.ws.resolve(state.entry, state.view);
+      const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
+      A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'x_record', skeleton);
+      A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
+        [...(p.records || []).map(r => r.$ref), uid].map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })));
+      selectFromSheet(uid);
+    },
+    deleteChartRecord(uid) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const p = cur.view.profiles.projection;
+      const kept = (p.records || []).map(r => r.$ref).filter(u => u !== uid);
+      A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
+        kept.map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })));
+      dropSelectRef(uid);
+      A.authoring.deleteDefinition(state.ws, state.entry, state.view, uid);
+    },
+    addTimelineRecord({ id, label, start, end, keys }) {
+      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: label, kind: 'record' });
+      const after = state.ws.resolve(state.entry, state.view);
+      const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
+      A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'x_record', { [keys.start]: start, [keys.end]: end });
+      const p = state.ws.resolve(state.entry, state.view).view.profiles.projection;
+      A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
+        [...(p.records || []).map(r => r.$ref), uid].map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })));
+      selectFromSheet(uid);
+    },
+    linkTimelineDependency({ name, from, to }) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const id = freshLocalId(cur.relations.map(r => r.id), 'precedes');
+      A.authoring.addRelation(state.ws, state.entry, state.view, { id, name, kind: 'analysis.precedes', from, to });
+      const after = state.ws.resolve(state.entry, state.view);
+      const rid = after.relations.map(r => r.id).find(u => u === id || u.endsWith('.' + id));
+      const p = after.view.profiles.projection;
+      A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'dependencies',
+        [...(p.dependencies || []).map(r => r.$ref), rid].map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })));
+    },
+    unlinkTimelineDependency(relationId) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const p = cur.view.profiles.projection;
+      const kept = (p.dependencies || []).map(r => r.$ref).filter(u => u !== relationId);
+      A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'dependencies',
+        kept.length ? kept.map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })) : undefined);
+    },
+    reorderDecisionRules(orderedIds) {
+      A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
+        orderedIds.map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })));
+    },
+    addDecisionRule({ id, label, then }) {
+      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: label, kind: 'rule.row' });
+      const after = state.ws.resolve(state.entry, state.view);
+      const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
+      A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'x_rule', { when: {}, then });
+      const p = state.ws.resolve(state.entry, state.view).view.profiles.projection;
+      A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
+        [...(p.records || []).map(r => r.$ref), uid].map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })));
+      selectFromSheet(uid);
+    },
+    deleteDecisionRule(ruleId) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const p = cur.view.profiles.projection;
+      const kept = (p.records || []).map(r => r.$ref).filter(u => u !== ruleId);
+      A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
+        kept.map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })));
+      dropSelectRef(ruleId);
+      A.authoring.deleteDefinition(state.ws, state.entry, state.view, ruleId);
+    },
+    addFishboneCategory({ id, label }) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const p = cur.view.profiles.projection;
+      const plan = state.ws.projectionPlan(state.entry, state.view);
+      if (plan.categories.length >= 12) throw Object.assign(new Error('Fishbone needs 1..12 root categories'), { code: 'DDN-QF003' });
+      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: label, kind: 'quality.category' });
+      const after = state.ws.resolve(state.entry, state.view);
+      const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
+      A.authoring.addRelation(state.ws, state.entry, state.view, { id: id + '_to_effect', name: 'Possible cause category', kind: p.relation, from: uid, to: plan.effect.id });
+      selectFromSheet(uid);
+    },
+    addFishboneCause({ id, label, parentId }) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const p = cur.view.profiles.projection;
+      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: label, kind: 'quality.cause' });
+      const after = state.ws.resolve(state.entry, state.view);
+      const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
+      A.authoring.addRelation(state.ws, state.entry, state.view, { id: 'c_' + id, name: 'Possible contributing cause', kind: p.relation, from: uid, to: parentId });
+      selectFromSheet(uid);
+    },
+    attachExistingCause({ causeId, parentId }) {
+      const cur = state.ws.resolve(state.entry, state.view);
+      const p = cur.view.profiles.projection;
+      const el2 = cur.elements.find(n => n.id === causeId);
+      if (!el2 || !['quality.cause', 'quality.category'].includes(el2.kind)) throw Object.assign(new Error('Only an existing cause or category definition can be attached to a second branch — reuse never clones the definition.'), { code: 'DDN-E006' });
+      if (causeId === parentId) throw Object.assign(new Error('A rib cannot attach a definition to itself.'), { code: 'DDN-UI20' });
+      const id = freshLocalId(cur.relations.map(r => r.id), 'attach');
+      A.authoring.addRelation(state.ws, state.entry, state.view, { id, name: 'Same cause, second appearance', kind: p.relation, from: causeId, to: parentId });
+    },
+    removeFishboneCause(relationId) { A.authoring.deleteDefinition(state.ws, state.entry, state.view, relationId); },
+    /* Panels: the whole replacement set as one projection.panels write; items
+     * are uids or {$ref:uid} records, view is a view id or {$ref}. */
+    setPanels(candidate) {
+      const norm = v => {
+        const out = { id: String(v.id), title: v.title, row: v.row, column: v.column, rowspan: v.rowspan ?? 1, colspan: v.colspan ?? 1 };
+        if (v.view !== undefined) out.view = { $ref: String(v.view && v.view.$ref !== undefined ? v.view.$ref : v.view).split('::').pop() };
+        else out.items = (v.items || []).map(r => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, String(r && r.$ref !== undefined ? r.$ref : r)) }));
+        return out;
+      };
+      A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'panels', candidate.map(norm));
+    },
+    addPanelItem({ panelId, id, label, description }) {
+      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: label, kind: 'note' });
+      const after = state.ws.resolve(state.entry, state.view);
+      const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
+      if (description !== undefined) A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'description', description);
+      const p = state.ws.resolve(state.entry, state.view).view.profiles.projection;
+      const panels = (p.panels || []).map(v => v.id === panelId ? { ...v, items: [...(v.items || []).map(r => r.$ref), uid] } : v);
+      this.setPanels(panels);
+      selectFromSheet(uid);
+    },
+    addPanel({ id, title, row, column, firstItem }) {
+      const noteId = id + '_note';
+      A.authoring.addElement(state.ws, state.entry, state.view, { id: noteId, name: firstItem, kind: 'note' });
+      const after = state.ws.resolve(state.entry, state.view);
+      const uid = after.elements.map(n => n.id).find(u => u === noteId || u.endsWith('.' + noteId));
+      const p = state.ws.resolve(state.entry, state.view).view.profiles.projection;
+      this.setPanels([...(p.panels || []), { id, title, row, column, items: [uid] }]);
+      selectFromSheet(uid);
     }
   });
 }

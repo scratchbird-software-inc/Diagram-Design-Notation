@@ -8620,6 +8620,45 @@ api.authoring={
   const b=build(ws,entry,view),site=forUid?find(b,forUid):b.viewNode;
   return refFor(b,site.doc||b.viewNode.doc,targetUid);
  },
+ /* Designer phase 6b (data-projection sheets): write one property of the
+  * view's projection { } group — the view-scope binding surface the chart,
+  * timeline, decision and panels sheets edit (mark/x/y/size/unit/aggregate/
+  * missing/records/dependencies/hit_policy/coverage/order/panels). Values
+  * serialize through the canonical `value` writer; `undefined` removes the
+  * key. One validated, undoable transaction; the commit-time build re-checks
+  * every DDN-PJ/QD/QP rule for the projection kind. */
+ setProjectionProperty(ws,entry,view,key,val){
+  const ALLOWED=['mark','x','y','size','unit','x_type','aggregate','missing','series','series_missing','records','dependencies','hit_policy','coverage','order','panels'];
+  if(!ALLOWED.includes(key))fail('DDN-E001','Unknown or unsupported projection property key: '+String(key)+' (allowed: '+ALLOWED.join(', ')+')');
+  const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];
+  const node=v.children.find(n=>n.type==='projection');
+  if(!node)fail('DDN-E006','The active view declares no projection { } group.');
+  /* Resolved-IR refs arrive module-qualified ('module::path'); the source form
+   * is the alias-aware path valid at the view's own document. */
+  const norm=x=>{
+   if(Array.isArray(x))return x.map(norm);
+   if(x&&typeof x==='object'){
+    const out={};
+    for(const [k,val]of Object.entries(x))out[k]=k==='$ref'&&typeof val==='string'&&val.includes('::')?refFor(b,v.doc,val):norm(val);
+    return out;
+   }
+   return x;
+  };
+  const edit=property(text,node,key,norm(val));
+  if(!edit)return ws.revision;
+  return apply(ws,b,[edit],entry,view);
+ },
+ /* Designer phase 6b (data-projection sheets): rewrite a view-body list
+  * property (select/exclude/data) from definition uids — the delete paths of
+  * the chart/decision sheets drop the removed definition's select ref in the
+  * same flow so deleteDefinition does not trip DDN-E004 on the auto-added
+  * occurrence. An empty list writes []; null removes the property. */
+ setViewList(ws,entry,view,key,uids){
+  if(!['select','exclude','data'].includes(key))fail('DDN-E001','View list writes target select, exclude or data (got '+key+').');
+  if(uids!==null&&!Array.isArray(uids))fail('DDN-E001','View list writes need a uid array (or null to remove).');
+  const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];
+  return apply(ws,b,[property(text,v,key,uids===null?undefined:uids.map(uid=>({$ref:refFor(b,v.doc,uid)})))],entry,view);
+ },
  value,
  setLabel(ws,entry,view,id,label){if(typeof label!=='string'||label.length>4096)fail('DDN-E001','Label must be text up to 4096 characters.');const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[labelEdit(ws.getFiles()[n.source],n,label)],entry,view);},
  setProperty(ws,entry,view,id,key,v){idOK(key);const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[property(ws.getFiles()[n.source],n,key,v)],entry,view);},

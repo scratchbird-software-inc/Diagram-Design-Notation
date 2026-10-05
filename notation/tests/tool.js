@@ -962,8 +962,8 @@ test('sheetForProjection: dispatch by view capability (projection kind + profile
   assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'cmmn.basic@1' }).id, 'cmmn');
   assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'cmmn.complete@1' }).id, 'cmmn');
   assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'ddn@1' }), null, 'plain graph views have no sheet');
-  assert.equal(T.sheetForProjection({ kind: 'chart', profile: 'chart.basic@1' }), null, 'chart has no sheet yet (phase 6)');
-  assert.equal(T.sheetForProjection({ kind: 'matrix', profile: 'cmmn.basic@1' }), null, 'cmmn sheet serves graph projections only');
+  assert.equal(T.sheetForProjection({ kind: 'chart', profile: 'chart.basic@1' }).id, 'chart', 'chart sheet landed in phase 6b');
+  assert.equal(T.sheetForProjection({ kind: 'matrix', profile: 'cmmn.basic@1' }).id, 'matrix', 'kind-only sheets (phase 6b) dispatch on the projection kind');
   assert.equal(T.sheetForProjection(null), null);
 });
 
@@ -1285,6 +1285,249 @@ test('phase 6a authoring: BPMN event/gateway/interrupt writes (PJ175/PJ117 re-ch
   const f1 = w.resolve('b.ddn', 'v').relations[0].id;
   A.authoring.setProperty(w, 'b.ddn', 'v', f1, 'x_interrupt', true);
   assert.equal(w.resolve('b.ddn', 'v').relations[0].properties.x_interrupt, true);
+});
+
+/* ================= Phase 6b: data-projection type sheets ================= */
+
+test('phase 6b sheet registry: dispatch by projection kind', () => {
+  const ids = T.SHEET_REGISTRY.map(s => s.id);
+  for (const id of ['matrix', 'chart', 'timeline', 'decision', 'fishbone', 'panels']) assert.ok(ids.includes(id), id + ' registered');
+  for (const k of ['matrix', 'chart', 'timeline', 'decision', 'fishbone', 'panels'])
+    assert.equal(T.sheetForProjection({ kind: k, profile: k + '.basic@1' }).id, k, k);
+  assert.equal(T.sheetForProjection({ kind: 'graph', profile: 'ddn@1' }), null, 'plain graph view still has no sheet');
+  assert.equal(T.sheetForProjection({ kind: 'matrix', profile: 'matrix.raci@1' }).label, 'Matrix (RACI/CRUD)', 'the palette hint names this sheet');
+});
+
+test('matrixStageChange: RACI assign/replace, CRUD toggle, clear staging', () => {
+  const cell = v => ({ value: v, staged: false, assignments: v ? [{}] : [] });
+  assert.deepEqual(T.matrixStageChange('matrix.raci@1', [], cell(''), 'r1', 'c1', 'R'),
+    [{ rowId: 'r1', columnId: 'c1', value: 'R' }], 'RACI assigns the letter');
+  assert.deepEqual(T.matrixStageChange('matrix.raci@1', [], cell('R'), 'r1', 'c1', 'R'), [], 'same letter is a no-op');
+  assert.deepEqual(T.matrixStageChange('matrix.raci@1', [{ rowId: 'r1', columnId: 'c1', value: 'R' }], { value: 'A', staged: true, assignments: [] }, 'r1', 'c1', 'C'),
+    [{ rowId: 'r1', columnId: 'c1', value: 'C' }], 'a new key replaces the staged change for the cell');
+  assert.deepEqual(T.matrixStageChange('matrix.crud@1', [], cell('CR'), 'r1', 'c1', 'U'),
+    [{ rowId: 'r1', columnId: 'c1', value: 'CRU' }], 'CRUD toggles a letter on');
+  assert.deepEqual(T.matrixStageChange('matrix.crud@1', [], cell('CR'), 'r1', 'c1', 'C'),
+    [{ rowId: 'r1', columnId: 'c1', value: 'R' }], 'CRUD toggles a letter off');
+  assert.deepEqual(T.matrixStageChange('matrix.crud@1', [], cell('C'), 'r1', 'c1', 'C'),
+    [{ rowId: 'r1', columnId: 'c1', remove: true }], 'emptying a populated cell stages a removal');
+  assert.deepEqual(T.matrixStageChange('matrix.crud@1', [], cell(''), 'r1', 'c1', 'C'),
+    [{ rowId: 'r1', columnId: 'c1', value: 'C' }], 'CRUD toggles a letter on an empty cell');
+  assert.deepEqual(T.matrixStageChange('matrix.raci@1', [], cell('A'), 'r1', 'c1', 'clear'),
+    [{ rowId: 'r1', columnId: 'c1', remove: true }], 'clear stages a removal');
+  assert.deepEqual(T.matrixStageChange('matrix.raci@1', [], cell(''), 'r1', 'c1', 'clear'), [], 'clear on an empty cell stages nothing');
+});
+
+test('chart pickers + record cell commits: data-aware keys, no numeric coercion', () => {
+  const recs = [
+    { properties: { x_record: { month: 'Jan', value: 10, unit: 'CAD' } } },
+    { properties: { x_record: { month: 'Feb', value: 12, unit: 'CAD', extra: 'x' } } }
+  ];
+  assert.deepEqual(T.chartRecordKeys(recs), ['month', 'value', 'unit', 'extra'], 'union of record keys in declaration order');
+  assert.deepEqual(T.chartNumericKeys(recs, T.chartRecordKeys(recs)), ['value'], 'numeric keys are numeric on every record that declares them');
+  assert.deepEqual(T.chartUnitChoices(recs), ['CAD']);
+  assert.deepEqual(T.chartRecordValueCommit(10, '13'), { action: 'set', value: 13 });
+  assert.equal(T.chartRecordValueCommit(10, '10').action, 'none');
+  assert.equal(T.chartRecordValueCommit(10, '').code, 'DDN-UI17', 'blank numeric rejected, never coerced');
+  assert.equal(T.chartRecordValueCommit(10, 'abc').code, 'DDN-UI17');
+  assert.deepEqual(T.chartRecordValueCommit(true, false), { action: 'set', value: false });
+  assert.equal(T.chartRecordValueCommit('CAD', 'CAD').action, 'none');
+  assert.deepEqual(T.chartRecordValueCommit('CAD', 'USD'), { action: 'set', value: 'USD' });
+});
+
+test('timelineDatesCommit: ISO grammar, milestone equality, one-sided merge', () => {
+  assert.ok(T.timelineDateOK('2026-02-28'));
+  assert.ok(!T.timelineDateOK('2026-02-30'), 'real calendar dates only');
+  assert.ok(!T.timelineDateOK('2026-2-8'));
+  assert.deepEqual(T.timelineDatesCommit({ start: '2026-01-01', end: '2026-02-01' }, { start: '2026-01-15' }),
+    { action: 'set', start: '2026-01-15', end: '2026-02-01' }, 'a start edit merges over the current end — no intermediate end < start');
+  assert.equal(T.timelineDatesCommit({ start: '2026-01-01', end: '2026-02-01' }, { start: '2026-03-01' }).code, 'DDN-UI18', 'end before start rejected');
+  assert.deepEqual(T.timelineDatesCommit({}, { start: '2026-05-01', end: '2026-05-01' }),
+    { action: 'set', start: '2026-05-01', end: '2026-05-01' }, 'equal dates are a legal zero-length milestone');
+  assert.equal(T.timelineDatesCommit({ start: '2026-01-01', end: '2026-02-01' }, {}).action, 'none');
+  assert.equal(T.timelineDatesCommit({}, { start: 'soon', end: '2026-01-01' }).code, 'DDN-UI18');
+});
+
+test('decision typed cells: domain-driven ops, predicate commits, QD002/QD003 pre-checks', () => {
+  const sev = { key: 'severity', type: 'enum', values: ['low', 'high'] };
+  const amt = { key: 'amount', type: 'number', min: 0, max: 1000 };
+  const vip = { key: 'vip', type: 'boolean' };
+  const note = { key: 'note', type: 'enum', values: ['a', 'b'], nullable: true, optional: true };
+  assert.deepEqual(T.decisionOpsFor(sev), ['eq', 'in'], 'enum: eq/in only');
+  assert.deepEqual(T.decisionOpsFor(amt), ['interval', 'eq', 'in'], 'numbers add interval');
+  assert.deepEqual(T.decisionOpsFor(note), ['eq', 'in', 'null', 'missing'], 'null/missing only when the domain declares them');
+  assert.deepEqual(T.decisionPredicateFromDraft(sev, { op: 'in', values: ['low', 'high'] }), { op: 'in', values: ['low', 'high'] }, 'enum multi-select');
+  assert.deepEqual(T.decisionPredicateFromDraft(amt, { op: 'interval', min: '10', max: '90', lowerClosed: false, upperClosed: true }),
+    { op: 'interval', min: 10, max: 90, lower_closed: false, upper_closed: true }, 'interval form with closure');
+  assert.deepEqual(T.decisionPredicateFromDraft(vip, { op: 'eq', value: 'true' }), { op: 'eq', value: true }, 'true/false for booleans');
+  assert.throws(() => T.decisionPredicateFromDraft(sev, { op: 'null' }), e => e.code === 'DDN-UI19', 'null rejected on a non-nullable domain');
+  assert.throws(() => T.decisionPredicateFromDraft(amt, { op: 'eq', value: 'abc' }), e => e.code === 'DDN-UI19', 'numeric strings are not coerced');
+  assert.deepEqual(T.decisionPredicateFromDraft(note, { op: 'missing' }), { op: 'missing' });
+  const p = { inputs: [sev, amt], outputs: ['route', 'fee'] };
+  const then = { route: 'senior', fee: 20 };
+  assert.equal(T.checkDecisionRule(p, { severity: { op: 'eq', value: 'high' }, amount: { op: 'interval', min: 0, max: 500 } }, then), null);
+  assert.equal(T.checkDecisionRule(p, { severity: { op: 'eq', value: 'urgent' } }, then).code, 'DDN-QD002', 'value outside the domain');
+  assert.equal(T.checkDecisionRule(p, { amount: { op: 'interval', min: 5, max: 5000 } }, then).code, 'DDN-QD002', 'interval outside the declared bounds');
+  assert.equal(T.checkDecisionRule(p, { amount: { op: 'interval', min: 50, max: 10 } }, then).code, 'DDN-QD002', 'min > max');
+  assert.equal(T.checkDecisionRule(p, { ghost: { op: 'eq', value: 'x' } }, then).code, 'DDN-QD002', 'unknown input');
+  assert.equal(T.checkDecisionRule(p, {}, { route: 'senior' }).code, 'DDN-QD003', 'every output required');
+  assert.equal(T.checkDecisionRule(p, {}, { route: 'senior', fee: 'lots' }), null, 'string outcomes are legal scalars');
+});
+
+test('panelGridCheck + fishboneOccurrences: panels candidate and rib occurrence models', () => {
+  const good = [
+    { id: 's', title: 'S', row: 0, column: 0, rowspan: 1, colspan: 1, items: ['n1'] },
+    { id: 'w', title: 'W', row: 0, column: 1, rowspan: 1, colspan: 1, items: ['n2'] }
+  ];
+  assert.equal(T.panelGridCheck(2, good), null);
+  assert.equal(T.panelGridCheck(2, []).code, 'DDN-PJ020', '1..80 panels');
+  assert.equal(T.panelGridCheck(2, [{ id: 's', title: 'S', row: 0, column: 1, rowspan: 1, colspan: 2, items: ['n1'] }]).code, 'DDN-PJ020', 'span must fit the columns');
+  assert.equal(T.panelGridCheck(2, [good[0], { id: 'w', title: 'W', row: 0, column: 0, rowspan: 1, colspan: 1, items: ['n2'] }]).code, 'DDN-PJ021', 'overlaps rejected');
+  assert.equal(T.panelGridCheck(2, [{ id: 'c', title: 'C', row: 1, column: 0, items: ['n1'], view: 'child' }]).code, 'DDN-QP001', 'a child-view panel cannot also contain items');
+  assert.ok(T.CANVAS_REQUIRED['canvas.bmc@1'].includes('vp'), 'fixed canvas blocks locked');
+  const plan = {
+    effect: { id: 'm::c.effect' },
+    categories: [
+      { node: { id: 'm::c.cat0' }, relationId: 'm::c.r0', children: [{ node: { id: 'm::c.cal' }, relationId: 'm::c.r1', children: [] }] },
+      { node: { id: 'm::c.cat1' }, relationId: 'm::c.r2', children: [{ node: { id: 'm::c.cal' }, relationId: 'm::c.r3', children: [] }] }
+    ]
+  };
+  const occ = T.fishboneOccurrences(plan);
+  assert.equal(occ.get('m::c.cal').length, 2, 'one identity, two occurrences');
+  assert.equal(occ.get('m::c.effect').length, 1);
+});
+
+test('phase 6b authoring: setProjectionProperty (chart bindings) and setRecordValue', () => {
+  const src = 'ddn "0.5";\nmodule "m.ch";\n\ndata facts {\n object m1 "Jan" { kind: record; x_record: { month: "Jan"; value: 10; unit: "CAD"; }; }\n object m2 "Feb" { kind: record; x_record: { month: "Feb"; value: 12; unit: "CAD"; }; }\n}\n\nview v "Chart" {\n    data: [@facts];\n    projection { kind: chart; profile: "chart.basic@1"; records: [@facts.m1, @facts.m2]; mark: bar; x: "x_record.month"; y: "x_record.value"; unit: "CAD"; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w = A.createWorkspace({ 'c.ddn': src });
+  A.authoring.setProjectionProperty(w, 'c.ddn', 'v', 'aggregate', 'sum');
+  assert.equal(w.resolve('c.ddn', 'v').view.profiles.projection.aggregate, 'sum');
+  A.authoring.setProjectionProperty(w, 'c.ddn', 'v', 'aggregate', undefined);
+  assert.equal(w.resolve('c.ddn', 'v').view.profiles.projection.aggregate, undefined, 'undefined removes the key');
+  A.authoring.setProjectionProperty(w, 'c.ddn', 'v', 'mark', 'line');
+  assert.equal(w.resolve('c.ddn', 'v').view.profiles.projection.mark, 'line', 'mark writes into the projection group');
+  assert.throws(() => A.authoring.setProjectionProperty(w, 'c.ddn', 'v', 'bogus', 1), e => e.code === 'DDN-E001', 'unknown projection key refused');
+  assert.throws(() => A.authoring.setProjectionProperty(w, 'c.ddn', 'v', 'mark', 'teapot'), () => true, 'an illegal mark rejects on commit');
+  A.authoring.setRecordValue(w, 'c.ddn', 'v', 'm.ch::facts.m1', 'value', 42);
+  assert.equal(w.resolve('c.ddn', 'v').elements.find(e => e.local === 'm1').properties.x_record.value, 42, 'record edits are shared-model writes');
+});
+
+test('phase 6b authoring: matrix batch cells as one transaction (RACI)', () => {
+  const src = 'ddn "0.5";\nmodule "m.mx";\n\ndata proc {\n object order "Order" {}\n object post "Post" {}\n}\ndata roles {\n object buyer "Buyer" {}\n object manager "Manager" {}\n object controller "Controller" {}\n}\ndata resp {\n relation a1 "assign" @proc.order -> @roles.buyer { kind: "analysis.assignment"; x_assignment: { code: "A" }; }\n relation a2 "assign" @proc.order -> @roles.manager { kind: "analysis.assignment"; x_assignment: { code: "R" }; }\n relation a3 "assign" @proc.post -> @roles.buyer { kind: "analysis.assignment"; x_assignment: { code: "R" }; }\n relation a4 "assign" @proc.post -> @roles.manager { kind: "analysis.assignment"; x_assignment: { code: "A" }; }\n}\n\nview v "RACI" {\n    data: [@proc, @roles, @resp];\n    projection { kind: matrix; profile: "matrix.raci@1"; rows: [@proc.order, @proc.post]; columns: [@roles.buyer, @roles.manager, @roles.controller]; relation: "analysis.assignment"; value: "x_assignment.code"; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w = A.createWorkspace({ 'm.ddn': src });
+  const plan = w.projectionPlan('m.ddn', 'v');
+  assert.equal(plan.cells[0][0][0].value, 'A');
+  assert.equal(plan.cells[0][1][0].value, 'R');
+  assert.deepEqual(plan.cells[1].flat().map(c => c.value).sort(), ['A', 'R'], 'every RACI row starts valid (PJ016)');
+  /* A batch that violates the RACI row rules commits nothing (DDN-PJ016). */
+  assert.throws(() => A.authoring.setMatrixCells(w, 'm.ddn', 'v', [{ row: 'm.mx::proc.order', column: 'm.mx::roles.buyer', value: 'R' }]),
+    e => e.code === 'DDN-PJ016', 'dropping the row’s only A is refused at commit');
+  assert.equal(w.projectionPlan('m.ddn', 'v').cells[0][0][0].value, 'A', 'the rejected batch left the source unchanged');
+  /* Legal batch: one transaction creating a new cell relation. */
+  A.authoring.setMatrixCells(w, 'm.ddn', 'v', [
+    { row: 'm.mx::proc.post', column: 'm.mx::roles.controller', value: 'C' }
+  ]);
+  const after = w.projectionPlan('m.ddn', 'v');
+  assert.equal(after.cells[1][2][0].value, 'C', 'the new cell relation landed in the shared data block');
+  /* Removal through the same batch channel: move the R from manager to
+   * controller in one transaction (the interim state never loses the row’s R). */
+  A.authoring.setMatrixCells(w, 'm.ddn', 'v', [
+    { row: 'm.mx::proc.order', column: 'm.mx::roles.manager', remove: true },
+    { row: 'm.mx::proc.order', column: 'm.mx::roles.controller', value: 'R' }
+  ]);
+  const moved = w.projectionPlan('m.ddn', 'v');
+  assert.equal(moved.cells[0][1].length, 0, 'remove deletes the cell relation');
+  assert.equal(moved.cells[0][2][0].value, 'R', 'the reassignment committed in the same transaction');
+});
+
+test('phase 6b authoring: decision rule writes, policy and records order', () => {
+  const src = 'ddn "0.5";\nmodule "m.dec";\n\ndata rules {\n object high "High route" { kind: "rule.row"; x_rule: { when: { severity: { op: "eq"; value: "high"; }; }; then: { route: "senior"; fee: 20; flag: true }; }; }\n object low "Low route" { kind: "rule.row"; x_rule: { when: { severity: { op: "eq"; value: "low"; }; }; then: { route: "standard"; fee: 5; flag: false }; }; }\n}\n\nview v "Rules" {\n    data: [@rules];\n    projection { kind: decision; profile: "decision.rules@1"; records: [@rules.high, @rules.low]; inputs: [{ "key": "severity"; "type": "enum"; "values": ["low", "high"] }]; outputs: ["route", "fee", "flag"]; hit_policy: "first"; coverage: "report"; analysis_budget: 4096; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w = A.createWorkspace({ 'd.ddn': src });
+  const plan = w.projectionPlan('d.ddn', 'v');
+  assert.equal(plan.policy, 'first');
+  assert.deepEqual(plan.rules.map(r => r.node.name), ['High route', 'Low route']);
+  const high = plan.rules[0], low = plan.rules[1];
+  /* Typed outcome + predicate edits write x_rule (shared model). */
+  A.authoring.setProperty(w, 'd.ddn', 'v', low.id, 'x_rule', { when: { severity: { op: 'eq', value: 'low' } }, then: { route: 'standard', fee: 8, flag: false } });
+  assert.equal(w.projectionPlan('d.ddn', 'v').rules[1].then.fee, 8);
+  /* hit_policy / coverage are view-scope projection writes. */
+  A.authoring.setProjectionProperty(w, 'd.ddn', 'v', 'hit_policy', 'collect');
+  assert.equal(w.projectionPlan('d.ddn', 'v').policy, 'collect');
+  A.authoring.setProjectionProperty(w, 'd.ddn', 'v', 'coverage', 'complete');
+  assert.equal(w.projectionPlan('d.ddn', 'v').coverage, 'complete');
+  /* Records order is a permutation of the same refs (first-match semantic). */
+  A.authoring.setProjectionProperty(w, 'd.ddn', 'v', 'records', [{ $ref: 'rules.low' }, { $ref: 'rules.high' }]);
+  assert.deepEqual(w.projectionPlan('d.ddn', 'v').rules.map(r => r.node.name), ['Low route', 'High route'], 'reorder commits');
+  /* Fixture evaluation is the read-only runtime path. */
+  const out = w.evaluateDecision('d.ddn', 'v', { severity: 'high' });
+  assert.ok(out.matched.length >= 1 && out.matched.some(id => id.endsWith('high')), 'fixture evaluator answers through the runtime');
+  /* The commit-time re-plan stays the authority for QD checks. */
+  assert.throws(() => A.authoring.setProperty(w, 'd.ddn', 'v', high.id, 'x_rule', { when: { severity: { op: 'eq', value: 'urgent' } }, then: high.then }),
+    e => (e.code || '').startsWith('DDN-'), 'a predicate outside the declared domain rejects');
+});
+
+test('phase 6b authoring: timeline date merge, dependency unlink (relation kept), panels writes', () => {
+  const src = 'ddn "0.5";\nmodule "m.tl";\n\ndata tasks {\n object order "Order" { x_record: { start: "2026-01-05"; end: "2026-01-20" }; }\n object receive "Receive" { x_record: { start: "2026-01-21"; end: "2026-02-02" }; }\n}\ndata schedule {\n relation order_before_receive "Precedes" @tasks.order -> @tasks.receive { kind: "analysis.precedes"; }\n}\n\nview v "Schedule" {\n    data: [@tasks, @schedule];\n    projection { kind: timeline; profile: "timeline.basic@1"; records: [@tasks.order, @tasks.receive]; start: "x_record.start"; end: "x_record.end"; dependencies: [@schedule.order_before_receive]; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w = A.createWorkspace({ 't.ddn': src });
+  const plan = w.projectionPlan('t.ddn', 'v');
+  assert.deepEqual(plan.items.map(i => i.label), ['Order', 'Receive']);
+  assert.equal(plan.dependencies.length, 1);
+  /* Merged two-key date write (no intermediate end < start). */
+  const xr = w.resolve('t.ddn', 'v').elements.find(e => e.local === 'receive').properties.x_record;
+  const out = T.timelineDatesCommit({ start: xr.start, end: xr.end }, { start: '2026-01-25' });
+  assert.equal(out.action, 'set');
+  A.authoring.setProperty(w, 't.ddn', 'v', 'm.tl::tasks.receive', 'x_record', { ...xr, start: out.start, end: out.end });
+  assert.equal(w.projectionPlan('t.ddn', 'v').items[1].start, '2026-01-25');
+  /* Unlink is a view-scope projection write; the shared relation survives. */
+  const depId = plan.dependencies[0].id;
+  A.authoring.setProjectionProperty(w, 't.ddn', 'v', 'dependencies', undefined);
+  assert.equal(w.projectionPlan('t.ddn', 'v').dependencies.length, 0, 'dependency unlinked from this view');
+  assert.ok(w.resolve('t.ddn', 'v').relations.some(r => r.id === depId), 'the shared relation is kept');
+  /* Panels. */
+  const srcP = 'ddn "0.5";\nmodule "m.pn";\n\ndata notes {\n object strength "Strong brand" { kind: note; }\n object weakness "Thin channel" { kind: note; }\n}\n\nview v "SWOT" {\n    data: [@notes];\n    projection { kind: panels; profile: "panels.basic@1"; columns: 2; panels: [{ id: "s", title: "STRENGTHS", row: 0, column: 0, rowspan: 1, colspan: 1, items: [@notes.strength] }, { id: "w", title: "WEAKNESSES", row: 0, column: 1, rowspan: 1, colspan: 1, items: [@notes.weakness] }]; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w2 = A.createWorkspace({ 'p.ddn': srcP });
+  const panels = w2.resolve('p.ddn', 'v').view.profiles.projection.panels;
+  /* Rename + move span as whole-set projection writes. */
+  A.authoring.setProjectionProperty(w2, 'p.ddn', 'v', 'panels', panels.map(v => v.id === 'w' ? { ...v, title: 'WEAKNESS', row: 1, column: 0 } : v));
+  const after = w2.projectionPlan('p.ddn', 'v');
+  assert.equal(after.panels.find(x => x.id === 'w').title, 'WEAKNESS');
+  assert.equal(after.panels.find(x => x.id === 'w').row, 1);
+  /* Overlap rejects on commit (DDN-PJ021 re-checked by the build). */
+  assert.throws(() => A.authoring.setProjectionProperty(w2, 'p.ddn', 'v', 'panels', panels.map(v => v.id === 'w' ? { ...v, row: 0, column: 0 } : v)),
+    e => e.code === 'DDN-PJ021', 'overlapping spans refuse');
+});
+
+test('phase 6b authoring: fishbone ribs (attach/remove) and setViewList', () => {
+  const src = 'ddn "0.5";\nmodule "m.fb";\n\ndata causes {\n object effect "Inspection failures" { kind: "quality.effect"; }\n object equip "Equipment" { kind: "quality.category"; }\n relation e2f "Possible cause category" @equip -> @effect { kind: "quality.cause"; }\n object drift "Calibration drift" { kind: "quality.cause"; }\n relation d2e "Possible contributing cause" @drift -> @equip { kind: "quality.cause"; }\n}\n\nview v "Fishbone" {\n    data: [@causes];\n    projection { kind: fishbone; profile: "fishbone.basic@1"; effect: @causes.effect; relation: "quality.cause"; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w = A.createWorkspace({ 'f.ddn': src });
+  const plan = w.projectionPlan('f.ddn', 'v');
+  assert.equal(plan.effect.name, 'Inspection failures');
+  assert.equal(plan.categories.length, 1);
+  assert.equal(plan.categories[0].children.length, 1);
+  /* Attach an existing cause under a second category: relation only, one
+   * identity with two occurrences. */
+  A.authoring.addElement(w, 'f.ddn', 'v', { id: 'method', name: 'Method', kind: 'quality.category' });
+  const mid = w.resolve('f.ddn', 'v').elements.find(e => e.local === 'method').id;
+  A.authoring.addRelation(w, 'f.ddn', 'v', { id: 'm2f', name: 'Possible cause category', kind: 'quality.cause', from: mid, to: plan.effect.id });
+  A.authoring.addRelation(w, 'f.ddn', 'v', { id: 'attach1', name: 'Same cause, second appearance', kind: 'quality.cause', from: 'm.fb::causes.drift', to: mid });
+  const plan2 = w.projectionPlan('f.ddn', 'v');
+  assert.equal(plan2.categories.length, 2);
+  const occ = T.fishboneOccurrences(plan2);
+  assert.equal(occ.get('m.fb::causes.drift').length, 2, 'attach creates a second occurrence, never a clone');
+  /* Remove one rib: the definition and its other occurrence survive. */
+  const attachUid = w.resolve('f.ddn', 'v').relations.find(r => r.id.endsWith('.attach1')).id;
+  A.authoring.deleteDefinition(w, 'f.ddn', 'v', attachUid);
+  assert.equal(T.fishboneOccurrences(w.projectionPlan('f.ddn', 'v')).get('m.fb::causes.drift').length, 1);
+  assert.ok(w.resolve('f.ddn', 'v').elements.some(e => e.local === 'drift'), 'the cause definition survives the rib removal');
+  /* Effect label is a shared-definition rename. */
+  A.authoring.setLabel(w, 'f.ddn', 'v', plan.effect.id, 'Dimensional failures');
+  assert.equal(w.projectionPlan('f.ddn', 'v').effect.name, 'Dimensional failures');
+  /* setViewList: rewrite an explicit select list from uids. */
+  const srcS = 'ddn "0.5";\nmodule "m.sl";\n\ndata d {\n object a "A" {}\n object b "B" {}\n}\n\nview v "Sel" {\n    data: [@d];\n    select: [@d.a, @d.b];\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n';
+  const w2 = A.createWorkspace({ 's.ddn': srcS });
+  A.authoring.setViewList(w2, 's.ddn', 'v', 'select', ['m.sl::d.b']);
+  assert.deepEqual(w2.resolve('s.ddn', 'v').view.selected, ['m.sl::d.b'], 'select list rewritten from uids');
+  assert.throws(() => A.authoring.setViewList(w2, 's.ddn', 'v', 'bogus', []), e => e.code === 'DDN-E001');
 });
 
 const n = results.length;
