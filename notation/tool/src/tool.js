@@ -427,14 +427,13 @@ const HOVER_CSS =
   '.ddn-label.ddn-hover rect{stroke:#245ac8;stroke-width:1.5px}' +
   '.ddn-label.ddn-hover text{fill:#245ac8}';
 
-/* Phase 9 (owner-approved): while the Inspector drawer or the pointer-select
- * Properties drawer is open, hovering the canvas highlights the element or
- * relation under the mouse — exactly what a click would select. Delegated
- * pointerover/out on the stage, CSS classes only; clears on stage leave; a
- * held pointer button (pan, pin-drag, placement) suppresses hover changes so
- * gestures never fight the highlight. */
+/* Phase 9/11 (owner-approved): in design mode, hovering the canvas highlights
+ * the element or relation under the mouse — exactly what a click would select
+ * (delegated pointerover/out on the stage, CSS classes only; clears on stage
+ * leave/down; a held pointer button (pan, pin-drag, placement) suppresses
+ * hover changes so gestures never fight the highlight). */
 function hoverEnabled() {
-  return drawerEls.inspector.dataset.state === 'open' || drawerEls.properties.dataset.state === 'open';
+  return !!state.config.design;
 }
 function attachHover() {
   const stage = stageEl();
@@ -1560,6 +1559,9 @@ const backgroundInputs = {};
   g.append(cRow);
   for (const el of [backgroundInputs.kind, backgroundInputs.image, backgroundInputs.pattern, backgroundInputs.opacity]) el.addEventListener('change', commit);
 }
+/* Discoverability: font/colour/line/shape styling moved to the unified
+ * editors in Style & Layout — point there from the Document drawer. */
+els.documentBody.append(dim('Fonts, colours, line and shape styling live in the Style & Layout drawer (brush icon in the toolbar).'));
 
 function syncDocumentForm() {
   const node = viewSourceNode();
