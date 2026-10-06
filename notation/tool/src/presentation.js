@@ -33,7 +33,11 @@ function overrideRuleFor(target, value) {
 }
 
 /* Per-kind typography CSS overlay (viewer B1-011 D2 semantics): no reflow, so
- * long labels can overflow; the global font-size control reflows instead. */
+ * long labels can overflow; the global font-size control reflows instead.
+ * Phase 9 (owner-approved font editor): the specials the notation cannot
+ * express in source ride the same session-preview CSS channel — bold, italic,
+ * strike-through, small-caps and text colour — all pure CSS on SVG text, all
+ * session-only, never serialized into the source. */
 function typographyRuleFor(code, style) {
   const decls = [];
   if (style && style.family != null && style.family !== 'source') {
@@ -46,8 +50,30 @@ function typographyRuleFor(code, style) {
     if (!Number.isFinite(n) || n < 8 || n > 24) throw new Error('font size must be between 8 and 24px');
     decls.push('font-size: ' + n + 'px');
   }
+  if (style && style.bold) decls.push('font-weight: 700');
+  if (style && style.italic) decls.push('font-style: italic');
+  if (style && style.strike) decls.push('text-decoration: line-through');
+  if (style && style.smallCaps) decls.push('font-variant-caps: small-caps');
+  if (style && style.colour != null && style.colour !== '') {
+    if (!/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(String(style.colour))) throw new Error('colour must be #rgb or #rrggbb');
+    decls.push('fill: ' + style.colour);
+  }
   if (!decls.length) throw new Error('typography rule needs a family or a size');
   return '.ddn-svg .ddn-kind-' + slug(code) + ' text { ' + decls.join('; ') + '; }';
+}
+
+/* Shared recent-colours history (phase 9 colour picker): validates and folds
+ * one picked colour into an MRU list, most-recent-first, deduplicated,
+ * case-folded, capped (the drawer widgets persist the result in
+ * localStorage). */
+const COLOUR_RE = /^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/;
+function recentColours(list, colour, max) {
+  const cap = max || 10;
+  const out = (Array.isArray(list) ? list : []).filter(c => typeof c === 'string' && COLOUR_RE.test(c));
+  if (colour == null || colour === '') return out.slice(0, cap);
+  if (!COLOUR_RE.test(String(colour))) throw new Error('colour must be #rgb or #rrggbb');
+  const c = String(colour).toLowerCase();
+  return [c, ...out.filter(x => x.toLowerCase() !== c)].slice(0, cap);
 }
 
 /* The whole CSS overlay for the current presentation + selection highlight. */
@@ -134,7 +160,7 @@ function cssOverlayRecord(presentation) {
   return Object.keys(out).length ? out : null;
 }
 
-const api = { slug, cssString, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord };
+const api = { slug, cssString, overrideRuleFor, typographyRuleFor, recentColours, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord };
 if (typeof module === 'object' && module.exports) module.exports = api;
 host.DDNToolPresentation = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

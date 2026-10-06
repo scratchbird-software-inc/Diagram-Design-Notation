@@ -75,6 +75,13 @@ the first endpoint is picked and the pair-legal verbs
 (`DDNLive.legalVerbs(from, to)`) once both are known, and closes when the
 gesture completes or is cancelled.
 
+While the **inspector** or **properties** drawer is open, hovering the
+canvas highlights whatever a click would select — a soft glow on elements,
+frames and field rows, a stroke highlight on relation edges and labels.
+The highlight is pure CSS class toggling (no layout, no re-render), clears
+on pointer-leave, and is suppressed while a pointer button is held so pan,
+pin-drag and placement gestures never fight it.
+
 The **style & layout** drawer's top section is the view switchboard: the
 **active view** selector (moved out of the toolbar), the **view kind**
 selector (the view's registered kind — `patent-figure`, `uml-class`, …;
@@ -83,6 +90,24 @@ DDN-V04 on older sources) and, for data-bound views, the **projection
 kind** selector (disabled on graph views). Both type controls write to
 source and re-derive capability filtering, the creator palette and the
 type-sheet dispatch, exactly like a view switch.
+
+The drawer's **Fonts** group is the single font editor. One target
+dropdown lists every font-holding target in the active view, with exactly
+the controls the notation supports for it: the **view base font** (family
+and size px, written to `style { font / font_size }` in source), **each
+kind present** (family, size, plus bold / italic / strike-through /
+small-caps / text colour — all *session preview*, riding the same CSS
+overlay as the colour cosmetics because the notation has no per-kind font
+syntax), and each existing **header/footer run** (family and size pt,
+written via `setViewChrome`). The legend and title block are listed
+disabled — the renderer fixes their typography, so there is nothing to
+edit.
+
+Every colour entry point — kind/relation-class/object overrides, page
+background, the font editor's text colour — uses one shared colour widget:
+a native colour input plus a row of the ten most recently used colours
+(most-recent-first, persisted in `localStorage` key
+`ddn-tool-colour-history`); all entries feed the same history.
 
 The **inspector** is the selection editor, with three tabs: **Meaning**
 (model identity — label, kind, description, relation endpoints/cardinality,

@@ -171,6 +171,12 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-colour-label { flex: 1 1 100px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ddn-colour-row select { flex: 0 1 auto; min-width: 0; max-width: 130px; font-size: 12px; }
 .ddn-colour-row input[type="color"] { width: 28px; height: 22px; padding: 0; border: 1px solid #cbd5e3; border-radius: 5px; background: #fff; }
+/* Phase 9: shared colour widget — native picker plus recent-colour swatches. */
+.ddn-colour-widget { display: inline-flex; align-items: center; gap: 5px; }
+.ddn-colour-widget input[type="color"] { width: 28px; height: 22px; padding: 0; border: 1px solid #cbd5e3; border-radius: 5px; background: #fff; }
+.ddn-colour-swatches { display: inline-flex; gap: 3px; flex-wrap: wrap; max-width: 130px; }
+.ddn-swatch { width: 14px; height: 14px; padding: 0; border: 1px solid #b6c2d4; border-radius: 4px; cursor: pointer; }
+.ddn-swatch:hover { outline: 2px solid #9bbdf7; }
 
 /* source drawer */
 #ddn-drawer-source .ddn-drawer-body { display: flex; gap: 14px; }

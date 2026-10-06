@@ -223,6 +223,26 @@ test('typographyRuleFor: per-kind family/size overlay', () => {
   assert.throws(() => T.typographyRuleFor('TBL', {}), /needs a family or a size/);
 });
 
+test('typographyRuleFor: phase-9 specials ride the session-preview CSS channel', () => {
+  assert.equal(T.typographyRuleFor('APP', { bold: true }),
+    '.ddn-svg .ddn-kind-app text { font-weight: 700; }');
+  assert.equal(T.typographyRuleFor('APP', { italic: true, strike: true, smallCaps: true }),
+    '.ddn-svg .ddn-kind-app text { font-style: italic; text-decoration: line-through; font-variant-caps: small-caps; }');
+  assert.equal(T.typographyRuleFor('APP', { colour: '#a1B2c3' }),
+    '.ddn-svg .ddn-kind-app text { fill: #a1B2c3; }');
+  assert.throws(() => T.typographyRuleFor('APP', { colour: 'red' }), /#rgb or #rrggbb/);
+  assert.throws(() => T.typographyRuleFor('APP', {}), /needs a family or a size/);
+});
+
+test('recentColours: MRU history — validated, deduplicated, case-folded, capped', () => {
+  assert.deepEqual(T.recentColours([], '#A1B2C3'), ['#a1b2c3']);
+  assert.deepEqual(T.recentColours(['#111111', '#a1b2c3'], '#a1b2c3'), ['#a1b2c3', '#111111'], 're-pick moves to front');
+  assert.deepEqual(T.recentColours(['#111111'], null), ['#111111'], 'null colour passes the list through');
+  assert.deepEqual(T.recentColours(['#111111', 'red', 42], null), ['#111111'], 'invalid entries dropped');
+  assert.throws(() => T.recentColours([], 'blue'), /#rgb or #rrggbb/);
+  assert.equal(T.recentColours(Array.from({ length: 15 }, (_, i) => '#00000' + i.toString(16)), '#ffffff').length, 10, 'capped at 10 by default');
+});
+
 test('overrideCss: composition plus relation highlight', () => {
   const css = T.overrideCss({ typography: { TBL: { family: 'serif', size: 'source' } }, kindColours: { TBL: '#111111' }, verbColours: { ref: '#222222' }, objectColours: { 'm.a': '#333333' } }, 'm.r1');
   for (const frag of ['.ddn-kind-tbl text', 'fill: #111111', '.ddn-verb-ref path', '[data-id="m.a"]', '[data-id="m.r1"] path { stroke: #d97706'])

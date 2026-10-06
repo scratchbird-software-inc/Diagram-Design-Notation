@@ -183,6 +183,12 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-colour-label { flex: 1 1 100px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ddn-colour-row select { flex: 0 1 auto; min-width: 0; max-width: 130px; font-size: 12px; }
 .ddn-colour-row input[type="color"] { width: 28px; height: 22px; padding: 0; border: 1px solid #cbd5e3; border-radius: 5px; background: #fff; }
+/* Phase 9: shared colour widget — native picker plus recent-colour swatches. */
+.ddn-colour-widget { display: inline-flex; align-items: center; gap: 5px; }
+.ddn-colour-widget input[type="color"] { width: 28px; height: 22px; padding: 0; border: 1px solid #cbd5e3; border-radius: 5px; background: #fff; }
+.ddn-colour-swatches { display: inline-flex; gap: 3px; flex-wrap: wrap; max-width: 130px; }
+.ddn-swatch { width: 14px; height: 14px; padding: 0; border: 1px solid #b6c2d4; border-radius: 4px; cursor: pointer; }
+.ddn-swatch:hover { outline: 2px solid #9bbdf7; }
 
 /* source drawer */
 #ddn-drawer-source .ddn-drawer-body { display: flex; gap: 14px; }
@@ -4636,7 +4642,11 @@ function overrideRuleFor(target, value) {
 }
 
 /* Per-kind typography CSS overlay (viewer B1-011 D2 semantics): no reflow, so
- * long labels can overflow; the global font-size control reflows instead. */
+ * long labels can overflow; the global font-size control reflows instead.
+ * Phase 9 (owner-approved font editor): the specials the notation cannot
+ * express in source ride the same session-preview CSS channel — bold, italic,
+ * strike-through, small-caps and text colour — all pure CSS on SVG text, all
+ * session-only, never serialized into the source. */
 function typographyRuleFor(code, style) {
   const decls = [];
   if (style && style.family != null && style.family !== 'source') {
@@ -4649,8 +4659,30 @@ function typographyRuleFor(code, style) {
     if (!Number.isFinite(n) || n < 8 || n > 24) throw new Error('font size must be between 8 and 24px');
     decls.push('font-size: ' + n + 'px');
   }
+  if (style && style.bold) decls.push('font-weight: 700');
+  if (style && style.italic) decls.push('font-style: italic');
+  if (style && style.strike) decls.push('text-decoration: line-through');
+  if (style && style.smallCaps) decls.push('font-variant-caps: small-caps');
+  if (style && style.colour != null && style.colour !== '') {
+    if (!/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(String(style.colour))) throw new Error('colour must be #rgb or #rrggbb');
+    decls.push('fill: ' + style.colour);
+  }
   if (!decls.length) throw new Error('typography rule needs a family or a size');
   return '.ddn-svg .ddn-kind-' + slug(code) + ' text { ' + decls.join('; ') + '; }';
+}
+
+/* Shared recent-colours history (phase 9 colour picker): validates and folds
+ * one picked colour into an MRU list, most-recent-first, deduplicated,
+ * case-folded, capped (the drawer widgets persist the result in
+ * localStorage). */
+const COLOUR_RE = /^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/;
+function recentColours(list, colour, max) {
+  const cap = max || 10;
+  const out = (Array.isArray(list) ? list : []).filter(c => typeof c === 'string' && COLOUR_RE.test(c));
+  if (colour == null || colour === '') return out.slice(0, cap);
+  if (!COLOUR_RE.test(String(colour))) throw new Error('colour must be #rgb or #rrggbb');
+  const c = String(colour).toLowerCase();
+  return [c, ...out.filter(x => x.toLowerCase() !== c)].slice(0, cap);
 }
 
 /* The whole CSS overlay for the current presentation + selection highlight. */
@@ -4737,7 +4769,7 @@ function cssOverlayRecord(presentation) {
   return Object.keys(out).length ? out : null;
 }
 
-const api = { slug, cssString, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord };
+const api = { slug, cssString, overrideRuleFor, typographyRuleFor, recentColours, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord };
 if (typeof module === 'object' && module.exports) module.exports = api;
 host.DDNToolPresentation = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
@@ -8182,7 +8214,7 @@ const SHT = __req('DDNToolSheets', './sheets.js');
 
 const { DRAWERS, DRAWER_STATES, GEAR_STATES, STORAGE_KEY, MODES, DEFAULT_MODE, parseMode, parseDrawersParam, cleanDrawerConfig, parseToolbarParam, resolveDrawerConfig } = PAR;
 const { computeFitScale, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem, pageDims, pageScaleFloor, artboardProblem } = PGF;
-const { slug, cssString, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord } = PRE;
+const { slug, cssString, overrideRuleFor, typographyRuleFor, recentColours, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord } = PRE;
 const { pickEntryView, viewListFrom, isPlausibleSourceFile, freshLocalId, srcFromQuery, srcFetchErrorMessage, srcImportClosure, templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic } = FIL;
 const { rasterCanvasSize, exportSvgWithOverrides, hopWindowsFromMarkers, nextHopTime, scaledDuration } = EXP;
 const { parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, workerBridgeError, createRenderBridge } = BRG;
@@ -8217,7 +8249,7 @@ function paletteFilter(kinds, projection, showAll) {
 
 const pure = {
   DRAWERS, DRAWER_STATES, GEAR_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig, parseToolbarParam,
-  computeFitScale, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, viewListFrom,
+  computeFitScale, overrideRuleFor, typographyRuleFor, recentColours, overrideCss, toolOverrides, viewListFrom,
   overrideProfileWrites, cssOverlayRecord, pickEntryView,
   isPlausibleSourceFile, freshLocalId, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
   templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic,
@@ -8555,6 +8587,61 @@ $('ddn-settings-clear').addEventListener('click', () => {
  * open by design (the studio editor attaches drag the same way). */
 const BARE_CSS = ':host{height:100%}.top,.tools,.advanced,.viewport-tools,.source,.diagnostics,.status{display:none!important}' +
   '.shell{height:100%;border:0;border-radius:0;display:flex;flex-direction:column}.stage{flex:1;height:auto;min-height:0;padding:8px}.error:empty{display:none}';
+
+/* Phase 9 hover affordance: a soft glow for nodes/frames/fields, a stroke
+ * highlight for relation paths and labels. CSS rules beat SVG presentation
+ * attributes, so inline fills/strokes are restyled without touching geometry. */
+const HOVER_CSS =
+  '.ddn-node.ddn-hover,.ddn-frame.ddn-hover,.ddn-field.ddn-hover{filter:drop-shadow(0 0 3px #245ac8) drop-shadow(0 0 1px #245ac8)}' +
+  '.ddn-rel.ddn-hover path{stroke:#245ac8!important;stroke-width:2.5px!important}' +
+  '.ddn-label.ddn-hover rect{stroke:#245ac8;stroke-width:1.5px}' +
+  '.ddn-label.ddn-hover text{fill:#245ac8}';
+
+/* Phase 9 (owner-approved): while the Inspector drawer or the pointer-select
+ * Properties drawer is open, hovering the canvas highlights the element or
+ * relation under the mouse — exactly what a click would select. Delegated
+ * pointerover/out on the stage, CSS classes only; clears on stage leave; a
+ * held pointer button (pan, pin-drag, placement) suppresses hover changes so
+ * gestures never fight the highlight. */
+function hoverEnabled() {
+  return drawerEls.inspector.dataset.state === 'open' || drawerEls.properties.dataset.state === 'open';
+}
+function attachHover() {
+  const stage = stageEl();
+  if (!stage || stage.dataset.toolHover) return;
+  stage.dataset.toolHover = 'true';
+  let current = [];
+  const clear = () => { for (const el of current) el.classList.remove('ddn-hover'); current = []; };
+  stage.addEventListener('pointerover', e => {
+    if (!hoverEnabled()) { if (current.length) clear(); return; }
+    if (e.buttons !== 0 || state.panning) { if (current.length) clear(); return; }
+    /* Field rows inside a node first (most specific), then relation groups
+     * and labels, then nodes, then frames. */
+    const field = e.target && e.target.closest && e.target.closest('.ddn-field[data-member]');
+    const relG = !field && e.target && e.target.closest && e.target.closest('.ddn-rel[data-id]');
+    const relL = !field && !relG && e.target && e.target.closest && e.target.closest('.ddn-label[data-id]');
+    const node = !field && !relG && !relL && e.target && e.target.closest && e.target.closest('.ddn-node[data-id]');
+    const frame = !field && !relG && !relL && !node && e.target && e.target.closest && e.target.closest('.ddn-frame[data-frame]');
+    const next = [];
+    if (field) {
+      next.push(field);
+      /* Relations get their edge path highlighted together with the label. */
+    } else if (relG || relL) {
+      const id = (relG || relL).dataset.id;
+      const both = stage.querySelectorAll('.ddn-rel[data-id="' + cssString(id) + '"], .ddn-label[data-id="' + cssString(id) + '"]');
+      next.push(...both);
+    } else if (node) next.push(node);
+    else if (frame) next.push(frame);
+    if (next.length === current.length && next.every((el, i) => el === current[i])) return;
+    clear();
+    for (const el of next) el.classList.add('ddn-hover');
+    current = next;
+  });
+  stage.addEventListener('pointerleave', clear);
+  stage.addEventListener('pointerdown', clear, true);
+  /* A render replaces the SVG; the stale targets die with it. */
+  stage.addEventListener('pointercancel', clear, true);
+}
 function mount() {
   if (state.diagram) state.diagram.destroy();
   state.diagram = null;
@@ -8568,6 +8655,13 @@ function mount() {
   state.overrideStyle = document.createElement('style');
   state.overrideStyle.id = 'ddn-tool-overrides';
   diagram.shadowRoot.append(state.overrideStyle);
+  /* Phase 9: hover-highlight rules live in their own static sheet (the
+   * override sheet is regenerated from presentation state). Pure CSS class
+   * toggling — no layout, no re-render. */
+  const hoverStyle = document.createElement('style');
+  hoverStyle.id = 'ddn-tool-hover';
+  hoverStyle.textContent = HOVER_CSS;
+  diagram.shadowRoot.append(hoverStyle);
   diagram.addEventListener('ddn-render-start', () => {
     /* D7: non-blocking busy affordance — the previous picture dims (the
      * component's stale idiom) and the stage spinner shows until the
@@ -8592,6 +8686,7 @@ function mount() {
     attachMindmap();
     applyMindScroll();
     attachDesign();
+    attachHover();
     updateDesignBar();
     refreshInspector();
     refreshTypeSheet();
@@ -8859,6 +8954,152 @@ for (const [group, profile, fields] of SOURCE_FIELDS) {
   if (profile === 'layout') g.append(dim('Gaps floor at 20px (DDN200); the authored value is the exact inter-element gap — object/edge/port clearances only affect edge routing and fan-out corridors, never node spacing. Tighter gaps keep the fit: contain scale nearer 1, so text renders larger on a fixed page.'));
 }
 function syncSourceInputs() { for (const f of sourceForms) f.sync(); }
+
+/* Phase 9 (owner-approved): ONE unified font editor — a "Fonts" group whose
+ * target dropdown lists every font-holding target in the active view, with
+ * exactly the supported controls per target (font-support matrix, verified
+ * against ddn-render/ddn-shapes/ddn-core and presentation.js):
+ *  · View base font — family (style.font, 4 roles) and size px
+ *    (style.font_size), SOURCE writes. Specials: unsupported — omitted.
+ *  · Each kind present — family (4 roles), size (8–24px) plus the specials
+ *    bold / italic / strike-through / small-caps / colour, ALL session-preview
+ *    CSS overlay (presentation.typography → typographyRuleFor; SVG text takes
+ *    font-weight/font-style/text-decoration/font-variant-caps/fill from CSS).
+ *    The renderer has no source syntax for per-kind fonts — nothing here is
+ *    serialized into source.
+ *  · Existing header/footer runs — family (role) and size (pt), SOURCE writes
+ *    via setViewChrome (the run band is rewritten as one transaction).
+ *    Specials: baked weights, no classes per run — omitted.
+ *  · Legend and the title block — no font properties anywhere (sizes/weights
+ *    baked, family follows the base font, text carries no addressable class):
+ *    listed DISABLED with an explanation, no controls.
+ *  · Per-element fonts — no model support (no element font properties in the
+ *    registry or x_* contracts): omitted per the same rule. */
+const fontEd = {};
+function fontRunBand(band) {
+  const node = viewSourceNode();
+  const pub = node && (node.children || []).find(x => x.group && x.type === 'publication');
+  const b = pub && (pub.children || []).find(x => x.group && x.type === band);
+  const spec = {};
+  for (const s of ['left', 'center', 'right']) {
+    const r = b && (b.children || []).find(x => x.group && x.type === s);
+    if (!r) continue;
+    const run = { text: r.props.text };
+    if (r.props.align !== undefined) run.align = r.props.align;
+    if (r.props.font !== undefined) run.font = r.props.font;
+    if (r.props.size !== undefined) { const sz = ptOf(r.props.size); if (sz != null) run.size = Math.round(sz * 100) / 100; }
+    if (r.props.lines !== undefined) run.lines = r.props.lines;
+    spec[s] = run;
+  }
+  return spec;
+}
+function setRunFontProps(band, slot, patch) {
+  const spec = fontRunBand(band);
+  if (!spec[slot]) { status('no ' + band + ' ' + slot + ' run in source — add text in the Document drawer first'); return; }
+  if (patch.font !== undefined) { if (patch.font) spec[slot].font = patch.font; else delete spec[slot].font; }
+  if (patch.size !== undefined) { if (patch.size != null) spec[slot].size = patch.size; else delete spec[slot].size; }
+  guard(() => guided(() => A.authoring.setViewChrome(state.ws, state.entry, state.view, { [band]: spec })));
+}
+function buildFontEditor() {
+  /* Rebuild only when the target list or the relevant state changed — the
+   * editor must not reset itself under the user's cursor on every render. */
+  const kinds = state._fontKinds || new Map();
+  const runs = [];
+  for (const band of ['header', 'footer']) {
+    const spec = fontRunBand(band);
+    for (const slot of ['left', 'center', 'right']) if (spec[slot]) runs.push(band + ':' + slot);
+  }
+  const typo = state.presentation.typography;
+  const sig = JSON.stringify([fontEd.target.value, [...kinds.keys()], runs, typo]);
+  if (sig === fontEd._sig) return;
+  fontEd._sig = sig;
+  const prev = fontEd.target.value;
+  const opts = [
+    ['base', 'View base font — source'],
+    ...[...kinds].sort().map(([code, label]) => ['kind:' + code, label + ' (' + code + ') text — session preview']),
+    ...runs.map(id => ['run:' + id, id.split(':')[0][0].toUpperCase() + id.split(':')[0].slice(1) + ' ' + id.split(':')[1] + ' run — source'])
+  ];
+  fontEd.target.replaceChildren(...opts.map(([v, l]) => new Option(l, v)));
+  const fixed = [['legend', 'Legend — follows the base font (fixed by the renderer)'], ['titleblock', 'Title block — fixed by the renderer']];
+  for (const [v, l] of fixed) { const o = new Option(l, v); o.disabled = true; o.title = 'No font properties exist for this target in the notation or the renderer — there is nothing to edit.'; fontEd.target.add(o); }
+  fontEd.target.value = opts.some(([v]) => v === prev) ? prev : 'base';
+  const body = fontEd.body;
+  body.replaceChildren();
+  const target = fontEd.target.value;
+
+  if (target === 'base') {
+    const fam = selectInput([['', 'As authored / default'], ['sans', 'sans'], ['serif', 'serif'], ['mono', 'mono'], ['handwriting', 'handwriting']], 'base font family');
+    const siz = document.createElement('input'); siz.type = 'number'; siz.min = 4; siz.max = 64; siz.step = 1; siz.placeholder = 'source'; siz.setAttribute('aria-label', 'base font size (px)');
+    const node = viewSourceNode();
+    const style = node && (node.children || []).find(x => x.group && x.type === 'style');
+    fam.value = style && typeof style.props.font === 'string' ? style.props.font : '';
+    const fs = style && pxOf(style.props.font_size);
+    siz.value = fs == null ? '' : String(fs);
+    fam.addEventListener('change', () => sourceProfileWrite('style', 'font', fam.value || undefined));
+    siz.addEventListener('change', () => sourceProfileWrite('style', 'font_size', siz.value === '' ? undefined : { $quantity: Number(siz.value), unit: 'px' }));
+    field(body, 'Family', fam);
+    field(body, 'Size (px)', siz);
+    body.append(dim('Writes style { font / font_size } to source. Bold/italic/… are not expressible for the base font — the renderer picks weights per text role.'));
+    return;
+  }
+
+  if (target.startsWith('kind:')) {
+    const code = target.slice(5);
+    const cur = { family: 'source', size: 'source', ...(typo[code] || {}) };
+    const update = patch => {
+      const next = { ...cur, ...patch };
+      for (const k of Object.keys(next)) if (next[k] === 'source' || next[k] === false || next[k] === '' || next[k] == null) delete next[k];
+      if (Object.keys(next).length) typo[code] = next; else delete typo[code];
+      applyOverrideCss();
+      fontEd._sig = null; // let the next repopulate resync
+    };
+    const fam = selectInput(familyOptions(), 'font family for ' + code); fam.value = cur.family || 'source';
+    const siz = selectInput(sizeOptions(), 'font size for ' + code); siz.value = String(cur.size || 'source');
+    fam.addEventListener('change', () => update({ family: fam.value }));
+    siz.addEventListener('change', () => update({ size: siz.value }));
+    field(body, 'Family', fam);
+    field(body, 'Size', siz);
+    const specialsRow = document.createElement('div'); specialsRow.className = 'ddn-row';
+    for (const [key, label] of [['bold', 'Bold'], ['italic', 'Italic'], ['strike', 'Strike-through'], ['smallCaps', 'Small-caps']]) {
+      const l = document.createElement('label'); l.className = 'ddn-check';
+      const c = document.createElement('input'); c.type = 'checkbox'; c.checked = !!cur[key]; c.setAttribute('aria-label', label + ' for ' + code);
+      c.addEventListener('change', () => update({ [key]: c.checked }));
+      l.append(c, ' ' + label);
+      specialsRow.append(l);
+    }
+    body.append(specialsRow);
+    const cw = colourWidget('text colour for ' + code, cur.colour || '#203047', v => update({ colour: v }));
+    const crow = document.createElement('div'); crow.className = 'ddn-colour-row';
+    const clab = document.createElement('span'); clab.className = 'ddn-colour-label'; clab.textContent = 'Text colour';
+    crow.append(clab, cw.root);
+    body.append(crow);
+    body.append(dim('Session preview (not saved to source) — the notation has no per-kind font syntax; these ride the CSS overlay like the colour cosmetics below.'));
+    return;
+  }
+
+  if (target.startsWith('run:')) {
+    const [, band, slot] = target.split(':');
+    const spec = fontRunBand(band);
+    const run = spec[slot] || {};
+    const fam = selectInput([['', 'default (base font)'], ['sans', 'sans'], ['serif', 'serif'], ['mono', 'mono'], ['handwriting', 'handwriting']], band + ' ' + slot + ' run font');
+    fam.value = typeof run.font === 'string' ? run.font : '';
+    const siz = document.createElement('input'); siz.type = 'number'; siz.min = 4; siz.max = 24; siz.step = 0.5; siz.placeholder = 'pt'; siz.setAttribute('aria-label', band + ' ' + slot + ' run size (pt)');
+    siz.value = run.size != null ? String(run.size) : '';
+    fam.addEventListener('change', () => setRunFontProps(band, slot, { font: fam.value }));
+    siz.addEventListener('change', () => setRunFontProps(band, slot, { size: siz.value === '' ? null : Number(siz.value) }));
+    field(body, 'Family', fam);
+    field(body, 'Size (pt)', siz);
+    body.append(dim('Writes the ' + band + ' band’s ' + slot + ' run to source (one setViewChrome transaction). The renderer fixes run weights (600 center, 400 sides); other specials are not expressible per run.'));
+  }
+}
+{
+  const g = appGroup(els.styleBody, 'Fonts', null);
+  fontEd.target = selectInput([], 'Font target');
+  field(g, 'Target', fontEd.target);
+  fontEd.body = document.createElement('div');
+  g.append(fontEd.body);
+  fontEd.target.addEventListener('change', () => { fontEd._sig = null; buildFontEditor(); });
+}
 /* Viewport actions + reset live in the style drawer too (the toolbar keeps
  * the quick fit/zoom subset). Session state only — nothing here writes source. */
 {
@@ -8878,7 +9119,6 @@ function syncSourceInputs() { for (const f of sourceForms) f.sync(); }
 }
 const coloursGroup = appGroup(els.styleBody, 'Colours — kinds', 'session');
 const verbsGroup = appGroup(els.styleBody, 'Colours — relation classes', 'session');
-const typoGroup = appGroup(els.styleBody, 'Typography per kind', 'session');
 const relationsGroup = appGroup(els.styleBody, 'Routing per relation class', 'session');
 const selectedGroup = appGroup(els.styleBody, 'Clicked object / relation', 'session');
 
@@ -9218,12 +9458,14 @@ const borderInputs = {};
   };
   for (const el of Object.values(borderInputs)) el.addEventListener('change', commit);
 }
+/* Phase 9 colour widget state (defined before the background section, which
+ * builds a widget at module init — see colourWidget below). */
+const COLOUR_HISTORY_KEY = 'ddn-tool-colour-history';
+const colourWidgetRegistry = [];
 const backgroundInputs = {};
 {
   const g = appGroup(els.documentBody, 'Page background', 'source');
   backgroundInputs.kind = field(g, 'Fill', selectInput([['', 'none'], ['color', 'color'], ['image', 'image (png/webp file)'], ['pattern', 'pattern (svg file)']], 'background fill'));
-  backgroundInputs.color = document.createElement('input'); backgroundInputs.color.type = 'text'; backgroundInputs.color.placeholder = '#rrggbb'; backgroundInputs.color.setAttribute('aria-label', 'Background colour');
-  field(g, 'Colour', backgroundInputs.color);
   backgroundInputs.image = document.createElement('input'); backgroundInputs.image.type = 'text'; backgroundInputs.image.placeholder = 'workspace path (.png/.webp)';
   field(g, 'Image file', backgroundInputs.image);
   backgroundInputs.pattern = document.createElement('input'); backgroundInputs.pattern.type = 'text'; backgroundInputs.pattern.placeholder = 'workspace path (.svg)';
@@ -9233,13 +9475,21 @@ const backgroundInputs = {};
   const commit = () => {
     const kind = backgroundInputs.kind.value;
     if (!kind) { guard(() => guided(() => A.authoring.setViewChrome(state.ws, state.entry, state.view, { background: null }))); return; }
-    const v = backgroundInputs[kind].value.trim();
+    const v = kind === 'color' ? backgroundInputs.color.input.value : backgroundInputs[kind].value.trim();
     if (!v) { status('background ' + kind + ' needs a value before it can be written'); return; }
     const spec = { [kind]: v };
     if (backgroundInputs.opacity.value !== '') spec.opacity = Number(backgroundInputs.opacity.value);
     guard(() => guided(() => A.authoring.setViewChrome(state.ws, state.entry, state.view, { background: spec })));
   };
-  for (const el of Object.values(backgroundInputs)) el.addEventListener('change', commit);
+  /* Phase 9: the background colour uses the shared colour widget (recent-
+   * colour history) — picking a colour writes immediately, like the other
+   * colour entries. */
+  backgroundInputs.color = colourWidget('Background colour', '#ffffff', () => { if (backgroundInputs.kind.value === 'color') commit(); });
+  const cRow = document.createElement('div'); cRow.className = 'ddn-colour-row';
+  const cLab = document.createElement('span'); cLab.className = 'ddn-colour-label'; cLab.textContent = 'Colour';
+  cRow.append(cLab, backgroundInputs.color.root);
+  g.append(cRow);
+  for (const el of [backgroundInputs.kind, backgroundInputs.image, backgroundInputs.pattern, backgroundInputs.opacity]) el.addEventListener('change', commit);
 }
 
 function syncDocumentForm() {
@@ -9283,7 +9533,7 @@ function syncDocumentForm() {
   const bg = concernNode('background');
   const bgKind = bg ? ['color', 'image', 'pattern'].find(k => bg.props[k] !== undefined) : '';
   backgroundInputs.kind.value = bgKind || '';
-  backgroundInputs.color.value = bg && typeof bg.props.color === 'string' ? bg.props.color : '';
+  backgroundInputs.color.input.value = bg && typeof bg.props.color === 'string' ? bg.props.color : '#ffffff';
   backgroundInputs.image.value = bg && typeof bg.props.image === 'string' ? bg.props.image : '';
   backgroundInputs.pattern.value = bg && typeof bg.props.pattern === 'string' ? bg.props.pattern : '';
   backgroundInputs.opacity.value = bg && bg.props.opacity !== undefined ? String(bg.props.opacity) : '';
@@ -9292,38 +9542,60 @@ function syncDocumentForm() {
 
 /* CSS-overlay panels (per-kind/verb/object colours, per-kind typography,
  * per-verb routing) — repopulated from the resolved model after each render. */
+/* Phase 9 (owner-approved): ONE shared colour-picker widget — a native
+ * input[type=color] plus a row of recently used swatches (max 10, most-recent-
+ * first, persisted in localStorage). Every colour entry point in the drawers
+ * (kind/relation-class/object overrides, page background, font-editor text
+ * colour) uses this widget and feeds the same history. */
+function loadColourHistory() {
+  try { return recentColours(JSON.parse(host.localStorage.getItem(COLOUR_HISTORY_KEY) || '[]'), null); } catch { return []; }
+}
+function recordColour(colour) {
+  try {
+    const h = recentColours(loadColourHistory(), colour);
+    host.localStorage.setItem(COLOUR_HISTORY_KEY, JSON.stringify(h));
+    for (let i = colourWidgetRegistry.length - 1; i >= 0; i--) {
+      if (!colourWidgetRegistry[i].root.isConnected) { colourWidgetRegistry.splice(i, 1); continue; }
+      colourWidgetRegistry[i].refreshSwatches();
+    }
+  } catch { /* invalid colour — never recorded */ }
+}
+function colourWidget(ariaLabel, current, onPick) {
+  const wrap = document.createElement('span'); wrap.className = 'ddn-colour-widget';
+  const inp = document.createElement('input'); inp.type = 'color'; inp.value = current || '#888888';
+  inp.setAttribute('aria-label', ariaLabel);
+  const swatches = document.createElement('span'); swatches.className = 'ddn-colour-swatches';
+  const w = {
+    root: wrap, input: inp,
+    refreshSwatches() {
+      swatches.replaceChildren(...loadColourHistory().map(c => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'ddn-swatch'; b.style.background = c; b.title = c;
+        b.setAttribute('aria-label', 'recent colour ' + c);
+        b.addEventListener('click', () => { inp.value = c; onPick(c); recordColour(c); });
+        return b;
+      }));
+    }
+  };
+  inp.addEventListener('input', () => onPick(inp.value));
+  inp.addEventListener('change', () => recordColour(inp.value));
+  wrap.append(inp, swatches);
+  w.refreshSwatches();
+  colourWidgetRegistry.push(w);
+  return w;
+}
 function colourRow(labelText, code, current, onPick, onClear) {
   const row = document.createElement('div'); row.className = 'ddn-colour-row';
   const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = labelText; lab.title = labelText;
-  const inp = document.createElement('input'); inp.type = 'color'; inp.value = current || '#888888';
-  inp.setAttribute('aria-label', 'colour override for ' + labelText);
-  inp.addEventListener('input', () => onPick(code, inp.value));
+  const w = colourWidget('colour override for ' + labelText, current, v => onPick(code, v));
   const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'ddn-mini'; clr.textContent = 'clear';
   clr.addEventListener('click', () => onClear(code));
-  row.append(lab, inp, clr);
+  row.append(lab, w.root, clr);
   return row;
 }
 const familyOptions = () => [['source', 'source default']].concat(Object.entries(FONT_STACKS).map(([k, stack]) => [k, k + ' — ' + stack.split(',')[0]]));
 const sizeOptions = () => [['source', 'source default'], ['8', '8 px'], ['9', '9 px'], ['10', '10 px'], ['11', '11 px'], ['12', '12 px'], ['14', '14 px'], ['16', '16 px'], ['18', '18 px'], ['20', '20 px'], ['24', '24 px']];
 const routingOptions = () => [['source', 'default']].concat(ROUTING_VALUES.map(v => [v, v]));
-
-function typographyRow(labelText, code) {
-  const row = document.createElement('div'); row.className = 'ddn-colour-row';
-  const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = labelText; lab.title = labelText;
-  const cur = state.presentation.typography[code] || { family: 'source', size: 'source' };
-  const fam = selectInput(familyOptions(), 'font family for ' + labelText); fam.value = cur.family || 'source';
-  const siz = selectInput(sizeOptions(), 'font size for ' + labelText); siz.value = String(cur.size || 'source');
-  const update = () => {
-    if (fam.value === 'source' && siz.value === 'source') delete state.presentation.typography[code];
-    else state.presentation.typography[code] = { family: fam.value, size: siz.value };
-    applyOverrideCss();
-  };
-  fam.addEventListener('change', update); siz.addEventListener('change', update);
-  const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'ddn-mini'; clr.textContent = 'clear';
-  clr.addEventListener('click', () => { delete state.presentation.typography[code]; repopulateOverridePanels(); applyOverrideCss(); });
-  row.append(lab, fam, siz, clr);
-  return row;
-}
 function verbRoutingRow(labelText, keyword) {
   const row = document.createElement('div'); row.className = 'ddn-colour-row';
   const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = labelText; lab.title = labelText;
@@ -9382,10 +9654,10 @@ function repopulateOverridePanels() {
       (c, col) => { state.presentation.verbColours[c] = col; applyOverrideCss(); },
       c => { delete state.presentation.verbColours[c]; repopulateOverridePanels(); applyOverrideCss(); })));
   if (!verbs.size) verbsGroup.append(dim('none in this view'));
-  setGroupRows(typoGroup, [...kinds].sort().map(([code, label]) => typographyRow(label + ' (' + code + ')', code)));
-  if (!kinds.size) typoGroup.append(dim('none in this view'));
   setGroupRows(relationsGroup, [...verbs].sort((a, b) => a[1].code < b[1].code ? -1 : 1).map(([keyword, v]) => verbRoutingRow(v.label + ' (' + keyword + ')', keyword)));
   if (!verbs.size) relationsGroup.append(dim('none in this view'));
+  state._fontKinds = new Map(kinds);
+  buildFontEditor();
   updateSelectedPanel();
 }
 
