@@ -661,6 +661,7 @@ for (const [group, profile, fields] of SOURCE_FIELDS) {
       A.authoring.setViewProfile(state.ws, state.entry, state.view, { [profile]: { [d.key]: v } });
       showSource(state.currentFile);
       updateHistory();
+      refreshAfterSourceWrite();
       status('source edit applied — undo restores the previous source');
     },
     note: status
@@ -862,12 +863,45 @@ const DOCUMENT_FIELDS = [
   ]]
 ];
 const docInputs = {};
+let legendHintEl = null;
+/* Legend callout keys (0.8 chapter 53): legend mode "numbers" renders
+ * RELATIONSHIP KEY callouts and the builder rejects the mode when any visible
+ * relation lacks an explicit key (DDN061) — so choosing numbers without keys
+ * must assign them in the SAME transaction, or the write is refused. Keys are
+ * keyed by the relation's reference path; already-keyed relations keep their
+ * numbers, unkeyed ones take the smallest free positive integers in view
+ * order. */
+function legendKeyPlan() {
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { return null; }
+  const authored = (ir.view.profiles.legend && ir.view.profiles.legend.keys) || {};
+  const resolved = ir.view.keys || {};
+  const used = new Set(Object.values(resolved));
+  const missing = [];
+  for (const rid of ir.view.relations) {
+    if (resolved[rid] !== undefined) continue;
+    const rel = (ir.relations || []).find(r => r.id === rid);
+    if (rel) missing.push(rel);
+  }
+  return { authored, missing, used };
+}
+function autoNumberedKeys(plan) {
+  const keys = { ...plan.authored };
+  let next = 1;
+  for (const rel of plan.missing) {
+    while (plan.used.has(next)) next++;
+    keys[rel.ref || rel.id] = next;
+    plan.used.add(next);
+    next++;
+  }
+  return keys;
+}
 for (const [group, profile, fields] of DOCUMENT_FIELDS) {
   const g = appGroup(els.documentBody, group, 'source');
   for (const [label, key, kind, min, max, step] of fields) {
     let input;
     const writeKey = key === 'banner_text' ? 'banner' : key;
-    const commit = () => {
+    const commit = () => guard(() => {
       let val;
       if (kind === 'number') val = input.value === '' ? undefined : Number(input.value);
       else if (kind === 'quantity') val = input.value === '' ? undefined : { $quantity: Number(input.value), unit: 'px' };
@@ -875,8 +909,16 @@ for (const [group, profile, fields] of DOCUMENT_FIELDS) {
       else if (kind === 'text') val = input.value.trim() ? input.value.trim() : undefined;
       else val = input.value === '' ? undefined : input.value;
       if (profile === 'view') guided(() => A.authoring.setViewProperties(state.ws, state.entry, state.view, { [writeKey]: val }));
+      else if (profile === 'legend' && writeKey === 'mode' && val === 'numbers') {
+        const plan = legendKeyPlan();
+        if (plan && plan.missing.length) {
+          const keys = autoNumberedKeys(plan);
+          guided(() => A.authoring.setViewProfile(state.ws, state.entry, state.view, { legend: { mode: 'numbers', keys } }));
+          status('numbered legend needed callout keys — auto-numbered ' + plan.missing.length + ' relation(s); edit legend { keys: { … } } in source to renumber');
+        } else sourceProfileWrite(profile, writeKey, val);
+      }
       else sourceProfileWrite(profile, writeKey, val);
-    };
+    });
     if (Array.isArray(kind)) {
       input = selectInput([['', 'As authored / default'], ...kind.map(v => [v, v])], label);
       input.addEventListener('change', commit);
@@ -889,9 +931,44 @@ for (const [group, profile, fields] of DOCUMENT_FIELDS) {
       input.addEventListener('change', commit);
     }
     docInputs[profile + '.' + key] = { input, kind };
+    /* Labels repeat across groups (Width, Title) — qualify so assistive tech
+     * and probes can tell Publication Width from Legend Width. */
+    input.setAttribute('aria-label', group + ' ' + label);
     field(g, label, input);
   }
   if (profile === 'publication') g.append(dim('Content scale grows or shrinks the drawing itself — geometry and all text together (0.25–4, default 1) — before Fit is applied, so Fit "contain" and the minimum-text check (DDN071) judge the scaled result, and Fit "none" renders at exactly that scale with DDN074 overflow rules on the scaled size. Embedding scale is different: it declares how much the embedding context enlarges the rendered SVG (1 = as-rendered). It never changes geometry or fonts in the file itself — it only scales the effective sizes the minimum-text and print lint checks enforce (DDN071/DDN-PS01/PS02), so a value above 1 asserts "this will be displayed larger". All renderers cap embedding scale at 4 (DDN070/DDN-PJ062).'));
+  if (profile === 'legend') {
+    legendHintEl = dim('');
+    legendHintEl.hidden = true;
+    const autoB = document.createElement('button');
+    autoB.type = 'button'; autoB.className = 'ddn-mini'; autoB.id = 'ddn-legend-autonumber';
+    autoB.textContent = 'Auto-number relations';
+    autoB.title = 'Assign legend callout keys (1…n in view order, skipping already-keyed relations) as legend { keys: { … } } — one undoable source write';
+    autoB.addEventListener('click', () => guard(() => {
+      const plan = legendKeyPlan();
+      if (!plan) { status('no resolvable view'); return; }
+      if (!plan.missing.length) { status('every visible relation already has a callout key'); return; }
+      const keys = autoNumberedKeys(plan);
+      guided(() => A.authoring.setViewProfile(state.ws, state.entry, state.view, { legend: { keys } }));
+      status('auto-numbered ' + plan.missing.length + ' relation(s) — edit legend { keys: { … } } in source to renumber');
+    }));
+    const row = document.createElement('div'); row.className = 'ddn-row';
+    row.append(autoB);
+    g.append(legendHintEl, row);
+  }
+}
+/* DDN061 surfacing: numbered legend mode needs one callout key per visible
+ * relation; say so next to the controls whenever that gap exists (the builder
+ * refuses mode: numbers without keys, so an unsatisfied requirement can only
+ * come from source edits or a keyset that lost entries). */
+function updateLegendHint() {
+  if (!legendHintEl) return;
+  const mode = docInputs['legend.mode'] && docInputs['legend.mode'].input.value;
+  const plan = mode === 'numbers' ? legendKeyPlan() : null;
+  if (plan && plan.missing.length) {
+    legendHintEl.hidden = false;
+    legendHintEl.textContent = 'Numbered mode requires callout keys — ' + plan.missing.length + ' visible relation(s) have none. Use Auto-number relations (or author legend { keys: { … } }) or the builder rejects the mode (DDN061).';
+  } else legendHintEl.hidden = true;
 }
 
 /* Chapter 53 publication chrome: header/footer run bands (left/center/right
@@ -937,9 +1014,9 @@ const borderInputs = {};
 {
   const g = appGroup(els.documentBody, 'Page border', 'source');
   borderInputs.style = field(g, 'Style', selectInput([['', 'none'], ['single', 'single'], ['double', 'double'], ['dashed', 'dashed']], 'border style'));
-  borderInputs.weight = document.createElement('input'); borderInputs.weight.type = 'number'; borderInputs.weight.min = 0.25; borderInputs.weight.max = 8; borderInputs.weight.step = 0.25; borderInputs.weight.placeholder = 'pt';
+  borderInputs.weight = document.createElement('input'); borderInputs.weight.type = 'number'; borderInputs.weight.min = 0.25; borderInputs.weight.max = 8; borderInputs.weight.step = 0.25; borderInputs.weight.placeholder = 'pt'; borderInputs.weight.setAttribute('aria-label', 'Border weight (pt)');
   field(g, 'Weight (pt)', borderInputs.weight);
-  borderInputs.inset = document.createElement('input'); borderInputs.inset.type = 'number'; borderInputs.inset.min = 0; borderInputs.inset.max = 2000; borderInputs.inset.step = 1; borderInputs.inset.placeholder = 'px';
+  borderInputs.inset = document.createElement('input'); borderInputs.inset.type = 'number'; borderInputs.inset.min = 0; borderInputs.inset.max = 2000; borderInputs.inset.step = 1; borderInputs.inset.placeholder = 'px'; borderInputs.inset.setAttribute('aria-label', 'Border inset (px)');
   field(g, 'Inset (px)', borderInputs.inset);
   borderInputs.corner_marks = field(g, 'Corner marks', selectInput([['', 'As authored / default'], ['on', 'on'], ['off', 'off']], 'corner marks'));
   const commit = () => {
@@ -956,7 +1033,7 @@ const backgroundInputs = {};
 {
   const g = appGroup(els.documentBody, 'Page background', 'source');
   backgroundInputs.kind = field(g, 'Fill', selectInput([['', 'none'], ['color', 'color'], ['image', 'image (png/webp file)'], ['pattern', 'pattern (svg file)']], 'background fill'));
-  backgroundInputs.color = document.createElement('input'); backgroundInputs.color.type = 'text'; backgroundInputs.color.placeholder = '#rrggbb';
+  backgroundInputs.color = document.createElement('input'); backgroundInputs.color.type = 'text'; backgroundInputs.color.placeholder = '#rrggbb'; backgroundInputs.color.setAttribute('aria-label', 'Background colour');
   field(g, 'Colour', backgroundInputs.color);
   backgroundInputs.image = document.createElement('input'); backgroundInputs.image.type = 'text'; backgroundInputs.image.placeholder = 'workspace path (.png/.webp)';
   field(g, 'Image file', backgroundInputs.image);
@@ -1021,6 +1098,7 @@ function syncDocumentForm() {
   backgroundInputs.image.value = bg && typeof bg.props.image === 'string' ? bg.props.image : '';
   backgroundInputs.pattern.value = bg && typeof bg.props.pattern === 'string' ? bg.props.pattern : '';
   backgroundInputs.opacity.value = bg && bg.props.opacity !== undefined ? String(bg.props.opacity) : '';
+  updateLegendHint();
 }
 
 /* CSS-overlay panels (per-kind/verb/object colours, per-kind typography,
@@ -1260,6 +1338,7 @@ function guidedInspector(action) {
     showSource(state.currentFile);
     updateHistory();
     inspectorNote('');
+    refreshAfterSourceWrite();
     status('source edit applied — undo restores the previous source');
     refreshInspector();
   } catch (e) {
@@ -1984,7 +2063,20 @@ function guided(action) {
   action();
   showSource(state.currentFile);
   updateHistory();
+  refreshAfterSourceWrite();
   status('source edit applied — undo restores the previous source');
+}
+/* Every source-writing drawer control re-renders after its transaction — the
+ * write is invisible on the canvas otherwise (the "legend numbers / border
+ * does nothing" report: the write landed but the picture only refreshed on
+ * the next manual Apply). Mirrors the Apply button idiom; a failed render
+ * surfaces through the component's ddn-error event. */
+function refreshAfterSourceWrite() {
+  if (state.diagram) {
+    state.diagram.ready = state.diagram.redraw();
+    state.diagram.ready.catch(() => {});
+  }
+  diagnosticsUI();
 }
 
 /* ------------------------------------------------ add element / relation modals
