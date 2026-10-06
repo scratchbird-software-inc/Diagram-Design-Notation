@@ -13,7 +13,7 @@ if(typeof process!=='undefined'&&process.getBuiltinModule){
   initial=JSON.parse(fs.readFileSync(path.join(here,'../../standard/registry/text-metrics.json'),'utf8'));
  }catch{}
 }
-const FONTS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'};
+const FONTS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Comic Sans MS, Segoe Print, Bradley Hand, Purisa, Nanum Pen Script, cursive'};
 /* 0.8 (chapter 54 §54.4): measurement-engine identity. A font_pin records the
  * producing engine; a mismatch is DDN-TF05 (pin ignored) at render time. */
 const ENGINE='ddn-text@1';

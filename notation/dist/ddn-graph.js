@@ -66,7 +66,7 @@
     initial=JSON.parse(fs.readFileSync(path.join(here,'../../standard/registry/text-metrics.json'),'utf8'));
    }catch{}
   }
-  const FONTS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'};
+  const FONTS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Comic Sans MS, Segoe Print, Bradley Hand, Purisa, Nanum Pen Script, cursive'};
   /* 0.8 (chapter 54 §54.4): measurement-engine identity. A font_pin records the
    * producing engine; a mismatch is DDN-TF05 (pin ignored) at render time. */
   const ENGINE='ddn-text@1';
@@ -1994,7 +1994,7 @@
    const palette=api$3.THEME_PAINT.colorblind_safe.palette;let best=palette[0],bd=Infinity;
    for(const c of palette){const ch=hueOf(c);if(ch===null)continue;const d=Math.min(Math.abs(ch-h),360-Math.abs(ch-h));if(d<bd){bd=d;best=c;}}
    return best;}
-  const FONT_STACKS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'};
+  const FONT_STACKS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Comic Sans MS, Segoe Print, Bradley Hand, Purisa, Nanum Pen Script, cursive'};
   const PT=96/72;
   /* 0.8 (chapter 55 §55.1): marking paint resolves per registered theme, so a
    * forbidden/tentative signal keeps a non-colour rendering under every theme. */
@@ -3045,7 +3045,7 @@
     if(H<needed)fail('DDN-I025',`Interaction page needs at least ${needed}px height; split phases or enlarge page`);
     if(q(p.style.font_size,16)!==16)fail('DDN-I026','Experimental interaction typography remains 16px; variable fonts are supported by the native core view renderer');
     if(q(p.publication.minimum_text,0)>11)fail('DDN-I026','Smallest interaction labels are 11px; this minimum is unsupported');
-    const font=p.style.font==='mono'?'DejaVu Sans Mono, monospace':p.style.font==='serif'?'DejaVu Serif, serif':p.style.font==='handwriting'?'Comic Neue, Segoe Print, Bradley Hand, cursive':'DejaVu Sans, Arial, sans-serif';
+    const font=p.style.font==='mono'?'DejaVu Sans Mono, monospace':p.style.font==='serif'?'DejaVu Serif, serif':p.style.font==='handwriting'?'Comic Neue, Comic Sans MS, Segoe Print, Bradley Hand, Purisa, Nanum Pen Script, cursive':'DejaVu Sans, Arial, sans-serif';
     const x=new Map(model.actors.map((n,i)=>[n.id,left+(i+.5)*laneW])), scene={format:'ddn-interaction-scene@0.1',width:W,height:H,scale:1,origin:[0,0],nodes:[],routes:[],messageRows:[],externalPredecessors:model.externalPredecessors};
     let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="ddn-title ddn-desc" style="font-family:${font}"><title id="ddn-title">${esc(ir.view.name)}</title><desc id="ddn-desc">Ordered protocol illustration generated from explicit DDN predecessor references. The pale vertical guides are participant lanes, not data-flow relationships. Numbered circles index the adjacent exchange key. Requests and responses use distinct arrows. This is a success-path architecture proposal, not a verified secure protocol.</desc><defs>${defs}</defs><rect width="100%" height="100%" fill="${t.background}"/>`;
     out+=text(30,26,'DDN / SESSION BOOTSTRAP / EXPERIMENTAL INTERACTION PROFILE',11,t.muted,650)+text(30,59,ir.view.name,24,t.ink,650);

@@ -58,7 +58,7 @@ function cbRemap(hex){const h=hueOf(hex);if(h===null)return hex;
  const palette=ViewProfiles.THEME_PAINT.colorblind_safe.palette;let best=palette[0],bd=Infinity;
  for(const c of palette){const ch=hueOf(c);if(ch===null)continue;const d=Math.min(Math.abs(ch-h),360-Math.abs(ch-h));if(d<bd){bd=d;best=c;}}
  return best;}
-const FONT_STACKS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'};
+const FONT_STACKS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Comic Sans MS, Segoe Print, Bradley Hand, Purisa, Nanum Pen Script, cursive'};
 const PT=96/72;
 /* 0.8 (chapter 55 §55.1): marking paint resolves per registered theme, so a
  * forbidden/tentative signal keeps a non-colour rendering under every theme. */

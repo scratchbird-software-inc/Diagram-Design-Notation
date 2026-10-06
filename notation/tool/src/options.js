@@ -14,7 +14,7 @@ const FONT_STACKS = {
   sans: 'DejaVu Sans, Arial, sans-serif',
   serif: 'DejaVu Serif, Georgia, serif',
   mono: 'DejaVu Sans Mono, monospace',
-  handwriting: 'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'
+  handwriting: 'Comic Neue, Comic Sans MS, Segoe Print, Bradley Hand, Purisa, Nanum Pen Script, cursive'
 };
 const FONT_SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24];
 const ROUTING_VALUES = ['orthogonal', 'straight', 'curved', 'rounded', 'string'];
