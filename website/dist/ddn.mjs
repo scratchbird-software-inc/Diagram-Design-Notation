@@ -4299,19 +4299,22 @@ function measure(g,p){
  * box exists to carry the name below the glyph). Routing, clipping and
  * interior tests must target the painted glyph, not the box, or edges stop
  * in mid-air around BPMN events, CMMN listeners, UML pseudostates and flow
- * finals. Mirrors the render branches below exactly (centres and radii). */
+ * finals. Mirrors the render branches below exactly (centres and radii).
+ * forkbar stays box-attached on purpose: its painted bar is 8px tall, so two
+ * same-side endpoints would clamp within the 12px lane clearance and seal
+ * each other's escape corridor (DDN215); the box edge keeps their stubs at
+ * lane distance. */
 function markerOutline(g){
  const {x,y,w,h,silhouette:t,scale:s}=g,cx=x+w/2;
  switch(t){
   case 'bpmevent':return {cx,cy:y+h/2-10*s,r:16*s};
-  case 'userevent':return {cx,cy:y+h/2-8*s,r:15*s};
-  case 'flowfinal':return {cx,cy:y+h/2-8*s,r:11*s};
-  case 'junction':return {cx,cy:y+h/2-8*s,r:7*s};
-  case 'entrypoint':case 'exitpoint':return {cx,cy:y+h/2-8*s,r:9*s};
-  case 'history':return {cx,cy:y+h/2-8*s,r:12*s};
-  case 'choice':return {cx,cy:y+h/2-8*s,r:12*s,diamond:true};
-  case 'terminate':return {cx,cy:y+h/2-8*s,r:8*s};
-  case 'forkbar':return {cx,cy:y+h/2-8*s,hw:32*s,hh:4*s};
+  case 'userevent':return {cx,cy:y+h/2-8,r:15*s};
+  case 'flowfinal':return {cx,cy:y+h/2-8,r:11*s};
+  case 'junction':return {cx,cy:y+h/2-8,r:7*s};
+  case 'entrypoint':case 'exitpoint':return {cx,cy:y+h/2-8,r:9*s};
+  case 'history':return {cx,cy:y+h/2-8,r:12*s};
+  case 'choice':return {cx,cy:y+h/2-8,r:12*s,diamond:true};
+  case 'terminate':return {cx,cy:y+h/2-8,r:8*s};
   case 'hourglass':return {cx,cy:y+h/2,hw:Math.min(w/2,26*s),hh:Math.min(h/2,20*s)};
  }
  return null;
