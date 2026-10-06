@@ -8401,7 +8401,7 @@ function recordEdit(text,n,record){
  const code='object '+n.id+' '+JSON.stringify(n.label??n.id)+' { kind: record; x_record: '+value(record)+';'+(extra?' '+extra:'')+' }';
  return {file:n.source,start:n.start,end:n.end,text:code};
 }
-function addLocal(ws,entry,view,code,newObjectId){const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source],data=v.doc.declarations.find(n=>n.type==='data'&&n.id==='editor_data'),edits=[];if(data)edits.push({file:v.source,start:data.bodyEnd,end:data.bodyEnd,text:'\n    '+code+'\n'});else {edits.push({file:v.source,start:v.start,end:v.start,text:'data editor_data {\n    '+code+'\n}\n\n'});const ds=Array.isArray(v.props.data)?v.props.data:[v.props.data];edits.push(property(text,v,'data',[...ds,{$ref:'editor_data'}]));}if(newObjectId&&v.props.select)edits.push(property(text,v,'select',[...v.props.select,{$ref:'editor_data.'+newObjectId}]));return apply(ws,b,edits,entry,view);}
+function addLocal(ws,entry,view,code,newObjectId,extra){const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source],data=v.doc.declarations.find(n=>n.type==='data'&&n.id==='editor_data'),edits=[];if(data)edits.push({file:v.source,start:data.bodyEnd,end:data.bodyEnd,text:'\n    '+code+'\n'});else {edits.push({file:v.source,start:v.start,end:v.start,text:'data editor_data {\n    '+code+'\n}\n\n'});const ds=Array.isArray(v.props.data)?v.props.data:[v.props.data];edits.push(property(text,v,'data',[...ds,{$ref:'editor_data'}]));}if(newObjectId&&v.props.select)edits.push(property(text,v,'select',[...v.props.select,{$ref:'editor_data.'+newObjectId}]));if(extra)edits.push(...extra);return apply(ws,b,edits,entry,view);}
 api.authoring={
  setMatrixCell(ws,entry,view,row,column,newValue,options={}){if(!options||typeof options!=='object'||Array.isArray(options)||Object.keys(options).some(k=>!['remove','id'].includes(k))||options.remove!==undefined&&typeof options.remove!=='boolean')fail('DDN-E007','Matrix edit options require a boolean remove flag and optional id');return this.setMatrixCells(ws,entry,view,[{row,column,...(options.remove?{remove:true}:{value:newValue}),...(options.id?{id:options.id}:{})}]);},
  setMatrixCells(ws,entry,view,changes){
@@ -8881,7 +8881,25 @@ api.authoring={
  hide(ws,entry,view,id){const b=build(ws,entry,view),v=b.viewNode,ref=refFor(b,v.doc,id),list=v.props.exclude||[];if(list.some(r=>b.workspace.resolve(r,v).uid===id))return false;return apply(ws,b,[property(ws.getFiles()[v.source],v,'exclude',[...list,{$ref:ref}])],entry,view);},
  addElement(ws,entry,view,{id,name,kind='object'}){idOK(id);if(!api.kinds.some(k=>k.id===kind))fail('DDN-E001','Unknown object kind.');return addLocal(ws,entry,view,'object '+id+' '+JSON.stringify(name||id)+' { kind: '+JSON.stringify(kind)+'; }',id);},
  addField(ws,entry,view,parentId,{id,name}){idOK(id);const b=build(ws,entry,view),n=find(b,parentId),fields=n.children.find(g=>g.group&&g.type==='fields');const code='field '+id+(name?' '+JSON.stringify(name):'')+';';let edit;if(fields)edit={file:n.source,start:fields.bodyEnd,end:fields.bodyEnd,text:'\n        '+code+'\n    '};else if(n.bodyEnd!==undefined)edit={file:n.source,start:n.bodyEnd,end:n.bodyEnd,text:'\n    fields { '+code+' }\n'};else edit={file:n.source,start:n.end-1,end:n.end,text:' { fields { '+code+' } }'};return apply(ws,b,[edit],entry,view);},
- addRelation(ws,entry,view,{id,name,kind='assoc',from,to}){idOK(id);if(!api.relations.some(k=>k.id===kind))fail('DDN-E001','Unknown relationship kind.');const b=build(ws,entry,view),v=b.viewNode,src=refFor(b,v.doc,from),dst=refFor(b,v.doc,to);return addLocal(ws,entry,view,'relation '+id+' '+JSON.stringify(name||id)+' @'+src+' -> @'+dst+' { kind: '+JSON.stringify(kind)+'; }');},
+ addRelation(ws,entry,view,{id,name,kind='assoc',from,to}){
+  idOK(id);if(!api.relations.some(k=>k.id===kind))fail('DDN-E001','Unknown relationship kind.');
+  const b=build(ws,entry,view),v=b.viewNode,src=refFor(b,v.doc,from),dst=refFor(b,v.doc,to);
+  /* Numbered-legend invariant (DDN061): with legend mode: numbers every
+   * visible relation needs an explicit callout key, so a bare add would be
+   * rejected by the builder's own validation. Assign the smallest free
+   * number to the new relation inside the same transaction. */
+  const extra=[];
+  const legend=(b.ir.view.profiles&&b.ir.view.profiles.legend)||{};
+  if(legend.mode==='numbers'){
+   const used=new Set(Object.values(b.ir.view.keys||{}));
+   let next=1;while(used.has(next))next++;
+   const keys={...(legend.keys||{}),['editor_data.'+id]:next};
+   const lg=v.children.find(n=>n.group&&n.type==='legend');
+   if(lg)extra.push(property(ws.getFiles()[v.source],lg,'keys',keys));
+   else extra.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    legend {\n        keys: '+value(keys)+';\n    }\n'});
+  }
+  return addLocal(ws,entry,view,'relation '+id+' '+JSON.stringify(name||id)+' @'+src+' -> @'+dst+' { kind: '+JSON.stringify(kind)+'; }',undefined,extra);
+ },
  deleteDefinition(ws,entry,view,id){const b=build(ws,entry,view),n=find(b,id),files=ws.getFiles();let references=0;for(const d of b.workspace.docs.values())for(const t of D.lex(files[d.source],d.source))if(t.type==='@'&&(d.source!==n.source||t.start<n.start||t.start>=n.end)){
   // Resolve complete reference against its indexed lexical owner.
   const owner=[...b.workspace.symbols.values()].filter(x=>x.source===d.source&&x.start<=t.start&&x.end>=t.end).sort((a,b)=>(a.end-a.start)-(b.end-b.start))[0];if(!owner)continue;

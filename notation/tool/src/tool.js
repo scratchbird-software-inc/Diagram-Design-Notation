@@ -152,15 +152,16 @@ const els = {
   aeNote: $('ddn-ae-note'), aeCreate: $('ddn-ae-create'), aeCancel: $('ddn-ae-cancel'),
   arModal: $('ddn-add-relation-modal'), arName: $('ddn-ar-name'), arId: $('ddn-ar-id'), arFrom: $('ddn-ar-from'),
   arTo: $('ddn-ar-to'), arKind: $('ddn-ar-kind'), arNote: $('ddn-ar-note'), arCreate: $('ddn-ar-create'), arCancel: $('ddn-ar-cancel'),
-  designBar: $('ddn-design-bar'), designHint: $('ddn-design-hint'), tidy: $('ddn-tidy'),
+  tidy: $('ddn-tidy'),
   sheetTitle: $('ddn-sheet-title'), sheetEmpty: $('ddn-sheet-empty'),
   sheetOutline: $('ddn-sheet-outline'), sheetEditor: $('ddn-sheet-editor'),
-  paletteToggle: $('ddn-palette-toggle'), pointerToggle: $('ddn-pointer-toggle'),
-  paletteSearch: $('ddn-palette-search'), paletteList: $('ddn-palette-list'),
+  pointerToggle: $('ddn-pointer-toggle'),
+  cutBtn: $('ddn-cut'), copyBtn: $('ddn-copy'), pasteBtn: $('ddn-paste'),
+  boldToggle: $('ddn-bold-toggle'), italicToggle: $('ddn-italic-toggle'),
+  creatorTabs: $('ddn-creator-tabs'), creatorIcons: $('ddn-creator-icons'),
+  paletteFamily: $('ddn-palette-family'), paletteFamilyMenu: $('ddn-palette-family-menu'),
+  paletteSearch: $('ddn-palette-search'),
   paletteHint: $('ddn-palette-hint'), paletteAll: $('ddn-palette-all'), paletteAllWrap: $('ddn-palette-all-wrap'),
-  connect: $('ddn-connect'), relselectList: $('ddn-relselect-list'),
-  connectSummary: $('ddn-connect-summary'), connectNote: $('ddn-connect-note'),
-  connectName: $('ddn-connect-name'), connectCreate: $('ddn-connect-create'), connectCancel: $('ddn-connect-cancel'),
   viewKind: $('ddn-view-kind'), projectionKind: $('ddn-projection-kind'),
   propertiesTitle: $('ddn-properties-title'), propertiesEmpty: $('ddn-properties-empty'), propertiesContent: $('ddn-properties-content'),
   rightSplitter: $('ddn-right-splitter'),
@@ -170,9 +171,9 @@ const els = {
   animStep: $('ddn-anim-step'), animSpeed: $('ddn-anim-speed'), animFlow: $('ddn-anim-flow'),
   animFlowField: $('ddn-anim-flow-field'), animStatus: $('ddn-anim-status')
 };
-const drawerEls = { files: $('ddn-drawer-files'), style: $('ddn-drawer-style'), document: $('ddn-drawer-document'), inspector: $('ddn-drawer-inspector'), source: $('ddn-drawer-source'), typesheet: $('ddn-drawer-typesheet'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation'), creator: $('ddn-drawer-creator'), relation: $('ddn-drawer-relation'), properties: $('ddn-drawer-properties') };
-const iconEls = { files: $('ddn-icon-files'), style: $('ddn-icon-style'), document: $('ddn-icon-document'), inspector: $('ddn-icon-inspector'), source: $('ddn-icon-source'), typesheet: $('ddn-icon-typesheet'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation'), creator: $('ddn-icon-creator'), relation: $('ddn-icon-relation'), properties: $('ddn-icon-properties') };
-const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Document', inspector: 'Inspector', source: 'Source', typesheet: 'Type sheet', export: 'Export', animation: 'Animation', creator: 'Creator', relation: 'Relation type', properties: 'Properties' };
+const drawerEls = { files: $('ddn-drawer-files'), style: $('ddn-drawer-style'), document: $('ddn-drawer-document'), inspector: $('ddn-drawer-inspector'), source: $('ddn-drawer-source'), typesheet: $('ddn-drawer-typesheet'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation'), creator: $('ddn-drawer-creator'), properties: $('ddn-drawer-properties') };
+const iconEls = { files: $('ddn-icon-files'), style: $('ddn-icon-style'), document: $('ddn-icon-document'), inspector: $('ddn-icon-inspector'), source: $('ddn-icon-source'), typesheet: $('ddn-icon-typesheet'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation'), creator: $('ddn-icon-creator'), properties: $('ddn-icon-properties') };
+const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Document', inspector: 'Inspector', source: 'Source', typesheet: 'Type sheet', export: 'Export', animation: 'Animation', creator: 'Creator', properties: 'Properties' };
 /* Right-side working drawers are exclusive (Document / Style & Layout /
  * Inspector): opening one closes the others. Selection opens the Inspector;
  * deselection returns to Document (phase 3 — the inspector moved out of the
@@ -181,7 +182,7 @@ const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Docu
  * Phase 8: the Relation type drawer joins the right-exclusive set (it opens
  * itself while the Connect gesture is armed and closes when it ends); the
  * Properties drawer joins the bottom-exclusive set (pointer-selection tool). */
-const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector', 'relation'];
+const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector'];
 const BOTTOM_EXCLUSIVE = ['source', 'typesheet', 'properties'];
 
 function emptyPresentation() {
@@ -276,12 +277,10 @@ function applyDrawerConfig() {
   // B1-033: the animation icon exists only when the render contains motion.
   const animSvg = svgEl();
   if (!(animSvg && animSvg.querySelector('.ddn-motion, .ddn-flow'))) iconEls.animation.hidden = true;
-  // B1-051: the design bar exists only in design mode; per-render capability
-  // gating (updateDesignBar) refines its buttons.
-  els.designBar.hidden = !c.design;
-  if (c.design) updateDesignBar();
-  else cancelDesignGesture();
-  els.paletteToggle.classList.toggle('active', !!design.placing || state.config.drawers.creator === 'open');
+  // Phase 12: the floating design bar is retired; creation gating lives in
+  // the Creator drawer (updateCreatorGate per render).
+  if (!c.design) cancelDesignGesture();
+  if (drawerEls.creator.dataset.state === 'open') buildCreator();
   /* Phase 8: the splitter only makes sense while a right drawer is open. */
   els.rightSplitter.dataset.hidden = String(!(RIGHT_EXCLUSIVE.some(n => drawerEls[n].dataset.state === 'open') || drawerEls.export.dataset.state === 'open' || drawerEls.animation.dataset.state === 'open'));
   // Drawer open/close resizes the stage; re-fit once the transition settles.
@@ -515,8 +514,11 @@ function mount() {
     attachMindmap();
     applyMindScroll();
     attachDesign();
+    attachPointerSelect();
+    attachContextMenu();
     attachHover();
-    updateDesignBar();
+    updateCreatorGate();
+    syncQuickToggles();
     refreshInspector();
     refreshTypeSheet();
     refreshAnimation();
@@ -588,7 +590,7 @@ function attachPan() {
   let pan = null;
   stage.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
-    if (design.placing || design.connecting) return; // an armed design gesture owns the stage
+    if (design.placing) return; // an armed placement gesture owns the stage
     if (e.target.closest && e.target.closest('.ddn-mind-resize')) return; // mind-map resize owns this drag (B1-100)
     if (els.dragMode.checked && e.target.closest && e.target.closest('.ddn-node[data-id]')) return; // drag-to-pin owns node drags
     pan = { x: e.clientX, y: e.clientY, left: stage.scrollLeft, top: stage.scrollTop, moved: 0 };
@@ -1674,7 +1676,7 @@ function repopulateOverridePanels() {
   syncSourceInputs();
   syncDocumentForm();
   syncViewControls();
-  if (drawerEls.creator.dataset.state === 'open') buildPalette();
+  if (drawerEls.creator.dataset.state === 'open') buildCreator();
   let ir = null;
   try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
   const kindByKeyword = new Map(A.kinds.map(k => [k.id, k]));
@@ -1752,6 +1754,7 @@ function onSelect(detail) {
   }
   applyOverrideCss();
   refreshEditors();
+  syncQuickToggles();
   inspector(id, ir, relation);
   autoDrawerForSelection(true);
   if (design.pointer) {
@@ -1768,6 +1771,7 @@ function deselect() {
   state.selected = null; state.selectedRelation = null; state.selectedIds = [];
   applyOverrideCss();
   refreshEditors();
+  syncQuickToggles();
   els.inspectorControls.hidden = true;
   inspectorNote('');
   els.selectionSummary.textContent = 'Click an object or relation in the diagram.';
@@ -1780,7 +1784,7 @@ function attachDeselect() {
   if (!stage || stage.dataset.toolDeselect) return;
   stage.dataset.toolDeselect = 'true';
   stage.addEventListener('click', e => {
-    if (state.panning || design.placing || design.connecting) return;
+    if (state.panning || design.placing) return;
     const path = e.composedPath ? e.composedPath() : [];
     const hit = path.length && path[0] && path[0].closest ? path[0].closest('[data-id],[data-member],[data-property]') : null;
     if (hit) return; // a diagram element was clicked — ddn-select owns this click
@@ -1792,7 +1796,7 @@ function attachDeselect() {
  * mutate their hidden state. */
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (design.placing || design.connecting) return;
+  if (design.placing) return;
   if (!els.iconPopup.hidden || !els.settingsPopup.hidden || !els.templatePopup.hidden || !els.aeModal.hidden || !els.arModal.hidden) return;
   if (state.selected || state.selectedRelation) deselect();
 }, true);
@@ -2692,7 +2696,7 @@ function attachDrag() {
   let drag = null;
   canvas.addEventListener('pointerdown', e => {
     if (!els.dragMode.checked || e.button !== 0) return;
-    if (design.placing || design.connecting) return; // an armed design gesture owns the stage
+    if (design.placing) return; // an armed placement gesture owns the stage
     const el = e.target.closest('.ddn-node[data-id]');
     const g = diagram.result && diagram.result.scene.nodes && diagram.result.scene.nodes.find(n => n.id === (el && el.dataset.id));
     const drawing = el && el.closest('svg') && el.closest('svg').querySelector('g[id$="drawing"]');
@@ -2806,68 +2810,45 @@ els.dragMode.addEventListener('change', () => {
  *     DDNLive.glyphs, the same iconography as the notation plates), then click
  *     on the diagram — the element is created at that spot and pinned there;
  *   · connect: click a source element, click a target element, pick a verb —
- *     one relation is created between them.
- * Both gestures are thin drivers over DDNLive.authoring (addElement / pin /
- * addRelation), so every creation is one undoable source edit, exactly like an
- * inspector edit. Esc cancels an armed gesture. */
-const design = { placing: null, connecting: false, from: null, to: null, verb: null, pointer: false };
+ * Click-to-place and drag-from-palette placement are thin drivers over
+ * DDNLive.authoring (addElement / pin / addRelation), so every creation is
+ * one undoable source edit, exactly like an inspector edit. Esc cancels an
+ * armed gesture. Phase 12: the floating design bar and the Connect gesture are
+ * retired — connecting is the context-menu Link-to flow; Tidy and the quick
+ * tools live in the Creator drawer's fixed icon area. */
+const design = { placing: null, pointer: false };
 
 function graphEditable() {
   const caps = state.diagram && state.diagram.capabilities;
   return !!(state.diagram && state.diagram.result && caps && !caps.sequence && caps.graphControls !== false);
 }
-function designHint(text) { els.designHint.textContent = text || 'Palette: pick a kind, click on the diagram to place it. Connect: click source, then target.'; }
 function cancelDesignGesture() {
-  design.placing = null; design.connecting = false; design.from = null; design.to = null; design.verb = null;
-  els.paletteToggle.classList.remove('active');
-  els.connect.classList.remove('active');
-  /* Phase 8: the Relation type drawer belongs to the Connect gesture — it
-   * closes when the gesture completes or is cancelled (guarded: setDrawer
-   * re-enters applyDrawerConfig, which itself can cancel the gesture). */
-  if (state.config.drawers.relation === 'open') setDrawer('relation', 'closed', true);
-  buildRelselectList();
-  designHint();
+  design.placing = null;
 }
 function armPlacement(kind) {
   cancelDesignGesture();
   design.placing = kind;
-  els.paletteToggle.classList.add('active');
   const label = (A.kinds.find(k => k.id === kind) || {}).label || kind;
-  designHint('Placing “' + label + '” — click on the diagram to drop it there (Esc cancels).');
-  status('click-to-place armed: ' + kind);
+  status('placing “' + label + '” — click on the diagram to drop it there (Esc cancels)');
 }
-function armConnect() {
-  cancelDesignGesture();
-  design.connecting = true;
-  els.connect.classList.add('active');
-  setDrawer('relation', 'open', true);
-  buildRelselectList();
-  designHint('Connect: click the SOURCE element (Esc cancels).');
-}
-els.paletteToggle.addEventListener('click', () => {
-  if (design.placing) { cancelDesignGesture(); return; }
-  if (state.config.drawers.creator === 'open') { setDrawer('creator', 'closed', true); return; }
-  setDrawer('creator', 'open', true);
-  buildPalette();
-  els.paletteSearch.focus();
-});
-els.connect.addEventListener('click', () => { if (design.connecting) cancelDesignGesture(); else armConnect(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && (design.placing || design.connecting)) cancelDesignGesture(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && design.placing) cancelDesignGesture(); });
 
-/* Phase 8: pointer-selection tool (Creator drawer). While armed, clicking a
- * canvas element selects it (the component's normal selection) and the bottom
- * Properties drawer shows JUST that object's properties; deactivating closes
- * the drawer and returns to normal. */
+/* Phase 8/12: pointer-selection tool (Creator drawer fixed area). While
+ * armed, clicks select (ctrl/shift-click toggles a multi-selection), a drag on
+ * empty canvas rubber-bands, and the bottom Properties drawer shows the
+ * selection's properties; deactivating closes the drawer and returns to
+ * normal. */
 els.pointerToggle.addEventListener('click', () => {
   design.pointer = !design.pointer;
   els.pointerToggle.setAttribute('aria-pressed', String(design.pointer));
   if (design.pointer) {
-    status('pointer select armed — click an object in the diagram to edit its properties below');
+    status('pointer select armed — click selects, ctrl/shift-click toggles, drag on empty canvas rubber-bands');
     if (state.selected || state.selectedRelation) { setDrawer('properties', 'open', true); renderPropertiesPanel(); }
     else renderPropertiesPanel();
   } else {
     status();
     if (state.config.drawers.properties === 'open') setDrawer('properties', 'closed', true);
+    clearMultiSelect();
   }
 });
 
@@ -2886,58 +2867,148 @@ function viewProjection() {
     return { ...((ir && ir.view.profiles.projection) || { kind: 'graph', profile: 'ddn@1' }), viewKind: ir && ir.view.kind };
   } catch { return { kind: 'graph', profile: 'ddn@1' }; }
 }
-function paletteItem(k) {
-  const b = document.createElement('button');
-  b.type = 'button'; b.className = 'ddn-palette-item';
-  b.title = 'Place a ' + k.label + ' (' + k.id + ') — then click on the diagram';
-  const g = A.glyphs && A.glyphs.forKind(k.id);
+
+/* Phase 12 Creator drawer: one tab per registry palette group
+ * (A.capabilities.paletteGroups order), icons wrap within a tab, headers wrap
+ * across rows. The hamburger swaps the palette FAMILY (display only — never
+ * the view type); 'ddn' (the full registry, grouped) stays the default, and
+ * every registered profile/pack tag from the kinds' allowed_in contracts is
+ * an alternative family. paletteKindsFor() is the seam a future view-type-
+ * driven tab bar plugs into. */
+const PALETTE_BASE_HUE = 216;
+const TAB_ACTIVE = 'hsl(' + PALETTE_BASE_HUE + ' 72% 42%)';
+const TAB_INACTIVE = 'hsl(' + PALETTE_BASE_HUE + ' 12% 62%)'; /* active hue, 10% grey shift */
+const creator = { family: 'ddn', tab: null };
+function paletteFamilies() {
+  const tags = new Set();
+  for (const k of A.kinds) for (const t of k.allowed_in || []) if (t !== 'graph') tags.add(t);
+  return [{ id: 'ddn', label: 'ddn — full registry' },
+    ...[...tags].sort().map(t => ({ id: t, label: t }))];
+}
+function paletteKindsFor(family) {
+  if (family === 'ddn') return paletteFilter(A.kinds, viewProjection(), els.paletteAll.checked);
+  return A.kinds.filter(k => (k.allowed_in || []).includes(family));
+}
+function paletteGlyph(k) {
   const icon = document.createElement('span'); icon.className = 'ddn-palette-glyph'; icon.setAttribute('aria-hidden', 'true');
+  const g = A.glyphs && A.glyphs.forKind(k.id);
   if (g) { icon.innerHTML = '<svg viewBox="' + g.viewBox + '">' + g.svg + '</svg>'; } else icon.textContent = k.code;
+  return icon;
+}
+function creatorIcon(k) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'ddn-creator-icon'; b.dataset.kind = k.id;
+  b.title = k.label + ' (' + k.id + ') — drag onto the canvas, or click then click the canvas';
   const lab = document.createElement('span'); lab.textContent = k.label;
-  b.append(icon, lab);
+  b.append(paletteGlyph(k), lab);
+  b.addEventListener('pointerdown', e => startPaletteDrag(e, k));
   b.addEventListener('click', () => armPlacement(k.id));
   return b;
 }
-function buildPalette() {
-  const q = els.paletteSearch.value.trim().toLowerCase();
+function buildCreator() {
+  drawerEls.creator.style.setProperty('--ddn-tab-active', TAB_ACTIVE);
+  drawerEls.creator.style.setProperty('--ddn-tab-inactive', TAB_INACTIVE);
   const dataBound = !graphEditable();
   els.paletteHint.hidden = !dataBound;
-  els.paletteSearch.hidden = dataBound;
-  els.paletteAllWrap.hidden = dataBound;
+  els.creatorTabs.hidden = dataBound;
+  els.creatorIcons.hidden = dataBound;
+  els.paletteFamily.disabled = dataBound;
   if (dataBound) {
-    /* Phase 5: when a Type sheet body is registered for this view's type, the
-     * hint names it — the sheet is the structured editing surface for the
-     * records and bindings the palette cannot offer. */
     const sheet = sheetForProjection(viewProjection());
     els.paletteHint.textContent = 'This view is generated from data — there is no element palette here. Edit the records and bindings in the Source drawer' +
       (sheet ? ', or in the ' + sheet.label + ' type sheet (bottom drawer).' : '.');
-    els.paletteList.replaceChildren();
     return;
   }
-  /* A non-empty search is an escape hatch: it scans every installed kind,
-   * beyond the capability filter. */
+  const q = els.paletteSearch.value.trim().toLowerCase();
+  const base = paletteKindsFor(creator.family);
   const kinds = q
     ? A.kinds.filter(k => (k.id + ' ' + k.label + ' ' + k.code).toLowerCase().includes(q))
-    : paletteFilter(A.kinds, viewProjection(), els.paletteAll.checked);
+    : base;
+  const order = (A.capabilities && A.capabilities.paletteGroups) || [];
   const groups = new Map();
   for (const k of kinds) {
-    const name = k.group || (k.id.includes('.') ? k.id.split('.')[0] : 'Other');
+    const name = k.group || 'Other';
     if (!groups.has(name)) groups.set(name, []);
     groups.get(name).push(k);
   }
-  const order = (A.capabilities && A.capabilities.paletteGroups) || [];
   const names = [...groups.keys()].sort((a, b) => {
     const ia = order.indexOf(a), ib = order.indexOf(b);
     if (ia < 0 && ib < 0) return a.localeCompare(b);
     if (ia < 0) return 1; if (ib < 0) return -1; return ia - ib;
   });
-  const out = [];
-  for (const name of names) {
-    const h = document.createElement('div'); h.className = 'ddn-palette-group'; h.textContent = name;
-    out.push(h, ...groups.get(name).map(paletteItem));
-  }
-  els.paletteList.replaceChildren(...out);
-  if (!kinds.length) els.paletteList.append(dim('no kind matches “' + els.paletteSearch.value + '”'));
+  if (q || !names.includes(creator.tab)) creator.tab = q ? null : names[0];
+  els.creatorTabs.replaceChildren(...(q ? [] : names.map(name => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.role = 'tab'; b.textContent = name;
+    b.setAttribute('aria-selected', String(name === creator.tab));
+    b.addEventListener('click', () => { creator.tab = name; buildCreator(); });
+    return b;
+  })));
+  const shown = q ? kinds : (groups.get(creator.tab) || []);
+  els.creatorIcons.replaceChildren(...shown.map(creatorIcon));
+  if (!shown.length) els.creatorIcons.append(dim(q ? 'no kind matches “' + els.paletteSearch.value + '”' : 'no kinds in this group'));
+}
+function buildPaletteFamilyMenu() {
+  const fams = paletteFamilies();
+  els.paletteFamilyMenu.replaceChildren(
+    ...fams.map(f => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.textContent = f.label; b.setAttribute('aria-checked', String(f.id === creator.family));
+      b.addEventListener('click', () => {
+        creator.family = f.id;
+        creator.tab = null;
+        els.paletteFamilyMenu.hidden = true;
+        buildCreator();
+        status('palette family: ' + f.label + ' (display only — the view type is unchanged)');
+      });
+      return b;
+    }));
+}
+els.paletteFamily.addEventListener('click', () => {
+  buildPaletteFamilyMenu();
+  els.paletteFamilyMenu.hidden = !els.paletteFamilyMenu.hidden;
+});
+document.addEventListener('click', e => {
+  if (!els.paletteFamilyMenu.hidden && !e.target.closest('#ddn-palette-family, #ddn-palette-family-menu')) els.paletteFamilyMenu.hidden = true;
+});
+
+/* Pointer-based ghost drag from a palette icon onto the canvas (works through
+ * the component's coordinate transform at any zoom; the drop reuses the
+ * crash-guarded placement path). A sub-4px gesture stays a plain click (which
+ * arms click-to-place). */
+function startPaletteDrag(e, kind) {
+  if (e.button !== 0) return;
+  e.preventDefault();
+  const startX = e.clientX, startY = e.clientY;
+  let ghost = null;
+  const move = ev => {
+    if (!ghost && Math.hypot(ev.clientX - startX, ev.clientY - startY) < 4) return;
+    if (!ghost) {
+      ghost = document.createElement('div');
+      ghost.id = 'ddn-drag-ghost';
+      ghost.append(paletteGlyph(kind), document.createTextNode(kind.label));
+      document.body.append(ghost);
+    }
+    ghost.style.left = (ev.clientX + 12) + 'px';
+    ghost.style.top = (ev.clientY + 12) + 'px';
+  };
+  const up = ev => {
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+    document.removeEventListener('pointercancel', up);
+    if (!ghost) return; // plain click — the icon's click handler arms placement
+    ghost.remove();
+    const stage = stageEl();
+    if (!stage) return;
+    const r = stage.getBoundingClientRect();
+    if (ev.clientX < r.left || ev.clientX > r.right || ev.clientY < r.top || ev.clientY > r.bottom) return;
+    const p = stageWorldPoint(ev);
+    if (!p) { status('drop inside the diagram to place the element'); return; }
+    placeElement(kind.id, p.x, p.y);
+  };
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+  document.addEventListener('pointercancel', up);
 }
 /* Icon picker (B1-end-user icons): browse every shipped and host-registered
  * icon pack and bind an icon to the selected node via x_icon — a real model
@@ -2975,8 +3046,8 @@ function buildIconPicker() {
 }
 els.iconSearch.addEventListener('input', buildIconPicker);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !els.iconPopup.hidden) els.iconPopup.hidden = true; });
-els.paletteSearch.addEventListener('input', buildPalette);
-els.paletteAll.addEventListener('change', buildPalette);
+els.paletteSearch.addEventListener('input', buildCreator);
+els.paletteAll.addEventListener('change', buildCreator);
 
 /* World-coordinates of a stage pointer event (same drawing-group inverse CTM
  * as drag-to-pin), or null when the event is outside the rendered drawing. */
@@ -3042,7 +3113,15 @@ function placeElement(kind, x, y) {
   });
 }
 
-/* Connect: create one relation between two clicked elements. */
+/* Connect: create one relation between two elements (shared by the Add
+ * relation modal and the Link-to chain). */
+function elementKindOf(id) {
+  try {
+    const ir = state.ws.resolve(state.entry, state.view);
+    const el = ir.elements.find(n => n.id === id) || ir.elements.find(n => n.id.endsWith('.' + id));
+    return el ? el.kind : null;
+  } catch { return null; }
+}
 function connectElements(from, to, kind, name) {
   guard(() => {
     flush();
@@ -3058,62 +3137,6 @@ function connectElements(from, to, kind, name) {
     });
   });
 }
-/* Connect verb list (Relation type drawer, phase 8): the same endpoint-
- * contract filtering as before (designer phase 2, DDNLive.legalVerbs), now
- * presented as a clickable verb list in the right drawer — both endpoints
- * known: legalVerbs(from, to); only the source picked: the from-kind's legal
- * verbs; nothing picked: the full registry with a prompt. When no registered
- * verb admits the pair the full list stays available with a note — the
- * designer filters offers, it never blocks; source text stays permissive. */
-function elementKindOf(id) {
-  try {
-    const ir = state.ws.resolve(state.entry, state.view);
-    const el = ir.elements.find(n => n.id === id) || ir.elements.find(n => n.id.endsWith('.' + id));
-    return el ? el.kind : null;
-  } catch { return null; }
-}
-function buildRelselectList() {
-  const fromKind = design.from && elementKindOf(design.from), toKind = design.to && elementKindOf(design.to);
-  let ids, note = '';
-  if (fromKind && toKind) ids = A.legalVerbs(fromKind, toKind);
-  else if (fromKind) ids = A.legalVerbs(fromKind, null);
-  else ids = A.relations.map(r => r.id);
-  if (!ids.length) {
-    ids = A.relations.map(r => r.id);
-    note = 'No registered verb admits ' + (fromKind || '?') + ' → ' + (toKind || '?') + ' — showing all installed verbs; the source validator will judge.';
-  }
-  if (design.verb && !ids.includes(design.verb)) design.verb = null;
-  if (!design.verb) design.verb = ids.includes('assoc') ? 'assoc' : ids[0];
-  els.connectSummary.textContent = design.from
-    ? design.from + (design.to ? ' → ' + design.to : ' → (pick a target element)')
-    : 'Arm Connect in the design bar, then click a source and a target element — the legal verbs for the pair list here.';
-  els.connectNote.textContent = note;
-  els.connectNote.hidden = !note;
-  els.relselectList.replaceChildren(...ids.map(id => {
-    const r = A.relations.find(x => x.id === id) || { label: id };
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'ddn-relselect-item';
-    b.textContent = r.label + ' (' + id + ')';
-    b.setAttribute('aria-pressed', String(id === design.verb));
-    b.addEventListener('click', () => guard(() => {
-      design.verb = id;
-      for (const other of els.relselectList.querySelectorAll('.ddn-relselect-item')) other.setAttribute('aria-pressed', 'false');
-      b.setAttribute('aria-pressed', 'true');
-      if (design.from && design.to) els.connectCreate.focus();
-    }));
-    return b;
-  }));
-  els.connectCreate.disabled = !(design.connecting && design.from && design.to);
-}
-els.connectCreate.addEventListener('click', () => {
-  if (!design.from || !design.to || !design.verb) { status('pick a source and a target element first'); return; }
-  const from = design.from, to = design.to, kind = design.verb, name = els.connectName.value.trim();
-  const keepConnecting = design.connecting;
-  cancelDesignGesture();
-  if (keepConnecting) armConnect(); // chain more connections without re-clicking the tool
-  connectElements(from, to, kind, name);
-});
-els.connectCancel.addEventListener('click', () => cancelDesignGesture());
 
 /* Design gesture clicks intercept the stage in the CAPTURE phase, ahead of the
  * component's own select/pan handlers, and are consumed (no selection, no pan)
@@ -3123,44 +3146,379 @@ function attachDesign() {
   if (!stage || stage.dataset.toolDesign) return;
   stage.dataset.toolDesign = 'true';
   stage.addEventListener('click', e => {
-    if (!design.placing && !design.connecting) return;
+    if (!design.placing) return;
     e.stopPropagation(); e.preventDefault();
-    if (design.placing) {
-      const p = stageWorldPoint(e);
-      const kind = design.placing;
-      cancelDesignGesture();
-      if (!p) { status('click inside the diagram to place the element'); return; }
-      placeElement(kind, p.x, p.y);
-      return;
-    }
-    const id = nodeIdAt(e);
-    if (!id) { designHint('Connect: click an ELEMENT — that click was empty canvas.'); return; }
-    if (!design.from) { design.from = id; designHint('Connect: source is ' + id + ' — now click the TARGET (Esc cancels).'); buildRelselectList(); return; }
-    if (id === design.from) { designHint('Connect: target must differ from the source (' + id + ').'); return; }
-    design.to = id;
-    els.connectName.value = '';
-    buildRelselectList();
+    const p = stageWorldPoint(e);
+    const kind = design.placing;
+    cancelDesignGesture();
+    if (!p) { status('click inside the diagram to place the element'); return; }
+    placeElement(kind, p.x, p.y);
   }, true);
   /* An armed gesture also owns pointer drags: suppress pan and drag-to-pin. */
-  stage.addEventListener('pointerdown', e => { if (design.placing || design.connecting) e.stopPropagation(); }, true);
+  stage.addEventListener('pointerdown', e => { if (design.placing) e.stopPropagation(); }, true);
+}
+
+/* Per-render gating: placement needs a graph projection (the same rule as
+ * drag-to-pin); on data-bound projections the Creator drawer explains itself. */
+function updateCreatorGate() {
+  const ok = graphEditable();
+  els.tidy.disabled = !ok;
+  els.tidy.title = ok ? 'Tidy — re-run placement and routing; authored pins keep their positions' : 'Tidy needs a graph projection — this view is data-bound';
+  if (!ok && design.placing) cancelDesignGesture();
+}
+
+/* Phase 12: element-level clipboard (Creator fixed area). Copy stores the
+ * selected definition's kind/name/properties; paste creates a NEW element with
+ * a fresh id and replays the properties through the canonical writer (one
+ * guided transaction); cut = copy + deleteDefinition (its own guarded
+ * transaction — reference errors surface, matching the Inspector delete). */
+const elementClipboard = { data: null };
+function selectedElementId() {
+  return state.selected && state.selectedIds.length <= 1 ? state.selected : null;
+}
+function copySelectedElement(cut) {
+  const id = selectedElementId();
+  if (!id) { status('select exactly one element first'); return; }
+  guard(() => {
+    const src = A.authoring.sourceOf(state.ws, state.entry, state.view, id);
+    if (src.type !== 'object') { status('clipboard holds elements, not ' + src.type + 's'); return; }
+    elementClipboard.data = { kind: src.properties.kind || 'object', name: src.name, properties: JSON.parse(JSON.stringify(src.properties)) };
+    els.pasteBtn.disabled = false;
+    if (cut) {
+      guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, id));
+      status('cut ' + id + ' — clipboard holds the definition; undo restores it');
+    } else status('copied ' + id + ' (' + (elementClipboard.data.kind || 'object') + ')');
+  });
+}
+function pasteElement() {
+  const data = elementClipboard.data;
+  if (!data) { status('element clipboard is empty'); return; }
+  guard(() => {
+    flush();
+    const ir = state.ws.resolve(state.entry, state.view);
+    const id = freshLocalId(ir.elements.map(n => n.id), data.kind || 'object');
+    guided(() => {
+      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: data.name + ' (copy)', kind: data.kind || 'object' });
+      const after = state.ws.resolve(state.entry, state.view);
+      const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id)) || id;
+      const props = { ...data.properties };
+      delete props.kind;
+      if (Object.keys(props).length) A.authoring.setElementProperties(state.ws, state.entry, state.view, uid, props);
+      state.selected = uid;
+      state.selectedRelation = null;
+      status('pasted as ' + uid + ' — a fresh identifier; ref: anchors elsewhere keep pointing at the original');
+    });
+  });
+}
+els.cutBtn.addEventListener('click', () => copySelectedElement(true));
+els.copyBtn.addEventListener('click', () => copySelectedElement(false));
+els.pasteBtn.addEventListener('click', pasteElement);
+
+/* Bold/italic quick toggles: the Fonts editor's session-preview typography
+ * channel, applied to the selected element's KIND (per-element text is not
+ * addressable in source — same support matrix as the Fonts group). */
+function typographyQuickToggle(prop) {
+  const id = selectedElementId();
+  if (!id) { status('select exactly one element first — ' + prop + ' applies to its kind (session preview)'); return; }
+  const kind = elementKindOf(id);
+  const code = kind && (A.kinds.find(k => k.id === kind) || {}).code;
+  if (!code) { status('no registered kind for ' + id); return; }
+  const cur = state.presentation.typography[code] || {};
+  const next = { ...cur, [prop]: !cur[prop] };
+  for (const k of Object.keys(next)) if (next[k] === 'source' || next[k] === false || next[k] == null) delete next[k];
+  if (Object.keys(next).length) state.presentation.typography[code] = next;
+  else delete state.presentation.typography[code];
+  applyOverrideCss();
+  status(prop + ' ' + (next[prop] ? 'on' : 'off') + ' for kind ' + code + ' (session preview — see the Fonts group)');
+}
+function syncQuickToggles() {
+  const id = selectedElementId();
+  const kind = id && elementKindOf(id);
+  const code = kind && (A.kinds.find(k => k.id === kind) || {}).code;
+  const cur = (code && state.presentation.typography[code]) || {};
+  els.boldToggle.setAttribute('aria-pressed', String(!!cur.bold));
+  els.italicToggle.setAttribute('aria-pressed', String(!!cur.italic));
+}
+els.boldToggle.addEventListener('click', () => typographyQuickToggle('bold'));
+els.italicToggle.addEventListener('click', () => typographyQuickToggle('italic'));
+
+/* Phase 12: pointer-tool multi-selection. With the pointer armed, clicks are
+ * owned by the tool (the component's single-select is suppressed): plain click
+ * selects one, ctrl/shift-click toggles membership, empty-canvas click clears,
+ * and a drag started on empty canvas rubber-bands every intersecting element
+ * (scene bounds — the same world math as drag-to-pin). The selection feeds the
+ * inspector's multi-selection helpers and the Properties drawer. */
+function applyMultiSelect() {
+  const ids = state.selectedIds;
+  state.selected = ids.length === 1 ? ids[0] : null;
+  state.selectedRelation = null;
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  inspector(state.selected || ids[0], ir, null);
+  if (design.pointer && ids.length) {
+    if (state.config.drawers.properties !== 'open') setDrawer('properties', 'open', true);
+    renderPropertiesPanel();
+  }
+  /* Visual: direct class toggling on the rendered nodes (like the hover). */
+  const stage = stageEl();
+  if (stage) {
+    for (const el of stage.querySelectorAll('.ddn-node.ddn-multisel')) el.classList.remove('ddn-multisel');
+    for (const id of ids) for (const el of stage.querySelectorAll('.ddn-node[data-id="' + cssString(id) + '"]')) el.classList.add('ddn-multisel');
+  }
+  status(ids.length ? ids.length + ' selected' : 'selection cleared');
+}
+function clearMultiSelect() {
+  state.selectedIds = state.selected ? [state.selected] : [];
+  const stage = stageEl();
+  if (stage) for (const el of stage.querySelectorAll('.ddn-node.ddn-multisel')) el.classList.remove('ddn-multisel');
+}
+function attachPointerSelect() {
+  const stage = stageEl();
+  if (!stage || stage.dataset.toolPointer) return;
+  stage.dataset.toolPointer = 'true';
+  stage.addEventListener('click', e => {
+    if (!design.pointer || design.placing) return;
+    const el = e.target && e.target.closest && e.target.closest('.ddn-node[data-id]');
+    e.stopPropagation(); e.preventDefault();
+    if (el) {
+      const id = el.dataset.id;
+      if (e.ctrlKey || e.metaKey || e.shiftKey) {
+        state.selectedIds = state.selectedIds.includes(id) ? state.selectedIds.filter(x => x !== id) : [...state.selectedIds, id];
+      } else state.selectedIds = [id];
+    } else if (!e.ctrlKey && !e.metaKey && !e.shiftKey) state.selectedIds = [];
+    applyMultiSelect();
+  }, true);
+  /* Rubber band on empty canvas (suppresses pan only when armed + empty). */
+  let band = null;
+  stage.addEventListener('pointerdown', e => {
+    if (!design.pointer || design.placing || e.button !== 0) return;
+    if (e.target.closest && e.target.closest('.ddn-node[data-id], .ddn-rel[data-id], .ddn-label[data-id]')) return;
+    e.stopPropagation(); e.preventDefault();
+    const r = stage.getBoundingClientRect();
+    band = { x0: e.clientX, y0: e.clientY, el: null, r };
+    try { stage.setPointerCapture(e.pointerId); } catch { /* synthetic */ }
+  }, true);
+  stage.addEventListener('pointermove', e => {
+    if (!band) return;
+    if (!band.el) {
+      if (Math.hypot(e.clientX - band.x0, e.clientY - band.y0) < 4) return;
+      band.el = document.createElement('div');
+      band.el.id = 'ddn-rubberband';
+      stage.append(band.el);
+    }
+    const x = Math.min(band.x0, e.clientX) - band.r.left, y = Math.min(band.y0, e.clientY) - band.r.top;
+    band.el.style.left = x + 'px'; band.el.style.top = y + 'px';
+    band.el.style.width = Math.abs(e.clientX - band.x0) + 'px';
+    band.el.style.height = Math.abs(e.clientY - band.y0) + 'px';
+  });
+  const finish = e => {
+    if (!band) return;
+    const b = band; band = null;
+    if (b.el) b.el.remove();
+    if (!b.el) return; // below threshold — the click handler clears/selects
+    const a = stageWorldPoint({ clientX: b.x0, clientY: b.y0 });
+    const c = stageWorldPoint({ clientX: e.clientX, clientY: e.clientY });
+    if (!a || !c) return;
+    const x0 = Math.min(a.x, c.x), x1 = Math.max(a.x, c.x), y0 = Math.min(a.y, c.y), y1 = Math.max(a.y, c.y);
+    const nodes = (state.diagram.result && state.diagram.result.scene.nodes) || [];
+    state.selectedIds = nodes.filter(g => g.x < x1 && g.x + g.w > x0 && g.y < y1 && g.y + g.h > y0).map(g => g.id);
+    applyMultiSelect();
+  };
+  stage.addEventListener('pointerup', finish);
+  stage.addEventListener('pointercancel', () => { if (band) { if (band.el) band.el.remove(); band = null; } });
+}
+
+/* Phase 12: canvas context menus (right-click). The browser menu is always
+ * suppressed on the stage; menus are built from the kind/relation contracts
+ * and capabilities (legalVerbs for verbs/link targets, ENDPOINT_MARKS for
+ * marks, graphEditable for pin/hide availability) — nothing hardcoded that a
+ * contract can answer. */
+function closeCtxMenu() {
+  const stage = stageEl();
+  if (stage) for (const m of stage.querySelectorAll('.ddn-ctx')) m.remove();
+}
+function ctxMenu(x, y, entries) {
+  closeCtxMenu();
+  const stage = stageEl();
+  if (!stage) return null;
+  const menu = document.createElement('div');
+  menu.className = 'ddn-ctx';
+  for (const ent of entries) {
+    if (ent === '-') { const s = document.createElement('div'); s.className = 'ddn-menu-sep'; menu.append(s); continue; }
+    if (ent.head) { const h = document.createElement('div'); h.className = 'ddn-menu-head'; h.textContent = ent.head; menu.append(h); continue; }
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = ent.label; b.disabled = !!ent.disabled;
+    if (ent.title) b.title = ent.title;
+    b.addEventListener('click', ev => { ev.stopPropagation(); closeCtxMenu(); ent.fn && guard(ent.fn); });
+    menu.append(b);
+  }
+  const r = stage.getBoundingClientRect();
+  menu.style.left = Math.min(x - r.left, r.width - 230) + 'px';
+  menu.style.top = Math.min(y - r.top, r.height - Math.min(320, entries.length * 26 + 16)) + 'px';
+  stage.append(menu);
+  return menu;
+}
+document.addEventListener('pointerdown', e => { if (!e.target.closest || !e.target.closest('.ddn-ctx')) closeCtxMenu(); }, true);
+
+function openInspectorFor(id, relation) {
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  if (relation) { state.selectedRelation = id; state.selected = null; }
+  else { state.selected = id; state.selectedRelation = null; state.selectedIds = [id]; }
+  inspector(id, ir, relation ? ir && ir.relations.find(r => r.id === id) : null);
+  setDrawer('inspector', 'open', true);
+}
+function openPropertiesFor(id, relation) {
+  if (relation) { state.selectedRelation = id; state.selected = null; }
+  else { state.selected = id; state.selectedRelation = null; state.selectedIds = [id]; }
+  setDrawer('properties', 'open', true);
+  renderPropertiesPanel();
+}
+function elementCtxEntries(id, gx, gy) {
+  const editable = graphEditable();
+  const scene = state.diagram.result && state.diagram.result.scene;
+  const g = scene && scene.nodes.find(n => n.id === id);
+  const isPinned = (() => {
+    try {
+      const node = viewSourceNode();
+      return !!(node && (node.children || []).some(x => x.type === 'place' && (() => { try { return state.ws.resolve(x.target, x).uid === id; } catch { return false; } })()));
+    } catch { return false; }
+  })();
+  return [
+    { head: id },
+    { label: 'Rename…', title: 'Select and edit the label in the Inspector', fn: () => { openInspectorFor(id, false); status('rename in the Inspector (Meaning tab, Label field)'); } },
+    { label: 'Duplicate', fn: () => guided(() => A.authoring.duplicate(state.ws, state.entry, state.view, id)) },
+    { label: 'Delete…', title: 'Delete the definition — blocked while references depend on it', fn: () => guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, id)) },
+    { label: 'Hide in this view', fn: () => guided(() => A.authoring.hide(state.ws, state.entry, state.view, id)) },
+    '-',
+    isPinned
+      ? { label: 'Unpin', fn: () => guided(() => A.authoring.unpin(state.ws, state.entry, state.view, id)) }
+      : { label: 'Pin here', disabled: !editable || !g, title: editable ? 'Pin the occurrence at its current position' : 'Needs a graph projection', fn: () => guided(() => A.authoring.pin(state.ws, state.entry, state.view, id, g.x, g.y)) },
+    { label: 'Link to…', disabled: !editable, title: editable ? 'Create a relation to a new or existing element' : 'Needs a graph projection', fn: () => linkToStart(id, gx, gy) },
+    { label: 'Min/max size…', title: 'Sizing is view-level only (no per-element size keys exist)', fn: () => { setDrawer('style', 'open', true); status('element sizing: the registry defines no per-element size keys — the Sizing group edits the view-level envelope (max_width/max_height/min_font)'); } },
+    '-',
+    { label: 'Properties', fn: () => openPropertiesFor(id, false) }
+  ];
+}
+function relationCtxEntries(id, gx, gy) {
+  let rel = null, ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); rel = ir.relations.find(r => r.id === id); } catch { rel = null; }
+  const fromKind = rel && elementKindOf(rel.from.element), toKind = rel && elementKindOf(rel.to.element);
+  const verbs = fromKind && toKind ? A.legalVerbs(fromKind, toKind) : [];
+  const entries = [
+    { head: id },
+    { label: 'Edit label…', fn: () => { openInspectorFor(id, true); status('edit the label in the Inspector (Meaning tab)'); } },
+    { label: 'Cardinality…', title: 'Open the cardinality editor in the Inspector', fn: () => openInspectorFor(id, true) },
+    { label: 'Delete', fn: () => guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, id)) },
+    '-',
+    { label: 'Properties', fn: () => openPropertiesFor(id, true) }
+  ];
+  const verbEntries = (verbs.length ? verbs : A.relations.map(r => r.id)).map(v => ({
+    label: (rel && v === rel.kind ? '✓ ' : '') + ((A.relations.find(r => r.id === v) || {}).label || v) + ' (' + v + ')',
+    fn: () => guided(() => A.authoring.setRelationProps(state.ws, state.entry, state.view, id, { kind: v }))
+  }));
+  const markEntries = end => [['', 'Not asserted'], ...ENDPOINT_MARKS.map(m => [m, m])].map(([v, l]) => ({
+    label: (rel && (rel.properties || {})[end + '_mark'] === v ? '✓ ' : '') + l,
+    fn: () => guided(() => A.authoring.setRelationProps(state.ws, state.entry, state.view, id, { [end + '_mark']: v || undefined }))
+  }));
+  return { entries, sub: { verbs: verbEntries, sourceMarks: markEntries('source'), targetMarks: markEntries('target') } };
+}
+function attachContextMenu() {
+  const stage = stageEl();
+  if (!stage || stage.dataset.toolCtx) return;
+  stage.dataset.toolCtx = 'true';
+  stage.addEventListener('contextmenu', e => {
+    e.preventDefault(); e.stopPropagation();
+    const relG = e.target && e.target.closest && (e.target.closest('.ddn-rel[data-id]') || e.target.closest('.ddn-label[data-id]'));
+    const node = e.target && e.target.closest && e.target.closest('.ddn-node[data-id]');
+    if (relG) {
+      const { entries, sub } = relationCtxEntries(relG.dataset.id, e.clientX, e.clientY);
+      entries.splice(3, 0,
+        { head: 'Verb' },
+        ...sub.verbs,
+        { head: 'Source mark' },
+        ...sub.sourceMarks,
+        { head: 'Target mark' },
+        ...sub.targetMarks);
+      ctxMenu(e.clientX, e.clientY, entries);
+    } else if (node) ctxMenu(e.clientX, e.clientY, elementCtxEntries(node.dataset.id, e.clientX, e.clientY));
+    else closeCtxMenu();
+  }, true);
+}
+
+/* Phase 12: "Link to…" chained flow (element context menu). Popup 1 lists the
+ * kinds the source kind may link TO (inverse of legalVerbs: kinds k with a
+ * non-empty legalVerbs(sourceKind, k)) plus an "existing element" choice;
+ * popup 2 lists the legal verbs for the pair. Confirming runs ONE compound
+ * guided transaction: add the new element (fresh id, pinned beside the
+ * source), add the relation, then auto-layout (relayout respects authored
+ * pins). Source, render and selection all update. */
+function linkTargetsFor(sourceKind) {
+  const out = [];
+  for (const k of A.kinds) if (A.legalVerbs(sourceKind, k.id).length) out.push(k);
+  return out;
+}
+function linkToStart(id, gx, gy) {
+  const sourceKind = elementKindOf(id);
+  if (!sourceKind) return;
+  const kinds = linkTargetsFor(sourceKind);
+  const ir = state.ws.resolve(state.entry, state.view);
+  const shown = new Set(ir.view.selected);
+  const existing = ir.elements.filter(n => shown.has(n.id) && n.id !== id && A.legalVerbs(sourceKind, n.kind || '').length);
+  const entries = [{ head: 'Link ' + id + ' to…' }];
+  if (!kinds.length && !existing.length) entries.push({ label: 'No legal link target for kind ' + sourceKind, disabled: true });
+  if (existing.length) {
+    entries.push({ head: 'Existing element' });
+    for (const n of existing.slice(0, 24)) entries.push({ label: n.name + ' (' + (n.kind || '?') + ')', fn: () => linkToVerbMenu(id, n.id, gx, gy) });
+  }
+  if (kinds.length) {
+    entries.push({ head: 'New element of kind…' });
+    for (const k of kinds.slice(0, 24)) entries.push({ label: k.label + ' (' + k.id + ')', fn: () => linkToVerbMenu(id, { newKind: k.id }, gx, gy) });
+  }
+  ctxMenu(gx, gy, entries);
+}
+function linkToVerbMenu(id, target, gx, gy) {
+  const sourceKind = elementKindOf(id);
+  const toKind = target.newKind || elementKindOf(target);
+  const verbs = A.legalVerbs(sourceKind, toKind);
+  const entries = [{ head: 'Verb for ' + id + ' → ' + (target.newKind ? 'new ' + target.newKind : target) }];
+  if (!verbs.length) entries.push({ label: 'No registered verb admits the pair', disabled: true });
+  for (const v of verbs) entries.push({
+    label: ((A.relations.find(r => r.id === v) || {}).label || v) + ' (' + v + ')',
+    fn: () => linkToCreate(id, target, v)
+  });
+  ctxMenu(gx, gy, entries);
+}
+function linkToCreate(id, target, verb) {
+  guard(() => {
+    flush();
+    const ir = state.ws.resolve(state.entry, state.view);
+    const scene = state.diagram.result && state.diagram.result.scene;
+    const g = scene && scene.nodes.find(n => n.id === id);
+    const verbLabel = (A.relations.find(r => r.id === verb) || {}).label || verb;
+    const rid = freshLocalId(ir.relations.map(r => r.id), 'relation');
+    guided(() => {
+      let toId = target;
+      if (target.newKind) {
+        const nid = freshLocalId(ir.elements.map(n => n.id), target.newKind);
+        const kLabel = (A.kinds.find(k => k.id === target.newKind) || {}).label || target.newKind;
+        A.authoring.addElement(state.ws, state.entry, state.view, { id: nid, name: 'New ' + kLabel.toLowerCase(), kind: target.newKind });
+        const after = state.ws.resolve(state.entry, state.view);
+        toId = after.elements.map(n => n.id).find(u => u === nid || u.endsWith('.' + nid)) || nid;
+        if (g && graphEditable()) A.authoring.pin(state.ws, state.entry, state.view, toId, g.x + g.w + 120, g.y);
+      }
+      A.authoring.addRelation(state.ws, state.entry, state.view, { id: rid, name: verbLabel, kind: verb, from: id, to: toId });
+      const after2 = state.ws.resolve(state.entry, state.view);
+      state.selectedRelation = after2.relations.map(r => r.id).find(u => u === rid || u.endsWith('.' + rid)) || rid;
+      state.selected = null;
+      status('linked ' + id + ' → ' + toId + ' (' + verb + ') in one transaction — auto-layout follows, pins are respected');
+    });
+    guard(() => state.diagram && state.diagram.action('relayout'));
+  });
 }
 
 /* Per-render gating: creation gestures need a graph projection (the same rule
  * as drag-to-pin); on data-bound projections the buttons explain themselves. */
-function updateDesignBar() {
-  els.designBar.hidden = !state.config.design;
-  if (!state.config.design) return;
-  const ok = graphEditable();
-  /* The palette button stays live on data-bound projections: the popup shows
-   * the "generated from data" hint instead of kinds (designer phase 2). */
-  els.paletteToggle.disabled = false;
-  els.connect.disabled = !ok;
-  els.tidy.disabled = !ok;
-  els.paletteToggle.title = ok ? 'Add element — open the Creator drawer, pick a kind, then click on the diagram to place it' : 'Add element — this view is generated from data; the Creator drawer explains where to edit instead';
-  els.connect.title = ok ? 'Connect two elements — click source, click target, pick a verb in the Relation type drawer' : 'Connecting needs a graph projection — this view is data-bound';
-  els.tidy.title = ok ? 'Tidy — re-run placement and routing; authored pins keep their positions' : 'Tidy needs a graph projection — this view is data-bound';
-  if (!ok && (design.placing || design.connecting)) cancelDesignGesture();
-}
 
 /* DDN 0.8 (ch. 57 §D5) Tidy: re-runs placement and routing on the active view
  * with all authored pins respected (the runtime's normal render honours them;
@@ -4040,12 +4398,13 @@ host.DDNTool = Object.assign({}, pure, {
   selectFlow: id => { anim.selectedFlow = id; els.animFlow.value = id; },
   getAnimationState: () => ({ playing: anim.playing, speed: anim.speed, flows: anim.flows.map(f => ({ ...f })), selectedFlow: anim.selectedFlow }),
   showSource, flush, snapshot, openFiles,
-  /* B1-051 design-mode surface (D1/D2): the programmatic counterparts of the
-   * design-bar gestures, for hosts and tests. */
-  startPlacement: armPlacement, startConnect: armConnect, cancelDesignGesture,
-  placeElement, connectElements,
-  getDesignGesture: () => ({ placing: design.placing, connecting: design.connecting, from: design.from, to: design.to }),
-  updateDesignBar,
+  /* Design-mode surface (D1/D2): the programmatic counterparts of the
+   * placement/link gestures, for hosts and tests. Phase 12: startConnect and
+   * the design-bar update hook are retired with the floating design bar. */
+  startPlacement: armPlacement, cancelDesignGesture,
+  placeElement, connectElements, linkToStart, linkToCreate,
+  getDesignGesture: () => ({ placing: design.placing, pointer: design.pointer }),
+  updateCreatorGate,
   /* 0.8 (ch. 57 §D2/D3/D5): tidy re-layout, the diagnostics list data, and the
    * new-document template sources — programmatic counterparts for hosts/tests. */
   tidy, collectDiagnostics, templates: () => ({ ...TEMPLATES }),

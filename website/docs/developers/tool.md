@@ -45,12 +45,12 @@ The status bar announces the synchronous fallback when it is active.
 The page is a diagram stage (pointer-drag pan, wheel/slider zoom, fit
 page/width/height/100%) with a slim icon toolbar and pop-in drawers:
 **files** (left), **creator** (top), **style & layout** (right),
-**document** (right), **inspector** (right), **relation type** (right),
+**document** (right), **inspector** (right),
 **type sheet** (bottom), **source** (bottom), **properties** (bottom),
 **export** (right) and **animation** (right). Drawers overlay the stage and
 animate open/closed. The right-side working drawers are exclusive —
-opening **document**, **style & layout**, **inspector** or **relation
-type** closes the others — and the bottom drawers (**source**, **type
+opening **document**, **style & layout** or **inspector** closes the
+others — and the bottom drawers (**source**, **type
 sheet**, **properties**) are exclusive likewise. Drawers follow the
 selection: selecting an element or relation opens the **inspector**,
 deselecting (empty-canvas click or Escape) opens the **document** drawer.
@@ -59,21 +59,44 @@ deselecting (empty-canvas click or Escape) opens the **document** drawer.
 the stage and the right column resizes every right drawer together
 (240–560 px, persisted in `localStorage` key `ddn-tool-right-width`).
 
-The **creator** drawer (top) holds the capability-filtered entity palette
-promoted from the old design-bar popup: grouped object kinds, search (a
-non-empty search scans every installed kind past the capability filter),
-the "all installed kinds" toggle, and the data-bound-projection hint. It
-also carries the **Pointer select** tool: while armed, clicking a canvas
-object selects it and opens the **properties** drawer (bottom) with just
-that object's properties — the inspector's *Meaning* and *This view*
-content, read-write; deactivating closes the drawer and returns to normal.
-The design bar's **Add element** button opens/focuses the creator drawer.
+The **creator** drawer (top) is a drop-down icon bar in three zones
+(phase 12 — the floating design bar and the Connect gesture are retired;
+connecting is the context-menu *Link to…* flow):
 
-The **relation type** drawer (right) is the Connect flow's verb selector:
-it opens when Connect is armed, lists the source kind's legal verbs after
-the first endpoint is picked and the pair-legal verbs
-(`DDNLive.legalVerbs(from, to)`) once both are known, and closes when the
-gesture completes or is cancelled.
+- the **left fixed icon area** — Pointer select (click selects,
+  ctrl/shift-click toggles, drag on empty canvas rubber-bands a
+  multi-selection), element clipboard (cut / copy / paste — paste mints a
+  fresh identifier and replays the definition's properties in one
+  transaction; cut is copy + a guarded delete), Bold/Italic quick toggles
+  (the Fonts editor's session-preview channel on the selection's kind),
+  and Tidy (re-layout, pins respected);
+- the **center tabbed palette** — one tab per registry palette group
+  (Meaning, Scopes, Data, Analysis, Systems, Process, People & control,
+  Notes & evidence), headers wrapping across rows, icons wrapping within a
+  tab; the active tab and the 10%-grey-shifted inactive tabs are both
+  computed from one base hue. Icons drag onto the canvas (pointer ghost
+  drag — the drop lands through the component's coordinate transform at
+  any zoom and reuses the crash-guarded placement path) or click to arm
+  click-to-place;
+- the **right side** — the search box (a non-empty search scans every
+  installed kind past the capability filter), the "all installed kinds"
+  toggle, and a hamburger listing the alternative palette families (every
+  registered profile/pack tag from the kinds' `allowed_in` contracts).
+  Swapping family changes only the displayed tab set, never the view type.
+
+Right-clicking the canvas opens context menus built from the kind/relation
+contracts (never a hardcoded list): on an element — rename, duplicate,
+delete, hide in this view, pin/unpin, *Link to…*, min/max size (a pointer
+to the view-level Sizing group — the registry defines no per-element size
+keys), properties; on a relation — edit label, the pair's legal verbs,
+source/target endpoint marks, cardinality, delete, properties. *Link to…*
+chains: the kinds the source kind may legally link to (inverse of
+`legalVerbs`), new-element or existing-element target, then the pair's
+legal verbs — confirming adds the element (fresh id, pinned beside the
+source), adds the relation and runs auto-layout in one guided transaction,
+with the numbered-legend callout key assigned in the same write when the
+view's legend is `mode: numbers` (the authoring layer keeps the DDN061
+invariant).
 
 While the **inspector** or **properties** drawer is open, hovering the
 canvas highlights whatever a click would select — a soft glow on elements,
@@ -200,27 +223,13 @@ editing affordances layered on top of `explore`:
   drawer auto-opening on selection;
 - **drag-to-pin armed by default** (the toolbar toggle stays — turn it off any
   time);
-- the **design bar** on the stage:
-  - **Add element** — opens the **creator** drawer: the object kinds the
-    active view's projection can actually hold (capability-filtered via the
-    registry's `allowed_in` contract; data-bound projections show a hint
-    naming the matching type sheet instead of an element palette), drawn
-    with the notation-plate glyphs (`DDNLive.glyphs.forKind`), searchable;
-    picking a kind arms click-to-place, and the next click on the diagram
-    creates the element at that spot and pins it there (one undoable source
-    edit; the new element stays selected for renaming in the inspector);
-  - **Connect** — click a source element, click a target element, pick a verb
-    in the **relation type** drawer from the relation kinds legal between
-    the two endpoints (the same legality contract as the CLI
-    `verbs --from --to` query; when no registered verb admits the pair the
-    full list is shown with a note — the designer filters offers, it never
-    blocks) plus an optional label: one relation is created between them.
-    Connect stays armed after a creation so chains of relations are quick;
-    Esc cancels any armed gesture.
-  - **Tidy** (0.8, standard chapter 57 §D5) — re-runs placement and routing on
-    the active view with every authored pin respected. The source is untouched
-    unless you confirm **Pin result**, which writes the computed positions of
-    the unpinned elements as `place` pins in one undoable transaction.
+- the **creator drawer** as the creation surface (see "Layout and
+  drawers"): drag-or-click placement from the tabbed palette, the fixed
+  tool area (pointer select with multi-select and rubber-band, element
+  clipboard, bold/italic, **Tidy** — 0.8, standard chapter 57 §D5, pins
+  respected, optional **Pin result**), and the context-menu **Link to…**
+  chain for relations. Placements are crash-guarded: an add that would
+  make the page unrenderable is auto-reverted with an explanation.
 
 ### DDN 0.8 designer contract surface (standard chapter 57)
 
@@ -253,11 +262,12 @@ editing affordances layered on top of `explore`:
   move (drag-to-pin, cut/paste in source) edits placement only, so the uid is
   preserved by construction — a move is never a delete-plus-create.
 
-Both creation gestures (and Tidy) need a graph projection; on data-bound projections (charts,
-timelines, sequence, …) the buttons disable with an explaining tooltip — the
+Placement, linking and Tidy need a graph projection; on data-bound projections (charts,
+timelines, sequence, …) the palette shows an explaining hint — the
 same rule drag-to-pin already follows. The programmatic counterparts
-(`DDNTool.placeElement`, `DDNTool.connectElements`, `startPlacement`,
-`startConnect`, `cancelDesignGesture`, `getDesignGesture`) drive the same code
+(`DDNTool.placeElement`, `DDNTool.connectElements`, `linkToStart`,
+`linkToCreate`, `startPlacement`,
+`cancelDesignGesture`, `getDesignGesture`) drive the same code
 paths for hosts and tests. `?mode=design&toolbar=off` plus the host I/O
 contract is the supported embedded-designer shape — see
 [embedding.md](embedding.md) → "Embedding the designer" and
@@ -278,8 +288,8 @@ its regression suite.
   pin/unpin, hide, add field, delete, go-to-source, add element/relation),
   drag-to-pin on the stage, workspace new/rename/delete and zip/json I/O,
   dirty guard on unload — source + files drawers, inspector drawer.
-- Designer prototype: kind palette with plate glyphs, click-to-place,
-  connect-two-elements — the design bar in design mode.
+- Designer prototype: kind palette with plate glyphs, click-to-place and
+  drag-to-place, context-menu link-to — the creator drawer in design mode.
 - Export drawer: SVG, PNG (2×), WebP (2×), example snapshot (workspace JSON).
 
 Rendering reuses the shared `<ddn-example>` component (`DDNLive.mount`); its

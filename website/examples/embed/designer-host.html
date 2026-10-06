@@ -110,7 +110,7 @@ async function selftest() {
     ok('setSource(string) resolves after render', r && r.entry === 'main.ddn' && r.view === 'overview', JSON.stringify(r));
     const cfg = t.getDrawerConfig();
     ok('mode=design active (design flag, source drawer open by preset)', cfg.mode === 'design' && cfg.design === true && cfg.drawers.source === 'api', JSON.stringify(cfg));
-    ok('design bar visible with toolbar=off', !doc.getElementById('ddn-design-bar').hidden, 'design bar hidden');
+    ok('design bar retired — creator drawer holds the tools (phase 12)', doc.getElementById('ddn-design-bar') === null && !!doc.getElementById('ddn-drawer-creator'), 'design bar still present or creator drawer missing');
     ok('drag-to-pin armed by default in design mode', doc.getElementById('ddn-drag-mode').checked === true, 'drag-mode checkbox not checked');
     // Visual edit 1: click-to-place a new element (the palette drop path).
     t.placeElement('table', 620, 420);

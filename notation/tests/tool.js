@@ -49,7 +49,6 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
      * Relation type right drawer, Properties bottom drawer, right-width
      * splitter, and the view-type controls in the Style & Layout drawer. */
     'ddn-drawer-creator', 'ddn-icon-creator', 'ddn-pointer-toggle',
-    'ddn-drawer-relation', 'ddn-icon-relation', 'ddn-relselect-list', 'ddn-connect-create', 'ddn-connect-cancel',
     'ddn-drawer-properties', 'ddn-icon-properties', 'ddn-properties-body', 'ddn-properties-content',
     'ddn-right-splitter', 'ddn-view-kind', 'ddn-projection-kind',
     'ddn-tidy',
@@ -66,7 +65,7 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
     assert.ok(html.includes('id="' + id + '"'), 'control #' + id + ' missing');
   assert.ok(html.includes('globalThis.DDN_TOOL_TEMPLATES'), 'inlined new-document templates missing');
   assert.ok(!/pdf|pptx/i.test(html), 'OSS export surface must not offer or advertise PDF/PPTX (chapter 57 §D4)');
-  for (const name of ['files', 'style', 'document', 'inspector', 'source', 'typesheet', 'export', 'creator', 'relation', 'properties'])
+  for (const name of ['files', 'style', 'document', 'inspector', 'source', 'typesheet', 'export', 'creator', 'properties'])
     assert.ok(html.includes('data-drawer="' + name + '"'), 'toolbar icon for drawer ' + name + ' missing');
   assert.ok(html.includes("DDNToolSheets"), 'sheets.js module not inlined into the tool build');
   /* Phase 3: the Source drawer carries text editing + diagnostics only — the
@@ -709,7 +708,7 @@ test('design mode preset includes the inspector drawer (closed until a selection
 
 test('inspector drawer joins the right-side exclusivity set in the tool source', () => {
   const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
-  assert.ok(tool.includes("const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector', 'relation']"), 'RIGHT_EXCLUSIVE must include inspector (and the phase-8 relation drawer)');
+  assert.ok(tool.includes("const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector']"), 'RIGHT_EXCLUSIVE must include inspector');
   assert.ok(tool.includes("state.config.drawers.inspector = 'open'"), 'selection must open the inspector drawer');
   for (const frag of ['setRelationProps', 'setRelationExtension'])
     assert.ok(tool.includes('A.authoring.' + frag), 'relation editing not wired to authoring.' + frag);
@@ -1007,8 +1006,8 @@ test('typesheet drawer joins the drawer model (params, presets, ?drawers=, setti
     assert.ok(tool.includes('A.authoring.' + frag), 'CMMN sheet not wired to authoring.' + frag);
 });
 
-test('phase 8 drawers join the drawer model (creator top, relation right, properties bottom)', () => {
-  for (const name of ['creator', 'relation', 'properties']) {
+test('phase 8/12 drawers join the drawer model (creator top, properties bottom; relation retired)', () => {
+  for (const name of ['creator', 'properties']) {
     assert.ok(T.DRAWERS.includes(name), name + ' missing from DRAWERS');
     assert.equal(T.resolveDrawerConfig('diagram', null, null).drawers[name], 'none', name + ' none in diagram mode');
     assert.equal(T.resolveDrawerConfig('explore', null, null).drawers[name], 'closed', name + ' closed in explore mode');
@@ -1016,9 +1015,10 @@ test('phase 8 drawers join the drawer model (creator top, relation right, proper
     assert.deepEqual(T.parseDrawersParam(name + ':open'), { [name]: 'open' }, '?drawers= accepts ' + name);
     assert.deepEqual(T.cleanDrawerConfig({ [name]: 'api' }), { [name]: 'api' }, 'saved settings accept ' + name);
   }
+  assert.ok(!T.DRAWERS.includes('relation'), 'phase 12: the relation drawer is retired (Link-to supersedes the Connect gesture)');
   const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
-  assert.ok(tool.includes("const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector', 'relation']"), 'relation drawer joins right exclusivity');
   assert.ok(tool.includes("const BOTTOM_EXCLUSIVE = ['source', 'typesheet', 'properties']"), 'properties drawer joins bottom exclusivity');
+  assert.ok(!tool.includes('ddn-design-bar'), 'phase 12: the floating design bar is removed');
   assert.ok(tool.includes("'ddn-tool-right-width'"), 'right-width persistence key missing');
   /* View type controls: view kind via setViewProperties (authoring allows
    * 'kind'), projection kind via setViewProfile. */

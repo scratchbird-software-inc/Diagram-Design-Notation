@@ -69,21 +69,47 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 #ddn-design-bar button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; }
 #ddn-design-bar button svg { width: 14px; height: 14px; display: block; }
 #ddn-design-hint { max-width: 46ch; }
-/* Phase 8: the palette lives in the Creator top drawer, the connect verb list
- * in the Relation type right drawer — the old design-bar popups are retired. */
-#ddn-palette-search { flex: 1; min-width: 140px; box-sizing: border-box; }
-#ddn-drawer-creator .ddn-drawer-body { display: flex; flex-direction: column; }
-#ddn-palette-list { overflow: auto; display: flex; flex-direction: column; gap: 2px; }
-.ddn-palette-item { display: flex; align-items: center; gap: 8px; text-align: left; border: 0; background: transparent; border-radius: 7px; padding: 4px 6px; }
-.ddn-palette-item:hover { background: #eef4ff; }
-.ddn-palette-all { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #40536b; margin: 0; }
-.ddn-palette-group { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7a90; margin: 8px 0 2px; }
-#ddn-palette-hint { margin: 4px 0 8px; line-height: 1.4; }
-#ddn-relselect-list { display: flex; flex-direction: column; gap: 2px; margin: 6px 0; max-height: 45vh; overflow: auto; }
-.ddn-relselect-item { text-align: left; border: 1px solid transparent; background: transparent; border-radius: 7px; padding: 4px 8px; font-size: 12.5px; }
-.ddn-relselect-item:hover { background: #eef4ff; }
-.ddn-relselect-item[aria-pressed="true"] { background: #dbe7fb; border-color: #b7ccf0; }
-#ddn-pointer-toggle[aria-pressed="true"] { background: #dbe7fb; border-color: #b7ccf0; }
+/* Phase 12: Creator drawer as a drop-down icon bar — left fixed tool area,
+ * center tabbed palette, right search/hamburger. Tab colours are computed
+ * from one base hue (active + 10% grey-shifted inactive, set as CSS vars). */
+.ddn-creator-body { display: flex; gap: 12px; align-items: stretch; }
+.ddn-creator-fixed { flex: none; display: flex; align-items: center; gap: 4px; border-right: 1px solid #e3eaf3; padding-right: 10px; }
+.ddn-creator-fixed button { padding: 5px 6px; }
+.ddn-creator-fixed button svg { width: 15px; height: 15px; display: block; }
+.ddn-creator-sep { width: 1px; align-self: stretch; background: #dbe3ed; margin: 0 3px; }
+.ddn-creator-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ddn-creator-side { flex: none; position: relative; display: flex; align-items: center; gap: 6px; border-left: 1px solid #e3eaf3; padding-left: 10px; }
+#ddn-creator-tabs { display: flex; flex-wrap: wrap; gap: 2px 4px; justify-content: flex-start; margin-bottom: 6px; }
+#ddn-creator-tabs button { border: 1px solid transparent; border-radius: 7px 7px 0 0; padding: 3px 10px; font-size: 11.5px; background: var(--ddn-tab-inactive, #8b93a0); color: #fff; }
+#ddn-creator-tabs button[aria-selected="true"] { background: var(--ddn-tab-active, #245ac8); border-color: var(--ddn-tab-active, #245ac8); font-weight: 600; }
+#ddn-creator-icons { display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; overflow: auto; max-height: 150px; }
+.ddn-creator-icon { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 76px; border: 1px solid #e3eaf3; background: #fff; border-radius: 8px; padding: 5px 3px; font-size: 10.5px; color: #2c3e57; cursor: grab; text-align: center; }
+.ddn-creator-icon:hover { background: #eef4ff; border-color: #a9c4f5; }
+.ddn-creator-icon .ddn-palette-glyph { width: 22px; height: 22px; }
+.ddn-creator-icon .ddn-palette-glyph svg { width: 22px; height: 22px; }
+.ddn-creator-icon span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#ddn-palette-family-menu { position: absolute; top: calc(100% + 4px); right: 0; z-index: 8; }
+#ddn-palette-search { width: 150px; box-sizing: border-box; }
+.ddn-menu { background: #fff; border: 1px solid #cbd5e3; border-radius: 10px; padding: 6px; box-shadow: 0 12px 32px #243b5933; min-width: 220px; max-height: 320px; overflow: auto; }
+.ddn-menu button { display: block; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 6px; padding: 4px 8px; font-size: 12.5px; }
+.ddn-menu button:hover { background: #eef4ff; }
+.ddn-menu button[aria-checked="true"] { font-weight: 700; color: #1d4ed8; }
+.ddn-menu .ddn-menu-head { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: #66809f; padding: 4px 8px 2px; }
+.ddn-menu .ddn-menu-sep { border-top: 1px solid #e3eaf3; margin: 4px 0; }
+/* canvas context menu + link-to chain (appended to the component stage) */
+.ddn-ctx { position: absolute; z-index: 9; background: #fff; border: 1px solid #cbd5e3; border-radius: 10px; padding: 5px; box-shadow: 0 12px 32px #243b5933; min-width: 210px; }
+.ddn-ctx button { display: block; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 6px; padding: 4px 9px; font-size: 12.5px; color: #20304a; }
+.ddn-ctx button:hover:not(:disabled) { background: #eef4ff; }
+.ddn-ctx button:disabled { opacity: .45; cursor: not-allowed; }
+.ddn-ctx .ddn-menu-head { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: #66809f; padding: 4px 9px 2px; }
+.ddn-ctx .ddn-menu-sep { border-top: 1px solid #e3eaf3; margin: 4px 0; }
+/* pointer-tool rubber band + multi-select highlight */
+#ddn-rubberband { position: absolute; z-index: 8; border: 1.5px dashed #245ac8; background: #245ac81a; pointer-events: none; }
+.ddn-node.ddn-multisel { filter: drop-shadow(0 0 3px #d97706) drop-shadow(0 0 1px #d97706); }
+/* pointer-based palette drag ghost */
+#ddn-drag-ghost { position: fixed; z-index: 20; pointer-events: none; display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #a9c4f5; border-radius: 8px; padding: 4px 8px; font-size: 11.5px; box-shadow: 0 8px 22px #243b5940; opacity: .92; }
+#ddn-drag-ghost .ddn-palette-glyph { width: 18px; height: 18px; }
+#ddn-drag-ghost .ddn-palette-glyph svg { width: 18px; height: 18px; }
 #ddn-icon-popup { position: absolute; top: calc(100% + 6px); right: 0; z-index: 6; width: 300px; background: #fff; border: 1px solid #cbd5e3; border-radius: 12px; padding: 10px 12px; box-shadow: 0 12px 32px #243b5933; }
 #ddn-icon-popup[hidden] { display: none; }
 #ddn-icon-search { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
