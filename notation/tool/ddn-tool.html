@@ -11229,6 +11229,14 @@ function placeElement(kind, x, y) {
     const ir = state.ws.resolve(state.entry, state.view);
     const id = freshLocalId(ir.elements.map(n2 => n2.id), kind);
     const label = (A.kinds.find(k => k.id === kind) || {}).label || kind;
+    /* Crash-guard (owner report "adding a second element crashes the
+     * designer"): when the page was rendering fine and THIS placement makes
+     * the re-render reject (DDN071 — the pin blew the drawing bounds up on a
+     * minimum_text-tight page, or any other render error), the stage would go
+     * dark with only a small error line. Revert the add instead, keep the last
+     * good picture, and say why. */
+    const wasRendered = !!(state.diagram && state.diagram.result);
+    const revBefore = state.ws.revision;
     guided(() => {
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: 'New ' + label.toLowerCase(), kind });
       const after = state.ws.resolve(state.entry, state.view);
@@ -11238,6 +11246,25 @@ function placeElement(kind, x, y) {
       state.selected = uid;
       state.selectedRelation = null;
       status('placed ' + uid + (Number.isFinite(x) ? ' at ' + Math.round(x) + ',' + Math.round(y) : '') + ' — rename it in the inspector');
+    });
+    const ready = state.diagram && state.diagram.ready;
+    if (wasRendered && ready && typeof ready.catch === 'function') ready.catch(() => {
+      if (!state.ws || state.ws.revision === revBefore) return;
+      guard(() => {
+        let h = state.ws.history();
+        while (state.ws.revision > revBefore && h && h.canUndo) { state.ws.undo(); h = state.ws.history(); }
+        state.selected = null; state.selectedRelation = null; state.selectedIds = [];
+        entriesUI(state.view);
+        showSource(state.currentFile);
+        updateHistory();
+        refreshAfterSourceWrite();
+        /* The recovery render's handler clears the status line — deliver the
+         * explanation after it settles so the user actually sees the why. */
+        const settled = state.diagram && state.diagram.ready;
+        const explain = () => status('placing there made the page unrenderable (usually the minimum_text rule on a tight page) — the add was reverted; place closer to the existing content or enlarge the page');
+        if (settled && typeof settled.then === 'function') settled.then(explain, explain);
+        else explain();
+      });
     });
   });
 }
