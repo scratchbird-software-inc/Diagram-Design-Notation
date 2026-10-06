@@ -45,6 +45,13 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
     /* 0.8 (ch. 57): D2 new-document picker, D3 tabs/diagnostics/jump, D5 tidy */
     'ddn-new-project', 'ddn-template-popup', 'ddn-template-list',
     'ddn-source-tabs', 'ddn-jump-def', 'ddn-diagnostics', 'ddn-diagnostics-count',
+    /* Designer phase 8: Creator top drawer (palette + pointer select),
+     * Relation type right drawer, Properties bottom drawer, right-width
+     * splitter, and the view-type controls in the Style & Layout drawer. */
+    'ddn-drawer-creator', 'ddn-icon-creator', 'ddn-pointer-toggle',
+    'ddn-drawer-relation', 'ddn-icon-relation', 'ddn-relselect-list', 'ddn-connect-create', 'ddn-connect-cancel',
+    'ddn-drawer-properties', 'ddn-icon-properties', 'ddn-properties-body', 'ddn-properties-content',
+    'ddn-right-splitter', 'ddn-view-kind', 'ddn-projection-kind',
     'ddn-tidy',
     /* Designer phase 5: the Type sheet bottom drawer (sheet outline/editor
      * panes, empty state, toolbar icon). */
@@ -59,7 +66,7 @@ test('generated tool inlines the runtime, the corpus data, and carries the chrom
     assert.ok(html.includes('id="' + id + '"'), 'control #' + id + ' missing');
   assert.ok(html.includes('globalThis.DDN_TOOL_TEMPLATES'), 'inlined new-document templates missing');
   assert.ok(!/pdf|pptx/i.test(html), 'OSS export surface must not offer or advertise PDF/PPTX (chapter 57 §D4)');
-  for (const name of ['files', 'style', 'document', 'inspector', 'source', 'typesheet', 'export'])
+  for (const name of ['files', 'style', 'document', 'inspector', 'source', 'typesheet', 'export', 'creator', 'relation', 'properties'])
     assert.ok(html.includes('data-drawer="' + name + '"'), 'toolbar icon for drawer ' + name + ' missing');
   assert.ok(html.includes("DDNToolSheets"), 'sheets.js module not inlined into the tool build');
   /* Phase 3: the Source drawer carries text editing + diagnostics only — the
@@ -661,7 +668,7 @@ test('design mode preset includes the inspector drawer (closed until a selection
 
 test('inspector drawer joins the right-side exclusivity set in the tool source', () => {
   const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
-  assert.ok(tool.includes("const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector']"), 'RIGHT_EXCLUSIVE must include inspector');
+  assert.ok(tool.includes("const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector', 'relation']"), 'RIGHT_EXCLUSIVE must include inspector (and the phase-8 relation drawer)');
   assert.ok(tool.includes("state.config.drawers.inspector = 'open'"), 'selection must open the inspector drawer');
   for (const frag of ['setRelationProps', 'setRelationExtension'])
     assert.ok(tool.includes('A.authoring.' + frag), 'relation editing not wired to authoring.' + frag);
@@ -954,9 +961,31 @@ test('typesheet drawer joins the drawer model (params, presets, ?drawers=, setti
   assert.deepEqual(T.parseDrawersParam('typesheet:bogus'), {}, 'unknown state ignored');
   assert.deepEqual(T.cleanDrawerConfig({ typesheet: 'api' }), { typesheet: 'api' });
   const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
-  assert.ok(tool.includes("const BOTTOM_EXCLUSIVE = ['source', 'typesheet']"), 'bottom-shelf exclusivity missing');
+  assert.ok(tool.includes("const BOTTOM_EXCLUSIVE = ['source', 'typesheet', 'properties']"), 'bottom-shelf exclusivity missing');
   for (const frag of ['setElementExtension', 'setFrameMembers', 'addFrame'])
     assert.ok(tool.includes('A.authoring.' + frag), 'CMMN sheet not wired to authoring.' + frag);
+});
+
+test('phase 8 drawers join the drawer model (creator top, relation right, properties bottom)', () => {
+  for (const name of ['creator', 'relation', 'properties']) {
+    assert.ok(T.DRAWERS.includes(name), name + ' missing from DRAWERS');
+    assert.equal(T.resolveDrawerConfig('diagram', null, null).drawers[name], 'none', name + ' none in diagram mode');
+    assert.equal(T.resolveDrawerConfig('explore', null, null).drawers[name], 'closed', name + ' closed in explore mode');
+    assert.equal(T.resolveDrawerConfig('design', null, null).drawers[name], 'closed', name + ' closed in design mode');
+    assert.deepEqual(T.parseDrawersParam(name + ':open'), { [name]: 'open' }, '?drawers= accepts ' + name);
+    assert.deepEqual(T.cleanDrawerConfig({ [name]: 'api' }), { [name]: 'api' }, 'saved settings accept ' + name);
+  }
+  const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
+  assert.ok(tool.includes("const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector', 'relation']"), 'relation drawer joins right exclusivity');
+  assert.ok(tool.includes("const BOTTOM_EXCLUSIVE = ['source', 'typesheet', 'properties']"), 'properties drawer joins bottom exclusivity');
+  assert.ok(tool.includes("'ddn-tool-right-width'"), 'right-width persistence key missing');
+  /* View type controls: view kind via setViewProperties (authoring allows
+   * 'kind'), projection kind via setViewProfile. */
+  assert.ok(tool.includes('A.viewProfiles.VIEW_KINDS'), 'view-kind select not fed from the registry');
+  assert.ok(tool.includes('setViewProperties(state.ws, state.entry, state.view, { kind:'), 'view-kind write missing');
+  assert.ok(tool.includes('projection: { kind:'), 'projection-kind write missing');
+  const authoring = fs.readFileSync(path.join(root, 'notation/studio/src/authoring.js'), 'utf8');
+  assert.ok(authoring.includes("['title','description','source','generator','kind']"), 'setViewProperties must accept kind');
 });
 
 test('sheetForProjection: dispatch by view capability (projection kind + profile)', () => {

@@ -447,9 +447,11 @@ api.authoring={
  },
  /* Designer Document drawer: flat view-level metadata properties (title,
   * description, source, generator — spec chapter 53 provenance). `undefined`
-  * removes the property. One validated source transaction. */
+  * removes the property. One validated source transaction. Phase 8: `kind`
+  * (the view's registered view kind, chapter 52 — DDN-VP01 validates the
+  * registry on commit) joins for the Style & Layout view-type control. */
  setViewProperties(ws,entry,view,props){
-  const ALLOWED=['title','description','source','generator'];
+  const ALLOWED=['title','description','source','generator','kind'];
   if(!props||typeof props!=='object'||Array.isArray(props))fail('DDN-E001','View property writes need a {key: value} record.');
   for(const k of Object.keys(props))if(!ALLOWED.includes(k))fail('DDN-E001','Unknown view metadata property: '+k+' (allowed: '+ALLOWED.join(', ')+')');
   const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];

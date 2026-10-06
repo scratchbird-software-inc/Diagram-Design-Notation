@@ -44,16 +44,45 @@ The status bar announces the synchronous fallback when it is active.
 
 The page is a diagram stage (pointer-drag pan, wheel/slider zoom, fit
 page/width/height/100%) with a slim icon toolbar and pop-in drawers:
-**files** (left), **style & layout** (right), **document** (right),
-**inspector** (right), **type sheet** (bottom), **source** (bottom),
+**files** (left), **creator** (top), **style & layout** (right),
+**document** (right), **inspector** (right), **relation type** (right),
+**type sheet** (bottom), **source** (bottom), **properties** (bottom),
 **export** (right) and **animation** (right). Drawers overlay the stage and
-animate open/closed. The three right-side working drawers are exclusive —
-opening **document**, **style & layout** or **inspector** closes the other
-two — and the two bottom drawers are exclusive likewise. Drawers follow the
+animate open/closed. The right-side working drawers are exclusive —
+opening **document**, **style & layout**, **inspector** or **relation
+type** closes the others — and the bottom drawers (**source**, **type
+sheet**, **properties**) are exclusive likewise. Drawers follow the
 selection: selecting an element or relation opens the **inspector**,
 deselecting (empty-canvas click or Escape) opens the **document** drawer.
 (The retired top **appearance** drawer name remains accepted as an alias of
-`style` in `?drawers=` and saved settings.)
+`style` in `?drawers=` and saved settings.) A draggable splitter between
+the stage and the right column resizes every right drawer together
+(240–560 px, persisted in `localStorage` key `ddn-tool-right-width`).
+
+The **creator** drawer (top) holds the capability-filtered entity palette
+promoted from the old design-bar popup: grouped object kinds, search (a
+non-empty search scans every installed kind past the capability filter),
+the "all installed kinds" toggle, and the data-bound-projection hint. It
+also carries the **Pointer select** tool: while armed, clicking a canvas
+object selects it and opens the **properties** drawer (bottom) with just
+that object's properties — the inspector's *Meaning* and *This view*
+content, read-write; deactivating closes the drawer and returns to normal.
+The design bar's **Add element** button opens/focuses the creator drawer.
+
+The **relation type** drawer (right) is the Connect flow's verb selector:
+it opens when Connect is armed, lists the source kind's legal verbs after
+the first endpoint is picked and the pair-legal verbs
+(`DDNLive.legalVerbs(from, to)`) once both are known, and closes when the
+gesture completes or is cancelled.
+
+The **style & layout** drawer's top section is the view switchboard: the
+**active view** selector (moved out of the toolbar), the **view kind**
+selector (the view's registered kind — `patent-figure`, `uml-class`, …;
+view kinds are a 0.6-dialect construct, so the write is refused with
+DDN-V04 on older sources) and, for data-bound views, the **projection
+kind** selector (disabled on graph views). Both type controls write to
+source and re-derive capability filtering, the creator palette and the
+type-sheet dispatch, exactly like a view switch.
 
 The **inspector** is the selection editor, with three tabs: **Meaning**
 (model identity — label, kind, description, relation endpoints/cardinality,
@@ -123,22 +152,22 @@ editing affordances layered on top of `explore`:
 - **drag-to-pin armed by default** (the toolbar toggle stays — turn it off any
   time);
 - the **design bar** on the stage:
-  - **Add element** — a palette popup of the object kinds the active view's
-    projection can actually hold (capability-filtered via the registry's
-    `allowed_in` contract; data-bound projections show a hint naming the
-    matching type sheet instead of an element palette), drawn with the
-    notation-plate glyphs (`DDNLive.glyphs.forKind`), searchable; picking a
-    kind arms click-to-place, and the next click on the diagram creates the
-    element at that spot and pins it there (one undoable source edit; the new
-    element stays selected for renaming in the inspector);
+  - **Add element** — opens the **creator** drawer: the object kinds the
+    active view's projection can actually hold (capability-filtered via the
+    registry's `allowed_in` contract; data-bound projections show a hint
+    naming the matching type sheet instead of an element palette), drawn
+    with the notation-plate glyphs (`DDNLive.glyphs.forKind`), searchable;
+    picking a kind arms click-to-place, and the next click on the diagram
+    creates the element at that spot and pins it there (one undoable source
+    edit; the new element stays selected for renaming in the inspector);
   - **Connect** — click a source element, click a target element, pick a verb
-    from the relation kinds legal between the two endpoints (the same
-    legality contract as the CLI `verbs --from --to` query; when no
-    registered verb admits the pair the full list is shown with a note —
-    the designer filters offers, it never blocks) plus an optional label:
-    one relation is created between them. Connect stays armed after a
-    creation so chains of relations are quick; Esc cancels any armed
-    gesture.
+    in the **relation type** drawer from the relation kinds legal between
+    the two endpoints (the same legality contract as the CLI
+    `verbs --from --to` query; when no registered verb admits the pair the
+    full list is shown with a note — the designer filters offers, it never
+    blocks) plus an optional label: one relation is created between them.
+    Connect stays armed after a creation so chains of relations are quick;
+    Esc cancels any armed gesture.
   - **Tidy** (0.8, standard chapter 57 §D5) — re-runs placement and routing on
     the active view with every authored pin respected. The source is untouched
     unless you confirm **Pin result**, which writes the computed positions of

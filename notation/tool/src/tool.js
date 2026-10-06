@@ -155,28 +155,34 @@ const els = {
   designBar: $('ddn-design-bar'), designHint: $('ddn-design-hint'), tidy: $('ddn-tidy'),
   sheetTitle: $('ddn-sheet-title'), sheetEmpty: $('ddn-sheet-empty'),
   sheetOutline: $('ddn-sheet-outline'), sheetEditor: $('ddn-sheet-editor'),
-  paletteToggle: $('ddn-palette-toggle'), palettePopup: $('ddn-palette-popup'),
+  paletteToggle: $('ddn-palette-toggle'), pointerToggle: $('ddn-pointer-toggle'),
   paletteSearch: $('ddn-palette-search'), paletteList: $('ddn-palette-list'),
   paletteHint: $('ddn-palette-hint'), paletteAll: $('ddn-palette-all'), paletteAllWrap: $('ddn-palette-all-wrap'),
-  connect: $('ddn-connect'), connectPopup: $('ddn-connect-popup'),
-  connectSummary: $('ddn-connect-summary'), connectVerb: $('ddn-connect-verb'), connectNote: $('ddn-connect-note'),
+  connect: $('ddn-connect'), relselectList: $('ddn-relselect-list'),
+  connectSummary: $('ddn-connect-summary'), connectNote: $('ddn-connect-note'),
   connectName: $('ddn-connect-name'), connectCreate: $('ddn-connect-create'), connectCancel: $('ddn-connect-cancel'),
+  viewKind: $('ddn-view-kind'), projectionKind: $('ddn-projection-kind'),
+  propertiesTitle: $('ddn-properties-title'), propertiesEmpty: $('ddn-properties-empty'), propertiesContent: $('ddn-properties-content'),
+  rightSplitter: $('ddn-right-splitter'),
   exportSvg: $('ddn-export-svg'), exportPng: $('ddn-export-png'), exportWebp: $('ddn-export-webp'), saveExample: $('ddn-save-example'),
   exportMotion: $('ddn-export-motion'),
   animEmpty: $('ddn-anim-empty'), animControls: $('ddn-anim-controls'), animToggle: $('ddn-anim-toggle'),
   animStep: $('ddn-anim-step'), animSpeed: $('ddn-anim-speed'), animFlow: $('ddn-anim-flow'),
   animFlowField: $('ddn-anim-flow-field'), animStatus: $('ddn-anim-status')
 };
-const drawerEls = { files: $('ddn-drawer-files'), style: $('ddn-drawer-style'), document: $('ddn-drawer-document'), inspector: $('ddn-drawer-inspector'), source: $('ddn-drawer-source'), typesheet: $('ddn-drawer-typesheet'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation') };
-const iconEls = { files: $('ddn-icon-files'), style: $('ddn-icon-style'), document: $('ddn-icon-document'), inspector: $('ddn-icon-inspector'), source: $('ddn-icon-source'), typesheet: $('ddn-icon-typesheet'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation') };
-const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Document', inspector: 'Inspector', source: 'Source', typesheet: 'Type sheet', export: 'Export', animation: 'Animation' };
+const drawerEls = { files: $('ddn-drawer-files'), style: $('ddn-drawer-style'), document: $('ddn-drawer-document'), inspector: $('ddn-drawer-inspector'), source: $('ddn-drawer-source'), typesheet: $('ddn-drawer-typesheet'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation'), creator: $('ddn-drawer-creator'), relation: $('ddn-drawer-relation'), properties: $('ddn-drawer-properties') };
+const iconEls = { files: $('ddn-icon-files'), style: $('ddn-icon-style'), document: $('ddn-icon-document'), inspector: $('ddn-icon-inspector'), source: $('ddn-icon-source'), typesheet: $('ddn-icon-typesheet'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation'), creator: $('ddn-icon-creator'), relation: $('ddn-icon-relation'), properties: $('ddn-icon-properties') };
+const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Document', inspector: 'Inspector', source: 'Source', typesheet: 'Type sheet', export: 'Export', animation: 'Animation', creator: 'Creator', relation: 'Relation type', properties: 'Properties' };
 /* Right-side working drawers are exclusive (Document / Style & Layout /
  * Inspector): opening one closes the others. Selection opens the Inspector;
  * deselection returns to Document (phase 3 — the inspector moved out of the
  * Source drawer, which now carries text editing + diagnostics only).
- * Phase 5: the bottom shelf is exclusive too (Source / Type sheet). */
-const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector'];
-const BOTTOM_EXCLUSIVE = ['source', 'typesheet'];
+ * Phase 5: the bottom shelf is exclusive too (Source / Type sheet).
+ * Phase 8: the Relation type drawer joins the right-exclusive set (it opens
+ * itself while the Connect gesture is armed and closes when it ends); the
+ * Properties drawer joins the bottom-exclusive set (pointer-selection tool). */
+const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector', 'relation'];
+const BOTTOM_EXCLUSIVE = ['source', 'typesheet', 'properties'];
 
 function emptyPresentation() {
   return { options: {}, typography: {}, kindColours: {}, verbColours: {}, objectColours: {}, verbRouting: {}, relationRouting: {}, mindNodes: {} };
@@ -275,6 +281,9 @@ function applyDrawerConfig() {
   els.designBar.hidden = !c.design;
   if (c.design) updateDesignBar();
   else cancelDesignGesture();
+  els.paletteToggle.classList.toggle('active', !!design.placing || state.config.drawers.creator === 'open');
+  /* Phase 8: the splitter only makes sense while a right drawer is open. */
+  els.rightSplitter.dataset.hidden = String(!(RIGHT_EXCLUSIVE.some(n => drawerEls[n].dataset.state === 'open') || drawerEls.export.dataset.state === 'open' || drawerEls.animation.dataset.state === 'open'));
   // Drawer open/close resizes the stage; re-fit once the transition settles.
   clearTimeout(state._fitTimer);
   state._fitTimer = setTimeout(() => applyFit(), 220);
@@ -329,6 +338,47 @@ for (const name of DRAWERS) {
   });
   drawerEls[name].querySelector('[data-close]').addEventListener('click', () => setDrawer(name, 'closed', true));
 }
+
+/* Phase 8 (owner-approved): right-column width splitter. The width is a CSS
+ * custom property (--ddn-right-w on #ddn-frame) every right drawer honors via
+ * flex-basis, clamped to 240–560px and persisted in localStorage (session and
+ * across reloads, like drawer states). */
+const RIGHT_WIDTH_KEY = 'ddn-tool-right-width';
+const RIGHT_WIDTH_MIN = 240, RIGHT_WIDTH_MAX = 560;
+function applyRightWidth(px) {
+  const w = Math.max(RIGHT_WIDTH_MIN, Math.min(RIGHT_WIDTH_MAX, Math.round(px)));
+  document.getElementById('ddn-frame').style.setProperty('--ddn-right-w', w + 'px');
+  return w;
+}
+function loadRightWidth() {
+  try {
+    const v = Number(host.localStorage.getItem(RIGHT_WIDTH_KEY));
+    if (Number.isFinite(v) && v > 0) applyRightWidth(v);
+  } catch { /* ignore */ }
+}
+loadRightWidth();
+els.rightSplitter.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  els.rightSplitter.classList.add('ddn-dragging');
+  try { els.rightSplitter.setPointerCapture(e.pointerId); } catch { /* synthetic pointers */ }
+  const frame = document.getElementById('ddn-frame');
+  const move = ev => {
+    const r = frame.getBoundingClientRect();
+    applyRightWidth(r.right - ev.clientX);
+  };
+  const done = ev => {
+    els.rightSplitter.classList.remove('ddn-dragging');
+    els.rightSplitter.removeEventListener('pointermove', move);
+    els.rightSplitter.removeEventListener('pointerup', done);
+    els.rightSplitter.removeEventListener('pointercancel', done);
+    const r = frame.getBoundingClientRect();
+    const w = applyRightWidth(r.right - ev.clientX);
+    try { host.localStorage.setItem(RIGHT_WIDTH_KEY, String(w)); } catch { /* ignore */ }
+  };
+  els.rightSplitter.addEventListener('pointermove', move);
+  els.rightSplitter.addEventListener('pointerup', done);
+  els.rightSplitter.addEventListener('pointercancel', done);
+});
 
 /* Settings popup: per-drawer open/closed/none selectors persisted to
  * localStorage; URL ?drawers= still wins on the next load (D3). */
@@ -593,6 +643,7 @@ for (const [group, fields] of SELECT_FIELDS) {
     field(g, label, input);
   }
   if (group === 'Layout') g.append(dim('Grid step sets fit_grid lattice granularity and the radial/organic/retained-position spiral search pitch only; it does not move grid, layered, tree or auto placements.'));
+  if (group === 'Style') g.append(dim('Base font scales every text role and re-measures the whole drawing with it, so at Fit page zoom the larger (or smaller) drawing is simply scaled back into the stage and the picture looks unchanged — the stage zoom percentage shows the difference. Switch to 100% zoom or a fixed artboard (Document drawer page size) to see text grow.'));
 }
 
 /* Source-backed controls for the spec-authorable style/layout/display keys
@@ -1162,6 +1213,8 @@ function repopulateOverridePanels() {
   syncOptionInputs();
   syncSourceInputs();
   syncDocumentForm();
+  syncViewControls();
+  if (drawerEls.creator.dataset.state === 'open') buildPalette();
   let ir = null;
   try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
   const kindByKeyword = new Map(A.kinds.map(k => [k.id, k]));
@@ -1279,6 +1332,10 @@ function onSelect(detail) {
   updateSelectedPanel();
   inspector(id, ir, relation);
   autoDrawerForSelection(true);
+  if (design.pointer) {
+    if (state.config.drawers.properties !== 'open') setDrawer('properties', 'open', true);
+    renderPropertiesPanel();
+  }
 }
 
 /* Deselection (empty-canvas click / Escape): clears the selection and opens
@@ -1294,6 +1351,7 @@ function deselect() {
   els.selectionSummary.textContent = 'Click an object or relation in the diagram.';
   if (had) status('selection cleared');
   autoDrawerForSelection(false);
+  if (design.pointer) renderPropertiesPanel();
 }
 function attachDeselect() {
   const stage = stageEl();
@@ -1313,7 +1371,7 @@ function attachDeselect() {
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (design.placing || design.connecting) return;
-  if (!els.iconPopup.hidden || !els.palettePopup.hidden || !els.connectPopup.hidden || !els.settingsPopup.hidden || !els.templatePopup.hidden || !els.aeModal.hidden || !els.arModal.hidden) return;
+  if (!els.iconPopup.hidden || !els.settingsPopup.hidden || !els.templatePopup.hidden || !els.aeModal.hidden || !els.arModal.hidden) return;
   if (state.selected || state.selectedRelation) deselect();
 }, true);
 
@@ -1346,6 +1404,7 @@ function guidedInspector(action) {
   }
 }
 function refreshInspector() {
+  if (state.config.drawers.properties === 'open') renderPropertiesPanel();
   if (!state.selected && !state.selectedRelation) return;
   let ir = null;
   try { ir = state.ws.resolve(state.entry, state.view); } catch { return; }
@@ -1677,6 +1736,33 @@ function inspector(id, ir, relation) {
   buildMeaningTab(els.inspectorMeaning, id, ir, { node, relation, fieldItem, multi });
   buildViewTab(els.inspectorView, id, ir, { node, relation, fieldItem, multi });
   buildDetailsTab(els.inspectorDetails, id, ir, { node, relation, fieldItem });
+}
+
+/* Phase 8: the pointer-selection tool's bottom Properties drawer — JUST the
+ * selected object's properties (Meaning + This view content, read-write,
+ * reusing the Inspector's builders) instead of the tabbed right drawer. */
+function renderPropertiesPanel() {
+  const id = state.selected || state.selectedRelation;
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  const relation = ir && state.selectedRelation ? ir.relations.find(r => r.id === state.selectedRelation) : null;
+  const node = ir && id ? ir.elements.find(n => n.id === id) : null;
+  const fieldItem = ir && id ? ir.elements.flatMap(n => n.fields || []).find(f => f.id === id) : null;
+  if (!ir || !id || (!node && !relation && !fieldItem)) {
+    els.propertiesTitle.textContent = '';
+    els.propertiesEmpty.hidden = false;
+    els.propertiesContent.hidden = true;
+    return;
+  }
+  const multi = multiSelection((state.selectedIds || []).map(u => ({ id: u, kind: null, isRelation: !!ir.relations.find(r => r.id === u) })));
+  els.propertiesTitle.textContent = (relation ? relation.name : node ? node.name : fieldItem.name) + ' · ' + (relation ? 'relationship' : fieldItem ? 'field' : node.kind) + ' — ' + id;
+  const meaning = document.createElement('div');
+  const view = document.createElement('div');
+  buildMeaningTab(meaning, id, ir, { node, relation, fieldItem, multi });
+  buildViewTab(view, id, ir, { node, relation, fieldItem, multi });
+  els.propertiesContent.replaceChildren(meaning, view);
+  els.propertiesEmpty.hidden = true;
+  els.propertiesContent.hidden = false;
 }
 
 /* --- shared small builders (local to the inspector; the style/document
@@ -2302,7 +2388,7 @@ els.dragMode.addEventListener('change', () => {
  * Both gestures are thin drivers over DDNLive.authoring (addElement / pin /
  * addRelation), so every creation is one undoable source edit, exactly like an
  * inspector edit. Esc cancels an armed gesture. */
-const design = { placing: null, connecting: false, from: null, to: null };
+const design = { placing: null, connecting: false, from: null, to: null, verb: null, pointer: false };
 
 function graphEditable() {
   const caps = state.diagram && state.diagram.capabilities;
@@ -2310,10 +2396,14 @@ function graphEditable() {
 }
 function designHint(text) { els.designHint.textContent = text || 'Palette: pick a kind, click on the diagram to place it. Connect: click source, then target.'; }
 function cancelDesignGesture() {
-  design.placing = null; design.connecting = false; design.from = null; design.to = null;
+  design.placing = null; design.connecting = false; design.from = null; design.to = null; design.verb = null;
   els.paletteToggle.classList.remove('active');
   els.connect.classList.remove('active');
-  els.palettePopup.hidden = true; els.connectPopup.hidden = true;
+  /* Phase 8: the Relation type drawer belongs to the Connect gesture — it
+   * closes when the gesture completes or is cancelled (guarded: setDrawer
+   * re-enters applyDrawerConfig, which itself can cancel the gesture). */
+  if (state.config.drawers.relation === 'open') setDrawer('relation', 'closed', true);
+  buildRelselectList();
   designHint();
 }
 function armPlacement(kind) {
@@ -2328,17 +2418,36 @@ function armConnect() {
   cancelDesignGesture();
   design.connecting = true;
   els.connect.classList.add('active');
+  setDrawer('relation', 'open', true);
+  buildRelselectList();
   designHint('Connect: click the SOURCE element (Esc cancels).');
 }
 els.paletteToggle.addEventListener('click', () => {
   if (design.placing) { cancelDesignGesture(); return; }
+  if (state.config.drawers.creator === 'open') { setDrawer('creator', 'closed', true); return; }
+  setDrawer('creator', 'open', true);
   buildPalette();
-  els.palettePopup.hidden = !els.palettePopup.hidden;
-  els.connectPopup.hidden = true;
-  if (!els.palettePopup.hidden) els.paletteSearch.focus();
+  els.paletteSearch.focus();
 });
 els.connect.addEventListener('click', () => { if (design.connecting) cancelDesignGesture(); else armConnect(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && (design.placing || design.connecting || !els.palettePopup.hidden)) cancelDesignGesture(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && (design.placing || design.connecting)) cancelDesignGesture(); });
+
+/* Phase 8: pointer-selection tool (Creator drawer). While armed, clicking a
+ * canvas element selects it (the component's normal selection) and the bottom
+ * Properties drawer shows JUST that object's properties; deactivating closes
+ * the drawer and returns to normal. */
+els.pointerToggle.addEventListener('click', () => {
+  design.pointer = !design.pointer;
+  els.pointerToggle.setAttribute('aria-pressed', String(design.pointer));
+  if (design.pointer) {
+    status('pointer select armed — click an object in the diagram to edit its properties below');
+    if (state.selected || state.selectedRelation) { setDrawer('properties', 'open', true); renderPropertiesPanel(); }
+    else renderPropertiesPanel();
+  } else {
+    status();
+    if (state.config.drawers.properties === 'open') setDrawer('properties', 'closed', true);
+  }
+});
 
 /* Palette: capability-filtered (designer phase 2). The active view's resolved
  * projection decides: data-bound projections show no element palette (a hint
@@ -2500,11 +2609,13 @@ function connectElements(from, to, kind, name) {
     });
   });
 }
-/* Connect verb list: filtered to the verbs whose endpoint contracts admit the
- * picked source/target kinds (designer phase 2 — the same endpoint_contract
- * data as the CLI `verbs --from --to` query, via DDNLive.legalVerbs). When no
- * registered verb admits the pair the full list stays available with a note —
- * the designer filters offers, it never blocks; source text stays permissive. */
+/* Connect verb list (Relation type drawer, phase 8): the same endpoint-
+ * contract filtering as before (designer phase 2, DDNLive.legalVerbs), now
+ * presented as a clickable verb list in the right drawer — both endpoints
+ * known: legalVerbs(from, to); only the source picked: the from-kind's legal
+ * verbs; nothing picked: the full registry with a prompt. When no registered
+ * verb admits the pair the full list stays available with a note — the
+ * designer filters offers, it never blocks; source text stays permissive. */
 function elementKindOf(id) {
   try {
     const ir = state.ws.resolve(state.entry, state.view);
@@ -2512,25 +2623,42 @@ function elementKindOf(id) {
     return el ? el.kind : null;
   } catch { return null; }
 }
-function populateConnectVerbs() {
-  const fromKind = elementKindOf(design.from), toKind = elementKindOf(design.to);
-  let ids = fromKind && toKind ? A.legalVerbs(fromKind, toKind) : A.relations.map(r => r.id);
-  let note = '';
+function buildRelselectList() {
+  const fromKind = design.from && elementKindOf(design.from), toKind = design.to && elementKindOf(design.to);
+  let ids, note = '';
+  if (fromKind && toKind) ids = A.legalVerbs(fromKind, toKind);
+  else if (fromKind) ids = A.legalVerbs(fromKind, null);
+  else ids = A.relations.map(r => r.id);
   if (!ids.length) {
     ids = A.relations.map(r => r.id);
     note = 'No registered verb admits ' + (fromKind || '?') + ' → ' + (toKind || '?') + ' — showing all installed verbs; the source validator will judge.';
   }
-  els.connectVerb.replaceChildren(...ids.map(id => {
-    const r = A.relations.find(x => x.id === id) || { label: id };
-    return new Option(r.label + ' (' + id + ')', id);
-  }));
-  els.connectVerb.value = ids.includes('assoc') ? 'assoc' : ids[0];
+  if (design.verb && !ids.includes(design.verb)) design.verb = null;
+  if (!design.verb) design.verb = ids.includes('assoc') ? 'assoc' : ids[0];
+  els.connectSummary.textContent = design.from
+    ? design.from + (design.to ? ' → ' + design.to : ' → (pick a target element)')
+    : 'Arm Connect in the design bar, then click a source and a target element — the legal verbs for the pair list here.';
   els.connectNote.textContent = note;
   els.connectNote.hidden = !note;
+  els.relselectList.replaceChildren(...ids.map(id => {
+    const r = A.relations.find(x => x.id === id) || { label: id };
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'ddn-relselect-item';
+    b.textContent = r.label + ' (' + id + ')';
+    b.setAttribute('aria-pressed', String(id === design.verb));
+    b.addEventListener('click', () => guard(() => {
+      design.verb = id;
+      for (const other of els.relselectList.querySelectorAll('.ddn-relselect-item')) other.setAttribute('aria-pressed', 'false');
+      b.setAttribute('aria-pressed', 'true');
+      if (design.from && design.to) els.connectCreate.focus();
+    }));
+    return b;
+  }));
+  els.connectCreate.disabled = !(design.connecting && design.from && design.to);
 }
 els.connectCreate.addEventListener('click', () => {
-  const from = design.from, to = design.to, kind = els.connectVerb.value, name = els.connectName.value.trim();
-  els.connectPopup.hidden = true;
+  if (!design.from || !design.to || !design.verb) { status('pick a source and a target element first'); return; }
+  const from = design.from, to = design.to, kind = design.verb, name = els.connectName.value.trim();
   const keepConnecting = design.connecting;
   cancelDesignGesture();
   if (keepConnecting) armConnect(); // chain more connections without re-clicking the tool
@@ -2558,13 +2686,11 @@ function attachDesign() {
     }
     const id = nodeIdAt(e);
     if (!id) { designHint('Connect: click an ELEMENT — that click was empty canvas.'); return; }
-    if (!design.from) { design.from = id; designHint('Connect: source is ' + id + ' — now click the TARGET (Esc cancels).'); return; }
+    if (!design.from) { design.from = id; designHint('Connect: source is ' + id + ' — now click the TARGET (Esc cancels).'); buildRelselectList(); return; }
     if (id === design.from) { designHint('Connect: target must differ from the source (' + id + ').'); return; }
     design.to = id;
-    els.connectSummary.textContent = design.from + ' → ' + design.to;
     els.connectName.value = '';
-    populateConnectVerbs();
-    els.connectPopup.hidden = false;
+    buildRelselectList();
   }, true);
   /* An armed gesture also owns pointer drags: suppress pan and drag-to-pin. */
   stage.addEventListener('pointerdown', e => { if (design.placing || design.connecting) e.stopPropagation(); }, true);
@@ -2581,8 +2707,8 @@ function updateDesignBar() {
   els.paletteToggle.disabled = false;
   els.connect.disabled = !ok;
   els.tidy.disabled = !ok;
-  els.paletteToggle.title = ok ? 'Add element — pick a kind, then click on the diagram to place it' : 'Add element — this view is generated from data; the palette explains where to edit instead';
-  els.connect.title = ok ? 'Connect two elements — click source, click target, pick a verb' : 'Connecting needs a graph projection — this view is data-bound';
+  els.paletteToggle.title = ok ? 'Add element — open the Creator drawer, pick a kind, then click on the diagram to place it' : 'Add element — this view is generated from data; the Creator drawer explains where to edit instead';
+  els.connect.title = ok ? 'Connect two elements — click source, click target, pick a verb in the Relation type drawer' : 'Connecting needs a graph projection — this view is data-bound';
   els.tidy.title = ok ? 'Tidy — re-run placement and routing; authored pins keep their positions' : 'Tidy needs a graph projection — this view is data-bound';
   if (!ok && (design.placing || design.connecting)) cancelDesignGesture();
 }
@@ -2773,6 +2899,37 @@ els.picker.addEventListener('change', () => guard(() => {
   mount();
   syncUrl();
 }));
+
+/* Phase 8 (owner-approved): the view selector lives at the top of the Style &
+ * Layout drawer, together with the first UI affordance for the view's TYPE —
+ * the registered view kind (chapter 52; DDN-VP01 validates on commit) and, for
+ * data-bound views, the projection kind (a projection profile-group write).
+ * Both write to source like the other drawer fields; the guided redraw then
+ * re-derives capabilities, palette filtering and the Type sheet dispatch —
+ * the same refresh a view switch triggers through the render event. */
+els.viewKind.replaceChildren(new Option('No view kind (untyped)', ''),
+  ...Object.keys(A.viewProfiles.VIEW_KINDS).map(k => new Option(k, k)));
+/* ddn-core CHOICES.projection.kind — the registered projection kinds. */
+const PROJECTION_KINDS = ['graph', 'chen', 'matrix', 'panels', 'table', 'chart', 'timeline', 'fishbone', 'decision', 'sequence', 'timing', 'geo'];
+els.projectionKind.replaceChildren(...PROJECTION_KINDS.map(k => new Option(k, k)));
+els.viewKind.addEventListener('change', () => guard(() =>
+  guided(() => A.authoring.setViewProperties(state.ws, state.entry, state.view, { kind: els.viewKind.value || undefined }))));
+els.projectionKind.addEventListener('change', () => guard(() =>
+  guided(() => A.authoring.setViewProfile(state.ws, state.entry, state.view, { projection: { kind: els.projectionKind.value } }))));
+function syncViewControls() {
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  els.viewKind.value = (ir && ir.view.kind) || '';
+  const proj = (ir && ir.view.profiles.projection) || { kind: 'graph' };
+  els.projectionKind.value = PROJECTION_KINDS.includes(proj.kind) ? proj.kind : 'graph';
+  /* Projection kind only retypes data-bound views; on a graph view the select
+   * explains itself instead of inviting a confusing write. */
+  const isGraph = (proj.kind || 'graph') === 'graph';
+  els.projectionKind.disabled = isGraph;
+  els.projectionKind.title = isGraph ? 'This is a graph view — projection kind applies to data-bound views (chart, matrix, …)' : 'Retype this data-bound view (writes projection { kind: … } to source)';
+  els.viewKind.disabled = !ir;
+  els.projectionKind.disabled = els.projectionKind.disabled || !ir;
+}
 
 function filesUI() {
   const fs = state.ws.getFiles();

@@ -69,19 +69,21 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 #ddn-design-bar button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; }
 #ddn-design-bar button svg { width: 14px; height: 14px; display: block; }
 #ddn-design-hint { max-width: 46ch; }
-#ddn-palette-popup, #ddn-connect-popup {
-  position: absolute; top: calc(100% + 6px); left: 0; z-index: 6; width: 320px;
-  background: #fff; border: 1px solid #cbd5e3; border-radius: 12px; padding: 10px 12px;
-  box-shadow: 0 12px 32px #243b5933;
-}
-#ddn-palette-popup[hidden], #ddn-connect-popup[hidden] { display: none; }
-#ddn-palette-search { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
-#ddn-palette-list { max-height: 320px; overflow: auto; display: flex; flex-direction: column; gap: 2px; }
+/* Phase 8: the palette lives in the Creator top drawer, the connect verb list
+ * in the Relation type right drawer — the old design-bar popups are retired. */
+#ddn-palette-search { flex: 1; min-width: 140px; box-sizing: border-box; }
+#ddn-drawer-creator .ddn-drawer-body { display: flex; flex-direction: column; }
+#ddn-palette-list { overflow: auto; display: flex; flex-direction: column; gap: 2px; }
 .ddn-palette-item { display: flex; align-items: center; gap: 8px; text-align: left; border: 0; background: transparent; border-radius: 7px; padding: 4px 6px; }
 .ddn-palette-item:hover { background: #eef4ff; }
-.ddn-palette-all { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #40536b; margin: 0 0 6px; }
+.ddn-palette-all { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #40536b; margin: 0; }
 .ddn-palette-group { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7a90; margin: 8px 0 2px; }
 #ddn-palette-hint { margin: 4px 0 8px; line-height: 1.4; }
+#ddn-relselect-list { display: flex; flex-direction: column; gap: 2px; margin: 6px 0; max-height: 45vh; overflow: auto; }
+.ddn-relselect-item { text-align: left; border: 1px solid transparent; background: transparent; border-radius: 7px; padding: 4px 8px; font-size: 12.5px; }
+.ddn-relselect-item:hover { background: #eef4ff; }
+.ddn-relselect-item[aria-pressed="true"] { background: #dbe7fb; border-color: #b7ccf0; }
+#ddn-pointer-toggle[aria-pressed="true"] { background: #dbe7fb; border-color: #b7ccf0; }
 #ddn-icon-popup { position: absolute; top: calc(100% + 6px); right: 0; z-index: 6; width: 300px; background: #fff; border: 1px solid #cbd5e3; border-radius: 12px; padding: 10px 12px; box-shadow: 0 12px 32px #243b5933; }
 #ddn-icon-popup[hidden] { display: none; }
 #ddn-icon-search { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
@@ -92,8 +94,6 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-icon-pick span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ddn-palette-glyph { width: 20px; height: 20px; flex: none; display: inline-flex; color: #40536b; font-size: 10px; align-items: center; justify-content: center; }
 .ddn-palette-glyph svg { width: 20px; height: 20px; display: block; }
-#ddn-connect-popup label { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px; }
-#ddn-connect-popup select { max-width: 220px; }
 #ddn-busy {
   position: absolute; top: 10px; right: 12px; z-index: 3;
   display: flex; align-items: center; gap: 8px;
@@ -119,8 +119,15 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-drawer[data-state="closed"], .ddn-drawer[data-state="none"] { flex-basis: 0 !important; opacity: 0; overflow: hidden; border: 0; }
 .ddn-drawer[data-state="none"] { display: none; }
 .ddn-left, .ddn-right { flex: 0 0 300px; }
+.ddn-right { flex-basis: var(--ddn-right-w, 300px); }
 .ddn-left { border-right: 1px solid #dbe3ed; }
 .ddn-right { border-left: 1px solid #dbe3ed; }
+/* Phase 8: draggable splitter between the canvas column and the right drawer
+ * column; the chosen width (240–560px) is a CSS custom property honored by
+ * every right-side drawer, persisted in localStorage. */
+#ddn-right-splitter { flex: 0 0 5px; cursor: col-resize; background: #eef2f8; border-left: 1px solid #e3eaf3; touch-action: none; }
+#ddn-right-splitter:hover, #ddn-right-splitter.ddn-dragging { background: #c9d9f4; }
+#ddn-right-splitter[data-hidden="true"] { display: none; }
 .ddn-top, .ddn-bottom { flex: 0 0 320px; }
 .ddn-top { border-bottom: 1px solid #dbe3ed; }
 .ddn-bottom { border-top: 1px solid #dbe3ed; }

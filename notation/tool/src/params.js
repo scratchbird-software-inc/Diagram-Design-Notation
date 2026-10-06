@@ -15,7 +15,12 @@
  * diagram-type editing sheet (CMMN case plan first). It auto-opens when the
  * active view resolves to a profile with a registered sheet body and
  * auto-closes for plain graph views (tool.js sheet dispatch). */
-const DRAWERS = ['style', 'document', 'inspector', 'source', 'typesheet', 'files', 'export', 'animation'];
+/* Phase 8 (2026-10 redesign): `creator` joins as a top drawer (the capability-
+ * filtered entity palette, promoted from the design-bar popup), `relation`
+ * joins the right-exclusive set (the Connect flow's verb selector), and
+ * `properties` joins the bottom-exclusive set (the pointer-selection tool's
+ * per-object properties panel). */
+const DRAWERS = ['style', 'document', 'inspector', 'source', 'typesheet', 'files', 'export', 'animation', 'creator', 'relation', 'properties'];
 const DRAWER_ALIASES = { appearance: 'style' };
 
 /* B1-049: `api` = icon hidden and not user-openable, but openable by host code
@@ -31,10 +36,10 @@ const STORAGE_KEY = 'ddn-tool-drawers';
  * icons=false shows only the viewport controls. Explicit ?drawers= pairs and
  * saved localStorage settings override the preset drawer states. */
 const MODES = {
-  diagram: { toolbar: false, icons: false, drawers: { style: 'none', document: 'none', inspector: 'none', source: 'none', typesheet: 'none', files: 'none', export: 'none', animation: 'none' } },
-  view: { toolbar: true, icons: false, drawers: { style: 'none', document: 'none', inspector: 'none', source: 'none', typesheet: 'none', files: 'none', export: 'none', animation: 'none' } },
-  explore: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'closed', inspector: 'closed', source: 'closed', typesheet: 'closed', files: 'closed', export: 'closed', animation: 'closed' } },
-  edit: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'closed', inspector: 'closed', source: 'open', typesheet: 'closed', files: 'closed', export: 'closed', animation: 'closed' } },
+  diagram: { toolbar: false, icons: false, drawers: { style: 'none', document: 'none', inspector: 'none', source: 'none', typesheet: 'none', files: 'none', export: 'none', animation: 'none', creator: 'none', relation: 'none', properties: 'none' } },
+  view: { toolbar: true, icons: false, drawers: { style: 'none', document: 'none', inspector: 'none', source: 'none', typesheet: 'none', files: 'none', export: 'none', animation: 'none', creator: 'none', relation: 'none', properties: 'none' } },
+  explore: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'closed', inspector: 'closed', source: 'closed', typesheet: 'closed', files: 'closed', export: 'closed', animation: 'closed', creator: 'closed', relation: 'closed', properties: 'closed' } },
+  edit: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'closed', inspector: 'closed', source: 'open', typesheet: 'closed', files: 'closed', export: 'closed', animation: 'closed', creator: 'closed', relation: 'closed', properties: 'closed' } },
   /* B1-051 (D1): design mode — the designer IS the viewer with more
    * functionality. Everything from explore PLUS the editing affordances on by
    * default: source drawer open (like edit), the Document drawer open (nothing
@@ -42,7 +47,7 @@ const MODES = {
    * (still toggleable), and the design bar visible (kind palette
    * click-to-place, connect-two-elements). Embeddable as
    * ?mode=design&toolbar=off + host I/O. */
-  design: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'open', inspector: 'closed', source: 'open', typesheet: 'closed', files: 'closed', export: 'closed', animation: 'closed' } }
+  design: { toolbar: true, icons: true, drawers: { style: 'closed', document: 'open', inspector: 'closed', source: 'open', typesheet: 'closed', files: 'closed', export: 'closed', animation: 'closed', creator: 'closed', relation: 'closed', properties: 'closed' } }
 };
 
 const DEFAULT_MODE = 'explore';

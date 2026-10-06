@@ -4295,8 +4295,38 @@ function measure(g,p){
  }
  return g;
 }
+/* Small-marker silhouettes paint a glyph much smaller than the node box (the
+ * box exists to carry the name below the glyph). Routing, clipping and
+ * interior tests must target the painted glyph, not the box, or edges stop
+ * in mid-air around BPMN events, CMMN listeners, UML pseudostates and flow
+ * finals. Mirrors the render branches below exactly (centres and radii).
+ * forkbar stays box-attached on purpose: its painted bar is 8px tall, so two
+ * same-side endpoints would clamp within the 12px lane clearance and seal
+ * each other's escape corridor (DDN215); the box edge keeps their stubs at
+ * lane distance. */
+function markerOutline(g){
+ const {x,y,w,h,silhouette:t,scale:s}=g,cx=x+w/2;
+ switch(t){
+  case 'bpmevent':return {cx,cy:y+h/2-10*s,r:16*s};
+  case 'userevent':return {cx,cy:y+h/2-8,r:15*s};
+  case 'flowfinal':return {cx,cy:y+h/2-8,r:11*s};
+  case 'junction':return {cx,cy:y+h/2-8,r:7*s};
+  case 'entrypoint':case 'exitpoint':return {cx,cy:y+h/2-8,r:9*s};
+  case 'history':return {cx,cy:y+h/2-8,r:12*s};
+  case 'choice':return {cx,cy:y+h/2-8,r:12*s,diamond:true};
+  case 'terminate':return {cx,cy:y+h/2-8,r:8*s};
+  case 'hourglass':return {cx,cy:y+h/2,hw:Math.min(w/2,26*s),hh:Math.min(h/2,20*s)};
+ }
+ return null;
+}
 function polygon(g){const{x,y,w,h,silhouette:t}=g;
  if(['initial','final'].includes(t)){const ps=[];for(let i=0;i<32;i++){const a=i/32*Math.PI*2;ps.push([x+w/2+12*g.scale*Math.cos(a),y+h/2-8*g.scale+12*g.scale*Math.sin(a)]);}return ps;}
+ const mk=markerOutline(g);
+ if(mk){
+  if(mk.diamond)return [[mk.cx,mk.cy-mk.r],[mk.cx+mk.r,mk.cy],[mk.cx,mk.cy+mk.r],[mk.cx-mk.r,mk.cy]];
+  if(mk.r!=null){const ps=[];for(let i=0;i<32;i++){const a=i/32*Math.PI*2;ps.push([mk.cx+mk.r*Math.cos(a),mk.cy+mk.r*Math.sin(a)]);}return ps;}
+  return [[mk.cx-mk.hw,mk.cy-mk.hh],[mk.cx+mk.hw,mk.cy-mk.hh],[mk.cx+mk.hw,mk.cy+mk.hh],[mk.cx-mk.hw,mk.cy+mk.hh]];
+ }
  if(t==='offpage')return [[x,y],[x+w,y],[x+w,y+h*.7],[x+w/2,y+h],[x,y+h*.7]];
  if(t==='sendpent')return [[x,y],[x+w*.82,y],[x+w,y+h/2],[x+w*.82,y+h],[x,y+h]];
  if(t==='acceptpent')return [[x,y],[x+w,y],[x+w*.82,y+h/2],[x+w,y+h],[x,y+h],[x+w*.18,y+h/2]];
@@ -4319,6 +4349,25 @@ function anchor(g,side,point){
  const {x,y,w,h,silhouette:t}=g;if(!t)return point;
  let px=point[0],py=point[1];const cx=x+w/2,cy=y+h/2;
  if(['initial','final'].includes(t)){const a={east:0,south:Math.PI/2,west:Math.PI,north:-Math.PI/2}[side];return [f$2(cx+12*g.scale*Math.cos(a)),f$2(cy-8*g.scale+12*g.scale*Math.sin(a))];}
+ const mk=markerOutline(g);
+ if(mk){
+  /* Slot-preserving contour attachment (same idiom as the ellipse and
+   * diamond branches below): the endpoint ordering slot's spread coordinate
+   * stays, the approach coordinate moves from the box edge onto the painted
+   * glyph outline. Ray-casting instead would drag slots off their lanes and
+   * congest escape corridors when several relations share a side. */
+  if(mk.diamond){
+   if(side==='east'||side==='west'){py=Math.max(mk.cy-mk.r*.9,Math.min(mk.cy+mk.r*.9,py));px=mk.cx+(side==='east'?1:-1)*mk.r*(1-Math.abs(py-mk.cy)/mk.r);}
+   else {px=Math.max(mk.cx-mk.r*.9,Math.min(mk.cx+mk.r*.9,px));py=mk.cy+(side==='south'?1:-1)*mk.r*(1-Math.abs(px-mk.cx)/mk.r);}
+  }else if(mk.r!=null){
+   if(side==='east'||side==='west'){py=Math.max(mk.cy-.94*mk.r,Math.min(mk.cy+.94*mk.r,py));const dy=Math.abs((py-mk.cy)/mk.r);px=mk.cx+(side==='east'?1:-1)*mk.r*Math.sqrt(1-dy*dy);}
+   else {px=Math.max(mk.cx-.94*mk.r,Math.min(mk.cx+.94*mk.r,px));const dx=Math.abs((px-mk.cx)/mk.r);py=mk.cy+(side==='south'?1:-1)*mk.r*Math.sqrt(1-dx*dx);}
+  }else {
+   px=side==='east'?mk.cx+mk.hw:side==='west'?mk.cx-mk.hw:Math.max(mk.cx-mk.hw,Math.min(mk.cx+mk.hw,px));
+   py=side==='south'?mk.cy+mk.hh:side==='north'?mk.cy-mk.hh:Math.max(mk.cy-mk.hh,Math.min(mk.cy+mk.hh,py));
+  }
+  return [f$2(px),f$2(py)];
+ }
  if(['ellipse','circle','collab'].includes(t)){
   if(side==='east'||side==='west'){const dy=Math.min(.94,Math.abs((py-cy)/(h/2)));px=cx+(side==='east'?1:-1)*w/2*Math.sqrt(1-dy*dy);}else {const dx=Math.min(.94,Math.abs((px-cx)/(w/2)));py=cy+(side==='south'?1:-1)*h/2*Math.sqrt(1-dx*dx);}
  }else if(t==='diamond'){
@@ -8757,9 +8806,11 @@ api.authoring={
  },
  /* Designer Document drawer: flat view-level metadata properties (title,
   * description, source, generator — spec chapter 53 provenance). `undefined`
-  * removes the property. One validated source transaction. */
+  * removes the property. One validated source transaction. Phase 8: `kind`
+  * (the view's registered view kind, chapter 52 — DDN-VP01 validates the
+  * registry on commit) joins for the Style & Layout view-type control. */
  setViewProperties(ws,entry,view,props){
-  const ALLOWED=['title','description','source','generator'];
+  const ALLOWED=['title','description','source','generator','kind'];
   if(!props||typeof props!=='object'||Array.isArray(props))fail('DDN-E001','View property writes need a {key: value} record.');
   for(const k of Object.keys(props))if(!ALLOWED.includes(k))fail('DDN-E001','Unknown view metadata property: '+k+' (allowed: '+ALLOWED.join(', ')+')');
   const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];

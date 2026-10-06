@@ -16,12 +16,14 @@
 <body>
 <header id="ddn-toolbar">
   <a class="ddn-brand" href="../index.html" title="ddn — back to the project site">{{BRAND_LOGO}}</a>
-  <select id="ddn-view-picker" aria-label="View"></select>
   <span class="ddn-sep" data-drawer-icons></span>
   <button id="ddn-icon-files" class="ddn-icon" type="button" data-drawer="files" title="Files drawer — open, catalogue, workspace I/O (left)">
     <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h4l1.5 2H14v7H2z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
   </button>
-  <button id="ddn-icon-style" class="ddn-icon" type="button" data-drawer="style" title="Style &amp; Layout drawer — view style, layout and display settings plus session-preview cosmetics (right)">
+  <button id="ddn-icon-creator" class="ddn-icon" type="button" data-drawer="creator" title="Creator drawer — capability-filtered entity palette and pointer-selection tool (top)">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="2" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="9" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M11.5 9v5M9 11.5h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+  </button>
+  <button id="ddn-icon-style" class="ddn-icon" type="button" data-drawer="style" title="Style &amp; Layout drawer — view selector, view type, style/layout/display settings plus session-preview cosmetics (right)">
     <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
   </button>
   <button id="ddn-icon-document" class="ddn-icon" type="button" data-drawer="document" title="Document drawer — publication, chrome, legend, header/footer, border, background and view metadata saved to source (right)">
@@ -30,11 +32,17 @@
   <button id="ddn-icon-inspector" class="ddn-icon" type="button" data-drawer="inspector" title="Inspector drawer — selection properties: Meaning / This view / Details (right)">
     <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M10.2 10.2 14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
   </button>
+  <button id="ddn-icon-relation" class="ddn-icon" type="button" data-drawer="relation" title="Relation type drawer — the Connect flow's verb list; opens automatically while connecting (right)">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="12.5" r="2" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12.5" cy="3.5" r="2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 10.8 10.8 5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+  </button>
   <button id="ddn-icon-source" class="ddn-icon" type="button" data-drawer="source" title="Source drawer — DDN text editing, apply/discard, diagnostics (bottom)">
     <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 4 2 8l3.5 4M10.5 4 14 8l-3.5 4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
   <button id="ddn-icon-typesheet" class="ddn-icon" type="button" data-drawer="typesheet" title="Type sheet drawer — diagram-type editing sheet for this view (CMMN case plan, …) (bottom)">
     <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 3.5h11M2.5 8h11M2.5 12.5h7" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+  </button>
+  <button id="ddn-icon-properties" class="ddn-icon" type="button" data-drawer="properties" title="Properties drawer — the pointer-selection tool's per-object properties panel (bottom)">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="13" cy="8" r="1.4" fill="currentColor"/></svg>
   </button>
   <button id="ddn-icon-export" class="ddn-icon" type="button" data-drawer="export" title="Export drawer — SVG, PNG, WebP, workspace snapshot (right)">
     <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M5 7l3 3 3-3M2.5 12.5h11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -103,13 +111,25 @@
     </div>
   </aside>
   <div id="ddn-center">
+    <aside id="ddn-drawer-creator" class="ddn-drawer ddn-top" data-state="closed" aria-label="Creator drawer">
+      <div class="ddn-drawer-head"><h2>Creator</h2><button class="ddn-mini" data-close type="button" title="Close creator drawer">×</button></div>
+      <div class="ddn-drawer-body">
+        <div class="ddn-row">
+          <input id="ddn-palette-search" type="search" placeholder="Find a kind…" aria-label="Find an object kind">
+          <button id="ddn-pointer-toggle" type="button" class="ddn-mini" aria-pressed="false" title="Pointer-selection mode — clicking a canvas object opens its properties in the bottom Properties drawer; toggle off to return to normal">Pointer select</button>
+          <label id="ddn-palette-all-wrap" class="ddn-palette-all"><input id="ddn-palette-all" type="checkbox"> All installed kinds</label>
+        </div>
+        <p id="ddn-palette-hint" class="ddn-dim" hidden>This view is generated from data — there is no element palette here. Edit the records and bindings in the Source drawer.</p>
+        <div id="ddn-palette-list" role="listbox" aria-label="Object kinds"></div>
+      </div>
+    </aside>
     <section id="ddn-stage" aria-label="Diagram stage">
       <div id="ddn-design-bar" hidden>
-        <button id="ddn-palette-toggle" type="button" title="Add element — pick a kind, then click on the diagram to place it">
+        <button id="ddn-palette-toggle" type="button" title="Add element — open the Creator drawer, pick a kind, then click on the diagram to place it">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           Add element
         </button>
-        <button id="ddn-connect" type="button" title="Connect two elements — click source, click target, pick a verb">
+        <button id="ddn-connect" type="button" title="Connect two elements — click source, click target, pick a verb in the Relation type drawer">
           <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="12.5" r="2" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12.5" cy="3.5" r="2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 10.8 10.8 5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
           Connect
         </button>
@@ -118,22 +138,6 @@
           Tidy
         </button>
         <span id="ddn-design-hint" class="ddn-dim"></span>
-        <div id="ddn-palette-popup" hidden>
-          <input id="ddn-palette-search" type="search" placeholder="Find a kind…" aria-label="Find an object kind">
-          <p id="ddn-palette-hint" class="ddn-dim" hidden>This view is generated from data — there is no element palette here. Edit the records and bindings in the Source drawer.</p>
-          <label id="ddn-palette-all-wrap" class="ddn-palette-all"><input id="ddn-palette-all" type="checkbox"> All installed kinds</label>
-          <div id="ddn-palette-list" role="listbox" aria-label="Object kinds"></div>
-        </div>
-        <div id="ddn-connect-popup" hidden>
-          <p id="ddn-connect-summary" class="ddn-dim"></p>
-          <p id="ddn-connect-note" class="ddn-dim" hidden></p>
-          <label>Verb <select id="ddn-connect-verb" aria-label="Relationship verb"></select></label>
-          <label>Label <input id="ddn-connect-name" type="text" placeholder="optional"></label>
-          <div class="ddn-row">
-            <button id="ddn-connect-create" type="button">Create relation</button>
-            <button id="ddn-connect-cancel" type="button" class="ddn-mini">Cancel</button>
-          </div>
-        </div>
       </div>
       <div id="ddn-diagram"></div>
       <div id="ddn-busy" hidden><span class="ddn-spinner" aria-hidden="true"></span>Rendering…</div>
@@ -175,7 +179,28 @@
         <div id="ddn-sheet-editor" hidden></div>
       </div>
     </aside>
+    <aside id="ddn-drawer-properties" class="ddn-drawer ddn-bottom" data-state="closed" aria-label="Properties drawer">
+      <div class="ddn-drawer-head"><h2>Properties</h2><span id="ddn-properties-title" class="ddn-dim"></span><button class="ddn-mini" data-close type="button" title="Close properties drawer">×</button></div>
+      <div class="ddn-drawer-body" id="ddn-properties-body">
+        <p class="ddn-dim" id="ddn-properties-empty">Arm Pointer select in the Creator drawer, then click an object in the diagram — its properties (Meaning and This view, read-write) appear here.</p>
+        <div id="ddn-properties-content" hidden></div>
+      </div>
+    </aside>
   </div>
+  <div id="ddn-right-splitter" role="separator" aria-orientation="vertical" aria-label="Resize the right drawer column" title="Drag to resize the right drawer column"></div>
+  <aside id="ddn-drawer-relation" class="ddn-drawer ddn-right" data-state="closed" aria-label="Relation type drawer">
+    <div class="ddn-drawer-head"><h2>Relation type</h2><button class="ddn-mini" data-close type="button" title="Close relation type drawer">×</button></div>
+    <div class="ddn-drawer-body">
+      <p id="ddn-connect-summary" class="ddn-dim">Arm Connect in the design bar, then click a source and a target element — the legal verbs for the pair list here.</p>
+      <p id="ddn-connect-note" class="ddn-dim" hidden></p>
+      <div id="ddn-relselect-list" role="listbox" aria-label="Relationship verbs"></div>
+      <label class="ddn-field"><span>Label</span><input id="ddn-connect-name" type="text" placeholder="optional" aria-label="Relationship label"></label>
+      <div class="ddn-row">
+        <button id="ddn-connect-create" type="button">Create relation</button>
+        <button id="ddn-connect-cancel" type="button" class="ddn-mini">Cancel</button>
+      </div>
+    </div>
+  </aside>
   <aside id="ddn-drawer-inspector" class="ddn-drawer ddn-right" data-state="closed" aria-label="Inspector drawer">
     <div class="ddn-drawer-head"><h2>Inspector</h2><button class="ddn-mini" data-close type="button" title="Close inspector drawer">×</button></div>
     <div class="ddn-drawer-body" id="ddn-inspector-body">
@@ -229,7 +254,15 @@
   </aside>
   <aside id="ddn-drawer-style" class="ddn-drawer ddn-right" data-state="closed" aria-label="Style and Layout drawer">
     <div class="ddn-drawer-head"><h2>Style &amp; Layout</h2><button class="ddn-mini" data-close type="button" title="Close style &amp; layout drawer">×</button></div>
-    <div class="ddn-drawer-body" id="ddn-style-body"></div>
+    <div class="ddn-drawer-body" id="ddn-style-body">
+      <div class="ddn-app-group" id="ddn-style-view">
+        <h3>View</h3>
+        <label class="ddn-field"><span>Active view</span><select id="ddn-view-picker" aria-label="View"></select></label>
+        <label class="ddn-field"><span>View kind</span><select id="ddn-view-kind" aria-label="View kind"></select></label>
+        <label class="ddn-field"><span>Projection kind</span><select id="ddn-projection-kind" aria-label="Projection kind"></select></label>
+        <p class="ddn-dim" id="ddn-view-kind-hint">View kind binds the view's vocabulary (DDN-VP rules) and drives capability filtering, the Creator palette and the Type sheet. Projection kind retypes a data-bound view. Both write to source.</p>
+      </div>
+    </div>
   </aside>
   <aside id="ddn-drawer-document" class="ddn-drawer ddn-right" data-state="closed" aria-label="Document drawer">
     <div class="ddn-drawer-head"><h2>Document</h2><button class="ddn-mini" data-close type="button" title="Close document drawer">×</button></div>
