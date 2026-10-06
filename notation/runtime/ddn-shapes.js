@@ -234,7 +234,14 @@ function segmentInterior(segment,g){
 function render(g,p,theme){
  let planning=null;
  if(g.planningH){planning={x:g.x,y:g.y,w:g.w,h:g.planningH-8*g.scale,items:g.n.properties.x_planning.items};g={...g,y:g.y+g.planningH,h:g.h-g.planningH};}
- const {n,k,x,y,w,h}=g,s=g.scale,look=p.style.look,shape=g.silhouette,mono=p.style.theme==='neutral'||p.theme08==='mono_print',monoPrint=p.theme08==='mono_print',nc=Palette.node(k,theme),ink=monoPrint?'#000000':mono?'#333333':nc.ink,fill=monoPrint?'#FFFFFF':mono?'#FAFAFA':nc.fill,fg=monoPrint?'#000000':nc.text;
+ let {n,k,x,y,w,h}=g;const s=g.scale,look=p.style.look,shape=g.silhouette,mono=p.style.theme==='neutral'||p.theme08==='mono_print',monoPrint=p.theme08==='mono_print',nc=Palette.node(k,theme),fg=monoPrint?'#000000':nc.text;
+ /* 0.8 (chapter 04 §6B): portable element outline/fill on profile
+  * silhouettes — color and fill ride the shared palette channels (ink/fill);
+  * weight and dash are plain-card-silhouette properties this revision
+  * (silhouette paint strings bake their registered widths). Monochrome
+  * themes keep their B/W contract. */
+ let ink=monoPrint?'#000000':mono?'#333333':nc.ink,fill=monoPrint?'#FFFFFF':mono?'#FAFAFA':nc.fill;
+ if(!mono&&!monoPrint){const st=n.properties?.stroke;if(st?.color)ink=st.color;if(n.properties?.fill)fill=n.properties.fill;}
  const opt={...p.style,id:n.id,stroke:ink,fill,width:1.8};
  const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?Sketch.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
  /* B1-074 : shapes-detail (thumbnails) suppresses every text run. */

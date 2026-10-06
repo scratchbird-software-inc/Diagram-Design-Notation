@@ -409,6 +409,31 @@
  "support": "0.8 amendment (spec/04 §6A): portable text properties as a text { } group on style and element declarations and as flat keys on header/footer runs; per-element scope is the label only"
  },
  {
+ "id": "relation.line",
+ "scope": "relation",
+ "name": "line",
+ "default": null,
+ "choices": [
+ "color",
+ "weight",
+ "dash"
+ ],
+ "support": "0.8 amendment (spec/04 §6B): portable line { } group on relations — decorates the painted route and endpoint heads; paint-only"
+ },
+ {
+ "id": "element.stroke",
+ "scope": "element",
+ "name": "stroke",
+ "default": null,
+ "choices": [
+ "color",
+ "weight",
+ "dash",
+ "corners"
+ ],
+ "support": "0.8 amendment (spec/04 §6B): portable stroke { } group + flat fill colour on elements; weight/dash apply to the plain card silhouettes, color/fill also ride profile-silhouette palette channels"
+ },
+ {
  "id": "layout.algorithm",
  "scope": "layout",
  "name": "algorithm",

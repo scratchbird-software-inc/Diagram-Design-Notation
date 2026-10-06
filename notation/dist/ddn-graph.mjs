@@ -500,7 +500,14 @@ function segmentInterior(segment,g){
 function render$2(g,p,theme){
  let planning=null;
  if(g.planningH){planning={x:g.x,y:g.y,w:g.w,h:g.planningH-8*g.scale,items:g.n.properties.x_planning.items};g={...g,y:g.y+g.planningH,h:g.h-g.planningH};}
- const {n,k,x,y,w,h}=g,s=g.scale,look=p.style.look,shape=g.silhouette,mono=p.style.theme==='neutral'||p.theme08==='mono_print',monoPrint=p.theme08==='mono_print',nc=api$a.node(k,theme),ink=monoPrint?'#000000':mono?'#333333':nc.ink,fill=monoPrint?'#FFFFFF':mono?'#FAFAFA':nc.fill,fg=monoPrint?'#000000':nc.text;
+ let {n,k,x,y,w,h}=g;const s=g.scale,look=p.style.look,shape=g.silhouette,mono=p.style.theme==='neutral'||p.theme08==='mono_print',monoPrint=p.theme08==='mono_print',nc=api$a.node(k,theme),fg=monoPrint?'#000000':nc.text;
+ /* 0.8 (chapter 04 §6B): portable element outline/fill on profile
+  * silhouettes — color and fill ride the shared palette channels (ink/fill);
+  * weight and dash are plain-card-silhouette properties this revision
+  * (silhouette paint strings bake their registered widths). Monochrome
+  * themes keep their B/W contract. */
+ let ink=monoPrint?'#000000':mono?'#333333':nc.ink,fill=monoPrint?'#FFFFFF':mono?'#FAFAFA':nc.fill;
+ if(!mono&&!monoPrint){const st=n.properties?.stroke;if(st?.color)ink=st.color;if(n.properties?.fill)fill=n.properties.fill;}
  const opt={...p.style,id:n.id,stroke:ink,fill,width:1.8};
  const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?api$8.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
  /* B1-074 : shapes-detail (thumbnails) suppresses every text run. */
@@ -1997,14 +2004,14 @@ function text$1(x,y,s,size=14,fill='#203047',weight=400,extra='',spec=null){cons
 function multilines(x,y,lines,size=14,fill='#203047',step=20,weight=400,spec=null){return lines.map((l,i)=>text$1(x,y+i*step,l,size,fill,weight,'',spec)).join('');}
 function line(x1,y1,x2,y2,colour,width=1.5,dash=''){return `<path d="M${fmt(x1)} ${fmt(y1)}L${fmt(x2)} ${fmt(y2)}" fill="none" stroke="${esc$1(colour)}" stroke-width="${width}"${dash?` stroke-dasharray="${esc$1(dash)}"`:''}/>`;}
 function glyph(name,x,y,size=24,colour='#285EA8'){return `<use href="#g-${esc$1(name)}" xlink:href="#g-${esc$1(name)}" x="${fmt(x)}" y="${fmt(y)}" width="${size}" height="${size}" style="color:${esc$1(colour)}"/>`;}
-function rect(x,y,w,h,stroke,fill,look='classic',id='',radius=0,style={}){
+function rect(x,y,w,h,stroke,fill,look='classic',id='',radius=0,style={},pen={}){
  if(look==='handDrawn'){
   if(!api$8)throw new Error('DDN handDrawn requires ddn-sketch.js to be loaded before ddn-render.js');
-  return api$8.box(x,y,w,h,{stroke,fill,id,radius,seed:style.seed??42,roughness:style.roughness??1.8,hachure:style.hachure??true});
+  return api$8.box(x,y,w,h,{stroke,fill,id,radius,seed:style.seed??42,roughness:style.roughness??1.8,hachure:style.hachure??true,...(pen.width!==undefined?{width:pen.width}:{}),...(pen.dash?{dash:pen.dash}:{})});
  }
  let out='';
  if(look==='neo')out+=`<rect x="${x+5}" y="${y+7}" width="${w}" height="${h}" rx="${radius}" fill="#000" opacity=".14"/>`;
- out+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${radius}" fill="${esc$1(fill)}" stroke="${esc$1(stroke)}" stroke-width="1.8"/>`;
+ out+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${radius}" fill="${esc$1(fill)}" stroke="${esc$1(stroke)}" stroke-width="${pen.width??1.8}"${pen.dash?` stroke-dasharray="${esc$1(pen.dash)}"`:''}/>`;
  if(look==='neo')out+=`<path d="M${x+radius+1} ${y+3}H${x+w-radius-1}" stroke="${esc$1(stroke)}" stroke-width="3" opacity=".68"/><path d="M${x+12} ${y+7}H${x+w-12}" stroke="#FFF" stroke-width="2" opacity=".75"/>`;
  return out;
 }
@@ -2277,6 +2284,15 @@ function renderNode(g,p,theme,registry){
  const{n,k,x,y,w,h,titleLines,footer}=g,s=g.scale,font=p.style.font,mono=p.style.theme==='neutral'||p.theme08==='mono_print',monoPrint=p.theme08==='mono_print',look=p.style.look;
  const kc=p.theme08==='colorblind_safe'?{...k,colour:cbRemap(k.colour)}:k;
  const nc=api$a.node(kc,theme),ink=monoPrint?'#000000':mono?'#333333':nc.ink,fill=monoPrint?'#FFFFFF':mono?'#FAFAFA':nc.fill,bodyInk=monoPrint?'#000000':nc.text;
+ /* 0.8 (chapter 04 §6B): portable element outline/fill. Applies to the
+  * silhouette outline only — interior separators, chips and text keep their
+  * role channels. Monochrome themes keep their B/W contract: declared
+  * colours are suppressed, but weight/dash (monochrome-safe) still apply.
+  * Stroke paint is SVG-standard centred on the outline path, so half the
+  * declared weight lies outside the laid-out box; geometry, endpoints and
+  * the model fingerprint are untouched. */
+ const elPen=n.properties?.stroke||null,elFill=n.properties?.fill??null;
+ const oInk=mono||monoPrint?ink:(elPen?.color??ink),oFill=mono||monoPrint?fill:(elFill??fill),oDash=elPen?.dash?DDN$1.LINE_DASH_PATTERNS[elPen.dash]:null,oW=elPen?.weight;
  const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
  let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc$1(n.id)}" data-ddn-id="${esc$1(n.id)}" data-ref="${esc$1(n.ref||n.id)}"${g.tfClip||g.tfClipW?' data-textfit-overflow="true"':''} tabindex="0" role="group" aria-label="${esc$1(n.name)}"><title>${esc$1(n.name+' — '+k.name)}</title>`;
  /* 0.8 (chapter 54 §54.2): residual overflow renders with the text clipped at
@@ -2291,7 +2307,7 @@ function renderNode(g,p,theme,registry){
    * field rows: the body text IS the note. */
   const STICKY={yellow:'#FEF3C7',pink:'#FCE7F3',blue:'#DBEAFE',green:'#D1FAE5',orange:'#FFEDD5',purple:'#EDE9FE'};
   const st=n.properties.x_sticky||{},sfill=STICKY[st.colour]||STICKY.yellow;
-  out+=`<rect class="ddn-sticky" data-colour="${esc$1(st.colour||'yellow')}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${4*s}" fill="${esc$1(sfill)}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=`<rect class="ddn-sticky" data-colour="${esc$1(st.colour||'yellow')}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${4*s}" fill="${esc$1(elFill??sfill)}" stroke="${oInk}" stroke-width="${oW??1.8}"${oDash?` stroke-dasharray="${esc$1(oDash)}"`:''}/>`;
   if(st.tape){for(const sx of [x+w*.22,x+w*.78])out+=`<rect class="ddn-sticky-tape" x="${fmt(sx-14*s)}" y="${fmt(y-6*s)}" width="${fmt(28*s)}" height="${fmt(12*s)}" fill="${ink}" opacity=".16" transform="rotate(-4 ${fmt(sx)} ${fmt(y)})"/>`;}
   if(g.noteLines.length){let ty=y+14*s;for(const ln of g.noteLines){api$9.measure(ln,12.5*s,p.style.font,400);out+=text$1(x+15*s,ty+13*s,ln,12.5*s,bodyInk,400);ty+=18*s;}}
   if(st.pin){const px=x+w/2,py=y+4*s;
@@ -2300,13 +2316,13 @@ function renderNode(g,p,theme,registry){
    * or meaning rows (line 201 would also re-draw the note lines). */
   return out+tfClose()+'</g>';
  }else if(k.shape==='note'){
-  if(look==='handDrawn')out+=api$8.polygon([[x,y],[x+w-16*s,y],[x+w,y+16*s],[x+w,y+h],[x,y+h]],{...p.style,id:n.id,stroke:ink,fill});
-  else out+=`<path d="M${x} ${y}H${x+w-16*s}L${x+w} ${y+16*s}V${y+h}H${x}Z" fill="${esc$1(fill)}" stroke="${esc$1(ink)}" stroke-width="1.8"/>`;
+  if(look==='handDrawn')out+=api$8.polygon([[x,y],[x+w-16*s,y],[x+w,y+16*s],[x+w,y+h],[x,y+h]],{...p.style,id:n.id,stroke:oInk,fill:oFill,...(oW!==undefined?{width:oW}:{}),...(oDash?{dash:oDash}:{})});
+  else out+=`<path d="M${x} ${y}H${x+w-16*s}L${x+w} ${y+16*s}V${y+h}H${x}Z" fill="${esc$1(oFill)}" stroke="${esc$1(oInk)}" stroke-width="${oW??1.8}"${oDash?` stroke-dasharray="${esc$1(oDash)}"`:''}/>`;
   out+=styleLine(x+w-16*s,y,x+w-16*s,y+16*s,ink,1.3,'',p,n.id+':fold-v')+styleLine(x+w-16*s,y+16*s,x+w,y+16*s,ink,1.3,'',p,n.id+':fold-h');
  /* B1-100 (corner fix): mind-map entities read as ideas, not records —
   * rounded corners for every node silhouette in the profile, including the
   * plain rect path object/entity/term/domain actually render through. */
- }else out+=rect(x,y,w,h,ink,fill,look,n.id,k.shape==='activity'?18*s:p.projection?.profile==='mindmap.basic@1'?10*s:0,p.style);
+ }else out+=rect(x,y,w,h,oInk,oFill,look,n.id,k.shape==='activity'?18*s:p.projection?.profile==='mindmap.basic@1'?10*s:0,p.style,{width:oW,dash:oDash});
  if(k.shape==='frame')out+=`<rect x="${x+6}" y="${y+6}" width="${w-12}" height="${h-12}" fill="none" stroke="${esc$1(ink)}" stroke-dasharray="4 4" opacity=".55"/>`;
  /* B1-100 icon generalization: icons are not a profileKind privilege — the
   * plain rect path resolves the same binding and leaves room for it. */
@@ -2371,7 +2387,7 @@ function renderNode(g,p,theme,registry){
 }
 function pathD(points){return points.map((v,i)=>(i?'L':'M')+fmt(v[0])+' '+fmt(v[1])).join(' ');}
 function segments(points){return points.slice(1).map((p,i)=>({a:points[i],b:p,i}));}
-function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')return '';let s=`<g transform="translate(${point[0]} ${point[1]}) rotate(${angle})" stroke="${esc$1(ink)}" stroke-width="1.7" fill="none">`;
+function endMark(point,angle,type,ink,surface='white',weight=1.7){if(!type||type==='none')return '';let s=`<g transform="translate(${point[0]} ${point[1]}) rotate(${angle})" stroke="${esc$1(ink)}" stroke-width="${weight}" fill="none">`;
  if(type==='filled')s+=`<path d="M0 0L-10 -5L-10 5Z" fill="${esc$1(ink)}"/>`;
  else if(type==='open')s+='<path d="M-10 -5L0 0L-10 5"/>';
  else if(type==='diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc$1(ink)}"/>`;
@@ -2622,7 +2638,14 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   diagram+=`</g>`;}
  const routeColours={};
  const gensets=new Map();
- for(const a of routes){const colour=mono?(theme08==='mono_print'?'#000000':'#383838'):theme08==='colorblind_safe'?cbRemap(api$a.semantic(a.reg.colour,t)):api$a.semantic(a.reg.colour,t);routeColours[a.id]=colour;
+ for(const a of routes){
+  /* 0.8 (chapter 04 §6B): portable relation line { } — color/weight/dash
+   * decorate the painted route and its endpoint heads (they share the line's
+   * pen). Monochrome themes keep their B/W contract; geometry is untouched. */
+  const lineSpec=a.r.properties?.line||null;
+  const colour=mono?(theme08==='mono_print'?'#000000':'#383838'):lineSpec?.color??(theme08==='colorblind_safe'?cbRemap(api$a.semantic(a.reg.colour,t)):api$a.semantic(a.reg.colour,t));routeColours[a.id]=colour;
+  const lineW=lineSpec?.weight??a.reg.width;
+  const lineDash=lineSpec&&Object.hasOwn(lineSpec,'dash')?DDN$1.LINE_DASH_PATTERNS[lineSpec.dash]:a.reg.pattern;
   /* B1-055 : n-ary association — the binary route is suppressed and
    * replaced by the UML diamond junction at the member centroid with one
    * straight spoke per end, each carrying its role/multiplicity labels. */
@@ -2635,7 +2658,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     const j=[gs2.reduce((v,g)=>v+g.x+g.w/2,0)/gs2.length,gs2.reduce((v,g)=>v+g.y+g.h/2,0)/gs2.length];
     diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-nary','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-id="${esc$1(a.id)}"><title>${esc$1(a.r.name)}</title>`;
     for(const [i,g]of gs2.entries()){const pt=rectAnchor(g,j),ang=Math.atan2(j[1]-pt[1],j[0]-pt[0])*180/Math.PI,rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad),nx=-dy,ny=dx,e=ends[i].label;
-     diagram+=`<path data-nary-spoke="${esc$1(ends[i].element)}" d="M${fmt(j[0])} ${fmt(j[1])}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc$1(colour)}" stroke-width="${a.reg.width}"/>`;
+     diagram+=`<path data-nary-spoke="${esc$1(ends[i].element)}" d="M${fmt(j[0])} ${fmt(j[1])}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc$1(colour)}" stroke-width="${lineW}"${lineDash?` stroke-dasharray="${esc$1(lineDash)}"`:''}/>`;
      if(e?.role)diagram+=`<g class="ddn-endlabel ddn-endlabel-role">`+text$1(pt[0]+dx*22*s+nx*11*s,pt[1]+dy*22*s+ny*11*s,e.role,11*s,colour,500)+'</g>';
      if(e?.multiplicity)diagram+=`<g class="ddn-endlabel ddn-endlabel-multiplicity">`+text$1(pt[0]+dx*22*s-nx*11*s,pt[1]+dy*22*s-ny*11*s+4*s,e.multiplicity,11*s,colour,500)+'</g>';}
     diagram+=`<path data-nary-junction="true" d="M${fmt(j[0])} ${fmt(j[1]-9*s)}L${fmt(j[0]+9*s)} ${fmt(j[1])}L${fmt(j[0])} ${fmt(j[1]+9*s)}L${fmt(j[0]-9*s)} ${fmt(j[1])}Z" fill="${esc$1(colour)}"/>`;
@@ -2657,7 +2680,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
    const dist=Math.hypot(x1-x0,y1-y0),sag=Math.max(8,Math.min(40,dist*.12)),dx=(x1-x0)/3,dy=(y1-y0)/3,wob=((parseInt(hash(a.id),16)%7)-3)*2;
    return `M${fmt(x0)} ${fmt(y0)}C${fmt(x0+dx)} ${fmt(y0+dy+sag+wob)}, ${fmt(x0+2*dx)} ${fmt(y0+2*dy+sag-wob)}, ${fmt(x1)} ${fmt(y1)}`;};
   const pieces=isString?[{points:a.points,d:stringD(a.points),distance:0}]:(a.commands||holes.some(h=>h.overDistance!==undefined)?api$6.curvePieces(a,holes):visibleRoutePieces(a.points,holes));
-  diagram+=`<g${mask} data-route-pieces="${pieces.length}">`+pieces.map((piece,i)=>p.style.look==='handDrawn'?(a.commands?api$8.curve:api$8.polyline)(a.commands?piece.commands:piece.points,{...p.style,id:a.id+':piece:'+i,stroke:colour,width:a.reg.width,dash:a.reg.pattern,dashOffset:-piece.distance,protectedPoints:crossings.filter(c=>c.under===a.id||c.over===a.id).map(c=>c.point)}):`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$1(colour)}" stroke-width="${a.reg.width}"${a.reg.pattern?` stroke-dasharray="${esc$1(a.reg.pattern)}" stroke-dashoffset="${fmt(-piece.distance)}"`:''}/>`).join('')+'</g>';
+  diagram+=`<g${mask} data-route-pieces="${pieces.length}">`+pieces.map((piece,i)=>p.style.look==='handDrawn'?(a.commands?api$8.curve:api$8.polyline)(a.commands?piece.commands:piece.points,{...p.style,id:a.id+':piece:'+i,stroke:colour,width:lineW,dash:lineDash,dashOffset:-piece.distance,protectedPoints:crossings.filter(c=>c.under===a.id||c.over===a.id).map(c=>c.point)}):`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$1(colour)}" stroke-width="${lineW}"${lineDash?` stroke-dasharray="${esc$1(lineDash)}" stroke-dashoffset="${fmt(-piece.distance)}"`:''}/>`).join('')+'</g>';
   /* B1-090: cross-file relations — the badge edge draws dashed and muted. */
   if(a.r.properties.x_external)diagram+=`<g data-external="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$1(t.muted)}" stroke-width="${a.reg.width}" stroke-dasharray="7 5"/>`).join('')+'</g>';
   /* B1-090: x_link — external association note at the route's target end. */
@@ -2670,8 +2693,8 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   /* B1-078: IDEF0 tunneled arrows — an open parenthesis at the tunneled end
    * instead of the arrowhead. */
   const tun=side=>{const xt=a.r.properties.x_tunnel||{};if(!xt[side])return false;return true;};
-  diagram+=(tun('start')?tunnelMark(a.points[0],api$6.curveDirection(a,true),colour):endMark(a.points[0],api$6.curveDirection(a,true),startType,colour,t.surface))
-   +(tun('end')?tunnelMark(a.points.at(-1),api$6.curveDirection(a),colour):endMark(a.points.at(-1),api$6.curveDirection(a),endType,colour,t.surface));
+  diagram+=(tun('start')?tunnelMark(a.points[0],api$6.curveDirection(a,true),colour):endMark(a.points[0],api$6.curveDirection(a,true),startType,colour,t.surface,lineSpec?.weight))
+   +(tun('end')?tunnelMark(a.points.at(-1),api$6.curveDirection(a),colour):endMark(a.points.at(-1),api$6.curveDirection(a),endType,colour,t.surface,lineSpec?.weight));
   /* B1-060 : interrupting/exception edges draw a lightning-bolt
    * zigzag over the route (perpendicular jog per segment, alternating side). */
   if(a.r.properties.x_interrupt===true||a.r.properties.x_exception===true){

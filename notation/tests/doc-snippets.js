@@ -27,11 +27,11 @@ const root=path.resolve(__dirname,'..','..');
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});console.log('PASS',name);}catch(e){results.push({name,pass:false});console.error('FAIL',name,e.stack);}}
 
 const sources=['README.md',...fs.readdirSync(path.join(root,'standard/specification')).filter(f=>f.endsWith('.md')).sort().map(f=>'standard/specification/'+f)];
-/* 0.8 chapters whose core-language constructs the runtime implements (chapters
- * 51–55, plus chapter 57 whose single fence is ordinary 0.6 core syntax):
- * their ```ddn-0.8 fences parse under a ddn "0.6" wrapper. Chapters 56 and 58
- * carry no ```ddn-0.8 fences. */
-const V08_SOURCES=new Set(['standard/specification/51-version-and-compatibility.md','standard/specification/52-view-profiles.md','standard/specification/53-publication-chrome.md','standard/specification/54-text-fit.md','standard/specification/55-markings-and-metadata.md','standard/specification/57-viewer-and-designer-contract.md']);
+/* 0.8 chapters whose core-language constructs the runtime implements (chapter
+ * 04 §6A/§6B and chapters 51–55, plus chapter 57 whose single fence is
+ * ordinary 0.6 core syntax): their ```ddn-0.8 fences parse under a ddn "0.6"
+ * wrapper. Chapters 56 and 58 carry no ```ddn-0.8 fences. */
+const V08_SOURCES=new Set(['standard/specification/04-notation-and-looks.md','standard/specification/51-version-and-compatibility.md','standard/specification/52-view-profiles.md','standard/specification/53-publication-chrome.md','standard/specification/54-text-fit.md','standard/specification/55-markings-and-metadata.md','standard/specification/57-viewer-and-designer-contract.md']);
 
 function extract(file){
   const lines=fs.readFileSync(path.join(root,file),'utf8').split('\n');

@@ -1362,6 +1362,14 @@
       ]
     },
     {
+      "chapter": "line-properties",
+      "entry": "field-guide/sources/line-properties.ddn",
+      "view": "main",
+      "files": [
+        "field-guide/sources/line-properties.ddn"
+      ]
+    },
+    {
       "chapter": "markings-metadata",
       "entry": "field-guide/sources/markings.ddn",
       "view": "main",

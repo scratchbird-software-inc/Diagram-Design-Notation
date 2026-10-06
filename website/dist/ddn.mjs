@@ -1916,7 +1916,7 @@ function validate$1(ir,registry,ErrorClass){
  const allMembers=new Map(ir.elements.flatMap(x=>[...x.fields,...x.ports].map(f=>[f.id,{...f,owner:x}])));
  new Map(registry.kinds.map(k=>[k.keyword,k]));
  const state=v=>isObject(v)&&Object.hasOwn(v,'$state');
- const reserved=new Set(['uid','description','aliases','kind','level','representation','platform','maturity','workload','role','temporal','time','distribution','location','meaning','scope','domain','datatype','key','nullable','presence','shape','unit','default','ordinal','classification','policy','owner','columns','rows','mode','capture','delivery','transport','enforcement','source_mark','target_mark','source_cardinality','target_cardinality','ordering','direction','side','payload','version','allow_extra','discriminator','variants','optional','dimension','target','min','max','text_fit','max_width','max_height','min_font','font_pin','numeral','marks','assertion','text']);
+ const reserved=new Set(['uid','description','aliases','kind','level','representation','platform','maturity','workload','role','temporal','time','distribution','location','meaning','scope','domain','datatype','key','nullable','presence','shape','unit','default','ordinal','classification','policy','owner','columns','rows','mode','capture','delivery','transport','enforcement','source_mark','target_mark','source_cardinality','target_cardinality','ordering','direction','side','payload','version','allow_extra','discriminator','variants','optional','dimension','target','min','max','text_fit','max_width','max_height','min_font','font_pin','numeral','marks','assertion','text','line','stroke','fill']);
  function props(item,target){
   for(const [key,value]of Object.entries(item.properties||{})){
    if(key.startsWith('x_')){
@@ -2880,11 +2880,32 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
   function getPorts(n){const g=group(n,'ports');return g?g.children.filter(c=>c.type==='port'):[];}
   function clean(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(clean);const o={};for(const [k,x]of Object.entries(v))if(!k.startsWith('$offset'))o[k]=clean(x);return o;}
   function quantity(v,def=0){if(typeof v==='number')return v;if(v&&v.$quantity!==undefined){const mult={px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96};if(!Object.hasOwn(mult,v.unit))throw new DDNError('DDN032','Expected length, not '+v.unit);return v.$quantity*mult[v.unit];}return def;}
+  /* 0.8 (chapter 04 §6B): portable stroke/line properties. Two model-level
+   * application contexts sharing one vocabulary: line { color, weight, dash }
+   * on relations and stroke { color, weight, dash, corners } + flat fill on
+   * elements. No view-wide layer — colours are semantic (§5), so declaration
+   * is per target. dash is a closed deterministic keyword set (custom arrays
+   * reserved); corners accepts only round (square reserved). */
+  const LINE_DASH_PATTERNS={solid:null,dashed:'10 6',dotted:'2 5'};
+  function normalizeLineColor(v,fail){
+    if(typeof v!=='string'||!/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(v))fail('DDN-LN02','line/stroke/fill color must be #rgb or #rrggbb; found '+JSON.stringify(v));
+    return v.toLowerCase();
+  }
+  function normalizeStrokeProps(raw,fail,{allowCorners=false,group='stroke'}={}){
+    if(raw===undefined)return undefined;
+    const keys=['color','weight','dash',...(allowCorners?['corners']:[])];
+    if(!raw||typeof raw!=='object'||Array.isArray(raw))fail('DDN-LN01',group+' must be a record of line properties ('+keys.join(', ')+')');
+    for(const k of Object.keys(raw))if(!keys.includes(k))fail('DDN-LN01','Unknown '+group+' property '+k+'; '+group+' accepts '+keys.join(', '));
+    const out={};
+    if(raw.color!==undefined)out.color=normalizeLineColor(raw.color,fail);
+    if(raw.weight!==undefined){const w=quantity(raw.weight,NaN);if(!Number.isFinite(w)||w<0.25||w>16)fail('DDN-LN03',group+' weight must be a length from 0.25px to 16px; found '+JSON.stringify(raw.weight));out.weight=Math.round(w*1000)/1000;}
+    if(raw.dash!==undefined){if(!['solid','dashed','dotted'].includes(raw.dash))fail('DDN-LN04',group+' dash must be solid, dashed or dotted (custom dash arrays are reserved for a future revision); found '+JSON.stringify(raw.dash));out.dash=raw.dash;}
+    if(allowCorners&&raw.corners!==undefined){if(raw.corners!=='round')fail('DDN-LN05','stroke corners must be round (square corner treatment is reserved for a future revision); found '+JSON.stringify(raw.corners));}
+    return out;
+  }
   /* 0.8 (chapter 04 §6A): the portable text-property vocabulary, validated
-   * once for all three application contexts (style text { } group, element
-   * text { } group, flat run keys). `fail(code,message)` throws the caller's
-   * located error. Returns a normalized record carrying only set,
-   * non-default keys (bold→700, decoration none and variant normal dropped). */
+   * once for all three application contexts (style/element text { } groups,
+   * flat run keys); returns only set, non-default keys. */
   const TEXT_KEYS=['weight','italic','decoration','variant','color'];
   function normalizeTextProps(raw,fail){
     if(raw===undefined)return undefined;
@@ -3089,7 +3110,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     const raw=usedData.flatMap(n=>n.children.filter(c=>!c.group));
     const elemTypes=['object','domain','sample','flow','assertion'];
     for(const n of raw){if(!elemTypes.includes(n.type)&&n.type!=='relation')throw new DDNError('DDN042','Unsupported data declaration '+n.type,n.source,n.start);}
-    for(const n of raw){if(n.from&&n.type!=='relation')throw new DDNError('DDN055','Only relations accept header endpoints',n.source,n.start);for(const g of n.children)if(g.group&&!(['fields','ports'].includes(g.type)||(g.type==='text'&&n.type!=='relation')))throw new DDNError('DDN900','Reference model does not implement group '+g.type,n.source,g.start);for(const f of getFields(n))for(const g of f.children)if(!g.group||g.type!=='fields')throw new DDNError('DDN042','Nested fields accept only a fields block',f.source,f.start);}
+    for(const n of raw){if(n.from&&n.type!=='relation')throw new DDNError('DDN055','Only relations accept header endpoints',n.source,n.start);for(const g of n.children)if(g.group&&!(['fields','ports'].includes(g.type)||(g.type==='text'&&n.type!=='relation')||(g.type==='stroke'&&n.type!=='relation')||(g.type==='line'&&n.type==='relation')))throw new DDNError('DDN900','Reference model does not implement group '+g.type,n.source,g.start);for(const f of getFields(n))for(const g of f.children)if(!g.group||g.type!=='fields')throw new DDNError('DDN042','Nested fields accept only a fields block',f.source,f.start);}
     const rawNodes=raw.filter(n=>elemTypes.includes(n.type));
     const rawRelations=raw.filter(n=>n.type==='relation');
     const p={};for(const k of Object.keys(DEFAULTS))p[k]=JSON.parse(JSON.stringify(DEFAULTS[k]));
@@ -3261,6 +3282,12 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
        * label only (fields/details/notes stay role-baked this revision). */
       const textGroup=group(n,'text');
       if(textGroup){textGate(n,'A text { } group on an element');properties.text=txCheck(textGroup.props,textGroup.source,textGroup.start);}
+      /* 0.8 (chapter 04 §6B): portable element outline (stroke { }) and fill
+       * (flat colour). Paint-only: layout, routing and the model fingerprint
+       * never change. */
+      const strokeGroup=group(n,'stroke');
+      if(strokeGroup){textGate(n,'A stroke { } group on an element');properties.stroke=normalizeStrokeProps(strokeGroup.props,(code,msg)=>{throw new DDNError(code,msg,strokeGroup.source,strokeGroup.start);},{allowCorners:true});}
+      if(properties.fill!==undefined){textGate(n,'fill on an element');properties.fill=normalizeLineColor(properties.fill,(code,msg)=>{throw new DDNError(code,msg,n.source,n.start);});}
       if(n.type==='sample'){
         if(!Array.isArray(properties.columns)||!Array.isArray(properties.rows))throw new DDNError('DDN051','Sample requires columns and rows',n.source,n.start);
         for(const c of n.props.columns){const f=ws.resolve(c,n);if(f.type!=='field')throw new DDNError('DDN052','Sample columns must bind to fields',n.source,n.start);}
@@ -3271,7 +3298,12 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     const elementIds=new Set(elements.map(n=>n.id));
     for(const n of elements)tfCheck(n.properties,n.source.file,n.source.start);
     function endpoint(r,n){let t=ws.resolve(r,n);if(['field','port'].includes(t.type)){const path=t.path.split('.');path.pop();let owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));while(owner?.type==='field'){path.pop();owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));}if(!owner||!elementIds.has(owner.uid)&&!ws.archPaths.has(owner.doc?.source))throw new DDNError('DDN054','Endpoint owner is outside the selected data modules',n.source,n.start);return {element:owner.uid,member:t.uid,role:t.type};}if(!elementIds.has(t.uid)&&!ws.archPaths.has(t.doc?.source))throw new DDNError('DDN054','Relation endpoint is not a data element in scope',n.source,n.start);return {element:t.uid};}
-    const relations=rawRelations.map(n=>{if(!n.from||!n.to)throw new DDNError('DDN055','Relation requires two endpoints',n.source,n.start);let r=relationEntry(registry,n.props.kind||'assoc');if(!r)throw new DDNError('DDN056','Unknown relationship kind '+n.props.kind,n.source,n.start);return {id:n.uid,ref:n.path,name:n.label||r.name,kind:r.keyword,kindCode:r.code,from:endpoint(n.from,n),to:endpoint(n.to,n),properties:resolveValue(n.props,n),source:{file:n.source,start:n.start,end:n.end}};});
+    const relations=rawRelations.map(n=>{if(!n.from||!n.to)throw new DDNError('DDN055','Relation requires two endpoints',n.source,n.start);let r=relationEntry(registry,n.props.kind||'assoc');if(!r)throw new DDNError('DDN056','Unknown relationship kind '+n.props.kind,n.source,n.start);const properties=resolveValue(n.props,n);
+      /* 0.8 (chapter 04 §6B): portable relation line { } — decorates the
+       * painted route and its endpoint heads; routed geometry is untouched. */
+      const lineGroup=group(n,'line');
+      if(lineGroup){textGate(n,'A line { } group on a relation');properties.line=normalizeStrokeProps(lineGroup.props,(code,msg)=>{throw new DDNError(code,msg,lineGroup.source,lineGroup.start);},{group:'line'});}
+      return {id:n.uid,ref:n.path,name:n.label||r.name,kind:r.keyword,kindCode:r.code,from:endpoint(n.from,n),to:endpoint(n.to,n),properties,source:{file:n.source,start:n.start,end:n.end}};});
     // B1-033: declarative motion vocabulary (D2). Values are validated here;
     // emission is the renderer's job. rate beyond the DOM-honest cap is a
     // warning (DDN-W016) and clamps at render time.
@@ -3626,7 +3658,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
    * namespace (first publish wins); never touch the module-local copy. */
   const Packs=namespace('DDNPacks');
   const registerIconPack=pack=>Packs.registerIconPack(pack,ICONLIBS.libraries);
-  const api$f={VERSION: VERSION$5,SOURCE_VERSIONS,DDNError,lex,parse: parse$1,bundle,createWorkspace: createWorkspace$1,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,normalizeTextProps,profiles:api$i,viewProfiles:api$g,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
+  const api$f={VERSION: VERSION$5,SOURCE_VERSIONS,DDNError,lex,parse: parse$1,bundle,createWorkspace: createWorkspace$1,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,normalizeTextProps,LINE_DASH_PATTERNS,profiles:api$i,viewProfiles:api$g,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
   publishNamespace('DDN',api$f);
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -4482,7 +4514,14 @@ function segmentInterior(segment,g){
 function render$3(g,p,theme){
  let planning=null;
  if(g.planningH){planning={x:g.x,y:g.y,w:g.w,h:g.planningH-8*g.scale,items:g.n.properties.x_planning.items};g={...g,y:g.y+g.planningH,h:g.h-g.planningH};}
- const {n,k,x,y,w,h}=g,s=g.scale,look=p.style.look,shape=g.silhouette,mono=p.style.theme==='neutral'||p.theme08==='mono_print',monoPrint=p.theme08==='mono_print',nc=api$b.node(k,theme),ink=monoPrint?'#000000':mono?'#333333':nc.ink,fill=monoPrint?'#FFFFFF':mono?'#FAFAFA':nc.fill,fg=monoPrint?'#000000':nc.text;
+ let {n,k,x,y,w,h}=g;const s=g.scale,look=p.style.look,shape=g.silhouette,mono=p.style.theme==='neutral'||p.theme08==='mono_print',monoPrint=p.theme08==='mono_print',nc=api$b.node(k,theme),fg=monoPrint?'#000000':nc.text;
+ /* 0.8 (chapter 04 §6B): portable element outline/fill on profile
+  * silhouettes — color and fill ride the shared palette channels (ink/fill);
+  * weight and dash are plain-card-silhouette properties this revision
+  * (silhouette paint strings bake their registered widths). Monochrome
+  * themes keep their B/W contract. */
+ let ink=monoPrint?'#000000':mono?'#333333':nc.ink,fill=monoPrint?'#FFFFFF':mono?'#FAFAFA':nc.fill;
+ if(!mono&&!monoPrint){const st=n.properties?.stroke;if(st?.color)ink=st.color;if(n.properties?.fill)fill=n.properties.fill;}
  const opt={...p.style,id:n.id,stroke:ink,fill,width:1.8};
  const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?api$9.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f$2(x1)} ${f$2(y1)}L${f$2(x2)} ${f$2(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
  /* B1-074 : shapes-detail (thumbnails) suppresses every text run. */
@@ -5754,14 +5793,14 @@ function text$1(x,y,s,size=14,fill='#203047',weight=400,extra='',spec=null){cons
 function multilines(x,y,lines,size=14,fill='#203047',step=20,weight=400,spec=null){return lines.map((l,i)=>text$1(x,y+i*step,l,size,fill,weight,'',spec)).join('');}
 function line(x1,y1,x2,y2,colour,width=1.5,dash=''){return `<path d="M${fmt$1(x1)} ${fmt$1(y1)}L${fmt$1(x2)} ${fmt$1(y2)}" fill="none" stroke="${esc$3(colour)}" stroke-width="${width}"${dash?` stroke-dasharray="${esc$3(dash)}"`:''}/>`;}
 function glyph(name,x,y,size=24,colour='#285EA8'){return `<use href="#g-${esc$3(name)}" xlink:href="#g-${esc$3(name)}" x="${fmt$1(x)}" y="${fmt$1(y)}" width="${size}" height="${size}" style="color:${esc$3(colour)}"/>`;}
-function rect(x,y,w,h,stroke,fill,look='classic',id='',radius=0,style={}){
+function rect(x,y,w,h,stroke,fill,look='classic',id='',radius=0,style={},pen={}){
  if(look==='handDrawn'){
   if(!api$9)throw new Error('DDN handDrawn requires ddn-sketch.js to be loaded before ddn-render.js');
-  return api$9.box(x,y,w,h,{stroke,fill,id,radius,seed:style.seed??42,roughness:style.roughness??1.8,hachure:style.hachure??true});
+  return api$9.box(x,y,w,h,{stroke,fill,id,radius,seed:style.seed??42,roughness:style.roughness??1.8,hachure:style.hachure??true,...(pen.width!==undefined?{width:pen.width}:{}),...(pen.dash?{dash:pen.dash}:{})});
  }
  let out='';
  if(look==='neo')out+=`<rect x="${x+5}" y="${y+7}" width="${w}" height="${h}" rx="${radius}" fill="#000" opacity=".14"/>`;
- out+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${radius}" fill="${esc$3(fill)}" stroke="${esc$3(stroke)}" stroke-width="1.8"/>`;
+ out+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${radius}" fill="${esc$3(fill)}" stroke="${esc$3(stroke)}" stroke-width="${pen.width??1.8}"${pen.dash?` stroke-dasharray="${esc$3(pen.dash)}"`:''}/>`;
  if(look==='neo')out+=`<path d="M${x+radius+1} ${y+3}H${x+w-radius-1}" stroke="${esc$3(stroke)}" stroke-width="3" opacity=".68"/><path d="M${x+12} ${y+7}H${x+w-12}" stroke="#FFF" stroke-width="2" opacity=".75"/>`;
  return out;
 }
@@ -6034,6 +6073,15 @@ function renderNode(g,p,theme,registry){
  const{n,k,x,y,w,h,titleLines,footer}=g,s=g.scale,font=p.style.font,mono=p.style.theme==='neutral'||p.theme08==='mono_print',monoPrint=p.theme08==='mono_print',look=p.style.look;
  const kc=p.theme08==='colorblind_safe'?{...k,colour:cbRemap(k.colour)}:k;
  const nc=api$b.node(kc,theme),ink=monoPrint?'#000000':mono?'#333333':nc.ink,fill=monoPrint?'#FFFFFF':mono?'#FAFAFA':nc.fill,bodyInk=monoPrint?'#000000':nc.text;
+ /* 0.8 (chapter 04 §6B): portable element outline/fill. Applies to the
+  * silhouette outline only — interior separators, chips and text keep their
+  * role channels. Monochrome themes keep their B/W contract: declared
+  * colours are suppressed, but weight/dash (monochrome-safe) still apply.
+  * Stroke paint is SVG-standard centred on the outline path, so half the
+  * declared weight lies outside the laid-out box; geometry, endpoints and
+  * the model fingerprint are untouched. */
+ const elPen=n.properties?.stroke||null,elFill=n.properties?.fill??null;
+ const oInk=mono||monoPrint?ink:(elPen?.color??ink),oFill=mono||monoPrint?fill:(elFill??fill),oDash=elPen?.dash?DDN$1.LINE_DASH_PATTERNS[elPen.dash]:null,oW=elPen?.weight;
  const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
  let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc$3(n.id)}" data-ddn-id="${esc$3(n.id)}" data-ref="${esc$3(n.ref||n.id)}"${g.tfClip||g.tfClipW?' data-textfit-overflow="true"':''} tabindex="0" role="group" aria-label="${esc$3(n.name)}"><title>${esc$3(n.name+' — '+k.name)}</title>`;
  /* 0.8 (chapter 54 §54.2): residual overflow renders with the text clipped at
@@ -6048,7 +6096,7 @@ function renderNode(g,p,theme,registry){
    * field rows: the body text IS the note. */
   const STICKY={yellow:'#FEF3C7',pink:'#FCE7F3',blue:'#DBEAFE',green:'#D1FAE5',orange:'#FFEDD5',purple:'#EDE9FE'};
   const st=n.properties.x_sticky||{},sfill=STICKY[st.colour]||STICKY.yellow;
-  out+=`<rect class="ddn-sticky" data-colour="${esc$3(st.colour||'yellow')}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${4*s}" fill="${esc$3(sfill)}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=`<rect class="ddn-sticky" data-colour="${esc$3(st.colour||'yellow')}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${4*s}" fill="${esc$3(elFill??sfill)}" stroke="${oInk}" stroke-width="${oW??1.8}"${oDash?` stroke-dasharray="${esc$3(oDash)}"`:''}/>`;
   if(st.tape){for(const sx of [x+w*.22,x+w*.78])out+=`<rect class="ddn-sticky-tape" x="${fmt$1(sx-14*s)}" y="${fmt$1(y-6*s)}" width="${fmt$1(28*s)}" height="${fmt$1(12*s)}" fill="${ink}" opacity=".16" transform="rotate(-4 ${fmt$1(sx)} ${fmt$1(y)})"/>`;}
   if(g.noteLines.length){let ty=y+14*s;for(const ln of g.noteLines){api$a.measure(ln,12.5*s,p.style.font,400);out+=text$1(x+15*s,ty+13*s,ln,12.5*s,bodyInk,400);ty+=18*s;}}
   if(st.pin){const px=x+w/2,py=y+4*s;
@@ -6057,13 +6105,13 @@ function renderNode(g,p,theme,registry){
    * or meaning rows (line 201 would also re-draw the note lines). */
   return out+tfClose()+'</g>';
  }else if(k.shape==='note'){
-  if(look==='handDrawn')out+=api$9.polygon([[x,y],[x+w-16*s,y],[x+w,y+16*s],[x+w,y+h],[x,y+h]],{...p.style,id:n.id,stroke:ink,fill});
-  else out+=`<path d="M${x} ${y}H${x+w-16*s}L${x+w} ${y+16*s}V${y+h}H${x}Z" fill="${esc$3(fill)}" stroke="${esc$3(ink)}" stroke-width="1.8"/>`;
+  if(look==='handDrawn')out+=api$9.polygon([[x,y],[x+w-16*s,y],[x+w,y+16*s],[x+w,y+h],[x,y+h]],{...p.style,id:n.id,stroke:oInk,fill:oFill,...(oW!==undefined?{width:oW}:{}),...(oDash?{dash:oDash}:{})});
+  else out+=`<path d="M${x} ${y}H${x+w-16*s}L${x+w} ${y+16*s}V${y+h}H${x}Z" fill="${esc$3(oFill)}" stroke="${esc$3(oInk)}" stroke-width="${oW??1.8}"${oDash?` stroke-dasharray="${esc$3(oDash)}"`:''}/>`;
   out+=styleLine(x+w-16*s,y,x+w-16*s,y+16*s,ink,1.3,'',p,n.id+':fold-v')+styleLine(x+w-16*s,y+16*s,x+w,y+16*s,ink,1.3,'',p,n.id+':fold-h');
  /* B1-100 (corner fix): mind-map entities read as ideas, not records —
   * rounded corners for every node silhouette in the profile, including the
   * plain rect path object/entity/term/domain actually render through. */
- }else out+=rect(x,y,w,h,ink,fill,look,n.id,k.shape==='activity'?18*s:p.projection?.profile==='mindmap.basic@1'?10*s:0,p.style);
+ }else out+=rect(x,y,w,h,oInk,oFill,look,n.id,k.shape==='activity'?18*s:p.projection?.profile==='mindmap.basic@1'?10*s:0,p.style,{width:oW,dash:oDash});
  if(k.shape==='frame')out+=`<rect x="${x+6}" y="${y+6}" width="${w-12}" height="${h-12}" fill="none" stroke="${esc$3(ink)}" stroke-dasharray="4 4" opacity=".55"/>`;
  /* B1-100 icon generalization: icons are not a profileKind privilege — the
   * plain rect path resolves the same binding and leaves room for it. */
@@ -6128,7 +6176,7 @@ function renderNode(g,p,theme,registry){
 }
 function pathD(points){return points.map((v,i)=>(i?'L':'M')+fmt$1(v[0])+' '+fmt$1(v[1])).join(' ');}
 function segments(points){return points.slice(1).map((p,i)=>({a:points[i],b:p,i}));}
-function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')return '';let s=`<g transform="translate(${point[0]} ${point[1]}) rotate(${angle})" stroke="${esc$3(ink)}" stroke-width="1.7" fill="none">`;
+function endMark(point,angle,type,ink,surface='white',weight=1.7){if(!type||type==='none')return '';let s=`<g transform="translate(${point[0]} ${point[1]}) rotate(${angle})" stroke="${esc$3(ink)}" stroke-width="${weight}" fill="none">`;
  if(type==='filled')s+=`<path d="M0 0L-10 -5L-10 5Z" fill="${esc$3(ink)}"/>`;
  else if(type==='open')s+='<path d="M-10 -5L0 0L-10 5"/>';
  else if(type==='diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc$3(ink)}"/>`;
@@ -6379,7 +6427,14 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   diagram+=`</g>`;}
  const routeColours={};
  const gensets=new Map();
- for(const a of routes){const colour=mono?(theme08==='mono_print'?'#000000':'#383838'):theme08==='colorblind_safe'?cbRemap(api$b.semantic(a.reg.colour,t)):api$b.semantic(a.reg.colour,t);routeColours[a.id]=colour;
+ for(const a of routes){
+  /* 0.8 (chapter 04 §6B): portable relation line { } — color/weight/dash
+   * decorate the painted route and its endpoint heads (they share the line's
+   * pen). Monochrome themes keep their B/W contract; geometry is untouched. */
+  const lineSpec=a.r.properties?.line||null;
+  const colour=mono?(theme08==='mono_print'?'#000000':'#383838'):lineSpec?.color??(theme08==='colorblind_safe'?cbRemap(api$b.semantic(a.reg.colour,t)):api$b.semantic(a.reg.colour,t));routeColours[a.id]=colour;
+  const lineW=lineSpec?.weight??a.reg.width;
+  const lineDash=lineSpec&&Object.hasOwn(lineSpec,'dash')?DDN$1.LINE_DASH_PATTERNS[lineSpec.dash]:a.reg.pattern;
   /* B1-055 : n-ary association — the binary route is suppressed and
    * replaced by the UML diamond junction at the member centroid with one
    * straight spoke per end, each carrying its role/multiplicity labels. */
@@ -6392,7 +6447,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     const j=[gs2.reduce((v,g)=>v+g.x+g.w/2,0)/gs2.length,gs2.reduce((v,g)=>v+g.y+g.h/2,0)/gs2.length];
     diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-nary','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-id="${esc$3(a.id)}"><title>${esc$3(a.r.name)}</title>`;
     for(const [i,g]of gs2.entries()){const pt=rectAnchor(g,j),ang=Math.atan2(j[1]-pt[1],j[0]-pt[0])*180/Math.PI,rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad),nx=-dy,ny=dx,e=ends[i].label;
-     diagram+=`<path data-nary-spoke="${esc$3(ends[i].element)}" d="M${fmt$1(j[0])} ${fmt$1(j[1])}L${fmt$1(pt[0])} ${fmt$1(pt[1])}" fill="none" stroke="${esc$3(colour)}" stroke-width="${a.reg.width}"/>`;
+     diagram+=`<path data-nary-spoke="${esc$3(ends[i].element)}" d="M${fmt$1(j[0])} ${fmt$1(j[1])}L${fmt$1(pt[0])} ${fmt$1(pt[1])}" fill="none" stroke="${esc$3(colour)}" stroke-width="${lineW}"${lineDash?` stroke-dasharray="${esc$3(lineDash)}"`:''}/>`;
      if(e?.role)diagram+=`<g class="ddn-endlabel ddn-endlabel-role">`+text$1(pt[0]+dx*22*s+nx*11*s,pt[1]+dy*22*s+ny*11*s,e.role,11*s,colour,500)+'</g>';
      if(e?.multiplicity)diagram+=`<g class="ddn-endlabel ddn-endlabel-multiplicity">`+text$1(pt[0]+dx*22*s-nx*11*s,pt[1]+dy*22*s-ny*11*s+4*s,e.multiplicity,11*s,colour,500)+'</g>';}
     diagram+=`<path data-nary-junction="true" d="M${fmt$1(j[0])} ${fmt$1(j[1]-9*s)}L${fmt$1(j[0]+9*s)} ${fmt$1(j[1])}L${fmt$1(j[0])} ${fmt$1(j[1]+9*s)}L${fmt$1(j[0]-9*s)} ${fmt$1(j[1])}Z" fill="${esc$3(colour)}"/>`;
@@ -6414,7 +6469,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
    const dist=Math.hypot(x1-x0,y1-y0),sag=Math.max(8,Math.min(40,dist*.12)),dx=(x1-x0)/3,dy=(y1-y0)/3,wob=((parseInt(hash(a.id),16)%7)-3)*2;
    return `M${fmt$1(x0)} ${fmt$1(y0)}C${fmt$1(x0+dx)} ${fmt$1(y0+dy+sag+wob)}, ${fmt$1(x0+2*dx)} ${fmt$1(y0+2*dy+sag-wob)}, ${fmt$1(x1)} ${fmt$1(y1)}`;};
   const pieces=isString?[{points:a.points,d:stringD(a.points),distance:0}]:(a.commands||holes.some(h=>h.overDistance!==undefined)?api$7.curvePieces(a,holes):visibleRoutePieces(a.points,holes));
-  diagram+=`<g${mask} data-route-pieces="${pieces.length}">`+pieces.map((piece,i)=>p.style.look==='handDrawn'?(a.commands?api$9.curve:api$9.polyline)(a.commands?piece.commands:piece.points,{...p.style,id:a.id+':piece:'+i,stroke:colour,width:a.reg.width,dash:a.reg.pattern,dashOffset:-piece.distance,protectedPoints:crossings.filter(c=>c.under===a.id||c.over===a.id).map(c=>c.point)}):`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$3(colour)}" stroke-width="${a.reg.width}"${a.reg.pattern?` stroke-dasharray="${esc$3(a.reg.pattern)}" stroke-dashoffset="${fmt$1(-piece.distance)}"`:''}/>`).join('')+'</g>';
+  diagram+=`<g${mask} data-route-pieces="${pieces.length}">`+pieces.map((piece,i)=>p.style.look==='handDrawn'?(a.commands?api$9.curve:api$9.polyline)(a.commands?piece.commands:piece.points,{...p.style,id:a.id+':piece:'+i,stroke:colour,width:lineW,dash:lineDash,dashOffset:-piece.distance,protectedPoints:crossings.filter(c=>c.under===a.id||c.over===a.id).map(c=>c.point)}):`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$3(colour)}" stroke-width="${lineW}"${lineDash?` stroke-dasharray="${esc$3(lineDash)}" stroke-dashoffset="${fmt$1(-piece.distance)}"`:''}/>`).join('')+'</g>';
   /* B1-090: cross-file relations — the badge edge draws dashed and muted. */
   if(a.r.properties.x_external)diagram+=`<g data-external="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$3(t.muted)}" stroke-width="${a.reg.width}" stroke-dasharray="7 5"/>`).join('')+'</g>';
   /* B1-090: x_link — external association note at the route's target end. */
@@ -6427,8 +6482,8 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   /* B1-078: IDEF0 tunneled arrows — an open parenthesis at the tunneled end
    * instead of the arrowhead. */
   const tun=side=>{const xt=a.r.properties.x_tunnel||{};if(!xt[side])return false;return true;};
-  diagram+=(tun('start')?tunnelMark(a.points[0],api$7.curveDirection(a,true),colour):endMark(a.points[0],api$7.curveDirection(a,true),startType,colour,t.surface))
-   +(tun('end')?tunnelMark(a.points.at(-1),api$7.curveDirection(a),colour):endMark(a.points.at(-1),api$7.curveDirection(a),endType,colour,t.surface));
+  diagram+=(tun('start')?tunnelMark(a.points[0],api$7.curveDirection(a,true),colour):endMark(a.points[0],api$7.curveDirection(a,true),startType,colour,t.surface,lineSpec?.weight))
+   +(tun('end')?tunnelMark(a.points.at(-1),api$7.curveDirection(a),colour):endMark(a.points.at(-1),api$7.curveDirection(a),endType,colour,t.surface,lineSpec?.weight));
   /* B1-060 : interrupting/exception edges draw a lightning-bolt
    * zigzag over the route (perpendicular jog per segment, alternating side). */
   if(a.r.properties.x_interrupt===true||a.r.properties.x_exception===true){

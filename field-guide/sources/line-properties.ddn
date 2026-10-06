@@ -1,0 +1,37 @@
+ddn "0.6";
+module "ddn.fieldguide.lineprops";
+
+// Portable stroke/line properties (spec ch. 04 §6B): one paint vocabulary —
+// color, weight, dash — as line { } on relations and stroke { } + flat fill
+// on elements. Paint-only: layout, routing, endpoints and the model
+// fingerprint never change.
+
+data model {
+  object invoice "Invoice gateway" {
+    kind: service;
+    fill: "#FFF7ED";
+    stroke { color: "#C2410C"; weight: 3px; dash: dashed; }
+    fields {
+      total: money;
+      status: string;
+    }
+  }
+  object ledger "Ledger archive" {
+    kind: database;
+    fill: "#EFF6FF";
+    stroke { color: "#1D4ED8"; weight: 2px; }
+  }
+  object legacy "Legacy export (retired)" {
+    kind: queue;
+  }
+  relation posts @invoice -> @ledger {
+    kind: flow;
+    line { color: "#1D4ED8"; weight: 2.5px; dash: dotted; }
+  }
+  relation fed @legacy -> @invoice { kind: flow; }
+}
+
+view main "Portable stroke and line properties" {
+  data: [@model];
+  publication { size: content; fit: none; }
+}

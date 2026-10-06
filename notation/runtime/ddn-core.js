@@ -657,11 +657,32 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
   function clean(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(clean);const o={};for(const [k,x]of Object.entries(v))if(!k.startsWith('$offset'))o[k]=clean(x);return o;}
   function enumOf(v){return typeof v==='string'?v:undefined;}
   function quantity(v,def=0){if(typeof v==='number')return v;if(v&&v.$quantity!==undefined){const mult={px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96};if(!Object.hasOwn(mult,v.unit))throw new DDNError('DDN032','Expected length, not '+v.unit);return v.$quantity*mult[v.unit];}return def;}
+  /* 0.8 (chapter 04 §6B): portable stroke/line properties. Two model-level
+   * application contexts sharing one vocabulary: line { color, weight, dash }
+   * on relations and stroke { color, weight, dash, corners } + flat fill on
+   * elements. No view-wide layer — colours are semantic (§5), so declaration
+   * is per target. dash is a closed deterministic keyword set (custom arrays
+   * reserved); corners accepts only round (square reserved). */
+  const LINE_DASH_PATTERNS={solid:null,dashed:'10 6',dotted:'2 5'};
+  function normalizeLineColor(v,fail){
+    if(typeof v!=='string'||!/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(v))fail('DDN-LN02','line/stroke/fill color must be #rgb or #rrggbb; found '+JSON.stringify(v));
+    return v.toLowerCase();
+  }
+  function normalizeStrokeProps(raw,fail,{allowCorners=false,group='stroke'}={}){
+    if(raw===undefined)return undefined;
+    const keys=['color','weight','dash',...(allowCorners?['corners']:[])];
+    if(!raw||typeof raw!=='object'||Array.isArray(raw))fail('DDN-LN01',group+' must be a record of line properties ('+keys.join(', ')+')');
+    for(const k of Object.keys(raw))if(!keys.includes(k))fail('DDN-LN01','Unknown '+group+' property '+k+'; '+group+' accepts '+keys.join(', '));
+    const out={};
+    if(raw.color!==undefined)out.color=normalizeLineColor(raw.color,fail);
+    if(raw.weight!==undefined){const w=quantity(raw.weight,NaN);if(!Number.isFinite(w)||w<0.25||w>16)fail('DDN-LN03',group+' weight must be a length from 0.25px to 16px; found '+JSON.stringify(raw.weight));out.weight=Math.round(w*1000)/1000;}
+    if(raw.dash!==undefined){if(!['solid','dashed','dotted'].includes(raw.dash))fail('DDN-LN04',group+' dash must be solid, dashed or dotted (custom dash arrays are reserved for a future revision); found '+JSON.stringify(raw.dash));out.dash=raw.dash;}
+    if(allowCorners&&raw.corners!==undefined){if(raw.corners!=='round')fail('DDN-LN05','stroke corners must be round (square corner treatment is reserved for a future revision); found '+JSON.stringify(raw.corners));}
+    return out;
+  }
   /* 0.8 (chapter 04 §6A): the portable text-property vocabulary, validated
-   * once for all three application contexts (style text { } group, element
-   * text { } group, flat run keys). `fail(code,message)` throws the caller's
-   * located error. Returns a normalized record carrying only set,
-   * non-default keys (bold→700, decoration none and variant normal dropped). */
+   * once for all three application contexts (style/element text { } groups,
+   * flat run keys); returns only set, non-default keys. */
   const TEXT_KEYS=['weight','italic','decoration','variant','color'];
   function normalizeTextProps(raw,fail){
     if(raw===undefined)return undefined;
@@ -866,7 +887,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     const raw=usedData.flatMap(n=>n.children.filter(c=>!c.group));
     const elemTypes=['object','domain','sample','flow','assertion'];
     for(const n of raw){if(!elemTypes.includes(n.type)&&n.type!=='relation')throw new DDNError('DDN042','Unsupported data declaration '+n.type,n.source,n.start);}
-    for(const n of raw){if(n.from&&n.type!=='relation')throw new DDNError('DDN055','Only relations accept header endpoints',n.source,n.start);for(const g of n.children)if(g.group&&!(['fields','ports'].includes(g.type)||(g.type==='text'&&n.type!=='relation')))throw new DDNError('DDN900','Reference model does not implement group '+g.type,n.source,g.start);for(const f of getFields(n))for(const g of f.children)if(!g.group||g.type!=='fields')throw new DDNError('DDN042','Nested fields accept only a fields block',f.source,f.start);}
+    for(const n of raw){if(n.from&&n.type!=='relation')throw new DDNError('DDN055','Only relations accept header endpoints',n.source,n.start);for(const g of n.children)if(g.group&&!(['fields','ports'].includes(g.type)||(g.type==='text'&&n.type!=='relation')||(g.type==='stroke'&&n.type!=='relation')||(g.type==='line'&&n.type==='relation')))throw new DDNError('DDN900','Reference model does not implement group '+g.type,n.source,g.start);for(const f of getFields(n))for(const g of f.children)if(!g.group||g.type!=='fields')throw new DDNError('DDN042','Nested fields accept only a fields block',f.source,f.start);}
     const rawNodes=raw.filter(n=>elemTypes.includes(n.type));
     const rawRelations=raw.filter(n=>n.type==='relation');
     const p={};for(const k of Object.keys(DEFAULTS))p[k]=JSON.parse(JSON.stringify(DEFAULTS[k]));
@@ -1038,6 +1059,12 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
        * label only (fields/details/notes stay role-baked this revision). */
       const textGroup=group(n,'text');
       if(textGroup){textGate(n,'A text { } group on an element');properties.text=txCheck(textGroup.props,textGroup.source,textGroup.start);}
+      /* 0.8 (chapter 04 §6B): portable element outline (stroke { }) and fill
+       * (flat colour). Paint-only: layout, routing and the model fingerprint
+       * never change. */
+      const strokeGroup=group(n,'stroke');
+      if(strokeGroup){textGate(n,'A stroke { } group on an element');properties.stroke=normalizeStrokeProps(strokeGroup.props,(code,msg)=>{throw new DDNError(code,msg,strokeGroup.source,strokeGroup.start);},{allowCorners:true});}
+      if(properties.fill!==undefined){textGate(n,'fill on an element');properties.fill=normalizeLineColor(properties.fill,(code,msg)=>{throw new DDNError(code,msg,n.source,n.start);});}
       if(n.type==='sample'){
         if(!Array.isArray(properties.columns)||!Array.isArray(properties.rows))throw new DDNError('DDN051','Sample requires columns and rows',n.source,n.start);
         for(const c of n.props.columns){const f=ws.resolve(c,n);if(f.type!=='field')throw new DDNError('DDN052','Sample columns must bind to fields',n.source,n.start);}
@@ -1048,7 +1075,12 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     const elementIds=new Set(elements.map(n=>n.id));
     for(const n of elements)tfCheck(n.properties,n.source.file,n.source.start);
     function endpoint(r,n){let t=ws.resolve(r,n);if(['field','port'].includes(t.type)){const path=t.path.split('.');path.pop();let owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));while(owner?.type==='field'){path.pop();owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));}if(!owner||!elementIds.has(owner.uid)&&!ws.archPaths.has(owner.doc?.source))throw new DDNError('DDN054','Endpoint owner is outside the selected data modules',n.source,n.start);return {element:owner.uid,member:t.uid,role:t.type};}if(!elementIds.has(t.uid)&&!ws.archPaths.has(t.doc?.source))throw new DDNError('DDN054','Relation endpoint is not a data element in scope',n.source,n.start);return {element:t.uid};}
-    const relations=rawRelations.map(n=>{if(!n.from||!n.to)throw new DDNError('DDN055','Relation requires two endpoints',n.source,n.start);let r=relationEntry(registry,n.props.kind||'assoc');if(!r)throw new DDNError('DDN056','Unknown relationship kind '+n.props.kind,n.source,n.start);return{id:n.uid,ref:n.path,name:n.label||r.name,kind:r.keyword,kindCode:r.code,from:endpoint(n.from,n),to:endpoint(n.to,n),properties:resolveValue(n.props,n),source:{file:n.source,start:n.start,end:n.end}};});
+    const relations=rawRelations.map(n=>{if(!n.from||!n.to)throw new DDNError('DDN055','Relation requires two endpoints',n.source,n.start);let r=relationEntry(registry,n.props.kind||'assoc');if(!r)throw new DDNError('DDN056','Unknown relationship kind '+n.props.kind,n.source,n.start);const properties=resolveValue(n.props,n);
+      /* 0.8 (chapter 04 §6B): portable relation line { } — decorates the
+       * painted route and its endpoint heads; routed geometry is untouched. */
+      const lineGroup=group(n,'line');
+      if(lineGroup){textGate(n,'A line { } group on a relation');properties.line=normalizeStrokeProps(lineGroup.props,(code,msg)=>{throw new DDNError(code,msg,lineGroup.source,lineGroup.start);},{group:'line'});}
+      return{id:n.uid,ref:n.path,name:n.label||r.name,kind:r.keyword,kindCode:r.code,from:endpoint(n.from,n),to:endpoint(n.to,n),properties,source:{file:n.source,start:n.start,end:n.end}};});
     // B1-033: declarative motion vocabulary (D2). Values are validated here;
     // emission is the renderer's job. rate beyond the DOM-honest cap is a
     // warning (DDN-W016) and clamps at render time.
@@ -1403,6 +1435,6 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
    * namespace (first publish wins); never touch the module-local copy. */
   const Packs=ddnNamespace('DDNPacks');
   const registerIconPack=pack=>Packs.registerIconPack(pack,ICONLIBS.libraries);
-  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,normalizeTextProps,profiles:Profiles,viewProfiles:ViewProfiles,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
+  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,normalizeTextProps,LINE_DASH_PATTERNS,profiles:Profiles,viewProfiles:ViewProfiles,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
   publishNamespace('DDN',api);
   export default api;

@@ -3,8 +3,8 @@
     "edition": "field-guide-0.8",
     "runtime": "0.8.0",
     "reviewed": "2026-10-04",
-    "chapterCount": 156,
-    "plannedChapterCount": 156,
+    "chapterCount": 157,
+    "plannedChapterCount": 157,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -1348,6 +1348,15 @@
       "entry": "field-guide/sources/text-properties.ddn",
       "view": "main",
       "sha256": "f001bce4e60eaddc3f27544f9375358214c9849755e16922ca778b69d642ebc2"
+    },
+    {
+      "id": "line-properties",
+      "status": "technique",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/line-properties.ddn",
+      "view": "main",
+      "sha256": "bcc4b1631ce53df1506c70a2d583b4fd81b6a56e803d71e96a3894fa60706e88"
     },
     {
       "id": "markings-metadata",
@@ -2750,6 +2759,15 @@
       "id": "text-properties",
       "before": "f001bce4e60eaddc3f27544f9375358214c9849755e16922ca778b69d642ebc2",
       "after": "8ccc313715c6fcba46b37e7b84e9cfb9cf3165f2bdcf498bc59a7644cb36b094",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "line-properties",
+      "before": "bcc4b1631ce53df1506c70a2d583b4fd81b6a56e803d71e96a3894fa60706e88",
+      "after": "ed31168c9b7ded008bff9012030770ae7edd9042c3d5d48ca62e83441688f9f7",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

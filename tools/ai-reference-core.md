@@ -1484,6 +1484,34 @@ view main "Text properties" {
 }
 ```
 
+### 14.6B Portable stroke/line properties (ch. 04 §6B)
+
+One paint vocabulary, two model-level contexts — no view-wide layer (colours are semantic; declaration is per target): `color` (`#rgb`/`#rrggbb`), `weight` (0.25–16px length), `dash` (`solid`/`dashed`/`dotted` → deterministic `10 6` / `2 5`; custom arrays reserved), `corners` (`round` only; square reserved).
+
+1. Relations: `line { color, weight, dash }` decorates the painted route (any routing, any look); endpoint arrowheads share the line's pen. Registered `source_mark`/`target_mark` marks are semantic and unchanged.
+2. Elements: `stroke { color, weight, dash, corners }` decorates the silhouette outline; flat `fill: "#…"` replaces the semantic fill. Plain cards take all four under every look; profile silhouettes take `color`/`fill` on the palette channels (weight/dash stay registered). Interior separators and text keep role channels.
+
+Monochrome themes suppress declared colours but keep weight/dash. Paint-only: layout, routing, endpoints and the model fingerprint never change. Validation: **DDN-LN01** group, **LN02** color, **LN03** weight, **LN04** dash, **LN05** corners; below `ddn "0.6";` any use is **DDN-V04**.
+
+```ddn
+ddn "0.6";
+module "recipes.lineprops";
+data model {
+  object invoice "Invoice gateway" {
+    kind: service;
+    fill: "#FFF7ED";
+    stroke { color: "#C2410C"; weight: 3px; dash: dashed; }
+    fields { total: money; }
+  }
+  object ledger "Ledger" { kind: database; }
+  relation posts @invoice -> @ledger {
+    kind: flow;
+    line { color: "#1D4ED8"; weight: 2.5px; dash: dotted; }
+  }
+}
+view main "Line properties" { data: [@model]; }
+```
+
 ### 14.7 Workspace conventions and conformance (ch. 56, 58)
 
 - Entry discovery for tools that must guess: `main.ddn`, then `index.ddn`, then the single `.ddn` at the root; ambiguity is reported (DDN-WS03), never resolved by mtime. A workspace MAY carry `ddn.workspace.json`: `{ "format": "ddn-workspace@1", "entry": "main.ddn", "packs": [] }` — malformed → DDN-WS02; missing entry file → DDN-WS04.

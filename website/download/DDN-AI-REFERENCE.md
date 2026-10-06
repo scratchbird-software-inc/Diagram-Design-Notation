@@ -9,7 +9,7 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 - Diagram profiles: **150** (`profiles/catalogue.json .profiles`)
 - Projection kinds: **12** (`graph`, `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`, `fishbone`, `decision`, `sequence`, `timing`, `geo`)
 - Endpoint marks: 12; object families: 12; relation families: 8; facets: 118; view types: 20; registered data properties: 108
-- Diagnostic codes: **480** extracted from the runtime (reference runtime + Studio `src/`)
+- Diagnostic codes: **485** extracted from the runtime (reference runtime + Studio `src/`)
 <!-- /generated (counts) -->
 
 ## 1. Purpose and the generate → check → fix loop
@@ -2146,7 +2146,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- generated: do not edit (diagnostics) -->
-## 9. Diagnostics and error recovery (481 codes, machine-extracted from runtime + Studio sources; 130 carry a hand-authored FIX)
+## 9. Diagnostics and error recovery (486 codes, machine-extracted from runtime + Studio sources; 135 carry a hand-authored FIX)
 
 `check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).
 
@@ -2213,6 +2213,11 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-ISOW01 | warning/info | depth on a graph view applies with iso: true; without it the view renders flat.<br>iso/depth extrusion is implemented for bar and area layers on quality charts; the  mark renders flat.<br>iso/depth extrusion is implemented for the bar, pie, donut, area and treemap marks; the  mark renders flat.<br>iso/depth extrusion is implemented for untransformed (identity) quality charts; the  transform renders flat. | - |
 | DDN-ISOW02 | warning/info | Isometric graph views render nodes and relations on the ground plane; frames and subdiagrams are flat-view devices and are omitted here (never silently merged). | - |
 | DDN-IW01 | warning/info | Experimental interaction projection validates declared predecessor/correlation metadata. It does not validate cryptographic security, real network behavior or full UML sequence semantics. | - |
+| DDN-LN01 | error | Unknown  property  accepts<br>must be a record of line properties ( | Use only the line/stroke properties color, weight, dash (and corners on element stroke); corners is not valid on a relation line { } group. |
+| DDN-LN02 | error | line/stroke/fill color must be #rgb or #rrggbb; found | Write line/stroke/fill color as #rgb or #rrggbb (for example "#1d4ed8"). |
+| DDN-LN03 | error | weight must be a length from 0.25px to 16px; found | Set line/stroke weight to a length from 0.25px to 16px. |
+| DDN-LN04 | error | dash must be solid, dashed or dotted (custom dash arrays are reserved for a future revision); found | Use dash: solid, dashed or dotted; custom dash arrays are reserved for a future revision. |
+| DDN-LN05 | error | stroke corners must be round (square corner treatment is reserved for a future revision); found | Use corners: round; square corner treatment is reserved for a future revision. |
 | DDN-LW01 | warning/info | Directed cycles retained as same-rank strongly connected groups; no model edge reversed. | - |
 | DDN-LW02 | warning/info | Ladder rung  contains a series cycle; column assignment is approximate.<br>Recomputed unsafe route hint | - |
 | DDN-LW03 | warning/info | (no literal message) | - |
@@ -3701,6 +3706,34 @@ view main "Text properties" {
   data: [@model];
   style { text { italic: true; } }
 }
+```
+
+### 14.6B Portable stroke/line properties (ch. 04 §6B)
+
+One paint vocabulary, two model-level contexts — no view-wide layer (colours are semantic; declaration is per target): `color` (`#rgb`/`#rrggbb`), `weight` (0.25–16px length), `dash` (`solid`/`dashed`/`dotted` → deterministic `10 6` / `2 5`; custom arrays reserved), `corners` (`round` only; square reserved).
+
+1. Relations: `line { color, weight, dash }` decorates the painted route (any routing, any look); endpoint arrowheads share the line's pen. Registered `source_mark`/`target_mark` marks are semantic and unchanged.
+2. Elements: `stroke { color, weight, dash, corners }` decorates the silhouette outline; flat `fill: "#…"` replaces the semantic fill. Plain cards take all four under every look; profile silhouettes take `color`/`fill` on the palette channels (weight/dash stay registered). Interior separators and text keep role channels.
+
+Monochrome themes suppress declared colours but keep weight/dash. Paint-only: layout, routing, endpoints and the model fingerprint never change. Validation: **DDN-LN01** group, **LN02** color, **LN03** weight, **LN04** dash, **LN05** corners; below `ddn "0.6";` any use is **DDN-V04**.
+
+```ddn
+ddn "0.6";
+module "recipes.lineprops";
+data model {
+  object invoice "Invoice gateway" {
+    kind: service;
+    fill: "#FFF7ED";
+    stroke { color: "#C2410C"; weight: 3px; dash: dashed; }
+    fields { total: money; }
+  }
+  object ledger "Ledger" { kind: database; }
+  relation posts @invoice -> @ledger {
+    kind: flow;
+    line { color: "#1D4ED8"; weight: 2.5px; dash: dotted; }
+  }
+}
+view main "Line properties" { data: [@model]; }
 ```
 
 ### 14.7 Workspace conventions and conformance (ch. 56, 58)

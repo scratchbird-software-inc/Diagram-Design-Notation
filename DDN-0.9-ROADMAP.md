@@ -66,14 +66,28 @@ OWN-080). Every addition needs measure-path support, not just paint support.
 
 A coherent `stroke`/`line` property family on relations and element outlines.
 
-- [ ] Relation line: dash pattern, stroke weight, stroke colour (portable;
-      colour is session-preview today)
-- [ ] Element outline: stroke colour, weight, dash, corner treatment
-- [ ] Element fill colour portable (currently per-kind session preview)
-- [ ] Arrow/endpoint heads beyond registered marks (size, open/filled) — check
-      against existing source_mark/target_mark grammar first
-- [ ] Decide the serialization: `line {}` group on relations + `stroke`/`fill`
-      keys on elements, aligned with the text-properties decision above
+- [x] Relation line: dash pattern, stroke weight, stroke colour (portable;
+      colour is session-preview today) — `line { color, weight, dash }`
+      (implemented 0.8.x amendment, spec ch. 04 §6B)
+- [x] Element outline: stroke colour, weight, dash, corner treatment —
+      `stroke { color, weight, dash, corners }` (implemented 0.8.x amendment;
+      corners accepts only `round`, square reserved with DDN-LN05 because
+      silhouette corner geometry is baked per kind)
+- [x] Element fill colour portable (currently per-kind session preview) —
+      flat `fill: color` on elements (implemented 0.8.x amendment)
+- [x] Arrow/endpoint heads beyond registered marks (size, open/filled) — check
+      against existing source_mark/target_mark grammar first → **decision:
+      registered marks unchanged.** The mark grammar is a closed semantic
+      keyword set (DDN114 contract); a size/open qualifier does not fit the
+      bare-keyword (or compact bracket) form cleanly. Instead, endpoint heads
+      now share the `line { }` pen — head stroke follows the line's colour
+      and weight — which covers the "reads as one pen" demand without
+      touching the semantic mark vocabulary.
+- [x] Decide the serialization: `line {}` group on relations + `stroke`/`fill`
+      keys on elements, aligned with the text-properties decision above →
+      **one vocabulary, two contexts**: `line { }` on relations,
+      `stroke { }` + flat `fill` on elements; no view-wide layer (colours are
+      semantic per spec ch. 04 §5)
 
 ## Portable sizing / layout properties [designer]
 

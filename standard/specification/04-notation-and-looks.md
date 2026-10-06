@@ -137,6 +137,58 @@ view v {
 
 (0.8 syntax — requires `ddn "0.6";`: `text { }` groups in `style` and on elements.)
 
+## 6B. Portable stroke and line properties (0.8 amendment)
+
+> **0.8 draft amendment:** this section is gated on source version `ddn "0.6";` — below it, any `line { }`/`stroke { }` group or `fill` property is `DDN-V04`. A diagram that declares no line property renders byte-identically to before this amendment. This is a deliberate, bounded relaxation of §5's "no arbitrary colours" rule: author-declared colours are portable **only** through the properties defined here and in §6A.
+
+Line styling survives in the `.ddn` file and renders identically in every conformant consumer. The design mirrors §6A: **one vocabulary, two model-level contexts**:
+
+| Key | Values | Default |
+|---|---|---|
+| `color` | `#rgb` or `#rrggbb` | registry/theme-assigned |
+| `weight` | length, 0.25–16 px | registered (relation: verb width; element: 1.8 px) |
+| `dash` | `solid`, `dashed`, `dotted` | registered pattern / solid |
+| `corners` | `round` | `round` |
+
+`dash` is a closed deterministic keyword set — `dashed` maps to `10 6`, `dotted` to `2 5` — so every consumer paints the identical rhythm; custom dash arrays are reserved for a future revision (`DDN-LN04`). `solid` is a real value: it un-dashes a verb whose registered pattern is dashed. `corners` accepts only `round`; square corner treatment is reserved (`DDN-LN05`) because silhouette corner geometry is baked per kind and re-cornering would change registered silhouettes.
+
+**Application contexts** (no view-wide layer — colours are semantic per §5, so declaration is per target; precedence is simply registry default < declaration):
+
+1. **Relations** — a `line { color, weight, dash }` group decorates the painted route: orthogonal, straight, curved and string routing alike, under every look. Endpoint arrowheads and marks share the line's pen: their stroke follows the line's colour and weight so head and shaft read as one stroke. The routed geometry, crossing gaps, label corridors and endpoint seating are untouched — `line` is paint-only. Registered structural marks (`source_mark`/`target_mark`, §1 and chapter 10) are semantic channel content and are unaffected: their geometry, registered keyword grammar and `DDN114` contract are unchanged by this amendment.
+2. **Elements** — a `stroke { color, weight, dash, corners }` group decorates the element's silhouette outline and a flat `fill: color` property replaces its semantic fill. Interior separators, kind chips, badges and text keep their role channels. On the plain card silhouettes (rect, note, sticky) all four properties apply, under all three looks (handDrawn forwards weight/dash to the sketch pen; hachure is unaffected). On profile silhouettes (chapter 17 shapes), `color` and `fill` ride the shared palette channels; `weight` and `dash` are plain-card properties this revision because silhouette paint strings bake their registered widths.
+
+Under the monochrome themes (`neutral`, `mono_print`) the black-and-white contract wins: line/stroke/fill colours are suppressed exactly like registered colours. Stroke paint is SVG-standard centred on the outline path, so half the declared weight lies outside the laid-out box; layout, routing, endpoints and the `modelFingerprint` never change. DDN071/print-lint effective sizes are unaffected.
+
+**Tool layering.** The reference designer's session-preview line/outline CSS channels (chapter 57) are a tool-side overlay that is never serialized; when a source declares these properties, tools SHOULD prefer the source declaration over any session preview.
+
+**Validation** (one shared validator):
+
+| Code | Condition |
+|---|---|
+| `DDN-LN01` | `line`/`stroke` is not a record, or carries a key outside its allowed set (`corners` is element-only) |
+| `DDN-LN02` | `color`/`fill` is not `#rgb`/`#rrggbb` |
+| `DDN-LN03` | `weight` is not a length from 0.25 px to 16 px |
+| `DDN-LN04` | `dash` is not `solid`/`dashed`/`dotted` (message notes custom arrays are reserved) |
+| `DDN-LN05` | `corners` is not `round` (message notes square is reserved) |
+
+```ddn-0.8
+data m {
+  object invoice "Invoice gateway" {
+    kind: service;
+    fill: "#FFF7ED";
+    stroke { color: "#C2410C"; weight: 3px; dash: dashed; }
+    fields { total: money; }
+  }
+  object ledger "Ledger" { kind: database; }
+  relation posts @invoice -> @ledger {
+    kind: flow;
+    line { color: "#1D4ED8"; weight: 2.5px; dash: dotted; }
+  }
+}
+```
+
+(0.8 syntax — requires `ddn "0.6";`: `line { }` on relations, `stroke { }`/`fill` on elements.)
+
 ## 7. Label modes and completeness
 
 Kind text, kind icons and discriminator tokens are independently optional subject to unambiguous recovery. Relation labels support `text`, `tokens`, `numbers` and `none`. With `none` no relation label or badge renders at all; the label corridor space is reclaimed, and the relationship key disappears for the same reason it does under full inline text — there is nothing left to decode — unless the author explicitly sets `chrome.legend: 'on'`. Numbered mode replaces full midpoint wording, not direction or structural participation endpoints. A relation's legend entry includes its source, target, verb and selected qualifiers. The text alternative should include field-level endpoints even when the drawing collapses them. The `concept.map@1` profile proves relation labels are first-class: concept maps require an explicit author-written relation name on every link and reject bare verb defaults (`DDN-PJ104`).

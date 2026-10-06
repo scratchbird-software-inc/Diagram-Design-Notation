@@ -193,6 +193,11 @@
     "DDN-TX03": "Set text italic to true or false.",
     "DDN-TX04": "Use decoration: strike or none; underline is reserved for a future revision.",
     "DDN-TX05": "Use variant: small-caps or normal.",
-    "DDN-TX06": "Write text color as #rgb or #rrggbb (for example \"#1a7f37\")."
+    "DDN-TX06": "Write text color as #rgb or #rrggbb (for example \"#1a7f37\").",
+    "DDN-LN01": "Use only the line/stroke properties color, weight, dash (and corners on element stroke); corners is not valid on a relation line { } group.",
+    "DDN-LN02": "Write line/stroke/fill color as #rgb or #rrggbb (for example \"#1d4ed8\").",
+    "DDN-LN03": "Set line/stroke weight to a length from 0.25px to 16px.",
+    "DDN-LN04": "Use dash: solid, dashed or dotted; custom dash arrays are reserved for a future revision.",
+    "DDN-LN05": "Use corners: round; square corner treatment is reserved for a future revision."
   }
 }

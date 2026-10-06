@@ -6,6 +6,27 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Portable stroke/line properties (0.8 amendment, spec ch. 04 §6B).** One
+  paint vocabulary — `color` (`#rgb`/`#rrggbb`), `weight` (0.25–16 px length),
+  `dash` (`solid`/`dashed`→`10 6`/`dotted`→`2 5`; custom arrays reserved),
+  `corners` (`round` only; square reserved) — in two model-level contexts:
+  `line { }` on relations (decorates the painted route under every routing
+  and look; endpoint arrowheads share the line's pen colour/weight) and
+  `stroke { }` + flat `fill` on elements (silhouette outline; plain cards
+  take all four properties, profile silhouettes ride color/fill on the
+  palette channels). No view-wide layer: colours are semantic, declaration is
+  per target; monochrome themes suppress declared colours but keep
+  weight/dash. Paint-only — layout, routing, endpoint seating and the
+  `modelFingerprint` are untouched, and output is byte-identical when nothing
+  is declared. Registered `source_mark`/`target_mark` structural marks are
+  unchanged (DDN114 contract intact). Validation is the coded family
+  `DDN-LN01`–`DDN-LN05`, version-gated `DDN-V04` below `ddn "0.6"`. Wired
+  through `ddn-core.js` (shared validator), `ddn-render.js` (route pen,
+  `endMark` weight, plain-card paint, handDrawn sketch forwarding),
+  `ddn-shapes.js` (palette-channel interception), the registry capabilities
+  list, the AI authoring reference (§14.6B + DDN-LN fixes), the field guide
+  (new "Portable stroke and line properties" chapter) and a 10-test
+  conformance suite (`notation/tests/line-properties.js`).
 - **Portable text properties (0.8 amendment, spec ch. 04 §6A + ch. 53 §53.1).**
   One decoration vocabulary — `weight` (`bold` or 100–900), `italic`,
   `decoration: strike|none` (`underline` reserved), `variant: small-caps|normal`,
