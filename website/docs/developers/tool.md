@@ -103,10 +103,34 @@ written via `setViewChrome`). The legend and title block are listed
 disabled — the renderer fixes their typography, so there is nothing to
 edit.
 
-Every colour entry point — kind/relation-class/object overrides, page
-background, the font editor's text colour — uses one shared colour widget:
-a native colour input plus a row of the ten most recently used colours
-(most-recent-first, persisted in `localStorage` key
+The **Lines**, **Shapes** and **Sizing** groups follow the same
+target-dropdown pattern and support discipline:
+
+- **Lines** — one edge editor for every line target in the view (it
+  absorbs the retired "Colours — relation classes" and "Routing per
+  relation class" panels): each **relation class** present (colour,
+  session), each **verb** present (routing style, dash pattern, stroke
+  weight — session; dash/weight scope to the route pieces so arrowheads
+  keep their geometry and never rescale with weight; curve type rides the
+  routing select, curve tension is view-wide and labeled), and the
+  **selected relation** (colour/routing/dash/weight session, plus
+  source-writable endpoint marks `source_mark`/`target_mark` via
+  `setRelationProps`; enforcement stays in the Inspector, cross-linked).
+- **Shapes** — fill and outline per **kind** present and per **selected
+  element** (absorbs "Colours — kinds" and the click-selection rows):
+  fill colour plus outline colour/weight/dash, all session-preview CSS on
+  the shape plate's direct children (nested icon glyphs keep their paint;
+  corner style is baked geometry — omitted).
+- **Sizing** — the view's text-fit envelope (`text_fit`, `max_width`,
+  `max_height`, `min_font`), moved here from the old source-only style
+  keys and still source-writable. There is no element target: the
+  property registry defines no element-level sizing keys, so per-element
+  sizing is intentionally omitted (the group says so inline).
+
+Every colour entry point — the Lines, Shapes and Fonts editors, page
+background, per-class and per-relation line colours — uses one shared
+colour widget: a native colour input plus a row of the ten most recently
+used colours (most-recent-first, persisted in `localStorage` key
 `ddn-tool-colour-history`); all entries feed the same history.
 
 The **inspector** is the selection editor, with three tabs: **Meaning**

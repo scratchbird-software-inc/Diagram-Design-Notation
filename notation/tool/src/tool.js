@@ -44,7 +44,7 @@ const SHT = __req('DDNToolSheets', './sheets.js');
 
 const { DRAWERS, DRAWER_STATES, GEAR_STATES, STORAGE_KEY, MODES, DEFAULT_MODE, parseMode, parseDrawersParam, cleanDrawerConfig, parseToolbarParam, resolveDrawerConfig } = PAR;
 const { computeFitScale, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem, pageDims, pageScaleFloor, artboardProblem } = PGF;
-const { slug, cssString, overrideRuleFor, typographyRuleFor, recentColours, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord } = PRE;
+const { slug, cssString, overrideRuleFor, typographyRuleFor, recentColours, relationColourRuleFor, lineStyleRuleFor, outlineRuleFor, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord } = PRE;
 const { pickEntryView, viewListFrom, isPlausibleSourceFile, freshLocalId, srcFromQuery, srcFetchErrorMessage, srcImportClosure, templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic } = FIL;
 const { rasterCanvasSize, exportSvgWithOverrides, hopWindowsFromMarkers, nextHopTime, scaledDuration } = EXP;
 const { parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, workerBridgeError, createRenderBridge } = BRG;
@@ -79,7 +79,7 @@ function paletteFilter(kinds, projection, showAll) {
 
 const pure = {
   DRAWERS, DRAWER_STATES, GEAR_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig, parseToolbarParam,
-  computeFitScale, overrideRuleFor, typographyRuleFor, recentColours, overrideCss, toolOverrides, viewListFrom,
+  computeFitScale, overrideRuleFor, typographyRuleFor, recentColours, relationColourRuleFor, lineStyleRuleFor, outlineRuleFor, overrideCss, toolOverrides, viewListFrom,
   overrideProfileWrites, cssOverlayRecord, pickEntryView,
   isPlausibleSourceFile, freshLocalId, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
   templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic,
@@ -185,7 +185,7 @@ const RIGHT_EXCLUSIVE = ['document', 'style', 'inspector', 'relation'];
 const BOTTOM_EXCLUSIVE = ['source', 'typesheet', 'properties'];
 
 function emptyPresentation() {
-  return { options: {}, typography: {}, kindColours: {}, verbColours: {}, objectColours: {}, verbRouting: {}, relationRouting: {}, mindNodes: {} };
+  return { options: {}, typography: {}, kindColours: {}, verbColours: {}, objectColours: {}, relationColours: {}, lineStyles: {}, kindOutlines: {}, objectOutlines: {}, verbRouting: {}, relationRouting: {}, mindNodes: {} };
 }
 const state = {
   ws: null, diagram: null, entry: '', view: '', viewList: [],
@@ -714,12 +714,10 @@ for (const [group, fields] of SELECT_FIELDS) {
  * only the SELECT_FIELDS keys). Each change is one undoable setViewProfile
  * source write; the blank / "default" choice removes the key from the source. */
 const SOURCE_FIELDS = [
+  /* Phase 10: the sizing keys (text_fit / max_width / max_height / min_font)
+   * moved to the Sizing editor below; this group keeps the seed. */
   ['Style — source-only keys', 'style', [
-    ['Seed', 'seed', 'number', 0, 4294967295, 1],
-    ['Text fit', 'text_fit', ['wrap', 'grow', 'shrink']],
-    ['Max text width (px)', 'max_width', 'quantity', 16, 32000],
-    ['Max text height (px)', 'max_height', 'quantity', 8, 32000],
-    ['Minimum font (px)', 'min_font', 'quantity', 4, 512]
+    ['Seed', 'seed', 'number', 0, 4294967295, 1]
   ]],
   ['Layout — source-only keys', 'layout', [
     ['Direction', 'direction', ['right', 'down', 'left', 'up']],
@@ -930,6 +928,251 @@ function buildFontEditor() {
   g.append(fontEd.body);
   fontEd.target.addEventListener('change', () => { fontEd._sig = null; buildFontEditor(); });
 }
+
+/* Phase 10 (owner-approved): the unified editors, same pattern as Fonts —
+ * target dropdown + per-target support matrix (source-writable vs
+ * session-preview-labeled vs omitted), signature-cached rebuilds. */
+
+/* --- Lines editor: every line/edge target in the view.
+ * Support matrix:
+ *  · relation class (verb code) — colour (session CSS, verbColours); marks/
+ *    enforcement are not expressible per class — omitted.
+ *  · verb — routing style (session override channel, verbRouting), dash
+ *    pattern + stroke weight (session CSS scoped to g[data-route-pieces] so
+ *    arrowheads keep their geometry; width never rescales arrowheads —
+ *    documented cosmetic limit). Curve TYPE rides the routing select
+ *    (curved = bezier, rounded); curve tension is view-wide only (session
+ *    option, shown once, labeled).
+ *  · selected relation — colour/routing/dash/weight (session, per-id CSS),
+ *    PLUS source-writable endpoint marks (source_mark/target_mark via
+ *    authoring.setRelationProps). Enforcement stays in the Inspector —
+ *    cross-linked, not duplicated. */
+const lineEd = {};
+function buildLineEditor() {
+  const verbs = state._fontVerbs || new Map();
+  const p = state.presentation;
+  const relId = state.selectedRelation;
+  let relProps = {};
+  if (relId) {
+    try { const src = A.authoring.sourceOf(state.ws, state.entry, state.view, relId); relProps = (src && src.properties) || {}; } catch { relProps = {}; }
+  }
+  const sig = JSON.stringify([lineEd.target.value, [...verbs.keys()], relId, relProps, p.verbColours, p.verbRouting, p.relationColours, p.relationRouting, p.lineStyles, p.options.curveTension]);
+  if (sig === lineEd._sig) return;
+  lineEd._sig = sig;
+  const prev = lineEd.target.value;
+  const opts = [];
+  for (const [id, v] of [...verbs].sort((a, b) => a[1].code < b[1].code ? -1 : 1)) {
+    opts.push(['class:' + v.code, v.label + ' (' + v.code + ') class colour — session preview']);
+    opts.push(['verb:' + id, v.label + ' (' + id + ') line — session preview']);
+  }
+  if (relId) opts.push(['rel:' + relId, 'Selected relation ' + relId + ' — session + source']);
+  lineEd.target.replaceChildren(...opts.map(([v, l]) => new Option(l, v)));
+  if (!opts.length) lineEd.target.add(new Option('no relations in this view', ''));
+  lineEd.target.value = opts.some(([v]) => v === prev) ? prev : (opts[0] ? opts[0][0] : '');
+  const body = lineEd.body;
+  body.replaceChildren();
+  const target = lineEd.target.value;
+  if (!target) return;
+
+  const dashWeightRows = (style, onChange) => {
+    const dash = document.createElement('input'); dash.type = 'text'; dash.placeholder = 'solid (e.g. 6 4)'; dash.value = (style && style.dash) || '';
+    dash.setAttribute('aria-label', 'dash pattern');
+    const wt = document.createElement('input'); wt.type = 'number'; wt.min = 0.25; wt.max = 12; wt.step = 0.25; wt.placeholder = 'weight'; wt.value = (style && style.weight) || '';
+    wt.setAttribute('aria-label', 'stroke weight (px)');
+    dash.addEventListener('change', () => onChange({ dash: dash.value.trim() }));
+    wt.addEventListener('change', () => onChange({ weight: wt.value }));
+    field(body, 'Dash pattern', dash);
+    field(body, 'Stroke weight (px)', wt);
+  };
+  const setLine = (key, patch) => {
+    const next = { ...(p.lineStyles[key] || {}), ...patch };
+    for (const k of Object.keys(next)) if (next[k] === '' || next[k] == null) delete next[k];
+    if (Object.keys(next).length) p.lineStyles[key] = next; else delete p.lineStyles[key];
+    applyOverrideCss();
+    lineEd._sig = null;
+  };
+
+  if (target.startsWith('class:')) {
+    const code = target.slice(6);
+    const cw = colourWidget('line colour for class ' + code, p.verbColours[code] || '#888888', v => { p.verbColours[code] = v; applyOverrideCss(); lineEd._sig = null; });
+    const row = document.createElement('div'); row.className = 'ddn-colour-row';
+    const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = 'Colour';
+    const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'ddn-mini'; clr.textContent = 'clear';
+    clr.addEventListener('click', () => { delete p.verbColours[code]; applyOverrideCss(); lineEd._sig = null; buildLineEditor(); });
+    row.append(lab, cw.root, clr);
+    body.append(row);
+    body.append(dim('Session preview — recolours every relation of this class. Endpoint marks and enforcement are per-relation source properties; select a single relation to edit them.'));
+    return;
+  }
+
+  if (target.startsWith('verb:')) {
+    const id = target.slice(5);
+    const sel = selectInput(routingOptions(), 'routing for ' + id);
+    sel.value = p.verbRouting[id] || 'source';
+    sel.addEventListener('change', () => {
+      if (sel.value === 'source') delete p.verbRouting[id]; else p.verbRouting[id] = sel.value;
+      rerender(); lineEd._sig = null;
+    });
+    field(body, 'Routing style', sel);
+    dashWeightRows(p.lineStyles['verb:' + id], patch => setLine('verb:' + id, patch));
+    const tension = document.createElement('input'); tension.type = 'number'; tension.min = 0; tension.max = 1; tension.step = 0.05; tension.placeholder = 'source';
+    tension.value = p.options.curveTension != null ? String(p.options.curveTension) : '';
+    tension.setAttribute('aria-label', 'curve tension (view-wide)');
+    tension.addEventListener('change', () => setOption('curveTension', tension.value === '' ? null : Number(tension.value)));
+    field(body, 'Curve tension (view-wide)', tension);
+    body.append(dim('Session preview. Routing covers the curve type (curved = bezier, rounded); dash/weight ride CSS on the route pieces only — arrowheads keep their authored geometry and do not rescale with stroke weight.'));
+    return;
+  }
+
+  if (target.startsWith('rel:')) {
+    const id = target.slice(4);
+    const cw = colourWidget('line colour for relation ' + id, p.relationColours[id] || '#888888', v => { p.relationColours[id] = v; applyOverrideCss(); lineEd._sig = null; });
+    const row = document.createElement('div'); row.className = 'ddn-colour-row';
+    const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = 'Colour';
+    row.append(lab, cw.root);
+    body.append(row);
+    const sel = selectInput(routingOptions(), 'routing for relation ' + id);
+    sel.value = p.relationRouting[id] || 'source';
+    sel.addEventListener('change', () => {
+      if (sel.value === 'source') delete p.relationRouting[id]; else p.relationRouting[id] = sel.value;
+      rerender(); lineEd._sig = null;
+    });
+    field(body, 'Routing style', sel);
+    dashWeightRows(p.lineStyles['rel:' + id], patch => setLine('rel:' + id, patch));
+    for (const end of ['source', 'target']) {
+      const mkSel = selectInput([['', 'Not asserted'], ...ENDPOINT_MARKS.map(m => [m, m])], end + ' endpoint mark');
+      mkSel.value = typeof relProps[end + '_mark'] === 'string' ? relProps[end + '_mark'] : '';
+      mkSel.addEventListener('change', () => guard(() => guided(() => A.authoring.setRelationProps(state.ws, state.entry, state.view, id, { [end + '_mark']: mkSel.value || undefined }))));
+      field(body, end[0].toUpperCase() + end.slice(1) + ' mark (source)', mkSel);
+    }
+    body.append(dim('Colour/routing/dash/weight are session preview; endpoint marks write to source. Enforcement edits live in the Inspector (This view / Meaning tabs) — selection is already on this relation.'));
+  }
+}
+{
+  const g = appGroup(els.styleBody, 'Lines', null);
+  lineEd.target = selectInput([], 'Line target');
+  field(g, 'Target', lineEd.target);
+  lineEd.body = document.createElement('div');
+  g.append(lineEd.body);
+  lineEd.target.addEventListener('change', () => { lineEd._sig = null; buildLineEditor(); });
+}
+
+/* --- Shapes editor: fill + outline per kind and per selected element.
+ * Support matrix:
+ *  · kind present — fill colour (session, kindColours), outline colour/
+ *    weight/dash (session CSS on the node group's direct shape children —
+ *    the renderer paints strokes as presentation attributes, which CSS
+ *    overrides; nested icon-glyph paths are not direct children and keep
+ *    their paint). Corner style (rx) is baked geometry — omitted.
+ *  · selected element — same two channels at data-id level (objectColours /
+ *    objectOutlines). */
+const shapeEd = {};
+function buildShapeEditor() {
+  const kinds = state._fontKinds || new Map();
+  const p = state.presentation;
+  const sig = JSON.stringify([shapeEd.target.value, [...kinds.keys()], state.selected, p.kindColours, p.objectColours, p.kindOutlines, p.objectOutlines]);
+  if (sig === shapeEd._sig) return;
+  shapeEd._sig = sig;
+  const prev = shapeEd.target.value;
+  const opts = [...kinds].sort().map(([code, label]) => ['kind:' + code, label + ' (' + code + ') — session preview']);
+  if (state.selected) opts.push(['el:' + state.selected, 'Selected element ' + state.selected + ' — session preview']);
+  shapeEd.target.replaceChildren(...opts.map(([v, l]) => new Option(l, v)));
+  if (!opts.length) shapeEd.target.add(new Option('no shapes in this view', ''));
+  shapeEd.target.value = opts.some(([v]) => v === prev) ? prev : (opts[0] ? opts[0][0] : '');
+  const body = shapeEd.body;
+  body.replaceChildren();
+  const target = shapeEd.target.value;
+  if (!target) return;
+  const isKind = target.startsWith('kind:');
+  const code = target.slice(target.indexOf(':') + 1);
+  const fills = isKind ? p.kindColours : p.objectColours;
+  const outlines = isKind ? p.kindOutlines : p.objectOutlines;
+  const cw = colourWidget('fill colour for ' + code, fills[code] || '#888888', v => { fills[code] = v; applyOverrideCss(); shapeEd._sig = null; });
+  const fillRow = document.createElement('div'); fillRow.className = 'ddn-colour-row';
+  const flab = document.createElement('span'); flab.className = 'ddn-colour-label'; flab.textContent = 'Fill';
+  const fclr = document.createElement('button'); fclr.type = 'button'; fclr.className = 'ddn-mini'; fclr.textContent = 'clear';
+  fclr.addEventListener('click', () => { delete fills[code]; delete outlines[code]; applyOverrideCss(); shapeEd._sig = null; buildShapeEditor(); });
+  fillRow.append(flab, cw.root, fclr);
+  body.append(fillRow);
+  const cur = outlines[code] || {};
+  const setOutline = patch => {
+    const next = { ...cur, ...patch };
+    for (const k of Object.keys(next)) if (next[k] === '' || next[k] == null) delete next[k];
+    if (Object.keys(next).length) outlines[code] = next; else delete outlines[code];
+    applyOverrideCss();
+    shapeEd._sig = null;
+  };
+  const ow = colourWidget('outline colour for ' + code, cur.colour || '#203047', v => setOutline({ colour: v }));
+  const orow = document.createElement('div'); orow.className = 'ddn-colour-row';
+  const olab = document.createElement('span'); olab.className = 'ddn-colour-label'; olab.textContent = 'Outline colour';
+  orow.append(olab, ow.root);
+  body.append(orow);
+  const wt = document.createElement('input'); wt.type = 'number'; wt.min = 0.25; wt.max = 12; wt.step = 0.25; wt.placeholder = 'weight'; wt.value = cur.weight || '';
+  wt.setAttribute('aria-label', 'outline weight (px)');
+  wt.addEventListener('change', () => setOutline({ weight: wt.value }));
+  field(body, 'Outline weight (px)', wt);
+  const dash = document.createElement('input'); dash.type = 'text'; dash.placeholder = 'solid (e.g. 4 3)'; dash.value = cur.dash || '';
+  dash.setAttribute('aria-label', 'outline dash pattern');
+  dash.addEventListener('change', () => setOutline({ dash: dash.value.trim() }));
+  field(body, 'Outline dash', dash);
+  body.append(dim('Session preview — CSS on the shape plate only; nested icon glyphs keep their authored paint. Corner style is baked geometry (per shape family) and cannot be overridden.'));
+}
+{
+  const g = appGroup(els.styleBody, 'Shapes', null);
+  shapeEd.target = selectInput([], 'Shape target');
+  field(g, 'Target', shapeEd.target);
+  shapeEd.body = document.createElement('div');
+  g.append(shapeEd.body);
+  shapeEd.target.addEventListener('change', () => { shapeEd._sig = null; buildShapeEditor(); });
+}
+
+/* --- Sizing editor: the view's text-fit envelope, moved here from the
+ * source-only style keys. Support matrix:
+ *  · view — text_fit (wrap/grow/shrink), max_width, max_height, min_font:
+ *    SOURCE writes (style {} profile keys), rendered through the P4 form
+ *    generator like the other source-backed groups.
+ *  · selected element — the property registry (data-properties.json +
+ *    x_* contracts) defines NO element-level sizing keys; form-descriptors.json
+ *    has none for elements. Per the support rule: omitted, with a note. */
+{
+  const g = appGroup(els.styleBody, 'Sizing', 'source');
+  const sizingFields = [
+    ['Text fit', 'text_fit', ['wrap', 'grow', 'shrink']],
+    ['Max text width (px)', 'max_width', 'quantity', 16, 32000],
+    ['Max text height (px)', 'max_height', 'quantity', 8, 32000],
+    ['Minimum font (px)', 'min_font', 'quantity', 4, 512]
+  ];
+  const descriptors = sizingFields.map(([label, key, kind, min, max, step]) => {
+    const d = { id: 'ddn.view.style.' + key, key, label, targets: ['view'], scope: 'view', removable: true, states: ['unset', 'value'] };
+    if (Array.isArray(kind)) { d.widget = 'select'; d.choices = kind.slice(); }
+    else { d.widget = 'quantity'; d.units = ['px']; d.min = min; d.max = max; }
+    return d;
+  });
+  const form = FRM.renderForm(g, descriptors, {
+    flat: true,
+    getValue(d) {
+      const node = viewSourceNode();
+      const c = node && (node.children || []).find(x => x.group && x.type === 'style');
+      return ((c && c.props) || {})[d.key];
+    },
+    commit(d, v) {
+      flush();
+      A.authoring.setViewProfile(state.ws, state.entry, state.view, { style: { [d.key]: v } });
+      showSource(state.currentFile);
+      updateHistory();
+      refreshAfterSourceWrite();
+      status('source edit applied — undo restores the previous source');
+    },
+    note: status
+  });
+  sourceForms.push(form);
+  g.append(dim('View-level text-fit envelope (style {} keys, saved to source). Per-element sizing is not expressible — the property registry defines no element-level max_width / text_fit / min_font keys, so there is intentionally no element target here.'));
+}
+function refreshEditors() {
+  buildFontEditor();
+  buildLineEditor();
+  buildShapeEditor();
+}
 /* Viewport actions + reset live in the style drawer too (the toolbar keeps
  * the quick fit/zoom subset). Session state only — nothing here writes source. */
 {
@@ -947,10 +1190,6 @@ function buildFontEditor() {
   head.textContent = 'Session preview (not saved to source)';
   els.styleBody.append(head);
 }
-const coloursGroup = appGroup(els.styleBody, 'Colours — kinds', 'session');
-const verbsGroup = appGroup(els.styleBody, 'Colours — relation classes', 'session');
-const relationsGroup = appGroup(els.styleBody, 'Routing per relation class', 'session');
-const selectedGroup = appGroup(els.styleBody, 'Clicked object / relation', 'session');
 
 /* D5 (B1-052): geometry context for artboardProblem, from the last rendered
  * scene — unscaled drawing bounds plus fixed chrome overhead (page minus
@@ -1426,28 +1665,7 @@ function colourRow(labelText, code, current, onPick, onClear) {
 const familyOptions = () => [['source', 'source default']].concat(Object.entries(FONT_STACKS).map(([k, stack]) => [k, k + ' — ' + stack.split(',')[0]]));
 const sizeOptions = () => [['source', 'source default'], ['8', '8 px'], ['9', '9 px'], ['10', '10 px'], ['11', '11 px'], ['12', '12 px'], ['14', '14 px'], ['16', '16 px'], ['18', '18 px'], ['20', '20 px'], ['24', '24 px']];
 const routingOptions = () => [['source', 'default']].concat(ROUTING_VALUES.map(v => [v, v]));
-function verbRoutingRow(labelText, keyword) {
-  const row = document.createElement('div'); row.className = 'ddn-colour-row';
-  const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = labelText; lab.title = labelText;
-  const sel = selectInput(routingOptions(), 'routing for ' + labelText);
-  sel.value = state.presentation.verbRouting[keyword] || 'source';
-  sel.addEventListener('change', () => {
-    if (sel.value === 'source') delete state.presentation.verbRouting[keyword];
-    else state.presentation.verbRouting[keyword] = sel.value;
-    rerender();
-  });
-  const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'ddn-mini'; clr.textContent = 'clear';
-  clr.addEventListener('click', () => { delete state.presentation.verbRouting[keyword]; repopulateOverridePanels(); rerender(); });
-  row.append(lab, sel, clr);
-  return row;
-}
 function dim(note) { const p = document.createElement('p'); p.className = 'ddn-dim'; p.textContent = note; return p; }
-
-/* Repopulate a session-preview group's rows without wiping its header (the
- * appGroup h3 carries the title and the "Session preview" scope pill). */
-function setGroupRows(group, rows) {
-  group.replaceChildren(group.querySelector('h3'), ...rows);
-}
 
 function repopulateOverridePanels() {
   syncOptionInputs();
@@ -1474,54 +1692,16 @@ function repopulateOverridePanels() {
       if (v && !verbs.has(v.id)) verbs.set(v.id, v);
     }
   }
-  setGroupRows(coloursGroup, [...kinds].sort().map(([code, label]) =>
-    colourRow(label + ' (' + code + ')', code, state.presentation.kindColours[code],
-      (c, col) => { state.presentation.kindColours[c] = col; applyOverrideCss(); },
-      c => { delete state.presentation.kindColours[c]; repopulateOverridePanels(); applyOverrideCss(); })));
-  if (!kinds.size) coloursGroup.append(dim('none in this view'));
-  setGroupRows(verbsGroup, [...verbs].sort((a, b) => a[1].code < b[1].code ? -1 : 1).map(([keyword, v]) =>
-    colourRow(v.label + ' (' + v.code + ')', v.code, state.presentation.verbColours[v.code],
-      (c, col) => { state.presentation.verbColours[c] = col; applyOverrideCss(); },
-      c => { delete state.presentation.verbColours[c]; repopulateOverridePanels(); applyOverrideCss(); })));
-  if (!verbs.size) verbsGroup.append(dim('none in this view'));
-  setGroupRows(relationsGroup, [...verbs].sort((a, b) => a[1].code < b[1].code ? -1 : 1).map(([keyword, v]) => verbRoutingRow(v.label + ' (' + keyword + ')', keyword)));
-  if (!verbs.size) relationsGroup.append(dim('none in this view'));
   state._fontKinds = new Map(kinds);
-  buildFontEditor();
-  updateSelectedPanel();
-}
-
-function updateSelectedPanel() {
-  const rows = [];
-  if (state.selected) {
-    rows.push(colourRow('Object ' + state.selected, state.selected, state.presentation.objectColours[state.selected],
-      (id, col) => { state.presentation.objectColours[id] = col; applyOverrideCss(); },
-      id => { delete state.presentation.objectColours[id]; updateSelectedPanel(); applyOverrideCss(); }));
-  }
-  if (state.selectedRelation) {
-    const row = document.createElement('div'); row.className = 'ddn-colour-row';
-    const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = 'Relation ' + state.selectedRelation; lab.title = state.selectedRelation;
-    const sel = selectInput(routingOptions(), 'routing for relation ' + state.selectedRelation);
-    sel.value = state.presentation.relationRouting[state.selectedRelation] || 'source';
-    sel.addEventListener('change', () => {
-      if (sel.value === 'source') delete state.presentation.relationRouting[state.selectedRelation];
-      else state.presentation.relationRouting[state.selectedRelation] = sel.value;
-      rerender();
-    });
-    const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'ddn-mini'; clr.textContent = 'clear';
-    clr.addEventListener('click', () => { delete state.presentation.relationRouting[state.selectedRelation]; updateSelectedPanel(); rerender(); });
-    row.append(lab, sel, clr);
-    rows.push(row);
-  }
-  if (!rows.length) rows.push(dim('click an object or relation in the diagram'));
-  setGroupRows(selectedGroup, rows);
+  state._fontVerbs = new Map(verbs);
+  refreshEditors();
 }
 
 function applyOverrideCss() {
   if (!state.overrideStyle) return;
   state.overrideStyle.textContent = overrideCss(state.presentation, state.selectedRelation);
   const p = state.presentation;
-  const n = Object.keys(p.kindColours).length + Object.keys(p.verbColours).length + Object.keys(p.objectColours).length + Object.keys(p.typography).length;
+  const n = Object.keys(p.kindColours).length + Object.keys(p.verbColours).length + Object.keys(p.objectColours).length + Object.keys(p.typography).length + Object.keys(p.relationColours || {}).length + Object.keys(p.lineStyles || {}).length + Object.keys(p.kindOutlines || {}).length + Object.keys(p.objectOutlines || {}).length;
   if (n) status(n + ' CSS override(s) active');
 }
 function rerender() {
@@ -1569,7 +1749,7 @@ function onSelect(detail) {
     status('selected ' + id);
   }
   applyOverrideCss();
-  updateSelectedPanel();
+  refreshEditors();
   inspector(id, ir, relation);
   autoDrawerForSelection(true);
   if (design.pointer) {
@@ -1585,7 +1765,7 @@ function deselect() {
   const had = state.selected || state.selectedRelation;
   state.selected = null; state.selectedRelation = null; state.selectedIds = [];
   applyOverrideCss();
-  updateSelectedPanel();
+  refreshEditors();
   els.inspectorControls.hidden = true;
   inspectorNote('');
   els.selectionSummary.textContent = 'Click an object or relation in the diagram.';
@@ -1678,7 +1858,7 @@ function sheetGuided(action, onError) {
 function selectFromSheet(uid) {
   state.selected = uid; state.selectedRelation = null; state.selectedIds = [uid];
   applyOverrideCss();
-  updateSelectedPanel();
+  refreshEditors();
   let ir = null;
   try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
   if (ir) inspector(uid, ir, null);
@@ -3658,7 +3838,7 @@ function restoreToolPresentation() {
     const v = A.parse(files[state.entry], state.entry).declarations.find(n => n.type === 'view' && n.id === state.view);
     const rec = v && v.props && v.props.x_tool_presentation;
     if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return;
-    for (const k of ['kindColours', 'verbColours', 'objectColours', 'typography'])
+    for (const k of ['kindColours', 'verbColours', 'objectColours', 'typography', 'relationColours', 'lineStyles', 'kindOutlines', 'objectOutlines'])
       if (rec[k] && typeof rec[k] === 'object' && !Array.isArray(rec[k])) state.presentation[k] = JSON.parse(JSON.stringify(rec[k]));
   } catch { /* overlay restore is best-effort; a broken record never blocks a load */ }
 }
@@ -3820,8 +4000,8 @@ host.DDNTool = Object.assign({}, pure, {
   setKindColour: (code, col) => { state.presentation.kindColours[code] = col; applyOverrideCss(); },
   setVerbColour: (code, col) => { state.presentation.verbColours[code] = col; applyOverrideCss(); },
   setObjectColour: (id, col) => { state.presentation.objectColours[id] = col; applyOverrideCss(); },
-  selectObject: id => { state.selected = id; state.selectedRelation = null; updateSelectedPanel(); },
-  selectRelation: id => { state.selectedRelation = id; state.selected = null; updateSelectedPanel(); applyOverrideCss(); },
+  selectObject: id => { state.selected = id; state.selectedRelation = null; refreshEditors(); },
+  selectRelation: id => { state.selectedRelation = id; state.selected = null; refreshEditors(); applyOverrideCss(); },
   setVerbRouting: (verb, v) => { state.presentation.verbRouting[verb] = v; repopulateOverridePanels(); rerender(); },
   setRelationRouting: (id, v) => { state.presentation.relationRouting[id] = v; rerender(); },
   refreshAnimation,

@@ -243,6 +243,27 @@ test('recentColours: MRU history — validated, deduplicated, case-folded, cappe
   assert.equal(T.recentColours(Array.from({ length: 15 }, (_, i) => '#00000' + i.toString(16)), '#ffffff').length, 10, 'capped at 10 by default');
 });
 
+test('phase-10 line/shape rule generators (Lines + Shapes editors)', () => {
+  assert.equal(T.relationColourRuleFor('m.r1', '#123456'),
+    '.ddn-svg .ddn-rel[data-id="m.r1"] path { stroke: #123456; }');
+  assert.throws(() => T.relationColourRuleFor('m.r1', 'red'), /#rgb or #rrggbb/);
+  assert.equal(T.lineStyleRuleFor('.ddn-svg .ddn-verb-flow', { dash: '6 4', weight: '2.5' }),
+    '.ddn-svg .ddn-verb-flow > g[data-route-pieces] path { stroke-width: 2.5px; stroke-dasharray: 6 4; }',
+    'dash/weight scope to route pieces so arrowheads keep their geometry');
+  assert.equal(T.lineStyleRuleFor('.ddn-svg .ddn-rel[data-id="m.r1"]', { dash: '2 2' }),
+    '.ddn-svg .ddn-rel[data-id="m.r1"] > g[data-route-pieces] path { stroke-dasharray: 2 2; }');
+  assert.throws(() => T.lineStyleRuleFor('.x', { dash: 'dashy' }), /numbers and spaces/);
+  assert.throws(() => T.lineStyleRuleFor('.x', { weight: '99' }), /between 0.25 and 12/);
+  assert.throws(() => T.lineStyleRuleFor('.x', {}), /needs a weight or a dash/);
+  const o = T.outlineRuleFor('.ddn-svg .ddn-kind-app', { colour: '#445566', weight: '3', dash: '4 3' });
+  assert.ok(o.startsWith('.ddn-svg .ddn-kind-app > path, .ddn-svg .ddn-kind-app > rect'), 'outline covers the shape-plate child set');
+  assert.ok(o.includes('stroke: #445566') && o.includes('stroke-width: 3px') && o.includes('stroke-dasharray: 4 3'));
+  assert.throws(() => T.outlineRuleFor('.x', {}), /needs a colour, a weight or a dash/);
+  const css = T.overrideCss({ relationColours: { 'm.r1': '#101010' }, lineStyles: { 'verb:flow': { dash: '1 2' } }, kindOutlines: { APP: { weight: 2 } }, objectOutlines: { 'm.a': { colour: '#010101' } } }, null);
+  for (const frag of ['.ddn-rel[data-id="m.r1"] path { stroke: #101010', 'ddn-verb-flow > g[data-route-pieces]', 'ddn-kind-app > path', 'stroke: #010101'])
+    assert.ok(css.includes(frag), 'overrideCss missing ' + frag);
+});
+
 test('overrideCss: composition plus relation highlight', () => {
   const css = T.overrideCss({ typography: { TBL: { family: 'serif', size: 'source' } }, kindColours: { TBL: '#111111' }, verbColours: { ref: '#222222' }, objectColours: { 'm.a': '#333333' } }, 'm.r1');
   for (const frag of ['.ddn-kind-tbl text', 'fill: #111111', '.ddn-verb-ref path', '[data-id="m.a"]', '[data-id="m.r1"] path { stroke: #d97706'])

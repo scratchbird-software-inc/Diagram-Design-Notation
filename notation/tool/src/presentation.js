@@ -76,6 +76,54 @@ function recentColours(list, colour, max) {
   return [c, ...out.filter(x => x.toLowerCase() !== c)].slice(0, cap);
 }
 
+/* Phase 10 (owner-approved unified editors): per-relation colour, line dash /
+ * weight, and shape outline rules — all session-preview CSS, never serialized.
+ * Dash/weight rules scope to g[data-route-pieces] so endpoint arrowheads (the
+ * sibling transform-group inside .ddn-rel) keep their crisp geometry; stroke
+ * width does not rescale arrowheads (documented cosmetic limit). */
+function relationColourRuleFor(id, colour) {
+  if (!COLOUR_RE.test(String(colour))) throw new Error('colour must be #rgb or #rrggbb');
+  return '.ddn-svg .ddn-rel[data-id="' + cssString(id) + '"] path { stroke: ' + colour + '; }';
+}
+function lineStyleRuleFor(sel, style) {
+  const decls = [];
+  if (style && style.weight != null && style.weight !== '') {
+    const n = Number(style.weight);
+    if (!Number.isFinite(n) || n < 0.25 || n > 12) throw new Error('stroke weight must be between 0.25 and 12px');
+    decls.push('stroke-width: ' + n + 'px');
+  }
+  if (style && style.dash != null && String(style.dash).trim() !== '') {
+    const d = String(style.dash).trim();
+    if (!/^[0-9., ]+$/.test(d)) throw new Error('dash pattern must be numbers and spaces, e.g. "6 4"');
+    decls.push('stroke-dasharray: ' + d);
+  }
+  if (!decls.length) throw new Error('line style needs a weight or a dash pattern');
+  return sel + ' > g[data-route-pieces] path { ' + decls.join('; ') + '; }';
+}
+/* Shape outlines: the node group's direct shape children (rect/path/circle/
+ * ellipse/polygon), the same selector set fill overrides use — CSS beats the
+ * presentation attributes the renderer paints with. */
+function outlineRuleFor(sel, style) {
+  const decls = [];
+  if (style && style.colour != null && style.colour !== '') {
+    if (!COLOUR_RE.test(String(style.colour))) throw new Error('colour must be #rgb or #rrggbb');
+    decls.push('stroke: ' + style.colour);
+  }
+  if (style && style.weight != null && style.weight !== '') {
+    const n = Number(style.weight);
+    if (!Number.isFinite(n) || n < 0.25 || n > 12) throw new Error('outline weight must be between 0.25 and 12px');
+    decls.push('stroke-width: ' + n + 'px');
+  }
+  if (style && style.dash != null && String(style.dash).trim() !== '') {
+    const d = String(style.dash).trim();
+    if (!/^[0-9., ]+$/.test(d)) throw new Error('dash pattern must be numbers and spaces, e.g. "4 3"');
+    decls.push('stroke-dasharray: ' + d);
+  }
+  if (!decls.length) throw new Error('outline style needs a colour, a weight or a dash pattern');
+  const sels = ['path', 'rect', 'circle', 'ellipse', 'polygon'].map(tag => sel + ' > ' + tag);
+  return sels.join(', ') + ' { ' + decls.join('; ') + '; }';
+}
+
 /* The whole CSS overlay for the current presentation + selection highlight. */
 function overrideCss(presentation, selectedRelation) {
   const p = presentation || {}, rules = [];
@@ -83,6 +131,15 @@ function overrideCss(presentation, selectedRelation) {
   for (const [code, col] of Object.entries(p.kindColours || {})) rules.push(overrideRuleFor({ type: 'kind', code }, col));
   for (const [code, col] of Object.entries(p.verbColours || {})) rules.push(overrideRuleFor({ type: 'verb', code }, col));
   for (const [id, col] of Object.entries(p.objectColours || {})) rules.push(overrideRuleFor({ type: 'object', id }, col));
+  for (const [id, col] of Object.entries(p.relationColours || {})) rules.push(relationColourRuleFor(id, col));
+  for (const [key, style] of Object.entries(p.lineStyles || {})) {
+    const sel = key.startsWith('rel:')
+      ? '.ddn-svg .ddn-rel[data-id="' + cssString(key.slice(4)) + '"]'
+      : '.ddn-svg .ddn-verb-' + slug(key.startsWith('verb:') ? key.slice(5) : key);
+    rules.push(lineStyleRuleFor(sel, style));
+  }
+  for (const [code, style] of Object.entries(p.kindOutlines || {})) rules.push(outlineRuleFor('.ddn-svg .ddn-kind-' + slug(code), style));
+  for (const [id, style] of Object.entries(p.objectOutlines || {})) rules.push(outlineRuleFor('.ddn-svg [data-id="' + cssString(id) + '"], .ddn-svg [data-ddn-id="' + cssString(id) + '"]', style));
   if (selectedRelation) rules.push('.ddn-svg [data-id="' + cssString(selectedRelation) + '"] path { stroke: #d97706; stroke-width: 2.5px; }');
   return rules.join('\n');
 }
@@ -155,12 +212,12 @@ function overrideProfileWrites(o) {
  * view's x_tool_presentation extension record; null when no overlay is set. */
 function cssOverlayRecord(presentation) {
   const p = presentation || {}, out = {};
-  for (const k of ['kindColours', 'verbColours', 'objectColours', 'typography'])
+  for (const k of ['kindColours', 'verbColours', 'objectColours', 'typography', 'relationColours', 'lineStyles', 'kindOutlines', 'objectOutlines'])
     if (p[k] && typeof p[k] === 'object' && Object.keys(p[k]).length) out[k] = JSON.parse(JSON.stringify(p[k]));
   return Object.keys(out).length ? out : null;
 }
 
-const api = { slug, cssString, overrideRuleFor, typographyRuleFor, recentColours, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord };
+const api = { slug, cssString, overrideRuleFor, typographyRuleFor, recentColours, relationColourRuleFor, lineStyleRuleFor, outlineRuleFor, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord };
 if (typeof module === 'object' && module.exports) module.exports = api;
 host.DDNToolPresentation = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
