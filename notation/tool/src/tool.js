@@ -818,6 +818,7 @@ function fontRunBand(band) {
     if (r.props.font !== undefined) run.font = r.props.font;
     if (r.props.size !== undefined) { const sz = ptOf(r.props.size); if (sz != null) run.size = Math.round(sz * 100) / 100; }
     if (r.props.lines !== undefined) run.lines = r.props.lines;
+    for (const k of ['weight', 'italic', 'decoration', 'variant', 'color']) if (r.props[k] !== undefined) run[k] = r.props[k];
     spec[s] = run;
   }
   return spec;
@@ -827,6 +828,9 @@ function setRunFontProps(band, slot, patch) {
   if (!spec[slot]) { status('no ' + band + ' ' + slot + ' run in source — add text in the Document drawer first'); return; }
   if (patch.font !== undefined) { if (patch.font) spec[slot].font = patch.font; else delete spec[slot].font; }
   if (patch.size !== undefined) { if (patch.size != null) spec[slot].size = patch.size; else delete spec[slot].size; }
+  /* 0.9 §6A: flat run text keys ride the same setViewChrome transaction. */
+  for (const k of ['weight', 'italic', 'decoration', 'variant', 'color'])
+    if (patch[k] !== undefined) { if (patch[k] === '' || patch[k] === false || patch[k] == null) delete spec[slot][k]; else spec[slot][k] = patch[k]; }
   guard(() => guided(() => A.authoring.setViewChrome(state.ws, state.entry, state.view, { [band]: spec })));
 }
 function buildFontEditor() {
@@ -839,7 +843,8 @@ function buildFontEditor() {
     for (const slot of ['left', 'center', 'right']) if (spec[slot]) runs.push(band + ':' + slot);
   }
   const typo = state.presentation.typography;
-  const sig = JSON.stringify([fontEd.target.value, [...kinds.keys()], runs, typo]);
+  const elText = state.selected ? groupSpecOf(state.selected, 'text') : null;
+  const sig = JSON.stringify([fontEd.target.value, [...kinds.keys()], runs, typo, state.selected, elText, viewStyleTextSpec(), fontRunBand('header'), fontRunBand('footer')]);
   if (sig === fontEd._sig) return;
   fontEd._sig = sig;
   const prev = fontEd.target.value;
@@ -848,6 +853,7 @@ function buildFontEditor() {
     ...[...kinds].sort().map(([code, label]) => ['kind:' + code, label + ' (' + code + ') text — session preview']),
     ...runs.map(id => ['run:' + id, id.split(':')[0][0].toUpperCase() + id.split(':')[0].slice(1) + ' ' + id.split(':')[1] + ' run — source'])
   ];
+  if (state.selected) opts.push(['el:' + state.selected, 'Selected element ' + state.selected + ' — source (label only)']);
   fontEd.target.replaceChildren(...opts.map(([v, l]) => new Option(l, v)));
   const fixed = [['legend', 'Legend — follows the base font (fixed by the renderer)'], ['titleblock', 'Title block — fixed by the renderer']];
   for (const [v, l] of fixed) { const o = new Option(l, v); o.disabled = true; o.title = 'No font properties exist for this target in the notation or the renderer — there is nothing to edit.'; fontEd.target.add(o); }
@@ -868,7 +874,30 @@ function buildFontEditor() {
     siz.addEventListener('change', () => sourceProfileWrite('style', 'font_size', siz.value === '' ? undefined : { $quantity: Number(siz.value), unit: 'px' }));
     field(body, 'Family', fam);
     field(body, 'Size (px)', siz);
-    body.append(dim('Writes style { font / font_size } to source. Bold/italic/… are not expressible for the base font — the renderer picks weights per text role.'));
+    /* 0.9 §6A: the view-wide text { } group in style — engine-painted, saved
+     * to source. */
+    const spec = viewStyleTextSpec();
+    const commit = patch => {
+      const merged = mergeSpec(viewStyleTextSpec(), patch);
+      guard(() => guided(() => A.authoring.setViewStyleText(state.ws, state.entry, state.view, Object.keys(merged).length ? merged : null)));
+      fontEd._sig = null;
+    };
+    textSpecialRows(body, spec, commit, 'view text colour');
+    body.append(dim('Writes style { font / font_size / text { … } } to source — engine-painted for every text role. ' + PRECEDENCE_NOTE));
+    return;
+  }
+
+  if (target.startsWith('el:')) {
+    /* 0.9 §6A: per-element text { } — label only this revision. */
+    const id = target.slice(3);
+    const spec = groupSpecOf(id, 'text');
+    const commit = patch => {
+      const merged = mergeSpec(groupSpecOf(id, 'text'), patch);
+      guard(() => guided(() => A.authoring.setElementGroup(state.ws, state.entry, state.view, id, 'text', Object.keys(merged).length ? merged : null)));
+      fontEd._sig = null;
+    };
+    textSpecialRows(body, spec, commit, 'label colour');
+    body.append(dim('Writes text { … } on the element to source — LABEL only this revision (fields, details and notes stay role-baked). ' + PRECEDENCE_NOTE));
     return;
   }
 
@@ -918,7 +947,11 @@ function buildFontEditor() {
     siz.addEventListener('change', () => setRunFontProps(band, slot, { size: siz.value === '' ? null : Number(siz.value) }));
     field(body, 'Family', fam);
     field(body, 'Size (pt)', siz);
-    body.append(dim('Writes the ' + band + ' band’s ' + slot + ' run to source (one setViewChrome transaction). The renderer fixes run weights (600 center, 400 sides); other specials are not expressible per run.'));
+    /* 0.9 §6A: the run's flat text keys (weight/italic/decoration/variant/
+     * color), written with the same setViewChrome band transaction. */
+    const commit = patch => { setRunFontProps(band, slot, patch); fontEd._sig = null; };
+    textSpecialRows(body, run, commit, band + ' ' + slot + ' run colour');
+    body.append(dim('Writes the ' + band + ' band’s ' + slot + ' run to source (one setViewChrome transaction) — engine-painted with the run’s ddn-run-' + slot + ' class. ' + PRECEDENCE_NOTE));
   }
 }
 {
@@ -957,7 +990,7 @@ function buildLineEditor() {
   if (relId) {
     try { const src = A.authoring.sourceOf(state.ws, state.entry, state.view, relId); relProps = (src && src.properties) || {}; } catch { relProps = {}; }
   }
-  const sig = JSON.stringify([lineEd.target.value, [...verbs.keys()], relId, relProps, p.verbColours, p.verbRouting, p.relationColours, p.relationRouting, p.lineStyles, p.options.curveTension]);
+  const sig = JSON.stringify([lineEd.target.value, [...verbs.keys()], relId, relProps, relId ? groupSpecOf(relId, 'line') : null, p.verbColours, p.verbRouting, p.relationColours, p.relationRouting, p.lineStyles, p.options.curveTension]);
   if (sig === lineEd._sig) return;
   lineEd._sig = sig;
   const prev = lineEd.target.value;
@@ -1027,9 +1060,43 @@ function buildLineEditor() {
 
   if (target.startsWith('rel:')) {
     const id = target.slice(4);
+    /* 0.9 §6B: the relation's line { } group — SOURCE-writable pen (color,
+     * weight, dash solid|dashed|dotted), engine-painted over route and
+     * arrowheads. Writing clears the overlapping session-preview entries
+     * (CSS would otherwise clobber the engine's paint). */
+    const lineSpec = () => groupSpecOf(id, 'line');
+    const commitLine = patch => {
+      const merged = mergeSpec(lineSpec(), patch);
+      if (patch.color !== undefined) delete p.relationColours[id];
+      if (patch.weight !== undefined || patch.dash !== undefined) {
+        const ls = p.lineStyles['rel:' + id];
+        if (ls) { if (patch.weight !== undefined) delete ls.weight; if (patch.dash !== undefined) delete ls.dash; if (!Object.keys(ls).length) delete p.lineStyles['rel:' + id]; }
+      }
+      applyOverrideCss();
+      guard(() => guided(() => A.authoring.setElementGroup(state.ws, state.entry, state.view, id, 'line', Object.keys(merged).length ? merged : null)));
+      lineEd._sig = null;
+    };
+    const spec = lineSpec();
+    const srcRow = document.createElement('div'); srcRow.className = 'ddn-colour-row';
+    const srcLab = document.createElement('span'); srcLab.className = 'ddn-colour-label'; srcLab.textContent = 'Line colour (source)';
+    const scw = colourWidget('source line colour for relation ' + id, spec.color || '#888888', v => commitLine({ color: v }));
+    const lclr = document.createElement('button'); lclr.type = 'button'; lclr.className = 'ddn-mini'; lclr.textContent = 'clear';
+    lclr.title = 'Remove the whole line { } group from source';
+    lclr.addEventListener('click', () => { delete p.relationColours[id]; delete p.lineStyles['rel:' + id]; applyOverrideCss(); guard(() => guided(() => A.authoring.setElementGroup(state.ws, state.entry, state.view, id, 'line', null))); lineEd._sig = null; buildLineEditor(); });
+    srcRow.append(srcLab, scw.root, lclr);
+    body.append(srcRow);
+    const wt2 = document.createElement('input'); wt2.type = 'number'; wt2.min = 0.25; wt2.max = 16; wt2.step = 0.25; wt2.placeholder = 'source'; wt2.value = spec.weight != null ? String(spec.weight) : '';
+    wt2.setAttribute('aria-label', 'source line weight (px)');
+    wt2.addEventListener('change', () => commitLine({ weight: wt2.value === '' ? undefined : { $quantity: Number(wt2.value), unit: 'px' } }));
+    field(body, 'Line weight px (source)', wt2);
+    const dashSel = selectInput([['', 'As authored / default'], ['solid', 'solid'], ['dashed', 'dashed'], ['dotted', 'dotted']], 'source line dash');
+    dashSel.value = typeof spec.dash === 'string' ? spec.dash : '';
+    dashSel.addEventListener('change', () => commitLine({ dash: dashSel.value || undefined }));
+    field(body, 'Line dash (source)', dashSel);
+    body.append(dim(PRECEDENCE_NOTE + ' Mono themes suppress authored colour per the notation.'));
     const cw = colourWidget('line colour for relation ' + id, p.relationColours[id] || '#888888', v => { p.relationColours[id] = v; applyOverrideCss(); lineEd._sig = null; });
     const row = document.createElement('div'); row.className = 'ddn-colour-row';
-    const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = 'Colour';
+    const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = 'Colour (session)';
     row.append(lab, cw.root);
     body.append(row);
     const sel = selectInput(routingOptions(), 'routing for relation ' + id);
@@ -1046,7 +1113,7 @@ function buildLineEditor() {
       mkSel.addEventListener('change', () => guard(() => guided(() => A.authoring.setRelationProps(state.ws, state.entry, state.view, id, { [end + '_mark']: mkSel.value || undefined }))));
       field(body, end[0].toUpperCase() + end.slice(1) + ' mark (source)', mkSel);
     }
-    body.append(dim('Colour/routing/dash/weight are session preview; endpoint marks write to source. Enforcement edits live in the Inspector (This view / Meaning tabs) — selection is already on this relation.'));
+    body.append(dim('Line pen and endpoint marks write to source; colour/routing/dash/weight below are session preview. Enforcement edits live in the Inspector (This view / Meaning tabs) — selection is already on this relation.'));
   }
 }
 {
@@ -1071,12 +1138,12 @@ const shapeEd = {};
 function buildShapeEditor() {
   const kinds = state._fontKinds || new Map();
   const p = state.presentation;
-  const sig = JSON.stringify([shapeEd.target.value, [...kinds.keys()], state.selected, p.kindColours, p.objectColours, p.kindOutlines, p.objectOutlines]);
+  const sig = JSON.stringify([shapeEd.target.value, [...kinds.keys()], state.selected, state.selected ? [flatPropsOf(state.selected), groupSpecOf(state.selected, 'stroke')] : null, p.kindColours, p.objectColours, p.kindOutlines, p.objectOutlines]);
   if (sig === shapeEd._sig) return;
   shapeEd._sig = sig;
   const prev = shapeEd.target.value;
   const opts = [...kinds].sort().map(([code, label]) => ['kind:' + code, label + ' (' + code + ') — session preview']);
-  if (state.selected) opts.push(['el:' + state.selected, 'Selected element ' + state.selected + ' — session preview']);
+  if (state.selected) opts.push(['el:' + state.selected, 'Selected element ' + state.selected + ' — source']);
   shapeEd.target.replaceChildren(...opts.map(([v, l]) => new Option(l, v)));
   if (!opts.length) shapeEd.target.add(new Option('no shapes in this view', ''));
   shapeEd.target.value = opts.some(([v]) => v === prev) ? prev : (opts[0] ? opts[0][0] : '');
@@ -1084,6 +1151,57 @@ function buildShapeEditor() {
   body.replaceChildren();
   const target = shapeEd.target.value;
   if (!target) return;
+  /* 0.9 §6B/§6C: the element target writes stroke { }, flat fill and flat
+   * opacity to source (engine-painted); the kind target stays session
+   * preview (the notation has no kind-level paint). */
+  if (target.startsWith('el:')) {
+    const id = target.slice(3);
+    const flats = flatPropsOf(id);
+    const fillRow = document.createElement('div'); fillRow.className = 'ddn-colour-row';
+    const flab = document.createElement('span'); flab.className = 'ddn-colour-label'; flab.textContent = 'Fill (source)';
+    const fcw = colourWidget('source fill for element ' + id, flats.fill || '#888888', v => {
+      delete p.objectColours[id]; applyOverrideCss();
+      guard(() => guided(() => A.authoring.setElementProperties(state.ws, state.entry, state.view, id, { fill: v })));
+      shapeEd._sig = null;
+    });
+    fillRow.append(flab, fcw.root);
+    body.append(fillRow);
+    const spec = () => groupSpecOf(id, 'stroke');
+    const commitStroke = patch => {
+      const merged = mergeSpec(spec(), patch);
+      delete p.objectOutlines[id]; applyOverrideCss();
+      guard(() => guided(() => A.authoring.setElementGroup(state.ws, state.entry, state.view, id, 'stroke', Object.keys(merged).length ? merged : null)));
+      shapeEd._sig = null;
+    };
+    const sc = spec();
+    const srow = document.createElement('div'); srow.className = 'ddn-colour-row';
+    const slab = document.createElement('span'); slab.className = 'ddn-colour-label'; slab.textContent = 'Stroke colour (source)';
+    const scw = colourWidget('source stroke colour for element ' + id, sc.color || '#203047', v => commitStroke({ color: v }));
+    srow.append(slab, scw.root);
+    body.append(srow);
+    const wt = document.createElement('input'); wt.type = 'number'; wt.min = 0.25; wt.max = 16; wt.step = 0.25; wt.placeholder = 'source'; wt.value = sc.weight != null ? String(sc.weight) : '';
+    wt.setAttribute('aria-label', 'source stroke weight (px)');
+    wt.addEventListener('change', () => commitStroke({ weight: wt.value === '' ? undefined : { $quantity: Number(wt.value), unit: 'px' } }));
+    field(body, 'Stroke weight px (source)', wt);
+    const dashSel = selectInput([['', 'As authored / default'], ['solid', 'solid'], ['dashed', 'dashed'], ['dotted', 'dotted']], 'source stroke dash');
+    dashSel.value = typeof sc.dash === 'string' ? sc.dash : '';
+    dashSel.addEventListener('change', () => commitStroke({ dash: dashSel.value || undefined }));
+    field(body, 'Stroke dash (source)', dashSel);
+    const cornerL = document.createElement('label'); cornerL.className = 'ddn-check';
+    const cornerC = document.createElement('input'); cornerC.type = 'checkbox'; cornerC.checked = sc.corners === 'round'; cornerC.setAttribute('aria-label', 'round corners');
+    cornerC.addEventListener('change', () => commitStroke({ corners: cornerC.checked ? 'round' : undefined }));
+    cornerL.append(cornerC, ' Round corners');
+    body.append(cornerL);
+    const op = document.createElement('input'); op.type = 'range'; op.min = 0; op.max = 1; op.step = 0.05; op.value = flats.opacity != null ? String(flats.opacity) : '1';
+    op.setAttribute('aria-label', 'element opacity');
+    const opOut = document.createElement('span'); opOut.textContent = ' ' + (flats.opacity != null ? flats.opacity : 1);
+    op.addEventListener('change', () => guard(() => guided(() => A.authoring.setElementProperties(state.ws, state.entry, state.view, id, { opacity: Number(op.value) >= 1 ? undefined : Number(op.value) }))));
+    op.addEventListener('input', () => { opOut.textContent = ' ' + op.value; });
+    field(body, 'Opacity (source)', op);
+    body.append(opOut);
+    body.append(dim(PRECEDENCE_NOTE + ' Mono themes suppress authored colour per the notation.'));
+    return;
+  }
   const isKind = target.startsWith('kind:');
   const code = target.slice(target.indexOf(':') + 1);
   const fills = isKind ? p.kindColours : p.objectColours;
@@ -1135,8 +1253,17 @@ function buildShapeEditor() {
  *  · selected element — the property registry (data-properties.json +
  *    x_* contracts) defines NO element-level sizing keys; form-descriptors.json
  *    has none for elements. Per the support rule: omitted, with a note. */
+const sizeEd = { target: null, viewWrap: null, elWrap: null, _sig: null };
 {
   const g = appGroup(els.styleBody, 'Sizing', 'source');
+  sizeEd.target = selectInput([['view', 'View — style envelope (source)']], 'Sizing target');
+  /* 0.9 §6C: per-element sizing is pinned (text_fit / max_width / max_height /
+   * min_font, element > view > default) plus element opacity — the editor has
+   * a view target (style {} envelope) and a selected-element target, both
+   * source-writable through the canonical channels. */
+  field(g, 'Target', sizeEd.target);
+  sizeEd.viewWrap = document.createElement('div');
+  sizeEd.elWrap = document.createElement('div');
   const sizingFields = [
     ['Text fit', 'text_fit', ['wrap', 'grow', 'shrink']],
     ['Max text width (px)', 'max_width', 'quantity', 16, 32000],
@@ -1149,7 +1276,7 @@ function buildShapeEditor() {
     else { d.widget = 'quantity'; d.units = ['px']; d.min = min; d.max = max; }
     return d;
   });
-  const form = FRM.renderForm(g, descriptors, {
+  const form = FRM.renderForm(sizeEd.viewWrap, descriptors, {
     flat: true,
     getValue(d) {
       const node = viewSourceNode();
@@ -1167,12 +1294,62 @@ function buildShapeEditor() {
     note: status
   });
   sourceForms.push(form);
-  g.append(dim('View-level text-fit envelope (style {} keys, saved to source). Per-element sizing is not expressible — the property registry defines no element-level max_width / text_fit / min_font keys, so there is intentionally no element target here.'));
+  g.append(sizeEd.viewWrap, sizeEd.elWrap);
+  sizeEd.target.addEventListener('change', () => { sizeEd._sig = null; buildSizeEditor(); });
+  sizeEd.target.value = 'view';
+  buildSizeEditor();
+}
+function buildSizeEditor() {
+  const id = state.selected;
+  const sig = JSON.stringify([sizeEd.target.value, id, id ? flatPropsOf(id) : null]);
+  if (sig === sizeEd._sig) return;
+  sizeEd._sig = sig;
+  const prev = sizeEd.target.value;
+  const opts = [['view', 'View — style envelope (source)']];
+  if (id) opts.push(['el:' + id, 'Selected element ' + id + ' — source']);
+  sizeEd.target.replaceChildren(...opts.map(([v, l]) => new Option(l, v)));
+  sizeEd.target.value = opts.some(([v]) => v === prev) ? prev : 'view';
+  const isEl = sizeEd.target.value.startsWith('el:');
+  sizeEd.viewWrap.hidden = isEl;
+  sizeEd.elWrap.hidden = !isEl;
+  sizeEd.elWrap.replaceChildren();
+  if (!isEl) return;
+  const elId = sizeEd.target.value.slice(3);
+  const flats = flatPropsOf(elId);
+  const commit = patch => guard(() => guided(() => A.authoring.setElementProperties(state.ws, state.entry, state.view, elId, patch)));
+  const fit = selectInput([['', 'As authored / default'], ['wrap', 'wrap'], ['grow', 'grow'], ['shrink', 'shrink']], 'element text fit');
+  fit.value = typeof flats.text_fit === 'string' ? flats.text_fit : '';
+  fit.addEventListener('change', () => commit({ text_fit: fit.value || undefined }));
+  field(sizeEd.elWrap, 'Text fit', fit);
+  for (const [key, label, min, max] of [['max_width', 'Max text width (px)', 16, 32000], ['max_height', 'Max text height (px)', 8, 32000], ['min_font', 'Minimum font (px)', 4, 512]]) {
+    const inp = document.createElement('input'); inp.type = 'number'; inp.min = min; inp.max = max; inp.step = 1; inp.placeholder = 'unset';
+    const cur = pxOf(flats[key]);
+    inp.value = cur == null ? '' : String(cur);
+    inp.setAttribute('aria-label', 'element ' + label);
+    inp.addEventListener('change', () => commit({ [key]: inp.value === '' ? undefined : { $quantity: Number(inp.value), unit: 'px' } }));
+    field(sizeEd.elWrap, label, inp);
+  }
+  const op = document.createElement('input'); op.type = 'range'; op.min = 0; op.max = 1; op.step = 0.05; op.value = flats.opacity != null ? String(flats.opacity) : '1';
+  op.setAttribute('aria-label', 'element opacity');
+  op.addEventListener('change', () => commit({ opacity: Number(op.value) >= 1 ? undefined : Number(op.value) }));
+  field(sizeEd.elWrap, 'Opacity (0–1)', op);
+  sizeEd.elWrap.append(dim('Element keys override the view envelope per key (element > view > default). ' + PRECEDENCE_NOTE));
+}
+function sizeEdJumpToElement(id) {
+  state.selected = id; state.selectedRelation = null; state.selectedIds = [id];
+  setDrawer('style', 'open', true);
+  refreshEditors();
+  sizeEd.target.value = 'el:' + id;
+  sizeEd._sig = null;
+  buildSizeEditor();
+  const body = document.getElementById('ddn-style-body');
+  if (body) body.scrollTop = 0;
 }
 function refreshEditors() {
   buildFontEditor();
   buildLineEditor();
   buildShapeEditor();
+  buildSizeEditor();
 }
 /* Viewport actions + reset live in the style drawer too (the toolbar keeps
  * the quick fit/zoom subset). Session state only — nothing here writes source. */
@@ -1325,6 +1502,76 @@ function viewSourceNode() {
     const ast = A.parse(files[state.entry], state.entry);
     return (ast.declarations || []).find(n => n.type === 'view' && n.id === state.view) || null;
   } catch { return null; }
+}
+
+/* 0.9 portable paint properties (chapter 04 §6A/§6B/§6C): AST helpers for the
+ * unified editors — read a declaration's child-group spec (text/stroke/line)
+ * and the view style's text { } group, and merge patches (undefined/''/false
+ * removes the key). Source writes clear the overlapping session-preview entry
+ * for the same target, because CSS beats the presentation attributes the
+ * engine paints with — source must win visually. */
+function declarationNode(id) {
+  try {
+    const src = A.authoring.sourceOf(state.ws, state.entry, state.view, id);
+    const files = state.ws.getFiles();
+    const ast = A.parse(files[src.file], src.file);
+    const walk = nodes => {
+      for (const n of nodes || []) {
+        if (n.start === src.start) return n;
+        const r = walk(n.children);
+        if (r) return r;
+      }
+      return null;
+    };
+    return walk(ast.declarations);
+  } catch { return null; }
+}
+function groupSpecOf(id, group) {
+  const n = declarationNode(id);
+  const g = n && (n.children || []).find(x => x.group && x.type === group);
+  return g ? JSON.parse(JSON.stringify(g.props)) : {};
+}
+function flatPropsOf(id) {
+  try { return A.authoring.sourceOf(state.ws, state.entry, state.view, id).properties || {}; } catch { return {}; }
+}
+function viewStyleTextSpec() {
+  const node = viewSourceNode();
+  const style = node && (node.children || []).find(x => x.group && x.type === 'style');
+  const tg = style && (style.children || []).find(x => x.group && x.type === 'text');
+  return tg ? JSON.parse(JSON.stringify(tg.props)) : {};
+}
+function mergeSpec(spec, patch) {
+  const out = { ...(spec || {}) };
+  for (const [k, v] of Object.entries(patch || {})) {
+    if (v === undefined || v === '' || v === false || v === null) delete out[k];
+    else out[k] = v;
+  }
+  return out;
+}
+const PRECEDENCE_NOTE = 'Source properties win over session preview — writing one of these clears the matching session-preview override for this target.';
+/* §6A text-special controls (weight/italic/strike/small-caps/colour), shared
+ * by the view-base, element and run targets. commit(patch) merges+writes. */
+function textSpecialRows(body, spec, commit, colourLabel) {
+  const wt = selectInput([['', 'normal / default'], ['bold', 'bold'], ['400', 'normal (400)']], 'text weight');
+  wt.value = spec.weight === 700 || spec.weight === 'bold' ? 'bold' : (spec.weight != null ? String(spec.weight) : '');
+  wt.addEventListener('change', () => commit({ weight: wt.value === '' ? undefined : (wt.value === 'bold' ? 'bold' : Number(wt.value)) }));
+  field(body, 'Weight', wt);
+  const row = document.createElement('div'); row.className = 'ddn-row';
+  for (const [key, label] of [['italic', 'Italic'], ['decoration', 'Strike-through'], ['variant', 'Small-caps']]) {
+    const l = document.createElement('label'); l.className = 'ddn-check';
+    const c = document.createElement('input'); c.type = 'checkbox';
+    c.checked = key === 'decoration' ? spec.decoration === 'strike' : key === 'variant' ? spec.variant === 'small-caps' : !!spec[key];
+    c.setAttribute('aria-label', label);
+    c.addEventListener('change', () => commit(key === 'decoration' ? { decoration: c.checked ? 'strike' : undefined } : key === 'variant' ? { variant: c.checked ? 'small-caps' : undefined } : { italic: c.checked }));
+    l.append(c, ' ' + label);
+    row.append(l);
+  }
+  body.append(row);
+  const cw = colourWidget(colourLabel || 'text colour', spec.color || '#203047', v => commit({ color: v }));
+  const crow = document.createElement('div'); crow.className = 'ddn-colour-row';
+  const clab = document.createElement('span'); clab.className = 'ddn-colour-label'; clab.textContent = 'Colour';
+  crow.append(clab, cw.root);
+  body.append(crow);
 }
 
 const DOCUMENT_FIELDS = [
@@ -3395,7 +3642,7 @@ function elementCtxEntries(id, gx, gy) {
       ? { label: 'Unpin', fn: () => guided(() => A.authoring.unpin(state.ws, state.entry, state.view, id)) }
       : { label: 'Pin here', disabled: !editable || !g, title: editable ? 'Pin the occurrence at its current position' : 'Needs a graph projection', fn: () => guided(() => A.authoring.pin(state.ws, state.entry, state.view, id, g.x, g.y)) },
     { label: 'Link to…', disabled: !editable, title: editable ? 'Create a relation to a new or existing element' : 'Needs a graph projection', fn: () => linkToStart(id, gx, gy) },
-    { label: 'Min/max size…', title: 'Sizing is view-level only (no per-element size keys exist)', fn: () => { setDrawer('style', 'open', true); status('element sizing: the registry defines no per-element size keys — the Sizing group edits the view-level envelope (max_width/max_height/min_font)'); } },
+    { label: 'Min/max size…', title: 'Per-element text fit, max width/height, min font and opacity (0.9 §6C)', fn: () => sizeEdJumpToElement(id) },
     '-',
     { label: 'Properties', fn: () => openPropertiesFor(id, false) }
   ];

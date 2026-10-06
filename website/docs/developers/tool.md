@@ -116,39 +116,49 @@ type-sheet dispatch, exactly like a view switch.
 
 The drawer's **Fonts** group is the single font editor. One target
 dropdown lists every font-holding target in the active view, with exactly
-the controls the notation supports for it: the **view base font** (family
-and size px, written to `style { font / font_size }` in source), **each
-kind present** (family, size, plus bold / italic / strike-through /
-small-caps / text colour — all *session preview*, riding the same CSS
-overlay as the colour cosmetics because the notation has no per-kind font
-syntax), and each existing **header/footer run** (family and size pt,
-written via `setViewChrome`). The legend and title block are listed
-disabled — the renderer fixes their typography, so there is nothing to
-edit.
+the controls the notation supports for it (0.9 portable text properties,
+chapter 04 §6A): the **view base font** (family, size px, plus
+weight/italic/strike/small-caps/colour written to `style { … text { … } }`
+in source and engine-painted), **each kind present** (family, size, plus
+bold / italic / strike-through / small-caps / text colour — all *session
+preview*; kind-level paint stays tool-side per the notation), the
+**selected element** (`text { … }` on the declaration, source — LABEL only
+this revision), and each existing **header/footer run** (family, size pt,
+plus the flat run text keys weight/italic/decoration/variant/color, all
+written with the run's `setViewChrome` band transaction; runs render with
+addressable `ddn-run-left/center/right` classes). The legend and title
+block are listed disabled — the renderer fixes their typography, so there
+is nothing to edit.
 
 The **Lines**, **Shapes** and **Sizing** groups follow the same
-target-dropdown pattern and support discipline:
+target-dropdown pattern and support discipline (0.9 §6B/§6C upgrades the
+element and relation targets from session preview to source):
 
-- **Lines** — one edge editor for every line target in the view (it
-  absorbs the retired "Colours — relation classes" and "Routing per
-  relation class" panels): each **relation class** present (colour,
-  session), each **verb** present (routing style, dash pattern, stroke
-  weight — session; dash/weight scope to the route pieces so arrowheads
-  keep their geometry and never rescale with weight; curve type rides the
-  routing select, curve tension is view-wide and labeled), and the
-  **selected relation** (colour/routing/dash/weight session, plus
-  source-writable endpoint marks `source_mark`/`target_mark` via
-  `setRelationProps`; enforcement stays in the Inspector, cross-linked).
-- **Shapes** — fill and outline per **kind** present and per **selected
-  element** (absorbs "Colours — kinds" and the click-selection rows):
-  fill colour plus outline colour/weight/dash, all session-preview CSS on
-  the shape plate's direct children (nested icon glyphs keep their paint;
-  corner style is baked geometry — omitted).
-- **Sizing** — the view's text-fit envelope (`text_fit`, `max_width`,
-  `max_height`, `min_font`), moved here from the old source-only style
-  keys and still source-writable. There is no element target: the
-  property registry defines no element-level sizing keys, so per-element
-  sizing is intentionally omitted (the group says so inline).
+- **Lines** — one edge editor for every line target in the view: each
+  **relation class** present (colour, session), each **verb** present
+  (routing style, dash pattern, stroke weight — session; dash/weight scope
+  to the route pieces), and the **selected relation** — source `line {
+  color, weight, dash solid|dashed|dotted }` (engine-painted over route
+  and arrowheads; writing clears the overlapping session entries because
+  CSS would otherwise clobber the engine's paint) plus session
+  colour/routing/dash/weight and source endpoint marks
+  `source_mark`/`target_mark` (enforcement stays in the Inspector).
+- **Shapes** — per **kind** (fill + outline, session CSS) and per
+  **selected element** — source `stroke { color, weight, dash, corners:
+  round }`, flat `fill`, and flat `opacity` (0–1, painted as one SVG group
+  opacity); writing clears the matching session overrides. Corner style
+  beyond `round` is reserved notation — omitted.
+- **Sizing** — the **view** target (`text_fit`, `max_width`, `max_height`,
+  `min_font` in `style {}`, source) and the **selected element** target
+  (0.9 §6C: per-element `text_fit` / `max_width` / `max_height` /
+  `min_font`, element > view > default per key, plus the opacity slider) —
+  both source-writable through the canonical channels. The context menu's
+  *Min/max size…* opens this element target.
+
+Every editor carries the note "source properties win over session
+preview": the engine paints source properties as SVG attributes, so a
+source write clears the overlapping session-preview CSS entry for the
+same target; mono themes suppress authored colour per the notation.
 
 Every colour entry point — the Lines, Shapes and Fonts editors, page
 background, per-class and per-relation line colours — uses one shared

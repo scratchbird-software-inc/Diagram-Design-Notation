@@ -5184,6 +5184,8 @@ api.authoring={
      if(r.font!==undefined)props.push('font: '+value(r.font)+';');
      if(r.size!==undefined)props.push('size: '+value({$quantity:r.size,unit:'pt'})+';');
      if(r.lines!==undefined)props.push('lines: '+value(r.lines)+';');
+     /* 0.9 portable text properties (§6A): flat run keys. */
+     for(const k of ['weight','italic','decoration','variant','color'])if(r[k]!==undefined)props.push(k+': '+value(r[k])+';');
      runs.push(slot+' { '+props.join(' ')+' }');
     }
     if(!runs.length)fail('DDN-E001',kind+' needs at least one run with a text (or pass null to remove the band).');
@@ -5213,6 +5215,46 @@ api.authoring={
    else if(pub&&pub.bodyEnd!==undefined)edits.push({file:v.source,start:pub.bodyEnd,end:pub.bodyEnd,text:'\n        '+block+'\n    '});
    else edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    publication {\n        '+block+'\n    }\n'});
   }
+  if(!edits.length)return ws.revision;
+  return apply(ws,b,edits,entry,view);
+ },
+ /* 0.9 portable paint properties (chapter 04 §6A/§6B): write or remove a
+  * child GROUP on an element or relation declaration — text { } on elements
+  * (label-only), stroke { } on elements, line { } on relations. `spec` is the
+  * full replacement record (merge before calling); null removes the group.
+  * The canonical value writer serializes; apply() re-runs the DDN-TX/LN
+  * contracts, so an out-of-contract value rolls the whole transaction back. */
+ setElementGroup(ws,entry,view,id,group,spec){
+  const ALLOWED={object:['text','stroke'],relation:['line']};
+  const b=build(ws,entry,view),n=find(b,id);
+  if(!ALLOWED[n.type]||!ALLOWED[n.type].includes(group))fail('DDN-E001','No '+group+' { } group is registered for '+n.type+' declarations.');
+  if(spec!==null&&(!spec||typeof spec!=='object'||Array.isArray(spec)))fail('DDN-E001',group+' writes need a spec record or null.');
+  const text=ws.getFiles()[n.source],child=(n.children||[]).find(x=>x.group&&x.type===group),edits=[];
+  if(spec===null){
+   if(child){let start=child.start;while(start>0&&(text[start-1]===' '||text[start-1]==='\t'))start--;let end=child.end;if(text[end]==='\n')end++;edits.push({file:n.source,start,end,text:''});}
+  }else {
+   const block=group+' { '+Object.entries(spec).map(([k,x])=>k+': '+value(x)+';').join(' ')+' }';
+   if(child)edits.push({file:n.source,start:child.start,end:child.end,text:block});
+   else if(n.bodyEnd!==undefined)edits.push({file:n.source,start:n.bodyEnd,end:n.bodyEnd,text:'\n        '+block+'\n    '});
+   else edits.push({file:n.source,start:n.end-1,end:n.end,text:' { '+block+' }'});
+  }
+  if(!edits.length)return ws.revision;
+  return apply(ws,b,edits,entry,view);
+ },
+ /* 0.9 §6A view-wide layer: the text { } group nested in the view's style { }
+  * override group (created when missing). `spec` replaces the whole group;
+  * null removes it (the style group itself stays). */
+ setViewStyleText(ws,entry,view,spec){
+  if(spec!==null&&(!spec||typeof spec!=='object'||Array.isArray(spec)))fail('DDN-E001','style text writes need a spec record or null.');
+  const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source],edits=[];
+  const styleNode=v.children.find(n=>n.group&&n.type==='style');
+  const child=styleNode&&(styleNode.children||[]).find(x=>x.group&&x.type==='text');
+  const block=spec===null?null:'text { '+Object.entries(spec).map(([k,x])=>k+': '+value(x)+';').join(' ')+' }';
+  if(spec===null){
+   if(child){let start=child.start;while(start>0&&(text[start-1]===' '||text[start-1]==='\t'))start--;let end=child.end;if(text[end]==='\n')end++;edits.push({file:v.source,start,end,text:''});}
+  }else if(child)edits.push({file:v.source,start:child.start,end:child.end,text:block});
+  else if(styleNode&&styleNode.bodyEnd!==undefined)edits.push({file:v.source,start:styleNode.bodyEnd,end:styleNode.bodyEnd,text:'\n        '+block+'\n    '});
+  else edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    style {\n        '+block+'\n    }\n'});
   if(!edits.length)return ws.revision;
   return apply(ws,b,edits,entry,view);
  },

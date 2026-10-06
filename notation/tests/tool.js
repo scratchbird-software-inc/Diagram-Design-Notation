@@ -1006,6 +1006,43 @@ test('typesheet drawer joins the drawer model (params, presets, ?drawers=, setti
     assert.ok(tool.includes('A.authoring.' + frag), 'CMMN sheet not wired to authoring.' + frag);
 });
 
+test('0.9 authoring: setElementGroup / setViewStyleText / run text keys / element sizing (chapter 04 §6A–6C)', () => {
+  const A = require('../dist/ddn.global.js');
+  const SRC = 'ddn "0.6";\nmodule "m";\ndata model {\n    object a "Alpha" { kind: application; }\n    object b "Beta" { kind: application; }\n    relation r "uses" @a -> @b { kind: flow; }\n}\nview v "V" { data: [@model]; publication { header { left { text: "H"; } } } }\n';
+  const mk = () => A.createWorkspace({ 'm.ddn': SRC });
+  // §6A element text { } + §6B stroke { } + line { } write and render
+  const ws = mk();
+  A.authoring.setElementGroup(ws, 'm.ddn', 'v', 'm::model.a', 'text', { weight: 'bold', color: '#123456' });
+  A.authoring.setElementGroup(ws, 'm.ddn', 'v', 'm::model.a', 'stroke', { color: '#ff0000', dash: 'dashed', corners: 'round' });
+  A.authoring.setElementGroup(ws, 'm.ddn', 'v', 'm::model.r', 'line', { color: '#00ff00', dash: 'dotted' });
+  A.authoring.setViewStyleText(ws, 'm.ddn', 'v', { italic: true, variant: 'small-caps' });
+  A.authoring.setElementProperties(ws, 'm.ddn', 'v', 'm::model.a', { fill: '#ffee00', opacity: 0.5, max_width: { $quantity: 300, unit: 'px' }, text_fit: 'wrap' });
+  const text = ws.getFiles()['m.ddn'];
+  for (const frag of ['text { weight: "bold"; color: "#123456"; }', 'stroke { color: "#ff0000"; dash: "dashed"; corners: "round"; }', 'line { color: "#00ff00"; dash: "dotted"; }', 'text { italic: true; variant: "small-caps"; }', 'fill: "#ffee00"', 'opacity: 0.5', 'max_width: 300px'])
+    assert.ok(text.includes(frag), 'source missing ' + frag);
+  const r = ws.renderSync({ entry: 'm.ddn', view: 'v' });
+  for (const frag of ['#123456', '#ff0000', '#00ff00', 'stroke-dasharray="2 5"', 'stroke-dasharray="10 6"', 'opacity="0.5"', 'small-caps', 'ddn-run-left'])
+    assert.ok(r.svg.includes(frag), 'render missing ' + frag);
+  // removal
+  A.authoring.setElementGroup(ws, 'm.ddn', 'v', 'm::model.a', 'text', null);
+  assert.ok(!ws.getFiles()['m.ddn'].includes('weight: "bold"'), 'element text group removed');
+  A.authoring.setViewStyleText(ws, 'm.ddn', 'v', null);
+  assert.ok(!ws.getFiles()['m.ddn'].includes('text {'), 'view style text removed');
+  // run flat text keys via setViewChrome
+  const ws2 = mk();
+  A.authoring.setViewChrome(ws2, 'm.ddn', 'v', { header: { left: { text: 'H', weight: 'bold', italic: true, color: '#112233' } } });
+  assert.ok(ws2.getFiles()['m.ddn'].includes('weight: "bold";'), 'run weight written');
+  assert.ok(ws2.renderSync({ entry: 'm.ddn', view: 'v' }).svg.includes('#112233'), 'run colour rendered');
+  // contract rollback: out-of-contract values fail coded and write nothing
+  const ws3 = mk();
+  assert.throws(() => A.authoring.setElementGroup(ws3, 'm.ddn', 'v', 'm::model.a', 'stroke', { weight: 99 }), e => e.code === 'DDN-LN03');
+  assert.ok(!ws3.getFiles()['m.ddn'].includes('stroke {'), 'rolled-back stroke write leaves no trace');
+  assert.throws(() => A.authoring.setElementGroup(ws3, 'm.ddn', 'v', 'm::model.b', 'line', { color: '#ffffff' }), e => e.code === 'DDN-E001');
+  assert.throws(() => A.authoring.setElementGroup(ws3, 'm.ddn', 'v', 'm::model.a', 'text', { weight: 'heavy' }), e => e.code === 'DDN-TX02');
+  const ws4 = mk();
+  assert.throws(() => A.authoring.setElementProperties(ws4, 'm.ddn', 'v', 'm::model.a', { opacity: 2 }), e => e.code === 'DDN-SZ01');
+});
+
 test('phase 8/12 drawers join the drawer model (creator top, properties bottom; relation retired)', () => {
   for (const name of ['creator', 'properties']) {
     assert.ok(T.DRAWERS.includes(name), name + ' missing from DRAWERS');
