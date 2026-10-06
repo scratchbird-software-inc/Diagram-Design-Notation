@@ -1,1232 +1,1240 @@
 [
-  {
-    "id": "whiteboard",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/01-whiteboard.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "business-erd",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/02-business-erd.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "bpmn-collaboration",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/46-bpmn.ddn",
-    "view": "collaboration"
-  },
-  {
-    "id": "bar-chart",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/59-data-refresh.ddn",
-    "view": "latency_chart"
-  },
-  {
-    "id": "ladder",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/101-ladder.ddn",
-    "view": "d"
-  },
-  {
-    "id": "decision-first",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "decision_first"
-  },
-  {
-    "id": "relational",
-    "title": "Logical relational schema",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/03-relational.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "physical-model",
-    "title": "Physical representation and datatype documentation",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "documents",
-    "title": "Document and embedded-object schema",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/05-documents.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "namespaces",
-    "title": "Catalog, database and schema organization",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/09-namespaces.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "domains",
-    "title": "Semantic domains and candidate bindings",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/08-domains.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "nested-fields",
-    "title": "Recursive fields and structural variants",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/12-nested-fields.ddn",
-    "view": "detailed"
-  },
-  {
-    "id": "wide-column",
-    "title": "Wide-column and access-pattern design",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/07-keyed-storage.ddn",
-    "view": "wide_column"
-  },
-  {
-    "id": "lineage",
-    "title": "Dataset lineage and derivation",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/13-lineage.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "migration",
-    "title": "Current-to-target mapping",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/20-migration.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "c4-context",
-    "title": "System context — C4-style",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/25-c4-views.ddn",
-    "view": "context"
-  },
-  {
-    "id": "c4-components",
-    "title": "Component responsibility map — C4-style",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/25-c4-views.ddn",
-    "view": "component"
-  },
-  {
-    "id": "network",
-    "title": "Network/system topology",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/54-network-diagram.ddn",
-    "view": "lan"
-  },
-  {
-    "id": "network-symbols",
-    "title": "Network with icon pack symbols",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/103-network-symbols.ddn",
-    "view": "net"
-  },
-  {
-    "id": "shards-replicas",
-    "title": "Sharding, replication and co-location",
-    "status": "pilot",
-    "support": "native",
-    "entry": "field-guide/sources/shards-replicas.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "etl",
-    "title": "ETL/ELT and analytical publication",
-    "status": "pilot",
-    "support": "native",
-    "entry": "field-guide/sources/etl.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "event-contract",
-    "title": "Event/message contract catalogue",
-    "status": "pilot",
-    "support": "native",
-    "entry": "field-guide/sources/event-contract.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "recovery",
-    "title": "Backup, restore and continuity design",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/19-recovery.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "dfd-yourdon",
-    "title": "Yourdon-style data-flow diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "overview"
-  },
-  {
-    "id": "dfd-gane-sarson",
-    "title": "Gane–Sarson-style DFD",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "overview"
-  },
-  {
-    "id": "flowchart",
-    "title": "ISO 5807 flowchart — full symbol set",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/91-iso5807-flowchart.ddn",
-    "view": "chart"
-  },
-  {
-    "id": "swimlane",
-    "title": "Cross-functional responsibility view",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/45-activity-diagram.ddn",
-    "view": "fulfilment"
-  },
-  {
-    "id": "sequence",
-    "title": "UML sequence diagram completeness",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/76-uml-sequence-complete.ddn",
-    "view": "fragments"
-  },
-  {
-    "id": "communication",
-    "title": "UML communication diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/42-communication-diagram.ddn",
-    "view": "communication"
-  },
-  {
-    "id": "interaction-overview",
-    "title": "Interaction overview",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/48-interaction-overview.ddn",
-    "view": "overview"
-  },
-  {
-    "id": "timing",
-    "title": "UML timing diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/47-timing-diagram.ddn",
-    "view": "timing"
-  },
-  {
-    "id": "msc",
-    "title": "MSC message sequence chart",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/93-msc.ddn",
-    "view": "chart"
-  },
-  {
-    "id": "statemachine",
-    "title": "UML state machine completeness",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/77-uml-statemachine-complete.ddn",
-    "view": "pseudostates"
-  },
-  {
-    "id": "activity",
-    "title": "UML activity diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/80-uml-activity.ddn",
-    "view": "pins"
-  },
-  {
-    "id": "umlclass",
-    "title": "UML class diagram completeness",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/75-uml-class-complete.ddn",
-    "view": "associations"
-  },
-  {
-    "id": "umlobject",
-    "title": "UML object diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/43-object-diagram.ddn",
-    "view": "objects"
-  },
-  {
-    "id": "umlcomposite",
-    "title": "UML component and composite structure",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/79-uml-composite.ddn",
-    "view": "components"
-  },
-  {
-    "id": "umlremainder",
-    "title": "UML remainder notations",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/81-uml-remainder.ddn",
-    "view": "packages"
-  },
-  {
-    "id": "bpmn-process",
-    "title": "BPMN process diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/82-bpmn-complete.ddn",
-    "view": "process"
-  },
-  {
-    "id": "bpmn-choreography",
-    "title": "BPMN choreography",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/82-bpmn-complete.ddn",
-    "view": "choreography"
-  },
-  {
-    "id": "cmmn-case",
-    "title": "CMMN case diagram completeness",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/83-cmmn-complete.ddn",
-    "view": "v"
-  },
-  {
-    "id": "sysml-bdd",
-    "title": "SysML block definition diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/85-sysml-blocks.ddn",
-    "view": "bdd"
-  },
-  {
-    "id": "sysml-ibd",
-    "title": "SysML internal block diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/85-sysml-blocks.ddn",
-    "view": "ibd"
-  },
-  {
-    "id": "sysml-parametric",
-    "title": "SysML parametric diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/85-sysml-blocks.ddn",
-    "view": "parametric"
-  },
-  {
-    "id": "dmn-drd",
-    "title": "DMN decision requirements diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/87-dmn-drd.ddn",
-    "view": "drd"
-  },
-  {
-    "id": "soaml-services",
-    "title": "SoaML service architecture",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/88-soaml.ddn",
-    "view": "arch"
-  },
-  {
-    "id": "uaf-strategic",
-    "title": "UAF strategic domain",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/89-uaf.ddn",
-    "view": "strategic"
-  },
-  {
-    "id": "uaf-summary",
-    "title": "UAF summary and overview",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/89-uaf.ddn",
-    "view": "summary"
-  },
-  {
-    "id": "fbd",
-    "title": "IEC 61131-3 function block diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/100-fbd.ddn",
-    "view": "d"
-  },
-  {
-    "id": "sdl",
-    "title": "SDL system and process diagrams",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/99-sdl.ddn",
-    "view": "system"
-  },
-  {
-    "id": "petri",
-    "title": "Petri net with token markings",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/95-petrinet.ddn",
-    "view": "net"
-  },
-  {
-    "id": "orm",
-    "title": "ORM 2 fact model",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/96-orm.ddn",
-    "view": "model"
-  },
-  {
-    "id": "vsm",
-    "title": "Value stream map",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/97-vsm.ddn",
-    "view": "map"
-  },
-  {
-    "id": "vsm-symbols",
-    "title": "VSM with icon pack symbols",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/102-vsm-symbols.ddn",
-    "view": "map"
-  },
-  {
-    "id": "idef0",
-    "title": "IDEF0 function model",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/94-idef0.ddn",
-    "view": "context"
-  },
-  {
-    "id": "pert-cpm",
-    "title": "PERT/CPM critical path",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/52-pert-cpm.ddn",
-    "view": "plan"
-  },
-  {
-    "id": "fault-tree",
-    "title": "Fault/event tree",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/53-fault-event-tree.ddn",
-    "view": "fault"
-  },
-  {
-    "id": "mindmap",
-    "title": "Mind map",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/28-mind-map.ddn",
-    "view": "mindmap"
-  },
-  {
-    "id": "concept-map",
-    "title": "Concept map",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/29-concept-map.ddn",
-    "view": "concepts"
-  },
-  {
-    "id": "organization",
-    "title": "Organization/reporting chart",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/26-org-chart.ddn",
-    "view": "org"
-  },
-  {
-    "id": "wbs",
-    "title": "Work breakdown structure",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/27-wbs.ddn",
-    "view": "wbs"
-  },
-  {
-    "id": "family-tree",
-    "title": "Family relationship map",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/56-family-tree.ddn",
-    "view": "family"
-  },
-  {
-    "id": "requirements",
-    "title": "Requirement and verification traceability",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/84-sysml-requirements.ddn",
-    "view": "requirements"
-  },
-  {
-    "id": "governance",
-    "title": "Data-product ownership and contracts",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/17-governance.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "security-boundary",
-    "title": "Trust and data-handling boundaries",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/18-security.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "audit",
-    "title": "Audit evidence and custody map",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/16-enterprise-gates.ddn",
-    "view": "external"
-  },
-  {
-    "id": "verification-gates",
-    "title": "Verification and readiness gates",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/16-enterprise-gates.ddn",
-    "view": "software"
-  },
-  {
-    "id": "form-contract",
-    "title": "UI form and interaction requirements",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/15-process-contracts.ddn",
-    "view": "balanced"
-  },
-  {
-    "id": "chen",
-    "title": "Chen ER notation — basic and extended",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "chen_extended"
-  },
-  {
-    "id": "crows-foot",
-    "title": "Crow's-foot ERD",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/37-crows-foot-erd.ddn",
-    "view": "erd"
-  },
-  {
-    "id": "raci",
-    "title": "RACI responsibility matrix",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "raci"
-  },
-  {
-    "id": "crud",
-    "title": "CRUD / data-access matrix",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "crud"
-  },
-  {
-    "id": "relationship-matrix",
-    "title": "Model-derived relationship matrix",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "record-table",
-    "title": "Source-bound record table",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "defect_table"
-  },
-  {
-    "id": "decision-unique",
-    "title": "Typed decision table — unique match",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "decision_unique"
-  },
-  {
-    "id": "decision-collect",
-    "title": "Typed decision table — collect matches",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "decision_collect"
-  },
-  {
-    "id": "heatmap-numeric",
-    "title": "Numeric heatmap",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "heat_numeric"
-  },
-  {
-    "id": "heatmap-bands",
-    "title": "Risk/priority threshold bands",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "heat_bands"
-  },
-  {
-    "id": "heatmap-categories",
-    "title": "Categorical status matrix",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "heat_categories"
-  },
-  {
-    "id": "swot",
-    "title": "SWOT and four-panel strategic analysis",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "sipoc",
-    "title": "SIPOC process overview",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "journey",
-    "title": "Customer/service journey panels",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "story-map",
-    "title": "Story map",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "empathy-scorecard",
-    "title": "Empathy map and scorecard",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/34-empathy-scorecard.ddn",
-    "view": "d"
-  },
-  {
-    "id": "line-chart",
-    "title": "Line chart",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "area-chart",
-    "title": "Area chart",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "pie-donut",
-    "title": "Pie and doughnut charts",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "scatter",
-    "title": "Scatter and perceptual plots",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "time-series",
-    "title": "Calendar-ordered time-series",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "grouped-bars",
-    "title": "Grouped multi-series bars",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "grouped_bars"
-  },
-  {
-    "id": "stacked-bars",
-    "title": "Signed stacked bars",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "stacked_bars"
-  },
-  {
-    "id": "percent-bars",
-    "title": "Percentage-stacked bars",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "percent_bars"
-  },
-  {
-    "id": "multi-line",
-    "title": "Multiple-line chart",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "multiseries_line"
-  },
-  {
-    "id": "multi-area",
-    "title": "Multiple-series area chart",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "multiseries_area"
-  },
-  {
-    "id": "actual-target",
-    "title": "Actual versus target / layered marks",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "actual_target"
-  },
-  {
-    "id": "histogram",
-    "title": "Histogram — counts and density",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "histogram"
-  },
-  {
-    "id": "pareto",
-    "title": "Pareto chart",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "pareto"
-  },
-  {
-    "id": "waterfall",
-    "title": "Waterfall reconciliation",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "waterfall"
-  },
-  {
-    "id": "boxplot",
-    "title": "Box plot conventions",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "boxplot"
-  },
-  {
-    "id": "distributions",
-    "title": "Distribution chart pack",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "treecharts",
-    "title": "Tree and radial chart pack",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/63-tree-charts.ddn",
-    "view": "d"
-  },
-  {
-    "id": "gridcharts",
-    "title": "Grid and network chart pack",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/64-grid-charts.ddn",
-    "view": "d"
-  },
-  {
-    "id": "overlays",
-    "title": "Statistical overlays (error bars, regression)",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "gantt",
-    "title": "Gantt / supplied-date schedule",
-    "status": "pilot",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
-  },
-  {
-    "id": "timeline-roadmap",
-    "title": "Timeline / milestone roadmap",
-    "status": "pilot",
-    "support": "native",
-    "entry": "field-guide/sources/roadmap.ddn",
-    "view": "roadmap"
-  },
-  {
-    "id": "dashboard",
-    "title": "Composed dashboard",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "dashboard_quality"
-  },
-  {
-    "id": "linked-views",
-    "title": "Linked diagrams / overview and detail",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/90-drilldown.ddn",
-    "view": "overview"
-  },
-  {
-    "id": "thumbnails",
-    "title": "Drill-down thumbnails",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/08-subdiagrams.ddn",
-    "view": "overview"
-  },
-  {
-    "id": "icons",
-    "title": "Icon packs and bindings",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/98-icons.ddn",
-    "view": "net"
-  },
-  {
-    "id": "icons-vendor",
-    "title": "Curated MIT icon packs (Tabler, Iconoir)",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/106-tabler-icons.ddn",
-    "view": "net"
-  },
-  {
-    "id": "pid-symbols",
-    "title": "P&ID common symbols",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/104-pid-symbols.ddn",
-    "view": "pid"
-  },
-  {
-    "id": "electrical-symbols",
-    "title": "Electrical common symbols",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/105-electrical-symbols.ddn",
-    "view": "sch"
-  },
-  {
-    "id": "cross-file",
-    "title": "Architecture containers and cross-file addressing",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/108-uaf-traceability.ddn",
-    "view": "sv"
-  },
-  {
-    "id": "iso-charts",
-    "title": "Isometric chart extrusions",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/72-iso-charts.ddn",
-    "view": "iso_bar"
-  },
-  {
-    "id": "iso-graph",
-    "title": "Isometric graph prisms",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/73-iso-architecture.ddn",
-    "view": "iso_map"
-  },
-  {
-    "id": "geo",
-    "title": "Geographic maps (choropleth, symbols, outline)",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/67-geo-choropleth.ddn",
-    "view": "choropleth"
-  },
-  {
-    "id": "style-looks",
-    "title": "Classic, hand-drawn and neo looks",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/basics/09-look-comparison.ddn",
-    "view": "classic"
-  },
-  {
-    "id": "route-options",
-    "title": "Straight, angular, curved and rounded routes",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/basics/17-curved-relations.ddn",
-    "view": "mindmap_classic"
-  },
-  {
-    "id": "crossings",
-    "title": "Crossings, gaps and bridge markers",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/basics/17-curved-relations.ddn",
-    "view": "crossing_gap"
-  },
-  {
-    "id": "fields-detail",
-    "title": "Selected detail and nested-field attachment",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/basics/12-nested-fields.ddn",
-    "view": "metrics_chart"
-  },
-  {
-    "id": "layout-algorithms",
-    "title": "Placement algorithms incl. ladder",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/gallery/src/layouts.ddn",
-    "view": "layered"
-  },
-  {
-    "id": "spacing",
-    "title": "Spacing hints",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/basics/60-spacing-hints.ddn",
-    "view": "normal"
-  },
-  {
-    "id": "page-size",
-    "title": "Page size, orientation, scale and zoom",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/basics/13-publication.ddn",
-    "view": "paper"
-  },
-  {
-    "id": "safe-export",
-    "title": "Visible versus authorized export",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/basics/14-authorized-export.ddn",
-    "view": "private"
-  },
-  {
-    "id": "notation-atlas",
-    "title": "Element silhouettes and indicator slots",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/projections/views.ddn",
-    "view": "shape_atlas"
-  },
-  {
-    "id": "pinned-placement",
-    "title": "Pin-centred placement patterns",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/live/pinned-patterns.ddn",
-    "view": "circular"
-  },
-  {
-    "id": "pause-placement",
-    "title": "Pause, reflow and retained positions",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/live/pinned-patterns.ddn",
-    "view": "paused"
-  },
-  {
-    "id": "night-palettes",
-    "title": "Dark and night palettes",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/gallery/src/looks.ddn",
-    "view": "classic_night"
-  },
-  {
-    "id": "wireframes",
-    "title": "Low-fidelity UI wireframes",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/55-wireframe.ddn",
-    "view": "settings"
-  },
-  {
-    "id": "data-refresh",
-    "title": "Live dashboards with keyed refresh",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "website/examples/basics/59-data-refresh.ddn",
-    "view": "latency_chart"
-  },
-  {
-    "id": "sql-dependencies",
-    "title": "SQL-object dependency diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "graph-schema",
-    "title": "Property-graph schema",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/06-graph-schema.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "keyed-storage",
-    "title": "Key-value structure and lookup contract",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/07-keyed-storage.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "hybrid-deployment",
-    "title": "Hybrid local/cloud deployment",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "data-flow",
-    "title": "Data-flow diagram (Yourdon/Gane–Sarson idiom)",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/11-data-flow.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "streaming",
-    "title": "Event distribution / streaming integration",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/12-streaming.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "temporal",
-    "title": "Valid-time and recorded-time model",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/14-temporal.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "warehouse",
-    "title": "Dimensional warehouse / star schema",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/15-warehouse.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "vector-lineage",
-    "title": "Embedding, vector and model lineage",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/16-vector-lineage.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "quality-model",
-    "title": "Example-driven data-quality specification",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/21-quality.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "linked-documentation",
-    "title": "Linked diagrams and documentation views",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/use-cases/22-linked-documentation.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "c4-container",
-    "title": "Application/container responsibilities — C4-style",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/25-c4-views.ddn",
-    "view": "container"
-  },
-  {
-    "id": "c4-deployment",
-    "title": "C4 deployment diagram",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/92-c4-epc.ddn",
-    "view": "deployment"
-  },
-  {
-    "id": "c4-dynamic",
-    "title": "C4 dynamic diagram (numbered messages)",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/92-c4-epc.ddn",
-    "view": "dynamic"
-  },
-  {
-    "id": "lifecycle-trace",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "lifecycle_trace"
-  },
-  {
-    "id": "fishbone",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/quality/views.ddn",
-    "view": "fishbone"
-  },
-  {
-    "id": "whiteboard-sticky-notes",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/109-whiteboard-workshop.ddn",
-    "view": "workshop"
-  },
-  {
-    "id": "presentation-art",
-    "status": "pilot",
-    "support": "native",
-    "entry": "website/examples/basics/110-presentation-architecture.ddn",
-    "view": "overview"
-  },
-  {
-    "id": "version-06",
-    "title": "Source versions — the 0.6 dialect and when to upgrade",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "field-guide/sources/version-06.ddn",
-    "view": "main"
-  },
-  {
-    "id": "view-profiles",
-    "title": "View kinds and strictness — declaring what a view is",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "field-guide/sources/view-profiles.ddn",
-    "view": "flow_strict"
-  },
-  {
-    "id": "patent-figures",
-    "title": "Patent and legal figures — numerals, refs and mono print",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "field-guide/sources/patent-figure.ddn",
-    "view": "fig1"
-  },
-  {
-    "id": "publication-chrome",
-    "title": "Publication chrome — headers, footers, borders and figure sets",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "field-guide/sources/publication-chrome.ddn",
-    "view": "overview"
-  },
-  {
-    "id": "text-fit",
-    "title": "Text fit — wrap, grow, shrink and honest overflow",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "field-guide/sources/text-fit.ddn",
-    "view": "fitted"
-  },
-  {
-    "id": "markings-metadata",
-    "title": "Markings and metadata — forbidden, tentative, provenance",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "field-guide/sources/markings.ddn",
-    "view": "main"
-  },
-  {
-    "id": "cli-power-tools",
-    "title": "CLI power tools — verbs, diagnostics JSON and publish",
-    "status": "pilot",
-    "support": "technique",
-    "entry": "field-guide/sources/cli-workflow.ddn",
-    "view": "main"
-  }
+ {
+  "id": "whiteboard",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/01-whiteboard.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "business-erd",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/02-business-erd.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "bpmn-collaboration",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/46-bpmn.ddn",
+  "view": "collaboration"
+ },
+ {
+  "id": "bar-chart",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/59-data-refresh.ddn",
+  "view": "latency_chart"
+ },
+ {
+  "id": "ladder",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/101-ladder.ddn",
+  "view": "d"
+ },
+ {
+  "id": "decision-first",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "decision_first"
+ },
+ {
+  "id": "relational",
+  "title": "Logical relational schema",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/03-relational.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "physical-model",
+  "title": "Physical representation and datatype documentation",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "documents",
+  "title": "Document and embedded-object schema",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/05-documents.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "namespaces",
+  "title": "Catalog, database and schema organization",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/09-namespaces.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "domains",
+  "title": "Semantic domains and candidate bindings",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/08-domains.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "nested-fields",
+  "title": "Recursive fields and structural variants",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/12-nested-fields.ddn",
+  "view": "detailed"
+ },
+ {
+  "id": "wide-column",
+  "title": "Wide-column and access-pattern design",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+  "view": "wide_column"
+ },
+ {
+  "id": "lineage",
+  "title": "Dataset lineage and derivation",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/13-lineage.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "migration",
+  "title": "Current-to-target mapping",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/20-migration.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "c4-context",
+  "title": "System context — C4-style",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/25-c4-views.ddn",
+  "view": "context"
+ },
+ {
+  "id": "c4-components",
+  "title": "Component responsibility map — C4-style",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/25-c4-views.ddn",
+  "view": "component"
+ },
+ {
+  "id": "network",
+  "title": "Network/system topology",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/54-network-diagram.ddn",
+  "view": "lan"
+ },
+ {
+  "id": "network-symbols",
+  "title": "Network with icon pack symbols",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/103-network-symbols.ddn",
+  "view": "net"
+ },
+ {
+  "id": "shards-replicas",
+  "title": "Sharding, replication and co-location",
+  "status": "pilot",
+  "support": "native",
+  "entry": "field-guide/sources/shards-replicas.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "etl",
+  "title": "ETL/ELT and analytical publication",
+  "status": "pilot",
+  "support": "native",
+  "entry": "field-guide/sources/etl.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "event-contract",
+  "title": "Event/message contract catalogue",
+  "status": "pilot",
+  "support": "native",
+  "entry": "field-guide/sources/event-contract.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "recovery",
+  "title": "Backup, restore and continuity design",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/19-recovery.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "dfd-yourdon",
+  "title": "Yourdon-style data-flow diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "overview"
+ },
+ {
+  "id": "dfd-gane-sarson",
+  "title": "Gane–Sarson-style DFD",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "overview"
+ },
+ {
+  "id": "flowchart",
+  "title": "ISO 5807 flowchart — full symbol set",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/91-iso5807-flowchart.ddn",
+  "view": "chart"
+ },
+ {
+  "id": "swimlane",
+  "title": "Cross-functional responsibility view",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/45-activity-diagram.ddn",
+  "view": "fulfilment"
+ },
+ {
+  "id": "sequence",
+  "title": "UML sequence diagram completeness",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/76-uml-sequence-complete.ddn",
+  "view": "fragments"
+ },
+ {
+  "id": "communication",
+  "title": "UML communication diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/42-communication-diagram.ddn",
+  "view": "communication"
+ },
+ {
+  "id": "interaction-overview",
+  "title": "Interaction overview",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/48-interaction-overview.ddn",
+  "view": "overview"
+ },
+ {
+  "id": "timing",
+  "title": "UML timing diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/47-timing-diagram.ddn",
+  "view": "timing"
+ },
+ {
+  "id": "msc",
+  "title": "MSC message sequence chart",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/93-msc.ddn",
+  "view": "chart"
+ },
+ {
+  "id": "statemachine",
+  "title": "UML state machine completeness",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/77-uml-statemachine-complete.ddn",
+  "view": "pseudostates"
+ },
+ {
+  "id": "activity",
+  "title": "UML activity diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/80-uml-activity.ddn",
+  "view": "pins"
+ },
+ {
+  "id": "umlclass",
+  "title": "UML class diagram completeness",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/75-uml-class-complete.ddn",
+  "view": "associations"
+ },
+ {
+  "id": "umlobject",
+  "title": "UML object diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/43-object-diagram.ddn",
+  "view": "objects"
+ },
+ {
+  "id": "umlcomposite",
+  "title": "UML component and composite structure",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/79-uml-composite.ddn",
+  "view": "components"
+ },
+ {
+  "id": "umlremainder",
+  "title": "UML remainder notations",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/81-uml-remainder.ddn",
+  "view": "packages"
+ },
+ {
+  "id": "bpmn-process",
+  "title": "BPMN process diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/82-bpmn-complete.ddn",
+  "view": "process"
+ },
+ {
+  "id": "bpmn-choreography",
+  "title": "BPMN choreography",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/82-bpmn-complete.ddn",
+  "view": "choreography"
+ },
+ {
+  "id": "cmmn-case",
+  "title": "CMMN case diagram completeness",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/83-cmmn-complete.ddn",
+  "view": "v"
+ },
+ {
+  "id": "sysml-bdd",
+  "title": "SysML block definition diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/85-sysml-blocks.ddn",
+  "view": "bdd"
+ },
+ {
+  "id": "sysml-ibd",
+  "title": "SysML internal block diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/85-sysml-blocks.ddn",
+  "view": "ibd"
+ },
+ {
+  "id": "sysml-parametric",
+  "title": "SysML parametric diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/85-sysml-blocks.ddn",
+  "view": "parametric"
+ },
+ {
+  "id": "dmn-drd",
+  "title": "DMN decision requirements diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/87-dmn-drd.ddn",
+  "view": "drd"
+ },
+ {
+  "id": "soaml-services",
+  "title": "SoaML service architecture",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/88-soaml.ddn",
+  "view": "arch"
+ },
+ {
+  "id": "uaf-strategic",
+  "title": "UAF strategic domain",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/89-uaf.ddn",
+  "view": "strategic"
+ },
+ {
+  "id": "uaf-summary",
+  "title": "UAF summary and overview",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/89-uaf.ddn",
+  "view": "summary"
+ },
+ {
+  "id": "fbd",
+  "title": "IEC 61131-3 function block diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/100-fbd.ddn",
+  "view": "d"
+ },
+ {
+  "id": "sdl",
+  "title": "SDL system and process diagrams",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/99-sdl.ddn",
+  "view": "system"
+ },
+ {
+  "id": "petri",
+  "title": "Petri net with token markings",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/95-petrinet.ddn",
+  "view": "net"
+ },
+ {
+  "id": "orm",
+  "title": "ORM 2 fact model",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/96-orm.ddn",
+  "view": "model"
+ },
+ {
+  "id": "vsm",
+  "title": "Value stream map",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/97-vsm.ddn",
+  "view": "map"
+ },
+ {
+  "id": "vsm-symbols",
+  "title": "VSM with icon pack symbols",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/102-vsm-symbols.ddn",
+  "view": "map"
+ },
+ {
+  "id": "idef0",
+  "title": "IDEF0 function model",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/94-idef0.ddn",
+  "view": "context"
+ },
+ {
+  "id": "pert-cpm",
+  "title": "PERT/CPM critical path",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/52-pert-cpm.ddn",
+  "view": "plan"
+ },
+ {
+  "id": "fault-tree",
+  "title": "Fault/event tree",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/53-fault-event-tree.ddn",
+  "view": "fault"
+ },
+ {
+  "id": "mindmap",
+  "title": "Mind map",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/28-mind-map.ddn",
+  "view": "mindmap"
+ },
+ {
+  "id": "concept-map",
+  "title": "Concept map",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/29-concept-map.ddn",
+  "view": "concepts"
+ },
+ {
+  "id": "organization",
+  "title": "Organization/reporting chart",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/26-org-chart.ddn",
+  "view": "org"
+ },
+ {
+  "id": "wbs",
+  "title": "Work breakdown structure",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/27-wbs.ddn",
+  "view": "wbs"
+ },
+ {
+  "id": "family-tree",
+  "title": "Family relationship map",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/56-family-tree.ddn",
+  "view": "family"
+ },
+ {
+  "id": "requirements",
+  "title": "Requirement and verification traceability",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/84-sysml-requirements.ddn",
+  "view": "requirements"
+ },
+ {
+  "id": "governance",
+  "title": "Data-product ownership and contracts",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/17-governance.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "security-boundary",
+  "title": "Trust and data-handling boundaries",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/18-security.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "audit",
+  "title": "Audit evidence and custody map",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/16-enterprise-gates.ddn",
+  "view": "external"
+ },
+ {
+  "id": "verification-gates",
+  "title": "Verification and readiness gates",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/16-enterprise-gates.ddn",
+  "view": "software"
+ },
+ {
+  "id": "form-contract",
+  "title": "UI form and interaction requirements",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/15-process-contracts.ddn",
+  "view": "balanced"
+ },
+ {
+  "id": "chen",
+  "title": "Chen ER notation — basic and extended",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "chen_extended"
+ },
+ {
+  "id": "crows-foot",
+  "title": "Crow's-foot ERD",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/37-crows-foot-erd.ddn",
+  "view": "erd"
+ },
+ {
+  "id": "raci",
+  "title": "RACI responsibility matrix",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "raci"
+ },
+ {
+  "id": "crud",
+  "title": "CRUD / data-access matrix",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "crud"
+ },
+ {
+  "id": "relationship-matrix",
+  "title": "Model-derived relationship matrix",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "record-table",
+  "title": "Source-bound record table",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "defect_table"
+ },
+ {
+  "id": "decision-unique",
+  "title": "Typed decision table — unique match",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "decision_unique"
+ },
+ {
+  "id": "decision-collect",
+  "title": "Typed decision table — collect matches",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "decision_collect"
+ },
+ {
+  "id": "heatmap-numeric",
+  "title": "Numeric heatmap",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "heat_numeric"
+ },
+ {
+  "id": "heatmap-bands",
+  "title": "Risk/priority threshold bands",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "heat_bands"
+ },
+ {
+  "id": "heatmap-categories",
+  "title": "Categorical status matrix",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "heat_categories"
+ },
+ {
+  "id": "swot",
+  "title": "SWOT and four-panel strategic analysis",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "sipoc",
+  "title": "SIPOC process overview",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "journey",
+  "title": "Customer/service journey panels",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "story-map",
+  "title": "Story map",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "empathy-scorecard",
+  "title": "Empathy map and scorecard",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/34-empathy-scorecard.ddn",
+  "view": "d"
+ },
+ {
+  "id": "line-chart",
+  "title": "Line chart",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "area-chart",
+  "title": "Area chart",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "pie-donut",
+  "title": "Pie and doughnut charts",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "scatter",
+  "title": "Scatter and perceptual plots",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "time-series",
+  "title": "Calendar-ordered time-series",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "grouped-bars",
+  "title": "Grouped multi-series bars",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "grouped_bars"
+ },
+ {
+  "id": "stacked-bars",
+  "title": "Signed stacked bars",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "stacked_bars"
+ },
+ {
+  "id": "percent-bars",
+  "title": "Percentage-stacked bars",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "percent_bars"
+ },
+ {
+  "id": "multi-line",
+  "title": "Multiple-line chart",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "multiseries_line"
+ },
+ {
+  "id": "multi-area",
+  "title": "Multiple-series area chart",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "multiseries_area"
+ },
+ {
+  "id": "actual-target",
+  "title": "Actual versus target / layered marks",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "actual_target"
+ },
+ {
+  "id": "histogram",
+  "title": "Histogram — counts and density",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "histogram"
+ },
+ {
+  "id": "pareto",
+  "title": "Pareto chart",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "pareto"
+ },
+ {
+  "id": "waterfall",
+  "title": "Waterfall reconciliation",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "waterfall"
+ },
+ {
+  "id": "boxplot",
+  "title": "Box plot conventions",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "boxplot"
+ },
+ {
+  "id": "distributions",
+  "title": "Distribution chart pack",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "treecharts",
+  "title": "Tree and radial chart pack",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/63-tree-charts.ddn",
+  "view": "d"
+ },
+ {
+  "id": "gridcharts",
+  "title": "Grid and network chart pack",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/64-grid-charts.ddn",
+  "view": "d"
+ },
+ {
+  "id": "overlays",
+  "title": "Statistical overlays (error bars, regression)",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "gantt",
+  "title": "Gantt / supplied-date schedule",
+  "status": "pilot",
+  "support": "native",
+  "entry": "(new fixture needed)",
+  "view": "d"
+ },
+ {
+  "id": "timeline-roadmap",
+  "title": "Timeline / milestone roadmap",
+  "status": "pilot",
+  "support": "native",
+  "entry": "field-guide/sources/roadmap.ddn",
+  "view": "roadmap"
+ },
+ {
+  "id": "dashboard",
+  "title": "Composed dashboard",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "dashboard_quality"
+ },
+ {
+  "id": "linked-views",
+  "title": "Linked diagrams / overview and detail",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/90-drilldown.ddn",
+  "view": "overview"
+ },
+ {
+  "id": "thumbnails",
+  "title": "Drill-down thumbnails",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/08-subdiagrams.ddn",
+  "view": "overview"
+ },
+ {
+  "id": "icons",
+  "title": "Icon packs and bindings",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/98-icons.ddn",
+  "view": "net"
+ },
+ {
+  "id": "icons-vendor",
+  "title": "Curated MIT icon packs (Tabler, Iconoir)",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/106-tabler-icons.ddn",
+  "view": "net"
+ },
+ {
+  "id": "pid-symbols",
+  "title": "P&ID common symbols",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/104-pid-symbols.ddn",
+  "view": "pid"
+ },
+ {
+  "id": "electrical-symbols",
+  "title": "Electrical common symbols",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/105-electrical-symbols.ddn",
+  "view": "sch"
+ },
+ {
+  "id": "cross-file",
+  "title": "Architecture containers and cross-file addressing",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/108-uaf-traceability.ddn",
+  "view": "sv"
+ },
+ {
+  "id": "iso-charts",
+  "title": "Isometric chart extrusions",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/72-iso-charts.ddn",
+  "view": "iso_bar"
+ },
+ {
+  "id": "iso-graph",
+  "title": "Isometric graph prisms",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/73-iso-architecture.ddn",
+  "view": "iso_map"
+ },
+ {
+  "id": "geo",
+  "title": "Geographic maps (choropleth, symbols, outline)",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/67-geo-choropleth.ddn",
+  "view": "choropleth"
+ },
+ {
+  "id": "style-looks",
+  "title": "Classic, hand-drawn and neo looks",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/basics/09-look-comparison.ddn",
+  "view": "classic"
+ },
+ {
+  "id": "route-options",
+  "title": "Straight, angular, curved and rounded routes",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/basics/17-curved-relations.ddn",
+  "view": "mindmap_classic"
+ },
+ {
+  "id": "crossings",
+  "title": "Crossings, gaps and bridge markers",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/basics/17-curved-relations.ddn",
+  "view": "crossing_gap"
+ },
+ {
+  "id": "fields-detail",
+  "title": "Selected detail and nested-field attachment",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/basics/12-nested-fields.ddn",
+  "view": "metrics_chart"
+ },
+ {
+  "id": "layout-algorithms",
+  "title": "Placement algorithms incl. ladder",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/gallery/src/layouts.ddn",
+  "view": "layered"
+ },
+ {
+  "id": "spacing",
+  "title": "Spacing hints",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/basics/60-spacing-hints.ddn",
+  "view": "normal"
+ },
+ {
+  "id": "page-size",
+  "title": "Page size, orientation, scale and zoom",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/basics/13-publication.ddn",
+  "view": "paper"
+ },
+ {
+  "id": "safe-export",
+  "title": "Visible versus authorized export",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/basics/14-authorized-export.ddn",
+  "view": "private"
+ },
+ {
+  "id": "notation-atlas",
+  "title": "Element silhouettes and indicator slots",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/projections/views.ddn",
+  "view": "shape_atlas"
+ },
+ {
+  "id": "pinned-placement",
+  "title": "Pin-centred placement patterns",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/live/pinned-patterns.ddn",
+  "view": "circular"
+ },
+ {
+  "id": "pause-placement",
+  "title": "Pause, reflow and retained positions",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/live/pinned-patterns.ddn",
+  "view": "paused"
+ },
+ {
+  "id": "night-palettes",
+  "title": "Dark and night palettes",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/gallery/src/looks.ddn",
+  "view": "classic_night"
+ },
+ {
+  "id": "wireframes",
+  "title": "Low-fidelity UI wireframes",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/55-wireframe.ddn",
+  "view": "settings"
+ },
+ {
+  "id": "data-refresh",
+  "title": "Live dashboards with keyed refresh",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "website/examples/basics/59-data-refresh.ddn",
+  "view": "latency_chart"
+ },
+ {
+  "id": "sql-dependencies",
+  "title": "SQL-object dependency diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "graph-schema",
+  "title": "Property-graph schema",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/06-graph-schema.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "keyed-storage",
+  "title": "Key-value structure and lookup contract",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "hybrid-deployment",
+  "title": "Hybrid local/cloud deployment",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "data-flow",
+  "title": "Data-flow diagram (Yourdon/Gane–Sarson idiom)",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/11-data-flow.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "streaming",
+  "title": "Event distribution / streaming integration",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/12-streaming.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "temporal",
+  "title": "Valid-time and recorded-time model",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/14-temporal.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "warehouse",
+  "title": "Dimensional warehouse / star schema",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/15-warehouse.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "vector-lineage",
+  "title": "Embedding, vector and model lineage",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/16-vector-lineage.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "quality-model",
+  "title": "Example-driven data-quality specification",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/21-quality.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "linked-documentation",
+  "title": "Linked diagrams and documentation views",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/use-cases/22-linked-documentation.ddn",
+  "view": "diagram"
+ },
+ {
+  "id": "c4-container",
+  "title": "Application/container responsibilities — C4-style",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/25-c4-views.ddn",
+  "view": "container"
+ },
+ {
+  "id": "c4-deployment",
+  "title": "C4 deployment diagram",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/92-c4-epc.ddn",
+  "view": "deployment"
+ },
+ {
+  "id": "c4-dynamic",
+  "title": "C4 dynamic diagram (numbered messages)",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/92-c4-epc.ddn",
+  "view": "dynamic"
+ },
+ {
+  "id": "lifecycle-trace",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "lifecycle_trace"
+ },
+ {
+  "id": "fishbone",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/quality/views.ddn",
+  "view": "fishbone"
+ },
+ {
+  "id": "whiteboard-sticky-notes",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/109-whiteboard-workshop.ddn",
+  "view": "workshop"
+ },
+ {
+  "id": "presentation-art",
+  "status": "pilot",
+  "support": "native",
+  "entry": "website/examples/basics/110-presentation-architecture.ddn",
+  "view": "overview"
+ },
+ {
+  "id": "version-06",
+  "title": "Source versions — the 0.6 dialect and when to upgrade",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/version-06.ddn",
+  "view": "main"
+ },
+ {
+  "id": "view-profiles",
+  "title": "View kinds and strictness — declaring what a view is",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/view-profiles.ddn",
+  "view": "flow_strict"
+ },
+ {
+  "id": "patent-figures",
+  "title": "Patent and legal figures — numerals, refs and mono print",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/patent-figure.ddn",
+  "view": "fig1"
+ },
+ {
+  "id": "publication-chrome",
+  "title": "Publication chrome — headers, footers, borders and figure sets",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/publication-chrome.ddn",
+  "view": "overview"
+ },
+ {
+  "id": "text-fit",
+  "title": "Text fit — wrap, grow, shrink and honest overflow",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/text-fit.ddn",
+  "view": "fitted"
+ },
+ {
+  "id": "text-properties",
+  "title": "Portable text properties — weight, italic, strike, small-caps, colour",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/text-properties.ddn",
+  "view": "main"
+ },
+ {
+  "id": "markings-metadata",
+  "title": "Markings and metadata — forbidden, tentative, provenance",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/markings.ddn",
+  "view": "main"
+ },
+ {
+  "id": "cli-power-tools",
+  "title": "CLI power tools — verbs, diagnostics JSON and publish",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/cli-workflow.ddn",
+  "view": "main"
+ }
 ]

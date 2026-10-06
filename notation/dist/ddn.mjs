@@ -1916,7 +1916,7 @@ function validate$1(ir,registry,ErrorClass){
  const allMembers=new Map(ir.elements.flatMap(x=>[...x.fields,...x.ports].map(f=>[f.id,{...f,owner:x}])));
  new Map(registry.kinds.map(k=>[k.keyword,k]));
  const state=v=>isObject(v)&&Object.hasOwn(v,'$state');
- const reserved=new Set(['uid','description','aliases','kind','level','representation','platform','maturity','workload','role','temporal','time','distribution','location','meaning','scope','domain','datatype','key','nullable','presence','shape','unit','default','ordinal','classification','policy','owner','columns','rows','mode','capture','delivery','transport','enforcement','source_mark','target_mark','source_cardinality','target_cardinality','ordering','direction','side','payload','version','allow_extra','discriminator','variants','optional','dimension','target','min','max','text_fit','max_width','max_height','min_font','font_pin','numeral','marks','assertion']);
+ const reserved=new Set(['uid','description','aliases','kind','level','representation','platform','maturity','workload','role','temporal','time','distribution','location','meaning','scope','domain','datatype','key','nullable','presence','shape','unit','default','ordinal','classification','policy','owner','columns','rows','mode','capture','delivery','transport','enforcement','source_mark','target_mark','source_cardinality','target_cardinality','ordering','direction','side','payload','version','allow_extra','discriminator','variants','optional','dimension','target','min','max','text_fit','max_width','max_height','min_font','font_pin','numeral','marks','assertion','text']);
  function props(item,target){
   for(const [key,value]of Object.entries(item.properties||{})){
    if(key.startsWith('x_')){
@@ -2880,6 +2880,24 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
   function getPorts(n){const g=group(n,'ports');return g?g.children.filter(c=>c.type==='port'):[];}
   function clean(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(clean);const o={};for(const [k,x]of Object.entries(v))if(!k.startsWith('$offset'))o[k]=clean(x);return o;}
   function quantity(v,def=0){if(typeof v==='number')return v;if(v&&v.$quantity!==undefined){const mult={px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96};if(!Object.hasOwn(mult,v.unit))throw new DDNError('DDN032','Expected length, not '+v.unit);return v.$quantity*mult[v.unit];}return def;}
+  /* 0.8 (chapter 04 §6A): the portable text-property vocabulary, validated
+   * once for all three application contexts (style text { } group, element
+   * text { } group, flat run keys). `fail(code,message)` throws the caller's
+   * located error. Returns a normalized record carrying only set,
+   * non-default keys (bold→700, decoration none and variant normal dropped). */
+  const TEXT_KEYS=['weight','italic','decoration','variant','color'];
+  function normalizeTextProps(raw,fail){
+    if(raw===undefined)return undefined;
+    if(!raw||typeof raw!=='object'||Array.isArray(raw))fail('DDN-TX01','text must be a record of text properties (weight, italic, decoration, variant, color)');
+    for(const k of Object.keys(raw))if(!TEXT_KEYS.includes(k))fail('DDN-TX01','Unknown text property '+k+'; text accepts '+TEXT_KEYS.join(', '));
+    const out={};
+    if(raw.weight!==undefined){if(raw.weight==='bold')out.weight=700;else if(Number.isSafeInteger(raw.weight)&&raw.weight>=100&&raw.weight<=900)out.weight=raw.weight;else fail('DDN-TX02','text weight must be the keyword bold or an integer from 100 to 900; found '+JSON.stringify(raw.weight));}
+    if(raw.italic!==undefined){if(typeof raw.italic!=='boolean')fail('DDN-TX03','text italic must be boolean; found '+JSON.stringify(raw.italic));if(raw.italic)out.italic=true;}
+    if(raw.decoration!==undefined){if(!['strike','none'].includes(raw.decoration))fail('DDN-TX04','text decoration must be strike or none (underline is reserved for a future revision); found '+JSON.stringify(raw.decoration));if(raw.decoration==='strike')out.decoration='strike';}
+    if(raw.variant!==undefined){if(!['small-caps','normal'].includes(raw.variant))fail('DDN-TX05','text variant must be small-caps or normal; found '+JSON.stringify(raw.variant));if(raw.variant==='small-caps')out.variant='small-caps';}
+    if(raw.color!==undefined){if(typeof raw.color!=='string'||!/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(raw.color))fail('DDN-TX06','text color must be #rgb or #rrggbb; found '+JSON.stringify(raw.color));out.color=raw.color.toLowerCase();}
+    return out;
+  }
   function kindEntry(reg,value){return api$i.registry(reg).kinds.find(k=>k.keyword===value||k.code.toLowerCase()===value||k.aliases?.includes(value));}
   function relationEntry(reg,value){return api$i.registry(reg).relationships.find(k=>k.keyword===value||k.code.toLowerCase()===value||k.aliases?.includes(value));}
   const DEFAULTS={
@@ -2941,7 +2959,10 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     return NaN;
   }
   function chromeRun(slot,node){
-    for(const k of Object.keys(node.props))if(!['text','align','font','size','lines'].includes(k))throw new DDNError('DDN-PB01','Unknown '+slot+' run property '+k+'; runs accept text, align, font, size and lines',node.source,node.start);
+    /* 0.8 (chapter 04 §6A): runs additionally accept the portable text
+     * vocabulary as flat keys — the run record is itself a text target, so no
+     * nested group. View/element text { } never restyles page furniture. */
+    for(const k of Object.keys(node.props))if(!['text','align','font','size','lines','weight','italic','decoration','variant','color'].includes(k))throw new DDNError('DDN-PB01','Unknown '+slot+' run property '+k+'; runs accept text, align, font, size, lines and the text properties weight, italic, decoration, variant, color',node.source,node.start);
     const p=node.props;
     if(typeof p.text!=='string'||!p.text.length)throw new DDNError('DDN-PB01',slot+' run requires a nonempty text string',node.source,node.start);
     scanChromeVars(p.text,node);
@@ -2952,7 +2973,8 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     if(!Number.isFinite(size)||size<4||size>24)throw new DDNError('DDN-PB01',slot+' run size must be 4-24pt; found '+JSON.stringify(p.size),node.source,node.start);
     const lines=p.lines??1;
     if(!Number.isSafeInteger(lines)||lines<1||lines>4)throw new DDNError('DDN-PB01',slot+' run lines must be an integer 1-4; found '+JSON.stringify(p.lines),node.source,node.start);
-    return {text:p.text,align,...(p.font!==undefined?{font:p.font}:{}),size,lines};
+    const textStyle=normalizeTextProps(Object.fromEntries(TEXT_KEYS.filter(k=>p[k]!==undefined).map(k=>[k,p[k]])),(code,msg)=>{throw new DDNError(code,slot+' run: '+msg,node.source,node.start);});
+    return {text:p.text,align,...(p.font!==undefined?{font:p.font}:{}),size,lines,...(textStyle&&Object.keys(textStyle).length?{textStyle}:{})};
   }
   function chromeBand(kind,node){
     const out={};
@@ -3067,13 +3089,13 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     const raw=usedData.flatMap(n=>n.children.filter(c=>!c.group));
     const elemTypes=['object','domain','sample','flow','assertion'];
     for(const n of raw){if(!elemTypes.includes(n.type)&&n.type!=='relation')throw new DDNError('DDN042','Unsupported data declaration '+n.type,n.source,n.start);}
-    for(const n of raw){if(n.from&&n.type!=='relation')throw new DDNError('DDN055','Only relations accept header endpoints',n.source,n.start);for(const g of n.children)if(g.group&&!['fields','ports'].includes(g.type))throw new DDNError('DDN900','Reference model does not implement group '+g.type,n.source,g.start);for(const f of getFields(n))for(const g of f.children)if(!g.group||g.type!=='fields')throw new DDNError('DDN042','Nested fields accept only a fields block',f.source,f.start);}
+    for(const n of raw){if(n.from&&n.type!=='relation')throw new DDNError('DDN055','Only relations accept header endpoints',n.source,n.start);for(const g of n.children)if(g.group&&!(['fields','ports'].includes(g.type)||(g.type==='text'&&n.type!=='relation')))throw new DDNError('DDN900','Reference model does not implement group '+g.type,n.source,g.start);for(const f of getFields(n))for(const g of f.children)if(!g.group||g.type!=='fields')throw new DDNError('DDN042','Nested fields accept only a fields block',f.source,f.start);}
     const rawNodes=raw.filter(n=>elemTypes.includes(n.type));
     const rawRelations=raw.filter(n=>n.type==='relation');
     const p={};for(const k of Object.keys(DEFAULTS))p[k]=JSON.parse(JSON.stringify(DEFAULTS[k]));
     let bundle=null;
     if(view.props.format){bundle=ws.resolve(view.props.format,view);if(bundle.type!=='bundle')throw new DDNError('DDN043','format must reference a bundle',view.source,view.start);}
-    let pubDefNode=null,pubOverrideNode=null;
+    let pubDefNode=null,pubOverrideNode=null,styleDefNode=null,styleOverrideNode=null;
     for(const type of Object.keys(p)){
       const r=view.props[type]||(bundle&&bundle.props[type]);let def=null;
       // B1-045 (D2/D3): a string `legend: auto|on|off` is the chrome shorthand,
@@ -3081,6 +3103,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       if(r&&!(type==='legend'&&typeof r==='string')){def=ws.resolve(r,view.props[type]?view:bundle);if(def.type!==type)throw new DDNError('DDN044',`Expected ${type} profile, found ${def.type}`,view.source,view.start);p[type]={...p[type],...resolveValue(def.props,def)};}
       const overrides=group(view,type);if(overrides){validateKnown(overrides,PROPERTIES[type]);p[type]={...p[type],...resolveValue(overrides.props,overrides)};}
       if(type==='publication'){pubDefNode=def;pubOverrideNode=overrides;}
+      if(type==='style'){styleDefNode=def;styleOverrideNode=overrides;}
       if(type==='legend'&&def&&def.props.keyset){let keyset=ws.resolve(def.props.keyset,def);if(keyset.type!=='keyset')throw new DDNError('DDN044','Expected keyset',def.source,def.start);p.legend.keys={...keyset.props.keys,...p.legend.keys};}
     }
     /* 0.8 (chapter 53): publication chrome rides the resolved publication
@@ -3130,6 +3153,26 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       if(props.min_font!==undefined){const v=quantity(props.min_font,NaN);if(!Number.isFinite(v)||v<6||v>64)throw new DDNError('DDN-TF03','min_font must be a length from 6px to 64px; found '+JSON.stringify(props.min_font),src,off);if(v>baseFont08)throw new DDNError('DDN-TF03','min_font '+v+'px is above the effective base font '+baseFont08+'px',src,off);}
     }
     tfCheck(p.style,view.source,view.start);
+    /* 0.8 (chapter 04 §6A): portable text properties — one decoration
+     * vocabulary (weight/italic/decoration/variant/color), packaged as a
+     * text { } group on style declarations/groups and element declarations,
+     * and as flat keys on header/footer run records (chapter 53 §53.1).
+     * Family and size stay role-based; text carries decoration only. */
+    const txCheck=(raw,src,off)=>normalizeTextProps(raw,(code,msg)=>{throw new DDNError(code,msg,src,off);});
+    function textGate(node,what){if(SOURCE_VERSIONS.indexOf(node.doc?.file?.version??'0.6')<V06)throw new DDNError('DDN-V04',what+' is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+node.doc.file.source+' declares ddn "'+node.doc.file.version+'"',node.source,node.start);}
+    /* View-wide layer: a text { } group nested in the resolved style profile
+     * and/or the view's style { } override group; the override group wins
+     * per key (chapter 04 §6A precedence rule 1). */
+    {
+      const styleText={};
+      for(const holder of [styleDefNode,styleOverrideNode]){
+        const tg=holder?group(holder,'text'):null;
+        if(!tg)continue;
+        textGate(holder,'A text { } group in style');
+        Object.assign(styleText,txCheck(tg.props,tg.source,tg.start));
+      }
+      if(Object.keys(styleText).length)p.style.text=styleText;
+    }
     /* 0.8 (chapter 54 §54.4): font_pin names a metrics file resolved by the
      * background path rules (chapter 53 §53.3): relative to the declaring
      * .ddn, inside the workspace, no absolute paths or URLs (DDN-PB05 family).
@@ -3213,6 +3256,11 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       const fields=getFields(n).map(f=>{let parentPath=f.path.split('.').slice(0,-1).join('.'),parentNode=ws.symbols.get(f.doc.module+'::'+parentPath);return {id:f.uid,name:f.label||f.id,local:f.id,path:f.path.slice(n.path.length+1),depth:f.path.split('.').length-n.path.split('.').length-1,parent:parentNode?.type==='field'?parentNode.uid:null,properties:resolveValue(f.props,f),source:{file:f.source,start:f.start,end:f.end}};});
       const ports=getPorts(n).map(f=>({id:f.uid,name:f.label||f.id,local:f.id,properties:resolveValue(f.props,f)}));
       const properties=resolveValue(n.props,n);
+      /* 0.8 (chapter 04 §6A): per-element label text properties ride the
+       * property bag as a normalized record; they decorate the element's
+       * label only (fields/details/notes stay role-baked this revision). */
+      const textGroup=group(n,'text');
+      if(textGroup){textGate(n,'A text { } group on an element');properties.text=txCheck(textGroup.props,textGroup.source,textGroup.start);}
       if(n.type==='sample'){
         if(!Array.isArray(properties.columns)||!Array.isArray(properties.rows))throw new DDNError('DDN051','Sample requires columns and rows',n.source,n.start);
         for(const c of n.props.columns){const f=ws.resolve(c,n);if(f.type!=='field')throw new DDNError('DDN052','Sample columns must bind to fields',n.source,n.start);}
@@ -3578,7 +3626,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
    * namespace (first publish wins); never touch the module-local copy. */
   const Packs=namespace('DDNPacks');
   const registerIconPack=pack=>Packs.registerIconPack(pack,ICONLIBS.libraries);
-  const api$f={VERSION: VERSION$5,SOURCE_VERSIONS,DDNError,lex,parse: parse$1,bundle,createWorkspace: createWorkspace$1,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:api$i,viewProfiles:api$g,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
+  const api$f={VERSION: VERSION$5,SOURCE_VERSIONS,DDNError,lex,parse: parse$1,bundle,createWorkspace: createWorkspace$1,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,normalizeTextProps,profiles:api$i,viewProfiles:api$g,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
   publishNamespace('DDN',api$f);
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -4005,33 +4053,49 @@ const FONTS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia,
  * producing engine; a mismatch is DDN-TF05 (pin ignored) at render time. */
 const ENGINE='ddn-text@1';
 let cache=initial?.measurements||{},provider=null,providerName=null,context=null;const requests=new Map();const counts={estimated:0,canvas:0,cache:0,provider:0};
-const key=(s,size,font,weight)=>JSON.stringify([String(s),+size,font,weight]);
+/* 0.8 (chapter 04 §6A): portable text properties. Measurement consumes the
+ * same decoration properties painting emits: an optional style record
+ * {italic:'italic'|true, variant:'small-caps'} joins the cache key (only when
+ * present, so pre-0.8 pinned caches keep their 4-tuple keys) and the canvas
+ * font string. Weight already rode the key. In the estimate path italic keeps
+ * regular advance widths (oblique advances are equal) and small-caps
+ * substitutes uppercase metrics at 0.8x size for cased-lowercase graphemes. */
+const styleFlags=st=>st&&(st.italic||st.variant==='small-caps')?[st.italic?1:0,st.variant==='small-caps'?1:0]:null;
+const key=(s,size,font,weight,st)=>{const base=[String(s),+size,font,weight];const fl=styleFlags(st);return JSON.stringify(fl?base.concat(fl):base);};
 const segments$1=typeof Intl!=='undefined'&&Intl.Segmenter?new Intl.Segmenter('und',{granularity:'grapheme'}):null;
 const graphemes=s=>segments$1?[...segments$1.segment(String(s))].map(x=>x.segment):[...String(s)];
 function setMetrics(data){cache=data?.measurements||data||{};}
 function setProvider(fn,name='custom'){provider=fn;providerName=name;}
-function measure$1(s,size=14,font='sans',weight=400){s=String(s??'');const k=key(s,size,font,weight);let result;
+function measure$1(s,size=14,font='sans',weight=400,st=null){s=String(s??'');const k=key(s,size,font,weight,st);let result;
  if(provider){counts.provider++;result=provider(s,size,FONTS[font]||font,weight);if(!result||!Number.isFinite(result.width))throw new Error('Text measurement provider returned invalid width');return {...result,method:providerName};}
- if(typeof document!=='undefined'&&document.createElement){try{context??=document.createElement('canvas').getContext('2d');if(context){counts.canvas++;context.font=`${weight} ${size}px ${FONTS[font]||font}`;const m=context.measureText(s);return {width:m.width,ascent:m.actualBoundingBoxAscent||size*.85,descent:m.actualBoundingBoxDescent||size*.25,method:'browser-canvas'};}}catch{}}
+ if(typeof document!=='undefined'&&document.createElement){try{context??=document.createElement('canvas').getContext('2d');if(context){counts.canvas++;context.font=`${st?.italic?'italic ':''}${st?.variant==='small-caps'?'small-caps ':''}${weight} ${size}px ${FONTS[font]||font}`;const m=context.measureText(s);return {width:m.width,ascent:m.actualBoundingBoxAscent||size*.85,descent:m.actualBoundingBoxDescent||size*.25,method:'browser-canvas'};}}catch{}}
  if(cache[k]){counts.cache++;return {...cache[k],method:'pinned-measurement-cache'};}
  counts.estimated++;
  // Bounded retention: the capture map is a debugging aid, not a leak. FIFO-evict
  // past the cap so many unique labels cannot grow the process heap without bound.
  if(!requests.has(k)){if(requests.size>=4096)requests.delete(requests.keys().next().value);requests.set(k,{text:s,size,font,weight});}
- let width=0;for(const g of graphemes(s)){if(/^\s+$/u.test(g))width+=size*.34;else if(/[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}\p{Extended_Pictographic}]/u.test(g))width+=size*1.08;else if(/[MW@#%&]/.test(g))width+=size*.9;else if(/[il.,:;!'|]/.test(g))width+=size*.34;else width+=size*(font==='mono'?.64:.64);}
+ const caps=st?.variant==='small-caps';
+ let width=0;for(const g of graphemes(s)){const up=caps&&g.toUpperCase()!==g;const gs=up?size*.8:size,gc=up?g.toUpperCase():g;if(/^\s+$/u.test(gc))width+=gs*.34;else if(/[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}\p{Extended_Pictographic}]/u.test(gc))width+=gs*1.08;else if(/[MW@#%&]/.test(gc))width+=gs*.9;else if(/[il.,:;!'|]/.test(gc))width+=gs*.34;else width+=gs*(font==='mono'?.64:.64);}
  return {width,ascent:size*.88,descent:size*.28,method:'estimated'};
 }
-function wrap$1(s,maxWidth,size=14,font='sans',weight=400){
+function wrap$1(s,maxWidth,size=14,font='sans',weight=400,st=null){
  const lines=[];maxWidth=Math.max(size*2,maxWidth);
- for(const raw of String(s??'').split('\n')){const words=raw.split(/(\s+)/u);let current='';for(const token of words){if(!token)continue;const joined=current+token;if(measure$1(joined,size,font,weight).width<=maxWidth){current=joined;continue;}if(current.trim())lines.push(current.trimEnd());current=token.trimStart();
-  if(measure$1(current,size,font,weight).width>maxWidth){let part='';for(const g of graphemes(current)){if(part&&measure$1(part+g,size,font,weight).width>maxWidth){lines.push(part);part=g;}else part+=g;}current=part;}}
+ for(const raw of String(s??'').split('\n')){const words=raw.split(/(\s+)/u);let current='';for(const token of words){if(!token)continue;const joined=current+token;if(measure$1(joined,size,font,weight,st).width<=maxWidth){current=joined;continue;}if(current.trim())lines.push(current.trimEnd());current=token.trimStart();
+  if(measure$1(current,size,font,weight,st).width>maxWidth){let part='';for(const g of graphemes(current)){if(part&&measure$1(part+g,size,font,weight,st).width>maxWidth){lines.push(part);part=g;}else part+=g;}current=part;}}
   lines.push(current.trimEnd());}
  return lines.length?lines:[''];
 }
 if(typeof process!=='undefined'&&process.env?.DDN_METRICS_CAPTURE){process.on('exit',()=>{const fs=process.getBuiltinModule('node:fs'),p=process.env.DDN_METRICS_CAPTURE;let old={};try{old=JSON.parse(fs.readFileSync(p,'utf8'));}catch{}for(const[k,v]of requests)old[k]=v;fs.writeFileSync(p,JSON.stringify(old));});}
 function pending(){return [...requests.values()];}
 function clearRequests(){requests.clear();}
-const api$a={stats:()=>({...counts}),FONTS,ENGINE,engine:ENGINE,key,measure: measure$1,wrap: wrap$1,graphemes,setMetrics,getMetrics:()=>cache,setProvider,pending,clearRequests};
+/* 0.8 (chapter 04 §6A): merge a base (role/view) text-property record with an
+ * override record, key by key; null/undefined bases are fine. Returns null
+ * when neither side carries anything, so hot paths can skip all work. */
+function mergeSpec(base,over){if(!base&&!over)return null;const out={};for(const src of [base,over])if(src)for(const[k,v]of Object.entries(src))if(v!==undefined)out[k]=v;return Object.keys(out).length?out:null;}
+/* SVG attribute fragment for a resolved text-property record (painter side;
+ * weight and fill are emitted by the caller since they already have slots). */
+function paintAttrs(spec){if(!spec)return '';let s='';if(spec.italic)s+=' font-style="italic"';if(spec.decoration==='strike')s+=' text-decoration="line-through"';if(spec.variant==='small-caps')s+=' font-variant-caps="small-caps"';return s;}
+const api$a={stats:()=>({...counts}),FONTS,ENGINE,engine:ENGINE,key,measure: measure$1,wrap: wrap$1,graphemes,setMetrics,getMetrics:()=>cache,setProvider,pending,clearRequests,mergeSpec,paintAttrs};
 publishNamespace('DDNText',api$a);
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -4198,10 +4262,15 @@ function shapeOf(k,p){if(k.keyword==='dfd.process')return p.projection?.profile=
  return k.silhouette;}
 function measure(g,p){
  const s=g.scale,n=g.n,k=g.k;g.silhouette=shapeOf(k,p);
+ /* 0.8 (chapter 04 §6A): per-element label text properties — profile
+  * silhouettes measure and paint their name labels with the resolved record
+  * (view style.text < element text { }), exactly like the plain rect path. */
+ const labelTs=api$a.mergeSpec(p.style?.text,n.properties?.text);
+ if(n.properties?.text)g.labelSpec=n.properties.text;
  const compact=['ellipse','circle','diamond','bpmevent','choreotask','groupbox','dataobject','datainput','dataoutput','caseplan','userevent','actor','terminal','parallelogram','document','store','subprocess','round','hexagon','sendpent','acceptpent','hourglass','flowfinal'].includes(g.silhouette);
  if(compact&&!n.fields.length){
   const proportion=g.silhouette==='diamond'?.60:['ellipse','circle'].includes(g.silhouette)?.68:.78;
-  g.titleLines=api$a.wrap(n.name,g.w*proportion,16*s,p.style.font,600);
+  g.titleLines=api$a.wrap(n.name,g.w*proportion,16*s,p.style.font,labelTs?.weight??600,labelTs);
   g.h=Math.max(g.h,(g.titleLines.length*21+55)*s*(g.silhouette==='diamond'?1.55:1));
   if(g.silhouette==='circle'){g.w=Math.max(g.w,g.h);g.h=g.w;}
   if(g.silhouette==='actor')g.h=Math.max(g.h,(140+g.titleLines.length*21)*s);
@@ -4272,11 +4341,11 @@ function measure(g,p){
   g.boxedRows=wrapped;g.boxedH=wrapped.length*18*s+(rows.length?16*s:0);
   g.h=Math.max(g.h,g.h+24*s+g.boxedH);
  }
- if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,api$a.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+ if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,api$a.measure(n.name,12*s,p.style.font,labelTs?.weight??400,labelTs).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
  /* B1-057 : pseudostate glyphs are small fixed markers with the name
   * below; states with activities/internal transitions/submachine grow a
   * compartment under the name. */
- if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){g.w=Math.max(110*s,api$a.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+ if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){g.w=Math.max(110*s,api$a.measure(n.name,12*s,p.style.font,labelTs?.weight??400,labelTs).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
  if(n.kind==='state.state'){const x=n.properties.x_state||{};
   const acts=[...['entry','exit','do'].filter(k=>x[k]).map(k=>k+' / '+x[k]),...(x.internal||[])];
   if(acts.length||x.submachine){g.stateActs=acts;g.submachine=x.submachine;
@@ -4418,7 +4487,13 @@ function render$3(g,p,theme){
  const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?api$9.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f$2(x1)} ${f$2(y1)}L${f$2(x2)} ${f$2(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
  /* B1-074 : shapes-detail (thumbnails) suppresses every text run. */
  const shapesOnly=p.detail==='shapes';
- const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return '';api$a.measure(txt,size*s,p.style.font,weight);return `<text x="${f$2(xx)}" y="${f$2(yy)}" font-size="${size*s}" fill="${fg}" font-weight="${weight}" ${extra}>${esc$4(txt)}</text>`;};
+ /* 0.8 (chapter 04 §6A): view-wide style.text decorates every painted run;
+  * the element's own text { } decorates its name/title lines only. With no
+  * text properties the output is byte-identical to before. */
+ const viewTs=p.style.text||null;
+ const labelTs=g.labelSpec?api$a.mergeSpec(viewTs,g.labelSpec):null;
+ const labelSet=labelTs?new Set([n.name,...(g.titleLines||[])]):null;
+ const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return '';const ts=labelSet?.has(txt)?labelTs:viewTs;const w=ts?.weight??weight,fil=ts?.color??fg;api$a.measure(txt,size*s,p.style.font,w,ts);return `<text x="${f$2(xx)}" y="${f$2(yy)}" font-size="${size*s}" fill="${fil}" font-weight="${w}"${ts?api$a.paintAttrs(ts):''} ${extra}>${esc$4(txt)}</text>`;};
  const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
  let out=`<g class="ddn-node ddn-kind-${slug$1(k.code)}" data-id="${esc$4(n.id)}" data-ddn-id="${esc$4(n.id)}" data-shape="${esc$4(shape)}" tabindex="0" role="group" aria-label="${esc$4(n.name)}"><title>${esc$4(n.name+' — '+k.name)}</title>`;
  if(planning)out+=`<g class="ddn-planning-table"><rect x="${f$2(planning.x)}" y="${f$2(planning.y)}" width="${f$2(planning.w)}" height="${f$2(planning.h)}" fill="${fill}" stroke="${ink}" stroke-width="1.3" stroke-dasharray="5 4"/>`+text(planning.x+8*s,planning.y+18*s,'Planning',10,650,'')+planning.items.map((it,i)=>text(planning.x+8*s,planning.y+(36+i*16)*s,it,10.5,400,'')).join('')+'</g>';
@@ -5669,8 +5744,14 @@ const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=M
 const slug=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 const cls=(...parts)=>parts.flat(Infinity).filter(Boolean).join(' ');
 function wrap(s,n=30){const lines=[];for(const line of String(s??'').split('\n')){let current='';for(const word of line.split(/\s+/)){if((current+' '+word).trim().length>n&&current){lines.push(current);current=word;}else current=(current+' '+word).trim();}while(current.length>n+8){lines.push(current.slice(0,n));current=current.slice(n);}lines.push(current);}return lines;}
-function text$1(x,y,s,size=14,fill='#203047',weight=400,extra=''){api$a?.measure(s,size,activeFont,weight);return `<text x="${fmt$1(x)}" y="${fmt$1(y)}" font-size="${size}" fill="${esc$3(fill)}" font-weight="${weight}" ${extra}>${esc$3(s).replace(/[→↗∅]/g,c=>`<tspan font-family="DejaVu Sans, Arial, sans-serif">${c}</tspan>`)}</text>`;}
-function multilines(x,y,lines,size=14,fill='#203047',step=20,weight=400){return lines.map((l,i)=>text$1(x,y+i*step,l,size,fill,weight)).join('');}
+/* 0.8 (chapter 04 §6A): the painter resolves the active text-property record
+ * (view-wide activeText merged with an optional per-call spec) over the role
+ * defaults passed by each call site: weight and fill keep their parameter
+ * slots, italic/strike/small-caps ride as attributes, and measurement
+ * consumes the identical record. With no text properties anywhere the emitted
+ * SVG is byte-identical to before. */
+function text$1(x,y,s,size=14,fill='#203047',weight=400,extra='',spec=null){const ts=spec?api$a.mergeSpec(activeText,spec):activeText;const w=ts?.weight??weight,fil=ts?.color??fill;api$a?.measure(s,size,activeFont,w,ts);return `<text x="${fmt$1(x)}" y="${fmt$1(y)}" font-size="${size}" fill="${esc$3(fil)}" font-weight="${w}"${ts?api$a.paintAttrs(ts):''} ${extra}>${esc$3(s).replace(/[→↗∅]/g,c=>`<tspan font-family="DejaVu Sans, Arial, sans-serif">${c}</tspan>`)}</text>`;}
+function multilines(x,y,lines,size=14,fill='#203047',step=20,weight=400,spec=null){return lines.map((l,i)=>text$1(x,y+i*step,l,size,fill,weight,'',spec)).join('');}
 function line(x1,y1,x2,y2,colour,width=1.5,dash=''){return `<path d="M${fmt$1(x1)} ${fmt$1(y1)}L${fmt$1(x2)} ${fmt$1(y2)}" fill="none" stroke="${esc$3(colour)}" stroke-width="${width}"${dash?` stroke-dasharray="${esc$3(dash)}"`:''}/>`;}
 function glyph(name,x,y,size=24,colour='#285EA8'){return `<use href="#g-${esc$3(name)}" xlink:href="#g-${esc$3(name)}" x="${fmt$1(x)}" y="${fmt$1(y)}" width="${size}" height="${size}" style="color:${esc$3(colour)}"/>`;}
 function rect(x,y,w,h,stroke,fill,look='classic',id='',radius=0,style={}){
@@ -5714,7 +5795,11 @@ function measureNode(n,registry,profiles,placement={},context={},fit=null){
  const k=DDN$1.kindEntry(registry,n.kind),s=q$2(fit?.fontSize??profiles.style.font_size,16)/16,font=profiles.style.font;
  const visible=profiles.display.fields==='none'?[]:n.fields.filter(f=>(f.depth||0)<profiles.display.depth);
  let w=fit?.width??Math.max(placement.size?q$2(placement.size[0]):270*s,160*s);
- const titleLines=api$a.wrap(n.name,w-96*s,16*s,font,650);if(profiles.display.kind==='text')w=Math.max(w,api$a.measure(k.name,11*s,font,650).width+28*s);const headerH=Math.max(64*s,40*s+titleLines.length*21*s);
+ /* 0.8 (chapter 04 §6A): the element label measures with its resolved text
+  * properties (view style.text < element text { }); wraps recompute at the
+  * effective width, so a bolder or small-caps label can grow the box. */
+ const labelSpec=api$a.mergeSpec(profiles.style?.text,n.properties?.text);
+ const titleLines=api$a.wrap(n.name,w-96*s,16*s,font,labelSpec?.weight??650,labelSpec);if(profiles.display.kind==='text')w=Math.max(w,api$a.measure(k.name,11*s,font,650).width+28*s);const headerH=Math.max(64*s,40*s+titleLines.length*21*s);
  /* 0.8 (chapter 52 §52.5): a reference numeral renders in a boxed field row
   * directly under the element header; the row reserves height like a field. */
  let numeralRow=null;
@@ -5987,8 +6072,9 @@ function renderNode(g,p,theme,registry){
   if(p.display.kind!=='text')out+=glyph(k.glyph,x+13*s,y+15*s,24*s,ink);
   if(['text','icon_token'].includes(p.display.kind)||mono)out+=text$1(x+14*s,y+53*s,p.display.kind==='text'?k.name:k.code,11*s,ink,650);
  }
- if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650)+'</g>';
- else out+=multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650);
+ const elTextSpec=n.properties?.text||null;
+ if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650,elTextSpec)+'</g>';
+ else out+=multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650,elTextSpec);
  if(plainIcon)out+=emitIcon(g,plainIcon);
  const artBind=artFor(g);
  if(artBind)out+=emitArt(g,artBind,p);
@@ -6083,14 +6169,14 @@ function visibleRoutePieces(points,holes,radius=7){
  }
  flush();return pieces;
 }
-let activeFont='sans';
-function render$2(ir,registry,glyphDefs='',options={}){const before=activeFont;activeFont=ir.view.profiles.style.font;
+let activeFont='sans',activeText=null;
+function render$2(ir,registry,glyphDefs='',options={}){const before=activeFont,beforeText=activeText;activeFont=ir.view.profiles.style.font;activeText=ir.view.profiles.style.text||null;
  /* 0.8 (chapter 54 §54.4): an active font pin replaces the measurement cache
   * for this render only (engine match was checked against Text.engine). */
  const pin=ir.view.fontPin&&ir.view.fontPin.engine===api$a.engine?ir.view.fontPin:null;
  const prevMetrics=pin?api$a.getMetrics():null;
  if(pin)api$a.setMetrics(pin.measurements);
- try{return renderInner(ir,registry,glyphDefs,options);}finally{if(pin)api$a.setMetrics(prevMetrics);activeFont=before;}}
+ try{return renderInner(ir,registry,glyphDefs,options);}finally{if(pin)api$a.setMetrics(prevMetrics);activeFont=before;activeText=beforeText;}}
 function renderInner(ir,registry,glyphDefs='',options={}){
  if(!api$7||!api$a||!Export)throw new DDN$1.DDNError('DDN099','Load layout/text/export modules before rendering');
  ir=Export.project(ir);
@@ -6579,14 +6665,19 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     out+=`<path class="ddn-pub-corner" d="M${fmt$1(cx+sx*G)} ${fmt$1(cy)}L${fmt$1(Math.max(2,Math.min(pageW-2,cx+sx*(G+L))))} ${fmt$1(cy)}M${fmt$1(cx)} ${fmt$1(cy+sy*G)}L${fmt$1(cx)} ${fmt$1(Math.max(2,Math.min(pageH-2,cy+sy*(G+L))))}" stroke="${esc$3(t.ink)}" stroke-width="${fmt$1(bw)}" fill="none"/>`;}
   out+='</g>';}
  /* 0.8 (chapter 53 §53.1): header/footer runs. Slots position the run
-  * (left/center/right across the page); align overrides the anchor. */
+  * (left/center/right across the page); align overrides the anchor. Every run
+  * carries addressable classes (ddn-run ddn-run-<slot>). Run-level text
+  * properties (chapter 04 §6A) resolve against the slot's baked weight; the
+  * view-wide style.text deliberately does NOT restyle page furniture, so runs
+  * paint through their own path rather than text(). */
  const emitBand=(band,y0,clsName)=>{
   let s=`<g class="${clsName}">`;
   for(const slot of ['left','center','right']){const r=band[slot];if(!r)continue;
    const sizePx=r.size*PT,anchor=r.align==='center'?'middle':r.align==='right'?'end':'start';
    const bx=r.align==='center'?pageW/2:r.align==='right'?pageW-margin:margin;
    const fontExtra=r.font?` font-family="${esc$3(FONT_STACKS[r.font]||font)}"`:'';
-   bandLines(r).forEach((ln,i)=>{s+=text$1(bx,y0+sizePx+i*sizePx*1.35,ln,fmt$1(sizePx),t.muted,slot==='center'?600:400,`text-anchor="${anchor}"${fontExtra}`);});}
+   const ts=r.textStyle||null,rw=ts?.weight??(slot==='center'?600:400),rf=ts?.color??t.muted;
+   bandLines(r).forEach((ln,i)=>{api$a.measure(ln,sizePx,r.font||activeFont,rw,ts);s+=`<text class="ddn-run ddn-run-${slot}" x="${fmt$1(bx)}" y="${fmt$1(y0+sizePx+i*sizePx*1.35)}" font-size="${fmt$1(sizePx)}" fill="${esc$3(rf)}" font-weight="${rw}"${ts?api$a.paintAttrs(ts):''} text-anchor="${anchor}"${fontExtra}>${esc$3(ln)}</text>`;});}
   return s+'</g>';};
  if(headerBand)out+=emitBand(p.publication.header,6,'ddn-pub-header');
  /* 0.8 (chapter 44 amendment): the banner is the engine-version line above the

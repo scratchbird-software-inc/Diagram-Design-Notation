@@ -71,33 +71,49 @@
    * producing engine; a mismatch is DDN-TF05 (pin ignored) at render time. */
   const ENGINE='ddn-text@1';
   let cache=initial?.measurements||{},provider=null,providerName=null,context=null;const requests=new Map();const counts={estimated:0,canvas:0,cache:0,provider:0};
-  const key=(s,size,font,weight)=>JSON.stringify([String(s),+size,font,weight]);
+  /* 0.8 (chapter 04 §6A): portable text properties. Measurement consumes the
+   * same decoration properties painting emits: an optional style record
+   * {italic:'italic'|true, variant:'small-caps'} joins the cache key (only when
+   * present, so pre-0.8 pinned caches keep their 4-tuple keys) and the canvas
+   * font string. Weight already rode the key. In the estimate path italic keeps
+   * regular advance widths (oblique advances are equal) and small-caps
+   * substitutes uppercase metrics at 0.8x size for cased-lowercase graphemes. */
+  const styleFlags=st=>st&&(st.italic||st.variant==='small-caps')?[st.italic?1:0,st.variant==='small-caps'?1:0]:null;
+  const key=(s,size,font,weight,st)=>{const base=[String(s),+size,font,weight];const fl=styleFlags(st);return JSON.stringify(fl?base.concat(fl):base);};
   const segments$1=typeof Intl!=='undefined'&&Intl.Segmenter?new Intl.Segmenter('und',{granularity:'grapheme'}):null;
   const graphemes=s=>segments$1?[...segments$1.segment(String(s))].map(x=>x.segment):[...String(s)];
   function setMetrics(data){cache=data?.measurements||data||{};}
   function setProvider(fn,name='custom'){provider=fn;providerName=name;}
-  function measure$1(s,size=14,font='sans',weight=400){s=String(s??'');const k=key(s,size,font,weight);let result;
+  function measure$1(s,size=14,font='sans',weight=400,st=null){s=String(s??'');const k=key(s,size,font,weight,st);let result;
    if(provider){counts.provider++;result=provider(s,size,FONTS[font]||font,weight);if(!result||!Number.isFinite(result.width))throw new Error('Text measurement provider returned invalid width');return {...result,method:providerName};}
-   if(typeof document!=='undefined'&&document.createElement){try{context??=document.createElement('canvas').getContext('2d');if(context){counts.canvas++;context.font=`${weight} ${size}px ${FONTS[font]||font}`;const m=context.measureText(s);return {width:m.width,ascent:m.actualBoundingBoxAscent||size*.85,descent:m.actualBoundingBoxDescent||size*.25,method:'browser-canvas'};}}catch{}}
+   if(typeof document!=='undefined'&&document.createElement){try{context??=document.createElement('canvas').getContext('2d');if(context){counts.canvas++;context.font=`${st?.italic?'italic ':''}${st?.variant==='small-caps'?'small-caps ':''}${weight} ${size}px ${FONTS[font]||font}`;const m=context.measureText(s);return {width:m.width,ascent:m.actualBoundingBoxAscent||size*.85,descent:m.actualBoundingBoxDescent||size*.25,method:'browser-canvas'};}}catch{}}
    if(cache[k]){counts.cache++;return {...cache[k],method:'pinned-measurement-cache'};}
    counts.estimated++;
    // Bounded retention: the capture map is a debugging aid, not a leak. FIFO-evict
    // past the cap so many unique labels cannot grow the process heap without bound.
    if(!requests.has(k)){if(requests.size>=4096)requests.delete(requests.keys().next().value);requests.set(k,{text:s,size,font,weight});}
-   let width=0;for(const g of graphemes(s)){if(/^\s+$/u.test(g))width+=size*.34;else if(/[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}\p{Extended_Pictographic}]/u.test(g))width+=size*1.08;else if(/[MW@#%&]/.test(g))width+=size*.9;else if(/[il.,:;!'|]/.test(g))width+=size*.34;else width+=size*(font==='mono'?.64:.64);}
+   const caps=st?.variant==='small-caps';
+   let width=0;for(const g of graphemes(s)){const up=caps&&g.toUpperCase()!==g;const gs=up?size*.8:size,gc=up?g.toUpperCase():g;if(/^\s+$/u.test(gc))width+=gs*.34;else if(/[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}\p{Extended_Pictographic}]/u.test(gc))width+=gs*1.08;else if(/[MW@#%&]/.test(gc))width+=gs*.9;else if(/[il.,:;!'|]/.test(gc))width+=gs*.34;else width+=gs*(font==='mono'?.64:.64);}
    return {width,ascent:size*.88,descent:size*.28,method:'estimated'};
   }
-  function wrap$1(s,maxWidth,size=14,font='sans',weight=400){
+  function wrap$1(s,maxWidth,size=14,font='sans',weight=400,st=null){
    const lines=[];maxWidth=Math.max(size*2,maxWidth);
-   for(const raw of String(s??'').split('\n')){const words=raw.split(/(\s+)/u);let current='';for(const token of words){if(!token)continue;const joined=current+token;if(measure$1(joined,size,font,weight).width<=maxWidth){current=joined;continue;}if(current.trim())lines.push(current.trimEnd());current=token.trimStart();
-    if(measure$1(current,size,font,weight).width>maxWidth){let part='';for(const g of graphemes(current)){if(part&&measure$1(part+g,size,font,weight).width>maxWidth){lines.push(part);part=g;}else part+=g;}current=part;}}
+   for(const raw of String(s??'').split('\n')){const words=raw.split(/(\s+)/u);let current='';for(const token of words){if(!token)continue;const joined=current+token;if(measure$1(joined,size,font,weight,st).width<=maxWidth){current=joined;continue;}if(current.trim())lines.push(current.trimEnd());current=token.trimStart();
+    if(measure$1(current,size,font,weight,st).width>maxWidth){let part='';for(const g of graphemes(current)){if(part&&measure$1(part+g,size,font,weight,st).width>maxWidth){lines.push(part);part=g;}else part+=g;}current=part;}}
     lines.push(current.trimEnd());}
    return lines.length?lines:[''];
   }
   if(typeof process!=='undefined'&&process.env?.DDN_METRICS_CAPTURE){process.on('exit',()=>{const fs=process.getBuiltinModule('node:fs'),p=process.env.DDN_METRICS_CAPTURE;let old={};try{old=JSON.parse(fs.readFileSync(p,'utf8'));}catch{}for(const[k,v]of requests)old[k]=v;fs.writeFileSync(p,JSON.stringify(old));});}
   function pending(){return [...requests.values()];}
   function clearRequests(){requests.clear();}
-  const api$9={stats:()=>({...counts}),FONTS,ENGINE,engine:ENGINE,key,measure: measure$1,wrap: wrap$1,graphemes,setMetrics,getMetrics:()=>cache,setProvider,pending,clearRequests};
+  /* 0.8 (chapter 04 §6A): merge a base (role/view) text-property record with an
+   * override record, key by key; null/undefined bases are fine. Returns null
+   * when neither side carries anything, so hot paths can skip all work. */
+  function mergeSpec(base,over){if(!base&&!over)return null;const out={};for(const src of [base,over])if(src)for(const[k,v]of Object.entries(src))if(v!==undefined)out[k]=v;return Object.keys(out).length?out:null;}
+  /* SVG attribute fragment for a resolved text-property record (painter side;
+   * weight and fill are emitted by the caller since they already have slots). */
+  function paintAttrs(spec){if(!spec)return '';let s='';if(spec.italic)s+=' font-style="italic"';if(spec.decoration==='strike')s+=' text-decoration="line-through"';if(spec.variant==='small-caps')s+=' font-variant-caps="small-caps"';return s;}
+  const api$9={stats:()=>({...counts}),FONTS,ENGINE,engine:ENGINE,key,measure: measure$1,wrap: wrap$1,graphemes,setMetrics,getMetrics:()=>cache,setProvider,pending,clearRequests,mergeSpec,paintAttrs};
   publishNamespace('DDNText',api$9);
 
   /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -264,10 +280,15 @@
    return k.silhouette;}
   function measure(g,p){
    const s=g.scale,n=g.n,k=g.k;g.silhouette=shapeOf(k,p);
+   /* 0.8 (chapter 04 §6A): per-element label text properties — profile
+    * silhouettes measure and paint their name labels with the resolved record
+    * (view style.text < element text { }), exactly like the plain rect path. */
+   const labelTs=api$9.mergeSpec(p.style?.text,n.properties?.text);
+   if(n.properties?.text)g.labelSpec=n.properties.text;
    const compact=['ellipse','circle','diamond','bpmevent','choreotask','groupbox','dataobject','datainput','dataoutput','caseplan','userevent','actor','terminal','parallelogram','document','store','subprocess','round','hexagon','sendpent','acceptpent','hourglass','flowfinal'].includes(g.silhouette);
    if(compact&&!n.fields.length){
     const proportion=g.silhouette==='diamond'?.60:['ellipse','circle'].includes(g.silhouette)?.68:.78;
-    g.titleLines=api$9.wrap(n.name,g.w*proportion,16*s,p.style.font,600);
+    g.titleLines=api$9.wrap(n.name,g.w*proportion,16*s,p.style.font,labelTs?.weight??600,labelTs);
     g.h=Math.max(g.h,(g.titleLines.length*21+55)*s*(g.silhouette==='diamond'?1.55:1));
     if(g.silhouette==='circle'){g.w=Math.max(g.w,g.h);g.h=g.w;}
     if(g.silhouette==='actor')g.h=Math.max(g.h,(140+g.titleLines.length*21)*s);
@@ -338,11 +359,11 @@
     g.boxedRows=wrapped;g.boxedH=wrapped.length*18*s+(rows.length?16*s:0);
     g.h=Math.max(g.h,g.h+24*s+g.boxedH);
    }
-   if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,api$9.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+   if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,api$9.measure(n.name,12*s,p.style.font,labelTs?.weight??400,labelTs).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
    /* B1-057 : pseudostate glyphs are small fixed markers with the name
     * below; states with activities/internal transitions/submachine grow a
     * compartment under the name. */
-   if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){g.w=Math.max(110*s,api$9.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+   if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){g.w=Math.max(110*s,api$9.measure(n.name,12*s,p.style.font,labelTs?.weight??400,labelTs).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
    if(n.kind==='state.state'){const x=n.properties.x_state||{};
     const acts=[...['entry','exit','do'].filter(k=>x[k]).map(k=>k+' / '+x[k]),...(x.internal||[])];
     if(acts.length||x.submachine){g.stateActs=acts;g.submachine=x.submachine;
@@ -484,7 +505,13 @@
    const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?api$8.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
    /* B1-074 : shapes-detail (thumbnails) suppresses every text run. */
    const shapesOnly=p.detail==='shapes';
-   const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return '';api$9.measure(txt,size*s,p.style.font,weight);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fg}" font-weight="${weight}" ${extra}>${esc$2(txt)}</text>`;};
+   /* 0.8 (chapter 04 §6A): view-wide style.text decorates every painted run;
+    * the element's own text { } decorates its name/title lines only. With no
+    * text properties the output is byte-identical to before. */
+   const viewTs=p.style.text||null;
+   const labelTs=g.labelSpec?api$9.mergeSpec(viewTs,g.labelSpec):null;
+   const labelSet=labelTs?new Set([n.name,...(g.titleLines||[])]):null;
+   const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return '';const ts=labelSet?.has(txt)?labelTs:viewTs;const w=ts?.weight??weight,fil=ts?.color??fg;api$9.measure(txt,size*s,p.style.font,w,ts);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fil}" font-weight="${w}"${ts?api$9.paintAttrs(ts):''} ${extra}>${esc$2(txt)}</text>`;};
    const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
    let out=`<g class="ddn-node ddn-kind-${slug$1(k.code)}" data-id="${esc$2(n.id)}" data-ddn-id="${esc$2(n.id)}" data-shape="${esc$2(shape)}" tabindex="0" role="group" aria-label="${esc$2(n.name)}"><title>${esc$2(n.name+' — '+k.name)}</title>`;
    if(planning)out+=`<g class="ddn-planning-table"><rect x="${f(planning.x)}" y="${f(planning.y)}" width="${f(planning.w)}" height="${f(planning.h)}" fill="${fill}" stroke="${ink}" stroke-width="1.3" stroke-dasharray="5 4"/>`+text(planning.x+8*s,planning.y+18*s,'Planning',10,650,'')+planning.items.map((it,i)=>text(planning.x+8*s,planning.y+(36+i*16)*s,it,10.5,400,'')).join('')+'</g>';
@@ -1960,8 +1987,14 @@
   const slug=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
   const cls=(...parts)=>parts.flat(Infinity).filter(Boolean).join(' ');
   function wrap(s,n=30){const lines=[];for(const line of String(s??'').split('\n')){let current='';for(const word of line.split(/\s+/)){if((current+' '+word).trim().length>n&&current){lines.push(current);current=word;}else current=(current+' '+word).trim();}while(current.length>n+8){lines.push(current.slice(0,n));current=current.slice(n);}lines.push(current);}return lines;}
-  function text$1(x,y,s,size=14,fill='#203047',weight=400,extra=''){api$9?.measure(s,size,activeFont,weight);return `<text x="${fmt(x)}" y="${fmt(y)}" font-size="${size}" fill="${esc$1(fill)}" font-weight="${weight}" ${extra}>${esc$1(s).replace(/[→↗∅]/g,c=>`<tspan font-family="DejaVu Sans, Arial, sans-serif">${c}</tspan>`)}</text>`;}
-  function multilines(x,y,lines,size=14,fill='#203047',step=20,weight=400){return lines.map((l,i)=>text$1(x,y+i*step,l,size,fill,weight)).join('');}
+  /* 0.8 (chapter 04 §6A): the painter resolves the active text-property record
+   * (view-wide activeText merged with an optional per-call spec) over the role
+   * defaults passed by each call site: weight and fill keep their parameter
+   * slots, italic/strike/small-caps ride as attributes, and measurement
+   * consumes the identical record. With no text properties anywhere the emitted
+   * SVG is byte-identical to before. */
+  function text$1(x,y,s,size=14,fill='#203047',weight=400,extra='',spec=null){const ts=spec?api$9.mergeSpec(activeText,spec):activeText;const w=ts?.weight??weight,fil=ts?.color??fill;api$9?.measure(s,size,activeFont,w,ts);return `<text x="${fmt(x)}" y="${fmt(y)}" font-size="${size}" fill="${esc$1(fil)}" font-weight="${w}"${ts?api$9.paintAttrs(ts):''} ${extra}>${esc$1(s).replace(/[→↗∅]/g,c=>`<tspan font-family="DejaVu Sans, Arial, sans-serif">${c}</tspan>`)}</text>`;}
+  function multilines(x,y,lines,size=14,fill='#203047',step=20,weight=400,spec=null){return lines.map((l,i)=>text$1(x,y+i*step,l,size,fill,weight,'',spec)).join('');}
   function line(x1,y1,x2,y2,colour,width=1.5,dash=''){return `<path d="M${fmt(x1)} ${fmt(y1)}L${fmt(x2)} ${fmt(y2)}" fill="none" stroke="${esc$1(colour)}" stroke-width="${width}"${dash?` stroke-dasharray="${esc$1(dash)}"`:''}/>`;}
   function glyph(name,x,y,size=24,colour='#285EA8'){return `<use href="#g-${esc$1(name)}" xlink:href="#g-${esc$1(name)}" x="${fmt(x)}" y="${fmt(y)}" width="${size}" height="${size}" style="color:${esc$1(colour)}"/>`;}
   function rect(x,y,w,h,stroke,fill,look='classic',id='',radius=0,style={}){
@@ -2005,7 +2038,11 @@
    const k=DDN$1.kindEntry(registry,n.kind),s=q$1(fit?.fontSize??profiles.style.font_size,16)/16,font=profiles.style.font;
    const visible=profiles.display.fields==='none'?[]:n.fields.filter(f=>(f.depth||0)<profiles.display.depth);
    let w=fit?.width??Math.max(placement.size?q$1(placement.size[0]):270*s,160*s);
-   const titleLines=api$9.wrap(n.name,w-96*s,16*s,font,650);if(profiles.display.kind==='text')w=Math.max(w,api$9.measure(k.name,11*s,font,650).width+28*s);const headerH=Math.max(64*s,40*s+titleLines.length*21*s);
+   /* 0.8 (chapter 04 §6A): the element label measures with its resolved text
+    * properties (view style.text < element text { }); wraps recompute at the
+    * effective width, so a bolder or small-caps label can grow the box. */
+   const labelSpec=api$9.mergeSpec(profiles.style?.text,n.properties?.text);
+   const titleLines=api$9.wrap(n.name,w-96*s,16*s,font,labelSpec?.weight??650,labelSpec);if(profiles.display.kind==='text')w=Math.max(w,api$9.measure(k.name,11*s,font,650).width+28*s);const headerH=Math.max(64*s,40*s+titleLines.length*21*s);
    /* 0.8 (chapter 52 §52.5): a reference numeral renders in a boxed field row
     * directly under the element header; the row reserves height like a field. */
    let numeralRow=null;
@@ -2278,8 +2315,9 @@
     if(p.display.kind!=='text')out+=glyph(k.glyph,x+13*s,y+15*s,24*s,ink);
     if(['text','icon_token'].includes(p.display.kind)||mono)out+=text$1(x+14*s,y+53*s,p.display.kind==='text'?k.name:k.code,11*s,ink,650);
    }
-   if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650)+'</g>';
-   else out+=multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650);
+   const elTextSpec=n.properties?.text||null;
+   if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650,elTextSpec)+'</g>';
+   else out+=multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650,elTextSpec);
    if(plainIcon)out+=emitIcon(g,plainIcon);
    const artBind=artFor(g);
    if(artBind)out+=emitArt(g,artBind,p);
@@ -2374,14 +2412,14 @@
    }
    flush();return pieces;
   }
-  let activeFont='sans';
-  function render$1(ir,registry,glyphDefs='',options={}){const before=activeFont;activeFont=ir.view.profiles.style.font;
+  let activeFont='sans',activeText=null;
+  function render$1(ir,registry,glyphDefs='',options={}){const before=activeFont,beforeText=activeText;activeFont=ir.view.profiles.style.font;activeText=ir.view.profiles.style.text||null;
    /* 0.8 (chapter 54 §54.4): an active font pin replaces the measurement cache
     * for this render only (engine match was checked against Text.engine). */
    const pin=ir.view.fontPin&&ir.view.fontPin.engine===api$9.engine?ir.view.fontPin:null;
    const prevMetrics=pin?api$9.getMetrics():null;
    if(pin)api$9.setMetrics(pin.measurements);
-   try{return renderInner(ir,registry,glyphDefs,options);}finally{if(pin)api$9.setMetrics(prevMetrics);activeFont=before;}}
+   try{return renderInner(ir,registry,glyphDefs,options);}finally{if(pin)api$9.setMetrics(prevMetrics);activeFont=before;activeText=beforeText;}}
   function renderInner(ir,registry,glyphDefs='',options={}){
    if(!api$6||!api$9||!Export)throw new DDN$1.DDNError('DDN099','Load layout/text/export modules before rendering');
    ir=Export.project(ir);
@@ -2870,14 +2908,19 @@
       out+=`<path class="ddn-pub-corner" d="M${fmt(cx+sx*G)} ${fmt(cy)}L${fmt(Math.max(2,Math.min(pageW-2,cx+sx*(G+L))))} ${fmt(cy)}M${fmt(cx)} ${fmt(cy+sy*G)}L${fmt(cx)} ${fmt(Math.max(2,Math.min(pageH-2,cy+sy*(G+L))))}" stroke="${esc$1(t.ink)}" stroke-width="${fmt(bw)}" fill="none"/>`;}
     out+='</g>';}
    /* 0.8 (chapter 53 §53.1): header/footer runs. Slots position the run
-    * (left/center/right across the page); align overrides the anchor. */
+    * (left/center/right across the page); align overrides the anchor. Every run
+    * carries addressable classes (ddn-run ddn-run-<slot>). Run-level text
+    * properties (chapter 04 §6A) resolve against the slot's baked weight; the
+    * view-wide style.text deliberately does NOT restyle page furniture, so runs
+    * paint through their own path rather than text(). */
    const emitBand=(band,y0,clsName)=>{
     let s=`<g class="${clsName}">`;
     for(const slot of ['left','center','right']){const r=band[slot];if(!r)continue;
      const sizePx=r.size*PT,anchor=r.align==='center'?'middle':r.align==='right'?'end':'start';
      const bx=r.align==='center'?pageW/2:r.align==='right'?pageW-margin:margin;
      const fontExtra=r.font?` font-family="${esc$1(FONT_STACKS[r.font]||font)}"`:'';
-     bandLines(r).forEach((ln,i)=>{s+=text$1(bx,y0+sizePx+i*sizePx*1.35,ln,fmt(sizePx),t.muted,slot==='center'?600:400,`text-anchor="${anchor}"${fontExtra}`);});}
+     const ts=r.textStyle||null,rw=ts?.weight??(slot==='center'?600:400),rf=ts?.color??t.muted;
+     bandLines(r).forEach((ln,i)=>{api$9.measure(ln,sizePx,r.font||activeFont,rw,ts);s+=`<text class="ddn-run ddn-run-${slot}" x="${fmt(bx)}" y="${fmt(y0+sizePx+i*sizePx*1.35)}" font-size="${fmt(sizePx)}" fill="${esc$1(rf)}" font-weight="${rw}"${ts?api$9.paintAttrs(ts):''} text-anchor="${anchor}"${fontExtra}>${esc$1(ln)}</text>`;});}
     return s+'</g>';};
    if(headerBand)out+=emitBand(p.publication.header,6,'ddn-pub-header');
    /* 0.8 (chapter 44 amendment): the banner is the engine-version line above the

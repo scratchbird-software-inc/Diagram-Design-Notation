@@ -6,6 +6,26 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Portable text properties (0.8 amendment, spec ch. 04 §6A + ch. 53 §53.1).**
+  One decoration vocabulary — `weight` (`bold` or 100–900), `italic`,
+  `decoration: strike|none` (`underline` reserved), `variant: small-caps|normal`,
+  `color: #rgb|#rrggbb` — with three application contexts: a `text { }` group
+  view-wide in `style`, a `text { }` group per element (its label only), and
+  flat keys on publication header/footer runs. Precedence is role default <
+  view `style.text` < element `text { }`; chrome runs resolve against their
+  slot weights and are never restyled by view/element declarations. Family
+  and size stay role-based. Measurement consumes the same properties
+  (weight/italic/small-caps join the measurement key and canvas font string;
+  undecorated runs keep the pre-0.8 4-tuple cache key, so pinned metric
+  caches stay valid) and wraps recompute. Every header/footer run text now
+  carries addressable `ddn-run ddn-run-left|center|right` classes. Validation
+  is the coded family `DDN-TX01`–`DDN-TX06`, version-gated `DDN-V04` below
+  `ddn "0.6"`. Wired through `ddn-core.js` (one shared validator),
+  `ddn-text.js` (measure/wrap style flags), `ddn-render.js`/`ddn-shapes.js`
+  (painter + label sites, byte-identical when unused), the registry
+  capabilities list, the AI authoring reference (§14.6A + DDN-TX fixes), the
+  field guide (new "Portable text properties" chapter) and a 10-test
+  conformance suite (`notation/tests/text-properties.js`).
 - **`publication.content_scale`: true content scaling (0.8 amendment, spec ch. 06).**
   A new publication-group ratio key (0.25–4, default 1) scales the laid-out
   drawing — geometry and all font roles uniformly — *before* the fit/contain

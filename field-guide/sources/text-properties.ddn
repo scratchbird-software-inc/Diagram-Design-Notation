@@ -1,0 +1,44 @@
+ddn "0.6";
+module "ddn.fieldguide.textprops";
+
+// Portable text properties (spec ch. 04 §6A): one decoration vocabulary —
+// weight, italic, decoration (strike), variant (small-caps), color — applied
+// view-wide in style { text { … } }, per element on the element's label, and
+// flat on publication header/footer runs. Family and size stay role-based.
+
+data model {
+  object invoice "Invoice gateway" {
+    kind: service;
+    text { weight: bold; variant: small-caps; }
+    fields {
+      total: money;
+      status: string;
+    }
+  }
+  object ledger "Ledger archive" {
+    kind: database;
+    text { italic: true; color: "#1a5fb4"; }
+  }
+  object legacy "Legacy export (retired)" {
+    kind: queue;
+    text { decoration: strike; }
+  }
+  relation posts @invoice -> @ledger { kind: flow; }
+  relation fed @legacy -> @invoice { kind: flow; }
+}
+
+format filing {
+  publication page {
+    size: content;
+    header {
+      left { text: "$view_id"; size: 8pt; }
+      right { text: "SUPERSEDED — $date"; size: 8pt; decoration: strike; color: "#a51d2d"; }
+    }
+  }
+}
+
+view main "Portable text properties" {
+  data: [@model];
+  publication: @filing.page;
+  style { text { weight: 500; } }
+}

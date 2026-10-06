@@ -1354,6 +1354,14 @@
       ]
     },
     {
+      "chapter": "text-properties",
+      "entry": "field-guide/sources/text-properties.ddn",
+      "view": "main",
+      "files": [
+        "field-guide/sources/text-properties.ddn"
+      ]
+    },
+    {
       "chapter": "markings-metadata",
       "entry": "field-guide/sources/markings.ddn",
       "view": "main",

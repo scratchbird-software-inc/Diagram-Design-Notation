@@ -24,8 +24,14 @@ const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=M
 const slug=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 const cls=(...parts)=>parts.flat(Infinity).filter(Boolean).join(' ');
 function wrap(s,n=30){const lines=[];for(const line of String(s??'').split('\n')){let current='';for(const word of line.split(/\s+/)){if((current+' '+word).trim().length>n&&current){lines.push(current);current=word;}else current=(current+' '+word).trim();}while(current.length>n+8){lines.push(current.slice(0,n));current=current.slice(n);}lines.push(current);}return lines;}
-function text(x,y,s,size=14,fill='#203047',weight=400,extra=''){Text?.measure(s,size,activeFont,weight);return `<text x="${fmt(x)}" y="${fmt(y)}" font-size="${size}" fill="${esc(fill)}" font-weight="${weight}" ${extra}>${esc(s).replace(/[→↗∅]/g,c=>`<tspan font-family="DejaVu Sans, Arial, sans-serif">${c}</tspan>`)}</text>`;}
-function multilines(x,y,lines,size=14,fill='#203047',step=20,weight=400){return lines.map((l,i)=>text(x,y+i*step,l,size,fill,weight)).join('');}
+/* 0.8 (chapter 04 §6A): the painter resolves the active text-property record
+ * (view-wide activeText merged with an optional per-call spec) over the role
+ * defaults passed by each call site: weight and fill keep their parameter
+ * slots, italic/strike/small-caps ride as attributes, and measurement
+ * consumes the identical record. With no text properties anywhere the emitted
+ * SVG is byte-identical to before. */
+function text(x,y,s,size=14,fill='#203047',weight=400,extra='',spec=null){const ts=spec?Text.mergeSpec(activeText,spec):activeText;const w=ts?.weight??weight,fil=ts?.color??fill;Text?.measure(s,size,activeFont,w,ts);return `<text x="${fmt(x)}" y="${fmt(y)}" font-size="${size}" fill="${esc(fil)}" font-weight="${w}"${ts?Text.paintAttrs(ts):''} ${extra}>${esc(s).replace(/[→↗∅]/g,c=>`<tspan font-family="DejaVu Sans, Arial, sans-serif">${c}</tspan>`)}</text>`;}
+function multilines(x,y,lines,size=14,fill='#203047',step=20,weight=400,spec=null){return lines.map((l,i)=>text(x,y+i*step,l,size,fill,weight,'',spec)).join('');}
 function line(x1,y1,x2,y2,colour,width=1.5,dash=''){return `<path d="M${fmt(x1)} ${fmt(y1)}L${fmt(x2)} ${fmt(y2)}" fill="none" stroke="${esc(colour)}" stroke-width="${width}"${dash?` stroke-dasharray="${esc(dash)}"`:''}/>`;}
 function glyph(name,x,y,size=24,colour='#285EA8'){return `<use href="#g-${esc(name)}" xlink:href="#g-${esc(name)}" x="${fmt(x)}" y="${fmt(y)}" width="${size}" height="${size}" style="color:${esc(colour)}"/>`;}
 function rect(x,y,w,h,stroke,fill,look='classic',id='',radius=0,style={}){
@@ -69,7 +75,11 @@ function measureNode(n,registry,profiles,placement={},context={},fit=null){
  const k=DDN.kindEntry(registry,n.kind),s=q(fit?.fontSize??profiles.style.font_size,16)/16,font=profiles.style.font;
  const visible=profiles.display.fields==='none'?[]:n.fields.filter(f=>(f.depth||0)<profiles.display.depth);
  let w=fit?.width??Math.max(placement.size?q(placement.size[0]):270*s,160*s);
- const titleLines=Text.wrap(n.name,w-96*s,16*s,font,650);if(profiles.display.kind==='text')w=Math.max(w,Text.measure(k.name,11*s,font,650).width+28*s);const headerH=Math.max(64*s,40*s+titleLines.length*21*s);
+ /* 0.8 (chapter 04 §6A): the element label measures with its resolved text
+  * properties (view style.text < element text { }); wraps recompute at the
+  * effective width, so a bolder or small-caps label can grow the box. */
+ const labelSpec=Text.mergeSpec(profiles.style?.text,n.properties?.text);
+ const titleLines=Text.wrap(n.name,w-96*s,16*s,font,labelSpec?.weight??650,labelSpec);if(profiles.display.kind==='text')w=Math.max(w,Text.measure(k.name,11*s,font,650).width+28*s);const headerH=Math.max(64*s,40*s+titleLines.length*21*s);
  /* 0.8 (chapter 52 §52.5): a reference numeral renders in a boxed field row
   * directly under the element header; the row reserves height like a field. */
  let numeralRow=null;
@@ -342,8 +352,9 @@ function renderNode(g,p,theme,registry){
   if(p.display.kind!=='text')out+=glyph(k.glyph,x+13*s,y+15*s,24*s,ink);
   if(['text','icon_token'].includes(p.display.kind)||mono)out+=text(x+14*s,y+53*s,p.display.kind==='text'?k.name:k.code,11*s,ink,650);
  }
- if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650)+'</g>';
- else out+=multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650);
+ const elTextSpec=n.properties?.text||null;
+ if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650,elTextSpec)+'</g>';
+ else out+=multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650,elTextSpec);
  if(plainIcon)out+=emitIcon(g,plainIcon);
  const artBind=artFor(g);
  if(artBind)out+=emitArt(g,artBind,p);
@@ -460,14 +471,14 @@ function visibleRoutePieces(points,holes,radius=7){
  }
  flush();return pieces;
 }
-let activeFont='sans';
-function render(ir,registry,glyphDefs='',options={}){const before=activeFont;activeFont=ir.view.profiles.style.font;
+let activeFont='sans',activeText=null;
+function render(ir,registry,glyphDefs='',options={}){const before=activeFont,beforeText=activeText;activeFont=ir.view.profiles.style.font;activeText=ir.view.profiles.style.text||null;
  /* 0.8 (chapter 54 §54.4): an active font pin replaces the measurement cache
   * for this render only (engine match was checked against Text.engine). */
  const pin=ir.view.fontPin&&ir.view.fontPin.engine===Text.engine?ir.view.fontPin:null;
  const prevMetrics=pin?Text.getMetrics():null;
  if(pin)Text.setMetrics(pin.measurements);
- try{return renderInner(ir,registry,glyphDefs,options);}finally{if(pin)Text.setMetrics(prevMetrics);activeFont=before;}}
+ try{return renderInner(ir,registry,glyphDefs,options);}finally{if(pin)Text.setMetrics(prevMetrics);activeFont=before;activeText=beforeText;}}
 function renderInner(ir,registry,glyphDefs='',options={}){
  if(!Layout||!Text||!Export)throw new DDN.DDNError('DDN099','Load layout/text/export modules before rendering');
  ir=Export.project(ir);
@@ -956,14 +967,19 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     out+=`<path class="ddn-pub-corner" d="M${fmt(cx+sx*G)} ${fmt(cy)}L${fmt(Math.max(2,Math.min(pageW-2,cx+sx*(G+L))))} ${fmt(cy)}M${fmt(cx)} ${fmt(cy+sy*G)}L${fmt(cx)} ${fmt(Math.max(2,Math.min(pageH-2,cy+sy*(G+L))))}" stroke="${esc(t.ink)}" stroke-width="${fmt(bw)}" fill="none"/>`;}
   out+='</g>';}
  /* 0.8 (chapter 53 §53.1): header/footer runs. Slots position the run
-  * (left/center/right across the page); align overrides the anchor. */
+  * (left/center/right across the page); align overrides the anchor. Every run
+  * carries addressable classes (ddn-run ddn-run-<slot>). Run-level text
+  * properties (chapter 04 §6A) resolve against the slot's baked weight; the
+  * view-wide style.text deliberately does NOT restyle page furniture, so runs
+  * paint through their own path rather than text(). */
  const emitBand=(band,y0,clsName)=>{
   let s=`<g class="${clsName}">`;
   for(const slot of ['left','center','right']){const r=band[slot];if(!r)continue;
    const sizePx=r.size*PT,anchor=r.align==='center'?'middle':r.align==='right'?'end':'start';
    const bx=r.align==='center'?pageW/2:r.align==='right'?pageW-margin:margin;
    const fontExtra=r.font?` font-family="${esc(FONT_STACKS[r.font]||font)}"`:'';
-   bandLines(r).forEach((ln,i)=>{s+=text(bx,y0+sizePx+i*sizePx*1.35,ln,fmt(sizePx),t.muted,slot==='center'?600:400,`text-anchor="${anchor}"${fontExtra}`);});}
+   const ts=r.textStyle||null,rw=ts?.weight??(slot==='center'?600:400),rf=ts?.color??t.muted;
+   bandLines(r).forEach((ln,i)=>{Text.measure(ln,sizePx,r.font||activeFont,rw,ts);s+=`<text class="ddn-run ddn-run-${slot}" x="${fmt(bx)}" y="${fmt(y0+sizePx+i*sizePx*1.35)}" font-size="${fmt(sizePx)}" fill="${esc(rf)}" font-weight="${rw}"${ts?Text.paintAttrs(ts):''} text-anchor="${anchor}"${fontExtra}>${esc(ln)}</text>`;});}
   return s+'</g>';};
  if(headerBand)out+=emitBand(p.publication.header,6,'ddn-pub-header');
  /* 0.8 (chapter 44 amendment): the banner is the engine-version line above the

@@ -395,6 +395,20 @@
  "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
  },
  {
+ "id": "style.text",
+ "scope": "style",
+ "name": "text",
+ "default": null,
+ "choices": [
+ "weight",
+ "italic",
+ "decoration",
+ "variant",
+ "color"
+ ],
+ "support": "0.8 amendment (spec/04 §6A): portable text properties as a text { } group on style and element declarations and as flat keys on header/footer runs; per-element scope is the label only"
+ },
+ {
  "id": "layout.algorithm",
  "scope": "layout",
  "name": "algorithm",

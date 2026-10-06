@@ -9,7 +9,7 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 - Diagram profiles: **150** (`profiles/catalogue.json .profiles`)
 - Projection kinds: **12** (`graph`, `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`, `fishbone`, `decision`, `sequence`, `timing`, `geo`)
 - Endpoint marks: 12; object families: 12; relation families: 8; facets: 118; view types: 20; registered data properties: 108
-- Diagnostic codes: **474** extracted from the runtime (reference runtime + Studio `src/`)
+- Diagnostic codes: **480** extracted from the runtime (reference runtime + Studio `src/`)
 <!-- /generated (counts) -->
 
 ## 1. Purpose and the generate → check → fix loop
@@ -2146,7 +2146,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- generated: do not edit (diagnostics) -->
-## 9. Diagnostics and error recovery (475 codes, machine-extracted from runtime + Studio sources; 124 carry a hand-authored FIX)
+## 9. Diagnostics and error recovery (481 codes, machine-extracted from runtime + Studio sources; 130 carry a hand-authored FIX)
 
 `check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).
 
@@ -2229,7 +2229,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-P002 | error | Invalid retained world coordinates.<br>Retained layout state has an invalid format or belongs to another view. | - |
 | DDN-P003 | error | No space for a new element without moving retained positions: | - |
 | DDN-P004 | error | Measured element lies outside a fixed frame: | - |
-| DDN-PB01 | error | Duplicate  run in<br>Unknown  run property ; runs accept text, align, font, size and lines<br>may contain only left, center and right run groups; found property<br>run align must be left, center or right; found<br>run does not accept nested declarations<br>run font must be one of ; found<br>run lines must be an integer 1-4; found<br>run requires a nonempty text string<br>run size must be 4-24pt; found | - |
+| DDN-PB01 | error | Duplicate  run in<br>Unknown  run property ; runs accept text, align, font, size, lines and the text properties weight, italic, decoration, variant, color<br>may contain only left, center and right run groups; found property<br>run align must be left, center or right; found<br>run does not accept nested declarations<br>run font must be one of ; found<br>run lines must be an integer 1-4; found<br>run requires a nonempty text string<br>run size must be 4-24pt; found | - |
 | DDN-PB02 | error | Unknown $variable $ in a chrome text string; registered variables:  (a literal dollar sign is written $$) | - |
 | DDN-PB03 | error | Unknown border property ; border accepts style, weight, inset and corner_marks<br>border inset must be a length from 0 to 2000px; found<br>border requires style single, double or dashed; found<br>border weight must be 0.25-8pt; found<br>corner_marks must be boolean | - |
 | DDN-PB04 | error | Unknown background property ; background accepts exactly one of color, image or pattern, plus opacity<br>background color must be a colour string<br>background declares  of color/image/pattern; exactly one is required<br>background opacity must be a number from 0 to 1; found | - |
@@ -2494,6 +2494,12 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-TF03 | error | min_font must be a length from 6px to 64px; found<br>min_font px is above the effective base font | - |
 | DDN-TF05 | warning/info | font_pin  was produced by  but this renderer measures with ; pinned metrics ignored for this render. | - |
 | DDN-TW01 | warning/info | Some projection text used estimated metrics. Browser-specific shaping is not certified.<br>Some text runs used estimated metrics; this is not a typography-certified publication. | - |
+| DDN-TX01 | error | Unknown text property ; text accepts<br>text must be a record of text properties (weight, italic, decoration, variant, color) | Use only the text properties weight, italic, decoration, variant and color inside a text { } group (or as flat run keys). |
+| DDN-TX02 | error | text weight must be the keyword bold or an integer from 100 to 900; found | Set text weight to the keyword bold or an integer from 100 to 900. |
+| DDN-TX03 | error | text italic must be boolean; found | Set text italic to true or false. |
+| DDN-TX04 | error | text decoration must be strike or none (underline is reserved for a future revision); found | Use decoration: strike or none; underline is reserved for a future revision. |
+| DDN-TX05 | error | text variant must be small-caps or normal; found | Use variant: small-caps or normal. |
+| DDN-TX06 | error | text color must be #rgb or #rrggbb; found | Write text color as #rgb or #rrggbb (for example "#1a7f37"). |
 | DDN-V04 | error | diff views are deferred to the 0.9 standard revision; diff is an unknown property in the 0.6 dialect<br>in publication is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>publication_set on  is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn " | - |
 | DDN-V06 | info | File  declares ddn "", older than the workspace's newest source version  (informational only). | - |
 | DDN-VP01 | error | Unknown view kind ; registered kinds: | - |
@@ -3670,6 +3676,32 @@ format shared {
 ```
 
 Tooling note (verified behavior): the CLI side-loads `font_pin` metrics files exactly like background images/patterns — the asset walker resolves the workspace-relative path under the same containment rules (no absolute paths, no URLs, no escapes) and supplies it as UTF-8 text, so `cli.js check/render` works on `font_pin` sources directly. Pins are equally usable through the embedder API (supply the pin file in the `createWorkspace`/`build` files map, as the conformance vectors do).
+
+### 14.6A Portable text properties (ch. 04 §6A, ch. 53 §53.1)
+
+One decoration vocabulary, three application contexts — never piecemeal keys: `weight` (`bold` or 100–900), `italic` (Boolean), `decoration` (`strike`/`none`; `underline` reserved, rejected), `variant` (`small-caps`/`normal`), `color` (`#rgb`/`#rrggbb`). Family and size stay role-based.
+
+1. View-wide: `style { text { … } }` (or in a style profile) restyles every drawing run over the baked role weights.
+2. Per element: `text { }` inside an object/domain/sample/flow/assertion decorates that element's **label** only, winning per key over the view-wide group. Fields/details/notes/relation labels are not element-addressable; kinds carry no source typography (per-kind styling is designer session preview only).
+3. Header/footer runs take the same five keys flat on the run record; view/element `text` never restyles page furniture. Run texts carry `class="ddn-run ddn-run-left|center|right"`.
+
+Measurement consumes the same properties (weight/italic/small-caps join the measurement key; wraps recompute; small-caps estimates use uppercase metrics at 0.8× for lowercase). Validation: **DDN-TX01** unknown/malformed group, **TX02** weight, **TX03** italic, **TX04** decoration, **TX05** variant, **TX06** color; below `ddn "0.6";` any use is **DDN-V04**.
+
+```ddn
+ddn "0.6";
+module "recipes.textprops";
+data model {
+  object invoice "Invoice" {
+    kind: service;
+    text { weight: bold; variant: small-caps; }
+    fields { total: money; }
+  }
+}
+view main "Text properties" {
+  data: [@model];
+  style { text { italic: true; } }
+}
+```
 
 ### 14.7 Workspace conventions and conformance (ch. 56, 58)
 

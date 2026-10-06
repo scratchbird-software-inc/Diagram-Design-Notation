@@ -14,10 +14,15 @@ function shapeOf(k,p){if(k.keyword==='dfd.process')return p.projection?.profile=
  return k.silhouette;}
 function measure(g,p){
  const s=g.scale,n=g.n,k=g.k;g.silhouette=shapeOf(k,p);
+ /* 0.8 (chapter 04 §6A): per-element label text properties — profile
+  * silhouettes measure and paint their name labels with the resolved record
+  * (view style.text < element text { }), exactly like the plain rect path. */
+ const labelTs=Text.mergeSpec(p.style?.text,n.properties?.text);
+ if(n.properties?.text)g.labelSpec=n.properties.text;
  const compact=['ellipse','circle','diamond','bpmevent','choreotask','groupbox','dataobject','datainput','dataoutput','caseplan','userevent','actor','terminal','parallelogram','document','store','subprocess','round','hexagon','sendpent','acceptpent','hourglass','flowfinal'].includes(g.silhouette);
  if(compact&&!n.fields.length){
   const proportion=g.silhouette==='diamond'?.60:['ellipse','circle'].includes(g.silhouette)?.68:.78;
-  g.titleLines=Text.wrap(n.name,g.w*proportion,16*s,p.style.font,600);
+  g.titleLines=Text.wrap(n.name,g.w*proportion,16*s,p.style.font,labelTs?.weight??600,labelTs);
   g.h=Math.max(g.h,(g.titleLines.length*21+55)*s*(g.silhouette==='diamond'?1.55:1));
   if(g.silhouette==='circle'){g.w=Math.max(g.w,g.h);g.h=g.w;}
   if(g.silhouette==='actor')g.h=Math.max(g.h,(140+g.titleLines.length*21)*s);
@@ -88,11 +93,11 @@ function measure(g,p){
   g.boxedRows=wrapped;g.boxedH=wrapped.length*18*s+(rows.length?16*s:0);
   g.h=Math.max(g.h,g.h+24*s+g.boxedH);
  }
- if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,Text.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+ if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,Text.measure(n.name,12*s,p.style.font,labelTs?.weight??400,labelTs).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
  /* B1-057 : pseudostate glyphs are small fixed markers with the name
   * below; states with activities/internal transitions/submachine grow a
   * compartment under the name. */
- if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){g.w=Math.max(110*s,Text.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+ if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){g.w=Math.max(110*s,Text.measure(n.name,12*s,p.style.font,labelTs?.weight??400,labelTs).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
  if(n.kind==='state.state'){const x=n.properties.x_state||{};
   const acts=[...['entry','exit','do'].filter(k=>x[k]).map(k=>k+' / '+x[k]),...(x.internal||[])];
   if(acts.length||x.submachine){g.stateActs=acts;g.submachine=x.submachine;
@@ -234,7 +239,13 @@ function render(g,p,theme){
  const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?Sketch.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
  /* B1-074 : shapes-detail (thumbnails) suppresses every text run. */
  const shapesOnly=p.detail==='shapes';
- const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return'';Text.measure(txt,size*s,p.style.font,weight);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fg}" font-weight="${weight}" ${extra}>${esc(txt)}</text>`;};
+ /* 0.8 (chapter 04 §6A): view-wide style.text decorates every painted run;
+  * the element's own text { } decorates its name/title lines only. With no
+  * text properties the output is byte-identical to before. */
+ const viewTs=p.style.text||null;
+ const labelTs=g.labelSpec?Text.mergeSpec(viewTs,g.labelSpec):null;
+ const labelSet=labelTs?new Set([n.name,...(g.titleLines||[])]):null;
+ const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return'';const ts=labelSet?.has(txt)?labelTs:viewTs;const w=ts?.weight??weight,fil=ts?.color??fg;Text.measure(txt,size*s,p.style.font,w,ts);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fil}" font-weight="${w}"${ts?Text.paintAttrs(ts):''} ${extra}>${esc(txt)}</text>`;};
  const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
  let out=`<g class="ddn-node ddn-kind-${slug(k.code)}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-shape="${esc(shape)}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
  if(planning)out+=`<g class="ddn-planning-table"><rect x="${f(planning.x)}" y="${f(planning.y)}" width="${f(planning.w)}" height="${f(planning.h)}" fill="${fill}" stroke="${ink}" stroke-width="1.3" stroke-dasharray="5 4"/>`+text(planning.x+8*s,planning.y+18*s,'Planning',10,650,'')+planning.items.map((it,i)=>text(planning.x+8*s,planning.y+(36+i*16)*s,it,10.5,400,'')).join('')+'</g>';

@@ -2,7 +2,7 @@
 
 A publication specifies `size:figure|content|a4|letter`, optional width/height, paper orientation, margins, `fit:contain|none|reflow`, minimum text size, an optional pre-fit `content_scale`, optional final `embedding_scale`, overflow policy and metric requirements. Unsupported pagination is rejected rather than emitting an incomplete first page.
 
-> **0.8 draft amendment:** chapter 53 extends `publication` with header/footer records and variables, a page-level border, backgrounds with workspace-relative path rules, multi-view publication sets and print-size lint; chapter 54 extends measurement with text-fit modes and font pins. All additions are page furniture gated on source version `ddn "0.6";`; publications declaring no 0.8 property render as specified here, byte-identically. This chapter additionally gains `content_scale` (below) — a drawing-scale key, not page furniture.
+> **0.8 draft amendment:** chapter 53 extends `publication` with header/footer records and variables, a page-level border, backgrounds with workspace-relative path rules, multi-view publication sets and print-size lint; chapter 54 extends measurement with text-fit modes and font pins; chapter 04 §6A adds portable text properties (weight/italic/strike/small-caps/colour) on style, elements and chrome runs. All additions are page furniture gated on source version `ddn "0.6";`; publications declaring no 0.8 property render as specified here, byte-identically. This chapter additionally gains `content_scale` (below) — a drawing-scale key, not page furniture.
 
 ## Actual behavior
 

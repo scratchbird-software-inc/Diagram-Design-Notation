@@ -1214,6 +1214,14 @@
     "view": "fitted"
   },
   {
+    "id": "text-properties",
+    "title": "Portable text properties — weight, italic, strike, small-caps, colour",
+    "status": "pilot",
+    "support": "technique",
+    "entry": "field-guide/sources/text-properties.ddn",
+    "view": "main"
+  },
+  {
     "id": "markings-metadata",
     "title": "Markings and metadata — forbidden, tentative, provenance",
     "status": "pilot",

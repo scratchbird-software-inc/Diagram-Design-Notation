@@ -657,6 +657,24 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
   function clean(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(clean);const o={};for(const [k,x]of Object.entries(v))if(!k.startsWith('$offset'))o[k]=clean(x);return o;}
   function enumOf(v){return typeof v==='string'?v:undefined;}
   function quantity(v,def=0){if(typeof v==='number')return v;if(v&&v.$quantity!==undefined){const mult={px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96};if(!Object.hasOwn(mult,v.unit))throw new DDNError('DDN032','Expected length, not '+v.unit);return v.$quantity*mult[v.unit];}return def;}
+  /* 0.8 (chapter 04 §6A): the portable text-property vocabulary, validated
+   * once for all three application contexts (style text { } group, element
+   * text { } group, flat run keys). `fail(code,message)` throws the caller's
+   * located error. Returns a normalized record carrying only set,
+   * non-default keys (bold→700, decoration none and variant normal dropped). */
+  const TEXT_KEYS=['weight','italic','decoration','variant','color'];
+  function normalizeTextProps(raw,fail){
+    if(raw===undefined)return undefined;
+    if(!raw||typeof raw!=='object'||Array.isArray(raw))fail('DDN-TX01','text must be a record of text properties (weight, italic, decoration, variant, color)');
+    for(const k of Object.keys(raw))if(!TEXT_KEYS.includes(k))fail('DDN-TX01','Unknown text property '+k+'; text accepts '+TEXT_KEYS.join(', '));
+    const out={};
+    if(raw.weight!==undefined){if(raw.weight==='bold')out.weight=700;else if(Number.isSafeInteger(raw.weight)&&raw.weight>=100&&raw.weight<=900)out.weight=raw.weight;else fail('DDN-TX02','text weight must be the keyword bold or an integer from 100 to 900; found '+JSON.stringify(raw.weight));}
+    if(raw.italic!==undefined){if(typeof raw.italic!=='boolean')fail('DDN-TX03','text italic must be boolean; found '+JSON.stringify(raw.italic));if(raw.italic)out.italic=true;}
+    if(raw.decoration!==undefined){if(!['strike','none'].includes(raw.decoration))fail('DDN-TX04','text decoration must be strike or none (underline is reserved for a future revision); found '+JSON.stringify(raw.decoration));if(raw.decoration==='strike')out.decoration='strike';}
+    if(raw.variant!==undefined){if(!['small-caps','normal'].includes(raw.variant))fail('DDN-TX05','text variant must be small-caps or normal; found '+JSON.stringify(raw.variant));if(raw.variant==='small-caps')out.variant='small-caps';}
+    if(raw.color!==undefined){if(typeof raw.color!=='string'||!/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(raw.color))fail('DDN-TX06','text color must be #rgb or #rrggbb; found '+JSON.stringify(raw.color));out.color=raw.color.toLowerCase();}
+    return out;
+  }
   function kindEntry(reg,value){return Profiles.registry(reg).kinds.find(k=>k.keyword===value||k.code.toLowerCase()===value||k.aliases?.includes(value));}
   function relationEntry(reg,value){return Profiles.registry(reg).relationships.find(k=>k.keyword===value||k.code.toLowerCase()===value||k.aliases?.includes(value));}
   const DEFAULTS={
@@ -718,7 +736,10 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     return NaN;
   }
   function chromeRun(slot,node){
-    for(const k of Object.keys(node.props))if(!['text','align','font','size','lines'].includes(k))throw new DDNError('DDN-PB01','Unknown '+slot+' run property '+k+'; runs accept text, align, font, size and lines',node.source,node.start);
+    /* 0.8 (chapter 04 §6A): runs additionally accept the portable text
+     * vocabulary as flat keys — the run record is itself a text target, so no
+     * nested group. View/element text { } never restyles page furniture. */
+    for(const k of Object.keys(node.props))if(!['text','align','font','size','lines','weight','italic','decoration','variant','color'].includes(k))throw new DDNError('DDN-PB01','Unknown '+slot+' run property '+k+'; runs accept text, align, font, size, lines and the text properties weight, italic, decoration, variant, color',node.source,node.start);
     const p=node.props;
     if(typeof p.text!=='string'||!p.text.length)throw new DDNError('DDN-PB01',slot+' run requires a nonempty text string',node.source,node.start);
     scanChromeVars(p.text,node);
@@ -729,7 +750,8 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     if(!Number.isFinite(size)||size<4||size>24)throw new DDNError('DDN-PB01',slot+' run size must be 4-24pt; found '+JSON.stringify(p.size),node.source,node.start);
     const lines=p.lines??1;
     if(!Number.isSafeInteger(lines)||lines<1||lines>4)throw new DDNError('DDN-PB01',slot+' run lines must be an integer 1-4; found '+JSON.stringify(p.lines),node.source,node.start);
-    return {text:p.text,align,...(p.font!==undefined?{font:p.font}:{}),size,lines};
+    const textStyle=normalizeTextProps(Object.fromEntries(TEXT_KEYS.filter(k=>p[k]!==undefined).map(k=>[k,p[k]])),(code,msg)=>{throw new DDNError(code,slot+' run: '+msg,node.source,node.start);});
+    return {text:p.text,align,...(p.font!==undefined?{font:p.font}:{}),size,lines,...(textStyle&&Object.keys(textStyle).length?{textStyle}:{})};
   }
   function chromeBand(kind,node){
     const out={};
@@ -844,13 +866,13 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     const raw=usedData.flatMap(n=>n.children.filter(c=>!c.group));
     const elemTypes=['object','domain','sample','flow','assertion'];
     for(const n of raw){if(!elemTypes.includes(n.type)&&n.type!=='relation')throw new DDNError('DDN042','Unsupported data declaration '+n.type,n.source,n.start);}
-    for(const n of raw){if(n.from&&n.type!=='relation')throw new DDNError('DDN055','Only relations accept header endpoints',n.source,n.start);for(const g of n.children)if(g.group&&!['fields','ports'].includes(g.type))throw new DDNError('DDN900','Reference model does not implement group '+g.type,n.source,g.start);for(const f of getFields(n))for(const g of f.children)if(!g.group||g.type!=='fields')throw new DDNError('DDN042','Nested fields accept only a fields block',f.source,f.start);}
+    for(const n of raw){if(n.from&&n.type!=='relation')throw new DDNError('DDN055','Only relations accept header endpoints',n.source,n.start);for(const g of n.children)if(g.group&&!(['fields','ports'].includes(g.type)||(g.type==='text'&&n.type!=='relation')))throw new DDNError('DDN900','Reference model does not implement group '+g.type,n.source,g.start);for(const f of getFields(n))for(const g of f.children)if(!g.group||g.type!=='fields')throw new DDNError('DDN042','Nested fields accept only a fields block',f.source,f.start);}
     const rawNodes=raw.filter(n=>elemTypes.includes(n.type));
     const rawRelations=raw.filter(n=>n.type==='relation');
     const p={};for(const k of Object.keys(DEFAULTS))p[k]=JSON.parse(JSON.stringify(DEFAULTS[k]));
     let bundle=null;
     if(view.props.format){bundle=ws.resolve(view.props.format,view);if(bundle.type!=='bundle')throw new DDNError('DDN043','format must reference a bundle',view.source,view.start);}
-    let pubDefNode=null,pubOverrideNode=null;
+    let pubDefNode=null,pubOverrideNode=null,styleDefNode=null,styleOverrideNode=null;
     for(const type of Object.keys(p)){
       const r=view.props[type]||(bundle&&bundle.props[type]);let def=null;
       // B1-045 (D2/D3): a string `legend: auto|on|off` is the chrome shorthand,
@@ -858,6 +880,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       if(r&&!(type==='legend'&&typeof r==='string')){def=ws.resolve(r,view.props[type]?view:bundle);if(def.type!==type)throw new DDNError('DDN044',`Expected ${type} profile, found ${def.type}`,view.source,view.start);p[type]={...p[type],...resolveValue(def.props,def)};}
       const overrides=group(view,type);if(overrides){validateKnown(overrides,PROPERTIES[type]);p[type]={...p[type],...resolveValue(overrides.props,overrides)};}
       if(type==='publication'){pubDefNode=def;pubOverrideNode=overrides;}
+      if(type==='style'){styleDefNode=def;styleOverrideNode=overrides;}
       if(type==='legend'&&def&&def.props.keyset){let keyset=ws.resolve(def.props.keyset,def);if(keyset.type!=='keyset')throw new DDNError('DDN044','Expected keyset',def.source,def.start);p.legend.keys={...keyset.props.keys,...p.legend.keys};}
     }
     /* 0.8 (chapter 53): publication chrome rides the resolved publication
@@ -907,6 +930,26 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       if(props.min_font!==undefined){const v=quantity(props.min_font,NaN);if(!Number.isFinite(v)||v<6||v>64)throw new DDNError('DDN-TF03','min_font must be a length from 6px to 64px; found '+JSON.stringify(props.min_font),src,off);if(v>baseFont08)throw new DDNError('DDN-TF03','min_font '+v+'px is above the effective base font '+baseFont08+'px',src,off);}
     }
     tfCheck(p.style,view.source,view.start);
+    /* 0.8 (chapter 04 §6A): portable text properties — one decoration
+     * vocabulary (weight/italic/decoration/variant/color), packaged as a
+     * text { } group on style declarations/groups and element declarations,
+     * and as flat keys on header/footer run records (chapter 53 §53.1).
+     * Family and size stay role-based; text carries decoration only. */
+    const txCheck=(raw,src,off)=>normalizeTextProps(raw,(code,msg)=>{throw new DDNError(code,msg,src,off);});
+    function textGate(node,what){if(SOURCE_VERSIONS.indexOf(node.doc?.file?.version??'0.6')<V06)throw new DDNError('DDN-V04',what+' is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+node.doc.file.source+' declares ddn "'+node.doc.file.version+'"',node.source,node.start);}
+    /* View-wide layer: a text { } group nested in the resolved style profile
+     * and/or the view's style { } override group; the override group wins
+     * per key (chapter 04 §6A precedence rule 1). */
+    {
+      const styleText={};
+      for(const holder of [styleDefNode,styleOverrideNode]){
+        const tg=holder?group(holder,'text'):null;
+        if(!tg)continue;
+        textGate(holder,'A text { } group in style');
+        Object.assign(styleText,txCheck(tg.props,tg.source,tg.start));
+      }
+      if(Object.keys(styleText).length)p.style.text=styleText;
+    }
     /* 0.8 (chapter 54 §54.4): font_pin names a metrics file resolved by the
      * background path rules (chapter 53 §53.3): relative to the declaring
      * .ddn, inside the workspace, no absolute paths or URLs (DDN-PB05 family).
@@ -990,6 +1033,11 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       const fields=getFields(n).map(f=>{let parentPath=f.path.split('.').slice(0,-1).join('.'),parentNode=ws.symbols.get(f.doc.module+'::'+parentPath);return {id:f.uid,name:f.label||f.id,local:f.id,path:f.path.slice(n.path.length+1),depth:f.path.split('.').length-n.path.split('.').length-1,parent:parentNode?.type==='field'?parentNode.uid:null,properties:resolveValue(f.props,f),source:{file:f.source,start:f.start,end:f.end}};});
       const ports=getPorts(n).map(f=>({id:f.uid,name:f.label||f.id,local:f.id,properties:resolveValue(f.props,f)}));
       const properties=resolveValue(n.props,n);
+      /* 0.8 (chapter 04 §6A): per-element label text properties ride the
+       * property bag as a normalized record; they decorate the element's
+       * label only (fields/details/notes stay role-baked this revision). */
+      const textGroup=group(n,'text');
+      if(textGroup){textGate(n,'A text { } group on an element');properties.text=txCheck(textGroup.props,textGroup.source,textGroup.start);}
       if(n.type==='sample'){
         if(!Array.isArray(properties.columns)||!Array.isArray(properties.rows))throw new DDNError('DDN051','Sample requires columns and rows',n.source,n.start);
         for(const c of n.props.columns){const f=ws.resolve(c,n);if(f.type!=='field')throw new DDNError('DDN052','Sample columns must bind to fields',n.source,n.start);}
@@ -1355,6 +1403,6 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
    * namespace (first publish wins); never touch the module-local copy. */
   const Packs=ddnNamespace('DDNPacks');
   const registerIconPack=pack=>Packs.registerIconPack(pack,ICONLIBS.libraries);
-  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles,viewProfiles:ViewProfiles,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
+  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,normalizeTextProps,profiles:Profiles,viewProfiles:ViewProfiles,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
   publishNamespace('DDN',api);
   export default api;

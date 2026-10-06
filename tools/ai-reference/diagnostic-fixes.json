@@ -187,6 +187,12 @@
     "DDN-PJ215": "SDL/MSC: x_sdl timer/channel/marker owner and reference rules; x_hmscref belongs to msc.hmscref",
     "DDN-PJ216": "Cross-file: unknown architecture base file, unknown x_link target identity, or identity collision across bases",
     "DDN-PJ217": "Cross-file: a relation spanning architecture bases needs an architecture container covering the base(s)",
-    "DDN-PJW07": "Cross-file: x_link target file absent from the workspace; rendered as an unresolved external note (warning, not an error)"
+    "DDN-PJW07": "Cross-file: x_link target file absent from the workspace; rendered as an unresolved external note (warning, not an error)",
+    "DDN-TX01": "Use only the text properties weight, italic, decoration, variant and color inside a text { } group (or as flat run keys).",
+    "DDN-TX02": "Set text weight to the keyword bold or an integer from 100 to 900.",
+    "DDN-TX03": "Set text italic to true or false.",
+    "DDN-TX04": "Use decoration: strike or none; underline is reserved for a future revision.",
+    "DDN-TX05": "Use variant: small-caps or normal.",
+    "DDN-TX06": "Write text color as #rgb or #rrggbb (for example \"#1a7f37\")."
   }
 }

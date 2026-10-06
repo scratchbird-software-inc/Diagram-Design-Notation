@@ -3,8 +3,8 @@
     "edition": "field-guide-0.8",
     "runtime": "0.8.0",
     "reviewed": "2026-10-04",
-    "chapterCount": 155,
-    "plannedChapterCount": 155,
+    "chapterCount": 156,
+    "plannedChapterCount": 156,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -7521,10 +7521,9 @@
         "view": "pseudostates",
         "profile": "uml.statemachine@1",
         "projection": "graph",
-        "sha256": "1ca3a873c805e9b36552a7ad024d18b98e81e145196c71e48dc1486cd2ee5248",
+        "sha256": "95211fe35bdff1f13f2349da3b932b4c103cae44abb28192603c5d9ccbff386d",
         "modelFingerprint": "fb2af9d6399f0e38",
         "warnings": [
-          "DDN-LW05",
           "DDN-TW01"
         ]
       },
@@ -7557,8 +7556,8 @@
         "expectation": "Only the label of Stopped / review changes; transitions, guards and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "1ca3a873c805e9b36552a7ad024d18b98e81e145196c71e48dc1486cd2ee5248",
-        "after": "cf21e455e474adc8eac6f3f662f45ed3c97488d86c46c3d182bc82307c484b5d",
+        "before": "95211fe35bdff1f13f2349da3b932b4c103cae44abb28192603c5d9ccbff386d",
+        "after": "b1b46f8f2d21b18da5caa7f385f801a1b37ff3aeee63c6a11dc3ec1486b58f19",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -7613,7 +7612,7 @@
         "view": "pins",
         "profile": "uml.activity@2",
         "projection": "graph",
-        "sha256": "cbe94e040a2f999d98973a9e8e64f839217aa9177d813b0f650b91b307ca414a",
+        "sha256": "f9fb7a395466ece83d000c18d535fc184459834adb51547aa4d325da56cbc9d1",
         "modelFingerprint": "1e14ad2d0c36e645",
         "warnings": [
           "DDN-TW01"
@@ -7648,8 +7647,8 @@
         "expectation": "Only the label of start / review changes; pins, flows and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "cbe94e040a2f999d98973a9e8e64f839217aa9177d813b0f650b91b307ca414a",
-        "after": "d96d4d8922cb3005e98735e9a3400e574d8abec925474bd7e3d205b3205d6cd7",
+        "before": "f9fb7a395466ece83d000c18d535fc184459834adb51547aa4d325da56cbc9d1",
+        "after": "4078b52566a7faf9bbae6b1600c081d6305f61b9a37a7a22f0a163fcf5e25a69",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8086,7 +8085,7 @@
         "view": "process",
         "profile": "bpmn.process@1",
         "projection": "graph",
-        "sha256": "42e5af41e37f51583edf9b3eb062c009398f9e10b7c70d22d3fa42633116aa3b",
+        "sha256": "156a0a33ec51b2cb65d3e92364e1f857e015571daeedbec8096845a388ba8c74",
         "modelFingerprint": "c2cc0c98d7101266",
         "warnings": [
           "DDN-LW05",
@@ -8122,8 +8121,8 @@
         "expectation": "Only the label of Review order / review changes; flow, gateways and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "42e5af41e37f51583edf9b3eb062c009398f9e10b7c70d22d3fa42633116aa3b",
-        "after": "823b11b1f6d0a90a2e589397afc5601230c817606d92efeacb25e2ddcdc26dab",
+        "before": "156a0a33ec51b2cb65d3e92364e1f857e015571daeedbec8096845a388ba8c74",
+        "after": "ce2562907824613fce645973711decde4a9a5d1c9f48c7246ab4bf92c4703350",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8257,7 +8256,7 @@
         "view": "v",
         "profile": "cmmn.complete@1",
         "projection": "graph",
-        "sha256": "1c3fa9316589ccac244abc0fa975714aa6a36671aa35778a56c7df7891542ecd",
+        "sha256": "bb85035423598e51701b2ea6a983ab75afbc4e9654de0b1027d866e5c881cd23",
         "modelFingerprint": "d7e0d0958b8b8b1f",
         "warnings": [
           "DDN-TW01"
@@ -8292,8 +8291,8 @@
         "expectation": "Only the label of Intake / review changes; stages, sentries and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "1c3fa9316589ccac244abc0fa975714aa6a36671aa35778a56c7df7891542ecd",
-        "after": "fb67f15a71b3a00c0e161deda9d4f3eb032fec25953453d9266a9dc3842996e7",
+        "before": "bb85035423598e51701b2ea6a983ab75afbc4e9654de0b1027d866e5c881cd23",
+        "after": "5f7264e71f7d4dad78c5b207e33b5e12c5650f93e643e7043ad61433fc4b388d",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14134,7 +14133,7 @@
         "view": "fig1",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "b4a18c505a696f64dc922e180a9a66b4477da46d35d8c3f5439e22fcce58dfdc",
+        "sha256": "a7db52ab051fbaf47c1e20d5ee8513df36445767c161b2482ce3650ff4b67576",
         "modelFingerprint": "6615e05538617bb7",
         "warnings": [
           "DDN-TW01"
@@ -14169,8 +14168,8 @@
         "expectation": "Only the label of Start / review changes; numerals, anchors and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "b4a18c505a696f64dc922e180a9a66b4477da46d35d8c3f5439e22fcce58dfdc",
-        "after": "e3e9bac9b66569832ee76dc09277ac05a3224b828e7e8ce885ee3050bd9ec6d8",
+        "before": "a7db52ab051fbaf47c1e20d5ee8513df36445767c161b2482ce3650ff4b67576",
+        "after": "898ea6ace2e52425a39482a2600ec7495a1c1493b6f7bd81a259fee70518ac32",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14228,7 +14227,7 @@
         "view": "overview",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "9db56900594073b59afe7b499f240382826b7c15c3735316c61b1ce00b6232a4",
+        "sha256": "67b2808e81e8dfae6e5d9398e404147751d7ba914ac652fa4c00bca202a9de41",
         "modelFingerprint": "7028a8b9e541938b",
         "warnings": [
           "DDN-TW01"
@@ -14264,8 +14263,8 @@
         "expectation": "Only the label of Edge gateway / review changes; chrome, page geometry and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "9db56900594073b59afe7b499f240382826b7c15c3735316c61b1ce00b6232a4",
-        "after": "d4f9f29d4721c239f6d79a37e969a629969c4e989ac74db5d9f853ec29b3640f",
+        "before": "67b2808e81e8dfae6e5d9398e404147751d7ba914ac652fa4c00bca202a9de41",
+        "after": "b70a46d0eb502004c8949ab7faee3fdd0e3a607f735737cc8ca8bb5aa7b58f7c",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14359,6 +14358,95 @@
       "exerciseEvidence": {
         "before": "30ec2d0e765113f2a01380c50752c978117d385f93008e975c08b916387db6c5",
         "after": "39f9883419a181182800109e101b9e6611fab70ae3a53ee04a442de94d49d2fa",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "text-properties",
+      "title": "Portable text properties — weight, italic, strike, small-caps, colour",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/text-properties.ddn",
+      "view": "main",
+      "what": "One text-decoration vocabulary — weight (bold or 100–900), italic, decoration: strike, variant: small-caps and color — portable in the source, so it renders identically in every consumer.",
+      "why": "Emphasis that lives only in a viewer's session preview vanishes on export; declared in the model it survives publication, diffing and hand-off to any conformant tool.",
+      "when": "A label that must read as retired (strike), a display name in small caps, an emphasised (bold/italic) element, a coloured label, or decorated header/footer chrome.",
+      "read": [
+        "The view-wide style { text { weight: 500; } } restyles every drawing run over the baked role weights; the elements' own text { } groups win per key on their labels only.",
+        "Invoice gateway paints bold small-caps, Ledger archive italic blue, and Legacy export is struck through — all from source, no CSS overlay.",
+        "The header run takes the same keys flat (decoration: strike; color: …) and each run carries a ddn-run-left/center/right class; view-wide text never restyles page furniture.",
+        "Measurement consumes the same properties: weight, italic and small-caps join the measurement key, so wraps and box sizes recompute honestly."
+      ],
+      "inputs": [
+        "The emphasis each label needs",
+        "View-wide vs per-element scope",
+        "The chrome text that needs decoration"
+      ],
+      "pitfalls": [
+        "Do not reach for text { } to change family or size — family stays role-based (style.font) and size stays role-metric; text carries decoration only.",
+        "Do not style kinds — kinds carry no source typography; per-kind styling is designer session preview and is never serialized."
+      ],
+      "limits": "decoration: underline is reserved for a future revision and rejected today (DDN-TX04). Element text { } decorates the label only — fields, details, notes and relation labels are not element-addressable. Invalid values are DDN-TX01–TX06; below ddn \"0.6\" any use is DDN-V04.",
+      "refs": [],
+      "probe": [
+        "service",
+        "database",
+        "queue"
+      ],
+      "editTask": "Rename one element, apply, then flip its text { } group between small-caps and strike and confirm the measurement follows.",
+      "tags": [
+        "technique",
+        "0.8",
+        "text",
+        "typography",
+        "publication"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/text-properties.ddn",
+        "view": "main",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "f001bce4e60eaddc3f27544f9375358214c9849755e16922ca778b69d642ebc2",
+        "modelFingerprint": "c9e99204b79c983e",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/text-properties.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/text-properties.ddn",
+          "roles": [
+            "data",
+            "format",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view main \"Portable text properties\" {\n  data: [@model];\n  publication: @filing.page;\n  style { text { weight: 500; } }\n}",
+      "walkthrough": [
+        "Open field-guide/sources/text-properties.ddn and locate view main. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.textprops::model.invoice",
+        "file": "field-guide/sources/text-properties.ddn",
+        "before": "Invoice gateway",
+        "after": "Invoice gateway / review",
+        "expectation": "Only the label of Invoice gateway / review changes; text properties, chrome and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "f001bce4e60eaddc3f27544f9375358214c9849755e16922ca778b69d642ebc2",
+        "after": "8ccc313715c6fcba46b37e7b84e9cfb9cf3165f2bdcf498bc59a7644cb36b094",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14504,7 +14592,7 @@
         "view": "main",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "def5f65318ade8d71967cb52f5136fc569aa9c11c95a75da9856d7d21d995d9c",
+        "sha256": "c68a97cf487c433c0926481616336b3bc45c5b7092bb6a9b730603ce93a8a46f",
         "modelFingerprint": "89fc61caea4fb9da",
         "warnings": [
           "DDN-TW01"
@@ -14539,8 +14627,8 @@
         "expectation": "Only the label of Order API / review changes; the publication set and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "def5f65318ade8d71967cb52f5136fc569aa9c11c95a75da9856d7d21d995d9c",
-        "after": "238f0eabb2ea390e82bc4fd03e6aba109397a773d7feed97cbd90da058ff55ff",
+        "before": "c68a97cf487c433c0926481616336b3bc45c5b7092bb6a9b730603ce93a8a46f",
+        "after": "fe23ce1b18108b1ec47d69c743f9d352e14e8a36e7a469e63aa973946310a333",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,

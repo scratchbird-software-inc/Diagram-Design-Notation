@@ -35,18 +35,28 @@ Consequences for this roadmap:
 Extend the notation so richer text styling survives in the .ddn file and
 renders identically in every consumer (ddn-viewer, ddn-designer, Weaver).
 
-- [ ] Font weight per target (`bold` / numeric weight) beyond the fixed
+- [x] Font weight per target (`bold` / numeric weight) beyond the fixed
       role-assigned weights — at minimum on element labels and header/footer runs
-- [ ] Italic (and bold-italic combination) as a first-class property
-- [ ] Strike-through text decoration
-- [ ] Small-caps font variant
-- [ ] Text colour as a portable property (currently session-preview CSS only)
-- [ ] Per-element font override (family/size/specials on one element, not only
-      per-kind or view-wide)
-- [ ] Header/footer run decoration classes (runs currently bake weights per slot
-      and are not individually addressable)
-- [ ] Decision: extend `style {}` with a `text {}` sub-grammar vs. per-property
-      keys on elements/runs — one design, not piecemeal keys
+      (implemented 0.8.x amendment, spec ch. 04 §6A)
+- [x] Italic (and bold-italic combination) as a first-class property
+      (implemented 0.8.x amendment, spec ch. 04 §6A)
+- [x] Strike-through text decoration
+      (implemented 0.8.x amendment, spec ch. 04 §6A; `underline` reserved)
+- [x] Small-caps font variant
+      (implemented 0.8.x amendment, spec ch. 04 §6A)
+- [x] Text colour as a portable property (currently session-preview CSS only)
+      (implemented 0.8.x amendment as `color`, spec ch. 04 §6A)
+- [x] Per-element font override (family/size/specials on one element, not only
+      per-kind or view-wide) — implemented for decoration specials on the
+      element label (0.8.x amendment, spec ch. 04 §6A); family and size stay
+      role-based by design, per-kind stays tool-side session preview
+- [x] Header/footer run decoration classes (runs currently bake weights per slot
+      and are not individually addressable) — `ddn-run ddn-run-left|center|right`
+      plus flat run text keys (implemented 0.8.x amendment, spec ch. 53 §53.1)
+- [x] Decision: extend `style {}` with a `text {}` sub-grammar vs. per-property
+      keys on elements/runs — one design, not piecemeal keys → **one vocabulary,
+      three contexts**: `text { }` group on style and element declarations, the
+      same five keys flat on run records (a run record is itself a text target)
 
 Constraint: the renderer's `text()` painter currently accepts size/fill/numeric
 -weight only, and measurement must consume the same properties (determinism,

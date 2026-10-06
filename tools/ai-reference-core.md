@@ -1458,6 +1458,32 @@ format shared {
 
 Tooling note (verified behavior): the CLI side-loads `font_pin` metrics files exactly like background images/patterns — the asset walker resolves the workspace-relative path under the same containment rules (no absolute paths, no URLs, no escapes) and supplies it as UTF-8 text, so `cli.js check/render` works on `font_pin` sources directly. Pins are equally usable through the embedder API (supply the pin file in the `createWorkspace`/`build` files map, as the conformance vectors do).
 
+### 14.6A Portable text properties (ch. 04 §6A, ch. 53 §53.1)
+
+One decoration vocabulary, three application contexts — never piecemeal keys: `weight` (`bold` or 100–900), `italic` (Boolean), `decoration` (`strike`/`none`; `underline` reserved, rejected), `variant` (`small-caps`/`normal`), `color` (`#rgb`/`#rrggbb`). Family and size stay role-based.
+
+1. View-wide: `style { text { … } }` (or in a style profile) restyles every drawing run over the baked role weights.
+2. Per element: `text { }` inside an object/domain/sample/flow/assertion decorates that element's **label** only, winning per key over the view-wide group. Fields/details/notes/relation labels are not element-addressable; kinds carry no source typography (per-kind styling is designer session preview only).
+3. Header/footer runs take the same five keys flat on the run record; view/element `text` never restyles page furniture. Run texts carry `class="ddn-run ddn-run-left|center|right"`.
+
+Measurement consumes the same properties (weight/italic/small-caps join the measurement key; wraps recompute; small-caps estimates use uppercase metrics at 0.8× for lowercase). Validation: **DDN-TX01** unknown/malformed group, **TX02** weight, **TX03** italic, **TX04** decoration, **TX05** variant, **TX06** color; below `ddn "0.6";` any use is **DDN-V04**.
+
+```ddn
+ddn "0.6";
+module "recipes.textprops";
+data model {
+  object invoice "Invoice" {
+    kind: service;
+    text { weight: bold; variant: small-caps; }
+    fields { total: money; }
+  }
+}
+view main "Text properties" {
+  data: [@model];
+  style { text { italic: true; } }
+}
+```
+
 ### 14.7 Workspace conventions and conformance (ch. 56, 58)
 
 - Entry discovery for tools that must guess: `main.ddn`, then `index.ddn`, then the single `.ddn` at the root; ambiguity is reported (DDN-WS03), never resolved by mtime. A workspace MAY carry `ddn.workspace.json`: `{ "format": "ddn-workspace@1", "entry": "main.ddn", "packs": [] }` — malformed → DDN-WS02; missing entry file → DDN-WS04.

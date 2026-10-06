@@ -43,6 +43,17 @@ defaulting to the run's slot), `font` (family keyword as in `style.font`),
 `size` (4–24 pt), and `lines` (integer 1–4; multi-line runs split `text` on
 `\n`). Missing slots emit nothing and reserve nothing.
 
+> **0.8 draft amendment (chapter 04 §6A):** a run additionally accepts the
+> portable text-property vocabulary as flat keys — `weight` (`bold` or
+> 100–900), `italic`, `decoration: strike|none`, `variant: small-caps|normal`,
+> `color: #rgb|#rrggbb` — validated with the same `DDN-TX01`–`DDN-TX06`
+> codes. The run record is itself a text target, so these ride flat rather
+> than in a nested group. They resolve against the slot's baked weight
+> (center 600, sides 400); view-wide `style.text` and element `text { }`
+> never restyle page furniture. Every run's text carries the addressable
+> classes `ddn-run ddn-run-left|center|right`, so hosting CSS can target
+> individual slots without positional selectors.
+
 **Variables**, resolved at publication time, per emitted page:
 
 | Variable | Value |

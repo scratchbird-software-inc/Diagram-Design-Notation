@@ -77,6 +77,66 @@ Production measurement shapes Unicode text before calculating box size, line wra
 
 The reference examples use a 16px base design metric. The roles `sans`, `serif` and `mono` use system DejaVu/Arial/Georgia fallbacks. The optional `handwriting` role tries Comic Neue, Comic Sans MS, Segoe Print, Bradley Hand, Purisa, Nanum Pen Script, then generic cursive. These are local font requests, not embedded or downloaded resources; when no handwriting font exists on the viewing machine the fallback generic is whatever the platform maps `cursive` to — on font-bare systems that can be a serif or sans face, so a handwriting look requires one of the named fonts (Comic Neue is OFL-licensed and packaged for Linux). Missing handwriting fonts change the text appearance, but do not remove the hand-drawn vector geometry. Other requested base metrics are rejected by the demonstrator rather than silently ignored. The production contract requires variable font size, accurate measurement and glyph fallback. Page scaling still operates independently and is checked at the final embedding size.
 
+## 6A. Portable text properties (0.8 amendment)
+
+> **0.8 draft amendment:** this section is gated on source version `ddn "0.6";` — below it, any `text { }` group or run text key is `DDN-V04`. A diagram that declares no text property renders byte-identically to before this amendment.
+
+Richer text styling survives in the `.ddn` file and renders identically in every conformant consumer. The design is **one vocabulary with three application contexts**, not per-context keys:
+
+| Key | Values | Default |
+|---|---|---|
+| `weight` | keyword `bold` (alias for 700), or an integer 100–900 | role-assigned |
+| `italic` | Boolean | `false` |
+| `decoration` | `strike` (line-through) or `none` | `none` |
+| `variant` | `small-caps` or `normal` | `normal` |
+| `color` | `#rgb` or `#rrggbb` | role/theme-assigned |
+
+`underline` is deliberately **not** in this revision's `decoration` vocabulary; it is reserved for a future revision and rejected today (`DDN-TX04`). Font **family** and **size** are not text properties: family stays role-based (`style.font` and the workspace font profile), size stays role-metric — `text` carries decoration only.
+
+**Application contexts and precedence** (per key, later wins):
+
+1. **View-wide** — a `text { }` group nested in a `style` profile declaration or in a view's `style { }` override group. It overrides the baked role weights/decorations of every drawing text run (labels, field text, kind chips, badges, legend, notes, relation labels, profile-silhouette text). The override group wins over the referenced profile, key by key.
+2. **Per element** — a `text { }` group nested in a model element declaration (object, domain, sample, flow, assertion; not relations, not fields). It decorates that element's **label** only — its title lines on the plain card path and its name label on profile silhouettes — and wins over the view-wide group. Field rows, detail lines, notes, samples and relation labels are not element-addressable in this revision.
+3. **Header/footer runs** — the same five keys as flat properties on the run records of chapter 53 §53.1. The run record is itself a text target, so no nested group exists there. View-wide and element `text { }` never restyle publication chrome.
+
+Kind-level source typography does not exist: kinds carry no text properties, and per-kind styling remains reference-tool session preview (chapter 57), never serialized. The full precedence chain is therefore **role default < view `style.text` < element `text { }`**, with run keys self-contained.
+
+**Portability rules.** Measurement MUST consume the same resolved properties as painting (OWN-080 determinism):
+
+- `weight` participates in the measurement key exactly as role weights always have.
+- `italic` and `variant: small-caps` join the measurement key and the canvas font string (`italic small-caps <weight> <size>px <stack>`). In the pinned-cache/estimate path, italic keeps regular advance widths (oblique advances are equal) and small-caps substitutes uppercase metrics at 0.8× size for cased-lowercase graphemes; the amendment keys append to the pre-existing 4-tuple cache key only when present, so pre-0.8 pinned metric caches stay valid.
+- Line wrapping recomputes at the effective measurement, so a bolder, italic or small-caps label can grow its box (chapter 54 fit modes compose unchanged).
+- The DDN071 minimum-text check operates on the run's nominal size at the final page scale, unchanged; authors should treat small-caps runs as visually smaller (lowercase glyphs render at roughly 0.8×).
+
+Painting emits `font-weight`, `font-style: italic`, `text-decoration: line-through`, `font-variant-caps: small-caps` and `fill` per resolved property. All three looks (classic, handDrawn, neo) share the same text painter, so the properties carry over; sketch geometry is unaffected. Header/footer run text additionally carries addressable classes `ddn-run ddn-run-left|center|right` so hosts can target runs in CSS (chapter 53 §53.1).
+
+**Validation.** All three contexts share one validator:
+
+| Code | Condition |
+|---|---|
+| `DDN-TX01` | `text` is not a record, or carries a key outside `weight, italic, decoration, variant, color` |
+| `DDN-TX02` | `weight` is neither `bold` nor an integer 100–900 |
+| `DDN-TX03` | `italic` is not Boolean |
+| `DDN-TX04` | `decoration` is not `strike` or `none` (message notes `underline` is reserved) |
+| `DDN-TX05` | `variant` is not `small-caps` or `normal` |
+| `DDN-TX06` | `color` is not `#rgb`/`#rrggbb` |
+
+```ddn-0.8
+data m {
+  object invoice "Invoice" {
+    kind: service;
+    text { weight: bold; variant: small-caps; }   // this element's label
+    fields { total: money; }
+  }
+}
+view v {
+  data: [@m];
+  style { text { italic: true; } }                 // every drawing run
+}
+```
+
+(0.8 syntax — requires `ddn "0.6";`: `text { }` groups in `style` and on elements.)
+
 ## 7. Label modes and completeness
 
 Kind text, kind icons and discriminator tokens are independently optional subject to unambiguous recovery. Relation labels support `text`, `tokens`, `numbers` and `none`. With `none` no relation label or badge renders at all; the label corridor space is reclaimed, and the relationship key disappears for the same reason it does under full inline text — there is nothing left to decode — unless the author explicitly sets `chrome.legend: 'on'`. Numbered mode replaces full midpoint wording, not direction or structural participation endpoints. A relation's legend entry includes its source, target, verb and selected qualifiers. The text alternative should include field-level endpoints even when the drawing collapses them. The `concept.map@1` profile proves relation labels are first-class: concept maps require an explicit author-written relation name on every link and reject bare verb defaults (`DDN-PJ104`).
