@@ -37,6 +37,6 @@ data m {
     relation o1 "" @op -> @asm { kind: "vsm.minfo"; }
 }
 view map "VSM symbol library": [@m] as "vsm.basic@1" {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }

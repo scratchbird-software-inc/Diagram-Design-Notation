@@ -19,6 +19,7 @@ data model {
     relation member @orders -> @schema { kind: namespace_member; }
 }
 view deployment "Hybrid deployment / fragments are not copies" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@model]; format: @shared.styles.technical;
     display: @shared.styles.compact;
     select: [@model.orders, @model.shard, @model.primary, @model.follower, @model.local, @model.cloud];

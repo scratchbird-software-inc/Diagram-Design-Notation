@@ -658,7 +658,7 @@
         "view": "diagram",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "7004e4d40a0956d5c25449d074b6cba1551e34ebb54369f000fa6cd22cafa945",
+        "sha256": "e57edd834ac4742ca6afeb0fabf4796fd013b01e621491c7a6118516fcf005e5",
         "modelFingerprint": "93a2788d768fb653",
         "warnings": [
           "DDN-TW01"
@@ -713,8 +713,8 @@
         "expectation": "Only the label of Orders / review changes; domains, bindings and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "7004e4d40a0956d5c25449d074b6cba1551e34ebb54369f000fa6cd22cafa945",
-        "after": "888ab8de17f5ec5c63d34eed891bb203bd28cfe37dd5e35de0fd75f872998573",
+        "before": "e57edd834ac4742ca6afeb0fabf4796fd013b01e621491c7a6118516fcf005e5",
+        "after": "04f68031391c1f06c74a677c1e1d8a1f6ef068ac227325f02ed07caadceb1b59",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -875,7 +875,7 @@
         "view": "diagram",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "828ab58731f10428b1beba026e69949efad0394b11ae0480a677ffc7c4d8fe9e",
+        "sha256": "15349c11d782c7fd2c0ab089a5c9884d1aafbc5ba7f7eeee4f133bd8b678378a",
         "modelFingerprint": "40478795248ae569",
         "warnings": [
           "DDN-TW01"
@@ -930,8 +930,8 @@
         "expectation": "Only the label of Orders / review changes; placements, links and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "828ab58731f10428b1beba026e69949efad0394b11ae0480a677ffc7c4d8fe9e",
-        "after": "86401f1562fe42da15fb94d35ec93cc9750b27aa14b842265002495f415e0406",
+        "before": "15349c11d782c7fd2c0ab089a5c9884d1aafbc5ba7f7eeee4f133bd8b678378a",
+        "after": "72f708f515c1377667d30eec6731744c8430fc5765644d79c19b21d2fafd4691",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -1084,7 +1084,7 @@
         "view": "diagram",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "d5f7f7a43a659d792d575d18fcc8734cf84f2db60af581ec4a087c7e1a3d5b75",
+        "sha256": "71668124dbdc9e7cc32acd4754fa81362d0055f9b72a258002c65a6db78058d6",
         "modelFingerprint": "1db02410c176bfe2",
         "warnings": [
           "DDN-LW05",
@@ -1140,8 +1140,8 @@
         "expectation": "Only the label of Customer / production / review changes; topics, subscriptions and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "d5f7f7a43a659d792d575d18fcc8734cf84f2db60af581ec4a087c7e1a3d5b75",
-        "after": "8667fb7ab1e5a71e21061aa23a068a3231edfc0f2aa7a9aaec508d99ab222af4",
+        "before": "71668124dbdc9e7cc32acd4754fa81362d0055f9b72a258002c65a6db78058d6",
+        "after": "62b2475c837b7c1117b590999293e853f99d1696ea8755c80e5c9ec155c0d96a",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -1391,7 +1391,7 @@
         "view": "diagram",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "ea73862e7b161ae5a50ea06021a4b484cb63745368018c42f71c03dada890cdb",
+        "sha256": "a5431316f9a56079b13a8657ea01628f0332d823a42290490da3116cb52b1084",
         "modelFingerprint": "ed3f80de77e01c86",
         "warnings": [
           "DDN-TW01"
@@ -1439,8 +1439,8 @@
         "expectation": "Only the label of Order line fact / review changes; grain, facts, dimensions and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "ea73862e7b161ae5a50ea06021a4b484cb63745368018c42f71c03dada890cdb",
-        "after": "b58f60606c7e456567de0a0de847c49eea25873bae93916210002cb220f68310",
+        "before": "a5431316f9a56079b13a8657ea01628f0332d823a42290490da3116cb52b1084",
+        "after": "89ae2e222cfd55d04e12290f30eacbc1d56dfda864ce7292c905227877aea127",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -2179,7 +2179,7 @@
         "view": "context",
         "profile": "c4.context@1",
         "projection": "graph",
-        "sha256": "8680ec8d255f37eb7f6b478f7634d6b40fb7a04ba6ef4b42b27be9ceccfa7a4d",
+        "sha256": "7d39099ccbba985a17734a3b6a2f3f5750f5f6e0a0e6a3b8a928f24169df1287",
         "modelFingerprint": "ac3fe2c1e216fa37",
         "warnings": [
           "DDN-TW01"
@@ -2222,8 +2222,8 @@
         "expectation": "Only the label of Online shop / review changes; the boundary and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "8680ec8d255f37eb7f6b478f7634d6b40fb7a04ba6ef4b42b27be9ceccfa7a4d",
-        "after": "6e889f5b2e2a660ea9849d35bbfa11dd3027c68ed5e63c331b94dd5fab495c74",
+        "before": "7d39099ccbba985a17734a3b6a2f3f5750f5f6e0a0e6a3b8a928f24169df1287",
+        "after": "df523804de7a6c7fd440543e3fea6d5d97961c649e1e96c46239678157966636",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -2297,7 +2297,7 @@
           ]
         }
       ],
-      "viewSource": "view container \"Synthetic shop / C4 container\" {\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.container@1\"; }\n    select: [@shop.customer, @shop.site, @shop.web, @shop.db, @shop.events];\n    display { fields: none; }\n    layout: @options.c4grid;\n    frame system_boundary { scope: @shop.site; members: [@shop.web, @shop.db, @shop.events]; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}",
+      "viewSource": "view container \"Synthetic shop / C4 container\" {\n    layout { gap: 112px; row_gap: 112px; }\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.container@1\"; }\n    select: [@shop.customer, @shop.site, @shop.web, @shop.db, @shop.events];\n    display { fields: none; }\n    layout: @options.c4grid;\n    frame system_boundary { scope: @shop.site; members: [@shop.web, @shop.db, @shop.events]; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}",
       "walkthrough": [
         "Open website/examples/basics/25-c4-views.ddn and locate view container. This selects existing data; it is not a stored SVG.",
         "Inspect the c4.container@1 profile and graph projection. Read the bindings before changing any value.",
@@ -2364,7 +2364,7 @@
         "view": "component",
         "profile": "c4.component@1",
         "projection": "graph",
-        "sha256": "ccf50292e48073bedc0b08e1c2a719914a14f40194fc4ef7eecb0efcaabd3529",
+        "sha256": "cc5a0a9ca49050d3d8977ee8ceb5b97fdac266b1e7bcafba450ae2f67e7dd17b",
         "modelFingerprint": "ac3fe2c1e216fa37",
         "warnings": [
           "DDN-TW01"
@@ -2407,8 +2407,8 @@
         "expectation": "Only the label of Checkout component / review changes; components, collaborations and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "ccf50292e48073bedc0b08e1c2a719914a14f40194fc4ef7eecb0efcaabd3529",
-        "after": "fdfab3daa5234421f0c93e4be19db57df1b0e6e7300552aa853a7be416b4fe96",
+        "before": "cc5a0a9ca49050d3d8977ee8ceb5b97fdac266b1e7bcafba450ae2f67e7dd17b",
+        "after": "69ee4846b2c5d0fe05fee8c623af5fc66674475d99140e58f8aa8ab2ba0f5eb1",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -2457,7 +2457,7 @@
         "view": "lan",
         "profile": "network.basic@1",
         "projection": "graph",
-        "sha256": "17febf630dd6ba087d1f338309c92ba9cc229a8737985d54cab42abfceeb56ee",
+        "sha256": "3d4591e1cf75658ff60827f09b6e67956b20e8a6797cd4feba1205e11f60b82b",
         "modelFingerprint": "45a74ff084928b60",
         "warnings": [
           "DDN-TW01"
@@ -2499,8 +2499,8 @@
         "expectation": "Only the label of Office bus / review changes; hosts, attachments and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "17febf630dd6ba087d1f338309c92ba9cc229a8737985d54cab42abfceeb56ee",
-        "after": "15a93d27096fa15cd26b23a750f36fb0b1979d03062bc9821ef342a9fe5a33b9",
+        "before": "3d4591e1cf75658ff60827f09b6e67956b20e8a6797cd4feba1205e11f60b82b",
+        "after": "93fac96ff68cc75f0b06819108ab6afe6184681ffb5b163f6e2e4b6556fcb37e",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -2547,7 +2547,7 @@
         "view": "net",
         "profile": "network.basic@1",
         "projection": "graph",
-        "sha256": "e8e1af30cc6e038ec3c6691922876b61f061c458101b8cd49c006cb6798a3917",
+        "sha256": "feede86104a73ca11feaab46a7ce4983e412b34b32ffe00f6002524c701915aa",
         "modelFingerprint": "3ae43b7b15f5f107",
         "warnings": [
           "DDN-LW05",
@@ -2583,8 +2583,8 @@
         "expectation": "Only the label of Edge firewall / review changes; glyphs, attachments and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "e8e1af30cc6e038ec3c6691922876b61f061c458101b8cd49c006cb6798a3917",
-        "after": "6e789ca2f1f07a90db5f5d95a63bb9428dd0a2af810fc240465233c3be11ac5d",
+        "before": "feede86104a73ca11feaab46a7ce4983e412b34b32ffe00f6002524c701915aa",
+        "after": "5b9c9971545f0e485b16b415983720e6ff2413c6c4a2b177278ef66c66933140",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -2657,7 +2657,7 @@
           ]
         }
       ],
-      "viewSource": "view main \"UML deployment / nodes and artifacts\": [@shop] as \"uml.deployment@1\" {\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view main \"UML deployment / nodes and artifacts\": [@shop] as \"uml.deployment@1\" {\n    layout { gap: 112px; row_gap: 112px; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/78-uml-deployment.ddn and locate view main. This selects existing data; it is not a stored SVG.",
         "Inspect the uml.deployment@1 profile and graph projection. Read the bindings before changing any value.",
@@ -2741,7 +2741,7 @@
           ]
         }
       ],
-      "viewSource": "view chart \"ISO 5807 warehouse flow\": [@m] as \"flow.iso5807@1\" {\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view chart \"ISO 5807 warehouse flow\": [@m] as \"flow.iso5807@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/91-iso5807-flowchart.ddn and locate view chart. This selects existing data; it is not a stored SVG.",
         "Inspect the flow.iso5807@1 profile and graph projection. Read the bindings before changing any value.",
@@ -2808,7 +2808,7 @@
         "view": "deployment",
         "profile": "c4.deployment@1",
         "projection": "graph",
-        "sha256": "8d8b9841051d0de4f2934e7d7f3d9cf6986cb4cfaa8499d5e35e4b136329c9d8",
+        "sha256": "27c22745f2ff066b1ccb5a2185423ce00962f40c2a19661f53377e8d0dc22a1e",
         "modelFingerprint": "fc73b557ab61c3a1",
         "warnings": [
           "DDN-TW01"
@@ -2843,8 +2843,8 @@
         "expectation": "Only the label of Edge node / review changes; placements, links and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "8d8b9841051d0de4f2934e7d7f3d9cf6986cb4cfaa8499d5e35e4b136329c9d8",
-        "after": "62588356629b6bc40b67d15f4ebadd0fb70c59d45547a62f2c366262c2499125",
+        "before": "27c22745f2ff066b1ccb5a2185423ce00962f40c2a19661f53377e8d0dc22a1e",
+        "after": "7bdee6dfb7b8834e0da917ee53ea23a4b6a32b5ef8e4ccfeff2d6fe14ec209ee",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -2892,7 +2892,7 @@
         "view": "dynamic",
         "profile": "c4.dynamic@1",
         "projection": "graph",
-        "sha256": "ec296a5a6cf8cd51bd9162a71afd0fda53901a1f4a4a13d9447fc69bda676036",
+        "sha256": "ef69c15d0489b729787624a050f15baaf2b2e6b101a35b90b6cb7dce918a7110",
         "modelFingerprint": "5b04ad76b73611fe",
         "warnings": [
           "DDN-TW01"
@@ -2927,8 +2927,8 @@
         "expectation": "Only the label of Customer / review changes; order, interactions and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "ec296a5a6cf8cd51bd9162a71afd0fda53901a1f4a4a13d9447fc69bda676036",
-        "after": "5f913f87cdf5fb795f3a166eba9af83bf823db278b2f6c863402d68ee0a756a4",
+        "before": "ef69c15d0489b729787624a050f15baaf2b2e6b101a35b90b6cb7dce918a7110",
+        "after": "103655e2d7cb9c0b5b6a3d16d7d168e486a999ab3f5acc0ce3c8b36ea357de10",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -3786,7 +3786,7 @@
           ]
         }
       ],
-      "viewSource": "view heat_numeric \"02 / Review score — numeric\" {\n    data: [@m.responsibilities];\n    format: @f.shared.common;\n    projection { kind: \"matrix\"; write_data: @m.responsibilities; profile: \"matrix.heatmap@1\"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: \"assoc\"; value: \"x_record.score\"; encoding: { \"mode\": \"numeric\", \"domain\": [0, 10], \"palette\": \"blue\" }; }\n    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];\n\n}",
+      "viewSource": "view heat_numeric \"02 / Review score — numeric\" {\n    layout { gap: 112px; row_gap: 112px; }\n    data: [@m.responsibilities];\n    format: @f.shared.common;\n    projection { kind: \"matrix\"; write_data: @m.responsibilities; profile: \"matrix.heatmap@1\"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: \"assoc\"; value: \"x_record.score\"; encoding: { \"mode\": \"numeric\", \"domain\": [0, 10], \"palette\": \"blue\" }; }\n    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];\n\n}",
       "walkthrough": [
         "Open website/examples/quality/views.ddn and locate view heat_numeric. This selects existing data; it is not a stored SVG.",
         "Inspect the matrix.heatmap@1 profile and matrix projection. Read the bindings before changing any value.",
@@ -3898,7 +3898,7 @@
           ]
         }
       ],
-      "viewSource": "view heat_bands \"02 / Review score — bands\" {\n    data: [@m.responsibilities];\n    format: @f.shared.common;\n    projection { kind: \"matrix\"; write_data: @m.responsibilities; profile: \"matrix.heatmap@1\"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: \"assoc\"; value: \"x_record.score\"; encoding: { \"mode\": \"bands\", \"boundaries\": [0, 3, 7, 11], \"labels\": [\"Low\", \"Watch\", \"Action\"], \"palette\": \"blue\" }; }\n    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];\n\n}",
+      "viewSource": "view heat_bands \"02 / Review score — bands\" {\n    layout { gap: 112px; row_gap: 112px; }\n    data: [@m.responsibilities];\n    format: @f.shared.common;\n    projection { kind: \"matrix\"; write_data: @m.responsibilities; profile: \"matrix.heatmap@1\"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: \"assoc\"; value: \"x_record.score\"; encoding: { \"mode\": \"bands\", \"boundaries\": [0, 3, 7, 11], \"labels\": [\"Low\", \"Watch\", \"Action\"], \"palette\": \"blue\" }; }\n    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];\n\n}",
       "walkthrough": [
         "Open website/examples/quality/views.ddn and locate view heat_bands. This selects existing data; it is not a stored SVG.",
         "Inspect the matrix.heatmap@1 profile and matrix projection. Read the bindings before changing any value.",
@@ -4010,7 +4010,7 @@
           ]
         }
       ],
-      "viewSource": "view heat_categories \"02 / Review score — categories\" {\n    data: [@m.responsibilities];\n    format: @f.shared.common;\n    projection { kind: \"matrix\"; write_data: @m.responsibilities; profile: \"matrix.heatmap@1\"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: \"assoc\"; value: \"x_record.status\"; encoding: { \"mode\": \"category\", \"values\": [\"Good\", \"Monitor\", \"Action\"], \"labels\": [\"Good\", \"Monitor\", \"Action\"], \"palette\": \"blue\" }; }\n    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];\n\n}",
+      "viewSource": "view heat_categories \"02 / Review score — categories\" {\n    layout { gap: 112px; row_gap: 112px; }\n    data: [@m.responsibilities];\n    format: @f.shared.common;\n    projection { kind: \"matrix\"; write_data: @m.responsibilities; profile: \"matrix.heatmap@1\"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: \"assoc\"; value: \"x_record.status\"; encoding: { \"mode\": \"category\", \"values\": [\"Good\", \"Monitor\", \"Action\"], \"labels\": [\"Good\", \"Monitor\", \"Action\"], \"palette\": \"blue\" }; }\n    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];\n\n}",
       "walkthrough": [
         "Open website/examples/quality/views.ddn and locate view heat_categories. This selects existing data; it is not a stored SVG.",
         "Inspect the matrix.heatmap@1 profile and matrix projection. Read the bindings before changing any value.",
@@ -4516,7 +4516,7 @@
           ]
         }
       ],
-      "viewSource": "view storymap \"Shop rebuild / story map\" {\n    data: [@shop];\n    format: @shared.styles.technical;\n    projection { kind:matrix; profile:\"matrix.storymap@1\"; rows:[@shop.r1, @shop.r2]; columns:[@shop.browse, @shop.configure, @shop.checkout, @shop.pay, @shop.fulfil]; relation:\"assoc\"; value:\"x_story.task\"; duplicates:join; }\n}",
+      "viewSource": "view storymap \"Shop rebuild / story map\" {\n    layout { gap: 112px; row_gap: 112px; }\n    data: [@shop];\n    format: @shared.styles.technical;\n    projection { kind:matrix; profile:\"matrix.storymap@1\"; rows:[@shop.r1, @shop.r2]; columns:[@shop.browse, @shop.configure, @shop.checkout, @shop.pay, @shop.fulfil]; relation:\"assoc\"; value:\"x_story.task\"; duplicates:join; }\n}",
       "walkthrough": [
         "Open website/examples/basics/36-story-map.ddn and locate view storymap. This selects existing data; it is not a stored SVG.",
         "Inspect the matrix.storymap@1 profile and matrix projection. Read the bindings before changing any value.",
@@ -6740,7 +6740,7 @@
         "view": "dashboard_quality",
         "profile": "panels.composed@1",
         "projection": "panels",
-        "sha256": "bc53abc459dc040b322d8e77b0ce8132eb809dd19afd3dce7af6956d6df9a452",
+        "sha256": "ee16e5d2ce3c5e06a834ce2651393871ea7977da91fb9bea9806f837c365fae6",
         "modelFingerprint": "833f2d66db2a3dd0",
         "warnings": [
           "DDN-TW01",
@@ -6799,8 +6799,8 @@
         "expectation": "Only the record's value changes from 9.82 to 9.92; the chart re-renders from the swapped records and undo restores the original payload."
       },
       "exerciseEvidence": {
-        "before": "bc53abc459dc040b322d8e77b0ce8132eb809dd19afd3dce7af6956d6df9a452",
-        "after": "957f0c90c6fde6816e2a8ef0910498ed89fa9dbc98149cf698e49b8d853be846",
+        "before": "ee16e5d2ce3c5e06a834ce2651393871ea7977da91fb9bea9806f837c365fae6",
+        "after": "38bd30d4730e57abb8c986680236f7c81352b80d9987b3aef96fef533d858b23",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -6850,7 +6850,7 @@
         "view": "lifecycle_trace",
         "profile": "state.flat@1",
         "projection": "graph",
-        "sha256": "3559a74ed816f758f49c7ac57dfadd92d931df16c202cc8177b2805a122dd309",
+        "sha256": "1f5b6c4208b85752c8ca4903dd32acc0781d838fc807baa27087c19056cff944",
         "modelFingerprint": "2597cf0130cd2d87",
         "warnings": [
           "DDN-TW01"
@@ -6905,8 +6905,8 @@
         "expectation": "Only one record value changes; states, trace and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "3559a74ed816f758f49c7ac57dfadd92d931df16c202cc8177b2805a122dd309",
-        "after": "cb6273de139e95ccfa17f04f1da1b4962c7b20ebe00e90677d8b87a1d35fa8fa",
+        "before": "1f5b6c4208b85752c8ca4903dd32acc0781d838fc807baa27087c19056cff944",
+        "after": "92a5272c5ad57110daed64c70f120c59e30cc2369e423354707b1e3c6fef0222",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -7156,7 +7156,7 @@
         "view": "associations",
         "profile": "uml.structure@2",
         "projection": "graph",
-        "sha256": "d1b77e7e6cb596442107886f3486a37bcdf45317bfa212741395add14e812c70",
+        "sha256": "e36c65b5fe978eba32e35e4fb4ef70a8dee4d3b93eca34fa6d0da7cefd3649f7",
         "modelFingerprint": "3e1e8a1e29f1f4a2",
         "warnings": [
           "DDN-TW01"
@@ -7191,8 +7191,8 @@
         "expectation": "Only the label of Company / review changes; features, ends and every identity are untouched."
       },
       "exerciseEvidence": {
-        "before": "d1b77e7e6cb596442107886f3486a37bcdf45317bfa212741395add14e812c70",
-        "after": "6fd4d300a807af2c2056a373bafb4706cafd88967a7c02388d28068b2191c84b",
+        "before": "e36c65b5fe978eba32e35e4fb4ef70a8dee4d3b93eca34fa6d0da7cefd3649f7",
+        "after": "15ef2ba510139ffccfb4de6fb6a9571effbcf7655c13ed4e67ed2ecd2029b364",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -7241,7 +7241,7 @@
         "view": "objects",
         "profile": "uml.object@1",
         "projection": "graph",
-        "sha256": "39e4af6d4406fa381ba94eb80cb1cefcd35ff51afe29feb68764dd3eda14560c",
+        "sha256": "176dc7f14e192dbcfcc722bc8d624cb4945cdb5362c4e582a6131ff693a4a6c6",
         "modelFingerprint": "39f2ec4888f72658",
         "warnings": [
           "DDN-TW01"
@@ -7283,8 +7283,8 @@
         "expectation": "Only the label of sample_customer : Customer / review changes; slots, links and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "39e4af6d4406fa381ba94eb80cb1cefcd35ff51afe29feb68764dd3eda14560c",
-        "after": "99927e8763ae9f00f8799da4bbf6c8ce4c78f76c161981b5c4e24e08714dc749",
+        "before": "176dc7f14e192dbcfcc722bc8d624cb4945cdb5362c4e582a6131ff693a4a6c6",
+        "after": "6dd1b329bb41ff478fe8751b5c845472df1809b4ca0486a3acbaf6edb0892379",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -7357,7 +7357,7 @@
           ]
         }
       ],
-      "viewSource": "view components \"UML component / ports and assembly\": [@shop] as \"uml.composite@1\" {\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view components \"UML component / ports and assembly\": [@shop] as \"uml.composite@1\" {\n    layout { gap: 112px; row_gap: 112px; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/79-uml-composite.ddn and locate view components. This selects existing data; it is not a stored SVG.",
         "Inspect the uml.composite@1 profile and graph projection. Read the bindings before changing any value.",
@@ -7430,7 +7430,7 @@
         "view": "packages",
         "profile": "uml.structure@2",
         "projection": "graph",
-        "sha256": "7e1f872170025626b5df9074f9299506ff65f1ac9c7c8ebaaf6d844a5311bded",
+        "sha256": "0dfd54a3a2103cf113d231ccfe7ef243067575b0f11b7baac97dc9d62a1c4fc4",
         "modelFingerprint": "7976fa8ea42c4f34",
         "warnings": [
           "DDN-TW01"
@@ -7465,8 +7465,8 @@
         "expectation": "Only the label of shop / review changes; members, imports and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "7e1f872170025626b5df9074f9299506ff65f1ac9c7c8ebaaf6d844a5311bded",
-        "after": "12bae05fb51555779b8b610cb12505b663f7576704d625db2494933093a19178",
+        "before": "0dfd54a3a2103cf113d231ccfe7ef243067575b0f11b7baac97dc9d62a1c4fc4",
+        "after": "e4a5bf694ccf64b83f31d56008ecc2a4948db8a6db123cc3712f57abcc4eb1a2",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -7521,7 +7521,7 @@
         "view": "pseudostates",
         "profile": "uml.statemachine@1",
         "projection": "graph",
-        "sha256": "42f23f8c7df90a80861669cfd8f061a4bd139c79762b95cce621eb80f49f141b",
+        "sha256": "1ca3a873c805e9b36552a7ad024d18b98e81e145196c71e48dc1486cd2ee5248",
         "modelFingerprint": "fb2af9d6399f0e38",
         "warnings": [
           "DDN-LW05",
@@ -7557,8 +7557,8 @@
         "expectation": "Only the label of Stopped / review changes; transitions, guards and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "42f23f8c7df90a80861669cfd8f061a4bd139c79762b95cce621eb80f49f141b",
-        "after": "b6cf8ee7d8d27212ebac6f2fa94d5d369eaa479200b89135fd60fcef2c87e515",
+        "before": "1ca3a873c805e9b36552a7ad024d18b98e81e145196c71e48dc1486cd2ee5248",
+        "after": "cf21e455e474adc8eac6f3f662f45ed3c97488d86c46c3d182bc82307c484b5d",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -7631,7 +7631,7 @@
           ]
         }
       ],
-      "viewSource": "view pins \"UML activity / pins, decision and merge\": [@fulfil] as \"uml.activity@2\" {\n    frame struct \"Iterative\" { members: [@fulfil.take, @fulfil.dec, @fulfil.mrg]; x_structured: { mode: \"iterative\" }; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view pins \"UML activity / pins, decision and merge\": [@fulfil] as \"uml.activity@2\" {\n    layout { gap: 112px; row_gap: 112px; }\n    frame struct \"Iterative\" { members: [@fulfil.take, @fulfil.dec, @fulfil.mrg]; x_structured: { mode: \"iterative\" }; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/80-uml-activity.ddn and locate view pins. This selects existing data; it is not a stored SVG.",
         "Inspect the uml.activity@2 profile and graph projection. Read the bindings before changing any value.",
@@ -7723,7 +7723,7 @@
           ]
         }
       ],
-      "viewSource": "view fulfilment \"Order fulfilment activity\" {\n    data: [@order]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"uml.activity@1\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n    frame webshop \"Webshop\" { members: [@order.start, @order.take_payment, @order.end]; }\n    frame warehouse \"Warehouse\" { members: [@order.fork, @order.pick_items, @order.order_obj, @order.join]; }\n}",
+      "viewSource": "view fulfilment \"Order fulfilment activity\" {\n    data: [@order]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"uml.activity@1\"; }\n    layout { algorithm: layered; gap: 112px; row_gap: 112px; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n    frame webshop \"Webshop\" { members: [@order.start, @order.take_payment, @order.end]; }\n    frame warehouse \"Warehouse\" { members: [@order.fork, @order.pick_items, @order.order_obj, @order.join]; }\n}",
       "walkthrough": [
         "Open website/examples/basics/45-activity-diagram.ddn and locate view fulfilment. This selects existing data; it is not a stored SVG.",
         "Inspect the uml.activity@1 profile and graph projection. Read the bindings before changing any value.",
@@ -7790,7 +7790,7 @@
         "view": "communication",
         "profile": "uml.communication@1",
         "projection": "graph",
-        "sha256": "f00767df300e527b7faabfa19cc79055f397ace6279d15bb681c0385e6b2cc77",
+        "sha256": "d6bd66b61657503af8aefa82da14b346161e8006d4b8a2c88a10faf32d15224d",
         "modelFingerprint": "b35e8a7c1167dd00",
         "warnings": [
           "DDN-TW01"
@@ -7832,8 +7832,8 @@
         "expectation": "Only the label of Customer app / review changes; links, numbering and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "f00767df300e527b7faabfa19cc79055f397ace6279d15bb681c0385e6b2cc77",
-        "after": "7ee1b4dd0065b9da9517ee5dcd98b4b4f978db1f6d428f2c6a851be45796060d",
+        "before": "d6bd66b61657503af8aefa82da14b346161e8006d4b8a2c88a10faf32d15224d",
+        "after": "c9845e556c220e0ea78de860c5c0e9330eafe84ec922564975d1e823b9108b5a",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -7892,7 +7892,7 @@
         "view": "overview",
         "profile": "uml.interaction_overview@1",
         "projection": "graph",
-        "sha256": "e58ce616c247d89241f2d07744a11c50802a613aaa44341e85da6f125b6118ca",
+        "sha256": "00b7953fcab49d395d46fc5775b2065bb418f00c100f0d45284b413f1e3ec26c",
         "modelFingerprint": "96f6ab38f6ee898e",
         "warnings": [
           "DDN-TW01"
@@ -7934,8 +7934,8 @@
         "expectation": "Only the label of Start / review changes; flow, references and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "e58ce616c247d89241f2d07744a11c50802a613aaa44341e85da6f125b6118ca",
-        "after": "b7b50a8fc1585422140a5b3c9e65af1da2fdb51a54ee7d1a1ddf5837f3e2e115",
+        "before": "00b7953fcab49d395d46fc5775b2065bb418f00c100f0d45284b413f1e3ec26c",
+        "after": "6e73b271936bc5a9b09631478e6b41560478e4a07a6816a8403e91e3066acca1",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8105,7 +8105,7 @@
           ]
         }
       ],
-      "viewSource": "view process \"Process\": [@proc] as \"bpmn.process@1\" {\n    frame pool \"Webshop\" { members: [@proc.start, @proc.review, @proc.escalate, @proc.dec, @proc.pack, @proc.call, @proc.tx, @proc.adhoc, @proc.evsub, @proc.cancel_end, @proc.done]; x_pool: true; }\n    publication { size: content; fit: none; minimum_text: 6pt; }\n}",
+      "viewSource": "view process \"Process\": [@proc] as \"bpmn.process@1\" {\n    layout { gap: 112px; row_gap: 112px; }\n    frame pool \"Webshop\" { members: [@proc.start, @proc.review, @proc.escalate, @proc.dec, @proc.pack, @proc.call, @proc.tx, @proc.adhoc, @proc.evsub, @proc.cancel_end, @proc.done]; x_pool: true; }\n    publication { size: content; fit: none; minimum_text: 6pt; }\n}",
       "walkthrough": [
         "Open website/examples/basics/82-bpmn-complete.ddn and locate view process. This selects existing data; it is not a stored SVG.",
         "Inspect the bpmn.process@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8172,7 +8172,7 @@
         "view": "choreography",
         "profile": "bpmn.choreography@1",
         "projection": "graph",
-        "sha256": "70afbe61808e58437f6e07259c98e82b04db4eaa7497eaf6f26657ea819f55ce",
+        "sha256": "156bfca56afca7787cf4213048f6c94fff93068d18664cdb47340d9e4c9c90e9",
         "modelFingerprint": "a7829435c92a6e87",
         "warnings": [
           "DDN-TW01"
@@ -8207,8 +8207,8 @@
         "expectation": "Only the label of Ship order / review changes; bands, flow and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "70afbe61808e58437f6e07259c98e82b04db4eaa7497eaf6f26657ea819f55ce",
-        "after": "1ac706c4d424c1bab807e874f65eb3d60870a3c052a96e10cd9ffd18253af6ed",
+        "before": "156bfca56afca7787cf4213048f6c94fff93068d18664cdb47340d9e4c9c90e9",
+        "after": "598fff9f2598a63a14c3be0114e74e2302bdefc8e4238d3d633405e296d14c27",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8275,7 +8275,7 @@
           ]
         }
       ],
-      "viewSource": "view v \"Case\": [@c] as \"cmmn.complete@1\" {\n    frame intake_f \"Intake\" { scope: @c.intake; members: [@c.review, @c.appr, @c.decide, @c.s1]; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view v \"Case\": [@c] as \"cmmn.complete@1\" {\n    layout { gap: 112px; row_gap: 112px; }\n    frame intake_f \"Intake\" { scope: @c.intake; members: [@c.review, @c.appr, @c.decide, @c.s1]; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/83-cmmn-complete.ddn and locate view v. This selects existing data; it is not a stored SVG.",
         "Inspect the cmmn.complete@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8342,7 +8342,7 @@
         "view": "bdd",
         "profile": "sysml.bdd@2",
         "projection": "graph",
-        "sha256": "73ad71008b6df28723c89a85bb7c8055fc1991cfd6d38aaf4db40edbc811d277",
+        "sha256": "84bcd806edb83767589b68fa61c50acc677600f85cffd1e9857d1b0f21028b3c",
         "modelFingerprint": "3e67ed914234873b",
         "warnings": [
           "DDN-TW01"
@@ -8377,8 +8377,8 @@
         "expectation": "Only the label of Pump / review changes; properties, relationships and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "73ad71008b6df28723c89a85bb7c8055fc1991cfd6d38aaf4db40edbc811d277",
-        "after": "503c7d74884510b0eac019d0f062094a9285805646ac72d072c5cf7d67767034",
+        "before": "84bcd806edb83767589b68fa61c50acc677600f85cffd1e9857d1b0f21028b3c",
+        "after": "bea55b667903635c56fbb7e9c4180115fdcd8a3d537e5745d7ea3aa5c501210a",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8427,7 +8427,7 @@
         "view": "ibd",
         "profile": "sysml.ibd@2",
         "projection": "graph",
-        "sha256": "5e0d1432de22e5d4a04ef12997a06d51eabd3c1a97453aa2541c71acc739d809",
+        "sha256": "0e1358d3f54901ec612fe9f8b19945ee718fb847e9e7b6bfa62bb7bf6e13f4ce",
         "modelFingerprint": "3e67ed914234873b",
         "warnings": [
           "DDN-TW01"
@@ -8462,8 +8462,8 @@
         "expectation": "Only the label of Pump / review changes; parts, ports and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "5e0d1432de22e5d4a04ef12997a06d51eabd3c1a97453aa2541c71acc739d809",
-        "after": "6becdb7b5c7efe13f357b49c8fc86d90b14f7f6dbea12ad537d446fd8144dad1",
+        "before": "0e1358d3f54901ec612fe9f8b19945ee718fb847e9e7b6bfa62bb7bf6e13f4ce",
+        "after": "3109d318e55b831551171f87abc9533f40c1453b43bc0327f30f04a419621136",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8531,7 +8531,7 @@
           ]
         }
       ],
-      "viewSource": "view parametric \"Flow balance\": [@m] as \"sysml.parametric@2\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n    exclude: [@m.water, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpIf, @m.waterSpec];\n}",
+      "viewSource": "view parametric \"Flow balance\": [@m] as \"sysml.parametric@2\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; }\n    publication { size: content; fit: none; }\n    exclude: [@m.water, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpIf, @m.waterSpec];\n}",
       "walkthrough": [
         "Open website/examples/basics/85-sysml-blocks.ddn and locate view parametric. This selects existing data; it is not a stored SVG.",
         "Inspect the sysml.parametric@2 profile and graph projection. Read the bindings before changing any value.",
@@ -8622,7 +8622,7 @@
           ]
         }
       ],
-      "viewSource": "view requirements \"Pump requirements\": [@reqs] as \"sysml.requirements@1\" {\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view requirements \"Pump requirements\": [@reqs] as \"sysml.requirements@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/84-sysml-requirements.ddn and locate view requirements. This selects existing data; it is not a stored SVG.",
         "Inspect the sysml.requirements@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8717,7 +8717,7 @@
           ]
         }
       ],
-      "viewSource": "view drd \"Claim handling DRD\": [@d] as \"dmn.drd@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view drd \"Claim handling DRD\": [@d] as \"dmn.drd@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/87-dmn-drd.ddn and locate view drd. This selects existing data; it is not a stored SVG.",
         "Inspect the dmn.drd@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8808,7 +8808,7 @@
           ]
         }
       ],
-      "viewSource": "view arch \"Retail service architecture\": [@m] as \"soaml.services@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view arch \"Retail service architecture\": [@m] as \"soaml.services@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/88-soaml.ddn and locate view arch. This selects existing data; it is not a stored SVG.",
         "Inspect the soaml.services@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8875,7 +8875,7 @@
         "view": "strategic",
         "profile": "uaf.strategic@1",
         "projection": "graph",
-        "sha256": "8feda2cc0d767981864886692787ebcefb809bd8aa7dbf32e3bff97dd0dcf45d",
+        "sha256": "facbf8d39171667bef908b39b7f866c7005c41a83872ccacba5f4f7e874e449e",
         "modelFingerprint": "495e0952abced536",
         "warnings": [
           "DDN-TW01"
@@ -8893,7 +8893,7 @@
           ]
         }
       ],
-      "viewSource": "view strategic \"St — Strategic\" { data: [@st]; projection { profile: \"uaf.strategic@1\"; } publication { size: content; fit: none; } }\nview operational \"Op — Operational\" { data: [@op]; projection { profile: \"uaf.operational@1\"; } publication { size: content; fit: none; } }",
+      "viewSource": "view strategic \"St — Strategic\" { data: [@st]; projection { profile: \"uaf.strategic@1\"; } publication { size: content; fit: none; } }\nview operational \"Op — Operational\" { layout { gap: 112px; row_gap: 112px; } data: [@op]; projection { profile: \"uaf.operational@1\"; } publication { size: content; fit: none; } }",
       "walkthrough": [
         "Open website/examples/basics/89-uaf.ddn and locate view strategic. This selects existing data; it is not a stored SVG.",
         "Inspect the uaf.strategic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8910,8 +8910,8 @@
         "expectation": "Only the label of Customer self-service / review changes; phases, mappings and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "8feda2cc0d767981864886692787ebcefb809bd8aa7dbf32e3bff97dd0dcf45d",
-        "after": "faa30bd59cedd2be8e1a5c4354f040a0b3743a9572a016a7abc2f36891434b79",
+        "before": "facbf8d39171667bef908b39b7f866c7005c41a83872ccacba5f4f7e874e449e",
+        "after": "27bba7adb9b0825006816121485b23042777f90013a88787b04a37cf5af976a9",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -8960,7 +8960,7 @@
         "view": "summary",
         "profile": "uaf.summary@1",
         "projection": "graph",
-        "sha256": "fcb4467250d560fd742a32326a1683c20ab614b4f7eec37a4bec3a97c7347539",
+        "sha256": "4d1b425c4dfdd5bd22a43157c72e3124215c17b26066af15133b797c77fb7049",
         "modelFingerprint": "e29e64ce5bc242bc",
         "warnings": [
           "DDN-TW01"
@@ -8995,8 +8995,8 @@
         "expectation": "Only the label of Retail architecture / review changes; frame members and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "fcb4467250d560fd742a32326a1683c20ab614b4f7eec37a4bec3a97c7347539",
-        "after": "4e9663bb2c865fa96d687b46578a149e352eaf2a4b7f84c313a1c0c12eb37f65",
+        "before": "4d1b425c4dfdd5bd22a43157c72e3124215c17b26066af15133b797c77fb7049",
+        "after": "e32dafe18c93410c3ab21f70630d0c033b7e45f7da4dddebfdc5c685adc2363c",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -9142,7 +9142,7 @@
         "view": "system",
         "profile": "sdl.basic@1",
         "projection": "graph",
-        "sha256": "5366b1d93ada6f9791683f01af86e678be91f808e254bc66fe1fc477b3efd956",
+        "sha256": "08d2881224aaaa0744fb4eac8fc86f5e812d5de35670593125ab7a08a16689d1",
         "modelFingerprint": "32f9059a0fffd81c",
         "warnings": [
           "DDN-TW01"
@@ -9177,8 +9177,8 @@
         "expectation": "Only the label of Network block / review changes; channels, transitions and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "5366b1d93ada6f9791683f01af86e678be91f808e254bc66fe1fc477b3efd956",
-        "after": "a2f096cb49872413edaf705bd0eed548bd818c718c7762462e8bb8834777855f",
+        "before": "08d2881224aaaa0744fb4eac8fc86f5e812d5de35670593125ab7a08a16689d1",
+        "after": "d40f7891d749e9ebe39d766429a24cae1a31b1135dd31f433abf3757a615cc9b",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -9245,7 +9245,7 @@
           ]
         }
       ],
-      "viewSource": "view d \"Motor control FBD\": [@m] as \"fbd.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view d \"Motor control FBD\": [@m] as \"fbd.basic@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/100-fbd.ddn and locate view d. This selects existing data; it is not a stored SVG.",
         "Inspect the fbd.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9330,7 +9330,7 @@
           ]
         }
       ],
-      "viewSource": "view net \"Producer/consumer net\": [@m] as \"petri.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view net \"Producer/consumer net\": [@m] as \"petri.basic@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/95-petrinet.ddn and locate view net. This selects existing data; it is not a stored SVG.",
         "Inspect the petri.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9415,7 +9415,7 @@
           ]
         }
       ],
-      "viewSource": "view model \"Customer fact model\": [@m] as \"orm.basic@1\" {\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view model \"Customer fact model\": [@m] as \"orm.basic@1\" {\n    layout { gap: 112px; row_gap: 112px; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/96-orm.ddn and locate view model. This selects existing data; it is not a stored SVG.",
         "Inspect the orm.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9501,7 +9501,7 @@
           ]
         }
       ],
-      "viewSource": "view map \"Current state map\": [@m] as \"vsm.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view map \"Current state map\": [@m] as \"vsm.basic@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/97-vsm.ddn and locate view map. This selects existing data; it is not a stored SVG.",
         "Inspect the vsm.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9585,7 +9585,7 @@
           ]
         }
       ],
-      "viewSource": "view map \"VSM symbol library\": [@m] as \"vsm.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view map \"VSM symbol library\": [@m] as \"vsm.basic@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/102-vsm-symbols.ddn and locate view map. This selects existing data; it is not a stored SVG.",
         "Inspect the vsm.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9742,7 +9742,7 @@
         "view": "plan",
         "profile": "pert.cpm@1",
         "projection": "graph",
-        "sha256": "47eae5ff681f33711abc73e14d352bf284e16981985937c2e57bc46e2bc5278b",
+        "sha256": "87fcbb99e18999dd4ad7e360611477ad651c6473aa539a849d02fa9b99566f9f",
         "modelFingerprint": "d3952051f58d9059",
         "warnings": [
           "DDN-TW01"
@@ -9784,8 +9784,8 @@
         "expectation": "Only the label of Design / review changes; durations, dependencies and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "47eae5ff681f33711abc73e14d352bf284e16981985937c2e57bc46e2bc5278b",
-        "after": "b914874e999079475e7c011b2a5c5f1c6c696c598c0c25abffec8050b2bed8ce",
+        "before": "87fcbb99e18999dd4ad7e360611477ad651c6473aa539a849d02fa9b99566f9f",
+        "after": "bbed776b72b0b9cdf93c046bc5c93069f8a85de68d30be0df0c3849f7d6804b3",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -9840,7 +9840,7 @@
         "view": "fault",
         "profile": "fault.tree@1",
         "projection": "graph",
-        "sha256": "39d02397c240cf5a6cb25aed645555066f9a08dd80e99dad1583de2e2beb4d43",
+        "sha256": "a0c2fc40460ab2a102bf6f65ecb50c48a58fd77b64bc32857f8a896eee9bf846",
         "modelFingerprint": "a3654c9bff6f3df9",
         "warnings": [
           "DDN-TW01"
@@ -9882,8 +9882,8 @@
         "expectation": "Only the label of OR outage / review changes; gates, branches and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "39d02397c240cf5a6cb25aed645555066f9a08dd80e99dad1583de2e2beb4d43",
-        "after": "841db39e4508e3662e967aeb3b132856bf643c45cb0a4de916f9c0100b2b0520",
+        "before": "a0c2fc40460ab2a102bf6f65ecb50c48a58fd77b64bc32857f8a896eee9bf846",
+        "after": "6415f3df7aba36e207cf66ba41cf401c90608763bb3cc8066b67f15411113f18",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -10025,7 +10025,7 @@
         "view": "concepts",
         "profile": "concept.map@1",
         "projection": "graph",
-        "sha256": "3d500dda284fbd40f178b25ff5afec8228a2358a0016c9c352084787e59fe031",
+        "sha256": "c32a3f5b842f31db50a6bc15a468ee19d9ae5395df4eb33152c1de0744c5d0b4",
         "modelFingerprint": "49ff957b3b158801",
         "warnings": [
           "DDN-TW01"
@@ -10068,8 +10068,8 @@
         "expectation": "Only the label of Order / review changes; propositions and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "3d500dda284fbd40f178b25ff5afec8228a2358a0016c9c352084787e59fe031",
-        "after": "61d19782aa326475da5303501ce471bc84fe01e141b270d18334a48018c1d0bd",
+        "before": "c32a3f5b842f31db50a6bc15a468ee19d9ae5395df4eb33152c1de0744c5d0b4",
+        "after": "61090f3f38eb0c9aa0dda07fac6d0dc33527b51d9bc96a9e6e92a27b811e6c45",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -10320,7 +10320,7 @@
           ]
         }
       ],
-      "viewSource": "view family \"Three generations\": [@m] as \"family.tree@1\" {\n    select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view family \"Three generations\": [@m] as \"family.tree@1\" {\n    select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/56-family-tree.ddn and locate view family. This selects existing data; it is not a stored SVG.",
         "Inspect the family.tree@1 profile and graph projection. Read the bindings before changing any value.",
@@ -10405,7 +10405,7 @@
           ]
         }
       ],
-      "viewSource": "view net \"Icon network\": [@m] as \"network.basic@1\" {\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view net \"Icon network\": [@m] as \"network.basic@1\" {\n    layout { gap: 112px; row_gap: 112px; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/98-icons.ddn and locate view net. This selects existing data; it is not a stored SVG.",
         "Inspect the network.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -10471,7 +10471,7 @@
         "view": "net",
         "profile": "network.basic@1",
         "projection": "graph",
-        "sha256": "989a93e66144de9b7244be4d613f9a361b662872c2530c2bd53e78e9207de626",
+        "sha256": "9d234d2cfce313f077ac14dd6f7bb3b5eae6e34942df2228049cf722afa8287a",
         "modelFingerprint": "b77720b2d3aa4c2e",
         "warnings": [
           "DDN-TW01"
@@ -10506,8 +10506,8 @@
         "expectation": "Only the label of WAN / review changes; glyphs, relations and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "989a93e66144de9b7244be4d613f9a361b662872c2530c2bd53e78e9207de626",
-        "after": "48672dcae353d289f5db0dd845467f2c3cc89828077e3da1b0d2e312fa5f208c",
+        "before": "9d234d2cfce313f077ac14dd6f7bb3b5eae6e34942df2228049cf722afa8287a",
+        "after": "fadb4e8b159909c3107aec3b5123f7ca1ff4cd08c5a2906c818296f301db8e37",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -10572,7 +10572,7 @@
           ]
         }
       ],
-      "viewSource": "view pid \"P&ID symbol library\": [@m] as \"network.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view pid \"P&ID symbol library\": [@m] as \"network.basic@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/104-pid-symbols.ddn and locate view pid. This selects existing data; it is not a stored SVG.",
         "Inspect the network.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -10655,7 +10655,7 @@
           ]
         }
       ],
-      "viewSource": "view sch \"Electrical symbol library\": [@m] as \"network.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view sch \"Electrical symbol library\": [@m] as \"network.basic@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/105-electrical-symbols.ddn and locate view sch. This selects existing data; it is not a stored SVG.",
         "Inspect the network.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -10839,7 +10839,7 @@
         "view": "iso_map",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "5b6d6f9a6d9d8e68a8ab939822027b8d276d69d285fabcf829b8d7a9265f9211",
+        "sha256": "cf1ef8caaf32dc3872fdb71c00db846ec85f1eb9e4db547a0079e625563a933f",
         "modelFingerprint": "3e3903fb8dd53bef",
         "warnings": [
           "DDN-W106",
@@ -10886,8 +10886,8 @@
         "expectation": "Only the label of Client app / review changes; tiers, blocks and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "5b6d6f9a6d9d8e68a8ab939822027b8d276d69d285fabcf829b8d7a9265f9211",
-        "after": "747fa9c0982f88277d3a09de84b52385e5e9abc94f88b70f1b08dbd00a6e535d",
+        "before": "cf1ef8caaf32dc3872fdb71c00db846ec85f1eb9e4db547a0079e625563a933f",
+        "after": "429539f8fdb04ac419b01dac3b67fa4220da4846e121267548e1ff1b9293e2e9",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11033,7 +11033,7 @@
         "view": "chen_extended",
         "profile": "chen.binary@2",
         "projection": "chen",
-        "sha256": "d1f7d86e32e931cfab36330f46d094670aea67296a26b86dbbf6281b83ff48c0",
+        "sha256": "b112a52865bd4e9515bfdc35d9b300d19c92c2e18dd2474cd5dc3e1ff9a9a07e",
         "modelFingerprint": "3e4ff6bc844e59d4",
         "warnings": [
           "DDN-TW01"
@@ -11088,8 +11088,8 @@
         "expectation": "Only the label of Order / review changes; diamonds, ovals and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "d1f7d86e32e931cfab36330f46d094670aea67296a26b86dbbf6281b83ff48c0",
-        "after": "b8d170fa11350e7bd5cfd8ee1bf354074d0cbb3e6729ef69e9231bd4cfd67e25",
+        "before": "b112a52865bd4e9515bfdc35d9b300d19c92c2e18dd2474cd5dc3e1ff9a9a07e",
+        "after": "9cd69263cb2d48c54fec1480d036d7b3c630657dc82ee06cb8af308be2eb9595",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11138,7 +11138,7 @@
         "view": "erd",
         "profile": "erd.crowfoot@1",
         "projection": "graph",
-        "sha256": "f1aeca2a42f78999b29b068e766f12eea08a09696ceb05adee5989c8e6b3f245",
+        "sha256": "bf1dc57d7ea3efb96c922bc0678910c6ee84f7e9afc37dfc6391f2e59e8f8a59",
         "modelFingerprint": "f99ee911b8a8bce9",
         "warnings": [
           "DDN-TW01"
@@ -11180,8 +11180,8 @@
         "expectation": "Only the label of Customer / review changes; attributes, end marks and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "f1aeca2a42f78999b29b068e766f12eea08a09696ceb05adee5989c8e6b3f245",
-        "after": "ad95a782d659e7b127adb80e100d744fa80586e3b159dee9ec7c792736126738",
+        "before": "bf1dc57d7ea3efb96c922bc0678910c6ee84f7e9afc37dfc6391f2e59e8f8a59",
+        "after": "ee0f6b12854666482e0a7d62f6b25dfabe917e5f7a3f402db38a5c12964bb985",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11268,7 +11268,7 @@
           ]
         }
       ],
-      "viewSource": "view sv \"Strategic capabilities\": [@strat] as \"uaf.strategic@1\" {\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view sv \"Strategic capabilities\": [@strat] as \"uaf.strategic@1\" {\n    layout { gap: 112px; row_gap: 112px; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/108-uaf-traceability.ddn and locate view sv. This selects existing data; it is not a stored SVG.",
         "Inspect the uaf.strategic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -11341,7 +11341,7 @@
         "view": "overview",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "9a89392eadd52b0b04d81a5c12a0ba01b21ca3520ecad48106425ea3ca39dc34",
+        "sha256": "ca9d8f39d6a60fef64651fd682e6488d10d73603c8906ba0c05b2589c82aa0b4",
         "modelFingerprint": "39028cb69c52a922",
         "warnings": [
           "DDN-TW01"
@@ -11376,8 +11376,8 @@
         "expectation": "Only the label of Order handling / review changes; links, detail content and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "9a89392eadd52b0b04d81a5c12a0ba01b21ca3520ecad48106425ea3ca39dc34",
-        "after": "f70bca65b8aeba40c1fc64b5ef92a75b18a556822e19bccfea524d761e92e9f3",
+        "before": "ca9d8f39d6a60fef64651fd682e6488d10d73603c8906ba0c05b2589c82aa0b4",
+        "after": "cf1c59f5842b661ebc06803de615acbcab2d33f90caf24cf0f6675edfe46e914",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11426,7 +11426,7 @@
         "view": "external",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "36edd6a7bf7e89811d55ee489e23f3a9dde3f8cfa90c7adf4ebe009609790868",
+        "sha256": "649d8651fb1076c763986ee57b1558de8e777c47058c8d71cba004d9e3341f17",
         "modelFingerprint": "f0fdcb65641ddf73",
         "warnings": [
           "DDN-TW01"
@@ -11468,8 +11468,8 @@
         "expectation": "Only the label of Same-company keys do not cover all cross-entity affinity rules / review changes; gates, evidence and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "36edd6a7bf7e89811d55ee489e23f3a9dde3f8cfa90c7adf4ebe009609790868",
-        "after": "b0b8b482d2971b1ea1202350f313d3a5b15424a00c25228bddb4eda44d972af3",
+        "before": "649d8651fb1076c763986ee57b1558de8e777c47058c8d71cba004d9e3341f17",
+        "after": "81e366456819ca90d9ba9b8eff234d6b4c3648c94db84917b54dd686c09b6cb6",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11518,7 +11518,7 @@
         "view": "software",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "dabcfa6c07e36b4af0f9fb0f4b5feda04c05c563da249f4894e85bc98b0df945",
+        "sha256": "c0f885d84a567e54629190882d785cb2c2f4d9720d73dbd5e0e970a53072a2da",
         "modelFingerprint": "f0fdcb65641ddf73",
         "warnings": [
           "DDN-TW01"
@@ -11560,8 +11560,8 @@
         "expectation": "Only the label of Automatic grid routes through an unrelated object / review changes; checklists and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "dabcfa6c07e36b4af0f9fb0f4b5feda04c05c563da249f4894e85bc98b0df945",
-        "after": "0f8229b5b51e12a4423000ce172267379fa161ba7544311fe836ba78690bbafa",
+        "before": "c0f885d84a567e54629190882d785cb2c2f4d9720d73dbd5e0e970a53072a2da",
+        "after": "8e5e48381d5d98f01365f6712e74d341445b5b9815da9c7d49a33351740e02aa",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11610,7 +11610,7 @@
         "view": "balanced",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "344d8ff73a9afd9e89bd04814075763b9ca97dcc0c749a578b86c704bf8691aa",
+        "sha256": "b9cae165da9d7223ca85a6e54ac843c056a341e5559da1410ffa88e0e93d40e5",
         "modelFingerprint": "08372f642c995588",
         "warnings": [
           "DDN-TW01"
@@ -11652,8 +11652,8 @@
         "expectation": "Only the label of Stock-transfer command / review changes; state, verification and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "344d8ff73a9afd9e89bd04814075763b9ca97dcc0c749a578b86c704bf8691aa",
-        "after": "27eacd4bc024e7e4cce3770a681f6c65b13fcaf9e2bf29b1d3a6eaab4faccb48",
+        "before": "b9cae165da9d7223ca85a6e54ac843c056a341e5559da1410ffa88e0e93d40e5",
+        "after": "b65989a343f879c92528f1674549e60343cf602ae2800e2236375161f4924db3",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11712,7 +11712,7 @@
         "view": "detailed",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "c179db8ea53c57455b799049585643eac7b9a1b5c53b75e3f3ead0e8c34d02aa",
+        "sha256": "89362c8fec280b75d51dec49485695dbe0741cffb553aedae6b393cd2b123488",
         "modelFingerprint": "0538ea71a3d08065",
         "warnings": [
           "DDN-TW01"
@@ -11754,8 +11754,8 @@
         "expectation": "Only the label of Order / review changes; nested rows, endpoints and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "c179db8ea53c57455b799049585643eac7b9a1b5c53b75e3f3ead0e8c34d02aa",
-        "after": "a166f374054971c1855212aa3185e59e2a628bb26e97cd98a6b78c8fc0784ca7",
+        "before": "89362c8fec280b75d51dec49485695dbe0741cffb553aedae6b393cd2b123488",
+        "after": "6d1bc8ba8a188085a307b36d9846f78e154a3c4d80eef35ebc17fc8387d715a1",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11804,7 +11804,7 @@
         "view": "settings",
         "profile": "wireframe.ui@1",
         "projection": "graph",
-        "sha256": "685f46fafdfd289715ee579739788b37079c9df3ad0f7951216f6d3e639564b6",
+        "sha256": "80ef8f3be1b86f99c64fcbef35d08a0f62215dfd5143856eecaa1a14890adeb6",
         "modelFingerprint": "d0e93603f65317f9",
         "warnings": [
           "DDN-TW01"
@@ -11839,8 +11839,8 @@
         "expectation": "Only the label of Profile / review changes; regions, controls and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "685f46fafdfd289715ee579739788b37079c9df3ad0f7951216f6d3e639564b6",
-        "after": "18a05745b7b89294be3506a1a4e072642a8c586105c4745d1cc144cf5f8b4884",
+        "before": "80ef8f3be1b86f99c64fcbef35d08a0f62215dfd5143856eecaa1a14890adeb6",
+        "after": "8ecb65999ae10b7fc72b61002abf24671e4a88d7ae71f9f29b4c069fadaffb7e",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11889,7 +11889,7 @@
         "view": "diagram",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "0cf46461e8372e54569bef22aee39a592a07c60bf92d1d97e2c87206aab7655f",
+        "sha256": "a06e23d7053c81a40f9597318004848a1dee48a412240e55e65e9e680450ebe4",
         "modelFingerprint": "dec4353a0862e742",
         "warnings": [
           "DDN-TW01"
@@ -11924,8 +11924,8 @@
         "expectation": "Only the label of Shop OLTP / review changes; the read/write topology and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "0cf46461e8372e54569bef22aee39a592a07c60bf92d1d97e2c87206aab7655f",
-        "after": "7099a84f7d19d6a831dd97dc2b6540339d2af7626fade6120cdd016a1a7e51f7",
+        "before": "a06e23d7053c81a40f9597318004848a1dee48a412240e55e65e9e680450ebe4",
+        "after": "686dad0e89f15658d1884bc68a513c98b101fc6b336e924f5e271ee97fe0866e",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -11974,9 +11974,10 @@
         "view": "diagram",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "cf1a9a2635c1dae4f7deda103c6d5c7d1b34e29a05bc2782925a63906e4c4b75",
+        "sha256": "11a475b92e0bdf59884f727966ca780294153d0fa691f9d26e48cfd55ea272ac",
         "modelFingerprint": "9d09e5358ad59c05",
         "warnings": [
+          "DDN-LW05",
           "DDN-TW01"
         ]
       },
@@ -12009,8 +12010,8 @@
         "expectation": "Only the label of Orders API / review changes; producer, schemas, consumers and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "cf1a9a2635c1dae4f7deda103c6d5c7d1b34e29a05bc2782925a63906e4c4b75",
-        "after": "38426a4da7c59a869e158bb811db8f2420c5bd2ce71dfe0022b51a855be0c21d",
+        "before": "11a475b92e0bdf59884f727966ca780294153d0fa691f9d26e48cfd55ea272ac",
+        "after": "44c02feec01966f1b2bd121d7afc47bc1364d156a36755f61b906c69f457f7c8",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -12078,7 +12079,7 @@
           ]
         }
       ],
-      "viewSource": "view diagram \"Synthetic shards and replicas / placement\": [@cluster] as \"ddn@1\" {\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view diagram \"Synthetic shards and replicas / placement\": [@cluster] as \"ddn@1\" {\n    layout { algorithm: layered; direction: right; gap: 112px; row_gap: 112px; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open field-guide/sources/shards-replicas.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
         "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
@@ -12350,7 +12351,7 @@
         "view": "classic",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "530b380f74c2685aedfe0dd33f26d60d225c29e12c4dbb6972e66d513e89c6b6",
+        "sha256": "d2feb0cc0f0caa9dbaca6307d65f1a70e74ad6c93a0e94a4d8550cfa58c5abb7",
         "modelFingerprint": "056de6a6bb2ce4d0",
         "warnings": [
           "DDN-TW01"
@@ -12392,8 +12393,8 @@
         "expectation": "Only the label of Customer / review changes; the look and every identity are untouched."
       },
       "exerciseEvidence": {
-        "before": "530b380f74c2685aedfe0dd33f26d60d225c29e12c4dbb6972e66d513e89c6b6",
-        "after": "be02ac8193d29308b3ba52fd703f1c52e1d3119edcb8321527702e091f515139",
+        "before": "d2feb0cc0f0caa9dbaca6307d65f1a70e74ad6c93a0e94a4d8550cfa58c5abb7",
+        "after": "6d051c44a04b42d429d1bc3648c7dc16b86af1067b1a982f5a5143564e9937b3",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -12459,7 +12460,7 @@
         "view": "mindmap_classic",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "0f18edece6891388807d837ed69f9330f5e3a90b36fafb47dd2c10d39ca405e7",
+        "sha256": "3f443f01acf1d53ed5a9aa2af2126501767706325a09135f91770e85b35d638b",
         "modelFingerprint": "747790253f224e9d",
         "warnings": [
           "DDN-TW01"
@@ -12502,8 +12503,8 @@
         "expectation": "Only the label of Accounting / review changes; routes and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "0f18edece6891388807d837ed69f9330f5e3a90b36fafb47dd2c10d39ca405e7",
-        "after": "ab19ef4a1f9e8c8d0edaf43e593282590f0ee2f3e1dbf5497d81f193ad858993",
+        "before": "3f443f01acf1d53ed5a9aa2af2126501767706325a09135f91770e85b35d638b",
+        "after": "135e5450fde0cf1b0b5a94a757537a9321786ca490c1f384b211155e6179d1fb",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -12800,7 +12801,7 @@
           ]
         }
       ],
-      "viewSource": "view layered \"Layouts / layered\" {\n    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    layout { algorithm: layered; direction: right; }\n}",
+      "viewSource": "view layered \"Layouts / layered\" {\n    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: right; }\n}",
       "walkthrough": [
         "Open website/examples/gallery/src/layouts.ddn and locate view layered. This selects existing data; it is not a stored SVG.",
         "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
@@ -12880,7 +12881,7 @@
         "view": "normal",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "e08b5fe8080144e3948b675fae30dec8b837391cb6d8d9c34b53d691f473f3ac",
+        "sha256": "a6310b259335feaef4ed8c8a1856040b43e828bb241b1f19155cc7f867d11c3e",
         "modelFingerprint": "9758c2d7aaf1a42f",
         "warnings": [
           "DDN-TW01"
@@ -12922,8 +12923,8 @@
         "expectation": "Only the label of Order capture / review changes; spacing and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "e08b5fe8080144e3948b675fae30dec8b837391cb6d8d9c34b53d691f473f3ac",
-        "after": "d7b221b28074f4dcf71ad1f5b199f7db08d231fcbc496f22a586dd863b65ddd1",
+        "before": "a6310b259335feaef4ed8c8a1856040b43e828bb241b1f19155cc7f867d11c3e",
+        "after": "51dd380726807d79f5f0f34126c2f15978aa5ee883292e6af239d15ef28142fa",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -12978,7 +12979,7 @@
         "view": "paper",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "70373a33124e121cb05eef70461bb6124996c55d4abf2efb205faa4ef652af33",
+        "sha256": "8ce62c4881bfc46199491b413239d09989b1c8fd886503928313bea714800373",
         "modelFingerprint": "2941bf3e881bac0a",
         "warnings": [
           "DDN-TW01"
@@ -13020,8 +13021,8 @@
         "expectation": "Only the label of Order input / review changes; page geometry and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "70373a33124e121cb05eef70461bb6124996c55d4abf2efb205faa4ef652af33",
-        "after": "0afe052094fd2f6c5c50d09e6db6ef7b93553f5db9c8e6ab87d5d7bfd28ac7bc",
+        "before": "8ce62c4881bfc46199491b413239d09989b1c8fd886503928313bea714800373",
+        "after": "9169807c89fafd5a100da5fb17fef9c26904e521fd4c2ebb9ec40f95d5666819",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -13076,7 +13077,7 @@
         "view": "private",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "6e308f616d616340264aa81cbe915b6c6129afa1bf4ee9917569f1abc1eecd6c",
+        "sha256": "6bc11c103eebc6f234191ff4f15ee4a95b5ab840ac6b5f2335a34b05976222a1",
         "modelFingerprint": "041d811c944adfb8",
         "warnings": [
           "DDN-TW01"
@@ -13118,8 +13119,8 @@
         "expectation": "Only the label of Workforce public directory / review changes; the allowlist and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "6e308f616d616340264aa81cbe915b6c6129afa1bf4ee9917569f1abc1eecd6c",
-        "after": "1986c392e0e0e5bdcf8be7ca9b69bdec9a57b4ecc2e606fd6f995df5ac1bf330",
+        "before": "6bc11c103eebc6f234191ff4f15ee4a95b5ab840ac6b5f2335a34b05976222a1",
+        "after": "72630c6c684bae2d455d38d088c8af651ba139220aa2fcda3e7b1ac2f09c8e79",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -13166,7 +13167,7 @@
         "view": "shape_atlas",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "ce64d811d1713dc548f1096444906d73b3db131bca2d6f760e0ab043d49f9c76",
+        "sha256": "4c1deed957befe71d7482d0c5cfa4839624056b3725f8791aed4c2d3f89fcfc0",
         "modelFingerprint": "b7e6661ae0671548",
         "warnings": [
           "DDN-TW01"
@@ -13214,8 +13215,8 @@
         "expectation": "Only the label of Purchase request / review changes; silhouettes and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "ce64d811d1713dc548f1096444906d73b3db131bca2d6f760e0ab043d49f9c76",
-        "after": "dd38e6032da05ad9e4eca2221b7fc362f71a630934cb0154dbe8d311903a3bb4",
+        "before": "4c1deed957befe71d7482d0c5cfa4839624056b3725f8791aed4c2d3f89fcfc0",
+        "after": "3beccc8746efe8ce48318b01b0f3c2bce5b8e7c310769d8c63c5d3959f6caa17",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -13465,7 +13466,7 @@
         "view": "classic_night",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "a45d3484ca1626916d25868cab94f77b90f52bc57833367453346f32349b9c59",
+        "sha256": "235f1a7248eb988cd3a678dd3a25a1b139c588ddc243eaae6aca1f3359a3bdb0",
         "modelFingerprint": "765c059e4bb2cde0",
         "warnings": [
           "DDN-TW01"
@@ -13501,8 +13502,8 @@
         "expectation": "Only the label of Online storefront / review changes; palette and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "a45d3484ca1626916d25868cab94f77b90f52bc57833367453346f32349b9c59",
-        "after": "f5c5f122340ca3095984b4641cbe201a6d9d6f82380cece1f3bc912a2cb8e9d7",
+        "before": "235f1a7248eb988cd3a678dd3a25a1b139c588ddc243eaae6aca1f3359a3bdb0",
+        "after": "b72aacba55ee07a0f190e2991f474d9e0465906a82a25944e779cd4cb1d27dea",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -13685,7 +13686,7 @@
           ]
         }
       ],
-      "viewSource": "view fishbone \"01 / Possible causes\" {\n    data: [@m.causes];\n    format: @f.shared.common;\n    projection { kind: \"fishbone\"; profile: \"fishbone.basic@1\"; effect: @m.causes.effect; relation: \"quality.cause\"; }\n\n}",
+      "viewSource": "view fishbone \"01 / Possible causes\" {\n    layout { gap: 112px; row_gap: 112px; }\n    data: [@m.causes];\n    format: @f.shared.common;\n    projection { kind: \"fishbone\"; profile: \"fishbone.basic@1\"; effect: @m.causes.effect; relation: \"quality.cause\"; }\n\n}",
       "walkthrough": [
         "Open website/examples/quality/views.ddn and locate view fishbone. This selects existing data; it is not a stored SVG.",
         "Inspect the fishbone.basic@1 profile and fishbone projection. Read the bindings before changing any value.",
@@ -13750,9 +13751,10 @@
         "view": "workshop",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "fe2b5db931b02afba2c08b5c57d00a8a6593799b047c83c134610107ecdf9edc",
+        "sha256": "50cb9238153a27dc0bb759128c50af9c87330308c52b2c2198acc7076563864b",
         "modelFingerprint": "64951ebd21e20b73",
         "warnings": [
+          "DDN-LW05",
           "DDN-TW01"
         ]
       },
@@ -13792,8 +13794,8 @@
         "expectation": "Only the note's text changes; colour, decorations, string routes and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "fe2b5db931b02afba2c08b5c57d00a8a6593799b047c83c134610107ecdf9edc",
-        "after": "f56ea3058284ab12507ea000c4e1e27ac7dfaa1053e7f6f2a8155bfcfb82f25f",
+        "before": "50cb9238153a27dc0bb759128c50af9c87330308c52b2c2198acc7076563864b",
+        "after": "5a5a77e042da185e8a9639311e48ae5471711b2840581700ce790ac74be6e18f",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -13842,7 +13844,7 @@
         "view": "overview",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "a35faf6011e71f244d99cf83cae18721dbbf7dd64e4ed8d05c37aceeba18fed8",
+        "sha256": "77ac6934e51e0077220c1b8976c7c5a2ea80016f0306b650888f50c2c15ced71",
         "modelFingerprint": "d48d7df71bd3356f",
         "warnings": [
           "DDN-LW05",
@@ -13868,7 +13870,7 @@
           ]
         }
       ],
-      "viewSource": "view overview \"Storefront systems — presentation overview\" {\n    data: [@shop];\n    format: @shared.styles.technical;\n    projection { kind: graph; profile: \"ddn@1\"; }\n    layout { algorithm: layered; direction: right; gap: 130px; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view overview \"Storefront systems — presentation overview\" {\n    data: [@shop];\n    format: @shared.styles.technical;\n    projection { kind: graph; profile: \"ddn@1\"; }\n    layout { algorithm: layered; direction: right; gap: 130px; row_gap: 130px; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/110-presentation-architecture.ddn and locate view overview. This selects existing data; it is not a stored SVG.",
         "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
@@ -13885,8 +13887,8 @@
         "expectation": "Only the node's name changes; the artwork, anchors and routes are untouched."
       },
       "exerciseEvidence": {
-        "before": "a35faf6011e71f244d99cf83cae18721dbbf7dd64e4ed8d05c37aceeba18fed8",
-        "after": "a694ab4b75106565afdf63d02a626b7ced9997d0c9887be154ba2d858f7ada6d",
+        "before": "77ac6934e51e0077220c1b8976c7c5a2ea80016f0306b650888f50c2c15ced71",
+        "after": "5dc7871f5a58e7d7475cbbc9048c5c459dfc558fa5ca5b3de91c7f6698b02010",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -13935,7 +13937,7 @@
         "view": "main",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "c4bc8a4f59e3034ae5a4945374026a15ec7f732c446bc75a6eefbf9e4c849dd4",
+        "sha256": "588bc3938ea9d4cf531b9b0bbcd3cec867da50bf9767ffffa5533d769583c232",
         "modelFingerprint": "71ae1327cba9484f",
         "warnings": [
           "DDN-TW01"
@@ -13970,8 +13972,8 @@
         "expectation": "Only the label of Order API / review changes; the version line and every identity are untouched."
       },
       "exerciseEvidence": {
-        "before": "c4bc8a4f59e3034ae5a4945374026a15ec7f732c446bc75a6eefbf9e4c849dd4",
-        "after": "cde4eddf03655168972ea04be70eded4f7d5e6b6123a3a9ac53bc401a8296dae",
+        "before": "588bc3938ea9d4cf531b9b0bbcd3cec867da50bf9767ffffa5533d769583c232",
+        "after": "f0b2a24f49e3cc54e4d19e49e7a8f0d258187c427f28fbbfe8ef630c457a9b03",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14037,7 +14039,7 @@
         "view": "flow_strict",
         "profile": "flow.documented@2",
         "projection": "graph",
-        "sha256": "22c5eee4f713e3dee083f2db8d61d3222d867675093406fbadc8ac25b57dcbba",
+        "sha256": "5c38a10081785d9ddb0d5cb3231655feba1af9b93a1590a120b6a70d5b36f8f1",
         "modelFingerprint": "cea017ac476ece7e",
         "warnings": [
           "DDN-TW01"
@@ -14072,8 +14074,8 @@
         "expectation": "Only the label of Start / review changes; the kind, strictness and every identity are untouched."
       },
       "exerciseEvidence": {
-        "before": "22c5eee4f713e3dee083f2db8d61d3222d867675093406fbadc8ac25b57dcbba",
-        "after": "f785cb49649de22a044b13b9504dde0758a2a315e7c5eaa665021711232c24ef",
+        "before": "5c38a10081785d9ddb0d5cb3231655feba1af9b93a1590a120b6a70d5b36f8f1",
+        "after": "dff76e9622815e88461bdc5ee8e8e36c003f9e8c0e521f9f048d880f89cb5ec5",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14132,7 +14134,7 @@
         "view": "fig1",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "dba2271c208f7bbb803584e58f8a75b1be3084e6f65efaeaf8f0bb8101d0f95e",
+        "sha256": "b4a18c505a696f64dc922e180a9a66b4477da46d35d8c3f5439e22fcce58dfdc",
         "modelFingerprint": "6615e05538617bb7",
         "warnings": [
           "DDN-TW01"
@@ -14167,8 +14169,8 @@
         "expectation": "Only the label of Start / review changes; numerals, anchors and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "dba2271c208f7bbb803584e58f8a75b1be3084e6f65efaeaf8f0bb8101d0f95e",
-        "after": "e9b24f80a4e2a772f925c1aa045ad15aa05c51dc6bb9c3e61d9afadd8965237c",
+        "before": "b4a18c505a696f64dc922e180a9a66b4477da46d35d8c3f5439e22fcce58dfdc",
+        "after": "e3e9bac9b66569832ee76dc09277ac05a3224b828e7e8ce885ee3050bd9ec6d8",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14226,7 +14228,7 @@
         "view": "overview",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "c7261893a95aaf8ff495896d5ab6ccd836de42e5a7edb58bbdda2377ba76a6a2",
+        "sha256": "9db56900594073b59afe7b499f240382826b7c15c3735316c61b1ce00b6232a4",
         "modelFingerprint": "7028a8b9e541938b",
         "warnings": [
           "DDN-TW01"
@@ -14262,8 +14264,8 @@
         "expectation": "Only the label of Edge gateway / review changes; chrome, page geometry and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "c7261893a95aaf8ff495896d5ab6ccd836de42e5a7edb58bbdda2377ba76a6a2",
-        "after": "98e98e1c597cbee61231378ada5297562566c6913283a55199853825b1188871",
+        "before": "9db56900594073b59afe7b499f240382826b7c15c3735316c61b1ce00b6232a4",
+        "after": "d4f9f29d4721c239f6d79a37e969a629969c4e989ac74db5d9f853ec29b3640f",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14320,7 +14322,7 @@
         "view": "fitted",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "ebc1ebc0965122795823dbd695c698487d994dcdb630fe6aa68ce04436f24782",
+        "sha256": "30ec2d0e765113f2a01380c50752c978117d385f93008e975c08b916387db6c5",
         "modelFingerprint": "a327f7cfa71dae5b",
         "warnings": [
           "DDN-TW01"
@@ -14355,8 +14357,8 @@
         "expectation": "Only the label of Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage. / review changes; fit modes, bounds and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "ebc1ebc0965122795823dbd695c698487d994dcdb630fe6aa68ce04436f24782",
-        "after": "6b29db648bab42c6b1bc45edfb0b5321a1bd5bbc85118e8aa6bb907e662863cf",
+        "before": "30ec2d0e765113f2a01380c50752c978117d385f93008e975c08b916387db6c5",
+        "after": "39f9883419a181182800109e101b9e6611fab70ae3a53ee04a442de94d49d2fa",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14414,7 +14416,7 @@
         "view": "main",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "1b83d8759a2303fc67dd872762b63e70a42b0b782b86008c4c4325e818a84924",
+        "sha256": "a4da2dab2aec778cdd8960e9da08e131ce7476bdf8d47dc7f79b3d1e73d5f4a7",
         "modelFingerprint": "fe71ebe648ef7230",
         "warnings": [
           "DDN-TW01"
@@ -14449,8 +14451,8 @@
         "expectation": "Only the label of Customer portal / review changes; markings, assertions and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "1b83d8759a2303fc67dd872762b63e70a42b0b782b86008c4c4325e818a84924",
-        "after": "e32d60c0f0f96a8cac3bf9c3da8dfb2a842890cbf2494562b8b9662a504265ff",
+        "before": "a4da2dab2aec778cdd8960e9da08e131ce7476bdf8d47dc7f79b3d1e73d5f4a7",
+        "after": "3b7e6b5ad647aef9e868ec6f260c1ab01c7127c8f4cc69aad286c530adadbcaa",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14502,7 +14504,7 @@
         "view": "main",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "c2e82f4cb2e93be61d69266bde9bc2ec91d647677484206ea742a7b0be9df80a",
+        "sha256": "def5f65318ade8d71967cb52f5136fc569aa9c11c95a75da9856d7d21d995d9c",
         "modelFingerprint": "89fc61caea4fb9da",
         "warnings": [
           "DDN-TW01"
@@ -14537,8 +14539,8 @@
         "expectation": "Only the label of Order API / review changes; the publication set and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "c2e82f4cb2e93be61d69266bde9bc2ec91d647677484206ea742a7b0be9df80a",
-        "after": "afa3966f2423be4e54c82e012e24229071eb42bf643ca7ada900109d3ab21393",
+        "before": "def5f65318ade8d71967cb52f5136fc569aa9c11c95a75da9856d7d21d995d9c",
+        "after": "238f0eabb2ea390e82bc4fd03e6aba109397a773d7feed97cbd90da058ff55ff",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14784,7 +14786,7 @@
         "view": "collaboration",
         "profile": "bpmn.basic@1",
         "projection": "graph",
-        "sha256": "7115b7376606db1878baa32744c131dd76012bd4aa5cc28168584949b5e7dc5d",
+        "sha256": "7bbe9950036b3f45bad13ea18fd27c5f7f7e82bc827faa50ec4cb8177730d81d",
         "modelFingerprint": "90414c1fb23d6cab",
         "warnings": [
           "DDN-TW01"
@@ -14826,8 +14828,8 @@
         "expectation": "Only the label of Request quote / review changes; pools, messages and flow identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "7115b7376606db1878baa32744c131dd76012bd4aa5cc28168584949b5e7dc5d",
-        "after": "8535dc2c322033b236651321fb33d44035f0eac0c7081dfc4949e66287016c51",
+        "before": "7bbe9950036b3f45bad13ea18fd27c5f7f7e82bc827faa50ec4cb8177730d81d",
+        "after": "f2c0c5107b4c01ac5bd82bfb95bb2b7fd417d3718e653d51171892d995f93abf",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14981,7 +14983,7 @@
           ]
         }
       ],
-      "viewSource": "view d \"Motor control ladder\": [@rung1, @rung2, @rung3] as \"ladder.basic@1\" {\n    layout { algorithm: ladder; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view d \"Motor control ladder\": [@rung1, @rung2, @rung3] as \"ladder.basic@1\" {\n    layout { gap: 112px; row_gap: 112px; algorithm: ladder; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/101-ladder.ddn and locate view d. This selects existing data; it is not a stored SVG.",
         "Inspect the ladder.basic@1 profile and graph projection. Read the bindings before changing any value.",

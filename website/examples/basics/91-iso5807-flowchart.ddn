@@ -41,6 +41,6 @@ data m {
 }
 
 view chart "ISO 5807 warehouse flow": [@m] as "flow.iso5807@1" {
-    layout { algorithm: layered; direction: down; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
 }

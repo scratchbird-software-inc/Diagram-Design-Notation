@@ -862,7 +862,10 @@
   function collinear(s,t,tolerance=.1){const h=Math.abs(s.a[1]-s.b[1])<EPS&&Math.abs(t.a[1]-t.b[1])<EPS,v=Math.abs(s.a[0]-s.b[0])<EPS&&Math.abs(t.a[0]-t.b[0])<EPS;if(h&&Math.abs(s.a[1]-t.a[1])<tolerance)return Math.min(Math.max(s.a[0],s.b[0]),Math.max(t.a[0],t.b[0]))-Math.max(Math.min(s.a[0],s.b[0]),Math.min(t.a[0],t.b[0]))>EPS;if(v&&Math.abs(s.a[0]-t.a[0])<tolerance)return Math.min(Math.max(s.a[1],s.b[1]),Math.max(t.a[1],t.b[1]))-Math.max(Math.min(s.a[1],s.b[1]),Math.min(t.a[1],t.b[1]))>EPS;return false;}
   function distancePointSegment(p,s){const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],l=dx*dx+dy*dy;if(!l)return Math.hypot(p[0]-s.a[0],p[1]-s.a[1]);const t=Math.max(0,Math.min(1,((p[0]-s.a[0])*dx+(p[1]-s.a[1])*dy)/l));return Math.hypot(p[0]-s.a[0]-t*dx,p[1]-s.a[1]-t*dy);}
   function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
-   const p=profiles.layout,minGap=2*(q$3(p.object_clearance,16)+Math.max(24,q$3(p.port_clearance,28)))+2*q$3(p.edge_clearance,12),diag=[];const authoredGap=q$3(p.gap,100),authoredRowGap=q$3(p.row_gap,100);if(authoredGap<20||authoredRowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');let gap=Math.max(authoredGap,minGap),rowGap=Math.max(authoredRowGap,minGap);
+   /* DDN200: the authored gap/row_gap IS the inter-element gap (floor 20px).
+    * object/edge/port clearances govern routing pads and port fan-out stubs
+    * (routingAttempt), never node spacing. */
+   const p=profiles.layout,diag=[];const authoredGap=q$3(p.gap,64),authoredRowGap=q$3(p.row_gap,64);if(authoredGap<20||authoredRowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');let gap=authoredGap,rowGap=authoredRowGap;
    const spread=spacingScale(p);gap=round(gap*spread);rowGap=round(rowGap*spread);
    const order=new Map(nodes.map((n,i)=>[n.id,i])),byId=new Map(nodes.map(n=>[n.id,n])),ids=new Set(byId.keys());
    const edges=rels.filter(r=>ids.has(r.from.element)&&ids.has(r.to.element)&&r.from.element!==r.to.element);
@@ -1467,19 +1470,19 @@
   function place(nodes,rels,ir,options={}){
    const p=ir.view.profiles,at=ir.view.placements||{},algorithm=p.layout.algorithm,diagnostics=[];
    const key=options.viewKey||ir.view.id,state=stateChecked(options.layoutState,key),paused=p.layout.auto_place===false;
-   const minGap=2*(q$2(p.layout.object_clearance,16)+Math.max(24,q$2(p.layout.port_clearance,28)))+2*q$2(p.layout.edge_clearance,12);
    const patternMode=algorithm==='auto'?'layered':algorithm==='spanning_tree'?'tree':algorithm;
    const usePattern=['auto','fit_grid','circular','radial','spanning_tree','organic'].includes(algorithm)||(algorithm==='layered'&&p.layout.center==='pins');
    let pattern=null;
    const ErrorClass=class extends Error{constructor(code,message){super(message);this.code=code;}};
    /* DDN200 (spec ch. 15): an AUTHORED gap/row_gap below 20px is rejected, not
-    * silently floored; authored values ≥20 are then raised to the clearance-
-    * derived minGap. Validated here so every algorithm path (pattern and
-    * layoutNodes) enforces it. */
-   const authoredGap=q$2(p.layout.gap,100),authoredRowGap=q$2(p.layout.row_gap,100);
+    * silently floored. Authored values of 20px or more are used verbatim as the
+    * inter-element gap (scaled by the spacing hint); object/edge/port clearances
+    * govern routing pads and port fan-out, never node spacing. Validated here so
+    * every algorithm path (pattern and layoutNodes) enforces it. */
+   const authoredGap=q$2(p.layout.gap,64),authoredRowGap=q$2(p.layout.row_gap,64);
    if(authoredGap<20||authoredRowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');
    if(usePattern){
-    const adapted={...p,layout:{...p.layout,algorithm:patternMode,gap:api$6.round(Math.max(minGap,q$2(p.layout.gap,100))*api$6.spacingScale(p.layout))}};
+    const adapted={...p,layout:{...p.layout,algorithm:patternMode,gap:api$6.round(q$2(p.layout.gap,64)*api$6.spacingScale(p.layout))}};
     const result=Patterns.place(nodes,rels,ir,adapted);pattern=result.pattern;diagnostics.push(...result.diagnostics);
     if(['left','up'].includes(p.layout.direction)&&patternMode==='layered'){
      for(const n of nodes)if(!at[n.id]?.at){const c=center(n),ax=pattern.anchor[0],ay=pattern.anchor[1];if(p.layout.direction==='left')n.x=2*ax-c[0]-n.w/2;else n.y=2*ay-c[1]-n.h/2;}
@@ -2423,7 +2426,7 @@
     g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
    }
 
-   if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q$1(p.publication.width,1280),reserve=legendPlacement==='right'?q$1(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q$1(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+api$6.round(q$1(p.layout.gap,100)*api$6.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
+   if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q$1(p.publication.width,1280),reserve=legendPlacement==='right'?q$1(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q$1(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+api$6.round(q$1(p.layout.gap,64)*api$6.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
    const placed=api$5.place(geoms,rels,ir,options);geoms=placed.nodes;
    /* B1-063: BPMN boundary events attach to their host's bottom border (port
     * attachment precedent — visual anchor, the node keeps its identity). */

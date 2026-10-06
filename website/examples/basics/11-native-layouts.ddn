@@ -15,11 +15,11 @@ data model {
  assoc f5 @plant -> @analytics;
 }
 format options {
- layout grid { algorithm: grid; columns: 3; }
- layout layered { algorithm: layered; direction: right; }
+ layout grid { gap: 112px; row_gap: 112px; algorithm: grid; columns: 3; }
+ layout layered { gap: 112px; row_gap: 112px; algorithm: layered; direction: right; }
  layout tree { algorithm: tree; root: @model.enterprise; hierarchy: [assoc]; }
- layout mindmap { algorithm: mindmap; routing: curved; root: @model.enterprise; hierarchy: [assoc]; }
- layout groups { algorithm: grouped; group_by: role; columns: 2; }
+ layout mindmap { gap: 112px; row_gap: 112px; algorithm: mindmap; routing: curved; root: @model.enterprise; hierarchy: [assoc]; }
+ layout groups { gap: 112px; row_gap: 112px; algorithm: grouped; group_by: role; columns: 2; }
  legend keys { mode: numbers; keys: { f1: 1, f2: 2, f3: 3, f4: 4, f5: 5 }; width: 330px; }
 }
 view grid "Native grid / no coordinates" {

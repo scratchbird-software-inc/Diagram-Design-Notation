@@ -1106,6 +1106,6 @@ data m {
 }
 view main {
   data: [@m];
-  layout { algorithm: layered; optimize: none; endpoint_ordering: preserve; }
+  layout { algorithm: layered; optimize: none; endpoint_ordering: preserve; gap: 112px; row_gap: 112px; }
   publication { width: 12000px; height: 9000px; overflow: warn; }
 }

@@ -38,6 +38,7 @@ data shop {
 }
 
 view storymap "Shop rebuild / story map" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@shop];
     format: @shared.styles.technical;
     projection { kind:matrix; profile:"matrix.storymap@1"; rows:[@shop.r1, @shop.r2]; columns:[@shop.browse, @shop.configure, @shop.checkout, @shop.pay, @shop.fulfil]; relation:"assoc"; value:"x_story.task"; duplicates:join; }

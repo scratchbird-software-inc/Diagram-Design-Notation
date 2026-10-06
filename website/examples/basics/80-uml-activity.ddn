@@ -56,11 +56,13 @@ data signals {
 }
 
 view pins "UML activity / pins, decision and merge": [@fulfil] as "uml.activity@2" {
+    layout { gap: 112px; row_gap: 112px; }
     frame struct "Iterative" { members: [@fulfil.take, @fulfil.dec, @fulfil.mrg]; x_structured: { mode: "iterative" }; }
     publication { size: content; fit: none; }
 }
 
 view interrupts "UML activity / signals, interrupts, exceptions": [@signals] as "uml.activity@2" {
+    layout { gap: 112px; row_gap: 112px; }
     frame danger "Interruptible" { members: [@signals.prepare, @signals.send_ship, @signals.wait_ack]; x_interruptible: true; }
     publication { size: content; fit: none; }
 }

@@ -113,7 +113,7 @@ data sum {
 }
 
 view strategic "St — Strategic" { data: [@st]; projection { profile: "uaf.strategic@1"; } publication { size: content; fit: none; } }
-view operational "Op — Operational" { data: [@op]; projection { profile: "uaf.operational@1"; } publication { size: content; fit: none; } }
+view operational "Op — Operational" { layout { gap: 112px; row_gap: 112px; } data: [@op]; projection { profile: "uaf.operational@1"; } publication { size: content; fit: none; } }
 view services "Svc — Services" { data: [@svc]; projection { profile: "uaf.services@1"; } publication { size: content; fit: none; } }
 view systems "Sys — Systems" { data: [@sys]; projection { profile: "uaf.systems@1"; } publication { size: content; fit: none; } }
 view personnel "Pr — Personnel" { data: [@per]; projection { profile: "uaf.personnel@1"; } publication { size: content; fit: none; } }

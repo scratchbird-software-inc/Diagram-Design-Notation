@@ -28,11 +28,13 @@ data model {
     relation f4 "no" @decide -> @stop { kind: "flow.next"; }
 }
 view fig1 "Sensor monitor" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@model];
     kind: patent-figure;
     publication: @shared.filing;
 }
 view fig2 "Sensor monitor (detail)" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@model];
     kind: patent-figure;
     publication: @shared.filing;

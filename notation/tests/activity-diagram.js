@@ -25,7 +25,7 @@ data order {
 view fulfilment "Order fulfilment activity" {
     data: [@order];
     projection { kind: graph; profile: "uml.activity@1"; }
-    layout { algorithm: layered; }
+    layout { algorithm: layered; gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
     frame webshop "Webshop" { members: [@order.start, @order.take_payment, @order.end]; }
     frame warehouse "Warehouse" { members: [@order.fork, @order.pick_items, @order.order_obj, @order.join]; }

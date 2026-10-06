@@ -14,7 +14,7 @@
             "severity": "warning"
           }
         ],
-        "geometry_sha256": "706e4f8a0ad344e81d8a79aca718aec3c0bb1dd133dbfe90756064bd4fbbc7c2"
+        "geometry_sha256": "3cc2b5549607af8b58308afc6852a064567591562c8f4569784aa198907f5bb6"
       }
     },
     {
@@ -94,11 +94,15 @@
       "expect": {
         "diagnostics": [
           {
+            "code": "DDN-LW04",
+            "severity": "info"
+          },
+          {
             "code": "DDN-TW01",
             "severity": "warning"
           }
         ],
-        "geometry_sha256": "4580b6db6f1dc9ae912bfbf9def61d80dc9da9198f87f19fc6aeb3eacfc32097"
+        "geometry_sha256": "4b317309dd18dfd9d5aff9152831257abbf5d2de3099250c5979929e7a0e84df"
       }
     },
     {
@@ -155,7 +159,7 @@
             "severity": "warning"
           }
         ],
-        "geometry_sha256": "cece96e35ee88182f3593cbf7bab01587600b94a512283ae9d0792069722a0ce"
+        "geometry_sha256": "50f0d2ed09a81e9b6ff742f28e7bee4d008ad9858099cb7ba1d536eb3c2e8025"
       }
     }
   ]

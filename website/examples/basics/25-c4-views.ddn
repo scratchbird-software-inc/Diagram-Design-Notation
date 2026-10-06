@@ -38,6 +38,7 @@ view context "Synthetic shop / C4 context" {
 }
 
 view container "Synthetic shop / C4 container" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@shop]; format: @shared.styles.technical;
     projection { kind: graph; profile: "c4.container@1"; }
     select: [@shop.customer, @shop.site, @shop.web, @shop.db, @shop.events];

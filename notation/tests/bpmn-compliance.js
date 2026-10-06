@@ -86,7 +86,7 @@ view choreography "Choreography" {
 }
 view conversation "Conversation" {
     data: [@conv];
-    layout { algorithm: layered; direction: right; routing: straight; }
+    layout { algorithm: layered; direction: right; routing: straight; gap: 130px; row_gap: 130px; }
     projection { kind: graph; profile: "bpmn.conversation@1"; }
     publication { size: content; fit: none; overflow: error; minimum_text: 6pt; }
 }

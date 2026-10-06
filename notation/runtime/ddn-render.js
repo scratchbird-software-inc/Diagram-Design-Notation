@@ -561,7 +561,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
  }
 
- if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q(p.publication.width,1280),reserve=legendPlacement==='right'?q(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+Layout.round(q(p.layout.gap,100)*Layout.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
+ if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q(p.publication.width,1280),reserve=legendPlacement==='right'?q(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+Layout.round(q(p.layout.gap,64)*Layout.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
  const placed=Placement.place(geoms,rels,ir,options);geoms=placed.nodes;
  /* B1-063: BPMN boundary events attach to their host's bottom border (port
   * attachment precedent — visual anchor, the node keeps its identity). */

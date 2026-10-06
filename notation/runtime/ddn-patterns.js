@@ -101,7 +101,7 @@ function setup(nodes,rels,ir,p) {
  const pins=ordered.filter(n=>n.pinned),pinBounds=bounds(pins),anchor=pinBounds?center(pinBounds):[0,0];
  const adj=adjacency(ordered,rels),root=pins.length?pins.map(n=>n.id):ordered.length?[...ordered].sort((a,b)=>adj.get(b.id).length-adj.get(a.id).length||cmp(a.id,b.id))[0].id:null;
  const roots=Array.isArray(root)?root:root?[root]:[];
- const gap=q(p.layout.gap,80),step=q(p.layout.grid_step,32);
+ const gap=q(p.layout.gap,64),step=q(p.layout.grid_step,32);
  if(!Number.isFinite(gap)||gap<16||gap>2000)error('LIVE-P001','Pattern gap must be a length from 16 to 2000 CSS pixels.');
  if(!Number.isFinite(step)||step<8||step>512)error('LIVE-P001','grid_step must be a length from 8 to 512 CSS pixels.');
  const ctx={algorithm,ordered,pins,free:ordered.filter(n=>!n.pinned),pinBounds,anchor,adj,roots,gap,step,

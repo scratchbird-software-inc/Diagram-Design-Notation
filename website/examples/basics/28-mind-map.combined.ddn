@@ -23,7 +23,7 @@ data ideas {
 }
 
 format options {
-    layout mind { algorithm: mindmap; routing: curved; root: @ideas.root; hierarchy: [assoc]; }
+    layout mind { gap: 112px; row_gap: 112px; algorithm: mindmap; routing: curved; root: @ideas.root; hierarchy: [assoc]; }
 }
 
 view mindmap "Synthetic brainstorm / mind map" {

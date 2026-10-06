@@ -27,7 +27,7 @@ data m {
     relation w4 "" @t1.q -> @motor { kind: "fbd.wire"; }
     relation fb "" @t1.q -> @a1.ina { kind: "fbd.wire"; }
 }
-view d "FBD" { data: [@m]; projection { kind: graph; profile: "fbd.basic@1"; } layout { algorithm: layered; direction: right; } publication { size: content; fit: none; overflow: error; minimum_text: 8pt; } }
+view d "FBD" { data: [@m]; projection { kind: graph; profile: "fbd.basic@1"; } layout { algorithm: layered; direction: right; gap: 112px; row_gap: 112px; } publication { size: content; fit: none; overflow: error; minimum_text: 8pt; } }
 `;
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 function run(view='d',changes={}){return A.createWorkspace({'main.ddn':SRC,...changes}).renderSync({entry:'main.ddn',view});}

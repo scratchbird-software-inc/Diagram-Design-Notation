@@ -199,7 +199,7 @@
         "use-cases/data/domains.ddn": "68f4a95de6443faac809849297787a29114e15a96f010d0500afbdd75c27c078"
       },
       "semanticHash": "1c3a6ee5fb041278e4d0fb8812dcb8500d7eb232ee77c9434e9f706860955212",
-      "svgHash": "ef238521c00763b959979ae370d0fdd694c8e6f7d694b0d7a081f52de948b7bf",
+      "svgHash": "6decbbb7018254ddab3d2e85d1771642d3985c50c2d61cfcc98f19d8a502272a",
       "diagnostics": []
     },
     {
@@ -238,7 +238,7 @@
         "use-cases/data/deployment.ddn": "9d5f2d766a378fbd1727b8715cd4a4f33a9ad9fd0d83dbcfcc6da6167a640921"
       },
       "semanticHash": "048d418c8e285ee256cbd8b9c0f1b6d56ac2ead7c8c345b9e07c28f8871628dc",
-      "svgHash": "828ab58731f10428b1beba026e69949efad0394b11ae0480a677ffc7c4d8fe9e",
+      "svgHash": "15349c11d782c7fd2c0ab089a5c9884d1aafbc5ba7f7eeee4f133bd8b678378a",
       "diagnostics": []
     },
     {
@@ -276,7 +276,7 @@
         "use-cases/data/flow.ddn": "f4e2973b4dbee0f8a89a5911fc6ae446683bfbe53182e972bf7c766e9b40f773"
       },
       "semanticHash": "5f5943c23fd19201fcfb45ad5b2e7994bc635ff3575a7024cd6e4c605b03f7a0",
-      "svgHash": "75126001d89c51062275565f367786bcde06d6b7341234ed5f0be1d74a9afdd8",
+      "svgHash": "52f15a2d5bdfd897ef8c97a0987e1d626105b39f36933d1cd399f8ddd42beca1",
       "diagnostics": []
     },
     {
@@ -331,7 +331,7 @@
         "use-cases/data/warehouse.ddn": "20f686796f1662c4694cc83a0e811e9a5134bafc709feffc3f5d9e0afd7c353a"
       },
       "semanticHash": "49a208d95b2e9bda2242b12731c5448c3de574b353f9ee44b63f6c6bac410c2c",
-      "svgHash": "d1d72da3fc19c1280be63d3b44b050b20c5d151621791c1023da015e44293c95",
+      "svgHash": "fa3cf71c8fbdf374f13898b3d60617316c5186f34b110c783c9c1a9534cbd030",
       "diagnostics": []
     },
     {

@@ -31,6 +31,6 @@ data m {
     relation o1 "" @op -> @weld { kind: "vsm.minfo"; }
 }
 view map "Current state map": [@m] as "vsm.basic@1" {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }

@@ -37,6 +37,6 @@ data rung3 {
     relation s6 "" @t1.q -> @done { kind: "ladder.series"; }
 }
 view d "Motor control ladder": [@rung1, @rung2, @rung3] as "ladder.basic@1" {
-    layout { algorithm: ladder; }
+    layout { gap: 112px; row_gap: 112px; algorithm: ladder; }
     publication { size: content; fit: none; }
 }

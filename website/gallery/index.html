@@ -2530,6 +2530,7 @@ data model {
     relation member @orders -&gt; @schema { kind: namespace_member; }
 }
 view deployment &quot;Hybrid deployment / fragments are not copies&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@model]; format: @shared.styles.technical;
     display: @shared.styles.compact;
     select: [@model.orders, @model.shard, @model.primary, @model.follower, @model.local, @model.cloud];
@@ -2595,6 +2596,7 @@ data model {
     relation member @orders -&gt; @schema { kind: namespace_member; }
 }
 view deployment &quot;Hybrid deployment / fragments are not copies&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@model]; format: @ddn.examples.shared.styles.technical;
     display: @ddn.examples.shared.styles.compact;
     select: [@model.orders, @model.shard, @model.primary, @model.follower, @model.local, @model.cloud];
@@ -2659,6 +2661,7 @@ data model {
     write r6 @search_job -&gt; @search;
 }
 view flow &quot;Capture, transport and transformation are different&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@model]; format: @shared.styles.technical; display: @shared.styles.compact;
     publication { width: 1550px; height: 1020px; }
     legend { mode: numbers; keys: { &quot;r1&quot;:1, &quot;r2&quot;:2, &quot;r3&quot;:3, &quot;r4&quot;:4, &quot;r5&quot;:5, &quot;r6&quot;:6 }; width: 300px; }
@@ -2714,6 +2717,7 @@ data model {
     write r6 @search_job -&gt; @search;
 }
 view flow &quot;Capture, transport and transformation are different&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@model]; format: @ddn.examples.shared.styles.technical; display: @ddn.examples.shared.styles.compact;
     publication { width: 1550px; height: 1020px; }
     legend { mode: numbers; keys: { &quot;r1&quot;:1, &quot;r2&quot;:2, &quot;r3&quot;:3, &quot;r4&quot;:4, &quot;r5&quot;:5, &quot;r6&quot;:6 }; width: 300px; }
@@ -3428,7 +3432,7 @@ data m {
     relation fb &quot;&quot; @t1.q -&gt; @a1.ina { kind: &quot;fbd.wire&quot;; }
 }
 view d &quot;Motor control FBD&quot;: [@m] as &quot;fbd.basic@1&quot; {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -3475,7 +3479,7 @@ data rung3 {
     relation s6 &quot;&quot; @t1.q -&gt; @done { kind: &quot;ladder.series&quot;; }
 }
 view d &quot;Motor control ladder&quot;: [@rung1, @rung2, @rung3] as &quot;ladder.basic@1&quot; {
-    layout { algorithm: ladder; }
+    layout { gap: 112px; row_gap: 112px; algorithm: ladder; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -3522,7 +3526,7 @@ data m {
     relation o1 &quot;&quot; @op -&gt; @asm { kind: &quot;vsm.minfo&quot;; }
 }
 view map &quot;VSM symbol library&quot;: [@m] as &quot;vsm.basic@1&quot; {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -3602,7 +3606,7 @@ data m {
     assoc s5 &quot;&quot; @ft -&gt; @fv;
 }
 view pid &quot;P&amp;ID symbol library&quot;: [@m] as &quot;network.basic@1&quot; {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -3648,7 +3652,7 @@ data m {
     assoc w11 &quot;&quot; @u2 -&gt; @u3;
 }
 view sch &quot;Electrical symbol library&quot;: [@m] as &quot;network.basic@1&quot; {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -3817,6 +3821,7 @@ data strat {
     relation x1 &quot;&quot; @fulfill -&gt; @brand { kind: &quot;uaf.mapsto&quot;; x_link: { file: &quot;108-uaf-governance.ddn&quot;, target: &quot;retail.gov.gov.policy1&quot; }; }
 }
 view sv &quot;Strategic capabilities&quot;: [@strat] as &quot;uaf.strategic@1&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -3960,11 +3965,11 @@ data model {
  assoc f5 @plant -&gt; @analytics;
 }
 format options {
- layout grid { algorithm: grid; columns: 3; }
- layout layered { algorithm: layered; direction: right; }
+ layout grid { gap: 112px; row_gap: 112px; algorithm: grid; columns: 3; }
+ layout layered { gap: 112px; row_gap: 112px; algorithm: layered; direction: right; }
  layout tree { algorithm: tree; root: @model.enterprise; hierarchy: [assoc]; }
- layout mindmap { algorithm: mindmap; routing: curved; root: @model.enterprise; hierarchy: [assoc]; }
- layout groups { algorithm: grouped; group_by: role; columns: 2; }
+ layout mindmap { gap: 112px; row_gap: 112px; algorithm: mindmap; routing: curved; root: @model.enterprise; hierarchy: [assoc]; }
+ layout groups { gap: 112px; row_gap: 112px; algorithm: grouped; group_by: role; columns: 2; }
  legend keys { mode: numbers; keys: { f1: 1, f2: 2, f3: 3, f4: 4, f5: 5 }; width: 330px; }
 }
 view grid &quot;Native grid / no coordinates&quot; {
@@ -4035,11 +4040,11 @@ data model {
  assoc f5 @plant -&gt; @analytics;
 }
 format options {
- layout grid { algorithm: grid; columns: 3; }
- layout layered { algorithm: layered; direction: right; }
+ layout grid { gap: 112px; row_gap: 112px; algorithm: grid; columns: 3; }
+ layout layered { gap: 112px; row_gap: 112px; algorithm: layered; direction: right; }
  layout tree { algorithm: tree; root: @model.enterprise; hierarchy: [assoc]; }
- layout mindmap { algorithm: mindmap; routing: curved; root: @model.enterprise; hierarchy: [assoc]; }
- layout groups { algorithm: grouped; group_by: role; columns: 2; }
+ layout mindmap { gap: 112px; row_gap: 112px; algorithm: mindmap; routing: curved; root: @model.enterprise; hierarchy: [assoc]; }
+ layout groups { gap: 112px; row_gap: 112px; algorithm: grouped; group_by: role; columns: 2; }
  legend keys { mode: numbers; keys: { f1: 1, f2: 2, f3: 3, f4: 4, f5: 5 }; width: 330px; }
 }
 view grid &quot;Native grid / no coordinates&quot; {
@@ -4131,7 +4136,7 @@ view overview &quot;Storefront systems — presentation overview&quot; {
     data: [@shop];
     format: @shared.styles.technical;
     projection { kind: graph; profile: &quot;ddn@1&quot;; }
-    layout { algorithm: layered; direction: right; gap: 130px; }
+    layout { algorithm: layered; direction: right; gap: 130px; row_gap: 130px; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -4202,7 +4207,7 @@ view overview &quot;Storefront systems — presentation overview&quot; {
     data: [@shop];
     format: @ddn.examples.shared.styles.technical;
     projection { kind: graph; profile: &quot;ddn@1&quot;; }
-    layout { algorithm: layered; direction: right; gap: 130px; }
+    layout { algorithm: layered; direction: right; gap: 130px; row_gap: 130px; }
     publication { size: content; fit: none; }
 }
 
@@ -4265,11 +4270,13 @@ data model {
     relation f4 &quot;no&quot; @decide -&gt; @stop { kind: &quot;flow.next&quot;; }
 }
 view fig1 &quot;Sensor monitor&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@model];
     kind: patent-figure;
     publication: @shared.filing;
 }
 view fig2 &quot;Sensor monitor (detail)&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@model];
     kind: patent-figure;
     publication: @shared.filing;
@@ -6168,6 +6175,7 @@ view context &quot;Synthetic shop / C4 context&quot; {
 }
 
 view container &quot;Synthetic shop / C4 container&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@shop]; format: @shared.styles.technical;
     projection { kind: graph; profile: &quot;c4.container@1&quot;; }
     select: [@shop.customer, @shop.site, @shop.web, @shop.db, @shop.events];
@@ -6255,6 +6263,7 @@ view context &quot;Synthetic shop / C4 context&quot; {
 }
 
 view container &quot;Synthetic shop / C4 container&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@shop]; format: @ddn.examples.shared.styles.technical;
     projection { kind: graph; profile: &quot;c4.container@1&quot;; }
     select: [@shop.customer, @shop.site, @shop.web, @shop.db, @shop.events];
@@ -6328,7 +6337,7 @@ data people {
 }
 
 format options {
-    layout org { algorithm: tree; direction: down; root: @people.ceo; hierarchy: [reports_to]; }
+    layout org { gap: 112px; row_gap: 112px; algorithm: tree; direction: down; root: @people.ceo; hierarchy: [reports_to]; }
 }
 
 view org &quot;Synthetic organisation / org chart&quot; {
@@ -6390,7 +6399,7 @@ data people {
 }
 
 format options {
-    layout org { algorithm: tree; direction: down; root: @people.ceo; hierarchy: [reports_to]; }
+    layout org { gap: 112px; row_gap: 112px; algorithm: tree; direction: down; root: @people.ceo; hierarchy: [reports_to]; }
 }
 
 view org &quot;Synthetic organisation / org chart&quot; {
@@ -6457,7 +6466,7 @@ data plan {
 }
 
 format options {
-    layout wbs { algorithm: tree; direction: down; root: @plan.project; hierarchy: [&quot;analysis.decomposes&quot;]; }
+    layout wbs { gap: 112px; row_gap: 112px; algorithm: tree; direction: down; root: @plan.project; hierarchy: [&quot;analysis.decomposes&quot;]; }
 }
 
 view wbs &quot;Synthetic project / work breakdown structure&quot; {
@@ -6523,7 +6532,7 @@ data plan {
 }
 
 format options {
-    layout wbs { algorithm: tree; direction: down; root: @plan.project; hierarchy: [&quot;analysis.decomposes&quot;]; }
+    layout wbs { gap: 112px; row_gap: 112px; algorithm: tree; direction: down; root: @plan.project; hierarchy: [&quot;analysis.decomposes&quot;]; }
 }
 
 view wbs &quot;Synthetic project / work breakdown structure&quot; {
@@ -6588,7 +6597,7 @@ data ideas {
 }
 
 format options {
-    layout mind { algorithm: mindmap; routing: curved; root: @ideas.root; hierarchy: [assoc]; }
+    layout mind { gap: 112px; row_gap: 112px; algorithm: mindmap; routing: curved; root: @ideas.root; hierarchy: [assoc]; }
 }
 
 view mindmap &quot;Synthetic brainstorm / mind map&quot; {
@@ -6652,7 +6661,7 @@ data ideas {
 }
 
 format options {
-    layout mind { algorithm: mindmap; routing: curved; root: @ideas.root; hierarchy: [assoc]; }
+    layout mind { gap: 112px; row_gap: 112px; algorithm: mindmap; routing: curved; root: @ideas.root; hierarchy: [assoc]; }
 }
 
 view mindmap &quot;Synthetic brainstorm / mind map&quot; {
@@ -7329,18 +7338,21 @@ data items {
 }
 
 view bcg &quot;Synthetic portfolio / BCG&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@axes, @items];
     format: @shared.styles.technical;
     projection { kind:matrix; profile:&quot;matrix.bcg@1&quot;; rows:[@axes.g_high, @axes.g_low]; columns:[@axes.s_high, @axes.s_low]; relation:&quot;assoc&quot;; value:&quot;name&quot;; duplicates:join; }
 }
 
 view ansoff &quot;Synthetic portfolio / Ansoff&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@axes, @items];
     format: @shared.styles.technical;
     projection { kind:matrix; profile:&quot;matrix.ansoff@1&quot;; rows:[@axes.m_existing, @axes.m_new]; columns:[@axes.p_existing, @axes.p_new]; relation:&quot;assoc&quot;; value:&quot;name&quot;; duplicates:join; }
 }
 
 view tows &quot;Synthetic portfolio / TOWS&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@axes, @items];
     format: @shared.styles.technical;
     projection { kind:matrix; profile:&quot;matrix.tows@1&quot;; rows:[@axes.int_s, @axes.int_w]; columns:[@axes.ext_o, @axes.ext_t]; relation:&quot;assoc&quot;; value:&quot;name&quot;; duplicates:join; }
@@ -7415,18 +7427,21 @@ data items {
 }
 
 view bcg &quot;Synthetic portfolio / BCG&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@axes, @items];
     format: @ddn.examples.shared.styles.technical;
     projection { kind:matrix; profile:&quot;matrix.bcg@1&quot;; rows:[@axes.g_high, @axes.g_low]; columns:[@axes.s_high, @axes.s_low]; relation:&quot;assoc&quot;; value:&quot;name&quot;; duplicates:join; }
 }
 
 view ansoff &quot;Synthetic portfolio / Ansoff&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@axes, @items];
     format: @ddn.examples.shared.styles.technical;
     projection { kind:matrix; profile:&quot;matrix.ansoff@1&quot;; rows:[@axes.m_existing, @axes.m_new]; columns:[@axes.p_existing, @axes.p_new]; relation:&quot;assoc&quot;; value:&quot;name&quot;; duplicates:join; }
 }
 
 view tows &quot;Synthetic portfolio / TOWS&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@axes, @items];
     format: @ddn.examples.shared.styles.technical;
     projection { kind:matrix; profile:&quot;matrix.tows@1&quot;; rows:[@axes.int_s, @axes.int_w]; columns:[@axes.ext_o, @axes.ext_t]; relation:&quot;assoc&quot;; value:&quot;name&quot;; duplicates:join; }
@@ -7815,6 +7830,7 @@ data shop {
 }
 
 view storymap &quot;Shop rebuild / story map&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@shop];
     format: @shared.styles.technical;
     projection { kind:matrix; profile:&quot;matrix.storymap@1&quot;; rows:[@shop.r1, @shop.r2]; columns:[@shop.browse, @shop.configure, @shop.checkout, @shop.pay, @shop.fulfil]; relation:&quot;assoc&quot;; value:&quot;x_story.task&quot;; duplicates:join; }
@@ -7888,6 +7904,7 @@ data shop {
 }
 
 view storymap &quot;Shop rebuild / story map&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@shop];
     format: @ddn.examples.shared.styles.technical;
     projection { kind:matrix; profile:&quot;matrix.storymap@1&quot;; rows:[@shop.r1, @shop.r2]; columns:[@shop.browse, @shop.configure, @shop.checkout, @shop.pay, @shop.fulfil]; relation:&quot;assoc&quot;; value:&quot;x_story.task&quot;; duplicates:join; }
@@ -8894,7 +8911,7 @@ data order {
 view lifecycle &quot;Order lifecycle / composite states&quot; {
     data: [@order]; format: @shared.styles.technical;
     projection { kind: graph; profile: &quot;state.composite@1&quot;; }
-    layout { algorithm: layered; }
+    layout { algorithm: layered; gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
     frame fulfillment &quot;FULFILLMENT&quot; { scope: @order.fulfillment;
         members: [@order.fulfillment, @order.awaiting, @order.paid, @order.open, @order.packed]; }
@@ -8977,7 +8994,7 @@ data order {
 view lifecycle &quot;Order lifecycle / composite states&quot; {
     data: [@order]; format: @ddn.examples.shared.styles.technical;
     projection { kind: graph; profile: &quot;state.composite@1&quot;; }
-    layout { algorithm: layered; }
+    layout { algorithm: layered; gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
     frame fulfillment &quot;FULFILLMENT&quot; { scope: @order.fulfillment;
         members: [@order.fulfillment, @order.awaiting, @order.paid, @order.open, @order.packed]; }
@@ -9050,7 +9067,7 @@ data order {
 view fulfilment &quot;Order fulfilment activity&quot; {
     data: [@order]; format: @shared.styles.technical;
     projection { kind: graph; profile: &quot;uml.activity@1&quot;; }
-    layout { algorithm: layered; }
+    layout { algorithm: layered; gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
     frame webshop &quot;Webshop&quot; { members: [@order.start, @order.take_payment, @order.end]; }
     frame warehouse &quot;Warehouse&quot; { members: [@order.fork, @order.pick_items, @order.order_obj, @order.join]; }
@@ -9118,7 +9135,7 @@ data order {
 view fulfilment &quot;Order fulfilment activity&quot; {
     data: [@order]; format: @ddn.examples.shared.styles.technical;
     projection { kind: graph; profile: &quot;uml.activity@1&quot;; }
-    layout { algorithm: layered; }
+    layout { algorithm: layered; gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
     frame webshop &quot;Webshop&quot; { members: [@order.start, @order.take_payment, @order.end]; }
     frame warehouse &quot;Warehouse&quot; { members: [@order.fork, @order.pick_items, @order.order_obj, @order.join]; }
@@ -10511,7 +10528,7 @@ data m {
 
 view family &quot;Three generations&quot;: [@m] as &quot;family.tree@1&quot; {
     select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];
-    layout { algorithm: layered; direction: down; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -12453,6 +12470,7 @@ view associations &quot;UML class diagram / association ends&quot;: [@fleet] as 
 }
 
 view classifiers &quot;UML class diagram / classifiers&quot;: [@library] as &quot;uml.structure@2&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -12639,6 +12657,7 @@ data cluster {
 }
 
 view main &quot;UML deployment / nodes and artifacts&quot;: [@shop] as &quot;uml.deployment@1&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }
 
@@ -12700,6 +12719,7 @@ data structure {
 }
 
 view components &quot;UML component / ports and assembly&quot;: [@shop] as &quot;uml.composite@1&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }
 
@@ -12769,11 +12789,13 @@ data signals {
 }
 
 view pins &quot;UML activity / pins, decision and merge&quot;: [@fulfil] as &quot;uml.activity@2&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     frame struct &quot;Iterative&quot; { members: [@fulfil.take, @fulfil.dec, @fulfil.mrg]; x_structured: { mode: &quot;iterative&quot; }; }
     publication { size: content; fit: none; }
 }
 
 view interrupts &quot;UML activity / signals, interrupts, exceptions&quot;: [@signals] as &quot;uml.activity@2&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     frame danger &quot;Interruptible&quot; { members: [@signals.prepare, @signals.send_ship, @signals.wait_ack]; x_interruptible: true; }
     publication { size: content; fit: none; }
 }
@@ -12944,10 +12966,12 @@ data conv {
 }
 
 view process &quot;Process&quot;: [@proc] as &quot;bpmn.process@1&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     frame pool &quot;Webshop&quot; { members: [@proc.start, @proc.review, @proc.escalate, @proc.dec, @proc.pack, @proc.call, @proc.tx, @proc.adhoc, @proc.evsub, @proc.cancel_end, @proc.done]; x_pool: true; }
     publication { size: content; fit: none; minimum_text: 6pt; }
 }
 view collaboration &quot;Collaboration&quot;: [@proc] as &quot;bpmn.process@1&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     frame shop &quot;Webshop&quot; { members: [@proc.start, @proc.review, @proc.dec, @proc.pack, @proc.done]; x_pool: true; }
     frame erp &quot;ERP (black box)&quot; { members: [@proc.call, @proc.tx]; x_pool: true; x_collapsed: true; }
     publication { size: content; fit: none; }
@@ -12957,7 +12981,7 @@ view choreography &quot;Choreography&quot;: [@choreo] as &quot;bpmn.choreography
     publication { size: content; fit: none; minimum_text: 6pt; }
 }
 view conversation &quot;Conversation&quot;: [@conv] as &quot;bpmn.conversation@1&quot; {
-    layout { algorithm: layered; routing: straight; }
+    layout { gap: 130px; row_gap: 130px; algorithm: layered; routing: straight; }
     publication { size: content; fit: none; minimum_text: 6pt; }
 }
 </code></pre>
@@ -12996,6 +13020,7 @@ data c {
 }
 
 view v &quot;Case&quot;: [@c] as &quot;cmmn.complete@1&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     frame intake_f &quot;Intake&quot; { scope: @c.intake; members: [@c.review, @c.appr, @c.decide, @c.s1]; }
     publication { size: content; fit: none; }
 }
@@ -13044,12 +13069,12 @@ data pkgs {
 }
 
 view requirements &quot;Pump requirements&quot;: [@reqs] as &quot;sysml.requirements@1&quot; {
-    layout { algorithm: layered; direction: down; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
 }
 
 view packages &quot;Model packages&quot;: [@pkgs] as &quot;sysml.package@1&quot; {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -13121,7 +13146,7 @@ view ibd &quot;Pump station internals&quot;: [@m] as &quot;sysml.ibd@2&quot; {
 }
 
 view parametric &quot;Flow balance&quot;: [@m] as &quot;sysml.parametric@2&quot; {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
     exclude: [@m.water, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpIf, @m.waterSpec];
 }
@@ -13233,7 +13258,7 @@ data d {
 }
 
 view drd &quot;Claim handling DRD&quot;: [@d] as &quot;dmn.drd@1&quot; {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 
@@ -13301,7 +13326,7 @@ data choreo {
 }
 
 view arch &quot;Retail service architecture&quot;: [@m] as &quot;soaml.services@1&quot; {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 
@@ -13428,7 +13453,7 @@ data sum {
 }
 
 view strategic &quot;St — Strategic&quot; { data: [@st]; projection { profile: &quot;uaf.strategic@1&quot;; } publication { size: content; fit: none; } }
-view operational &quot;Op — Operational&quot; { data: [@op]; projection { profile: &quot;uaf.operational@1&quot;; } publication { size: content; fit: none; } }
+view operational &quot;Op — Operational&quot; { layout { gap: 112px; row_gap: 112px; } data: [@op]; projection { profile: &quot;uaf.operational@1&quot;; } publication { size: content; fit: none; } }
 view services &quot;Svc — Services&quot; { data: [@svc]; projection { profile: &quot;uaf.services@1&quot;; } publication { size: content; fit: none; } }
 view systems &quot;Sys — Systems&quot; { data: [@sys]; projection { profile: &quot;uaf.systems@1&quot;; } publication { size: content; fit: none; } }
 view personnel &quot;Pr — Personnel&quot; { data: [@per]; projection { profile: &quot;uaf.personnel@1&quot;; } publication { size: content; fit: none; } }
@@ -13526,7 +13551,7 @@ data m {
 }
 
 view chart &quot;ISO 5807 warehouse flow&quot;: [@m] as &quot;flow.iso5807@1&quot; {
-    layout { algorithm: layered; direction: down; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -13601,6 +13626,7 @@ view dynamic &quot;Browse dynamic&quot;: [@dyn] as &quot;c4.dynamic@1&quot; {
 }
 
 view epc &quot;Fulfillment EPC&quot;: [@e] as &quot;epc.complete@1&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     frame lane &quot;Warehouse lane&quot; { scope: @e.wh; members: [@e.pick, @e.picker, @e.list]; }
     publication { size: content; fit: none; }
 }
@@ -13714,7 +13740,7 @@ data m {
     relation rd &quot;&quot; @idle -&gt; @consume { kind: &quot;petri.testarc&quot;; }
 }
 view net &quot;Producer/consumer net&quot;: [@m] as &quot;petri.basic@1&quot; {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -13750,6 +13776,7 @@ data m {
     relation x1 &quot;&quot; @viporder -&gt; @has { kind: &quot;orm.exclusion&quot;; }
 }
 view model &quot;Customer fact model&quot;: [@m] as &quot;orm.basic@1&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -13790,7 +13817,7 @@ data m {
     relation o1 &quot;&quot; @op -&gt; @weld { kind: &quot;vsm.minfo&quot;; }
 }
 view map &quot;Current state map&quot;: [@m] as &quot;vsm.basic@1&quot; {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -13817,6 +13844,7 @@ data m {
     relation a3 &quot;&quot; @guest -&gt; @lan { kind: &quot;network.attaches&quot;; }
 }
 view net &quot;Icon network&quot;: [@m] as &quot;network.basic@1&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -13882,6 +13910,7 @@ view system &quot;SDL system&quot;: [@sys] as &quot;sdl.basic@1&quot; {
     publication { size: content; fit: none; }
 }
 view process &quot;Order process&quot;: [@p] as &quot;sdl.process@1&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }
 </code></pre>
@@ -13919,7 +13948,7 @@ format gallery {
 
 view grid &quot;Layouts / grid&quot; {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: grid; columns: 3; }
+    layout { gap: 112px; row_gap: 112px; algorithm: grid; columns: 3; }
 }
 view manual &quot;Layouts / manual (pinned)&quot; {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
@@ -13933,11 +13962,11 @@ view manual &quot;Layouts / manual (pinned)&quot; {
 }
 view layered &quot;Layouts / layered&quot; {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: right; }
 }
 view tree &quot;Layouts / tree&quot; {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: tree; root: @model.holding; hierarchy: [assoc]; }
+    layout { gap: 112px; row_gap: 112px; algorithm: tree; root: @model.holding; hierarchy: [assoc]; }
 }
 view mindmap &quot;Layouts / mindmap&quot; {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
@@ -13961,7 +13990,7 @@ view radial &quot;Layouts / radial&quot; {
 }
 view spanning_tree &quot;Layouts / spanning_tree&quot; {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: spanning_tree; root: @model.holding; }
+    layout { gap: 112px; row_gap: 112px; algorithm: spanning_tree; root: @model.holding; }
 }
 view organic &quot;Layouts / organic&quot; {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
@@ -14464,7 +14493,7 @@ data model {
 
 format gallery {
     style standard;
-    layout flow_right { algorithm: layered; }
+    layout flow_right { gap: 112px; row_gap: 112px;  algorithm: layered; }
     display readable { badges: none; maturity: none; }
     publication screen { size: content; fit: none; }
     legend key { width: 260px; }
@@ -14643,12 +14672,12 @@ data network {
 }
 format patterns {
     style day;
-    layout grid { algorithm: fit_grid; center: pins; gap: 80px; routing: curved; }
-    layout circle { algorithm: circular; center: pins; gap: 80px; routing: curved; }
-    layout rings { algorithm: radial; center: pins; gap: 80px; routing: curved; }
-    layout hierarchy { algorithm: layered; center: pins; gap: 80px; }
-    layout breadth { algorithm: spanning_tree; center: pins; gap: 80px; routing: curved; }
-    layout force { algorithm: organic; center: pins; gap: 80px; routing: curved; }
+    layout grid { algorithm: fit_grid; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
+    layout circle { algorithm: circular; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
+    layout rings { algorithm: radial; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
+    layout hierarchy { algorithm: layered; center: pins; gap: 112px; row_gap: 112px; }
+    layout breadth { algorithm: spanning_tree; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
+    layout force { algorithm: organic; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
     display detail { maturity: none; }
     legend key { mode: numbers; width: 330px; keys: {&quot;network.submit&quot;:1,&quot;network.route&quot;:2,&quot;network.reserve&quot;:3,&quot;network.plan&quot;:4,&quot;network.persist&quot;:5,&quot;network.publish&quot;:6,&quot;network.history_projection&quot;:7,&quot;network.monitor&quot;:8,&quot;network.document&quot;:9}; }
     publication page { size: content; fit: none; }
@@ -15710,6 +15739,7 @@ import &quot;./details.ddn&quot; as d;
 import &quot;./formats.ddn&quot; as f;
 
 view fishbone &quot;01 / Possible causes&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@m.causes];
     format: @f.shared.common;
     projection { kind: &quot;fishbone&quot;; profile: &quot;fishbone.basic@1&quot;; effect: @m.causes.effect; relation: &quot;quality.cause&quot;; }
@@ -15717,6 +15747,7 @@ view fishbone &quot;01 / Possible causes&quot; {
 }
 
 view fishbone_sketch &quot;01 / Possible causes — sketch&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@m.causes];
     format: @f.shared.common;
     projection { kind: &quot;fishbone&quot;; profile: &quot;fishbone.basic@1&quot;; effect: @m.causes.effect; relation: &quot;quality.cause&quot;; }
@@ -15724,6 +15755,7 @@ view fishbone_sketch &quot;01 / Possible causes — sketch&quot; {
 }
 
 view heat_numeric &quot;02 / Review score — numeric&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@m.responsibilities];
     format: @f.shared.common;
     projection { kind: &quot;matrix&quot;; write_data: @m.responsibilities; profile: &quot;matrix.heatmap@1&quot;; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: &quot;assoc&quot;; value: &quot;x_record.score&quot;; encoding: { &quot;mode&quot;: &quot;numeric&quot;, &quot;domain&quot;: [0, 10], &quot;palette&quot;: &quot;blue&quot; }; }
@@ -15732,6 +15764,7 @@ view heat_numeric &quot;02 / Review score — numeric&quot; {
 }
 
 view heat_bands &quot;02 / Review score — bands&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@m.responsibilities];
     format: @f.shared.common;
     projection { kind: &quot;matrix&quot;; write_data: @m.responsibilities; profile: &quot;matrix.heatmap@1&quot;; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: &quot;assoc&quot;; value: &quot;x_record.score&quot;; encoding: { &quot;mode&quot;: &quot;bands&quot;, &quot;boundaries&quot;: [0, 3, 7, 11], &quot;labels&quot;: [&quot;Low&quot;, &quot;Watch&quot;, &quot;Action&quot;], &quot;palette&quot;: &quot;blue&quot; }; }
@@ -15740,6 +15773,7 @@ view heat_bands &quot;02 / Review score — bands&quot; {
 }
 
 view heat_categories &quot;02 / Review score — categories&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@m.responsibilities];
     format: @f.shared.common;
     projection { kind: &quot;matrix&quot;; write_data: @m.responsibilities; profile: &quot;matrix.heatmap@1&quot;; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: &quot;assoc&quot;; value: &quot;x_record.status&quot;; encoding: { &quot;mode&quot;: &quot;category&quot;, &quot;values&quot;: [&quot;Good&quot;, &quot;Monitor&quot;, &quot;Action&quot;], &quot;labels&quot;: [&quot;Good&quot;, &quot;Monitor&quot;, &quot;Action&quot;], &quot;palette&quot;: &quot;blue&quot; }; }
@@ -15963,6 +15997,7 @@ view flow_documented &quot;21 / Documented cross-sheet control flow&quot; {
 
 module &quot;meridian.quality.views&quot;;
 view fishbone &quot;01 / Possible causes&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@meridian.quality.review.causes];
     format: @meridian.quality.formats.shared.common;
     projection { kind: &quot;fishbone&quot;; profile: &quot;fishbone.basic@1&quot;; effect: @meridian.quality.review.causes.effect; relation: &quot;quality.cause&quot;; }
@@ -15970,6 +16005,7 @@ view fishbone &quot;01 / Possible causes&quot; {
 }
 
 view fishbone_sketch &quot;01 / Possible causes — sketch&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@meridian.quality.review.causes];
     format: @meridian.quality.formats.shared.common;
     projection { kind: &quot;fishbone&quot;; profile: &quot;fishbone.basic@1&quot;; effect: @meridian.quality.review.causes.effect; relation: &quot;quality.cause&quot;; }
@@ -15977,6 +16013,7 @@ view fishbone_sketch &quot;01 / Possible causes — sketch&quot; {
 }
 
 view heat_numeric &quot;02 / Review score — numeric&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@meridian.quality.review.responsibilities];
     format: @meridian.quality.formats.shared.common;
     projection { kind: &quot;matrix&quot;; write_data: @meridian.quality.review.responsibilities; profile: &quot;matrix.heatmap@1&quot;; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c]; relation: &quot;assoc&quot;; value: &quot;x_record.score&quot;; encoding: { &quot;mode&quot;: &quot;numeric&quot;, &quot;domain&quot;: [0, 10], &quot;palette&quot;: &quot;blue&quot; }; }
@@ -15985,6 +16022,7 @@ view heat_numeric &quot;02 / Review score — numeric&quot; {
 }
 
 view heat_bands &quot;02 / Review score — bands&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@meridian.quality.review.responsibilities];
     format: @meridian.quality.formats.shared.common;
     projection { kind: &quot;matrix&quot;; write_data: @meridian.quality.review.responsibilities; profile: &quot;matrix.heatmap@1&quot;; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c]; relation: &quot;assoc&quot;; value: &quot;x_record.score&quot;; encoding: { &quot;mode&quot;: &quot;bands&quot;, &quot;boundaries&quot;: [0, 3, 7, 11], &quot;labels&quot;: [&quot;Low&quot;, &quot;Watch&quot;, &quot;Action&quot;], &quot;palette&quot;: &quot;blue&quot; }; }
@@ -15993,6 +16031,7 @@ view heat_bands &quot;02 / Review score — bands&quot; {
 }
 
 view heat_categories &quot;02 / Review score — categories&quot; {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@meridian.quality.review.responsibilities];
     format: @meridian.quality.formats.shared.common;
     projection { kind: &quot;matrix&quot;; write_data: @meridian.quality.review.responsibilities; profile: &quot;matrix.heatmap@1&quot;; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c]; relation: &quot;assoc&quot;; value: &quot;x_record.status&quot;; encoding: { &quot;mode&quot;: &quot;category&quot;, &quot;values&quot;: [&quot;Good&quot;, &quot;Monitor&quot;, &quot;Action&quot;], &quot;labels&quot;: [&quot;Good&quot;, &quot;Monitor&quot;, &quot;Action&quot;], &quot;palette&quot;: &quot;blue&quot; }; }

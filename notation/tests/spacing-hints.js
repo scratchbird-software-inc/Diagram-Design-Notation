@@ -18,7 +18,7 @@ data model {
  relation r4 "audits" @a -> @d { kind: assoc; }
 }
 format fmts {
- layout lay { algorithm: grid; columns: 2; }
+ layout lay { algorithm: grid; columns: 2; gap: 112px; row_gap: 112px; }
  bundle plain { layout: @lay; }
  bundle wide { spacing: loose; layout: @lay; }
 }
@@ -33,7 +33,7 @@ data model {
  relation r1 "A deliberately long relationship label used for reservation checks" @a -> @b { kind: assoc; }
 }
 format fmts {
- layout lay { algorithm: grid; columns: 2; }
+ layout lay { algorithm: grid; columns: 2; gap: 112px; row_gap: 112px; }
  bundle wide { spacing: loose; layout: @lay; }
  bundle plain { layout: @lay; }
 }
@@ -69,7 +69,7 @@ test('bad format spacing value rejected as DDN033',()=>{
  fail(()=>render(src),'DDN033');
 });
 test('spacing inside a layout group is an unknown property (DDN033)',()=>{
- const src=fixture('').replace('layout lay { algorithm: grid; columns: 2; }','layout lay { algorithm: grid; columns: 2; spacing: loose; }');
+ const src=fixture('').replace('layout lay { algorithm: grid; columns: 2; gap: 112px; row_gap: 112px; }','layout lay { algorithm: grid; columns: 2; gap: 112px; row_gap: 112px; spacing: loose; }');
  fail(()=>render(src),'DDN033');
 });
 
@@ -100,7 +100,7 @@ data m {
  relation r3 "audits" @a -> @c { kind: assoc; }
  relation r4 "owns" @c -> @d { kind: assoc; }
 }
-format fmts { layout lay { algorithm: grid; columns: 2; gap: 120px; row_gap: 170px; } bundle plain { layout: @lay; } }
+format fmts { layout lay { algorithm: grid; columns: 2; gap: 140px; row_gap: 170px; } bundle plain { layout: @lay; } }
 view main "Spread" { data: [@m]; format: @fmts.plain; ${spacing} publication { size: content; fit: none; } }
 `;
 test('canvas width and height spread monotonically tight < normal < loose < expanded',()=>{

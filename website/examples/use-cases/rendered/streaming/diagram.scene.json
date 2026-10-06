@@ -1,7 +1,7 @@
 {
   "smallestText": 11,
   "width": 1505,
-  "height": 724,
+  "height": 628,
   "scale": 1,
   "origin": [
     40,
@@ -75,7 +75,7 @@
       "meaningLines": [],
       "noteLines": [],
       "x": 0,
-      "y": 212,
+      "y": 164,
       "fieldRows": []
     },
     {
@@ -93,7 +93,7 @@
       "meaningLines": [],
       "noteLines": [],
       "x": 390,
-      "y": 212,
+      "y": 164,
       "fieldRows": []
     },
     {
@@ -110,7 +110,7 @@
       "meaningLines": [],
       "noteLines": [],
       "x": 780,
-      "y": 212,
+      "y": 164,
       "fieldRows": []
     },
     {
@@ -127,7 +127,7 @@
       "meaningLines": [],
       "noteLines": [],
       "x": 0,
-      "y": 424,
+      "y": 328,
       "fieldRows": []
     }
   ],
@@ -197,24 +197,24 @@
         ],
         [
           716,
-          196
+          148
         ],
         [
           314,
-          196
+          148
         ],
         [
           314,
-          245.333
+          197.333
         ],
         [
           270,
-          245.333
+          197.333
         ]
       ],
       "label": {
         "x": 349.25,
-        "y": 181,
+        "y": 133,
         "w": 30,
         "h": 30
       },
@@ -235,16 +235,16 @@
         ],
         [
           736,
-          262
+          214
         ],
         [
           660,
-          262
+          214
         ]
       ],
       "label": {
-        "x": 683,
-        "y": 247,
+        "x": 721,
+        "y": 164.25,
         "w": 30,
         "h": 30
       },
@@ -257,32 +257,32 @@
       "points": [
         [
           270,
-          278.667
+          230.667
         ],
         [
           314,
-          278.667
+          230.667
         ],
         [
           314,
-          328
+          280
         ],
         [
           736,
-          328
+          280
         ],
         [
           736,
-          278.667
+          230.667
         ],
         [
           780,
-          278.667
+          230.667
         ]
       ],
       "label": {
         "x": 351.75,
-        "y": 313,
+        "y": 265,
         "w": 30,
         "h": 30
       },
@@ -295,24 +295,24 @@
       "points": [
         [
           390,
-          262
+          214
         ],
         [
           326,
-          262
+          214
         ],
         [
           326,
-          474
+          378
         ],
         [
           270,
-          474
+          378
         ]
       ],
       "label": {
         "x": 311,
-        "y": 353,
+        "y": 322,
         "w": 30,
         "h": 30
       },
@@ -325,7 +325,7 @@
     {
       "point": [
         326,
-        328
+        280
       ],
       "under": "ddn.usecases.flow::stream.r_history_write",
       "over": "ddn.usecases.flow::stream.r_search_write",
@@ -357,7 +357,7 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 1,
-        "length": 2234.666,
+        "length": 2090.666,
         "bends": 14
       },
       {
@@ -365,14 +365,14 @@
         "trials": 14,
         "accepted": 1,
         "crossings": 1,
-        "length": 2217.9990000000003,
+        "length": 2073.999,
         "bends": 14
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 1,
         "localCrossings": 0,
-        "length": 2217.9990000000003,
+        "length": 2073.999,
         "bends": 14,
         "trials": 0,
         "accepted": 0
@@ -381,13 +381,13 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 1,
-        "length": 2217.9990000000003,
+        "length": 2073.999,
         "bends": 14
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 1,
-        "length": 2217.9990000000003,
+        "length": 2073.999,
         "bends": 14
       }
     ],
@@ -402,13 +402,13 @@
       "before": {
         "crossings": 1,
         "localCrossings": 0,
-        "length": 2217.9990000000003,
+        "length": 2073.999,
         "bends": 14
       },
       "after": {
         "crossings": 1,
         "localCrossings": 0,
-        "length": 2217.9990000000003,
+        "length": 2073.999,
         "bends": 14
       },
       "exhausted": false
@@ -421,13 +421,13 @@
     "x": 0,
     "y": 0,
     "w": 1080,
-    "h": 554
+    "h": 458
   },
   "drawingArea": {
     "x": 30,
     "y": 90,
     "w": 1080,
-    "h": 564
+    "h": 468
   },
   "layoutState": {
     "format": "ddn-layout-state@1",
@@ -447,19 +447,19 @@
       ],
       "ddn.usecases.flow::stream.hist_job": [
         0,
-        212
+        164
       ],
       "ddn.usecases.flow::stream.search_job": [
         390,
-        212
+        164
       ],
       "ddn.usecases.flow::stream.history": [
         780,
-        212
+        164
       ],
       "ddn.usecases.flow::stream.search": [
         0,
-        424
+        328
       ]
     }
   },

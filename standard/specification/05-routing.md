@@ -11,11 +11,11 @@
 | mindmap | Two-sided root with alternating primary branches; otherwise a forest layout. |
 | grouped | Groups by a declared property path, then places a grid in each group. The grouping does not create containment facts. |
 
-Spacing values are preferences subject to minimum port/edge clearances. Hard pins cannot overlap. `direction` controls ranked orientation for layered layout and endpoint preference for grid/manual. Tree/mind-map use a horizontal branching arrangement in this edition; a renderer must not claim arbitrary orientation of those algorithms.
+Spacing values are preferences honored verbatim down to the 20 px DDN200 floor (see ch. 15); the clearances below are routing-time pads, not node-spacing floors. Hard pins cannot overlap. `direction` controls ranked orientation for layered layout and endpoint preference for grid/manual. Tree/mind-map use a horizontal branching arrangement in this edition; a renderer must not claim arbitrary orientation of those algorithms.
 
 ## Endpoint and route pipeline
 
-Measure visible cards and rows → place nodes → reserve every field/object port stub → assign independent endpoint slots → route around inflated object boxes and prior callout envelopes → place callouts → validate the complete scene. A later edge cannot overwrite an earlier label or borrow an unrelated connector track.
+Measure visible cards and rows → place nodes → reserve every field/object port stub (the corridor extends `object_clearance + port_clearance` past the port, keeping fan-out lanes separable; it is a routing pad, not a node-spacing floor) → assign independent endpoint slots → route around inflated object boxes and prior callout envelopes → place callouts → validate the complete scene. A later edge cannot overwrite an earlier label or borrow an unrelated connector track.
 
 The native router uses deterministic orthogonal candidates and bounded A* over an obstacle visibility grid. It penalizes bends/crossings and reserves independent lanes. It is not an optimality proof. Exhausted search or infeasible hard geometry returns a diagnostic; no invisible topology mutation is permitted. Rendering the same model, profile and metric environment is deterministic. A changed model may legitimately trigger a different layout; stable coordinates across arbitrary edits are not guaranteed.
 

@@ -103,10 +103,16 @@ test('embedding_scale stays declaration-only: SVG bytes unchanged by embedding_s
  assert.equal(a,b,'no lint trigger at default minimum_text');
 });
 
-test('DDN200: authored gap below 20px is rejected, not floored; >=20 raised to clearance floor',()=>{
+test('DDN200: authored gap below 20px is rejected; >=20 is the verbatim inter-element gap',()=>{
  assert.equal(code(()=>render(MODEL+'\nview v { data: [@m]; layout { gap: 10px; } }')),'DDN200','gap 10 rejected');
  assert.equal(code(()=>render(MODEL+'\nview v { data: [@m]; layout { row_gap: 19px; } }')),'DDN200','row_gap 19 rejected');
- const r=render(MODEL+'\nview v { data: [@m]; layout { gap: 20px; algorithm: grid; } }');
- assert.ok(r.svg.includes('<svg'),'gap 20 accepted and floored to the clearance-derived minimum');
+ const r=render(MODEL+'\nview v { data: [@m]; layout { gap: 64px; algorithm: grid; } }');
+ assert.ok(r.svg.includes('<svg'),'gap 64 accepted');
+ const a=r.scene.nodes.find(n=>n.id.endsWith('.a')),b=r.scene.nodes.find(n=>n.id.endsWith('.b'));
+ assert.ok(Math.abs(b.x-(a.x+a.w)-64)<1e-9,'authored gap is used verbatim — no clearance floor added');
+ // Clearances still govern routing: at gap 20 two facing endpoints cannot
+ // escape past each other's inflated boxes and escape corridors, so the router
+ // reports DDN212 instead of silently widening the authored spacing.
+ assert.equal(code(()=>render(MODEL+'\nview v { data: [@m]; layout { gap: 20px; algorithm: grid; } }')),'DDN212','sub-clearance gap is a routing diagnostic, not a silent override');
 });
 console.log('content-scale:',results.filter(r=>r.pass).length+'/'+results.length,'passed');

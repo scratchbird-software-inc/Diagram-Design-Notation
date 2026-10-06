@@ -27,6 +27,6 @@ data m {
 
 view family "Three generations": [@m] as "family.tree@1" {
     select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];
-    layout { algorithm: layered; direction: down; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
 }

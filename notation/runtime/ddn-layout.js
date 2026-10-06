@@ -66,7 +66,10 @@ function cross(s,t,margin=0){
 function collinear(s,t,tolerance=.1){const h=Math.abs(s.a[1]-s.b[1])<EPS&&Math.abs(t.a[1]-t.b[1])<EPS,v=Math.abs(s.a[0]-s.b[0])<EPS&&Math.abs(t.a[0]-t.b[0])<EPS;if(h&&Math.abs(s.a[1]-t.a[1])<tolerance)return Math.min(Math.max(s.a[0],s.b[0]),Math.max(t.a[0],t.b[0]))-Math.max(Math.min(s.a[0],s.b[0]),Math.min(t.a[0],t.b[0]))>EPS;if(v&&Math.abs(s.a[0]-t.a[0])<tolerance)return Math.min(Math.max(s.a[1],s.b[1]),Math.max(t.a[1],t.b[1]))-Math.max(Math.min(s.a[1],s.b[1]),Math.min(t.a[1],t.b[1]))>EPS;return false;}
 function distancePointSegment(p,s){const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],l=dx*dx+dy*dy;if(!l)return Math.hypot(p[0]-s.a[0],p[1]-s.a[1]);const t=Math.max(0,Math.min(1,((p[0]-s.a[0])*dx+(p[1]-s.a[1])*dy)/l));return Math.hypot(p[0]-s.a[0]-t*dx,p[1]-s.a[1]-t*dy);}
 function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
- const p=profiles.layout,minGap=2*(q(p.object_clearance,16)+Math.max(24,q(p.port_clearance,28)))+2*q(p.edge_clearance,12),diag=[];const authoredGap=q(p.gap,100),authoredRowGap=q(p.row_gap,100);if(authoredGap<20||authoredRowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');let gap=Math.max(authoredGap,minGap),rowGap=Math.max(authoredRowGap,minGap);
+ /* DDN200: the authored gap/row_gap IS the inter-element gap (floor 20px).
+  * object/edge/port clearances govern routing pads and port fan-out stubs
+  * (routingAttempt), never node spacing. */
+ const p=profiles.layout,diag=[];const authoredGap=q(p.gap,64),authoredRowGap=q(p.row_gap,64);if(authoredGap<20||authoredRowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');let gap=authoredGap,rowGap=authoredRowGap;
  const spread=spacingScale(p);gap=round(gap*spread);rowGap=round(rowGap*spread);
  const order=new Map(nodes.map((n,i)=>[n.id,i])),byId=new Map(nodes.map(n=>[n.id,n])),ids=new Set(byId.keys());
  const edges=rels.filter(r=>ids.has(r.from.element)&&ids.has(r.to.element)&&r.from.element!==r.to.element);

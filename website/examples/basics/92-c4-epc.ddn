@@ -65,6 +65,7 @@ view dynamic "Browse dynamic": [@dyn] as "c4.dynamic@1" {
 }
 
 view epc "Fulfillment EPC": [@e] as "epc.complete@1" {
+    layout { gap: 112px; row_gap: 112px; }
     frame lane "Warehouse lane" { scope: @e.wh; members: [@e.pick, @e.picker, @e.list]; }
     publication { size: content; fit: none; }
 }

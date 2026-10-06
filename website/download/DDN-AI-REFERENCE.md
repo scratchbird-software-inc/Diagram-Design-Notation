@@ -483,11 +483,11 @@ Labels, reference numerals and callout badges must not overlap each other or unr
   },
   "crossings": "gap",
   "gap": {
-   "$quantity": 100,
+   "$quantity": 64,
    "unit": "px"
   },
   "row_gap": {
-   "$quantity": 100,
+   "$quantity": 64,
    "unit": "px"
   },
   "columns": 3,

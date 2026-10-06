@@ -62,7 +62,7 @@ view ibd "Pump station internals": [@m] as "sysml.ibd@2" {
 }
 
 view parametric "Flow balance": [@m] as "sysml.parametric@2" {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
     exclude: [@m.water, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpIf, @m.waterSpec];
 }

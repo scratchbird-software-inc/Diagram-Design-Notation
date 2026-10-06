@@ -2886,7 +2886,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     projection:{kind:'graph',profile:'ddn@1'},
     notation:{registry:'ddn-core@0.3'},
     style:{look:'classic',theme:'default',font:'sans',font_size:{$quantity:16,unit:'px'},seed:42},
-    layout:{algorithm:'auto',auto_place:true,center:'content',grid_step:{$quantity:32,unit:'px'},optimize:'crossings',endpoint_ordering:'optimize',frame_overflow:'expand',direction:'right',routing:'orthogonal',curve:'bezier',curve_tension:.5,curve_radius:{$quantity:32,unit:'px'},crossings:'gap',gap:{$quantity:100,unit:'px'},row_gap:{$quantity:100,unit:'px'},columns:3,object_clearance:{$quantity:16,unit:'px'},edge_clearance:{$quantity:12,unit:'px'},port_clearance:{$quantity:28,unit:'px'},route_policy:'repair',quality:'error',root:null,group_by:'none'},
+    layout:{algorithm:'auto',auto_place:true,center:'content',grid_step:{$quantity:32,unit:'px'},optimize:'crossings',endpoint_ordering:'optimize',frame_overflow:'expand',direction:'right',routing:'orthogonal',curve:'bezier',curve_tension:.5,curve_radius:{$quantity:32,unit:'px'},crossings:'gap',gap:{$quantity:64,unit:'px'},row_gap:{$quantity:64,unit:'px'},columns:3,object_clearance:{$quantity:16,unit:'px'},edge_clearance:{$quantity:12,unit:'px'},port_clearance:{$quantity:28,unit:'px'},route_policy:'repair',quality:'error',root:null,group_by:'none'},
     display:{fields:'names',kind:'icon_token',maturity:'token',badges:'tokens',relations:'between_selected',samples:'show',domains:'hide',datatypes:'hide',depth:32},
     publication:{size:'figure',width:{$quantity:1280,unit:'px'},height:{$quantity:800,unit:'px'},margin:{$quantity:32,unit:'px'},fit:'contain',minimum_text:{$quantity:8,unit:'pt'},overflow:'error'},
     legend:{mode:'text',placement:'right',width:{$quantity:310,unit:'px'},keys:{}},
@@ -3682,7 +3682,7 @@ function setup(nodes,rels,ir,p) {
  const pins=ordered.filter(n=>n.pinned),pinBounds=bounds(pins),anchor=pinBounds?center(pinBounds):[0,0];
  const adj=adjacency(ordered,rels),root=pins.length?pins.map(n=>n.id):ordered.length?[...ordered].sort((a,b)=>adj.get(b.id).length-adj.get(a.id).length||cmp(a.id,b.id))[0].id:null;
  const roots=Array.isArray(root)?root:root?[root]:[];
- const gap=q(p.layout.gap,80),step=q(p.layout.grid_step,32);
+ const gap=q(p.layout.gap,64),step=q(p.layout.grid_step,32);
  if(!Number.isFinite(gap)||gap<16||gap>2000)error('LIVE-P001','Pattern gap must be a length from 16 to 2000 CSS pixels.');
  if(!Number.isFinite(step)||step<8||step>512)error('LIVE-P001','grid_step must be a length from 8 to 512 CSS pixels.');
  const ctx={algorithm,ordered,pins,free:ordered.filter(n=>!n.pinned),pinBounds,anchor,adj,roots,gap,step,

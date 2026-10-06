@@ -48,7 +48,7 @@ data choreo {
 }
 
 view arch "Retail service architecture": [@m] as "soaml.services@1" {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 

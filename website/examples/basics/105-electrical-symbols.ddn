@@ -36,6 +36,6 @@ data m {
     assoc w11 "" @u2 -> @u3;
 }
 view sch "Electrical symbol library": [@m] as "network.basic@1" {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }

@@ -1,7 +1,7 @@
 {
   "smallestText": 11,
   "width": 1569,
-  "height": 597,
+  "height": 549,
   "scale": 1,
   "origin": [
     60,
@@ -73,7 +73,7 @@
       "meaningLines": [],
       "noteLines": [],
       "x": 0,
-      "y": 212,
+      "y": 164,
       "fieldRows": []
     },
     {
@@ -90,7 +90,7 @@
       "meaningLines": [],
       "noteLines": [],
       "x": 390,
-      "y": 212,
+      "y": 164,
       "fieldRows": []
     },
     {
@@ -107,7 +107,7 @@
       "meaningLines": [],
       "noteLines": [],
       "x": 780,
-      "y": 212,
+      "y": 164,
       "fieldRows": []
     }
   ],
@@ -177,11 +177,11 @@
       "points": [
         [
           270,
-          237
+          189
         ],
         [
           314,
-          237
+          189
         ],
         [
           314,
@@ -194,7 +194,7 @@
       ],
       "label": {
         "x": 299,
-        "y": 136.83350000000002,
+        "y": 112.8335,
         "w": 30,
         "h": 30
       },
@@ -223,11 +223,11 @@
         ],
         [
           704,
-          262
+          214
         ],
         [
           660,
-          262
+          214
         ]
       ],
       "label": {
@@ -245,32 +245,32 @@
       "points": [
         [
           270,
-          287
+          239
         ],
         [
           314,
-          287
+          239
         ],
         [
           314,
-          328
+          280
         ],
         [
           736,
-          328
+          280
         ],
         [
           736,
-          262
+          214
         ],
         [
           780,
-          262
+          214
         ]
       ],
       "label": {
         "x": 351.75,
-        "y": 313,
+        "y": 265,
         "w": 30,
         "h": 30
       },
@@ -291,24 +291,24 @@
         ],
         [
           676,
-          139
+          148
         ],
         [
           337,
-          139
+          148
         ],
         [
           337,
-          262
+          214
         ],
         [
           270,
-          262
+          214
         ]
       ],
       "label": {
-        "x": 491.5,
-        "y": 124,
+        "x": 288.5,
+        "y": 199,
         "w": 30,
         "h": 30
       },
@@ -330,7 +330,7 @@
       "x": 370,
       "y": -54,
       "w": 700,
-      "h": 388
+      "h": 340
     },
     {
       "id": "ddn.usecases.views.hybrid-deployment::diagram.cloud",
@@ -341,7 +341,7 @@
         "ddn.usecases.deployment::model.cloud"
       ],
       "x": -20,
-      "y": 158,
+      "y": 110,
       "w": 1090,
       "h": 176
     }
@@ -370,7 +370,7 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 1,
-        "length": 2218,
+        "length": 2074,
         "bends": 16
       },
       {
@@ -378,14 +378,14 @@
         "trials": 1,
         "accepted": 1,
         "crossings": 0,
-        "length": 2576,
+        "length": 2432,
         "bends": 18
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
-        "length": 2576,
+        "length": 2432,
         "bends": 18,
         "trials": 0,
         "accepted": 0
@@ -394,13 +394,13 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 0,
-        "length": 2576,
+        "length": 2432,
         "bends": 18
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
-        "length": 2576,
+        "length": 2432,
         "bends": 18
       }
     ],
@@ -415,13 +415,13 @@
       "before": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 2576,
+        "length": 2432,
         "bends": 18
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 2576,
+        "length": 2432,
         "bends": 18
       },
       "exhausted": false
@@ -434,13 +434,13 @@
     "x": -20,
     "y": -54,
     "w": 1144,
-    "h": 427
+    "h": 379
   },
   "drawingArea": {
     "x": 30,
     "y": 90,
     "w": 1144,
-    "h": 437
+    "h": 389
   },
   "layoutState": {
     "format": "ddn-layout-state@1",
@@ -460,15 +460,15 @@
       ],
       "ddn.usecases.deployment::model.follower": [
         0,
-        212
+        164
       ],
       "ddn.usecases.deployment::model.local": [
         390,
-        212
+        164
       ],
       "ddn.usecases.deployment::model.cloud": [
         780,
-        212
+        164
       ]
     }
   },

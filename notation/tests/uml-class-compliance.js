@@ -46,7 +46,7 @@ data model {
 view classes "UML class completeness" {
     data: [@model];
     projection { kind: graph; profile: "uml.structure@2"; }
-    layout { algorithm: layered; }
+    layout { algorithm: layered; gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; overflow: error; minimum_text: 6pt; }
 }
 `;

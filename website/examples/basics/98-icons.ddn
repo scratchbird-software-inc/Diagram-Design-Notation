@@ -17,5 +17,6 @@ data m {
     relation a3 "" @guest -> @lan { kind: "network.attaches"; }
 }
 view net "Icon network": [@m] as "network.basic@1" {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }

@@ -28,6 +28,6 @@ data cluster {
 }
 
 view diagram "Synthetic shards and replicas / placement": [@cluster] as "ddn@1" {
-    layout { algorithm: layered; direction: right; }
+    layout { algorithm: layered; direction: right; gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }

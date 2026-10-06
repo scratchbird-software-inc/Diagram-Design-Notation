@@ -27,7 +27,7 @@ data plan {
 }
 
 format options {
-    layout wbs { algorithm: tree; direction: down; root: @plan.project; hierarchy: ["analysis.decomposes"]; }
+    layout wbs { gap: 112px; row_gap: 112px; algorithm: tree; direction: down; root: @plan.project; hierarchy: ["analysis.decomposes"]; }
 }
 
 view wbs "Synthetic project / work breakdown structure" {

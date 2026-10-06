@@ -63,10 +63,12 @@ data conv {
 }
 
 view process "Process": [@proc] as "bpmn.process@1" {
+    layout { gap: 112px; row_gap: 112px; }
     frame pool "Webshop" { members: [@proc.start, @proc.review, @proc.escalate, @proc.dec, @proc.pack, @proc.call, @proc.tx, @proc.adhoc, @proc.evsub, @proc.cancel_end, @proc.done]; x_pool: true; }
     publication { size: content; fit: none; minimum_text: 6pt; }
 }
 view collaboration "Collaboration": [@proc] as "bpmn.process@1" {
+    layout { gap: 112px; row_gap: 112px; }
     frame shop "Webshop" { members: [@proc.start, @proc.review, @proc.dec, @proc.pack, @proc.done]; x_pool: true; }
     frame erp "ERP (black box)" { members: [@proc.call, @proc.tx]; x_pool: true; x_collapsed: true; }
     publication { size: content; fit: none; }
@@ -76,6 +78,6 @@ view choreography "Choreography": [@choreo] as "bpmn.choreography@1" {
     publication { size: content; fit: none; minimum_text: 6pt; }
 }
 view conversation "Conversation": [@conv] as "bpmn.conversation@1" {
-    layout { algorithm: layered; routing: straight; }
+    layout { gap: 130px; row_gap: 130px; algorithm: layered; routing: straight; }
     publication { size: content; fit: none; minimum_text: 6pt; }
 }

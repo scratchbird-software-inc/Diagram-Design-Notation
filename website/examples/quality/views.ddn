@@ -5,6 +5,7 @@ import "./details.ddn" as d;
 import "./formats.ddn" as f;
 
 view fishbone "01 / Possible causes" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@m.causes];
     format: @f.shared.common;
     projection { kind: "fishbone"; profile: "fishbone.basic@1"; effect: @m.causes.effect; relation: "quality.cause"; }
@@ -12,6 +13,7 @@ view fishbone "01 / Possible causes" {
 }
 
 view fishbone_sketch "01 / Possible causes — sketch" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@m.causes];
     format: @f.shared.common;
     projection { kind: "fishbone"; profile: "fishbone.basic@1"; effect: @m.causes.effect; relation: "quality.cause"; }
@@ -19,6 +21,7 @@ view fishbone_sketch "01 / Possible causes — sketch" {
 }
 
 view heat_numeric "02 / Review score — numeric" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@m.responsibilities];
     format: @f.shared.common;
     projection { kind: "matrix"; write_data: @m.responsibilities; profile: "matrix.heatmap@1"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: "assoc"; value: "x_record.score"; encoding: { "mode": "numeric", "domain": [0, 10], "palette": "blue" }; }
@@ -27,6 +30,7 @@ view heat_numeric "02 / Review score — numeric" {
 }
 
 view heat_bands "02 / Review score — bands" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@m.responsibilities];
     format: @f.shared.common;
     projection { kind: "matrix"; write_data: @m.responsibilities; profile: "matrix.heatmap@1"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: "assoc"; value: "x_record.score"; encoding: { "mode": "bands", "boundaries": [0, 3, 7, 11], "labels": ["Low", "Watch", "Action"], "palette": "blue" }; }
@@ -35,6 +39,7 @@ view heat_bands "02 / Review score — bands" {
 }
 
 view heat_categories "02 / Review score — categories" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@m.responsibilities];
     format: @f.shared.common;
     projection { kind: "matrix"; write_data: @m.responsibilities; profile: "matrix.heatmap@1"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: "assoc"; value: "x_record.status"; encoding: { "mode": "category", "values": ["Good", "Monitor", "Action"], "labels": ["Good", "Monitor", "Action"], "palette": "blue" }; }

@@ -26,5 +26,6 @@ data m {
     relation x1 "" @viporder -> @has { kind: "orm.exclusion"; }
 }
 view model "Customer fact model": [@m] as "orm.basic@1" {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }

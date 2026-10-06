@@ -21,7 +21,7 @@ data people {
 }
 
 format options {
-    layout org { algorithm: tree; direction: down; root: @people.ceo; hierarchy: [reports_to]; }
+    layout org { gap: 112px; row_gap: 112px; algorithm: tree; direction: down; root: @people.ceo; hierarchy: [reports_to]; }
 }
 
 view org "Synthetic organisation / org chart" {

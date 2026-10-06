@@ -29,6 +29,7 @@ data c {
 }
 
 view v "Case": [@c] as "cmmn.complete@1" {
+    layout { gap: 112px; row_gap: 112px; }
     frame intake_f "Intake" { scope: @c.intake; members: [@c.review, @c.appr, @c.decide, @c.s1]; }
     publication { size: content; fit: none; }
 }

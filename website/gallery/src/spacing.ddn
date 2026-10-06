@@ -15,7 +15,7 @@ data model {
 
 format gallery {
     style standard;
-    layout flow_right { algorithm: layered; }
+    layout flow_right { gap: 112px; row_gap: 112px;  algorithm: layered; }
     display readable { badges: none; maturity: none; }
     publication screen { size: content; fit: none; }
     legend key { width: 260px; }

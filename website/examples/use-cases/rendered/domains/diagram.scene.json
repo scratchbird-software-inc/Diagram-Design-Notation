@@ -1,7 +1,7 @@
 {
   "smallestText": 11,
   "width": 1505,
-  "height": 643,
+  "height": 595,
   "scale": 1,
   "origin": [
     40,
@@ -137,7 +137,7 @@
       "meaningLines": [],
       "noteLines": [],
       "x": 0,
-      "y": 312,
+      "y": 264,
       "fieldRows": []
     }
   ],
@@ -223,16 +223,16 @@
         ],
         [
           736,
-          362
+          314
         ],
         [
           270,
-          362
+          314
         ]
       ],
       "label": {
         "x": 488,
-        "y": 347,
+        "y": 299,
         "w": 30,
         "h": 30
       },
@@ -267,7 +267,7 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 0,
-        "length": 1612,
+        "length": 1564,
         "bends": 8
       },
       {
@@ -275,14 +275,14 @@
         "trials": 0,
         "accepted": 0,
         "crossings": 0,
-        "length": 1612,
+        "length": 1564,
         "bends": 8
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
-        "length": 1612,
+        "length": 1564,
         "bends": 8,
         "trials": 0,
         "accepted": 0
@@ -291,13 +291,13 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 0,
-        "length": 1612,
+        "length": 1564,
         "bends": 8
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
-        "length": 1612,
+        "length": 1564,
         "bends": 8
       }
     ],
@@ -312,13 +312,13 @@
       "before": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 1612,
+        "length": 1564,
         "bends": 8
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 1612,
+        "length": 1564,
         "bends": 8
       },
       "exhausted": false
@@ -331,13 +331,13 @@
     "x": 0,
     "y": -31,
     "w": 1080,
-    "h": 473
+    "h": 425
   },
   "drawingArea": {
     "x": 30,
     "y": 90,
     "w": 1080,
-    "h": 483
+    "h": 435
   },
   "layoutState": {
     "format": "ddn-layout-state@1",
@@ -357,7 +357,7 @@
       ],
       "ddn.usecases.domains::model.binding": [
         0,
-        312
+        264
       ]
     }
   },

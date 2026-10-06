@@ -45,6 +45,7 @@ data structure {
 }
 
 view components "UML component / ports and assembly": [@shop] as "uml.composite@1" {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }
 

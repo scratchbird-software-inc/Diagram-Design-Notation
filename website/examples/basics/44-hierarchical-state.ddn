@@ -43,7 +43,7 @@ data order {
 view lifecycle "Order lifecycle / composite states" {
     data: [@order]; format: @shared.styles.technical;
     projection { kind: graph; profile: "state.composite@1"; }
-    layout { algorithm: layered; }
+    layout { algorithm: layered; gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
     frame fulfillment "FULFILLMENT" { scope: @order.fulfillment;
         members: [@order.fulfillment, @order.awaiting, @order.paid, @order.open, @order.packed]; }

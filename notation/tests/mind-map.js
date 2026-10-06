@@ -9,7 +9,7 @@ module "test.mindmap";
 format o {
     notation core { registry: "ddn-core@0.3"; }
     style classic { look: classic; theme: default; font: sans; seed: 42; }
-    layout mind { algorithm: mindmap; routing: curved; curve: bezier; root: @m.root; hierarchy: [assoc]; }
+    layout mind { algorithm: mindmap; routing: curved; curve: bezier; root: @m.root; hierarchy: [assoc]; gap: 112px; row_gap: 112px; }
     display compact { fields: none; kind: icon_token; maturity: none; badges: none; }
     publication screen { size: content; margin: 30px; minimum_text: 8pt; overflow: error; }
     bundle technical {

@@ -437,9 +437,10 @@ test('B1-052 D5: artboard pre-validation names the smallest usable artboard (DDN
   assert.ok(msg2, 'tiny artboard flagged for the live scene too');
   const mw = Number(/is (\d+)×(\d+)px/.exec(msg2)[1]), mh = Number(/is (\d+)×(\d+)px/.exec(msg2)[2]);
   /* B1-100 note: text-mode legends suppress by default, so this fixture's
-   * minimum artboard is narrower than when the legend band was reserved —
-   * 800px now renders; 700px is below the named minimum. */
-  assert.throws(() => A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { page: 'custom', width: 700, height: 1000 } }),
+   * minimum artboard is narrower than when the legend band was reserved; the
+   * 0.8 authored-gap semantics (default 64px, no clearance floor) narrowed it
+   * further — 640px now renders; 600px is below the named minimum. */
+  assert.throws(() => A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { page: 'custom', width: 600, height: 1000 } }),
     e => e.code === 'DDN071' && /increase base font to ≥[\d.]+px|enlarge/.test(e.message),
     'below the named minimum the renderer fails DDN071 naming the remedy');
   assert.throws(() => A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { page: 'custom', width: mw - 20, height: 1000 } }),

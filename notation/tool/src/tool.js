@@ -592,6 +592,7 @@ for (const [group, fields] of SELECT_FIELDS) {
     optionInputs[key] = input;
     field(g, label, input);
   }
+  if (group === 'Layout') g.append(dim('Grid step sets fit_grid lattice granularity and the radial/organic/retained-position spiral search pitch only; it does not move grid, layered, tree or auto placements.'));
 }
 
 /* Source-backed controls for the spec-authorable style/layout/display keys
@@ -665,7 +666,7 @@ for (const [group, profile, fields] of SOURCE_FIELDS) {
     note: status
   });
   sourceForms.push(form);
-  if (profile === 'layout') g.append(dim('Gaps floor at 20px and at the clearance-derived minimum (DDN200); the layout engine raises smaller effective gaps to that floor rather than shrinking elements. Tighter gaps keep the fit: contain scale nearer 1, so text renders larger on a fixed page.'));
+  if (profile === 'layout') g.append(dim('Gaps floor at 20px (DDN200); the authored value is the exact inter-element gap — object/edge/port clearances only affect edge routing and fan-out corridors, never node spacing. Tighter gaps keep the fit: contain scale nearer 1, so text renders larger on a fixed page.'));
 }
 function syncSourceInputs() { for (const f of sourceForms) f.sync(); }
 /* Viewport actions + reset live in the style drawer too (the toolbar keeps

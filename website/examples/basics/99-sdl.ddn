@@ -56,5 +56,6 @@ view system "SDL system": [@sys] as "sdl.basic@1" {
     publication { size: content; fit: none; }
 }
 view process "Order process": [@p] as "sdl.process@1" {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }

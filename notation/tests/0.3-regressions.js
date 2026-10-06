@@ -16,7 +16,7 @@ test('001','Conflicting hard pins fail, not overlap',()=>rejects(()=>draw(trio,'
 const parallel='object a {kind:table;fields {field id;}}object b {kind:table;fields {field id;}}relation r1 @a.id -> @b.id {kind:ref;}relation r2 @a.id -> @b.id {kind:ref;}';
 test('002','Independent field relations get distinct tracks',()=>{const x=draw(parallel);good(x);assert.notDeepEqual(x.scene.routes[0].points,x.scene.routes[1].points);});
 test('002','Reverse direction does not merge a second relation',()=>good(draw(parallel+'relation r3 @b -> @a {kind:ref;}')));
-test('002','Eight crossing relations retain distinct occurrence IDs',()=>{const x=draw('object a {kind:table;}object b {kind:table;}'+Array.from({length:8},(_,i)=>`relation r${i} @a -> @b {kind:ref;}`).join(''));good(x);assert.equal(x.scene.routes.length,8);});
+test('002','Eight crossing relations retain distinct occurrence IDs',()=>{const x=draw('object a {kind:table;}object b {kind:table;}'+Array.from({length:8},(_,i)=>`relation r${i} @a -> @b {kind:ref;}`).join(''),'layout {gap:112px;row_gap:112px;}');good(x);assert.equal(x.scene.routes.length,8);});
 test('002','Rebuild is deterministic',()=>{const ir=build(parallel);assert.equal(R.render(ir,reg,defs).svg,R.render(ir,reg,defs).svg);});
 test('003','A team cannot replicate a table',()=>rejects(()=>build('object team {kind:team;}object t {kind:table;}relation wrong @team -> @t {kind:replicate;}'),'DDN102'));
 test('003','Table-to-table replication remains valid',()=>assert.equal(build('object a {kind:table;}object b {kind:table;}relation r @a -> @b {kind:replicate;}').relations.length,1));

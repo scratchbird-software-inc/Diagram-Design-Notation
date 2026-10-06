@@ -37,18 +37,21 @@ data items {
 }
 
 view bcg "Synthetic portfolio / BCG" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@axes, @items];
     format: @ddn.examples.shared.styles.technical;
     projection { kind:matrix; profile:"matrix.bcg@1"; rows:[@axes.g_high, @axes.g_low]; columns:[@axes.s_high, @axes.s_low]; relation:"assoc"; value:"name"; duplicates:join; }
 }
 
 view ansoff "Synthetic portfolio / Ansoff" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@axes, @items];
     format: @ddn.examples.shared.styles.technical;
     projection { kind:matrix; profile:"matrix.ansoff@1"; rows:[@axes.m_existing, @axes.m_new]; columns:[@axes.p_existing, @axes.p_new]; relation:"assoc"; value:"name"; duplicates:join; }
 }
 
 view tows "Synthetic portfolio / TOWS" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@axes, @items];
     format: @ddn.examples.shared.styles.technical;
     projection { kind:matrix; profile:"matrix.tows@1"; rows:[@axes.int_s, @axes.int_w]; columns:[@axes.ext_o, @axes.ext_t]; relation:"assoc"; value:"name"; duplicates:join; }

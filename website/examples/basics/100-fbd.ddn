@@ -31,6 +31,6 @@ data m {
     relation fb "" @t1.q -> @a1.ina { kind: "fbd.wire"; }
 }
 view d "Motor control FBD": [@m] as "fbd.basic@1" {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }

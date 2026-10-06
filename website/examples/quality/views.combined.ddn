@@ -2,6 +2,7 @@ ddn "0.5";
 
 module "meridian.quality.views";
 view fishbone "01 / Possible causes" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@meridian.quality.review.causes];
     format: @meridian.quality.formats.shared.common;
     projection { kind: "fishbone"; profile: "fishbone.basic@1"; effect: @meridian.quality.review.causes.effect; relation: "quality.cause"; }
@@ -9,6 +10,7 @@ view fishbone "01 / Possible causes" {
 }
 
 view fishbone_sketch "01 / Possible causes — sketch" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@meridian.quality.review.causes];
     format: @meridian.quality.formats.shared.common;
     projection { kind: "fishbone"; profile: "fishbone.basic@1"; effect: @meridian.quality.review.causes.effect; relation: "quality.cause"; }
@@ -16,6 +18,7 @@ view fishbone_sketch "01 / Possible causes — sketch" {
 }
 
 view heat_numeric "02 / Review score — numeric" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@meridian.quality.review.responsibilities];
     format: @meridian.quality.formats.shared.common;
     projection { kind: "matrix"; write_data: @meridian.quality.review.responsibilities; profile: "matrix.heatmap@1"; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c]; relation: "assoc"; value: "x_record.score"; encoding: { "mode": "numeric", "domain": [0, 10], "palette": "blue" }; }
@@ -24,6 +27,7 @@ view heat_numeric "02 / Review score — numeric" {
 }
 
 view heat_bands "02 / Review score — bands" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@meridian.quality.review.responsibilities];
     format: @meridian.quality.formats.shared.common;
     projection { kind: "matrix"; write_data: @meridian.quality.review.responsibilities; profile: "matrix.heatmap@1"; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c]; relation: "assoc"; value: "x_record.score"; encoding: { "mode": "bands", "boundaries": [0, 3, 7, 11], "labels": ["Low", "Watch", "Action"], "palette": "blue" }; }
@@ -32,6 +36,7 @@ view heat_bands "02 / Review score — bands" {
 }
 
 view heat_categories "02 / Review score — categories" {
+    layout { gap: 112px; row_gap: 112px; }
     data: [@meridian.quality.review.responsibilities];
     format: @meridian.quality.formats.shared.common;
     projection { kind: "matrix"; write_data: @meridian.quality.review.responsibilities; profile: "matrix.heatmap@1"; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c]; relation: "assoc"; value: "x_record.status"; encoding: { "mode": "category", "values": ["Good", "Monitor", "Action"], "labels": ["Good", "Monitor", "Action"], "palette": "blue" }; }

@@ -28,7 +28,7 @@ format gallery {
 
 view grid "Layouts / grid" {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: grid; columns: 3; }
+    layout { gap: 112px; row_gap: 112px; algorithm: grid; columns: 3; }
 }
 view manual "Layouts / manual (pinned)" {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
@@ -42,11 +42,11 @@ view manual "Layouts / manual (pinned)" {
 }
 view layered "Layouts / layered" {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: right; }
 }
 view tree "Layouts / tree" {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: tree; root: @model.holding; hierarchy: [assoc]; }
+    layout { gap: 112px; row_gap: 112px; algorithm: tree; root: @model.holding; hierarchy: [assoc]; }
 }
 view mindmap "Layouts / mindmap" {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
@@ -70,7 +70,7 @@ view radial "Layouts / radial" {
 }
 view spanning_tree "Layouts / spanning_tree" {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: spanning_tree; root: @model.holding; }
+    layout { gap: 112px; row_gap: 112px; algorithm: spanning_tree; root: @model.holding; }
 }
 view organic "Layouts / organic" {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;

@@ -38,11 +38,11 @@ data pkgs {
 }
 
 view requirements "Pump requirements": [@reqs] as "sysml.requirements@1" {
-    layout { algorithm: layered; direction: down; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
 }
 
 view packages "Model packages": [@pkgs] as "sysml.package@1" {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }

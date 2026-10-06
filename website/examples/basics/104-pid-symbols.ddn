@@ -30,6 +30,6 @@ data m {
     assoc s5 "" @ft -> @fv;
 }
 view pid "P&ID symbol library": [@m] as "network.basic@1" {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }

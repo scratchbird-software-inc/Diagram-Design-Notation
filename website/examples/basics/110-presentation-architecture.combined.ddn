@@ -35,7 +35,7 @@ view overview "Storefront systems — presentation overview" {
     data: [@shop];
     format: @ddn.examples.shared.styles.technical;
     projection { kind: graph; profile: "ddn@1"; }
-    layout { algorithm: layered; direction: right; gap: 130px; }
+    layout { algorithm: layered; direction: right; gap: 130px; row_gap: 130px; }
     publication { size: content; fit: none; }
 }
 

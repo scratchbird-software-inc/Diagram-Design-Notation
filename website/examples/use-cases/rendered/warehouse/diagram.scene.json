@@ -1,7 +1,7 @@
 {
   "smallestText": 11,
   "width": 1564,
-  "height": 748,
+  "height": 700,
   "scale": 1,
   "origin": [
     99,
@@ -195,7 +195,7 @@
       "meaningLines": [],
       "noteLines": [],
       "x": 0,
-      "y": 396,
+      "y": 348,
       "fieldRows": [
         {
           "id": "ddn.usecases.warehouse::model.date.date_key",
@@ -237,7 +237,7 @@
         "additive line measures."
       ],
       "x": 390,
-      "y": 396,
+      "y": 348,
       "fieldRows": []
     }
   ],
@@ -331,16 +331,16 @@
         ],
         [
           -44,
-          474
+          426
         ],
         [
           0,
-          474
+          426
         ]
       ],
       "label": {
         "x": -59,
-        "y": 372,
+        "y": 348,
         "w": 30,
         "h": 30
       },
@@ -375,7 +375,7 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 0,
-        "length": 1494,
+        "length": 1446,
         "bends": 10
       },
       {
@@ -383,14 +383,14 @@
         "trials": 0,
         "accepted": 0,
         "crossings": 0,
-        "length": 1494,
+        "length": 1446,
         "bends": 10
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
-        "length": 1494,
+        "length": 1446,
         "bends": 10,
         "trials": 0,
         "accepted": 0
@@ -399,13 +399,13 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 0,
-        "length": 1494,
+        "length": 1446,
         "bends": 10
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
-        "length": 1494,
+        "length": 1446,
         "bends": 10
       }
     ],
@@ -420,13 +420,13 @@
       "before": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 1494,
+        "length": 1446,
         "bends": 10
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 1494,
+        "length": 1446,
         "bends": 10
       },
       "exhausted": false
@@ -439,13 +439,13 @@
     "x": -59,
     "y": 0,
     "w": 1139,
-    "h": 578
+    "h": 530
   },
   "drawingArea": {
     "x": 30,
     "y": 90,
     "w": 1139,
-    "h": 588
+    "h": 540
   },
   "layoutState": {
     "format": "ddn-layout-state@1",
@@ -465,11 +465,11 @@
       ],
       "ddn.usecases.warehouse::model.date": [
         0,
-        396
+        348
       ],
       "ddn.usecases.warehouse::model.grain": [
         390,
-        396
+        348
       ]
     }
   },

@@ -25,12 +25,12 @@ data network {
 }
 format patterns {
     style day;
-    layout grid { algorithm: fit_grid; center: pins; gap: 80px; routing: curved; }
-    layout circle { algorithm: circular; center: pins; gap: 80px; routing: curved; }
-    layout rings { algorithm: radial; center: pins; gap: 80px; routing: curved; }
-    layout hierarchy { algorithm: layered; center: pins; gap: 80px; }
-    layout breadth { algorithm: spanning_tree; center: pins; gap: 80px; routing: curved; }
-    layout force { algorithm: organic; center: pins; gap: 80px; routing: curved; }
+    layout grid { algorithm: fit_grid; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
+    layout circle { algorithm: circular; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
+    layout rings { algorithm: radial; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
+    layout hierarchy { algorithm: layered; center: pins; gap: 112px; row_gap: 112px; }
+    layout breadth { algorithm: spanning_tree; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
+    layout force { algorithm: organic; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
     display detail { maturity: none; }
     legend key { mode: numbers; width: 330px; keys: {"network.submit":1,"network.route":2,"network.reserve":3,"network.plan":4,"network.persist":5,"network.publish":6,"network.history_projection":7,"network.monitor":8,"network.document":9}; }
     publication page { size: content; fit: none; }

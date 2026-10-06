@@ -20,5 +20,6 @@ data strat {
     relation x1 "" @fulfill -> @brand { kind: "uaf.mapsto"; x_link: { file: "108-uaf-governance.ddn", target: "retail.gov.gov.policy1" }; }
 }
 view sv "Strategic capabilities": [@strat] as "uaf.strategic@1" {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }

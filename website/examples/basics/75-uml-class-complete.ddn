@@ -77,5 +77,6 @@ view associations "UML class diagram / association ends": [@fleet] as "uml.struc
 }
 
 view classifiers "UML class diagram / classifiers": [@library] as "uml.structure@2" {
+    layout { gap: 112px; row_gap: 112px; }
     publication { size: content; fit: none; }
 }

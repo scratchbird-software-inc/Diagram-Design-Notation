@@ -33,7 +33,7 @@ data d {
 }
 
 view drd "Claim handling DRD": [@d] as "dmn.drd@1" {
-    layout { algorithm: layered; }
+    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
     publication { size: content; fit: none; }
 }
 

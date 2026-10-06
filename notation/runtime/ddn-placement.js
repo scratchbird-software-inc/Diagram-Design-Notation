@@ -21,19 +21,19 @@ function stateChecked(state,key){
 function place(nodes,rels,ir,options={}){
  const p=ir.view.profiles,at=ir.view.placements||{},algorithm=p.layout.algorithm,diagnostics=[];
  const key=options.viewKey||ir.view.id,state=stateChecked(options.layoutState,key),paused=p.layout.auto_place===false;
- const minGap=2*(q(p.layout.object_clearance,16)+Math.max(24,q(p.layout.port_clearance,28)))+2*q(p.layout.edge_clearance,12);
  const patternMode=algorithm==='auto'?'layered':algorithm==='spanning_tree'?'tree':algorithm;
  const usePattern=['auto','fit_grid','circular','radial','spanning_tree','organic'].includes(algorithm)||(algorithm==='layered'&&p.layout.center==='pins');
  let pattern=null;
  const ErrorClass=class extends Error{constructor(code,message){super(message);this.code=code;}};
  /* DDN200 (spec ch. 15): an AUTHORED gap/row_gap below 20px is rejected, not
-  * silently floored; authored values ≥20 are then raised to the clearance-
-  * derived minGap. Validated here so every algorithm path (pattern and
-  * layoutNodes) enforces it. */
- const authoredGap=q(p.layout.gap,100),authoredRowGap=q(p.layout.row_gap,100);
+  * silently floored. Authored values of 20px or more are used verbatim as the
+  * inter-element gap (scaled by the spacing hint); object/edge/port clearances
+  * govern routing pads and port fan-out, never node spacing. Validated here so
+  * every algorithm path (pattern and layoutNodes) enforces it. */
+ const authoredGap=q(p.layout.gap,64),authoredRowGap=q(p.layout.row_gap,64);
  if(authoredGap<20||authoredRowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');
  if(usePattern){
-  const adapted={...p,layout:{...p.layout,algorithm:patternMode,gap:Layout.round(Math.max(minGap,q(p.layout.gap,100))*Layout.spacingScale(p.layout))}};
+  const adapted={...p,layout:{...p.layout,algorithm:patternMode,gap:Layout.round(q(p.layout.gap,64)*Layout.spacingScale(p.layout))}};
   const result=Patterns.place(nodes,rels,ir,adapted);pattern=result.pattern;diagnostics.push(...result.diagnostics);
   if(['left','up'].includes(p.layout.direction)&&patternMode==='layered'){
    for(const n of nodes)if(!at[n.id]?.at){const c=center(n),ax=pattern.anchor[0],ay=pattern.anchor[1];if(p.layout.direction==='left')n.x=2*ax-c[0]-n.w/2;else n.y=2*ay-c[1]-n.h/2;}
