@@ -6,6 +6,30 @@ closure audit (kimi-specification-workarea/ddn-opensource-closure-2026-10-05/02)
 are marked [closure]; items from the 2026-10-06 designer sessions are marked
 [designer].
 
+## Scope rule — specification vs. reference-tool behavior
+
+The DDN/DDNA specification covers only what is **portable**: what a .ddn file
+can declare and how every conformant consumer must interpret it. Anyone may
+write their own viewer, renderer, or generator; the conformance contract they
+must satisfy is the grammar, the registry, and the chapter-58 vector corpus —
+nothing more.
+
+ddn-viewer and ddn-designer are reference implementations. Their UI behavior —
+drawers, hover highlights, font/colour editors, colour history, session-preview
+overrides, interaction gestures — is **not** specification and carries no
+conformance weight. Session-preview cosmetics in particular are deliberately
+non-portable: they are never serialized into .ddn source, and a third-party
+tool owes them nothing.
+
+Consequences for this roadmap:
+- Items under "Portable …" sections below are **spec candidates**: if ratified,
+  they enter the grammar/registry and every conformant consumer must honor them.
+- Items marked "(designer)" in the closure-deferral list are **reference-tool
+  work**: they may ship in ddn-designer without any spec change, and other
+  tools may solve the same problem differently or not at all.
+- Nothing about the reference tools' behavior may leak into the spec as a
+  requirement (same guardrail as OWN-079/081 on the Weaver side).
+
 ## Portable text properties [designer]
 
 Extend the notation so richer text styling survives in the .ddn file and
