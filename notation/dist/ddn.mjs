@@ -1916,7 +1916,7 @@ function validate$1(ir,registry,ErrorClass){
  const allMembers=new Map(ir.elements.flatMap(x=>[...x.fields,...x.ports].map(f=>[f.id,{...f,owner:x}])));
  new Map(registry.kinds.map(k=>[k.keyword,k]));
  const state=v=>isObject(v)&&Object.hasOwn(v,'$state');
- const reserved=new Set(['uid','description','aliases','kind','level','representation','platform','maturity','workload','role','temporal','time','distribution','location','meaning','scope','domain','datatype','key','nullable','presence','shape','unit','default','ordinal','classification','policy','owner','columns','rows','mode','capture','delivery','transport','enforcement','source_mark','target_mark','source_cardinality','target_cardinality','ordering','direction','side','payload','version','allow_extra','discriminator','variants','optional','dimension','target','min','max','text_fit','max_width','max_height','min_font','font_pin','numeral','marks','assertion','text','line','stroke','fill']);
+ const reserved=new Set(['uid','description','aliases','kind','level','representation','platform','maturity','workload','role','temporal','time','distribution','location','meaning','scope','domain','datatype','key','nullable','presence','shape','unit','default','ordinal','classification','policy','owner','columns','rows','mode','capture','delivery','transport','enforcement','source_mark','target_mark','source_cardinality','target_cardinality','ordering','direction','side','payload','version','allow_extra','discriminator','variants','optional','dimension','target','min','max','text_fit','max_width','max_height','min_font','font_pin','numeral','marks','assertion','text','line','stroke','fill','opacity']);
  function props(item,target){
   for(const [key,value]of Object.entries(item.properties||{})){
    if(key.startsWith('x_')){
@@ -3288,6 +3288,12 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       const strokeGroup=group(n,'stroke');
       if(strokeGroup){textGate(n,'A stroke { } group on an element');properties.stroke=normalizeStrokeProps(strokeGroup.props,(code,msg)=>{throw new DDNError(code,msg,strokeGroup.source,strokeGroup.start);},{allowCorners:true});}
       if(properties.fill!==undefined){textGate(n,'fill on an element');properties.fill=normalizeLineColor(properties.fill,(code,msg)=>{throw new DDNError(code,msg,n.source,n.start);});}
+      /* 0.8 (chapter 04 §6C): per-element content opacity — a plain 0..1
+       * ratio painted as one SVG group opacity over the whole node (fill,
+       * stroke and text together). Paint-only: hit-testing, measurement,
+       * layout, diagnostics and the model fingerprint are unaffected. */
+      if(properties.opacity!==undefined){textGate(n,'opacity on an element');
+        if(typeof properties.opacity!=='number'||!Number.isFinite(properties.opacity)||properties.opacity<0||properties.opacity>1)throw new DDNError('DDN-SZ01','opacity on an element must be a number from 0 to 1; found '+JSON.stringify(properties.opacity),n.source,n.start);}
       if(n.type==='sample'){
         if(!Array.isArray(properties.columns)||!Array.isArray(properties.rows))throw new DDNError('DDN051','Sample requires columns and rows',n.source,n.start);
         for(const c of n.props.columns){const f=ws.resolve(c,n);if(f.type!=='field')throw new DDNError('DDN052','Sample columns must bind to fields',n.source,n.start);}
@@ -4534,7 +4540,10 @@ function render$3(g,p,theme){
  const labelSet=labelTs?new Set([n.name,...(g.titleLines||[])]):null;
  const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return '';const ts=labelSet?.has(txt)?labelTs:viewTs;const w=ts?.weight??weight,fil=ts?.color??fg;api$a.measure(txt,size*s,p.style.font,w,ts);return `<text x="${f$2(xx)}" y="${f$2(yy)}" font-size="${size*s}" fill="${fil}" font-weight="${w}"${ts?api$a.paintAttrs(ts):''} ${extra}>${esc$4(txt)}</text>`;};
  const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
- let out=`<g class="ddn-node ddn-kind-${slug$1(k.code)}" data-id="${esc$4(n.id)}" data-ddn-id="${esc$4(n.id)}" data-shape="${esc$4(shape)}" tabindex="0" role="group" aria-label="${esc$4(n.name)}"><title>${esc$4(n.name+' — '+k.name)}</title>`;
+ /* 0.8 (chapter 04 §6C): per-element opacity — one group opacity over the
+  * whole silhouette, same contract as the plain card path. */
+ const elOp=n.properties?.opacity;
+ let out=`<g class="ddn-node ddn-kind-${slug$1(k.code)}" data-id="${esc$4(n.id)}" data-ddn-id="${esc$4(n.id)}" data-shape="${esc$4(shape)}"${elOp!==undefined&&elOp<1?` opacity="${elOp}"`:''} tabindex="0" role="group" aria-label="${esc$4(n.name)}"><title>${esc$4(n.name+' — '+k.name)}</title>`;
  if(planning)out+=`<g class="ddn-planning-table"><rect x="${f$2(planning.x)}" y="${f$2(planning.y)}" width="${f$2(planning.w)}" height="${f$2(planning.h)}" fill="${fill}" stroke="${ink}" stroke-width="1.3" stroke-dasharray="5 4"/>`+text(planning.x+8*s,planning.y+18*s,'Planning',10,650,'')+planning.items.map((it,i)=>text(planning.x+8*s,planning.y+(36+i*16)*s,it,10.5,400,'')).join('')+'</g>';
  if(['initial','final'].includes(shape)){
   const cx=x+w/2,cy=y+h/2-8,r=12*s;
@@ -6083,7 +6092,11 @@ function renderNode(g,p,theme,registry){
  const elPen=n.properties?.stroke||null,elFill=n.properties?.fill??null;
  const oInk=mono||monoPrint?ink:(elPen?.color??ink),oFill=mono||monoPrint?fill:(elFill??fill),oDash=elPen?.dash?DDN$1.LINE_DASH_PATTERNS[elPen.dash]:null,oW=elPen?.weight;
  const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
- let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc$3(n.id)}" data-ddn-id="${esc$3(n.id)}" data-ref="${esc$3(n.ref||n.id)}"${g.tfClip||g.tfClipW?' data-textfit-overflow="true"':''} tabindex="0" role="group" aria-label="${esc$3(n.name)}"><title>${esc$3(n.name+' — '+k.name)}</title>`;
+ /* 0.8 (chapter 04 §6C): per-element opacity paints as one group opacity over
+  * the whole node — fill, stroke and text fade together; hit-testing and
+  * diagnostics are unaffected (SVG group opacity changes paint only). */
+ const op=n.properties?.opacity;
+ let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc$3(n.id)}" data-ddn-id="${esc$3(n.id)}" data-ref="${esc$3(n.ref||n.id)}"${g.tfClip||g.tfClipW?' data-textfit-overflow="true"':''}${op!==undefined&&op<1?` opacity="${op}"`:''} tabindex="0" role="group" aria-label="${esc$3(n.name)}"><title>${esc$3(n.name+' — '+k.name)}</title>`;
  /* 0.8 (chapter 54 §54.2): residual overflow renders with the text clipped at
   * the box edge and a visible ellipsis marker — never invisible text. The clip
   * rect is the box inflated by the border stroke so the frame stays whole. */

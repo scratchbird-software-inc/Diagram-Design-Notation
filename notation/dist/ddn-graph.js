@@ -520,7 +520,10 @@
    const labelSet=labelTs?new Set([n.name,...(g.titleLines||[])]):null;
    const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return '';const ts=labelSet?.has(txt)?labelTs:viewTs;const w=ts?.weight??weight,fil=ts?.color??fg;api$9.measure(txt,size*s,p.style.font,w,ts);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fil}" font-weight="${w}"${ts?api$9.paintAttrs(ts):''} ${extra}>${esc$2(txt)}</text>`;};
    const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
-   let out=`<g class="ddn-node ddn-kind-${slug$1(k.code)}" data-id="${esc$2(n.id)}" data-ddn-id="${esc$2(n.id)}" data-shape="${esc$2(shape)}" tabindex="0" role="group" aria-label="${esc$2(n.name)}"><title>${esc$2(n.name+' — '+k.name)}</title>`;
+   /* 0.8 (chapter 04 §6C): per-element opacity — one group opacity over the
+    * whole silhouette, same contract as the plain card path. */
+   const elOp=n.properties?.opacity;
+   let out=`<g class="ddn-node ddn-kind-${slug$1(k.code)}" data-id="${esc$2(n.id)}" data-ddn-id="${esc$2(n.id)}" data-shape="${esc$2(shape)}"${elOp!==undefined&&elOp<1?` opacity="${elOp}"`:''} tabindex="0" role="group" aria-label="${esc$2(n.name)}"><title>${esc$2(n.name+' — '+k.name)}</title>`;
    if(planning)out+=`<g class="ddn-planning-table"><rect x="${f(planning.x)}" y="${f(planning.y)}" width="${f(planning.w)}" height="${f(planning.h)}" fill="${fill}" stroke="${ink}" stroke-width="1.3" stroke-dasharray="5 4"/>`+text(planning.x+8*s,planning.y+18*s,'Planning',10,650,'')+planning.items.map((it,i)=>text(planning.x+8*s,planning.y+(36+i*16)*s,it,10.5,400,'')).join('')+'</g>';
    if(['initial','final'].includes(shape)){
     const cx=x+w/2,cy=y+h/2-8,r=12*s;
@@ -2294,7 +2297,11 @@
    const elPen=n.properties?.stroke||null,elFill=n.properties?.fill??null;
    const oInk=mono||monoPrint?ink:(elPen?.color??ink),oFill=mono||monoPrint?fill:(elFill??fill),oDash=elPen?.dash?DDN$1.LINE_DASH_PATTERNS[elPen.dash]:null,oW=elPen?.weight;
    const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
-   let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc$1(n.id)}" data-ddn-id="${esc$1(n.id)}" data-ref="${esc$1(n.ref||n.id)}"${g.tfClip||g.tfClipW?' data-textfit-overflow="true"':''} tabindex="0" role="group" aria-label="${esc$1(n.name)}"><title>${esc$1(n.name+' — '+k.name)}</title>`;
+   /* 0.8 (chapter 04 §6C): per-element opacity paints as one group opacity over
+    * the whole node — fill, stroke and text fade together; hit-testing and
+    * diagnostics are unaffected (SVG group opacity changes paint only). */
+   const op=n.properties?.opacity;
+   let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc$1(n.id)}" data-ddn-id="${esc$1(n.id)}" data-ref="${esc$1(n.ref||n.id)}"${g.tfClip||g.tfClipW?' data-textfit-overflow="true"':''}${op!==undefined&&op<1?` opacity="${op}"`:''} tabindex="0" role="group" aria-label="${esc$1(n.name)}"><title>${esc$1(n.name+' — '+k.name)}</title>`;
    /* 0.8 (chapter 54 §54.2): residual overflow renders with the text clipped at
     * the box edge and a visible ellipsis marker — never invisible text. The clip
     * rect is the box inflated by the border stroke so the frame stays whole. */

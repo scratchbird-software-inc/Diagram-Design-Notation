@@ -189,6 +189,38 @@ data m {
 
 (0.8 syntax — requires `ddn "0.6";`: `line { }` on relations, `stroke { }`/`fill` on elements.)
 
+## 6C. Per-element sizing resolution and content opacity (0.8 amendment)
+
+> **0.8 draft amendment:** the sizing half of this section restates (and pins) the element-override contract chapter 54 already defines; `opacity` is gated on source version `ddn "0.6";` — below it, `opacity` on an element is `DDN-V04`.
+
+**Sizing.** The four view-level sizing keys of chapter 54 — `text_fit`, `max_width`, `max_height`, `min_font` — resolve **per key** on every element:
+
+| Key | Element | View (`style { }`) | Engine default |
+|---|---|---|---|
+| `text_fit` | wins | profile/bundle default | inferred `wrap` when a width constraint exists, else fixed box |
+| `max_width` / `max_height` | wins | view-wide bound | none (natural size) |
+| `min_font` | wins | view-wide floor | 8 px absolute floor |
+
+An element therefore overrides exactly the keys it declares and inherits the rest — `max_width` on the element composes with `min_font` from the view, and so on. The chapter-54 fit loop (measure → resize → re-layout, at most two passes) consumes the **resolved per-element record**, so a view-wide bound applies to every element that does not counter-declare it. Composition with the publication layer is unchanged: `content_scale` (chapter 06) scales the post-fit drawing uniformly at page composition, and DDN071 checks effective sizes at the final page scale (contain factor × `content_scale`). These keys change geometry, never semantics: `modelFingerprint`, endpoints and relation identities are unaffected. (Reference-tool note: the designer's Sizing editor targets these same source keys; tool wiring is not part of this contract.)
+
+**Opacity.** An element gains an optional `opacity` key: a plain number from 0 to 1, painted as **one SVG group opacity** over the whole node — fill, stroke and text fade together, exactly like the view `background { opacity }` at the page layer. Opacity is paint-only: it does not affect hit-testing, measurement, layout, routing, diagnostics (DDN071, print lint) or the `modelFingerprint`, and it applies under every theme including the monochrome modes (it carries no colour). `1` is the default and paints nothing; anything outside 0–1 or not a number is `DDN-SZ01`.
+
+```ddn-0.8
+data m {
+  object summary "Quarterly summary, rather long" {
+    kind: note;
+    max_width: 200px;      // overrides the view-wide 320px
+    opacity: 0.85;
+  }
+}
+view v {
+  data: [@m];
+  style { max_width: 320px; min_font: 10px; }   // inherited keys still apply
+}
+```
+
+(0.8 syntax — requires `ddn "0.6";`: `opacity` on elements; element sizing keys are chapter-54 syntax.)
+
 ## 7. Label modes and completeness
 
 Kind text, kind icons and discriminator tokens are independently optional subject to unambiguous recovery. Relation labels support `text`, `tokens`, `numbers` and `none`. With `none` no relation label or badge renders at all; the label corridor space is reclaimed, and the relationship key disappears for the same reason it does under full inline text — there is nothing left to decode — unless the author explicitly sets `chrome.legend: 'on'`. Numbered mode replaces full midpoint wording, not direction or structural participation endpoints. A relation's legend entry includes its source, target, verb and selected qualifiers. The text alternative should include field-level endpoints even when the drawing collapses them. The `concept.map@1` profile proves relation labels are first-class: concept maps require an explicit author-written relation name on every link and reject bare verb defaults (`DDN-PJ104`).

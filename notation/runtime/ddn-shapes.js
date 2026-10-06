@@ -254,7 +254,10 @@ function render(g,p,theme){
  const labelSet=labelTs?new Set([n.name,...(g.titleLines||[])]):null;
  const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return'';const ts=labelSet?.has(txt)?labelTs:viewTs;const w=ts?.weight??weight,fil=ts?.color??fg;Text.measure(txt,size*s,p.style.font,w,ts);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fil}" font-weight="${w}"${ts?Text.paintAttrs(ts):''} ${extra}>${esc(txt)}</text>`;};
  const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
- let out=`<g class="ddn-node ddn-kind-${slug(k.code)}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-shape="${esc(shape)}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
+ /* 0.8 (chapter 04 §6C): per-element opacity — one group opacity over the
+  * whole silhouette, same contract as the plain card path. */
+ const elOp=n.properties?.opacity;
+ let out=`<g class="ddn-node ddn-kind-${slug(k.code)}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-shape="${esc(shape)}"${elOp!==undefined&&elOp<1?` opacity="${elOp}"`:''} tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
  if(planning)out+=`<g class="ddn-planning-table"><rect x="${f(planning.x)}" y="${f(planning.y)}" width="${f(planning.w)}" height="${f(planning.h)}" fill="${fill}" stroke="${ink}" stroke-width="1.3" stroke-dasharray="5 4"/>`+text(planning.x+8*s,planning.y+18*s,'Planning',10,650,'')+planning.items.map((it,i)=>text(planning.x+8*s,planning.y+(36+i*16)*s,it,10.5,400,'')).join('')+'</g>';
  if(['initial','final'].includes(shape)){
   const cx=x+w/2,cy=y+h/2-8,r=12*s;

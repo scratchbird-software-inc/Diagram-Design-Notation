@@ -9,7 +9,7 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 - Diagram profiles: **150** (`profiles/catalogue.json .profiles`)
 - Projection kinds: **12** (`graph`, `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`, `fishbone`, `decision`, `sequence`, `timing`, `geo`)
 - Endpoint marks: 12; object families: 12; relation families: 8; facets: 118; view types: 20; registered data properties: 108
-- Diagnostic codes: **485** extracted from the runtime (reference runtime + Studio `src/`)
+- Diagnostic codes: **486** extracted from the runtime (reference runtime + Studio `src/`)
 <!-- /generated (counts) -->
 
 ## 1. Purpose and the generate → check → fix loop
@@ -2146,7 +2146,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- generated: do not edit (diagnostics) -->
-## 9. Diagnostics and error recovery (486 codes, machine-extracted from runtime + Studio sources; 135 carry a hand-authored FIX)
+## 9. Diagnostics and error recovery (487 codes, machine-extracted from runtime + Studio sources; 136 carry a hand-authored FIX)
 
 `check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).
 
@@ -2494,6 +2494,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-QP002 | error | Composed panels support one child-view level; recursive dashboards are not supported | - |
 | DDN-QP003 | error | At most twelve embedded child views are permitted<br>Child exceeds visible graph limits | - |
 | DDN-QP004 | error | Child panels require the unified engine dispatcher | - |
+| DDN-SZ01 | error | opacity on an element must be a number from 0 to 1; found | Set element opacity to a number from 0 to 1 (for example 0.6); 1 is the default and may simply be omitted. |
 | DDN-TF01 | error | Unknown text_fit mode ; expected wrap, grow or shrink | - |
 | DDN-TF02 | error | must be a length from 40px to 4000px and within the 50000px drawing extent budget; found | - |
 | DDN-TF03 | error | min_font must be a length from 6px to 64px; found<br>min_font px is above the effective base font | - |
@@ -3734,6 +3735,28 @@ data model {
   }
 }
 view main "Line properties" { data: [@model]; }
+```
+
+### 14.6C Per-element sizing resolution and opacity (ch. 04 §6C, ch. 54)
+
+The chapter-54 sizing keys resolve **per key**: element > view `style { }` > engine default. An element overrides exactly what it declares and inherits the rest (`max_width` on the element composes with `min_font` from the view). The two-pass fit loop consumes the resolved per-element record; `content_scale` scales the post-fit drawing at page composition and DDN071 checks effective sizes at the final scale. Geometry changes, semantics never do.
+
+`opacity: 0..1` on an element fades the whole node (fill+stroke+text) as one SVG group opacity — paint-only: no hit-testing, measurement, layout, routing, diagnostic or fingerprint effect; applies under every theme. `1` is the default and paints nothing; anything else is **DDN-SZ01**; below `ddn "0.6";` it is **DDN-V04**.
+
+```ddn
+ddn "0.6";
+module "recipes.sizing";
+data model {
+  object summary "Quarterly summary, rather long" {
+    kind: note;
+    max_width: 200px;
+    opacity: 0.85;
+  }
+}
+view main "Sizing" {
+  data: [@model];
+  style { max_width: 320px; min_font: 10px; }
+}
 ```
 
 ### 14.7 Workspace conventions and conformance (ch. 56, 58)

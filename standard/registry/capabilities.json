@@ -434,6 +434,14 @@
  "support": "0.8 amendment (spec/04 §6B): portable stroke { } group + flat fill colour on elements; weight/dash apply to the plain card silhouettes, color/fill also ride profile-silhouette palette channels"
  },
  {
+ "id": "element.opacity",
+ "scope": "element",
+ "name": "opacity",
+ "default": 1,
+ "choices": null,
+ "support": "0.8 amendment (spec/04 §6C): per-element content opacity 0..1 painted as one SVG group opacity; paint-only. Element sizing keys (text_fit, max_width, max_height, min_font) resolve per key element > view > engine default per spec/54 §54.1"
+ },
+ {
  "id": "layout.algorithm",
  "scope": "layout",
  "name": "algorithm",

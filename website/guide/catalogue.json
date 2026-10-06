@@ -3,8 +3,8 @@
     "edition": "field-guide-0.8",
     "runtime": "0.8.0",
     "reviewed": "2026-10-04",
-    "chapterCount": 157,
-    "plannedChapterCount": 157,
+    "chapterCount": 158,
+    "plannedChapterCount": 158,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -14536,6 +14536,95 @@
       "exerciseEvidence": {
         "before": "bcc4b1631ce53df1506c70a2d583b4fd81b6a56e803d71e96a3894fa60706e88",
         "after": "ed31168c9b7ded008bff9012030770ae7edd9042c3d5d48ca62e83441688f9f7",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "sizing-opacity",
+      "title": "Per-element sizing and opacity — overrides that compose",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/sizing-opacity.ddn",
+      "view": "main",
+      "what": "The view-level sizing keys (text_fit, max_width, max_height, min_font) resolve per key on every element — element beats view beats engine default — plus a per-element opacity that fades a whole node.",
+      "why": "One long label should not force a diagram-wide bound: declare the default once in style { } and let the noisy element counter-declare exactly the key it needs, inheriting the rest.",
+      "when": "A single oversized note in an otherwise uniform diagram, a draft node that should recede visually, a tight caption with its own shrink floor.",
+      "read": [
+        "summary wraps at its own 200px while the view-wide default is 320px — the element key wins, the inherited wrap mode still applies.",
+        "verdict shrinks toward its own 11px floor (DDN-LW08 names the floor if the text cannot fit); the view-wide min_font of 10px does not lower it.",
+        "draft paints at 0.55 opacity — fill, stroke and text fade together as one group; its box, the routing and every diagnostic are exactly as if it were solid.",
+        "content_scale and DDN071 compose after the fit: the publication layer scales the post-fit drawing and checks effective sizes at the final page scale."
+      ],
+      "inputs": [
+        "The view-wide sizing default",
+        "The elements that genuinely deviate",
+        "Which nodes should visually recede"
+      ],
+      "pitfalls": [
+        "Do not re-declare the whole sizing record on an element to change one key — resolution is per key, so declare only the override.",
+        "Do not use opacity to hide content — it is paint-only; hit-testing, measurement and diagnostics all still see the node."
+      ],
+      "limits": "opacity is 0–1 (DDN-SZ01) and 1 is the default. Sizing bounds stay the chapter-54 ranges (DDN-TF02/TF03). Below ddn \"0.6\" opacity is DDN-V04; sizing keys are chapter-54 syntax with the same gate.",
+      "refs": [],
+      "probe": [
+        "note",
+        "term"
+      ],
+      "editTask": "Rename one element, apply, then move max_width between the element and the view style { } and watch which boxes re-wrap.",
+      "tags": [
+        "technique",
+        "0.8",
+        "sizing",
+        "opacity",
+        "text",
+        "overflow"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/sizing-opacity.ddn",
+        "view": "main",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "309396c8edf9ba5341d5ccd76a9595856520b722d50a21f7e5874440d0e22107",
+        "modelFingerprint": "5f4e42d0ae4a7682",
+        "warnings": [
+          "DDN-LW08",
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/sizing-opacity.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/sizing-opacity.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view main \"Per-element sizing and opacity\" {\n  data: [@model];\n  style { max_width: 320px; min_font: 10px; }\n  layout { quality: warn; }\n  publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open field-guide/sources/sizing-opacity.ddn and locate view main. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.sizing::model.summary",
+        "file": "field-guide/sources/sizing-opacity.ddn",
+        "before": "Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage.",
+        "after": "Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage. / review",
+        "expectation": "Only the label of Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage. / review changes; sizing resolution, opacity and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "309396c8edf9ba5341d5ccd76a9595856520b722d50a21f7e5874440d0e22107",
+        "after": "8ba62a52d6009516794d099a62b7f375be4104499f9d20269a151ac066d9ac54",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,

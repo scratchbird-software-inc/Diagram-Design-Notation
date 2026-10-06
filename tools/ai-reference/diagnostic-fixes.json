@@ -198,6 +198,7 @@
     "DDN-LN02": "Write line/stroke/fill color as #rgb or #rrggbb (for example \"#1d4ed8\").",
     "DDN-LN03": "Set line/stroke weight to a length from 0.25px to 16px.",
     "DDN-LN04": "Use dash: solid, dashed or dotted; custom dash arrays are reserved for a future revision.",
-    "DDN-LN05": "Use corners: round; square corner treatment is reserved for a future revision."
+    "DDN-LN05": "Use corners: round; square corner treatment is reserved for a future revision.",
+    "DDN-SZ01": "Set element opacity to a number from 0 to 1 (for example 0.6); 1 is the default and may simply be omitted."
   }
 }

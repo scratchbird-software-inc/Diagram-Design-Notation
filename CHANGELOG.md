@@ -6,6 +6,22 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Per-element sizing resolution + content opacity (0.8 amendment, spec ch. 04 §6C).**
+  Pins the per-key resolution contract for the chapter-54 sizing keys —
+  `text_fit` / `max_width` / `max_height` / `min_font` resolve element > view
+  `style { }` > engine default, and the two-pass fit loop consumes the
+  resolved per-element record (composition with `content_scale` and DDN071 at
+  the final page scale documented). Adds per-element `opacity` (0–1): one
+  SVG group opacity over the whole node on both the plain card and profile
+  silhouette paths — paint-only (no hit-testing, measurement, layout,
+  routing, diagnostic or fingerprint effect), applied under every theme,
+  `1` paints nothing. Validation `DDN-SZ01`, version-gated `DDN-V04` below
+  `ddn "0.6"`; `opacity` added to the contracts reserved set and the registry
+  capabilities list. Output is byte-identical when nothing is declared. AI
+  authoring reference gains §14.6C (+ `DDN-SZ01` fix), the field guide a
+  "Per-element sizing and opacity" chapter, and a new 8-test suite
+  (`notation/tests/sizing-properties.js`) pins resolution, fit-loop
+  interaction, `content_scale` composition and opacity paint/validation.
 - **Portable stroke/line properties (0.8 amendment, spec ch. 04 §6B).** One
   paint vocabulary — `color` (`#rgb`/`#rrggbb`), `weight` (0.25–16 px length),
   `dash` (`solid`/`dashed`→`10 6`/`dotted`→`2 5`; custom arrays reserved),

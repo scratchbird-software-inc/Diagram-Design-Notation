@@ -1512,6 +1512,28 @@ data model {
 view main "Line properties" { data: [@model]; }
 ```
 
+### 14.6C Per-element sizing resolution and opacity (ch. 04 §6C, ch. 54)
+
+The chapter-54 sizing keys resolve **per key**: element > view `style { }` > engine default. An element overrides exactly what it declares and inherits the rest (`max_width` on the element composes with `min_font` from the view). The two-pass fit loop consumes the resolved per-element record; `content_scale` scales the post-fit drawing at page composition and DDN071 checks effective sizes at the final scale. Geometry changes, semantics never do.
+
+`opacity: 0..1` on an element fades the whole node (fill+stroke+text) as one SVG group opacity — paint-only: no hit-testing, measurement, layout, routing, diagnostic or fingerprint effect; applies under every theme. `1` is the default and paints nothing; anything else is **DDN-SZ01**; below `ddn "0.6";` it is **DDN-V04**.
+
+```ddn
+ddn "0.6";
+module "recipes.sizing";
+data model {
+  object summary "Quarterly summary, rather long" {
+    kind: note;
+    max_width: 200px;
+    opacity: 0.85;
+  }
+}
+view main "Sizing" {
+  data: [@model];
+  style { max_width: 320px; min_font: 10px; }
+}
+```
+
 ### 14.7 Workspace conventions and conformance (ch. 56, 58)
 
 - Entry discovery for tools that must guess: `main.ddn`, then `index.ddn`, then the single `.ddn` at the root; ambiguity is reported (DDN-WS03), never resolved by mtime. A workspace MAY carry `ddn.workspace.json`: `{ "format": "ddn-workspace@1", "entry": "main.ddn", "packs": [] }` — malformed → DDN-WS02; missing entry file → DDN-WS04.

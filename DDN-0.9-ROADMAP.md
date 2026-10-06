@@ -91,10 +91,17 @@ A coherent `stroke`/`line` property family on relations and element outlines.
 
 ## Portable sizing / layout properties [designer]
 
-- [ ] Element size constraints per element (max_width/max_height/text_fit/
-      min_font exist view-wide in `style {}`; per-element override path)
-- [ ] Content opacity / background opacity (view background carries opacity;
-      per-element does not)
+- [x] Element size constraints per element (max_width/max_height/text_fit/
+      min_font exist view-wide in `style {}`; per-element override path) —
+      already portable since 0.8 (spec ch. 54 §54.1 element-level keys);
+      the per-key resolution element > view > engine default is now pinned by
+      spec ch. 04 §6C and `notation/tests/sizing-properties.js` (implemented
+      0.8.x amendment). Designer Sizing-editor element targeting remains
+      reference-tool wiring, a separate follow-up.
+- [x] Content opacity / background opacity (view background carries opacity;
+      per-element does not) — per-element `opacity` 0–1 as one SVG group
+      opacity, paint-only, DDN-SZ01 (implemented 0.8.x amendment, spec
+      ch. 04 §6C)
 
 ## Deferred from the 0.8 closure audit [closure]
 

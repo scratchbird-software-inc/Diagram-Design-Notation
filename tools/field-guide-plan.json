@@ -1230,6 +1230,14 @@
   "view": "main"
  },
  {
+  "id": "sizing-opacity",
+  "title": "Per-element sizing and opacity — overrides that compose",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/sizing-opacity.ddn",
+  "view": "main"
+ },
+ {
   "id": "markings-metadata",
   "title": "Markings and metadata — forbidden, tentative, provenance",
   "status": "pilot",

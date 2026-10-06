@@ -1,0 +1,33 @@
+ddn "0.6";
+module "ddn.fieldguide.sizing";
+
+// Per-element sizing resolution (spec ch. 04 §6C, ch. 54) and content
+// opacity: sizing keys resolve per key — element > view > engine default —
+// and opacity fades a whole node as one group, paint-only.
+
+data model {
+  object summary "Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage." {
+    kind: note;
+    max_width: 200px;
+  }
+  object draft "Draft hypothesis — not yet reviewed by the working group" {
+    kind: note;
+    opacity: 0.55;
+  }
+  object verdict "Proceed with the staged migration" {
+    kind: term;
+    text_fit: shrink;
+    max_width: 240px;
+    max_height: 64px;
+    min_font: 11px;
+  }
+  relation leads @summary -> @verdict { kind: assoc; }
+  relation informs @draft -> @verdict { kind: assoc; }
+}
+
+view main "Per-element sizing and opacity" {
+  data: [@model];
+  style { max_width: 320px; min_font: 10px; }
+  layout { quality: warn; }
+  publication { size: content; fit: none; }
+}

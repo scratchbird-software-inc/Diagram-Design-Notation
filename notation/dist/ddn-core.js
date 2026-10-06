@@ -1921,7 +1921,7 @@
    const allMembers=new Map(ir.elements.flatMap(x=>[...x.fields,...x.ports].map(f=>[f.id,{...f,owner:x}])));
    new Map(registry.kinds.map(k=>[k.keyword,k]));
    const state=v=>isObject(v)&&Object.hasOwn(v,'$state');
-   const reserved=new Set(['uid','description','aliases','kind','level','representation','platform','maturity','workload','role','temporal','time','distribution','location','meaning','scope','domain','datatype','key','nullable','presence','shape','unit','default','ordinal','classification','policy','owner','columns','rows','mode','capture','delivery','transport','enforcement','source_mark','target_mark','source_cardinality','target_cardinality','ordering','direction','side','payload','version','allow_extra','discriminator','variants','optional','dimension','target','min','max','text_fit','max_width','max_height','min_font','font_pin','numeral','marks','assertion','text','line','stroke','fill']);
+   const reserved=new Set(['uid','description','aliases','kind','level','representation','platform','maturity','workload','role','temporal','time','distribution','location','meaning','scope','domain','datatype','key','nullable','presence','shape','unit','default','ordinal','classification','policy','owner','columns','rows','mode','capture','delivery','transport','enforcement','source_mark','target_mark','source_cardinality','target_cardinality','ordering','direction','side','payload','version','allow_extra','discriminator','variants','optional','dimension','target','min','max','text_fit','max_width','max_height','min_font','font_pin','numeral','marks','assertion','text','line','stroke','fill','opacity']);
    function props(item,target){
     for(const [key,value]of Object.entries(item.properties||{})){
      if(key.startsWith('x_')){
@@ -3293,6 +3293,12 @@
         const strokeGroup=group(n,'stroke');
         if(strokeGroup){textGate(n,'A stroke { } group on an element');properties.stroke=normalizeStrokeProps(strokeGroup.props,(code,msg)=>{throw new DDNError(code,msg,strokeGroup.source,strokeGroup.start);},{allowCorners:true});}
         if(properties.fill!==undefined){textGate(n,'fill on an element');properties.fill=normalizeLineColor(properties.fill,(code,msg)=>{throw new DDNError(code,msg,n.source,n.start);});}
+        /* 0.8 (chapter 04 §6C): per-element content opacity — a plain 0..1
+         * ratio painted as one SVG group opacity over the whole node (fill,
+         * stroke and text together). Paint-only: hit-testing, measurement,
+         * layout, diagnostics and the model fingerprint are unaffected. */
+        if(properties.opacity!==undefined){textGate(n,'opacity on an element');
+          if(typeof properties.opacity!=='number'||!Number.isFinite(properties.opacity)||properties.opacity<0||properties.opacity>1)throw new DDNError('DDN-SZ01','opacity on an element must be a number from 0 to 1; found '+JSON.stringify(properties.opacity),n.source,n.start);}
         if(n.type==='sample'){
           if(!Array.isArray(properties.columns)||!Array.isArray(properties.rows))throw new DDNError('DDN051','Sample requires columns and rows',n.source,n.start);
           for(const c of n.props.columns){const f=ws.resolve(c,n);if(f.type!=='field')throw new DDNError('DDN052','Sample columns must bind to fields',n.source,n.start);}

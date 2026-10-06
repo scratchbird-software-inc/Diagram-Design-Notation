@@ -324,7 +324,11 @@ function renderNode(g,p,theme,registry){
  const elPen=n.properties?.stroke||null,elFill=n.properties?.fill??null;
  const oInk=mono||monoPrint?ink:(elPen?.color??ink),oFill=mono||monoPrint?fill:(elFill??fill),oDash=elPen?.dash?DDN.LINE_DASH_PATTERNS[elPen.dash]:null,oW=elPen?.weight;
  const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
- let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-ref="${esc(n.ref||n.id)}"${g.tfClip||g.tfClipW?' data-textfit-overflow="true"':''} tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
+ /* 0.8 (chapter 04 §6C): per-element opacity paints as one group opacity over
+  * the whole node — fill, stroke and text fade together; hit-testing and
+  * diagnostics are unaffected (SVG group opacity changes paint only). */
+ const op=n.properties?.opacity;
+ let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-ref="${esc(n.ref||n.id)}"${g.tfClip||g.tfClipW?' data-textfit-overflow="true"':''}${op!==undefined&&op<1?` opacity="${op}"`:''} tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
  /* 0.8 (chapter 54 §54.2): residual overflow renders with the text clipped at
   * the box edge and a visible ellipsis marker — never invisible text. The clip
   * rect is the box inflated by the border stroke so the frame stays whole. */

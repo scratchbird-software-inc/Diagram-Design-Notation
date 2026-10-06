@@ -107,6 +107,24 @@ view v {
   }
 }</code></pre>
 <p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>line { }</code> on relations, <code>stroke { }</code>/<code>fill</code> on elements.)</p>
+<h2>6C. Per-element sizing resolution and content opacity (0.8 amendment)</h2>
+<blockquote><strong>0.8 draft amendment:</strong> the sizing half of this section restates (and pins) the element-override contract chapter 54 already defines; <code>opacity</code> is gated on source version <code>ddn &quot;0.6&quot;;</code> — below it, <code>opacity</code> on an element is <code>DDN-V04</code>.</blockquote>
+<p><strong>Sizing.</strong> The four view-level sizing keys of chapter 54 — <code>text_fit</code>, <code>max_width</code>, <code>max_height</code>, <code>min_font</code> — resolve <strong>per key</strong> on every element:</p>
+<table><thead><tr><th>Key</th><th>Element</th><th>View (<code>style { }</code>)</th><th>Engine default</th></tr></thead><tbody><tr><td><code>text_fit</code></td><td>wins</td><td>profile/bundle default</td><td>inferred <code>wrap</code> when a width constraint exists, else fixed box</td></tr><tr><td><code>max_width</code> / <code>max_height</code></td><td>wins</td><td>view-wide bound</td><td>none (natural size)</td></tr><tr><td><code>min_font</code></td><td>wins</td><td>view-wide floor</td><td>8 px absolute floor</td></tr></tbody></table>
+<p>An element therefore overrides exactly the keys it declares and inherits the rest — <code>max_width</code> on the element composes with <code>min_font</code> from the view, and so on. The chapter-54 fit loop (measure → resize → re-layout, at most two passes) consumes the <strong>resolved per-element record</strong>, so a view-wide bound applies to every element that does not counter-declare it. Composition with the publication layer is unchanged: <code>content_scale</code> (chapter 06) scales the post-fit drawing uniformly at page composition, and DDN071 checks effective sizes at the final page scale (contain factor × <code>content_scale</code>). These keys change geometry, never semantics: <code>modelFingerprint</code>, endpoints and relation identities are unaffected. (Reference-tool note: the designer's Sizing editor targets these same source keys; tool wiring is not part of this contract.)</p>
+<p><strong>Opacity.</strong> An element gains an optional <code>opacity</code> key: a plain number from 0 to 1, painted as <strong>one SVG group opacity</strong> over the whole node — fill, stroke and text fade together, exactly like the view <code>background { opacity }</code> at the page layer. Opacity is paint-only: it does not affect hit-testing, measurement, layout, routing, diagnostics (DDN071, print lint) or the <code>modelFingerprint</code>, and it applies under every theme including the monochrome modes (it carries no colour). <code>1</code> is the default and paints nothing; anything outside 0–1 or not a number is <code>DDN-SZ01</code>.</p>
+<pre><code>data m {
+  object summary &quot;Quarterly summary, rather long&quot; {
+    kind: note;
+    max_width: 200px;      // overrides the view-wide 320px
+    opacity: 0.85;
+  }
+}
+view v {
+  data: [@m];
+  style { max_width: 320px; min_font: 10px; }   // inherited keys still apply
+}</code></pre>
+<p>(0.8 syntax — requires <code>ddn &quot;0.6&quot;;</code>: <code>opacity</code> on elements; element sizing keys are chapter-54 syntax.)</p>
 <h2>7. Label modes and completeness</h2>
 <p>Kind text, kind icons and discriminator tokens are independently optional subject to unambiguous recovery. Relation labels support <code>text</code>, <code>tokens</code>, <code>numbers</code> and <code>none</code>. With <code>none</code> no relation label or badge renders at all; the label corridor space is reclaimed, and the relationship key disappears for the same reason it does under full inline text — there is nothing left to decode — unless the author explicitly sets <code>chrome.legend: 'on'</code>. Numbered mode replaces full midpoint wording, not direction or structural participation endpoints. A relation's legend entry includes its source, target, verb and selected qualifiers. The text alternative should include field-level endpoints even when the drawing collapses them. The <code>concept.map@1</code> profile proves relation labels are first-class: concept maps require an explicit author-written relation name on every link and reject bare verb defaults (<code>DDN-PJ104</code>).</p>
 <p>A legend is generated from the resolved view and profile, not manually reconstructed by an author. The complete registry key and the per-diagram relationship key are distinct sections. Compact figures may show only used vocabulary. No unused decorative colour should appear as though it represents a data fact.</p>

@@ -1370,6 +1370,14 @@
       ]
     },
     {
+      "chapter": "sizing-opacity",
+      "entry": "field-guide/sources/sizing-opacity.ddn",
+      "view": "main",
+      "files": [
+        "field-guide/sources/sizing-opacity.ddn"
+      ]
+    },
+    {
       "chapter": "markings-metadata",
       "entry": "field-guide/sources/markings.ddn",
       "view": "main",
