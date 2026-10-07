@@ -6,6 +6,24 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Diff views (0.8 amendment, spec ch. 55 §55.6; closes the 0.8 S6 deferral in
+  DDN-GAPS.md).** `view review { diff: [@v1, @v2]; }` renders the union of
+  both views' visible models with per-member states. Members match by **local
+  source id in the data block** (workspace uids cannot correlate revisions —
+  DDN026), comparison covers name/kind/properties/fields with relation
+  endpoints compared by local id; geometry is ignored. States paint per the
+  §55.1 marking conventions: added (green, solid, `+` token), removed (red,
+  dashed, strike, `−`), changed (amber, dotted, `~`), unchanged (no overlay);
+  relations repaint in the same channel, mono themes drop colours and keep
+  dash/strike/tokens, and an automatic `ddn-diff-key` names the operands. The
+  union re-keys members to the diff view and lays out fresh under its own
+  profiles. Validation `DDN-DF01`–`DDN-DF04` (malformed/`data` conflict,
+  unresolved/non-view ref, self/diff-of-diff, ambiguous identity); `DDN-V04`
+  below `ddn "0.6"`. Conformance vectors `diff-basic` + `reject-ddn-df03`
+  (manifest +2 entries, nothing re-recorded), a 7-test suite
+  (`notation/tests/diff-views.js`, registered `test:diff-views`), AI
+  reference + `DDN-DFxx` fixes, field-guide "Diff views" chapter. Designer
+  diff UI remains a reference-tool follow-up.
 - **Parameterized model fragments + nested `use:` (0.8 amendment, spec ch. 01;
   closes the 2026-09-24 DDN-GAPS deferral).** `fragment name(p1, …) {…}`
   (1–8 unique parameters) applied as `use: @name(a1, …)` with a documented

@@ -163,13 +163,29 @@ operations observe:
   offer to rewrite referencing sites (anchors, bindings, relations) in the
   same undo transaction.
 
-## 55.6 Deferred: diff views (S6)
+## 55.6 Diff views (0.8 amendment; S6 deferral closed)
 
-`diff: [@viewA, @viewB]` with added/removed/changed styling by uid
-(geometry ignored; label/kind/marks compared) is **deferred to 0.9**. 0.8
-processors MUST reject `diff` as an unknown property (`DDN-V04` in 0.6
-files) rather than half-implement it. The uid semantics of §55.5 are written
-so diff can build on them without amendment.
+> **0.8 draft amendment:** this section is gated on source version `ddn "0.6";` — below it, `diff` on a view remains `DDN-V04`. Views declaring no `diff` are unaffected. The S6 deferral recorded above is closed by this amendment; the uid semantics of §55.5 are unchanged.
+
+A view may declare `diff: [@viewA, @viewB]` **instead of** `data` (the two are mutually exclusive, `DDN-DF01`). Both operands build through the ordinary pipeline; the diff view renders the **union of their visible models** (selected elements and the relations visible between them) with a per-member state.
+
+**Matching rule.** Members correlate by **local source id within the data block**: `before.keep` and `after.keep` are the same logical element — the shared local id is the author's identity claim. (Workspace uids cannot serve: they are unique per workspace by construction — DDN026 — so two revisions can never share one.) Relations correlate by their local id the same way. An operand containing two members with the same local id is an authoring ambiguity (`DDN-DF04`; narrow it with `select`/`exclude`).
+
+**States.** For each matched pair: **unchanged** when name, kind, properties (and fields, for elements; endpoints by local id, for relations) compare equal, else **changed**; present only in A = **removed**; only in B = **added**. Geometry is ignored in the comparison. A relation's state reflects its own record; an endpoint element's change shows on the element, not the relation. Union members are re-keyed to the diff view (`<diff-view>::<state>::<local-id>`) and relation endpoints re-point at the union copy.
+
+**State paint.** States ride the marking conventions of §55.1: a colour channel (added green, removed red, changed amber) **plus** a non-colour channel — added solid outline with a `+` corner token, removed dashed outline with a strike and a `−` token, changed dotted outline with a `~` token; relations are repainted in the same channel. Under `neutral` and `mono_print` the colours drop to the monochrome contract and the dash/strike/token channels keep the states distinguishable. `unchanged` paints no overlay: it is the context. An automatic **diff key** (`<g class="ddn-diff-key">`, three rows naming the operand views) renders beside the title block whenever a diff view is painted.
+
+**Layout.** The union is laid out fresh by the normal pipeline under the diff view's own layout profiles — A's geometry is not preserved (the comparison ignores geometry, so there is nothing to preserve); `place` pins belong to the operand views and do not carry. Removed members occupy space in the union layout, so a removed element appears where the union places it among its former neighbours.
+
+**Validation.** `DDN-DF01` malformed diff (not exactly two view references, or `diff` combined with `data`); `DDN-DF02` a reference does not resolve to a view; `DDN-DF03` self-diff, a diff naming itself, or diff-of-diff (operands must be ordinary views — expansion depth stays 1); `DDN-DF04` ambiguous identity in an operand. Below `ddn "0.6";`, any `diff` is `DDN-V04`.
+
+```ddn-0.8
+view v1 "Before" { data: [@before]; }
+view v2 "After" { data: [@after]; }
+view review "Before → after" { diff: [@v1, @v2]; publication { size: content; } }
+```
+
+(0.8 syntax — requires `ddn "0.6";`: `diff` on a view.)
 
 ## 55.7 Diagnostic codes allocated by this chapter
 
@@ -181,3 +197,7 @@ so diff can build on them without amendment.
 | `DDN-MK04` | error | Assertion text empty or over 500 characters. |
 | `DDN-MK05` | error | `ref:` anchor names a missing element; message names the anchor site. |
 | `DDN-MK06` | error | `ref:` self-reference within an element's own text. |
+| `DDN-DF01` | error | Malformed `diff`: not exactly two view references, or `diff` combined with `data` (§55.6). |
+| `DDN-DF02` | error | A `diff` reference does not resolve to a view in the workspace (§55.6). |
+| `DDN-DF03` | error | Self-diff, diff naming itself, or diff-of-diff (§55.6). |
+| `DDN-DF04` | error | A diff operand contains two members with the same local-id identity (§55.6). |

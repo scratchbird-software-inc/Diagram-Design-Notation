@@ -3188,15 +3188,34 @@
         const v06=SOURCE_VERSIONS.indexOf(n.doc.file.version)>=V06;
         const gate=k=>{throw new DDNError('DDN-V04',k+' on '+n.type+' '+n.id+' is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+n.doc.file.source+' declares ddn "'+n.doc.file.version+'"',n.source,n.start);};
         if(n.type==='view'){
-          if(Object.hasOwn(n.props,'diff'))throw new DDNError('DDN-V04','diff views are deferred to the 0.9 standard revision; diff is an unknown property in the 0.6 dialect',n.source,n.start);
+          if(Object.hasOwn(n.props,'diff')&&!v06)throw new DDNError('DDN-V04','diff views are a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+n.doc.file.source+' declares ddn "'+n.doc.file.version+'"',n.source,n.start);
           if(!v06)for(const k of ['kind','strictness','theme','source','generator','assertions'])if(Object.hasOwn(n.props,k))gate(k);
         }
         else if(n.type==='publication_set'){if(!v06)gate('publication_set');}
         else if(n.type==='bundle'){if(!v06)for(const k of ['kind','strictness'])if(Object.hasOwn(n.props,k))gate(k);}
         else if(!['data','format','architecture',...PRESET_DEFS].includes(n.type)&&!v06)for(const k of ['marks','assertion','numeral','text_fit','max_width','max_height','min_font','font_pin'])if(Object.hasOwn(n.props,k))gate(k);
       }
-      const usedData=(Array.isArray(view.props.data)?view.props.data:[view.props.data]).filter(Boolean).map(r=>ws.resolve(r,view));
-      if(!usedData.length||usedData.some(n=>n.type!=='data'))throw new DDNError('DDN041','View data must reference one or more data blocks',view.source,view.start);
+      /* 0.8 amendment (chapter 55 §55.6): diff views. A view may declare
+       * diff: [@viewA, @viewB] instead of data — it renders the union of both
+       * views' models with per-uid added/removed/changed/unchanged states.
+       * diff and data are mutually exclusive; self-diffs and diff-of-diff are
+       * rejected (an ordinary-view-only contract keeps expansion depth at 1). */
+      let diff08=null;
+      if(view.props.diff!==undefined){
+        const d=view.props.diff;
+        if(!Array.isArray(d)||d.length!==2)throw new DDNError('DDN-DF01','diff must name exactly two views: diff: [@viewA, @viewB]',view.source,view.start);
+        if(view.props.data!==undefined)throw new DDNError('DDN-DF01','diff and data are mutually exclusive; a diff view selects nothing of its own',view.source,view.start);
+        const resolveDiffView=(r)=>{let t=null;try{t=ws.resolve(r,view);}catch(e){if(e.code!=='DDN031'&&e.code!=='DDN030')throw e;}
+          if(!t||t.type!=='view')throw new DDNError('DDN-DF02','diff reference '+JSON.stringify(r.$ref??r)+' does not resolve to a view in this workspace',view.source,r.$offset||view.start);
+          return t;};
+        const ra=resolveDiffView(d[0]),rb=resolveDiffView(d[1]);
+        if(ra.uid===rb.uid)throw new DDNError('DDN-DF03','diff of a view against itself is meaningless; name two different views',view.source,view.start);
+        if(ra.uid===view.uid||rb.uid===view.uid)throw new DDNError('DDN-DF03','a diff view cannot name itself',view.source,view.start);
+        if(ra.props.diff!==undefined||rb.props.diff!==undefined)throw new DDNError('DDN-DF03','diff-of-diff is not supported; diff references must name ordinary views',view.source,view.start);
+        diff08={a:ra,b:rb};
+      }
+      const usedData=diff08?[]:(Array.isArray(view.props.data)?view.props.data:[view.props.data]).filter(Boolean).map(r=>ws.resolve(r,view));
+      if(!diff08&&(!usedData.length||usedData.some(n=>n.type!=='data')))throw new DDNError('DDN041','View data must reference one or more data blocks',view.source,view.start);
       const raw=usedData.flatMap(n=>n.children.filter(c=>!c.group));
       const elemTypes=['object','domain','sample','flow','assertion'];
       for(const n of raw){if(!elemTypes.includes(n.type)&&n.type!=='relation')throw new DDNError('DDN042','Unsupported data declaration '+n.type,n.source,n.start);}
@@ -3400,6 +3419,55 @@
         const lineGroup=group(n,'line');
         if(lineGroup){textGate(n,'A line { } group on a relation');properties.line=normalizeStrokeProps(lineGroup.props,(code,msg)=>{throw new DDNError(code,msg,lineGroup.source,lineGroup.start);},{group:'line'});}
         return {id:n.uid,ref:n.path,name:n.label||r.name,kind:r.keyword,kindCode:r.code,from:endpoint(n.from,n),to:endpoint(n.to,n),properties,source:{file:n.source,start:n.start,end:n.end}};});
+      /* 0.8 amendment (chapter 55 §55.6): diff union. Both operand views build
+       * through the ordinary pipeline. Matching is by LOCAL SOURCE ID within
+       * the data block (before.keep correlates with after.keep — uids are
+       * workspace-unique by construction (DDN026) and cannot correlate two
+       * revisions; the shared local id is the author's identity claim).
+       * Comparison covers name, kind, properties (and fields for elements);
+       * geometry is ignored. An operand with two elements sharing one local id
+       * is an authoring ambiguity (DDN-DF04). The diff view then flows through
+       * selection/visibility/layout exactly like a data-backed view. */
+      if(diff08){
+        const irA=build(files,diff08.a.source,diff08.a.uid,registry,[...stack,view.uid]).ir;
+        const irB=build(files,diff08.b.source,diff08.b.uid,registry,[...stack,view.uid]).ir;
+        /* The operand is the view's VISIBLE model: selected elements and the
+         * relations visible between them (ir.view.relations), not the whole
+         * underlying data blocks. */
+        const visEls=ir=>(new Set(ir.view.selected||ir.elements.map(e=>e.id)));
+        const visRels=ir=>new Set(ir.view.relations||[]);
+        const selA=visEls(irA),selB=visEls(irB),visA=visRels(irA),visB=visRels(irB);
+        const elsA=irA.elements.filter(e=>selA.has(e.id)),elsB=irB.elements.filter(e=>selB.has(e.id));
+        const relsA=irA.relations.filter(r=>visA.has(r.id)),relsB=irB.relations.filter(r=>visB.has(r.id));
+        const localOf=(ref,local)=>local??String(ref).split('.').pop();
+        const keyOf=(list,side)=>{const m=new Map();
+          for(const e of list){const k=localOf(e.ref,e.local);
+            if(m.has(k))throw new DDNError('DDN-DF04','diff operand '+side+' contains two elements with the identity '+JSON.stringify(k)+' (from '+m.get(k).ref+' and '+e.ref+'); narrow the operand with select/exclude',view.source,view.start);
+            m.set(k,e);}
+          return m;};
+        const cmpEl=el=>JSON.stringify({name:el.name,kind:el.kind,properties:el.properties,fields:(el.fields||[]).map(f=>[f.name,f.properties])});
+        const byIdA=keyOf(elsA,diff08.a.uid),byIdB=keyOf(elsB,diff08.b.uid);
+        const counts={added:0,removed:0,changed:0,unchanged:0};
+        const cmpRel=r=>JSON.stringify({name:r.name,kind:r.kind,
+         from:{element:String(r.from.element).split('.').pop(),member:r.from.member},
+         to:{element:String(r.to.element).split('.').pop(),member:r.to.member},properties:r.properties});
+        const relA=keyOf(relsA,diff08.a.uid),relB=keyOf(relsB,diff08.b.uid);
+        /* Union identities are re-keyed to the diff view: operand uids are
+         * workspace-unique by construction (DDN026), so the union members get
+         * synthetic per-state ids and relation endpoints re-point at the union
+         * copy of their element (matched by the same local-id key). */
+        const elemKeyOf=e=>localOf(e.ref,e.local),unionId=(e,state)=>view.uid+'::'+state+'::'+elemKeyOf(e);
+        const byOrig=new Map(),newElems=[];
+        for(const [k,e] of byIdA){const other=byIdB.get(k),state=!other?'removed':cmpEl(e)!==cmpEl(other)?'changed':'unchanged';counts[state]++;const id=unionId(e,state);byOrig.set(e.id,id);if(other)byOrig.set(other.id,id);newElems.push({...e,id,diffState:state});}
+        for(const [k,e] of byIdB)if(!byIdA.has(k)){counts.added++;const id=unionId(e,'added');byOrig.set(e.id,id);newElems.push({...e,id,diffState:'added'});}
+        const newRels=[];
+        for(const [k,r] of relA){const other=relB.get(k),state=!other?'removed':cmpRel(r)!==cmpRel(other)?'changed':'unchanged';newRels.push({...r,diffState:state});}
+        for(const [k,r] of relB)if(!relA.has(k))newRels.push({...r,diffState:'added'});
+        for(const r of newRels){r.id=view.uid+'::'+r.diffState+'::'+localOf(r.ref,r.local);r.from={...r.from,element:byOrig.get(r.from.element)||r.from.element};r.to={...r.to,element:byOrig.get(r.to.element)||r.to.element};}
+        elements.push(...newElems);relations.push(...newRels);
+        elementIds.clear();for(const n of elements)elementIds.add(n.id);
+        diff08.aName=irA.view.name;diff08.bName=irB.view.name;diff08.counts=counts;
+      }
       // B1-033: declarative motion vocabulary (D2). Values are validated here;
       // emission is the renderer's job. rate beyond the DOM-honest cap is a
       // warning (DDN-W016) and clamps at render time.
@@ -3601,6 +3669,7 @@
       const currentLanguage=[...ws.docs.values()].some(d=>d.version==='0.6')?'0.6':[...ws.docs.values()].some(d=>d.version==='0.5')?'0.5':[...ws.docs.values()].some(d=>d.version==='0.4')?'0.4':'0.3';
       const ir={format:'ddn-resolved@'+currentLanguage,language:currentLanguage,registry:'ddn-core@0.3',entry,view:{id:view.uid,name:view.label||view.id,local:view.id,selected,relations:visibleRelations.map(r=>r.id),profiles:p,keys,placements,routes,subdiagrams,frames,flows,source:{file:view.source,start:view.start,end:view.end,bodyEnd:view.bodyEnd}},elements,relations,diagnostics};
       if(kind08!==undefined){ir.view.kind=kind08;ir.view.strictness=strictness08;}
+      if(diff08)ir.view.diff={a:diff08.a.uid,b:diff08.b.uid,aName:diff08.aName,bName:diff08.bName,counts:diff08.counts};
       if(theme08!==undefined)ir.view.theme=theme08;
       if(assertions08)ir.view.assertions=assertions08;
       if(fontPin08)ir.view.fontPin=fontPin08;

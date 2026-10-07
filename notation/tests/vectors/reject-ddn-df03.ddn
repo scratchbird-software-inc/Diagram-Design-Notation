@@ -1,0 +1,9 @@
+ddn "0.6";
+module "vectors.diffreject";
+
+data m {
+  object a { kind: cache; }
+}
+view a { data: [@m]; }
+view b { data: [@m]; }
+view main { diff: [@a, @a]; }

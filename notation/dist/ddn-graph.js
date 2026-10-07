@@ -2484,7 +2484,27 @@
    const chrome=p.chrome||{legend:'auto',title:'on',footer:'on'},
     titleOn=chrome.title!=='off'&&p.detail!=='shapes',
     footerOn=chrome.footer!=='off'&&p.detail!=='shapes';
-   /* B1-100: the RELATIONSHIP KEY legend exists to decode numbered badges and
+   /* 0.8 (chapter 55 §55.6): diff state paint. States ride the marking
+   * conventions — a colour channel PLUS a non-colour channel (dash pattern,
+   * strike, corner token) — so neutral and mono_print themes keep the three
+   * states distinguishable without colour. unchanged paints no overlay: it is
+   * the context the states stand out from. */
+  const DIFF_PAINT={
+   added:{stroke:'#1A7F37',dash:'',token:'+',word:'added'},
+   removed:{stroke:'#B42318',dash:'6 4',strike:true,token:'−',word:'removed'},
+   changed:{stroke:'#B45309',dash:'2 4',token:'~',word:'changed'}};
+  function diffPaint(state,monoTag){const dp=DIFF_PAINT[state];if(!dp)return null;
+   if(monoTag==='mono_print')return {...dp,stroke:'#000000'};
+   if(monoTag==='neutral')return {...dp,stroke:'#333333'};
+   return dp;}
+  function diffNodeOverlay(g,paint,s){
+   const{x,y,w,h}=g;
+   let o=`<g class="ddn-diff ddn-diff-${esc$1(g.n.diffState)}" data-diff="${esc$1(g.n.diffState)}"><rect x="${fmt(x-3)}" y="${fmt(y-3)}" width="${fmt(w+6)}" height="${fmt(h+6)}" rx="${fmt(6*s)}" fill="none" stroke="${esc$1(paint.stroke)}" stroke-width="2.2"${paint.dash?` stroke-dasharray="${esc$1(paint.dash)}"`:''}/>`;
+   if(paint.strike)o+=`<path d="M${fmt(x-3)} ${fmt(y-3)}L${fmt(x+w+3)} ${fmt(y+h+3)}" stroke="${esc$1(paint.stroke)}" stroke-width="2.2" fill="none"/>`;
+   o+=`<rect class="ddn-diff-token" x="${fmt(x+w-16*s)}" y="${fmt(y-11*s)}" width="${fmt(16*s)}" height="${fmt(16*s)}" rx="${fmt(3*s)}" fill="${esc$1(paint.stroke)}"/>`+text$1(x+w-8*s,y+1.5*s,paint.token,11*s,'#FFFFFF',700,'text-anchor="middle"');
+   return o+'</g>';
+  }
+  /* B1-100: the RELATIONSHIP KEY legend exists to decode numbered badges and
     * tokens. When relation names already print in full inline (legend mode
     * 'text'), the legend repeats what the diagram says — suppress it unless the
     * author explicitly asked for it (chrome.legend: 'on'). Numbers/tokens keep
@@ -2758,6 +2778,10 @@
      if(paint.strike)diagram+=`<path d="M${fmt(mx-nx*13)} ${fmt(my-ny*13)}L${fmt(mx+nx*13)} ${fmt(my+ny*13)}" stroke="${esc$1(paint.stroke)}" stroke-width="2.4" fill="none"/>`;
      if(paint.hatch)diagram+=`<path data-hatch="true" d="M${fmt(mx-nx*13-Math.cos(ang)*10)} ${fmt(my-ny*13-Math.sin(ang)*10)}L${fmt(mx+nx*13-Math.cos(ang)*10)} ${fmt(my+ny*13-Math.sin(ang)*10)}M${fmt(mx-nx*13+Math.cos(ang)*10)} ${fmt(my-ny*13+Math.sin(ang)*10)}L${fmt(mx+nx*13+Math.cos(ang)*10)} ${fmt(my+ny*13+Math.sin(ang)*10)}" stroke="${esc$1(paint.stroke)}" stroke-width="1.4" fill="none"/>`;
      diagram+='</g>';}
+    /* 0.8 (chapter 55 §55.6): diff state overlay — the route is repainted in
+     * the state channel (colour + dash), like the marking treatments. */
+    if(a.r.diffState&&a.r.diffState!=='unchanged'){const dp=diffPaint(a.r.diffState,theme08==='mono_print'?'mono_print':p.style.theme==='neutral'?'neutral':null);
+     if(dp)diagram+=`<g class="ddn-diff ddn-diff-${esc$1(a.r.diffState)}" data-diff="${esc$1(a.r.diffState)}" data-relation="${esc$1(a.id)}">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$1(dp.stroke)}" stroke-width="${a.reg.width+1.2}"${dp.dash?` stroke-dasharray="${esc$1(dp.dash)}"`:''} opacity=".85"/>`).join('')+'</g>';}
     diagram+='</g>';
    }
    /* B1-060 : pins with no incident edge still render on the action
@@ -2858,7 +2882,9 @@
      flowScene.push({id:f.id,name:f.name,duration:durT,hops:hopScene});
     }
    }
-   geoms.forEach(g=>diagram+=renderNode(g,p,t,registry));
+   geoms.forEach(g=>{diagram+=renderNode(g,p,t,registry);
+    /* 0.8 (chapter 55 §55.6): diff state overlay rides after the node paint. */
+    if(g.n.diffState&&g.n.diffState!=='unchanged'){const dp=diffPaint(g.n.diffState,p.theme08==='mono_print'?'mono_print':p.style.theme==='neutral'?'neutral':null);if(dp)diagram+=diffNodeOverlay(g,dp,g.scale);}});
    for(const d of subs){
     if(d.mode==='inline'&&d.child){const child=render$1(d.child,registry,glyphDefs),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc$1(d.target)}">`+inner+'</g>';}
     else {if(!/^[A-Za-z0-9_.\/-]+$/.test(d.targetLocal)||d.targetLocal.startsWith('/')||d.targetLocal.includes('..'))throw new DDN$1.DDNError('DDN078','Subdiagram reference target must be a safe relative identifier: '+d.targetLocal);diagram+=`<g class="ddn-subdiagram" data-view="${esc$1(d.target)}"><a href="${esc$1(d.targetLocal)}.svg">`+rect(d.x,d.y,d.w,d.h,t.accent,t.surface,p.style.look,d.id,0,p.style)+glyph('frame',d.x+14,d.y+18,25,t.accent)+text$1(d.x+48,d.y+33,d.name,15,t.ink,600)+text$1(d.x+14,d.y+64,'↗ '+d.targetLocal+' · diagram reference',11,t.muted)+'</a></g>';}
@@ -2958,6 +2984,15 @@
     * the line, any other string replaces the text. */
    const bannerText=chrome.banner==='off'?null:(typeof chrome.banner==='string'&&chrome.banner!=='on'?chrome.banner:'DDN / PROPOSED STANDARD / '+DDN$1.VERSION);
    if(titleOn)out+=(bannerText?text$1(margin,headerBand+margin+5,bannerText,11,t.muted,650):'')+multilines(margin,headerBand+margin+34,titleLines,24,t.ink,28,650)+multilines(margin,headerBand+margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text$1(pageW-margin,headerBand+margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
+   /* 0.8 (chapter 55 §55.6): the diff key — three state rows, self-evident
+    * without colour (dash/strike/token + words), naming the operand views. */
+   if(ir.view.diff){const dk=ir.view.diff,monoTag=p.theme08==='mono_print'?'mono_print':p.style.theme==='neutral'?'neutral':null;
+    const rows=[['added','+ added in '+dk.bName],['removed','− removed from '+dk.aName],['changed','~ changed']];
+    const ky0=headerBand+margin+22,kx0=pageW-margin-170;
+    out+=`<g class="ddn-diff-key" data-a="${esc$1(dk.a)}" data-b="${esc$1(dk.b)}" data-counts="${esc$1(JSON.stringify(dk.counts))}">`;
+    rows.forEach(([st,label],i)=>{const dp=diffPaint(st,monoTag);
+     out+=`<rect x="${fmt(kx0)}" y="${fmt(ky0+i*16)}" width="16" height="10" fill="none" stroke="${esc$1(dp.stroke)}" stroke-width="2"${dp.dash?` stroke-dasharray="${esc$1(dp.dash)}"`:''}/>`+text$1(kx0+22,ky0+9+i*16,label,10.5,t.muted,500);});
+    out+='</g>';}
    out+=`<g id="drawing" transform="translate(${fmt(tx)} ${fmt(ty)}) scale(${fmt(scale)})">${diagram}</g>`;
    if(legendPlacement!=='none'&&legendEntries.length){let lx=legendPlacement==='right'?pageW-margin-legendW:margin,ly=legendPlacement==='right'?headBlock-15+extraHeader:pageH-margin-footerBand-legendHeight;out+=line(lx-12,ly-12,lx-12,legendPlacement==='right'?pageH-margin-footerBand-40:ly+legendHeight,t.rule,1);out+=text$1(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
     for(const entry of legendEntries){const key=p.legend.mode==='numbers'?entry.key:entry.reg.code;if(p.legend.mode==='numbers')out+=`<circle cx="${lx+12}" cy="${ly-4}" r="12" fill="${t.surface}" stroke="${t.ink}"/>`+text$1(lx+12,ly,String(key),11,t.ink,700,'text-anchor="middle"');else out+=text$1(lx,ly,String(key),11,t.muted,650);

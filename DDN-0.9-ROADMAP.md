@@ -112,7 +112,11 @@ rationale:
       implemented 0.8.x amendment (spec ch. 01 parameterized reuse): token-
       level substitution, DDN-FG01–FG06, cycle/depth guards, IR-equivalence
       fixtures; DDN-GAPS deferral closed 2026-10-06
-- [ ] Diff views (`diff: [@viewA, @viewB]`)
+- [x] Diff views (`diff: [@viewA, @viewB]`) — implemented 0.8.x amendment
+      (spec ch. 55 §55.6): local-id matching, added/removed/changed/unchanged
+      marking-convention paint + diff key, DDN-DF01–DF04, ch.58 vectors
+      (diff-basic, reject-ddn-df03); DDN-GAPS deferral closed 2026-10-06.
+      Designer diff UI remains reference-tool follow-up.
 - [ ] Assertion evaluation (owner decision pending: 0.9 vs Weaver orchestration)
 - [ ] Mermaid import (designer "Import…" command)
 - [ ] Unicode identifiers (UAX #31 / UTS #39 profiles)

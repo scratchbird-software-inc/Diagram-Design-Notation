@@ -3,8 +3,8 @@
     "edition": "field-guide-0.8",
     "runtime": "0.8.0",
     "reviewed": "2026-10-04",
-    "chapterCount": 159,
-    "plannedChapterCount": 159,
+    "chapterCount": 160,
+    "plannedChapterCount": 160,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -14712,6 +14712,95 @@
       "exerciseEvidence": {
         "before": "dcb97dc9385831da724675a26a78834fbba2322cebbafc590f6595a79ab90ecc",
         "after": "5f2a51a843cdcaae49b2e0ae3f853abfa3e128c620c5f93be2adaf817c015ca9",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "diff-views",
+      "title": "Diff views — before/after in one picture",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/diff-views.ddn",
+      "view": "main",
+      "editView": "v1",
+      "what": "A view with diff: [@v1, @v2] renders the union of both views’ visible models with per-member states: added, removed, changed and unchanged.",
+      "why": "Reviewing a change means seeing it, not reconstructing it from two files: one picture shows what appeared, what vanished and what moved — generated from the model, never hand-drawn.",
+      "when": "Migration plans, review packets, change proposals, before/after teaching material — anywhere two revisions of a model need one shared reading.",
+      "read": [
+        "Members match by local source id: before.worker and after.worker are the same element, so it paints changed (amber, dotted, ~) — it gained a retries field; legacy is removed (red, dashed, struck, −); ingest is added (green, solid, +); store is unchanged and gets no overlay.",
+        "Relations carry their own states: r1 is removed, r3 is added, r2 is unchanged — a relation’s state reflects its own record, so an endpoint’s change shows on the element, not the edge.",
+        "The diff key beside the title names the operands and the three state channels; under neutral or mono_print the colours drop out and the dash, strike and token channels keep the states readable.",
+        "The union is laid out fresh — the operands’ geometry is ignored, so a removed element appears where the union places it among its former neighbours."
+      ],
+      "inputs": [
+        "The two revisions as data blocks or views with matching local ids",
+        "Which members should correlate (shared local ids)",
+        "The diff view’s own layout and publication"
+      ],
+      "pitfalls": [
+        "Do not rely on uid: to correlate revisions — uids are workspace-unique by construction; the shared local source id is the identity claim.",
+        "Do not diff a view against itself or a diff of a diff (DDN-DF03) — operands are ordinary views."
+      ],
+      "limits": "diff and data: are mutually exclusive (DDN-DF01); an operand with duplicate local ids is DDN-DF04 (narrow with select/exclude). Below ddn \"0.6\" any diff is DDN-V04.",
+      "refs": [],
+      "probe": [
+        "cache",
+        "service",
+        "queue"
+      ],
+      "editTask": "Rename one element, apply, then give worker back its v1 field set and watch it flip from changed to unchanged.",
+      "tags": [
+        "technique",
+        "0.8",
+        "diff",
+        "review",
+        "migration"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/diff-views.ddn",
+        "view": "main",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "0cb53b0235cbcd6166c6e4de5d0d9b5bf4c4ddc2d063bac0535c271a91867351",
+        "modelFingerprint": "e0bcd2abbf56bdff",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/diff-views.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/diff-views.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view main \"Before → after\" {\n  diff: [@v1, @v2];\n  publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open field-guide/sources/diff-views.ddn and locate view main. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.diff::before.store",
+        "file": "field-guide/sources/diff-views.ddn",
+        "before": "Shared store",
+        "after": "Shared store / review",
+        "expectation": "Only the label of Shared store / review changes; diff matching, states and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "0cb53b0235cbcd6166c6e4de5d0d9b5bf4c4ddc2d063bac0535c271a91867351",
+        "after": "52412ddb1524256102b445facc2e1ca9901ce993be0eaed4ea7093f880284b06",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,

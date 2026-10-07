@@ -3183,15 +3183,34 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       const v06=SOURCE_VERSIONS.indexOf(n.doc.file.version)>=V06;
       const gate=k=>{throw new DDNError('DDN-V04',k+' on '+n.type+' '+n.id+' is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+n.doc.file.source+' declares ddn "'+n.doc.file.version+'"',n.source,n.start);};
       if(n.type==='view'){
-        if(Object.hasOwn(n.props,'diff'))throw new DDNError('DDN-V04','diff views are deferred to the 0.9 standard revision; diff is an unknown property in the 0.6 dialect',n.source,n.start);
+        if(Object.hasOwn(n.props,'diff')&&!v06)throw new DDNError('DDN-V04','diff views are a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+n.doc.file.source+' declares ddn "'+n.doc.file.version+'"',n.source,n.start);
         if(!v06)for(const k of ['kind','strictness','theme','source','generator','assertions'])if(Object.hasOwn(n.props,k))gate(k);
       }
       else if(n.type==='publication_set'){if(!v06)gate('publication_set');}
       else if(n.type==='bundle'){if(!v06)for(const k of ['kind','strictness'])if(Object.hasOwn(n.props,k))gate(k);}
       else if(!['data','format','architecture',...PRESET_DEFS].includes(n.type)&&!v06)for(const k of ['marks','assertion','numeral','text_fit','max_width','max_height','min_font','font_pin'])if(Object.hasOwn(n.props,k))gate(k);
     }
-    const usedData=(Array.isArray(view.props.data)?view.props.data:[view.props.data]).filter(Boolean).map(r=>ws.resolve(r,view));
-    if(!usedData.length||usedData.some(n=>n.type!=='data'))throw new DDNError('DDN041','View data must reference one or more data blocks',view.source,view.start);
+    /* 0.8 amendment (chapter 55 §55.6): diff views. A view may declare
+     * diff: [@viewA, @viewB] instead of data — it renders the union of both
+     * views' models with per-uid added/removed/changed/unchanged states.
+     * diff and data are mutually exclusive; self-diffs and diff-of-diff are
+     * rejected (an ordinary-view-only contract keeps expansion depth at 1). */
+    let diff08=null;
+    if(view.props.diff!==undefined){
+      const d=view.props.diff;
+      if(!Array.isArray(d)||d.length!==2)throw new DDNError('DDN-DF01','diff must name exactly two views: diff: [@viewA, @viewB]',view.source,view.start);
+      if(view.props.data!==undefined)throw new DDNError('DDN-DF01','diff and data are mutually exclusive; a diff view selects nothing of its own',view.source,view.start);
+      const resolveDiffView=(r)=>{let t=null;try{t=ws.resolve(r,view);}catch(e){if(e.code!=='DDN031'&&e.code!=='DDN030')throw e;}
+        if(!t||t.type!=='view')throw new DDNError('DDN-DF02','diff reference '+JSON.stringify(r.$ref??r)+' does not resolve to a view in this workspace',view.source,r.$offset||view.start);
+        return t;};
+      const ra=resolveDiffView(d[0]),rb=resolveDiffView(d[1]);
+      if(ra.uid===rb.uid)throw new DDNError('DDN-DF03','diff of a view against itself is meaningless; name two different views',view.source,view.start);
+      if(ra.uid===view.uid||rb.uid===view.uid)throw new DDNError('DDN-DF03','a diff view cannot name itself',view.source,view.start);
+      if(ra.props.diff!==undefined||rb.props.diff!==undefined)throw new DDNError('DDN-DF03','diff-of-diff is not supported; diff references must name ordinary views',view.source,view.start);
+      diff08={a:ra,b:rb};
+    }
+    const usedData=diff08?[]:(Array.isArray(view.props.data)?view.props.data:[view.props.data]).filter(Boolean).map(r=>ws.resolve(r,view));
+    if(!diff08&&(!usedData.length||usedData.some(n=>n.type!=='data')))throw new DDNError('DDN041','View data must reference one or more data blocks',view.source,view.start);
     const raw=usedData.flatMap(n=>n.children.filter(c=>!c.group));
     const elemTypes=['object','domain','sample','flow','assertion'];
     for(const n of raw){if(!elemTypes.includes(n.type)&&n.type!=='relation')throw new DDNError('DDN042','Unsupported data declaration '+n.type,n.source,n.start);}
@@ -3395,6 +3414,55 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       const lineGroup=group(n,'line');
       if(lineGroup){textGate(n,'A line { } group on a relation');properties.line=normalizeStrokeProps(lineGroup.props,(code,msg)=>{throw new DDNError(code,msg,lineGroup.source,lineGroup.start);},{group:'line'});}
       return {id:n.uid,ref:n.path,name:n.label||r.name,kind:r.keyword,kindCode:r.code,from:endpoint(n.from,n),to:endpoint(n.to,n),properties,source:{file:n.source,start:n.start,end:n.end}};});
+    /* 0.8 amendment (chapter 55 §55.6): diff union. Both operand views build
+     * through the ordinary pipeline. Matching is by LOCAL SOURCE ID within
+     * the data block (before.keep correlates with after.keep — uids are
+     * workspace-unique by construction (DDN026) and cannot correlate two
+     * revisions; the shared local id is the author's identity claim).
+     * Comparison covers name, kind, properties (and fields for elements);
+     * geometry is ignored. An operand with two elements sharing one local id
+     * is an authoring ambiguity (DDN-DF04). The diff view then flows through
+     * selection/visibility/layout exactly like a data-backed view. */
+    if(diff08){
+      const irA=build(files,diff08.a.source,diff08.a.uid,registry,[...stack,view.uid]).ir;
+      const irB=build(files,diff08.b.source,diff08.b.uid,registry,[...stack,view.uid]).ir;
+      /* The operand is the view's VISIBLE model: selected elements and the
+       * relations visible between them (ir.view.relations), not the whole
+       * underlying data blocks. */
+      const visEls=ir=>(new Set(ir.view.selected||ir.elements.map(e=>e.id)));
+      const visRels=ir=>new Set(ir.view.relations||[]);
+      const selA=visEls(irA),selB=visEls(irB),visA=visRels(irA),visB=visRels(irB);
+      const elsA=irA.elements.filter(e=>selA.has(e.id)),elsB=irB.elements.filter(e=>selB.has(e.id));
+      const relsA=irA.relations.filter(r=>visA.has(r.id)),relsB=irB.relations.filter(r=>visB.has(r.id));
+      const localOf=(ref,local)=>local??String(ref).split('.').pop();
+      const keyOf=(list,side)=>{const m=new Map();
+        for(const e of list){const k=localOf(e.ref,e.local);
+          if(m.has(k))throw new DDNError('DDN-DF04','diff operand '+side+' contains two elements with the identity '+JSON.stringify(k)+' (from '+m.get(k).ref+' and '+e.ref+'); narrow the operand with select/exclude',view.source,view.start);
+          m.set(k,e);}
+        return m;};
+      const cmpEl=el=>JSON.stringify({name:el.name,kind:el.kind,properties:el.properties,fields:(el.fields||[]).map(f=>[f.name,f.properties])});
+      const byIdA=keyOf(elsA,diff08.a.uid),byIdB=keyOf(elsB,diff08.b.uid);
+      const counts={added:0,removed:0,changed:0,unchanged:0};
+      const cmpRel=r=>JSON.stringify({name:r.name,kind:r.kind,
+       from:{element:String(r.from.element).split('.').pop(),member:r.from.member},
+       to:{element:String(r.to.element).split('.').pop(),member:r.to.member},properties:r.properties});
+      const relA=keyOf(relsA,diff08.a.uid),relB=keyOf(relsB,diff08.b.uid);
+      /* Union identities are re-keyed to the diff view: operand uids are
+       * workspace-unique by construction (DDN026), so the union members get
+       * synthetic per-state ids and relation endpoints re-point at the union
+       * copy of their element (matched by the same local-id key). */
+      const elemKeyOf=e=>localOf(e.ref,e.local),unionId=(e,state)=>view.uid+'::'+state+'::'+elemKeyOf(e);
+      const byOrig=new Map(),newElems=[];
+      for(const [k,e] of byIdA){const other=byIdB.get(k),state=!other?'removed':cmpEl(e)!==cmpEl(other)?'changed':'unchanged';counts[state]++;const id=unionId(e,state);byOrig.set(e.id,id);if(other)byOrig.set(other.id,id);newElems.push({...e,id,diffState:state});}
+      for(const [k,e] of byIdB)if(!byIdA.has(k)){counts.added++;const id=unionId(e,'added');byOrig.set(e.id,id);newElems.push({...e,id,diffState:'added'});}
+      const newRels=[];
+      for(const [k,r] of relA){const other=relB.get(k),state=!other?'removed':cmpRel(r)!==cmpRel(other)?'changed':'unchanged';newRels.push({...r,diffState:state});}
+      for(const [k,r] of relB)if(!relA.has(k))newRels.push({...r,diffState:'added'});
+      for(const r of newRels){r.id=view.uid+'::'+r.diffState+'::'+localOf(r.ref,r.local);r.from={...r.from,element:byOrig.get(r.from.element)||r.from.element};r.to={...r.to,element:byOrig.get(r.to.element)||r.to.element};}
+      elements.push(...newElems);relations.push(...newRels);
+      elementIds.clear();for(const n of elements)elementIds.add(n.id);
+      diff08.aName=irA.view.name;diff08.bName=irB.view.name;diff08.counts=counts;
+    }
     // B1-033: declarative motion vocabulary (D2). Values are validated here;
     // emission is the renderer's job. rate beyond the DOM-honest cap is a
     // warning (DDN-W016) and clamps at render time.
@@ -3596,6 +3664,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     const currentLanguage=[...ws.docs.values()].some(d=>d.version==='0.6')?'0.6':[...ws.docs.values()].some(d=>d.version==='0.5')?'0.5':[...ws.docs.values()].some(d=>d.version==='0.4')?'0.4':'0.3';
     const ir={format:'ddn-resolved@'+currentLanguage,language:currentLanguage,registry:'ddn-core@0.3',entry,view:{id:view.uid,name:view.label||view.id,local:view.id,selected,relations:visibleRelations.map(r=>r.id),profiles:p,keys,placements,routes,subdiagrams,frames,flows,source:{file:view.source,start:view.start,end:view.end,bodyEnd:view.bodyEnd}},elements,relations,diagnostics};
     if(kind08!==undefined){ir.view.kind=kind08;ir.view.strictness=strictness08;}
+    if(diff08)ir.view.diff={a:diff08.a.uid,b:diff08.b.uid,aName:diff08.aName,bName:diff08.bName,counts:diff08.counts};
     if(theme08!==undefined)ir.view.theme=theme08;
     if(assertions08)ir.view.assertions=assertions08;
     if(fontPin08)ir.view.fontPin=fontPin08;
@@ -6364,7 +6433,27 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const chrome=p.chrome||{legend:'auto',title:'on',footer:'on'},
   titleOn=chrome.title!=='off'&&p.detail!=='shapes',
   footerOn=chrome.footer!=='off'&&p.detail!=='shapes';
- /* B1-100: the RELATIONSHIP KEY legend exists to decode numbered badges and
+ /* 0.8 (chapter 55 §55.6): diff state paint. States ride the marking
+ * conventions — a colour channel PLUS a non-colour channel (dash pattern,
+ * strike, corner token) — so neutral and mono_print themes keep the three
+ * states distinguishable without colour. unchanged paints no overlay: it is
+ * the context the states stand out from. */
+const DIFF_PAINT={
+ added:{stroke:'#1A7F37',dash:'',token:'+',word:'added'},
+ removed:{stroke:'#B42318',dash:'6 4',strike:true,token:'−',word:'removed'},
+ changed:{stroke:'#B45309',dash:'2 4',token:'~',word:'changed'}};
+function diffPaint(state,monoTag){const dp=DIFF_PAINT[state];if(!dp)return null;
+ if(monoTag==='mono_print')return {...dp,stroke:'#000000'};
+ if(monoTag==='neutral')return {...dp,stroke:'#333333'};
+ return dp;}
+function diffNodeOverlay(g,paint,s){
+ const{x,y,w,h}=g;
+ let o=`<g class="ddn-diff ddn-diff-${esc$3(g.n.diffState)}" data-diff="${esc$3(g.n.diffState)}"><rect x="${fmt$1(x-3)}" y="${fmt$1(y-3)}" width="${fmt$1(w+6)}" height="${fmt$1(h+6)}" rx="${fmt$1(6*s)}" fill="none" stroke="${esc$3(paint.stroke)}" stroke-width="2.2"${paint.dash?` stroke-dasharray="${esc$3(paint.dash)}"`:''}/>`;
+ if(paint.strike)o+=`<path d="M${fmt$1(x-3)} ${fmt$1(y-3)}L${fmt$1(x+w+3)} ${fmt$1(y+h+3)}" stroke="${esc$3(paint.stroke)}" stroke-width="2.2" fill="none"/>`;
+ o+=`<rect class="ddn-diff-token" x="${fmt$1(x+w-16*s)}" y="${fmt$1(y-11*s)}" width="${fmt$1(16*s)}" height="${fmt$1(16*s)}" rx="${fmt$1(3*s)}" fill="${esc$3(paint.stroke)}"/>`+text$1(x+w-8*s,y+1.5*s,paint.token,11*s,'#FFFFFF',700,'text-anchor="middle"');
+ return o+'</g>';
+}
+/* B1-100: the RELATIONSHIP KEY legend exists to decode numbered badges and
   * tokens. When relation names already print in full inline (legend mode
   * 'text'), the legend repeats what the diagram says — suppress it unless the
   * author explicitly asked for it (chrome.legend: 'on'). Numbers/tokens keep
@@ -6638,6 +6727,10 @@ function renderInner(ir,registry,glyphDefs='',options={}){
    if(paint.strike)diagram+=`<path d="M${fmt$1(mx-nx*13)} ${fmt$1(my-ny*13)}L${fmt$1(mx+nx*13)} ${fmt$1(my+ny*13)}" stroke="${esc$3(paint.stroke)}" stroke-width="2.4" fill="none"/>`;
    if(paint.hatch)diagram+=`<path data-hatch="true" d="M${fmt$1(mx-nx*13-Math.cos(ang)*10)} ${fmt$1(my-ny*13-Math.sin(ang)*10)}L${fmt$1(mx+nx*13-Math.cos(ang)*10)} ${fmt$1(my+ny*13-Math.sin(ang)*10)}M${fmt$1(mx-nx*13+Math.cos(ang)*10)} ${fmt$1(my-ny*13+Math.sin(ang)*10)}L${fmt$1(mx+nx*13+Math.cos(ang)*10)} ${fmt$1(my+ny*13+Math.sin(ang)*10)}" stroke="${esc$3(paint.stroke)}" stroke-width="1.4" fill="none"/>`;
    diagram+='</g>';}
+  /* 0.8 (chapter 55 §55.6): diff state overlay — the route is repainted in
+   * the state channel (colour + dash), like the marking treatments. */
+  if(a.r.diffState&&a.r.diffState!=='unchanged'){const dp=diffPaint(a.r.diffState,theme08==='mono_print'?'mono_print':p.style.theme==='neutral'?'neutral':null);
+   if(dp)diagram+=`<g class="ddn-diff ddn-diff-${esc$3(a.r.diffState)}" data-diff="${esc$3(a.r.diffState)}" data-relation="${esc$3(a.id)}">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$3(dp.stroke)}" stroke-width="${a.reg.width+1.2}"${dp.dash?` stroke-dasharray="${esc$3(dp.dash)}"`:''} opacity=".85"/>`).join('')+'</g>';}
   diagram+='</g>';
  }
  /* B1-060 : pins with no incident edge still render on the action
@@ -6738,7 +6831,9 @@ function renderInner(ir,registry,glyphDefs='',options={}){
    flowScene.push({id:f.id,name:f.name,duration:durT,hops:hopScene});
   }
  }
- geoms.forEach(g=>diagram+=renderNode(g,p,t,registry));
+ geoms.forEach(g=>{diagram+=renderNode(g,p,t,registry);
+  /* 0.8 (chapter 55 §55.6): diff state overlay rides after the node paint. */
+  if(g.n.diffState&&g.n.diffState!=='unchanged'){const dp=diffPaint(g.n.diffState,p.theme08==='mono_print'?'mono_print':p.style.theme==='neutral'?'neutral':null);if(dp)diagram+=diffNodeOverlay(g,dp,g.scale);}});
  for(const d of subs){
   if(d.mode==='inline'&&d.child){const child=render$2(d.child,registry,glyphDefs),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc$3(d.target)}">`+inner+'</g>';}
   else {if(!/^[A-Za-z0-9_.\/-]+$/.test(d.targetLocal)||d.targetLocal.startsWith('/')||d.targetLocal.includes('..'))throw new DDN$1.DDNError('DDN078','Subdiagram reference target must be a safe relative identifier: '+d.targetLocal);diagram+=`<g class="ddn-subdiagram" data-view="${esc$3(d.target)}"><a href="${esc$3(d.targetLocal)}.svg">`+rect(d.x,d.y,d.w,d.h,t.accent,t.surface,p.style.look,d.id,0,p.style)+glyph('frame',d.x+14,d.y+18,25,t.accent)+text$1(d.x+48,d.y+33,d.name,15,t.ink,600)+text$1(d.x+14,d.y+64,'↗ '+d.targetLocal+' · diagram reference',11,t.muted)+'</a></g>';}
@@ -6838,6 +6933,15 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   * the line, any other string replaces the text. */
  const bannerText=chrome.banner==='off'?null:(typeof chrome.banner==='string'&&chrome.banner!=='on'?chrome.banner:'DDN / PROPOSED STANDARD / '+DDN$1.VERSION);
  if(titleOn)out+=(bannerText?text$1(margin,headerBand+margin+5,bannerText,11,t.muted,650):'')+multilines(margin,headerBand+margin+34,titleLines,24,t.ink,28,650)+multilines(margin,headerBand+margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text$1(pageW-margin,headerBand+margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
+ /* 0.8 (chapter 55 §55.6): the diff key — three state rows, self-evident
+  * without colour (dash/strike/token + words), naming the operand views. */
+ if(ir.view.diff){const dk=ir.view.diff,monoTag=p.theme08==='mono_print'?'mono_print':p.style.theme==='neutral'?'neutral':null;
+  const rows=[['added','+ added in '+dk.bName],['removed','− removed from '+dk.aName],['changed','~ changed']];
+  const ky0=headerBand+margin+22,kx0=pageW-margin-170;
+  out+=`<g class="ddn-diff-key" data-a="${esc$3(dk.a)}" data-b="${esc$3(dk.b)}" data-counts="${esc$3(JSON.stringify(dk.counts))}">`;
+  rows.forEach(([st,label],i)=>{const dp=diffPaint(st,monoTag);
+   out+=`<rect x="${fmt$1(kx0)}" y="${fmt$1(ky0+i*16)}" width="16" height="10" fill="none" stroke="${esc$3(dp.stroke)}" stroke-width="2"${dp.dash?` stroke-dasharray="${esc$3(dp.dash)}"`:''}/>`+text$1(kx0+22,ky0+9+i*16,label,10.5,t.muted,500);});
+  out+='</g>';}
  out+=`<g id="drawing" transform="translate(${fmt$1(tx)} ${fmt$1(ty)}) scale(${fmt$1(scale)})">${diagram}</g>`;
  if(legendPlacement!=='none'&&legendEntries.length){let lx=legendPlacement==='right'?pageW-margin-legendW:margin,ly=legendPlacement==='right'?headBlock-15+extraHeader:pageH-margin-footerBand-legendHeight;out+=line(lx-12,ly-12,lx-12,legendPlacement==='right'?pageH-margin-footerBand-40:ly+legendHeight,t.rule,1);out+=text$1(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
   for(const entry of legendEntries){const key=p.legend.mode==='numbers'?entry.key:entry.reg.code;if(p.legend.mode==='numbers')out+=`<circle cx="${lx+12}" cy="${ly-4}" r="12" fill="${t.surface}" stroke="${t.ink}"/>`+text$1(lx+12,ly,String(key),11,t.ink,700,'text-anchor="middle"');else out+=text$1(lx,ly,String(key),11,t.muted,650);

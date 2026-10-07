@@ -1246,6 +1246,14 @@
   "view": "main"
  },
  {
+  "id": "diff-views",
+  "title": "Diff views — before/after in one picture",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/diff-views.ddn",
+  "view": "main"
+ },
+ {
   "id": "markings-metadata",
   "title": "Markings and metadata — forbidden, tentative, provenance",
   "status": "pilot",

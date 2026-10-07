@@ -1386,6 +1386,14 @@
       ]
     },
     {
+      "chapter": "diff-views",
+      "entry": "field-guide/sources/diff-views.ddn",
+      "view": "main",
+      "files": [
+        "field-guide/sources/diff-views.ddn"
+      ]
+    },
+    {
       "chapter": "markings-metadata",
       "entry": "field-guide/sources/markings.ddn",
       "view": "main",

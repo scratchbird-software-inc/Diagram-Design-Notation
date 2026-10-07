@@ -205,6 +205,10 @@
     "DDN-FG03": "Pass an identifier-shaped argument ([A-Za-z_][A-Za-z0-9_-]*) when the parameter substitutes into a declaration id or reference.",
     "DDN-FG04": "Break the use: cycle between definitions \u2014 expand one level inline or restructure the fragment graph.",
     "DDN-FG05": "Flatten the definition nesting (cap is 8 levels); expand intermediate fragments inline where the chain is deeper.",
-    "DDN-FG06": "Declare 1-8 unique parameters: fragment name(p1, p2) \u2014 no duplicates, no empty list."
+    "DDN-FG06": "Declare 1-8 unique parameters: fragment name(p1, p2) \u2014 no duplicates, no empty list.",
+    "DDN-DF01": "Write diff: [@viewA, @viewB] with exactly two view references, and no data: on the same view \u2014 diff and data are mutually exclusive.",
+    "DDN-DF02": "Point both diff references at views declared in this workspace (imports included); the reference must resolve to a view, not a data block or element.",
+    "DDN-DF03": "Name two different ordinary views \u2014 no self-pairs, no self-reference, and no diff-of-diff.",
+    "DDN-DF04": "An operand shows two elements with the same local id; narrow the view with select:/exclude: so each diff identity is unique."
   }
 }

@@ -211,8 +211,13 @@ function buildChapter(ch) {
   const ws = A.createWorkspace(files);
   const r = ws.renderSync({ entry: ch.entry, view: ch.view });
   const ir = ws.resolve(ch.entry, ch.view);
-  const candidates = ir.elements.filter(e => ir.view.selected.includes(e.id));
-  const element = candidates.find(e => ch.probe.includes(e.kind)) || candidates[0] || ir.elements[0];
+  /* editView (diff chapters): the chapter renders ch.view but the guided edit
+   * targets an operand view — union/diff members are derived and not
+   * editable; the operand's elements live in source. */
+  const editView = ch.editView || ch.view;
+  const irEdit = editView === ch.view ? ir : ws.resolve(ch.entry, editView);
+  const candidates = irEdit.elements.filter(e => irEdit.view.selected.includes(e.id));
+  const element = candidates.find(e => ch.probe.includes(e.kind)) || candidates[0] || irEdit.elements[0];
   // guided experiment through the public API (label edit, or a keyed record swap)
   let before, after, r2;
   const svgBefore = sha256(r.svg);
@@ -298,7 +303,7 @@ function buildChapter(ch) {
     if (!target) target = candidates.find(e => e.properties && typeof e.properties.description === 'string');
     if (!target) throw new Error(ch.id + ': no panel item with an editable description found for the panel experiment');
     const beforeV = target.properties.description, afterV = beforeV + ' (reviewed)';
-    A.authoring.setProperty(ws, ch.entry, ch.view, target.id, 'description', afterV);
+    A.authoring.setProperty(ws, ch.entry, editView, target.id, 'description', afterV);
     before = (target.name || target.id) + ' description = ' + beforeV.slice(0, 40) + (beforeV.length > 40 ? '…' : '');
     after = (target.name || target.id) + ' description = ' + afterV.slice(0, 40) + (afterV.length > 40 ? '…' : '');
     ch.experimentMeta = { id: target.id, key: 'description', value: afterV };
@@ -309,14 +314,14 @@ function buildChapter(ch) {
     const key = Object.keys(xr.then).find(k => typeof xr.then[k] === 'boolean');
     const beforeV = xr.then[key], afterV = !beforeV;
     xr.then[key] = afterV;
-    A.authoring.setProperty(ws, ch.entry, ch.view, rule.id, 'x_rule', xr);
+    A.authoring.setProperty(ws, ch.entry, editView, rule.id, 'x_rule', xr);
     before = (rule.name || rule.id) + ' then.' + key + ' = ' + beforeV;
     after = (rule.name || rule.id) + ' then.' + key + ' = ' + afterV;
     ch.experimentMeta = { id: rule.id, record: xr };
   } else {
     before = element.name;
     after = before + ' / review';
-    A.authoring.setLabel(ws, ch.entry, ch.view, element.id, after);
+    A.authoring.setLabel(ws, ch.entry, editView, element.id, after);
   }
   r2 = ws.renderSync({ entry: ch.entry, view: ch.view });
   const svgAfter = sha256(r2.svg);

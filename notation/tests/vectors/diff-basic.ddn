@@ -1,0 +1,26 @@
+ddn "0.6";
+module "vectors.diff";
+
+// 0.9 diff views (spec ch. 55 §55.6): the union of both operands, states by
+// local source id — unchanged (keep), removed (gone), changed (changed),
+// added (added); relations removed/unchanged/added.
+
+data before {
+  object keep "Shared store" { kind: cache; }
+  object gone "Legacy queue" { kind: queue; }
+  object changed "Worker v1" { kind: service; fields { load: number; } }
+  relation r1 @keep -> @gone { kind: flow; }
+  relation r2 @keep -> @changed { kind: flow; }
+}
+
+data after {
+  object keep "Shared store" { kind: cache; }
+  object changed "Worker v2" { kind: service; fields { load: number; retries: number; } }
+  object added "New ingest" { kind: service; }
+  relation r2 @keep -> @changed { kind: flow; }
+  relation r3 @changed -> @added { kind: flow; }
+}
+
+view v1 "Before" { data: [@before]; publication { size: content; fit: none; } }
+view v2 "After" { data: [@after]; publication { size: content; fit: none; } }
+view main "Before → after" { diff: [@v1, @v2]; publication { size: content; fit: none; } }

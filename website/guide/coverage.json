@@ -3,8 +3,8 @@
     "edition": "field-guide-0.8",
     "runtime": "0.8.0",
     "reviewed": "2026-10-04",
-    "chapterCount": 159,
-    "plannedChapterCount": 159,
+    "chapterCount": 160,
+    "plannedChapterCount": 160,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -1375,6 +1375,15 @@
       "entry": "field-guide/sources/fragment-params.ddn",
       "view": "main",
       "sha256": "dcb97dc9385831da724675a26a78834fbba2322cebbafc590f6595a79ab90ecc"
+    },
+    {
+      "id": "diff-views",
+      "status": "technique",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/diff-views.ddn",
+      "view": "main",
+      "sha256": "0cb53b0235cbcd6166c6e4de5d0d9b5bf4c4ddc2d063bac0535c271a91867351"
     },
     {
       "id": "markings-metadata",
@@ -2804,6 +2813,15 @@
       "id": "fragment-params",
       "before": "dcb97dc9385831da724675a26a78834fbba2322cebbafc590f6595a79ab90ecc",
       "after": "5f2a51a843cdcaae49b2e0ae3f853abfa3e128c620c5f93be2adaf817c015ca9",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "diff-views",
+      "before": "0cb53b0235cbcd6166c6e4de5d0d9b5bf4c4ddc2d063bac0535c271a91867351",
+      "after": "52412ddb1524256102b445facc2e1ca9901ce993be0eaed4ea7093f880284b06",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

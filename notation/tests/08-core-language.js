@@ -40,8 +40,9 @@ test('DDN-V04: 0.8 constructs rejected in files declaring <=0.5, naming the mini
  gate('data m { object a "A" { kind: cache; } object b "B" { kind: queue; } relation r @a -> @b { kind: flow; assertion: "x"; } }\nview v { data: [@m]; }');
  gate('data m { object a "A" { kind: cache; } }\nview v { data: [@m]; kind: flowchart; }','0.4');
  gate('data m { object a "A" { kind: cache; } }\nformat f { bundle b { kind: flowchart; } }\nview v { data: [@m]; format: @f.b; }');
- // diff is deferred to 0.9: rejected even in a 0.6 file
- assert.equal(code(()=>build('data m { object a "A" { kind: cache; } }\nview v { data: [@m]; diff: [@v]; }')),'DDN-V04');
+ // diff views (0.8 amendment, ch. 55 §55.6): validated in 0.6, gated below it
+ assert.equal(code(()=>build('data m { object a "A" { kind: cache; } }\nview v { data: [@m]; diff: [@v]; }')),'DDN-DF01');
+ assert.equal(code(()=>build('data m { object a "A" { kind: cache; } }\nview v { data: [@m]; diff: [@v]; }','v','0.5')),'DDN-V04');
  try{build('data m { object a "A" { kind: cache; } }\nview v { data: [@m]; kind: flowchart; }','v','0.5');assert.fail('no throw');}
  catch(e){assert.match(e.message,/0\.6/);assert.match(e.message,/kind/);}
 });

@@ -48,10 +48,18 @@ The 0.8 standard (spec chapters 51–58, source version `ddn "0.6";`)
 consciously deferred three items; none is a gap in what shipped, each has a
 named hook:
 
-- **Diff views** (`diff: [@viewA, @viewB]`, ch. 55 §55.6) — deferred so the
+- **Diff views** (`diff: [@viewA, @viewB]`, ch. 55 §55.6) — ~~deferred so the
   uid move/duplicate semantics (§55.5) could settle first. 0.8 processors
   reject `diff` as DDN-V04 rather than half-implementing it. Revisiting: 0.9,
-  building on the uid contract without amendment.
+  building on the uid contract without amendment.~~ **CLOSED 2026-10-06:**
+  implemented as a 0.8 amendment (ch. 55 §55.6), gated on `ddn "0.6";`.
+  Matching is by local source id within the data block (workspace uids cannot
+  correlate two revisions — DDN026); states added/removed/changed/unchanged
+  ride the §55.1 marking paint conventions (colour + dash/strike/token, mono
+  distinguishable) with an automatic diff key; the union lays out fresh under
+  the diff view's own profiles. Coded family DDN-DF01–DF04; conformance
+  vectors `diff-basic` + `reject-ddn-df03`; suite
+  `notation/tests/diff-views.js`.
 - **Assertion evaluation** (ch. 55 §55.2) — 0.8 assertions are parsed,
   shape-validated, carried and exported but never evaluated; chapter 58
   reserves the conformance hook. Revisiting: 0.9 evaluation semantics.
