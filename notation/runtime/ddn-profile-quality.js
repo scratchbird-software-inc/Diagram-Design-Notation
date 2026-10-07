@@ -34,9 +34,13 @@ function validate(ir,E){
   for(const r of ir.relations.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element)&&['uml.include','uml.extend'].includes(r.kind))){if(r.kind==='uml.extend'&&!r.properties.x_usecase)fail('DDN-PX006','Extend needs an extension point and condition',r);const a=ns.get(r.from.element).properties.x_usecase?.subjects||[],b=ns.get(r.to.element).properties.x_usecase?.subjects||[];if(!a.some(x=>b.some(y=>x.$ref===y.$ref)))fail('DDN-PX006','Include/extend endpoints must share a declared subject',r);}
   for(const frame of ir.view.frames)if(ns.get(frame.scope)?.kind==='uml.subject')for(const id of frame.members){const n=ns.get(id);if(n?.kind==='uml.usecase'&&!n.properties.x_usecase?.subjects?.some(r=>r.$ref===frame.scope))fail('DDN-PX006','View subject frame contradicts model membership',n);}
  }
- if(profile==='chen.binary@2'){
+ if(profile==='chen.binary@2'||profile==='chen.nary@3'){
+  /* 0.8 amendment (ch. 17 §17.5): chen.nary@3 = the binary@2 rule set plus
+   * n-ary associations; x_nary relations carry per-end role/multiplicity
+   * annotations instead of the binary from/to pair. */
   const included=ir.elements.filter(n=>shown.has(n.id));for(const n of included){if(n.kind!=='entity')fail('DDN-PX007','Chen binary profile selects entities only',n);for(const f of n.fields)if(n.fields.some(g=>g.parent===f.id)&&!f.properties.x_chen?.composite)fail('DDN-PX007','Nested Chen attribute requires composite metadata',f);if(n.properties.x_chen?.weak){if(!shown.has(n.properties.x_chen.owner.$ref))fail('DDN-PX007','Weak entity owner is absent from this view',n);const rs=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.properties.x_chen?.identifying&&r.properties.x_chen.weak?.$ref===n.id);if(rs.length!==1)fail('DDN-PX007','Weak entity requires exactly one visible identifying relationship',n);}}
-  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)))if(!r.properties.x_chen?.from||!r.properties.x_chen?.to)fail('DDN-PX007','Binary Chen relationship needs both min/max participation annotations',r);
+  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&!r.properties.x_nary))if(!r.properties.x_chen?.from||!r.properties.x_chen?.to)fail('DDN-PX007','Binary Chen relationship needs both min/max participation annotations',r);
+  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.properties.x_nary)){const ends=r.properties.x_nary.ends||[];if(ends.length<1)fail('DDN-PX007','N-ary Chen relationship needs its participant ends (x_nary.ends)',r);if(ends.some(e=>!e.element?.$ref))fail('DDN-PX007','Every n-ary Chen end references a participant entity',r);}
   const active=new Set(),seen=new Set();function visit(n){if(active.has(n.id))fail('DDN-PX007','Cyclic identifying ownership',n);if(seen.has(n.id))return;active.add(n.id);const own=n.properties.x_chen?.owner?.$ref;if(own)visit(ns.get(own));active.delete(n.id);seen.add(n.id);}included.forEach(visit);
  }
  if(profile==='flow.documented@2'){

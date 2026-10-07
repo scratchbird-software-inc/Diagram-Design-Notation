@@ -191,15 +191,17 @@ function validate(ir,reg,ErrorClass){
   }
   const nary=r.properties.x_nary;
   if(nary!==undefined){
-   if(r.kind!=='uml.association')fail('DDN-PJ151','x_nary applies to uml.association only, not '+r.kind,r);
+   /* 0.8 amendment (ch. 17 §17.5): under chen.nary@3, x_nary also applies to
+    * assoc relationships (one diamond, one spoke per end). */
+   if(r.kind!=='uml.association'&&!(p.profile==='chen.nary@3'&&r.kind==='assoc'))fail('DDN-PJ151','x_nary applies to uml.association only, not '+r.kind,r);
    else{
     const seen=new Set([r.from.element,r.to.element]);
     for(const end of nary.ends){const el2=nodes.get(end.element?.$ref);
      if(!el2)fail('DDN-PJ151','N-ary association end does not resolve to a declared element',r);
-     else if(!['uml.class','uml.interface','uml.enumeration'].includes(el2.kind))fail('DDN-PJ151','N-ary association ends must be classifiers (uml.class/uml.interface/uml.enumeration), not '+el2.kind,r);
+     else if(p.profile==='chen.nary@3'?el2.kind!=='entity':!['uml.class','uml.interface','uml.enumeration'].includes(el2.kind))fail('DDN-PJ151','N-ary association ends must be '+(p.profile==='chen.nary@3'?'entities':'classifiers (uml.class/uml.interface/uml.enumeration)')+', not '+el2.kind,r);
      else if(seen.has(el2.id))fail('DDN-PJ151','N-ary association ends must be distinct; '+el2.id+' appears twice',r);
      else seen.add(el2.id);
-     if(end.multiplicity!==undefined&&!MULT.test(end.multiplicity))fail('DDN-PJ151','N-ary end multiplicity must be a UML multiplicity; found "'+end.multiplicity+'"',r);}
+     if(end.multiplicity!==undefined&&p.profile!=='chen.nary@3'&&!MULT.test(end.multiplicity))fail('DDN-PJ151','N-ary end multiplicity must be a UML multiplicity; found "'+end.multiplicity+'"',r);}
    }
   }
   const gs=r.properties.x_genset;

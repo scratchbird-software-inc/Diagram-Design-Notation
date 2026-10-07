@@ -24,6 +24,16 @@ view overview {
 
 `select` limits visible objects; `exclude` removes occurrences from that view. Relations are selected when both endpoints are shown unless relations are disabled. Domain/reference dependencies still have to be supplied as data modules even when not shown. Default selection order is deterministic source order.
 
+> **DRAFT RFC (0.9, not implemented — no runtime change): AUD-004 versioned occurrence contract.** Today's rule is one appearance per view: an element occurs at most once per view (its uid *is* its occurrence), and a relation is visible exactly when both endpoints are — there is no way to show a relation while hiding an endpoint, or to show one element twice in one view. This draft records the proposed contract for review; **0.8 processors treat it as commentary**, and sources do not change.
+>
+> *Proposed model.* An **occurrence** is the pair `(view, element)` plus an optional **version qualifier** `occ`: `object x { … }` in a view is the default occurrence; a second appearance would declare `occ: 2` (integer ≥ 2, default 1) at the view-reference site. Occurrence identity = `element uid + view + occ`. Layout, `place` pins, marks and per-occurrence presentation (ch. 04 §6A–§6C properties) attach to the occurrence, never to the element; the model fingerprint stays occurrence-free.
+>
+> *Relation visibility.* Today relation visibility is derived from endpoint visibility. The RFC proposes an optional explicit override at the occurrence site — `show: [@rel]` / `hide: [@rel]` on the view — evaluated AFTER the endpoint rule: a hidden endpoint still suppresses its relations by default, but an author may show a relation to a hidden endpoint (drawn to the endpoint's would-be position, marked as a boundary cross) or hide a relation whose endpoints are both shown. Relation occurrence identity likewise gains an optional `occ` qualifier for duplicate visual runs.
+>
+> *Migration path.* Existing sources are occurrence-1 everywhere, so nothing migrates syntactically; the identity surface changes: tools keyed on `element uid` per view must rekey to `(uid, view, occ)`. uid introduction at migration: an element appearing twice gains explicit `uid:` assignments before the first two-occurrence view, so the transition is a checkable edit, never a silent split. Open questions recorded for the grammar RFC discussion: whether `occ` participates in `select`/`exclude` reference syntax (`@el#2`?), how diff views (ch. 55 §55.6) key occurrences, and whether occurrence-level `place` interacts with the pinned-origin contract.
+>
+> This RFC is deliberately not implemented in the 0.8 runtime; when ratified it lands as a grammar amendment with conformance vectors.
+
 A view or a bundle may also declare `spacing: tight|normal|loose|expanded` directly (`view overview { spacing: loose; … }`, `bundle wide { spacing: loose; layout: @x; … }`). The view declaration wins over the bundle's; absent means `normal`. It scales graph-family gaps and route-label reservation only — see [Anchored placement](15-placement-and-low-light.md#spacing-hints).
 
 ## Display versus authorization

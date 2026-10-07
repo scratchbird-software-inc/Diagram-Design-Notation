@@ -6,10 +6,10 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 **Vocabulary counts (generated from the registries + runtime sources):**
 - Object kinds: **375 total** = 153 core (`registry/catalogue.json .kinds`) + 222 profile (`registry/profiles/catalogue.json .kinds`)
 - Relationships (verbs): **185 total** = 91 core + 94 profile
-- Diagram profiles: **150** (`profiles/catalogue.json .profiles`)
+- Diagram profiles: **151** (`profiles/catalogue.json .profiles`)
 - Projection kinds: **12** (`graph`, `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`, `fishbone`, `decision`, `sequence`, `timing`, `geo`)
 - Endpoint marks: 12; object families: 12; relation families: 8; facets: 118; view types: 20; registered data properties: 108
-- Diagnostic codes: **499** extracted from the runtime (reference runtime + Studio `src/`)
+- Diagnostic codes: **504** extracted from the runtime (reference runtime + Studio `src/`)
 <!-- /generated (counts) -->
 
 ## 1. Purpose and the generate → check → fix loop
@@ -230,7 +230,8 @@ Labels, reference numerals and callout badges must not overlap each other or unr
   "method",
   "graticule",
   "iso",
-  "depth"
+  "depth",
+  "fiscal_year_start"
  ],
  "notation": [
   "registry"
@@ -1371,7 +1372,7 @@ Direction note: governance verbs `reports_to` and profile verb `analysis.decompo
 | fbd.wire | Connects | flow | none | filled | fbd.block, fbd.variable | fbd.block, fbd.variable | no | yes |
 | ladder.series | Wires in series | flow | none | none | ladder.contact, ladder.coil, ladder.label, ladder.jump, ladder.return, fbd.block, fbd.variable | ladder.contact, ladder.coil, ladder.label, ladder.jump, ladder.return, fbd.block, fbd.variable | no | yes |
 
-### 4.5 Diagram profiles (150)
+### 4.5 Diagram profiles (151)
 
 A profile is selected in a view's projection: `projection { kind: graph; profile: "c4.container@1"; }`. `kind` MUST equal the profile's registered projection (DDN-PF002); unknown profile → DDN-PF001. Per-profile enforced rules are in section 6. `use when` is the authoring-intent annotation (tools/ai-reference/profile-annotations.json; the generator fails if any profile lacks one).
 
@@ -1413,6 +1414,7 @@ A profile is selected in a view's projection: `projection { kind: graph; profile
 | uml.usecase@2 | graph | UML use-case with subject boundaries and extension-point contracts | Use-case diagram | Adds subjects, extension-point targets, conditions and classifier generalization to the declared subset. | subject references; extension-point existence; condition declaration; acyclic generalization |
 | uml.usecase@3 | graph | UML use-case diagram with extension-point semantics: extend conditions on the label | UML use-case diagram | uml.usecase@2 plus: extend conditions on the label; extension-point existence (DDN-PX004). | subject naming (DDN-PX002/PX004/PX006) |
 | chen.binary@2 | chen | Chen ER extended: weak entities, participation bounds, composite attributes | Binary Chen ER | Composite, derived/multivalued attributes, keys and partial keys, weak entities and identifying binary associations; min/max participant annotations. | field metadata; identifying owner references; participation bounds |
+| chen.nary@3 | chen | Chen ER with n-ary relationships: one diamond per relationship, one labelled spoke per participant end | Chen ER with n-ary relationships | chen.binary@2 plus n-ary associations: one diamond per relationship with one labelled spoke per participant end; min/max (or role/multiplicity) annotations at every end. | field metadata; identifying owner references; participation bounds; n-ary end structure (3+ ends, named roles/multiplicity) |
 | flow.documented@2 | graph | Flowchart with off-page connectors and annotation notes attached | Documented flowchart, Cross-page flowchart | Adds on-page connectors, matched off-page continuations, storage and non-control annotations. | control reachability; annotation separation; continuation contracts |
 | chart.gauge@1 | chart | Single-value gauge/KPI dial (0-100, optional target) | Gauge/KPI dial | One percentage value on a semicircular dial with an optional target marker; record provenance. | exactly one record after filtering (DDN-PJ074); value and target finite numbers in 0..100 (DDN-PJ075); categorical x only (DDN-PJ030); no aggregation (DDN-PJ031); no series binding (DDN-PJ030) |
 | chart.candlestick@1 | chart | Candlestick/OHLC chart for financial time series | Candlestick/OHLC | Supplied open/high/low/close per category or date; wick low-high, body open-close; record provenance. | finite numeric open/high/low/close on every record (DDN-PJ076); high >= low and open/close within [low, high] (DDN-PJ077); explicit x/open/high/low/close bindings (DDN-PJ030); category or date x; numeric x rejected (DDN-PJ030); no aggregation (DDN-PJ031); no series binding (DDN-PJ030); duplicate x/category rejected (DDN-PJ036) |
@@ -1961,7 +1963,8 @@ Unregistered `x_*` keys: preserved with warning DDN-W103 in logical mode; error 
   "label",
   "dependencies",
   "filter",
-  "order"
+  "order",
+  "fiscal_year_start"
  ],
  "sequence": [
   "kind",
@@ -2147,12 +2150,15 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- generated: do not edit (diagnostics) -->
-## 9. Diagnostics and error recovery (500 codes, machine-extracted from runtime + Studio sources; 150 carry a hand-authored FIX)
+## 9. Diagnostics and error recovery (506 codes, machine-extracted from runtime + Studio sources; 156 carry a hand-authored FIX)
 
 `check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).
 
 | code | severity | meaning (message template(s); runtime values concatenated between literal parts) | FIX (authoring recovery) |
 |---|---|---|---|
+| DDN-AS01 | error | (code selected dynamically at the raise site; no static literal message) | The assertion contradicts the resolved model — review the claim or fix the model; this is a warning, not a build failure. |
+| DDN-AS02 | error | Assertion  subject does not name a model element, field or relation in scope ( | Point the assertion subject at a model element, field or relation in scope (@id of the declaration). |
+| DDN-AS03 | error | Assertion  basis must be intended, observed, inferred, measured or verified; found<br>Assertion  confidence must be a number in [0,1]<br>Assertion  observed_at must carry an explicit Z or ±HH:MM offset for absolute instants<br>Assertion  requires a nonempty property path string<br>Assertion  requires a subject reference<br>Assertion  requires an asserted value<br>Assertion  state must be known, undecided, not_applicable or conflicting; found<br>Assertion  with basis  requires a source (evidence reference) | Fix the assertion record: subject/property/value are required; state, basis, confidence and observed_at follow the chapter-10 shapes (observed/measured/verified needs a source; absolute instants need an explicit offset). |
 | DDN-CW01 | warning/info | Cubic corridor spline used to retain clearance or routing hints for | - |
 | DDN-DF01 | error | diff and data are mutually exclusive; a diff view selects nothing of its own<br>diff must name exactly two views: diff: [@viewA, @viewB] | Write diff: [@viewA, @viewB] with exactly two view references, and no data: on the same view — diff and data are mutually exclusive. |
 | DDN-DF02 | error | diff reference  does not resolve to a view in this workspace | Point both diff references at views declared in this workspace (imports included); the reference must resolve to a view, not a data block or element. |
@@ -2275,7 +2281,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-PJ001 | error | Unsupported projection | - |
 | DDN-PJ002 | error | Cannot combine interaction and data-bound projections<br>Data-bound projections do not accept graph place/route/frame/subdiagram geometry; select a graph view | - |
 | DDN-PJ003 | error | Profile-specific redacted projection is not qualified; provide a separately authorized workspace<br>Redacted non-graph projections require a separately authorized input workspace; unsupported export fails closed | - |
-| DDN-PJ004 | error | namekindobjectstringT00:00:00Z | Unsafe binding path: use dot-separated safe paths like x_record.value, or the special names name/id/kind. |
+| DDN-PJ004 | error | namekindobject | Unsafe binding path: use dot-separated safe paths like x_record.value, or the special names name/id/kind. |
 | DDN-PJ005 | error | projection does not use ; no silent ignored settings | Remove projection keys that are not legal for this projection.kind — see the supported-keys table; nothing is silently ignored. |
 | DDN-PJ006 | error | Projection  must be 240..12000 px | - |
 | DDN-PJ007 | error | Projection reference is outside its data scope: | Every bound element (records/rows/columns/…) must belong to the view's data: scope — add the data block or fix the ref. |
@@ -2295,17 +2301,17 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-PJ021 | error | Overlapping panel spans | - |
 | DDN-PJ030 | error | Bars, arcs, radar spokes and funnel stages currently require categorical x<br>Calendar cells require date x (x_type must be date)<br>Calendar shows one value per day; do not set series<br>Candlestick requires categorical or date x (x_type must not be number)<br>Candlestick shows one candle per record; do not set series<br>Chart needs explicit x and y bindings<br>Density heatmap bins two numeric fields; set x_type:number<br>Density heatmap pools one scatter; do not set series<br>Funnel shows one stage per record; do not set series<br>Funnel stages require categorical x (x_type must be category)<br>Gauge caption requires categorical x (x_type must be category)<br>Gauge shows one value; do not set series<br>Heatmap columns require categorical x<br>Parallel-coordinates axes are categorical x values<br>Radar series must be a nonempty text key of at most 80 characters<br>Radar spokes require categorical x (x_type must be category)<br>Sankey encodes flows between endpoints; do not set series<br>Sankey sources require categorical x (x_type must be category)<br>Sankey target is a property binding, not a numeric reference<br>Scatter/bubble requires x_type:number<br>Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey, histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble, heatmap, densityheatmap, calendar, parallelcoords, wordcloud, arc, force, edgebundle<br>Treemap paths require categorical x (x_type must be category)<br>Treemap tiles encode one value per record; do not set series<br>Word cloud sizes one word per record; do not set series<br>Word cloud words are categorical x values<br>encodes links between endpoints; do not set series<br>encodes one value per record; do not set series<br>endpoints require categorical x<br>groups require categorical x (x_type must be category)<br>inner_radius is a radius fraction 0..0.9 exclusive<br>measures one numeric sample; set x_type:number with x as the measurement binding<br>paths require categorical x (x_type must be category)<br>target is a property binding, not a numeric reference<br>treemapTreemapHierarchy paths have at most 3 levels<br>x_type is category, number or date | Pick a mark from the chart mark list; check mark-specific requirements (categorical vs numeric x, series rules) for the chosen mark. |
 | DDN-PJ031 | error | Aggregation is available on category bars/arcs only<br>Distribution marks measure raw records; aggregation is not available<br>Sankey flows encode supplied values; aggregation is not available<br>Treemap tiles encode supplied values; aggregation is not available<br>Unknown aggregatecountDDN-PJ034Count is dimensionless; do not label it as currency or another input unitnonebarpiedonuttopkAggregation is available on category bars/arcs only<br>leaves encode supplied values; aggregation is not available<br>links encode supplied values; aggregation is not available | - |
-| DDN-PJ032 | error | Aggregate overflowtreemaptreemapsankey<br>Category x must be text or number<br>Chart y must be finite numeric data; numeric strings are not coerced<br>Numeric x requireddateDDN-PJ033Date x must be a real ISO YYYY-MM-DD datestringnumberCategory x must be text or numberDDN-PJ034Every record must declare matching x_record.unit:<br>Quantitative axis range overflow<br>Quantitative x range overflow<br>sankeySankeyNetwork endpoints are distinct nonempty category text | y must bind finite numbers: fix the x_record payloads (real JSON numbers, not strings) or bind another key. |
-| DDN-PJ033 | error | Date x must be a real ISO YYYY-MM-DD date | Date x values must be real ISO YYYY-MM-DD strings in x_record; fix the payloads or use x_type: category. |
+| DDN-PJ032 | error | Aggregate overflowtreemaptreemapsankey<br>Category x must be text or number<br>Chart y must be finite numeric data; numeric strings are not coerced<br>Numeric x requireddatenaiveDDN-PJ221Datetime x needs an explicit Z or ±HH:MM offset — never guessed from localeDDN-PJ033Date x must be a real ISO YYYY-MM-DD date or zoned ISO timestamp<br>Quantitative axis range overflow<br>Quantitative x range overflow<br>sankeySankeyNetwork endpoints are distinct nonempty category text | y must bind finite numbers: fix the x_record payloads (real JSON numbers, not strings) or bind another key. |
+| DDN-PJ033 | error | Date x must be a real ISO YYYY-MM-DD date or zoned ISO timestampstringnumberDDN-PJ032Category x must be text or number | Date x values must be real ISO YYYY-MM-DD strings in x_record; fix the payloads or use x_type: category. |
 | DDN-PJ034 | error | Count is dimensionless; do not label it as currency or another input unit<br>Every record must declare matching x_record.unit: | - |
 | DDN-PJ035 | error | Point size must be a finite nonnegative value | - |
 | DDN-PJ036 | error | Duplicate x/category: supply an explicit aggregate or distinct coordinates | - |
 | DDN-PJ037 | error | Arcs require nonnegative values and a positive total | - |
-| DDN-PJ040 | error | Timeline needs real ISO date-only start/end with end >= start | - |
+| DDN-PJ040 | error | Timeline needs real ISO date-only or zoned start/end with end >= start | - |
 | DDN-PJ041 | error | Timeline dependencies must be selected predecessor-to-successor links | - |
 | DDN-PJ042 | error | Finish-to-start dependency contradicts supplied dates | - |
 | DDN-PJ043 | error | Timeline dependency cycle | - |
-| DDN-PJ050 | error | Chen scalar subset does not silently flatten nested or repeated fields<br>Chen subset requires entity objects and binary object-level assoc/ref relationships | - |
+| DDN-PJ050 | error | Chen scalar subset does not silently flatten nested or repeated fields<br>Chen subset requires entity objects and binary object-level assoc/ref relationships<br>N-ary Chen relationships require the chen.nary@3 profile; the binary profiles do not silently flatten them | - |
 | DDN-PJ051 | error | Retained graph positions cannot override data-bound projection coordinates | - |
 | DDN-PJ060 | error | Projection extent exceeds bounded publication budget | - |
 | DDN-PJ061 | error | Page has no remaining drawing area | - |
@@ -2382,7 +2388,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-PJ148 | error | Duplicate choropleth join key " | - |
 | DDN-PJ149 | error | Association-end multiplicity must be a UML multiplicity (1, 0..1, 0..*, 1..*, *); found "<br>x_endlabels (role/multiplicity/qualifier) apply to uml.association, uml.commpath, uml.connector and uml.link only, not | x_endlabels on uml.association/uml.commpath only; multiplicity must be a UML form (1, 0..1, 0..*, 1..*, *) |
 | DDN-PJ150 | error | Association class cannot be an endpoint of its own association<br>Association class must name a uml.class, not<br>Association class reference does not resolve to a declared element<br>x_association_class applies to uml.association only, not | x_association_class needs a reference to a declared uml.class that is not an endpoint of its own association |
-| DDN-PJ151 | error | N-ary association end does not resolve to a declared element<br>N-ary association ends must be classifiers (uml.class/uml.interface/uml.enumeration), not<br>N-ary association ends must be distinct;  appears twice<br>N-ary end multiplicity must be a UML multiplicity; found "<br>x_nary applies to uml.association only, not | x_nary needs at least three distinct classifier ends (uml.class/interface/enumeration) across anchors and x_nary.ends, each a UML multiplicity |
+| DDN-PJ151 | error | N-ary association end does not resolve to a declared element<br>N-ary association ends must be chen.nary@3entitiesclassifiers (uml.class/uml.interface/uml.enumeration), not<br>N-ary association ends must be distinct;  appears twice<br>N-ary end multiplicity must be a UML multiplicity; found "<br>x_nary applies to uml.association only, not | x_nary needs at least three distinct classifier ends (uml.class/interface/enumeration) across anchors and x_nary.ends, each a UML multiplicity |
 | DDN-PJ152 | error | Generalization set "" must share one target;  and  disagree<br>x_genset applies to uml.generalization only, not | x_genset is legal on uml.generalization only; all relations of a set (same name) must share one target classifier |
 | DDN-PJ153 | error | x_template applies to uml.class/uml.interface only, not | x_template applies to uml.class/uml.interface only; move the parameter list to a classifier kind |
 | DDN-PJ154 | error | uml.enumeration members must be x_member kind literal;  declares<br>x_member kind literal applies to uml.enumeration members only; | x_member kind literal belongs on uml.enumeration members only, and enumeration members must be literals (or plain fields) |
@@ -2448,7 +2454,10 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-PJ215 | error | A spontaneous transition (input none) takes no priority or continuous condition;<br>Channel  signal reference must resolve to an sdl.signal<br>Timer set/reset  must reference a declared sdl.timer<br>active() query on  must reference an sdl.timer<br>x_hmscref (reference parameter lists) applies to msc.hmscref;<br>x_sdl  does not apply to a channel relation;<br>x_sdl applies to SDL kinds;<br>x_sdl on relations belongs to sdl.channel;<br>x_sdl priority/spontaneous/continuous/active markers belong to sdl.input;<br>x_sdl signals/nodelay belong to sdl.channel relations;<br>x_sdl timer/duration belong to sdl.set/sdl.reset; | SDL/MSC: x_sdl timer/channel/marker owner and reference rules; x_hmscref belongs to msc.hmscref |
 | DDN-PJ216 | error | architecture files: entries must be workspace-relative path strings<br>failed to load:<br>is not in the workspace:<br>x_link needs file and target stringsx_link target file<br>x_link on  targets unknown identity | Cross-file: unknown architecture base file, unknown x_link target identity, or identity collision across bases |
 | DDN-PJ217 | error | Cross-file relation  links  and ; an architecture container covering the base(s) is required | Cross-file: a relation spanning architecture bases needs an architecture container covering the base(s) |
-| DDN-PJW01 | warning/info | Extended binary Chen; Chen scalar/binary subset;  attribute and relationship occurrences are projections, not copied semantic entities. | - |
+| DDN-PJ218 | error | An n-ary Chen relationship needs at least three participant ends (two ends are a binary association)<br>N-ary Chen end  must reference a selected entity | An n-ary Chen relationship needs at least three participant ends, each referencing a selected entity (two ends are a binary association). |
+| DDN-PJ221 | error | Datetime x needs an explicit Z or ±HH:MM offset — never guessed from locale<br>Timeline datetimes need an explicit Z or ±HH:MM offset — never guessed from locale | Give the datetime an explicit Z or ±HH:MM offset (for example 2026-01-05T23:30:00+05:30); naive datetimes are never resolved against a locale. |
+| DDN-PJ222 | error | fiscal_year_start must be a real ISO YYYY-MM-DD date | Write fiscal_year_start as a real ISO YYYY-MM-DD date (for example "2025-07-01"); it is an annotation, never calendar arithmetic. |
+| DDN-PJW01 | warning/info | Chen with n-ary associations; Extended binary Chen; Chen scalar/binary subset;  attribute and relationship occurrences are projections, not copied semantic entities. | - |
 | DDN-PJW02 | warning/info | Quantitative mark coordinates remain exact in every drawing style; styling does not change values. | - |
 | DDN-PJW03 | warning/info | Sequence participant  has no incident messages; it is drawn with an empty lifeline. | - |
 | DDN-PJW04 | warning/info | Parallel-coordinates axes  are constant: their scale is UNKNOWN and values are drawn at mid-height (dashed axis), not at zero.<br>Some series lack values on some axes; those segments pass through mid-height as UNKNOWN, not as zero.<br>Word cloud could not place  word(s) without overlap and omitted them: . Nothing was resized to fit silently. | - |
@@ -2465,7 +2474,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-PX004 | error | Extend must name an extension point on its target use case<br>Extend requires a stated condition or condition definition<br>Use one condition form | - |
 | DDN-PX005 | error | Chen associations are binary object-level assoc/ref<br>Each weak instance has exactly one owner<br>Identifying association must connect the declared weak entity to its owner<br>Nonidentifying relationship cannot declare owner/weak roles<br>Participation is nonnegative min/max or max:many<br>identifying is boolean | - |
 | DDN-PX006 | error | Extend needs an extension point and condition<br>Include/extend endpoints must share a declared subject<br>Use case must name its subject boundary<br>View subject frame contradicts model membership | - |
-| DDN-PX007 | error | Binary Chen relationship needs both min/max participation annotations<br>Chen binary profile selects entities only<br>Cyclic identifying ownership<br>Nested Chen attribute requires composite metadata<br>Weak entity owner is absent from this view<br>Weak entity requires exactly one visible identifying relationship | - |
+| DDN-PX007 | error | Binary Chen relationship needs both min/max participation annotations<br>Chen binary profile selects entities only<br>Cyclic identifying ownership<br>Every n-ary Chen end references a participant entity<br>N-ary Chen relationship needs its participant ends (x_nary.ends)<br>Nested Chen attribute requires composite metadata<br>Weak entity owner is absent from this view<br>Weak entity requires exactly one visible identifying relationship | - |
 | DDN-PX008 | error | Annotation needs an explicit attachment<br>Continuation  needs a matched out/in pair and explicit continues link<br>Continuation needs key and in/out side<br>Continuation ports contradict direction<br>Unsupported relationship in documented flowchart | - |
 | DDN-Q001 | error | must be a finite number (no numeric-string coercion) | - |
 | DDN-Q002 | error | Missing or not-selected quality reference: | - |
@@ -2480,7 +2489,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-QC013 | error | Waterfall requires a step binding (delta/subtotal/total)<br>Waterfall step must be delta, subtotal, or total | - |
 | DDN-QC014 | error | Declared total does not match cumulative changes; totals are not extra deltas | - |
 | DDN-QC015 | error | Supported quartiles: linear_r7; whiskers: tukey_1_5 or minmax | - |
-| DDN-QC020 | error | Count cannot retain an input measurement unit<br>Date x must be a real ISO date<br>Invalid arrangement or x_type<br>Series must have a nonempty text key of at most 80 characters<br>Unknown aggregatecountCount cannot retain an input measurement unitgapzeroerrorseries_missing is gap, zero or error<br>series_missing is gap, zero or error | - |
+| DDN-QC020 | error | Count cannot retain an input measurement unit<br>Date x must be a real ISO date<br>Date x must be a real ISO date or zoned timestamp<br>Invalid arrangement or x_type<br>Series must have a nonempty text key of at most 80 characters<br>Unknown aggregatecountCount cannot retain an input measurement unitgapzeroerrorseries_missing is gap, zero or error<br>series_missing is gap, zero or error | - |
 | DDN-QC021 | error | Bar series require categorical x<br>Declare exactly one layer per series<br>Percent target must be within 0..100<br>Quality chart limits: 20 series and 200 coordinates<br>Stacked/percent layers must be all bars or all areas<br>Unknown series or unsupported layer mark<br>target is a numeric reference on the shared y scale | - |
 | DDN-QC022 | error | Duplicate series/category requires explicit aggregate<br>Missing series/category observationzerozero<br>Percent stack requires nonnegative values<br>Stacks need complete data or explicit zero fill<br>Zero-total percent category has no defined percentages | - |
 | DDN-QC099 | error | identity<br>identitycategorydateT00:00:00Zend | - |

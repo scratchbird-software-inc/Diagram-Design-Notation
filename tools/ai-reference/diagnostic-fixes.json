@@ -213,6 +213,12 @@
     "DDN-ID01": "Remove the invisible character (zero-width space, ZWJ/ZWNJ, bidi control or other format character) from the identifier; such characters are legal only inside display strings.",
     "DDN-ID02": "Write the identifier in a single script (digits, marks, _ and - are script-neutral); put mixed-language names in a quoted label instead.",
     "DDN-ID03": "Write the identifier in NFC composed form (for example \u00e9 as a single code point); normalization is never applied silently.",
-    "DDN-I033": "The interaction export closure left nothing to publish: widen the export elements allowlist to cover the exchanges and their payload contracts (whole-or-nothing per exchange), or export full."
+    "DDN-I033": "The interaction export closure left nothing to publish: widen the export elements allowlist to cover the exchanges and their payload contracts (whole-or-nothing per exchange), or export full.",
+    "DDN-AS01": "The assertion contradicts the resolved model \u2014 review the claim or fix the model; this is a warning, not a build failure.",
+    "DDN-AS02": "Point the assertion subject at a model element, field or relation in scope (@id of the declaration).",
+    "DDN-AS03": "Fix the assertion record: subject/property/value are required; state, basis, confidence and observed_at follow the chapter-10 shapes (observed/measured/verified needs a source; absolute instants need an explicit offset).",
+    "DDN-PJ218": "An n-ary Chen relationship needs at least three participant ends, each referencing a selected entity (two ends are a binary association).",
+    "DDN-PJ221": "Give the datetime an explicit Z or \u00b1HH:MM offset (for example 2026-01-05T23:30:00+05:30); naive datetimes are never resolved against a locale.",
+    "DDN-PJ222": "Write fiscal_year_start as a real ISO YYYY-MM-DD date (for example \"2025-07-01\"); it is an annotation, never calendar arithmetic."
   }
 }

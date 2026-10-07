@@ -117,18 +117,35 @@ rationale:
       marking-convention paint + diff key, DDN-DF01–DF04, ch.58 vectors
       (diff-basic, reject-ddn-df03); DDN-GAPS deferral closed 2026-10-06.
       Designer diff UI remains reference-tool follow-up.
-- [ ] Assertion evaluation (owner decision pending: 0.9 vs Weaver orchestration)
+- [x] Assertion evaluation (owner decision pending: 0.9 vs Weaver orchestration)
+      — implemented 0.8.x amendment (spec ch. 55 §55.2): structured assertion
+      elements evaluate read-only at build (lookup + equality only, no
+      execution semantics); DDN-AS01 contradiction warning / DDN-AS02 subject
+      / DDN-AS03 shape; inert string assertions stay inert
 - [x] Mermaid import (designer "Import…" command) — reference-tool feature, no spec change: `notation/tool/src/mermaid-import.js` + Files-drawer Import… popup with loss report; node tests + headless probe
 - [x] Unicode identifiers (UAX #31 / UTS #39 profiles) — implemented 0.8.x
       amendment (spec ch. 01 + S06, EBNF updated): UAX #31 ID_Start/Continue
       plus `_`/`-`, UTS #39 profile (NFC, no format/bidi characters, single
       script per identifier), DDN-ID01–ID03; ASCII fully backward-compatible,
       no dialect gate (pre-0.9 rejects cleanly as DDN006)
-- [ ] Chen profile completions (pending owner: 0.9 vs close notation-only)
-- [ ] Calendar/locale time semantics (pending owner)
+- [x] Chen profile completions (pending owner: 0.9 vs close notation-only)
+      — implemented 0.8.x amendment (spec ch. 17 §17.5): weak/identifying/
+      multivalued/derived already in chen.binary@2 (re-pinned); new
+      chen.nary@3 adds n-ary associations (one diamond, one labelled spoke
+      per end); cardinality annotations at every end; DDN-PJ218/PX007
+- [x] Calendar/locale time semantics (pending owner) — implemented 0.8.x
+      amendment (spec ch. 19 §19.3), conservative: zoned ISO-8601 timestamps
+      accepted and normalized to the UTC calendar date; naive datetimes
+      rejected (DDN-PJ221); fiscal_year_start annotation carried, never
+      arithmetic (DDN-PJ222); DST durations documented elapsed-time; locale
+      date formats refused (nondeterministic); business-day calendars out of
+      scope
 - [ ] AUD-003 command set remainder (kind conversion, deep field
       reorder/reparent, multi-occurrence, typed scope membership) (pending owner)
-- [ ] AUD-004 versioned occurrence contract (grammar RFC)
+- [x] AUD-004 versioned occurrence contract (grammar RFC) — DRAFT RFC written
+      as spec ch. 03 amendment (occurrence model, occ qualifier, relation
+      visibility override, uid-at-migration path); deliberately NOT
+      implemented in the runtime
 - [x] Canvas multi-select gestures (designer) — pointer tool: ctrl/shift-click toggle + rubber-band on empty canvas (phase 12; headless-verified)
 - [x] Profile-filtered specialized shelves (designer) — the Creator drawer's hamburger swaps palette families from the registry's allowed_in profile/pack tags (display-only, never touches view type); capability filtering on by default (phase 12; headless-verified)
 - [x] Attachment-policy editing + Reverse relation op (designer) — reverseRelation in authoring (endpoint swap + mark/cardinality/endlabel remap, one transaction; double-reverse identity); attachment-policy editing OMITTED: the relation contracts carry no attachment/attachment_policy keys (registry-verified)

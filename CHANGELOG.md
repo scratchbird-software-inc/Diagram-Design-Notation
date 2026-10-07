@@ -8,6 +8,44 @@ Component-level history predating the monorepo import lives in
 
 ### Added
 
+- **Assertion evaluation (0.8 amendment, spec ch. 55 §55.2; 0.9 closure,
+  conservative read).** Structured assertion *elements* (the chapter-10
+  record: `subject`/`property`/`value` + `state`/`basis`/`source`/
+  `observed_at`/`confidence`) now evaluate **read-only** against the resolved
+  model at build: property lookup plus equality, nothing else — no execution
+  semantics, and `check` exit codes are unchanged. A contradiction is a
+  `DDN-AS01` **warning** (review signal, never failure, never evidence); a
+  satisfied assertion is silent. `undecided`/`not_applicable` are carried,
+  not judged; `confidence`/`observed_at` are shape-validated and carried.
+  Shape violations `DDN-AS03` (incl. basis-without-source and offset-less
+  instants); subject naming no model member `DDN-AS02`. Inert string
+  assertions (`assertion:`/`assertions:`) stay inert. Suite
+  `notation/tests/assertion-eval.js` (5/5).
+- **Chen profile completion (0.8 amendment, spec ch. 17 §17.5).** New
+  `chen.nary@3` profile: n-ary associations — one diamond per relationship
+  with one labelled spoke per participant end (min/max pair, else
+  multiplicity, else role). Weak entities, identifying relationships,
+  multivalued/derived attributes and both-end min/max annotations
+  (chen.binary@2, already shipped) re-pinned. Binary profiles reject
+  `x_nary` on `assoc` (DDN-PJ151) rather than flattening; malformed n-ary is
+  `DDN-PJ218`/`DDN-PX007`. Suite `notation/tests/chen-nary.js` (4/4).
+- **Calendar/time closure, conservative (0.8 amendment, spec ch. 19 §19.3).**
+  Date-scoped projections (timeline, chart date axes) accept ISO-8601 zoned
+  timestamps and normalize them to the instant's **UTC calendar date** —
+  deterministic, no locale formatting anywhere. Naive datetimes are
+  `DDN-PJ221` (never guessed from locale); locale date formats stay refused;
+  rollover stays rejected. `timeline.basic@1` gains `fiscal_year_start` as a
+  carried annotation (`DDN-PJ222` if not a real ISO date) — never calendar
+  arithmetic. Durations keep elapsed-time (not wall-clock DST) semantics;
+  business-day calendars remain out of scope. Suite
+  `notation/tests/calendar-time.js` (5/5).
+- **AUD-004 versioned occurrence contract — DRAFT RFC only (spec ch. 03).**
+  The occurrence model (`(view, element, occ)` identity), per-occurrence
+  presentation, independent relation visibility (`show:`/`hide:` on the
+  view), and the uid-at-migration path are written as a **draft RFC**;
+  deliberately NOT implemented in the runtime — 0.8 processors treat the
+  section as commentary and no source changes.
+
 - **Fixed-lane occurrence/payload export closure (0.8 amendment, spec ch. 11;
   closes the 0.9 closure-audit item).** Redacted export of a fixed-lane
   interaction view (`session-bootstrap@0.1`) now passes through the same

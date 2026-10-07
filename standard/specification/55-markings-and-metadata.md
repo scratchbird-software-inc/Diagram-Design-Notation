@@ -72,13 +72,24 @@ view billing "Billing overview" {
 - `assertion` (single string, on a relation) and `assertions` (array of 1–32
   strings on a view; overflow `DDN-MK03`). Strings are plain text, 1–500
   characters (`DDN-MK04`).
-- **Inert in 0.8.** Assertions are parsed, validated for shape, carried in the
-  resolved IR, shown in exports (`export { … }` includes them in JSON), and
-  surfaced in the designer inspector. They are **never evaluated**: no
-  assertion influences `check` results, rendering, or conformance. A failing-
-  looking assertion is not a diagnostic; a true-looking one is not evidence.
-  Evaluation semantics are deferred to 0.9 (chapter 58 records the
-  conformance hook).
+- **Evaluated in 0.8 (amendment, 0.9 closure).** The inert *string* assertions
+  above stay inert text. Structured **assertion elements** (declarations of
+  type `assertion` carrying the chapter-10 record: `subject`, `property`,
+  `value`, plus optional `state`, `basis`, `source`, `observed_at`,
+  `confidence`) evaluate **read-only** against the resolved model at build:
+  property lookup plus equality, nothing else. A contradiction is a warning
+  (`DDN-AS01`) — a review signal, never a failure and never evidence; a
+  satisfied assertion is silent. `undecided`/`not_applicable` assertions are
+  carried, not judged; `confidence`/`observed_at` are shape-validated and
+  carried, not judged. Shape violations are `DDN-AS03` (including `basis:
+  observed|measured|verified` without a `source`, and an `observed_at`
+  instant without an explicit offset); a subject that names no model element,
+  field or relation in scope is `DDN-AS02`. Quantities compare in px;
+  `name`/`kind` read the identity fields; other paths are JSON equality on
+  the resolved property value. Evaluation introduces **no execution
+  semantics** — assertions still run no expression language (chapter 16
+  §16.2 discipline), and `check` exit codes are unchanged (warnings do not
+  fail).
 - Assertions are not executable in any dialect: they run no expression
   language (chapter 16 §16.2 discipline).
 

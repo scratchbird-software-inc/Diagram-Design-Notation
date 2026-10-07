@@ -51,9 +51,9 @@ machine-readable catalogue that the specification and the runtime share.
 | **Total element kinds** | **375** | computed |
 | **Total relation verbs** | **185** | computed |
 | Shape silhouettes | 14 | profiles catalogue |
-| Installed profiles | 150 | profiles catalogue |
+| Installed profiles | 151 | profiles catalogue |
 | Projection kinds | 12 | language choices |
-| Documented diagnostics | 150 | diagnostic fix guide |
+| Documented diagnostics | 156 | diagnostic fix guide |
 
 ## 4. Extension mechanism, profiles, and icon packs
 
@@ -65,9 +65,9 @@ versioned layer:
   extensions are carried (never silently dropped); known ones are
   schema-validated. Old processors pass new extensions through untouched.
 - **Profiles and projections** — a view's `projection.profile` names its
-  model kind. **150** versioned profiles are installed
+  model kind. **151** versioned profiles are installed
   across **12** projection kinds (per-projection
-  distribution: {"graph":85,"chen":2,"matrix":8,"panels":12,"table":1,"chart":30,"timeline":1,"fishbone":1,"decision":1,"sequence":4,"timing":2,"geo":3}). Profiles are vocabulary +
+  distribution: {"graph":85,"chen":3,"matrix":8,"panels":12,"table":1,"chart":30,"timeline":1,"fishbone":1,"decision":1,"sequence":4,"timing":2,"geo":3}). Profiles are vocabulary +
   validation layers over the same machinery — no profile redefines core
   semantics.
 - **Icon packs** (`ddn-icon-pack@1`, spec ch. 49) — symbols ship as

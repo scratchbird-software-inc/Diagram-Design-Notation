@@ -32,7 +32,7 @@
   },
   "profiles": {
     "installed": {
-      "value": 150,
+      "value": 151,
       "source": "standard/registry/profiles/catalogue.json (profiles)"
     },
     "projectionKinds": {
@@ -42,7 +42,7 @@
     "byProjection": {
       "value": {
         "graph": 85,
-        "chen": 2,
+        "chen": 3,
         "matrix": 8,
         "panels": 12,
         "table": 1,
@@ -92,7 +92,7 @@
   },
   "diagnostics": {
     "documentedFixes": {
-      "value": 150,
+      "value": 156,
       "source": "tools/ai-reference/diagnostic-fixes.json (fixes)"
     }
   },

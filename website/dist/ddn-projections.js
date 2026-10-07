@@ -64,16 +64,34 @@
   }
   function chen(ir,reg,glyphs,options){
    const projected=clone(ir),selected=new Set(ir.view.selected),nodes=ir.elements.filter(n=>selected.has(n.id)),edges=ir.relations.filter(r=>ir.view.relations.includes(r.id));
+   /* 0.8 amendment (ch. 17 §17.5 completion): chen.nary@3 = chen.binary@2 plus
+    * n-ary associations — one diamond per relationship with one labelled spoke
+    * per participant end. Under the binary profiles an x_nary relationship is
+    * rejected rather than silently flattened. */
+   const profile=ir.view.profiles.projection.profile,extended=profile==='chen.binary@2'||profile==='chen.nary@3',nary=profile==='chen.nary@3';
    if(nodes.some(n=>n.kind!=='entity')||edges.some(r=>!['assoc','ref'].includes(r.kind)||r.from.member||r.to.member))throw new D.DDNError('DDN-PJ050','Chen subset requires entity objects and binary object-level assoc/ref relationships');
-   const extended=ir.view.profiles.projection.profile==='chen.binary@2';
+   if(edges.some(r=>r.properties.x_nary&&!nary))throw new D.DDNError('DDN-PJ050','N-ary Chen relationships require the chen.nary@3 profile; the binary profiles do not silently flatten them');
    if(!extended&&nodes.some(n=>n.fields.some(f=>f.depth||f.properties.shape&&f.properties.shape!=='scalar')))throw new D.DDNError('DDN-PJ050','Chen scalar subset does not silently flatten nested or repeated fields');
    const out=[],rels=[],mapping=[];
    function node(source,kind,name){const k=D.kindEntry(reg,kind),n={...clone(source),name,kind,kindCode:k.code,fields:[],ports:[],type:'object'};out.push(n);mapping.push({occurrence:n.id,source:source.id});return n;}
    function connect(id,a,b,source,label='',double=false){rels.push({id,ref:id,name:label,kind:'assoc',kindCode:'ASSOC',from:{element:a},to:{element:b},properties:{x_chen_total:double},_visualLabel:!!label});mapping.push({occurrence:id,source});}
    for(const n of nodes){node(n,'chen.entity',n.name);for(const fld of n.fields){const a=node({...fld,ref:fld.id,local:fld.local,properties:fld.properties},'chen.attribute',fld.name);connect('occ:attribute:'+fld.id,extended&&fld.parent?fld.parent:n.id,a.id,fld.id);}}
-   for(const r of edges){const x=extended?r.properties.x_chen||{}:{};node({...r,properties:{x_chen:{identifying:!!x.identifying}},local:r.id,ref:r.id},'chen.association',r.name);const label=m=>m?'('+m.min+'..'+(m.max==='many'?'N':m.max)+')':'';connect('occ:from:'+r.id,r.from.element,r.id,r.id,label(x.from),extended&&x.identifying&&x.weak?.$ref===r.from.element);connect('occ:to:'+r.id,r.id,r.to.element,r.id,label(x.to),extended&&x.identifying&&x.weak?.$ref===r.to.element);}
+   for(const r of edges){const x=extended?r.properties.x_chen||{}:{};
+    const assoc=node({...r,properties:{x_chen:{identifying:!!x.identifying}},local:r.id,ref:r.id},'chen.association',r.name);
+    const label=m=>m?'('+m.min+'..'+(m.max==='many'?'N':m.max)+')':'';
+    if(nary&&r.properties.x_nary){
+     /* N-ary: one diamond, one spoke per end. Each end's annotation is its
+      * min/max pair when declared, else its multiplicity label, else its role. */
+     const allEnds=[{element:r.from.element,ann:x.from},{element:r.to.element,ann:x.to},...(r.properties.x_nary.ends||[]).map(e=>({element:e.element?.$ref,ann:null,role:e.role,multiplicity:e.multiplicity}))];
+     if(allEnds.length<3)throw new D.DDNError('DDN-PJ218','An n-ary Chen relationship needs at least three participant ends (two ends are a binary association)',r.source?.file,r.source?.start);
+     allEnds.forEach((e,i)=>{
+      if(!e.element||!selected.has(e.element))throw new D.DDNError('DDN-PJ218','N-ary Chen end '+(i+1)+' of '+(r.name||r.id)+' must reference a selected entity',r.source?.file,r.source?.start);
+      const lbl=e.ann?label(e.ann):(e.multiplicity?String(e.multiplicity):(e.role?String(e.role):''));
+      connect('occ:nary:'+i+':'+r.id,e.element,assoc.id,r.id,lbl);});
+     continue;}
+    connect('occ:from:'+r.id,r.from.element,r.id,r.id,label(x.from),extended&&x.identifying&&x.weak?.$ref===r.from.element);connect('occ:to:'+r.id,r.id,r.to.element,r.id,label(x.to),extended&&x.identifying&&x.weak?.$ref===r.to.element);}
    projected.elements=out;projected.relations=rels;projected.view.selected=out.map(n=>n.id);projected.view.relations=rels.map(r=>r.id);projected.view.keys={};projected.view.profiles.projection={kind:'graph',profile:'ddn@1'};projected.view.profiles.legend={...projected.view.profiles.legend,mode:'text',placement:'none'};
-   const result=R.render(projected,reg,glyphs,options);result.scene.projection={kind:'chen',profile:ir.view.profiles.projection.profile,mapping};result._ir=ir;result.diagnostics.push({code:'DDN-PJW01',severity:'info',message:(extended?'Extended binary Chen; ':'Chen scalar/binary subset; ')+ ' attribute and relationship occurrences are projections, not copied semantic entities.'});return result;
+   const result=R.render(projected,reg,glyphs,options);result.scene.projection={kind:'chen',profile:ir.view.profiles.projection.profile,mapping};result._ir=ir;result.diagnostics.push({code:'DDN-PJW01',severity:'info',message:(nary?'Chen with n-ary associations; ':extended?'Extended binary Chen; ':'Chen scalar/binary subset; ')+ ' attribute and relationship occurrences are projections, not copied semantic entities.'});return result;
   }
   function render(ir,reg,glyphs='',options={}){
    const plan=Data.plan(ir,D.DDNError),p=ir.view.profiles,pr=p.projection;
@@ -578,7 +596,7 @@
      body+=group(n.id,[n.id],`<title>${esc(n.label+' · ['+n.start+', '+n.end+') UTC')}</title>`+box,{x:xx,y:cy-12*s,w:end-xx,h:24*s,start:n.start,end:n.end},pr.start);
     }
     for(let i=0;i<plan.dependencies.length;i++){const r=plan.dependencies[i],a=positions.get(r.from.element),b=positions.get(r.to.element),x=Math.min(right+15*s,a.end[0]+16*s),yy=b.start[1],d=`M${f(a.end[0])} ${f(a.end[1])}H${f(x)}V${f(yy-23*s)}H${f(b.start[0])}V${f(yy-12*s)}`;body+=group(r.id,[r.id],`<path d="${d}" stroke="${t.ink}" fill="none" stroke-width="1.2"/>`+R.endMark([b.start[0],yy-12*s],90,'filled',t.ink,t.surface));}
-    body+=text(0,H-20*s,'UTC dates · end-exclusive intervals · diamonds are milestones · supplied schedule, not a scheduling solver.',11);
+    body+=text(0,H-20*s,'UTC dates (zoned timestamps normalize to their UTC date) · end-exclusive intervals · diamonds are milestones · supplied schedule, not a scheduling solver.'+(plan.fiscalYearStart?' Fiscal year starts '+plan.fiscalYearStart+' — annotation only, no calendar arithmetic.':''),11);
    }
    if(plan.kind==='sequence'){
     const parts=plan.participants,msgs=plan.messages,px=new Map();

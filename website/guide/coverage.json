@@ -600,7 +600,7 @@
       "projection": "timeline",
       "entry": "website/examples/projections/views.ddn",
       "view": "gantt",
-      "sha256": "b049329ab0e860a9f2244c2fe9950e82194f33c9a796233a5a7be010feadd717"
+      "sha256": "4d8e7da20145d9c64fecb722892c8c2bc8477b953090c34e68ae86623a87f8c3"
     },
     {
       "id": "dashboard",
@@ -1149,7 +1149,7 @@
       "projection": "timeline",
       "entry": "field-guide/sources/roadmap.ddn",
       "view": "roadmap",
-      "sha256": "05a05b30dc571f2f577bfb33a7170a9d573c488e0f679ab93c7d6a433234350d"
+      "sha256": "78abf975b62cf1037c102c4e63431df9d201e1ea05e282f0c36aaebfef9a0658"
     },
     {
       "id": "style-looks",
@@ -2037,8 +2037,8 @@
     },
     {
       "id": "gantt",
-      "before": "b049329ab0e860a9f2244c2fe9950e82194f33c9a796233a5a7be010feadd717",
-      "after": "eae34787c047432d4afabdcc187370034323555b15be4d434a1f727e90c1e889",
+      "before": "4d8e7da20145d9c64fecb722892c8c2bc8477b953090c34e68ae86623a87f8c3",
+      "after": "24f03a696cbde2a265379628b35b6719ab5d7d211fdbac8a53cbfd47fd4fc4ca",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2586,8 +2586,8 @@
     },
     {
       "id": "timeline-roadmap",
-      "before": "05a05b30dc571f2f577bfb33a7170a9d573c488e0f679ab93c7d6a433234350d",
-      "after": "6fa98cd65257996b0646b765d73d62a7012687fb8ff26e1d98097c37385b1e56",
+      "before": "78abf975b62cf1037c102c4e63431df9d201e1ea05e282f0c36aaebfef9a0658",
+      "after": "e983f171ae04cad0b7798e66da2bf2b3efeac744b4d43a2aead95f71bc23a375",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

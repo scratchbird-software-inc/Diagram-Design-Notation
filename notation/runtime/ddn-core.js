@@ -827,7 +827,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
   };
   const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic','ladder'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved','string'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens','none'],placement:['right','bottom','none']},chrome:{legend:['auto','on','off'],title:['on','off'],footer:['on','off']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
   const PROPERTIES={
-    projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','x_completeness','traces','geography','method','graticule','iso','depth'],
+    projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','x_completeness','traces','geography','method','graticule','iso','depth','fiscal_year_start'],
     notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure','font_pin','text_fit','max_width','max_height','min_font'],
     layout:['algorithm','auto_place','center','grid_step','optimize','endpoint_ordering','frame_overflow','direction','routing','curve','curve_tension','curve_radius','crossings','gap','columns','port_clearance','object_clearance','edge_clearance','junctions','shared_segments','row_gap','route_policy','quality','root','hierarchy','group_by'],
     display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
@@ -1463,11 +1463,53 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     for(const n of rawRelations){scanRefs(n.label,n.uid,n);scanRefs(n.props.text,n.uid,n);scanRefs(n.props.label,n.uid,n);}
     scanRefs(view.label,view.uid,view);scanRefs(view.props.title,view.uid,view);scanRefs(view.props.footer,view.uid,view);
     scanRefs(p.publication.title,view.uid,view);scanRefs(p.publication.caption,view.uid,view);
+    /* 0.8 amendment (chapter 55 §55.2 evaluation, 0.9 closure): structured
+     * assertion ELEMENTS (subject/property/value plus state/basis/source/
+     * observed_at/confidence) evaluate READ-ONLY against the resolved model
+     * at build. A contradiction is a warning (review signal), never a failure
+     * and never evidence; undecided/not_applicable assertions are carried,
+     * not judged. The inert string assertions (assertion:/assertions:) are
+     * untouched. No execution semantics: evaluation is property lookup and
+     * equality, nothing more. */
+    const diags08x=[];
+    for(const el of elements.filter(e=>e.type==='assertion')){
+      const pr=el.properties||{};
+      const afail=(code,msg)=>{throw new DDNError(code,msg,el.source.file,el.source.start);};
+      const awarn=(code,msg)=>diags08x.push({code,severity:'warning',message:msg,source:el.source.file,start:el.source.start});
+      if(!pr.subject?.$ref)afail('DDN-AS03','Assertion '+el.local+' requires a subject reference');
+      if(typeof pr.property!=='string'||!pr.property.trim())afail('DDN-AS03','Assertion '+el.local+' requires a nonempty property path string');
+      if(pr.value===undefined)afail('DDN-AS03','Assertion '+el.local+' requires an asserted value');
+      const state=typeof pr.state==='string'?pr.state:pr.state?.$state;
+      if(pr.state!==undefined&&!['known','undecided','not_applicable','conflicting'].includes(state))afail('DDN-AS03','Assertion '+el.local+' state must be known, undecided, not_applicable or conflicting; found '+JSON.stringify(pr.state));
+      if(pr.basis!==undefined&&!['intended','observed','inferred','measured','verified'].includes(pr.basis))afail('DDN-AS03','Assertion '+el.local+' basis must be intended, observed, inferred, measured or verified; found '+JSON.stringify(pr.basis));
+      if(['observed','measured','verified'].includes(pr.basis)&&pr.source===undefined)afail('DDN-AS03','Assertion '+el.local+' with basis '+pr.basis+' requires a source (evidence reference)');
+      if(pr.confidence!==undefined&&(typeof pr.confidence!=='number'||!Number.isFinite(pr.confidence)||pr.confidence<0||pr.confidence>1))afail('DDN-AS03','Assertion '+el.local+' confidence must be a number in [0,1]');
+      if(pr.observed_at!==undefined&&(typeof pr.observed_at!=='string'||(/T\d{2}:\d{2}/.test(pr.observed_at)&&!/(Z|[+-]\d{2}:\d{2})$/.test(pr.observed_at))))afail('DDN-AS03','Assertion '+el.local+' observed_at must carry an explicit Z or ±HH:MM offset for absolute instants');
+      /* Resolution: the subject must be a model member (element, field,
+       * relation) in scope. resolveValue has already resolved the reference;
+       * a declaration outside the model (view, data block, definition) is
+       * DDN-AS02. */
+      const sid=pr.subject.$ref;
+      const fieldTarget=elements.flatMap(e=>e.fields).find(f=>f.id===sid);
+      const target=elementIds.has(sid)?elements.find(e=>e.id===sid):fieldTarget||relations.find(r=>r.id===sid);
+      if(!target)afail('DDN-AS02','Assertion '+el.local+' subject does not name a model element, field or relation in scope ('+sid+')');
+      if(['undecided','not_applicable'].includes(state))continue; // carried, not judged
+      /* Evaluation: property lookup + equality only. Quantities compare in
+       * px; name/kind read the identity fields; everything else is JSON
+       * equality on the resolved property value. */
+      const path=pr.property.split('.');
+      let actual=path[0]==='name'?target.name:path[0]==='kind'?target.kind:target.properties;
+      if(path[0]!=='name'&&path[0]!=='kind')for(const seg of path){if(actual===null||typeof actual!=='object'||!Object.hasOwn(actual,seg)){actual=undefined;break;}actual=actual[seg];}
+      const eq=(a,b)=>{
+        if(a&&typeof a==='object'&&a.$quantity!==undefined&&b&&typeof b==='object'&&b.$quantity!==undefined)return quantity(a,NaN)===quantity(b,NaN);
+        return JSON.stringify(a)===JSON.stringify(b);};
+      if(!eq(actual,pr.value))awarn('DDN-AS01','Assertion '+el.local+' contradicted: '+pr.property+' on '+sid.split('::').pop()+' is '+JSON.stringify(actual===undefined?'(absent)':actual)+', asserted '+JSON.stringify(pr.value));
+    }
     /* DDN-V06: informational when a file declares older than the workspace's
      * newest source version; never a failure. */
     const maxDocVersion=Math.max(...[...ws.docs.values()].map(d=>SOURCE_VERSIONS.indexOf(d.version)));
     for(const d of ws.docs.values())if(SOURCE_VERSIONS.indexOf(d.version)<maxDocVersion)diags08.push({code:'DDN-V06',severity:'info',message:'File '+d.source+' declares ddn "'+d.version+'", older than the workspace\'s newest source version '+SOURCE_VERSIONS[maxDocVersion]+' (informational only).',source:d.source});
-    const diagnostics=[...motionDiagnostics,...xrefDiags,...chrome08Diags,...diags08];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
+    const diagnostics=[...motionDiagnostics,...xrefDiags,...chrome08Diags,...diags08,...diags08x];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
     const currentLanguage=[...ws.docs.values()].some(d=>d.version==='0.6')?'0.6':[...ws.docs.values()].some(d=>d.version==='0.5')?'0.5':[...ws.docs.values()].some(d=>d.version==='0.4')?'0.4':'0.3';
     const ir={format:'ddn-resolved@'+currentLanguage,language:currentLanguage,registry:'ddn-core@0.3',entry,view:{id:view.uid,name:view.label||view.id,local:view.id,selected,relations:visibleRelations.map(r=>r.id),profiles:p,keys,placements,routes,subdiagrams,frames,flows,source:{file:view.source,start:view.start,end:view.end,bodyEnd:view.bodyEnd}},elements,relations,diagnostics};
     if(kind08!==undefined){ir.view.kind=kind08;ir.view.strictness=strictness08;}

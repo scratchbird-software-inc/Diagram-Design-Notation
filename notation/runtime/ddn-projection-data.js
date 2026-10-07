@@ -3,14 +3,34 @@ import {publishNamespace} from './ddn-module-registry.js';
 import Quality from './ddn-quality-data.js';
 'use strict';
 const common=['kind','profile','width','height'];
-const supported={graph:['kind','profile','inputs','analysis_budget','traces','iso','depth'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order','x_completeness'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','iso','depth'],timeline:[...common,'records','start','end','label','dependencies','filter','order'],sequence:[...common],timing:[...common],geo:[...common,'records','mark','x','y','value','size','unit','filter','order','missing','geography','method','graticule']};
+const supported={graph:['kind','profile','inputs','analysis_budget','traces','iso','depth'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order','x_completeness'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','iso','depth'],timeline:[...common,'records','start','end','label','dependencies','filter','order','fiscal_year_start'],sequence:[...common],timing:[...common],geo:[...common,'records','mark','x','y','value','size','unit','filter','order','missing','geography','method','graticule']};
 const ref=x=>typeof x==='string'?x:x?.$ref;
 function get(record,path){
  if(typeof path!=='string'||!/^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/.test(path)||path.split('.').some(k=>['__proto__','prototype','constructor'].includes(k)))throw Object.assign(new Error('Unsafe property binding '+path),{code:'DDN-PJ004'});
  if(['id','name','kind'].includes(path))return record[path];
  let v=record.properties;for(const part of path.split('.')){if(v===null||typeof v!=='object'||!Object.hasOwn(v,part))return undefined;v=v[part];}return v;
 }
-function date(s){if(typeof s!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(s))return NaN;const t=Date.parse(s+'T00:00:00Z');return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===s?t:NaN;}
+/* 0.8 amendment (chapter 19 §19.3, calendar/time closure): date-scoped
+ * projections accept ISO-8601 zoned timestamps (YYYY-MM-DDTHH:MM[:SS[.fff]]
+ * with Z or ±HH:MM) and NORMALIZE them to the instant's UTC calendar date —
+ * deterministic, no locale formatting anywhere. A datetime without an offset
+ * is ambiguous and rejected (DDN-PJ221); locale date formats are refused
+ * outright. Duration arithmetic keeps elapsed-time semantics (no wall-clock
+ * DST math); fiscal calendars are data annotations (fiscal_year_start), never
+ * calendar arithmetic. */
+function isoInstant(s){ /* → {t: epoch-ms of the UTC midnight of the instant's UTC date, iso, zoned} | {error} */
+ if(typeof s!=='string')return{error:'invalid'};
+ const dOnly=/^(\d{4})-(\d{2})-(\d{2})$/;
+ let m=s.match(dOnly);
+ if(m){const t=Date.parse(s+'T00:00:00Z');if(!Number.isFinite(t)||new Date(t).toISOString().slice(0,10)!==s)return{error:'invalid'};return{t,iso:s,zoned:false};}
+ m=s.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})$/);
+ if(!m)return{error:/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)?'naive':'invalid'};
+ const t=Date.parse(s);
+ if(!Number.isFinite(t))return{error:'invalid'};
+ const iso=new Date(t).toISOString().slice(0,10);
+ return{t:Date.parse(iso+'T00:00:00Z'),iso,zoned:true};
+}
+function date(s){const r=isoInstant(s);return r.error?NaN:r.t;}
 function plan(ir,ErrorClass=Error){
  const p=ir.view.profiles.projection||{kind:'graph',profile:'ddn@1'},kind=p.kind,byId=new Map(ir.elements.map(n=>[n.id,n])),byRel=new Map(ir.relations.map(r=>[r.id,r])),shown=new Set(ir.view.selected);
  const fail=(code,msg,n)=>{const e=new ErrorClass(code,msg,n?.source?.file||ir.view.source?.file,n?.source?.start||ir.view.source?.start);if(ErrorClass===Error){e.message=msg;e.code=code;}throw e;};
@@ -230,7 +250,7 @@ function plan(ir,ErrorClass=Error){
     if(![ohlc.o,ohlc.h,ohlc.l,ohlc.c].every(v=>typeof v==='number'&&Number.isFinite(v)))fail('DDN-PJ076','Candlestick requires finite numeric open/high/low/close on every record',n);
     if(ohlc.h<ohlc.l||ohlc.o<ohlc.l||ohlc.o>ohlc.h||ohlc.c<ohlc.l||ohlc.c>ohlc.h)fail('DDN-PJ077','Candlestick requires high >= low and open/close within [low, high]',n);
    }else if(typeof y!=='number'||!Number.isFinite(y))fail('DDN-PJ032','Chart y must be finite numeric data; numeric strings are not coerced',n);
-   const type=p.x_type||'category',rawX=x;if(type==='number'){if(typeof x!=='number'||!Number.isFinite(x))fail('DDN-PJ032','Numeric x required',n);}else if(type==='date'){x=date(x);if(!Number.isFinite(x))fail('DDN-PJ033','Date x must be a real ISO YYYY-MM-DD date',n);}else if(typeof x!=='string'&&typeof x!=='number')fail('DDN-PJ032','Category x must be text or number',n);
+   const type=p.x_type||'category';let rawX=x;if(type==='number'){if(typeof x!=='number'||!Number.isFinite(x))fail('DDN-PJ032','Numeric x required',n);}else if(type==='date'){const dr=isoInstant(x);if(dr.error==='naive')fail('DDN-PJ221','Datetime x needs an explicit Z or ±HH:MM offset — never guessed from locale',n);if(dr.error)fail('DDN-PJ033','Date x must be a real ISO YYYY-MM-DD date or zoned ISO timestamp',n);x=dr.t;rawX=dr.iso; /* zoned instants normalize to their UTC date; the painted label is UTC, deterministic */}else if(typeof x!=='string'&&typeof x!=='number')fail('DDN-PJ032','Category x must be text or number',n);
    if(p.unit&&n.properties.x_record?.unit!==p.unit)fail('DDN-PJ034','Every record must declare matching x_record.unit: '+p.unit,n);
    const size=p.size?get(n,p.size):1;if(typeof size!=='number'||!Number.isFinite(size)||size<0)fail('DDN-PJ035','Point size must be a finite nonnegative value',n);
    const err=p.error?get(n,p.error):undefined;if(p.error&&(typeof err!=='number'||!Number.isFinite(err)||err<0))fail('DDN-PJ141','Error bar values must be finite nonnegative numbers (UNKNOWN is refused, never drawn as zero)',n);
@@ -424,11 +444,21 @@ function plan(ir,ErrorClass=Error){
   return{kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(hierTree?{tree:hierTree}:{}),...(grid?{grid}:{}),...(net?{net}:{}),...(trendLine?{trendLine}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
  }
  if(kind==='timeline'){
-  const records=filtered(),items=records.map(n=>{const start=get(n,p.start),end=get(n,p.end),a=date(start),b=date(end);if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)fail('DDN-PJ040','Timeline needs real ISO date-only start/end with end >= start',n);return{id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start,end,a,b};});
+  const records=filtered(),items=records.map(n=>{const start=get(n,p.start),end=get(n,p.end),sd=isoInstant(start),ed=isoInstant(end);
+   if(sd.error==='naive'||ed.error==='naive')fail('DDN-PJ221','Timeline datetimes need an explicit Z or ±HH:MM offset — never guessed from locale',n);
+   if(sd.error||ed.error)fail('DDN-PJ040','Timeline needs real ISO date-only or zoned start/end with end >= start',n);
+   const a=sd.t,b=ed.t;if(b<a)fail('DDN-PJ040','Timeline needs real ISO date-only or zoned start/end with end >= start',n);
+   /* zoned instants normalize to their UTC calendar date (date-scoped
+    * projection; ch. 19 §19.3); author strings stay as supplied for labels. */
+   return{id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start:sd.iso,end:ed.iso,a,b};});
   const by=new Map(items.map(n=>[n.id,n])),dependencies=[];
   for(const id of p.dependencies||[]){const r=resolve(id,'relation'),a=by.get(r.from.element),b=by.get(r.to.element);if(!a||!b||!['precede','analysis.precedes'].includes(r.kind))fail('DDN-PJ041','Timeline dependencies must be selected predecessor-to-successor links',r);if(a.b>b.a)fail('DDN-PJ042','Finish-to-start dependency contradicts supplied dates',r);dependencies.push(r);}
   const seen=new Set(),active=new Set();function visit(id){if(active.has(id))fail('DDN-PJ043','Timeline dependency cycle');if(seen.has(id))return;active.add(id);dependencies.filter(r=>r.from.element===id).forEach(r=>visit(r.to.element));active.delete(id);seen.add(id);}items.forEach(x=>visit(x.id));
-  return{kind,profile:p.profile,items,dependencies,sourceIds:items.map(i=>i.id).concat(dependencies.map(d=>d.id)),quantitative:true};
+  /* 0.8 amendment (ch. 19 §19.3): fiscal calendar annotation — carried, never
+   * arithmetic. fiscal_year_start is a real ISO date or DDN-PJ222. */
+  let fiscalYearStart;
+  if(p.fiscal_year_start!==undefined){const fr=isoInstant(p.fiscal_year_start);if(fr.error)fail('DDN-PJ222','fiscal_year_start must be a real ISO YYYY-MM-DD date');fiscalYearStart=fr.iso;}
+  return{kind,profile:p.profile,items,dependencies,...(fiscalYearStart?{fiscalYearStart}:{}),sourceIds:items.map(i=>i.id).concat(dependencies.map(d=>d.id)),quantitative:true};
  }
  if(kind==='sequence'){
   const participants=orderedParticipants(ir,shown),byParticipant=new Map(participants.map(n=>[n.id,n]));

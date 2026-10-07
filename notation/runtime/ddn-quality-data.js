@@ -81,7 +81,13 @@ function chart(ir,E,get){
  if(p.series_missing!==undefined&&!['gap','zero','error'].includes(p.series_missing))fail('DDN-QC020','series_missing is gap, zero or error');
  const series=[],categories=[],groups=new Map();
  for(const pt of points){const ser=p.series?get(pt.node,p.series):'Value';if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-QC020','Series must have a nonempty text key of at most 80 characters',pt.node);if(!series.includes(ser))series.push(ser);
-  if(xType==='number')finite(pt.x,'Numeric x');if(xType==='date'){if(typeof pt.x!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(pt.x)||!Number.isFinite(Date.parse(pt.x+'T00:00:00Z'))||new Date(pt.x+'T00:00:00Z').toISOString().slice(0,10)!==pt.x)fail('DDN-QC020','Date x must be a real ISO date');}
+  if(xType==='number')finite(pt.x,'Numeric x');if(xType==='date'){
+   /* 0.8 amendment (ch. 19 §19.3): zoned ISO timestamps normalize to their UTC date. */
+   if(typeof pt.x==='string'&&/^\d{4}-\d{2}-\d{2}T/.test(pt.x)){
+    if(!/(Z|[+-]\d{2}:\d{2})$/.test(pt.x))fail('DDN-PJ221','Datetime x needs an explicit Z or ±HH:MM offset — never guessed from locale');
+    const t=Date.parse(pt.x);if(!Number.isFinite(t))fail('DDN-QC020','Date x must be a real ISO date or zoned timestamp');
+    pt.x=new Date(t).toISOString().slice(0,10);}
+   if(typeof pt.x!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(pt.x)||!Number.isFinite(Date.parse(pt.x+'T00:00:00Z'))||new Date(pt.x+'T00:00:00Z').toISOString().slice(0,10)!==pt.x)fail('DDN-QC020','Date x must be a real ISO date');}
   if(!categories.some(v=>canon(v)===canon(pt.x)))categories.push(pt.x);const key=canon([ser,pt.x]);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(pt);}
  if(series.length>20||categories.length>200)fail('DDN-QC021','Quality chart limits: 20 series and 200 coordinates');if(xType!=='category')categories.sort((a,b)=>xType==='date'?Date.parse(a)-Date.parse(b):a-b);
  const layers=p.layers||series.map(key=>({series:key,mark}));if(!Array.isArray(layers)||layers.length!==series.length||new Set(layers.map(l=>l.series)).size!==series.length)fail('DDN-QC021','Declare exactly one layer per series');
