@@ -6,6 +6,26 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+### Added
+
+- **Mermaid import (0.9, reference-tool only — the spec stays Mermaid-free).**
+  The designer's Files drawer gains an **Import…** command (ch. 57 §57.4
+  surface): paste Mermaid source and the popup previews the conversion
+  (counts plus an explicit loss report) before creating a new workspace
+  file. Supported subset: flowchart (graph/flowchart TD|BT|LR|RL — nodes,
+  labeled edges, subgraphs → frames), sequenceDiagram (participants/actors,
+  `->>`/`-->>` messages incl. self-messages; dashed replies become
+  `x_return`), classDiagram (classes, members → fields, inheritance/
+  realization/association/dependency verbs), erDiagram (entities, attribute
+  blocks with PK, crow's-foot cardinality → endpoint marks), stateDiagram
+  (states, `[*]` initial/final, transitions, composite states → frames).
+  Layout is automatic (Mermaid has no coordinates to import); skipped
+  constructs (Mermaid styling, click handlers, combined fragments, member
+  types, comments, …) are always reported in the preview, the status bar
+  and a comment block at the bottom of the generated file. Converter:
+  `notation/tool/src/mermaid-import.js` (UMD, node-tested); no Mermaid code
+  is vendored.
+
 - **Unicode identifiers (0.8 amendment, spec ch. 01 + S06; EBNF updated).**
   Structural identifiers now follow UAX #31 — `ID_Start` then `ID_Continue`,
   plus the ASCII separators `_` and `-` — so every ASCII identifier is

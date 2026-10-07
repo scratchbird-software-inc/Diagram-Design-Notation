@@ -118,7 +118,7 @@ rationale:
       (diff-basic, reject-ddn-df03); DDN-GAPS deferral closed 2026-10-06.
       Designer diff UI remains reference-tool follow-up.
 - [ ] Assertion evaluation (owner decision pending: 0.9 vs Weaver orchestration)
-- [ ] Mermaid import (designer "Import…" command)
+- [x] Mermaid import (designer "Import…" command) — reference-tool feature, no spec change: `notation/tool/src/mermaid-import.js` + Files-drawer Import… popup with loss report; node tests + headless probe
 - [x] Unicode identifiers (UAX #31 / UTS #39 profiles) — implemented 0.8.x
       amendment (spec ch. 01 + S06, EBNF updated): UAX #31 ID_Start/Continue
       plus `_`/`-`, UTS #39 profile (NFC, no format/bidi characters, single

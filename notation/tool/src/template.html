@@ -79,6 +79,18 @@
         <button id="ddn-open-folder" type="button" title="Open a folder of .ddn files">Folder…</button>
         <button id="ddn-merge" type="button" title="Add files to the current workspace">Merge…</button>
         <button id="ddn-new-project" type="button" class="ddn-mini" title="New document — start empty from a template (blank, flowchart, C4 container, patent figure…)">New document…</button>
+        <button id="ddn-import" type="button" class="ddn-mini" title="Import… — convert a Mermaid diagram (flowchart, sequence, class, ER, state) to DDN (0.9; the notation itself stays Mermaid-free)">Import…</button>
+        <div id="ddn-import-popup" hidden>
+          <h3>Import from Mermaid</h3>
+          <p class="ddn-dim">Paste Mermaid source — flowchart (graph/flowchart), sequenceDiagram, classDiagram, erDiagram or stateDiagram. The diagram becomes a new workspace file (auto layout; unsupported constructs are reported, never silently dropped).</p>
+          <textarea id="ddn-import-text" spellcheck="false" placeholder="graph TD&#10;  A[Start] --> B{Decision}&#10;  B -->|yes| C[Done]"></textarea>
+          <div class="ddn-row">
+            <button id="ddn-import-preview-btn" type="button" class="ddn-mini">Preview</button>
+            <button id="ddn-import-confirm" type="button" disabled>Import</button>
+            <button id="ddn-import-cancel" type="button" class="ddn-mini">Cancel</button>
+          </div>
+          <div id="ddn-import-preview" class="ddn-dim"></div>
+        </div>
         <div id="ddn-template-popup" hidden>
           <p class="ddn-dim">A new document starts EMPTY — a valid .ddn skeleton. Templates scaffold a view kind's starter content; after creation the document is ordinary .ddn with no template dependency.</p>
           <div id="ddn-template-list" role="listbox" aria-label="Document templates"></div>

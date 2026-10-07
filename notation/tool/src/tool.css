@@ -258,6 +258,12 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 #ddn-diagnostics .sev-warning { color: #885513; }
 #ddn-diagnostics .sev-info { color: #245ac8; }
 #ddn-diagnostics .none { color: #5a6d85; padding: 2px 4px; }
+/* mermaid import popup (0.9, ch.57 §57.4) */
+#ddn-import-popup { border: 1px solid #cbd5e3; border-radius: 8px; background: #fff; padding: 10px; margin: 6px 0; }
+#ddn-import-popup h3 { margin: 0 0 6px; }
+#ddn-import-text { width: 100%; min-height: 110px; border: 1px solid #cbd5e3; border-radius: 7px; padding: 8px; font: 12px/1.5 ui-monospace, monospace; }
+#ddn-import-preview { margin: 6px 0; max-height: 180px; overflow: auto; line-height: 1.45; }
+#ddn-import-preview:empty { display: none; }
 /* new-document template picker (chapter 57 §D2) */
 #ddn-template-popup { border: 1px solid #cbd5e3; border-radius: 8px; background: #fff; padding: 10px; margin: 6px 0; }
 #ddn-template-list { display: flex; flex-direction: column; gap: 3px; }

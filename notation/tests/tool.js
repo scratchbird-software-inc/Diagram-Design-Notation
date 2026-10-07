@@ -1043,6 +1043,101 @@ test('0.9 authoring: setElementGroup / setViewStyleText / run text keys / elemen
   assert.throws(() => A.authoring.setElementProperties(ws4, 'm.ddn', 'v', 'm::model.a', { opacity: 2 }), e => e.code === 'DDN-SZ01');
 });
 
+test('0.9 Mermaid import: pure converter per diagram type (reference-tool, spec stays Mermaid-free)', () => {
+  const M = require('../tool/src/mermaid-import.js');
+  const A = require('../dist/ddn.global.js');
+  const roundtrip = (src, expect) => {
+    const { source, report } = M.mermaidToDdn(src);
+    const ws = A.createWorkspace({ 'm.ddn': source });
+    const view = ws.entries()[0].views[0].id;
+    const r = ws.renderSync({ entry: 'm.ddn', view });
+    const ir = ws.resolve('m.ddn', view);
+    return { source, report, ir, scene: r.scene };
+  };
+  // flowchart: nodes/edges/labels/subgraph→frame, styling skipped & reported
+  const fc = roundtrip(`graph LR
+  A[Start] --> B{Decision}
+  B -->|yes| C(Process A)
+  B -->|no| D[(Store)]
+  subgraph S [Scope X]
+    C --> D
+  end
+  C -.-> E[[Sub]]
+  style A fill:#f9f
+  click A callback`);
+  assert.equal(fc.report.type, 'flowchart');
+  assert.equal(fc.report.created.objects, 5);
+  assert.equal(fc.report.created.relations, 5);
+  assert.equal(fc.report.created.frames, 1);
+  const kinds = fc.ir.elements.map(e => e.kind).sort();
+  assert.deepEqual(kinds, ['flow.datastore', 'flow.decision', 'flow.process', 'flow.process', 'flow.subprocess']);
+  assert.ok(fc.source.includes('frame S "SCOPE X" { members: [@model.C, @model.D]; }'), 'subgraph becomes a view frame');
+  assert.ok(fc.source.includes('direction: "down"') || fc.source.includes('direction: "right"'), 'LR maps direction');
+  assert.ok(fc.report.skipped.some(s => /styling/.test(s.reason) && s.text.startsWith('style')), 'style line reported as skipped');
+  assert.ok(fc.report.skipped.some(s => /click/.test(s.reason)), 'click handler reported as skipped');
+  assert.ok(fc.report.skipped.some(s => /dashed-arrow/.test(s.reason)), 'dashed edge noted');
+  assert.ok(fc.ir.relations.some(r => r.name === 'yes' && r.name === 'yes'), 'edge label carried as relation name');
+  // sequence: participants, ->> vs -->> (x_return), fragments skipped
+  const sq = roundtrip(`sequenceDiagram
+  participant U as User
+  participant S as Shop
+  U->>S: Submit order
+  S-->>U: Confirm
+  S->>S: Audit
+  alt rare
+    U->>S: Cancel
+  end`);
+  assert.equal(sq.report.created.objects, 2);
+  assert.equal(sq.report.created.relations, 4);
+  assert.ok(sq.source.includes('kind: "uml.message"'), 'messages map to uml.message');
+  assert.ok(sq.source.includes('x_return: true'), 'dashed reply carries x_return');
+  assert.ok(sq.source.includes('kind: "sequence"'), 'sequence projection written');
+  assert.ok(sq.ir.elements.find(e => e.name === 'User'), 'participant alias becomes the label');
+  assert.ok(sq.report.skipped.some(s => /combined fragments/.test(s.reason)), 'alt fragment reported');
+  // classDiagram: members, generalization (child→parent), composition note, dependency
+  const cd = roundtrip(`classDiagram
+  class Animal { +string name +speak() }
+  class Duck { +quack() }
+  Animal <|-- Duck
+  Animal *-- Pond
+  Duck ..> Hunter : sees`);
+  assert.equal(cd.report.created.objects, 4);
+  assert.equal(cd.report.created.relations, 3);
+  const animal = cd.ir.elements.find(e => e.name === 'Animal');
+  assert.deepEqual((animal.fields || []).map(f => f.name).sort(), ['name', 'speak()'], 'members become fields');
+  assert.ok(cd.report.skipped.some(s => /visibility\/types/.test(s.reason)), 'dropped types reported');
+  assert.ok(cd.ir.relations.some(r => r.kind === 'uml.generalization'), 'inheritance verb mapped');
+  assert.ok(cd.ir.relations.some(r => r.kind === 'uml.dependency' && r.name === 'sees'), 'dependency with label');
+  assert.ok(cd.report.skipped.some(s => /composition maps to uml.association/.test(s.reason)), 'composition approximation noted');
+  // erDiagram: crow's-foot marks + PK fields
+  const er = roundtrip(`erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER |{--|{ LINE_ITEM : contains
+  CUSTOMER { string name string id PK }`);
+  assert.equal(er.report.created.objects, 3);
+  const places = er.ir.relations.find(r => r.name === 'places');
+  assert.equal(places.kind, 'ref');
+  assert.equal(places.properties.source_mark, 'one');
+  assert.equal(places.properties.target_mark, 'zeromany', 'o{ maps to zeromany');
+  const cust = er.ir.elements.find(e => e.name === 'CUSTOMER');
+  assert.ok((cust.fields || []).some(f => f.name === 'id' && f.properties && f.properties.key === 'primary'), 'PK becomes key: primary');
+  // stateDiagram: [*] endpoints, events, composite → frame
+  const st = roundtrip(`stateDiagram-v2
+  [*] --> Draft
+  Draft --> Paid : pay
+  Paid --> [*]
+  state Paid {
+    [*] --> Check
+    Check --> Done
+  }`);
+  const stKinds = st.ir.elements.map(e => e.kind);
+  assert.ok(stKinds.includes('state.initial') && stKinds.includes('state.final') && stKinds.includes('state.state'), 'state kinds mapped');
+  assert.ok(st.ir.relations.some(r => r.kind === 'state.transition' && r.name === 'pay'), 'transition event carried');
+  assert.equal(st.report.created.frames, 1, 'composite state becomes a frame');
+  // unrecognized input rejects with a coded error
+  assert.throws(() => M.mermaidToDdn('pie title Pets'), e => e.code === 'DDN-MP01');
+});
+
 test('phase 8/12 drawers join the drawer model (creator top, properties bottom; relation retired)', () => {
   for (const name of ['creator', 'properties']) {
     assert.ok(T.DRAWERS.includes(name), name + ' missing from DRAWERS');

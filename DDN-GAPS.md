@@ -63,9 +63,14 @@ named hook:
 - **Assertion evaluation** (ch. 55 §55.2) — 0.8 assertions are parsed,
   shape-validated, carried and exported but never evaluated; chapter 58
   reserves the conformance hook. Revisiting: 0.9 evaluation semantics.
-- **Mermaid import** (ch. 57 §57.4) — the 0.8 surface only fixes where it
-  will live (a designer "Import…" command producing ordinary 0.6 source).
-  Revisiting: 0.9.
+- **Mermaid import** (ch. 57 §57.4) — ~~the 0.8 surface only fixes where it
+  will live (a designer "Import…" command producing ordinary 0.6 source).~~
+  **CLOSED 0.9:** the designer's Files-drawer **Import…** command converts
+  the practical Mermaid subset (flowchart, sequenceDiagram, classDiagram,
+  erDiagram, stateDiagram) to ordinary DDN source with an explicit loss
+  report; it is a reference-tool feature only — the spec and the conformant
+  runtime stay Mermaid-free (see `notation/tool/src/mermaid-import.js` and
+  tool.md "Import from Mermaid").
 
 ## Known 0.8 tooling gaps (2026-10-04)
 

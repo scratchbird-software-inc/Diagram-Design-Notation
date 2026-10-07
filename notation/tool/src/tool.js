@@ -131,6 +131,8 @@ const els = {
   styleBody: $('ddn-style-body'), documentBody: $('ddn-document-body'),
   open: $('ddn-open'), openFolder: $('ddn-open-folder'), merge: $('ddn-merge'), newProject: $('ddn-new-project'),
   templatePopup: $('ddn-template-popup'), templateList: $('ddn-template-list'),
+  importBtn: $('ddn-import'), importPopup: $('ddn-import-popup'), importText: $('ddn-import-text'),
+  importPreviewBtn: $('ddn-import-preview-btn'), importConfirm: $('ddn-import-confirm'), importCancel: $('ddn-import-cancel'), importPreview: $('ddn-import-preview'),
   fileInput: $('ddn-file-input'), folderInput: $('ddn-folder-input'),
   catalogue: $('ddn-catalogue'), catalogueSearch: $('ddn-catalogue-search'),
   fileList: $('ddn-file-list'), fileCount: $('ddn-file-count'),
@@ -1917,6 +1919,7 @@ const familyOptions = () => [['source', 'source default']].concat(Object.entries
 const sizeOptions = () => [['source', 'source default'], ['8', '8 px'], ['9', '9 px'], ['10', '10 px'], ['11', '11 px'], ['12', '12 px'], ['14', '14 px'], ['16', '16 px'], ['18', '18 px'], ['20', '20 px'], ['24', '24 px']];
 const routingOptions = () => [['source', 'default']].concat(ROUTING_VALUES.map(v => [v, v]));
 function dim(note) { const p = document.createElement('p'); p.className = 'ddn-dim'; p.textContent = note; return p; }
+function escapeHtml(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
 function repopulateOverridePanels() {
   syncOptionInputs();
@@ -4344,6 +4347,60 @@ els.downloadJson.addEventListener('click', () => guard(() => {
   state.saved = state.ws.getFiles();
   status('downloaded the complete workspace JSON');
 }));
+/* 0.9 Mermaid import (ch.57 §57.4 surface: the designer's Import… command —
+ * a reference-tool feature; the spec and the conformant runtime stay
+ * Mermaid-free). Paste → preview (counts + loss report) → confirm creates a
+ * new workspace file through the normal workspace paths. */
+let pendingImport = null;
+els.importBtn.addEventListener('click', () => {
+  els.importPopup.hidden = !els.importPopup.hidden;
+  els.templatePopup.hidden = true;
+  if (!els.importPopup.hidden) els.importText.focus();
+});
+els.importCancel.addEventListener('click', () => { els.importPopup.hidden = true; });
+els.importPreviewBtn.addEventListener('click', () => guard(() => {
+  const text = els.importText.value.trim();
+  if (!text) { els.importPreview.textContent = 'paste Mermaid source first'; return; }
+  try {
+    const { source, report } = DDNMermaidImport.mermaidToDdn(text);
+    pendingImport = { source, report };
+    const lines = ['<strong>' + report.type + '</strong> — creates ' + report.created.objects + ' object(s), ' + report.created.relations + ' relation(s)' + (report.created.frames ? ', ' + report.created.frames + ' frame(s)' : '') + '.'];
+    if (report.skipped.length) {
+      lines.push('Loss report — ' + report.skipped.length + ' construct(s) skipped (also embedded as comments in the generated file):');
+      for (const sk of report.skipped.slice(0, 20)) lines.push('· ' + (sk.line ? 'line ' + sk.line + ': ' : '') + escapeHtml(sk.reason) + ' — <code>' + escapeHtml(sk.text) + '</code>');
+      if (report.skipped.length > 20) lines.push('· … and ' + (report.skipped.length - 20) + ' more (in the file)');
+    } else lines.push('Nothing skipped — full-fidelity import for this diagram.');
+    els.importPreview.innerHTML = lines.join('<br>');
+    els.importConfirm.disabled = false;
+  } catch (e) {
+    pendingImport = null;
+    els.importConfirm.disabled = true;
+    els.importPreview.textContent = (e && e.code ? e.code + ': ' : '') + (e && e.message || e);
+  }
+}));
+els.importConfirm.addEventListener('click', () => guard(() => {
+  if (!pendingImport) return;
+  flush();
+  const files = state.ws.getFiles();
+  let name = 'mermaid-import.ddn', i = 2;
+  while (Object.prototype.hasOwnProperty.call(files, name)) name = 'mermaid-import-' + (i++) + '.ddn';
+  state.ws.updateFiles({ [name]: pendingImport.source });
+  const sk = pendingImport.report.skipped.length;
+  const created = pendingImport.report.created;
+  pendingImport = null;
+  els.importPopup.hidden = true;
+  entriesUI('main');
+  mount();
+  showSource(name);
+  updateHistory();
+  /* The mount render's handler clears the status line — deliver the import
+   * summary once the first render of the imported view settles. */
+  const summary = () => status('imported Mermaid → ' + name + ' (' + created.objects + ' objects, ' + created.relations + ' relations' + (sk ? '; ' + sk + ' construct(s) skipped — see the loss report at the bottom of the file' : '; nothing skipped') + ')');
+  const ready = state.diagram && state.diagram.ready;
+  if (ready && typeof ready.then === 'function') ready.then(summary, summary);
+  else summary();
+}));
+
 els.loadPaste.addEventListener('click', () => guard(() => {
   const t = els.paste.value.trim();
   if (!t) throw new Error('paste a .ddn source first');

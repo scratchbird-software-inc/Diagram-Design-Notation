@@ -212,6 +212,42 @@ all, yet the host can still open drawers through `DDNTool` — see
 
 ## Loading sources
 
+### Import from Mermaid (0.9)
+
+The Files drawer's **Import…** command converts Mermaid source to DDN — a
+reference-tool feature only: the specification and the conformant runtime
+stay Mermaid-free (no Mermaid code is vendored; the output is ordinary
+`ddn "0.6"` source you then own). Paste into the popup, **Preview** shows
+what will be created (object/relation/frame counts) with the **loss
+report** (every skipped construct, line and reason), and **Import** writes
+a new `mermaid-import.ddn` file, mounts the imported view and summarizes
+the result in the status bar. The same loss report is embedded as comments
+at the bottom of the generated file.
+
+Supported subset and mapping:
+
+| Mermaid | DDN |
+|---|---|
+| `graph/flowchart TD\|BT\|LR\|RL` | `layout { direction: down/up/right/left }` |
+| `id[…]` / `id(…)` / `id{…}` / `id[[…]]` / `id[(…)]` / `id>…]` / `id((…))` | `flow.process` / `flow.process` (shape note) / `flow.decision` / `flow.subprocess` / `flow.datastore` / `flow.io` / `flow.start` |
+| `A --> B`, `-- label -->`, `-->\|label\|`, `-.->`, `==>`, `---` | `flow.next` (label = relation name); dashed/thick/open-arrow styling reported as skipped |
+| `subgraph X [Title] … end` | view `frame X "TITLE" { members: […] }` |
+| `participant`/`actor … as Name` | `application`/`uml.actor` objects (alias = label) |
+| `A->>B: m` / `A-->>B: m` | `uml.message`; dashed reply gets `x_return: true`; `sequence` projection (`uml.sequence@1`) |
+| `class X { +type name +m() }` | `uml.class` object + fields (visibility/types dropped — reported) |
+| `<\|--`, `<\|..`, `*--`, `o--`, `-->`, `..>` | `uml.generalization`, `uml.realization`, `uml.association` (composition/aggregation noted), `uml.association`, `uml.dependency` |
+| `A \|\|--o{ B : label` | `table` objects + `ref` relation with crow's-foot `source_mark`/`target_mark` (`\|\|`→one, `o\|`→zeroone, `}\|`→many, `}o`→zeromany); `PK` → `key: primary` |
+| `[*] --> S`, `S --> [*]`, `S1 --> S2 : event`, `state X { … }` | `state.initial`/`state.final`/`state.state` objects, `state.transition` (event = name + `x_transition`), composite → frame |
+
+Layout is automatic — Mermaid has no coordinates, so nothing else is
+invented. Data-store endpoints use the generic `uses` verb (`flow.next`'s
+endpoint contract excludes stores — reported). Unsupported constructs
+(Mermaid `style`/`classDef`, `click` handlers, combined fragments
+(alt/opt/loop), notes, generics, member types, comments, …) are collected
+and reported, never silently dropped; unrecognized input is rejected with a
+coded message before anything is written.
+
+
 - **Files drawer**: open files / a folder / a workspace `.zip` or `.json`
   (with merge-into-current), drag-drop anywhere on the page, paste source
   text, or pick from the bundled example catalogue.
