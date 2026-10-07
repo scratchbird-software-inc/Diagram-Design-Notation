@@ -1,0 +1,35 @@
+ddn "0.6";
+module "ddn.fieldguide.fragparams";
+
+// Parameterized fragments + nested use: (spec ch. 01 amendment): a fragment
+// declares 1-8 parameters and a use: binds them positionally. Substitution is
+// token-level — declaration ids, whole @references, whole property values and
+// ${name} string interpolation — so the expansion is identical to the
+// handwritten model. Identities must stay unique per instance: ids that vary
+// per stage are parameters too (lnk below).
+
+fragment staged(name, table, lnk) {
+  object name "Stage: ${name}" {
+    kind: service;
+    fields { payload: string; }
+  }
+  relation lnk @name -> @audit_trail { kind: flow; }
+}
+
+fragment pipeline(first, second) {
+  use: @staged(first, payload, first_out);
+  use: @staged(second, payload, second_out);
+  relation chain @first -> @second { kind: flow; }
+}
+
+data model {
+  object audit_trail "Audit trail" {
+    kind: database;
+  }
+  use: @pipeline(ingest, reconcile);
+}
+
+view main "Parameterized fragments" {
+  data: [@model];
+  publication { size: content; fit: none; }
+}

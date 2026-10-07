@@ -199,6 +199,12 @@
     "DDN-LN03": "Set line/stroke weight to a length from 0.25px to 16px.",
     "DDN-LN04": "Use dash: solid, dashed or dotted; custom dash arrays are reserved for a future revision.",
     "DDN-LN05": "Use corners: round; square corner treatment is reserved for a future revision.",
-    "DDN-SZ01": "Set element opacity to a number from 0 to 1 (for example 0.6); 1 is the default and may simply be omitted."
+    "DDN-SZ01": "Set element opacity to a number from 0 to 1 (for example 0.6); 1 is the default and may simply be omitted.",
+    "DDN-FG01": "Bind exactly as many arguments as the fragment declares parameters (use: @name(a1, \u2026)), or remove the argument list for a parameterless definition.",
+    "DDN-FG02": "Use only the fragment's declared parameters in ${name} interpolations; a literal ${ is written $${.",
+    "DDN-FG03": "Pass an identifier-shaped argument ([A-Za-z_][A-Za-z0-9_-]*) when the parameter substitutes into a declaration id or reference.",
+    "DDN-FG04": "Break the use: cycle between definitions \u2014 expand one level inline or restructure the fragment graph.",
+    "DDN-FG05": "Flatten the definition nesting (cap is 8 levels); expand intermediate fragments inline where the chain is deeper.",
+    "DDN-FG06": "Declare 1-8 unique parameters: fragment name(p1, p2) \u2014 no duplicates, no empty list."
   }
 }

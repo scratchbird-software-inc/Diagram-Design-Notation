@@ -6,6 +6,26 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Parameterized model fragments + nested `use:` (0.8 amendment, spec ch. 01;
+  closes the 2026-09-24 DDN-GAPS deferral).** `fragment name(p1, …) {…}`
+  (1–8 unique parameters) applied as `use: @name(a1, …)` with a documented
+  **token-level substitution rule**: a parameter binds by token value in
+  exactly four positions — declaration ids, whole `@reference` targets, whole
+  property values, and `${name}` interpolation inside strings (`$${` escapes
+  to a literal `${`); identifier tokens are never interpolated inside, so
+  kebab-case rules always hold. Definitions may now apply other definitions
+  (nested `use:`), expanded bottom-up with `DDN-FG04` cycle detection and a
+  `DDN-FG05` depth cap of 8. Coded family `DDN-FG01`–`DDN-FG06` (arity,
+  unknown `${param}`, illegal substitution position, cycle, depth, malformed
+  parameter list); parameters/arguments are `DDN-V04` below `ddn "0.6"` and
+  nested `use:` stays `DDN-E017` there, so old sources are unaffected.
+  Expansion is **IR-identical** to the handwritten model — pinned by
+  equivalence fixtures in the new 9-test suite
+  (`notation/tests/fragment-params.js`, registered as `test:fragment-params`).
+  Inspector edit scope documented: expansions are derived/read-only (existing
+  D8 rule); no tool changes. AI reference gains the reuse bullet update +
+  `DDN-FGxx` fixes; the field guide gains a "Parameterized fragments"
+  chapter.
 - **Per-element sizing resolution + content opacity (0.8 amendment, spec ch. 04 §6C).**
   Pins the per-key resolution contract for the chapter-54 sizing keys —
   `text_fit` / `max_width` / `max_height` / `min_font` resolve element > view

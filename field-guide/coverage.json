@@ -3,8 +3,8 @@
     "edition": "field-guide-0.8",
     "runtime": "0.8.0",
     "reviewed": "2026-10-04",
-    "chapterCount": 158,
-    "plannedChapterCount": 158,
+    "chapterCount": 159,
+    "plannedChapterCount": 159,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -1366,6 +1366,15 @@
       "entry": "field-guide/sources/sizing-opacity.ddn",
       "view": "main",
       "sha256": "309396c8edf9ba5341d5ccd76a9595856520b722d50a21f7e5874440d0e22107"
+    },
+    {
+      "id": "fragment-params",
+      "status": "technique",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/fragment-params.ddn",
+      "view": "main",
+      "sha256": "dcb97dc9385831da724675a26a78834fbba2322cebbafc590f6595a79ab90ecc"
     },
     {
       "id": "markings-metadata",
@@ -2786,6 +2795,15 @@
       "id": "sizing-opacity",
       "before": "309396c8edf9ba5341d5ccd76a9595856520b722d50a21f7e5874440d0e22107",
       "after": "8ba62a52d6009516794d099a62b7f375be4104499f9d20269a151ac066d9ac54",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "fragment-params",
+      "before": "dcb97dc9385831da724675a26a78834fbba2322cebbafc590f6595a79ab90ecc",
+      "after": "5f2a51a843cdcaae49b2e0ae3f853abfa3e128c620c5f93be2adaf817c015ca9",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

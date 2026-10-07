@@ -53,7 +53,7 @@ machine-readable catalogue that the specification and the runtime share.
 | Shape silhouettes | 14 | profiles catalogue |
 | Installed profiles | 150 | profiles catalogue |
 | Projection kinds | 12 | language choices |
-| Documented diagnostics | 136 | diagnostic fix guide |
+| Documented diagnostics | 142 | diagnostic fix guide |
 
 ## 4. Extension mechanism, profiles, and icon packs
 

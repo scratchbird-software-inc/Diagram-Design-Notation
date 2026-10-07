@@ -2276,7 +2276,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
         else out.push({type:'number',value,start,end:i});continue;}
       const id=text.slice(i).match(/^[A-Za-z_][A-Za-z0-9_-]*/);
       if(id){let name=id[0];if(name.endsWith('-')&&text[i+name.length]==='>')name=name.slice(0,-1);i+=name.length;out.push({type:'id',value:name,start,end:i});continue;}
-      if('{}[]:;,.@'.includes(c)){out.push({type:c,value:c,start,end:++i});continue;}
+      if('{}[]:;,.@()'.includes(c)){out.push({type:c,value:c,start,end:++i});continue;}
       fail('DDN006',`Unexpected character ${JSON.stringify(c)}`,{start},source);
     }
     out.push({type:'eof',value:'',start:i,end:i});return out;
@@ -2394,10 +2394,16 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       fail('DDN010','Expected a value',t,source);
     }
     function useMarker(node,t){take();
+      /* 0.8 amendment (parameterized reuse): a use: reference may carry an
+       * argument list @name(a1, a2) — bound to the definition's parameters
+       * at expansion; args on a parameterless definition are DDN-FG01. */
+      const argList=r=>{if(peek().type!=='(')return;take();const args=[];
+        for(;;){args.push(value());if(peek().type!==',')break;take();}
+        expect(')');r.$args=args;};
       const refs=[];
       if(peek().type==='['){take();if(peek().type===']')fail('DDN-E017','use: needs at least one preset or fragment reference',peek(),source);
-        for(;;){if(peek().type!=='@')fail('DDN010','Expected a @preset reference in the use: list',peek(),source);refs.push(ref());if(peek().type!==',')break;take();}expect(']');}
-      else refs.push(ref());
+        for(;;){if(peek().type!=='@')fail('DDN010','Expected a @preset reference in the use: list',peek(),source);const r=ref();argList(r);refs.push(r);if(peek().type!==',')break;take();}expect(']');}
+      else {const r=ref();argList(r);refs.push(r);}
       expect(';');
       node.children.push({type:'$use',refs,start:t.start,end:tokens[pos-1].end,source});
     }
@@ -2487,6 +2493,12 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       if(['place','route'].includes(n.type)){n.target=ref();n.id=n.target.$ref;return body(n);}
       if(peek().type==='{'){n.group=true;n.id=n.type;return body(n);}
       n.id=expect('id').value;
+      /* 0.8 amendment (parameterized reuse): fragment name(p1, p2) declares
+       * 1-8 unique substitution parameters. */
+      if(n.type==='fragment'&&peek().type==='('){take();n.params=[];
+        if(peek().type===')')fail('DDN-FG06','A parameterized fragment declares at least one parameter',peek(),source);
+        for(;;){const p=expect('id');if(n.params.includes(p.value))fail('DDN-FG06','Duplicate parameter '+p.value+' in fragment '+n.id,p,source);n.params.push(p.value);if(n.params.length>8)fail('DDN-FG06','A fragment declares at most 8 parameters',p,source);if(peek().type!==',')break;take();}
+        expect(')');}
       if(peek().type==='string')n.label=take().value;
       if(n.type==='view'&&peek().type===':')return viewHeader(n);
       if(peek().type==='@'){n.from=ref();expect('->');n.to=ref();}
@@ -2791,8 +2803,13 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       if(symbols.has(key))throw new DDNError('DDN024','Duplicate declaration '+n.id,d.source,n.start);
       symbols.set(key,n);
       if(n.props.version!==undefined&&!Number.isSafeInteger(n.props.version))throw new DDNError('DDN-E017','Definition version must be an integer (documentary only; expansion ignores it)',d.source,n.start);
-      const noNested=x=>{for(const c of x.children){if(c.type==='$use')throw new DDNError('DDN-E017','A definition body cannot apply presets or fragments (use: is legal at application sites only)',x.source,c.start);noNested(c);}};
-      noNested(n);
+      /* 0.8 amendment (parameterized reuse): fragment parameters and nested
+       * use: are 0.8 (0.6-dialect) constructs. Below ddn "0.6" definitions
+       * stay closed templates exactly as before (nested use: is DDN-E017). */
+      const v06=SOURCE_VERSIONS.indexOf(d.file.version)>=V06;
+      if(n.params?.length&&!v06)throw new DDNError('DDN-V04','fragment parameters are a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+d.file.source+' declares ddn "'+d.file.version+'"',n.source,n.start);
+      if(!v06){const noNested=x=>{for(const c of x.children){if(c.type==='$use')throw new DDNError('DDN-E017','A definition body cannot apply presets or fragments (use: is legal at application sites only)',x.source,c.start);noNested(c);}};
+        noNested(n);}
     }
     function resolvePreset(r,rec){
       const parts=r.$ref.split('.'),found=n=>n&&PRESET_DEFS.has(n.type)?n:null;
@@ -2806,24 +2823,91 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     }
     function cloneValue(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(cloneValue);const o=Object.create(null);for(const k of Object.keys(v))o[k]=cloneValue(v[k]);return o;}
     function cloneNode(n,origin){const c={...n,props:cloneValue(n.props),children:n.children.map(x=>cloneNode(x,origin))};c.presetOrigin=origin;return c;}
+    /* 0.8 amendment (parameterized reuse, chapter 01): token-level
+     * substitution. A parameter binds by TOKEN VALUE in exactly these
+     * positions: (1) a declaration id, (2) a whole @reference target,
+     * (3) a whole property value, (4) ${name} interpolation inside any
+     * string (labels, string values). $${ escapes to a literal ${. Args are
+     * bound positionally (DDN-FG01 arity); an arg that cannot serve the
+     * position it lands in is DDN-FG03; an unknown ${name} is DDN-FG02. */
+    const IDENT_RE=/^[A-Za-z_][A-Za-z0-9_-]*$/,REFPATH_RE=/^[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*$/;
+    function bindArgs(def,r,node,at,enclosing){
+      if(!def.params?.length){if(r.$args)throw new DDNError('DDN-FG01','@'+r.$ref+' declares no parameters; remove the argument list',node.source,at);return null;}
+      if(!r.$args||r.$args.length!==def.params.length)throw new DDNError('DDN-FG01','@'+r.$ref+' takes '+def.params.length+' argument(s) ('+def.params.join(', ')+'); found '+(r.$args?r.$args.length:0),node.source,at);
+      /* Pass-through: an argument token that is itself a parameter of the
+       * ENCLOSING definition stays a parameter ({$pt:token}) so the outer
+       * application re-binds it — ids/refs/values keep the bare token,
+       * ${…} interpolation re-emits ${token} instead of baking the text. */
+      return new Map(def.params.map((p,i)=>{const a=r.$args[i];return [p,typeof a==='string'&&enclosing?.includes(a)?{$pt:a}:a];}));
+    }
+    function substString(s,mapping,node){
+      return s.replace(/\$\$\{|\$\{([A-Za-z_][A-Za-z0-9_-]*)\}/g,(m,name)=>{
+        if(name===undefined)return '${';
+        if(!mapping.has(name))throw new DDNError('DDN-FG02','Unknown parameter ${'+name+'} in a fragment string; declared parameters: '+[...mapping.keys()].map(p=>'${'+p+'}').join(', '),node.source,node.start);
+        const v=mapping.get(name);
+        if(v&&typeof v==='object'&&v.$pt)return '${'+v.$pt+'}';
+        return typeof v==='string'?v:v&&v.$quantity!==undefined?String(v.$quantity)+v.unit:v&&v.$ref?'@'+v.$ref:String(v);
+      });
+    }
+    function substValue(v,mapping,node){
+      if(typeof v==='string'&&mapping.has(v)){const a=mapping.get(v);return a&&typeof a==='object'&&a.$pt?a.$pt:a;}
+      if(typeof v==='string')return substString(v,mapping,node);
+      if(Array.isArray(v))return v.map(x=>substValue(x,mapping,node));
+      if(v&&typeof v==='object'){
+        if(v.$ref!==undefined){if(!mapping.has(v.$ref))return v;const a=mapping.get(v.$ref),t=a&&typeof a==='object'&&a.$pt?a.$pt:a;
+          if(typeof t==='string'&&REFPATH_RE.test(t))return {...v,$ref:t};
+          if(t&&typeof t==='object'&&t.$ref)return {...v,$ref:t.$ref};
+          throw new DDNError('DDN-FG03','Parameter '+v.$ref+' substitutes into a reference; the argument must be an identifier path or a @reference; found '+JSON.stringify(a),node.source,node.start);}
+        if(v.$quantity!==undefined)return v;
+        const o=Object.create(null);for(const[k,x]of Object.entries(v))o[k]=substValue(x,mapping,node);return o;
+      }
+      return v;
+    }
+    function substNode(n,mapping){
+      if(!mapping)return n;
+      if(n.id&&mapping.has(n.id)){const a=mapping.get(n.id),t=a&&typeof a==='object'&&a.$pt?a.$pt:a;
+        if(typeof t!=='string'||!IDENT_RE.test(t))throw new DDNError('DDN-FG03','Parameter '+n.id+' substitutes into a declaration id, which needs an identifier ([A-Za-z_][A-Za-z0-9_-]*); found '+JSON.stringify(a),n.source,n.start);
+        n.id=t;}
+      if(typeof n.label==='string')n.label=substString(n.label,mapping,n);
+      n.props=substValue(n.props,mapping,n);
+      for(const key of ['from','to'])if(n[key]?.$ref)n[key]=substValue(n[key],mapping,n);
+      n.children=n.children.map(c=>substNode(c,mapping));
+      return n;
+    }
+    /* Nested use: definitions apply other definitions, expanded lazily
+     * bottom-up with a cycle guard (DDN-FG04) and a depth cap of 8
+     * (DDN-FG05), consistent with the existing nesting guards (DDN007). */
+    const defState={done:new Set(),stack:[]};
+    function ensureExpanded(def){
+      if(defState.done.has(def.uid))return;
+      if(defState.stack.includes(def.uid))throw new DDNError('DDN-FG04','use: cycle through definitions: '+[...defState.stack,def.uid].map(u=>u.split('::').pop()).join(' → '),def.source,def.start);
+      if(defState.stack.length>=8)throw new DDNError('DDN-FG05','Definition nesting exceeds the cap of 8 levels',def.source,def.start);
+      defState.stack.push(def.uid);
+      expandUse(def,def.doc);
+      defState.stack.pop();defState.done.add(def.uid);
+    }
     function expandUse(n,rec){
       const kept=[],propSources=[];
       for(const c of n.children){
         if(c.type==='$use'){
           const ctx=n.group&&(n.type==='fields'||n.type==='ports')?'members'
-            :!n.group&&n.type==='data'?'fragment'
+            :!n.group&&(n.type==='data'||n.type==='fragment')?'fragment'
             :!n.group&&['object','domain','sample','flow','assertion','relation'].includes(n.type)?'props'
             :null;
           if(!ctx)throw new DDNError('DDN-E017','use: is legal only inside a data block (fragments), a fields/ports group (member groups), or an element/relation/flow body (property presets)',n.source,c.start);
           for(const r of c.refs){
-            const def=resolvePreset(r,rec),origin={file:def.source,start:def.start,end:def.end,type:def.type,id:def.id};
+            if(r.$args&&SOURCE_VERSIONS.indexOf(n.doc?.file?.version??'0.6')<V06)throw new DDNError('DDN-V04','use: arguments are a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but '+n.doc.file.source+' declares ddn "'+n.doc.file.version+'"',n.source,c.start);
+            const def=resolvePreset(r,rec);
+            ensureExpanded(def);
+            const mapping=bindArgs(def,r,n,c.start,n.params);
+            const origin={file:def.source,start:def.start,end:def.end,type:def.type,id:def.id};
             if(ctx==='members'){if(def.type!==n.type)throw new DDNError('DDN-E017','@'+r.$ref+' is a '+def.type+' definition; a '+n.type+' group applies a '+n.type+' definition',n.source,c.start);
-              for(const m of def.children)kept.push(cloneNode(m,origin));}
+              for(const m of def.children)kept.push(substNode(cloneNode(m,origin),mapping));}
             else if(ctx==='fragment'){if(def.type!=='fragment')throw new DDNError('DDN-E017','@'+r.$ref+' is a '+def.type+' definition; a data block applies a fragment definition',n.source,c.start);
-              for(const m of def.children)kept.push(cloneNode(m,origin));}
+              for(const m of def.children)kept.push(substNode(cloneNode(m,origin),mapping));}
             else {if(def.type==='relation_props'){if(n.type!=='relation')throw new DDNError('DDN-E017','relation_props @'+r.$ref+' applies to relation declarations only',n.source,c.start);}
               else if(def.type!=='preset')throw new DDNError('DDN-E017','@'+r.$ref+' is a '+def.type+' definition; property position applies a preset or relation_props definition',n.source,c.start);
-              propSources.push({def,at:c.start});}
+              propSources.push({def,at:c.start,mapping});}
           }
           continue;
         }
@@ -2836,14 +2920,15 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
        * properties are ASSERTED (present on the expanded declaration), and
        * only the named presets' own properties apply. */
       const seen=new Map(),localKeys=new Set(Object.keys(n.props));
-      for(const {def,at} of propSources)for(const k of Object.keys(def.props)){
+      for(const {def,at,mapping} of propSources)for(const k of Object.keys(def.props)){
         if(k==='version')continue;
         if(localKeys.has(k))continue;
-        const v=def.props[k],got=seen.get(k);
+        const v=mapping?substValue(def.props[k],mapping,n):def.props[k],got=seen.get(k);
         if(got&&JSON.stringify(got.value)!==JSON.stringify(v))throw new DDNError('DDN-E017','Presets @'+got.id+' and @'+def.id+' conflict on property '+k+'; declare '+k+': … locally to resolve the conflict',n.source,at);
         if(!got){seen.set(k,{value:v,id:def.id});n.props[k]=v;}
       }
     }
+    for(const d of modules.values())for(const n of d.declarations)if(PRESET_DEFS.has(n.type))ensureExpanded(n);
     for(const d of modules.values())for(const n of d.declarations)if(!PRESET_DEFS.has(n.type))expandUse(n,d);
     function index(n,d,parent=''){
       n.doc=d;n.path=parent?(parent+'.'+n.id):n.id;n.uid=n.props.uid||`${d.module}::${n.path}`;

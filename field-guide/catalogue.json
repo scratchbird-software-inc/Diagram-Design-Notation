@@ -3,8 +3,8 @@
     "edition": "field-guide-0.8",
     "runtime": "0.8.0",
     "reviewed": "2026-10-04",
-    "chapterCount": 158,
-    "plannedChapterCount": 158,
+    "chapterCount": 159,
+    "plannedChapterCount": 159,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -14625,6 +14625,93 @@
       "exerciseEvidence": {
         "before": "309396c8edf9ba5341d5ccd76a9595856520b722d50a21f7e5874440d0e22107",
         "after": "8ba62a52d6009516794d099a62b7f375be4104499f9d20269a151ac066d9ac54",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "fragment-params",
+      "title": "Parameterized fragments — one template, many instances",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "field-guide/sources/fragment-params.ddn",
+      "view": "main",
+      "what": "A fragment declares 1-8 parameters (fragment staged(name, table) {…}) and each use: binds them positionally, stamping out declarations as if handwritten; definitions may also apply other definitions (nested use:).",
+      "why": "A pipeline of identical stages is one template, not five copies to keep in sync: rename the stage kind or add a field once and every instance follows — with identities exactly as if you had typed each stage out.",
+      "when": "Repeated sub-models (stages, tiers, mirrored pairs), template libraries shared across files, any place a copy-paste block keeps drifting.",
+      "read": [
+        "staged(name, table) stamps a service card and its flow to the audit trail; pipeline(first, second) applies it twice (nested use:) and chains the stages — ingest and reconcile render like any handwritten card.",
+        "Substitution is token-level: a declaration id, a whole @reference, a whole property value, or ${name} inside a string. name_out would be one token — identifiers never interpolate inside, so kebab rules always hold.",
+        "The expansion is IR-identical to the handwritten model: equivalence is gated by fixtures, and inspectors treat expanded content as derived/read-only — edit the use: site (local override) or the fragment (all instances).",
+        "Cycles between definitions are DDN-FG04 and nesting past 8 levels is DDN-FG05; arity, unknown ${…}, and bad identifier args are DDN-FG01/FG02/FG03."
+      ],
+      "inputs": [
+        "The repeated shape and what varies per instance",
+        "Parameter names and their positions (id, reference, value, string)",
+        "The maximum reuse depth (cap 8)"
+      ],
+      "pitfalls": [
+        "Do not expect name_out-style identifier interpolation — put the varying part in a whole id token or a ${…} string.",
+        "Do not edit an expanded instance hoping to change the template — expansions are derived; edit the fragment or override at the use: site."
+      ],
+      "limits": "Arguments bind positionally (DDN-FG01); an argument that cannot serve its position is DDN-FG03. Below ddn \"0.6\" parameters/arguments are DDN-V04 and nested use: stays DDN-E017.",
+      "refs": [],
+      "probe": [
+        "service",
+        "database"
+      ],
+      "editTask": "Rename one stage, apply, then add a third stage by calling use: @staged with a new name and watch the pipeline grow.",
+      "tags": [
+        "technique",
+        "0.8",
+        "reuse",
+        "fragment",
+        "parameters"
+      ],
+      "runtime": {
+        "entry": "field-guide/sources/fragment-params.ddn",
+        "view": "main",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "dcb97dc9385831da724675a26a78834fbba2322cebbafc590f6595a79ab90ecc",
+        "modelFingerprint": "8723c2fde3defe4b",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "field-guide/sources/fragment-params.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "field-guide/sources/fragment-params.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view main \"Parameterized fragments\" {\n  data: [@model];\n  publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open field-guide/sources/fragment-params.ddn and locate view main. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.fieldguide.fragparams::model.audit_trail",
+        "file": "field-guide/sources/fragment-params.ddn",
+        "before": "Audit trail",
+        "after": "Audit trail / review",
+        "expectation": "Only the label of Audit trail / review changes; fragment bindings, identities and routing are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "dcb97dc9385831da724675a26a78834fbba2322cebbafc590f6595a79ab90ecc",
+        "after": "5f2a51a843cdcaae49b2e0ae3f853abfa3e128c620c5f93be2adaf817c015ca9",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,

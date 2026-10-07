@@ -1378,6 +1378,14 @@
       ]
     },
     {
+      "chapter": "fragment-params",
+      "entry": "field-guide/sources/fragment-params.ddn",
+      "view": "main",
+      "files": [
+        "field-guide/sources/fragment-params.ddn"
+      ]
+    },
+    {
       "chapter": "markings-metadata",
       "entry": "field-guide/sources/markings.ddn",
       "view": "main",

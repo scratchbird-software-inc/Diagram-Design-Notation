@@ -3,7 +3,24 @@
 This file records scope decisions that were consciously deferred, with the
 reason and the revisiting hook. Entries are dated and reference the work item.
 
-## Parameterized model fragments (B1-041, 2026-09-24)
+## Parameterized model fragments (B1-041, 2026-09-24) — CLOSED 2026-10-06
+
+**CLOSED:** implemented as a 0.8 amendment (spec ch. 01 "0.8 draft amendment
+(parameterized reuse)"), gated on `ddn "0.6";`: `fragment name(p1, …) {…}` +
+`use: @name(a1, …)` with the documented token-level substitution rule
+(declaration ids, whole `@reference` targets, whole property values, `${name}`
+string interpolation; `$${` escape), nested `use:` in definition bodies with
+DDN-FG04 cycle / DDN-FG05 depth-cap(8) guards, coded family DDN-FG01–FG06,
+and equivalence-gate fixtures in `notation/tests/fragment-params.js`
+(expanded IR identical to the handwritten model). Inspector edit scope
+follows the existing D8 rule (expansions are derived/read-only; edits target
+the declaration site or the fragment definition), documented in the
+amendment; no tool changes were needed. The nested-use deferral closed with
+it: below `ddn "0.6";` a nested `use:` remains DDN-E017.
+
+---
+
+Original deferral record (2026-09-24):
 
 Phase 5 of compact authoring ships UNPARAMETERIZED include-by-reference
 fragments (`fragment name { … }` + `use: @name;`) plus the full preset family

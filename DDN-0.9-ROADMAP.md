@@ -108,7 +108,10 @@ A coherent `stroke`/`line` property family on relations and element outlines.
 Standard-revision items dispositioned 0.9 — see the closure pack for full
 rationale:
 
-- [ ] Parameterized model fragments (`fragment name(…)`) + nested `use:`
+- [x] Parameterized model fragments (`fragment name(…)`) + nested `use:` —
+      implemented 0.8.x amendment (spec ch. 01 parameterized reuse): token-
+      level substitution, DDN-FG01–FG06, cycle/depth guards, IR-equivalence
+      fixtures; DDN-GAPS deferral closed 2026-10-06
 - [ ] Diff views (`diff: [@viewA, @viewB]`)
 - [ ] Assertion evaluation (owner decision pending: 0.9 vs Weaver orchestration)
 - [ ] Mermaid import (designer "Import…" command)

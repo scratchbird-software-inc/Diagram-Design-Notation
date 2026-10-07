@@ -1238,6 +1238,14 @@
   "view": "main"
  },
  {
+  "id": "fragment-params",
+  "title": "Parameterized fragments — one template, many instances",
+  "status": "pilot",
+  "support": "technique",
+  "entry": "field-guide/sources/fragment-params.ddn",
+  "view": "main"
+ },
+ {
   "id": "markings-metadata",
   "title": "Markings and metadata — forbidden, tentative, provenance",
   "status": "pilot",
