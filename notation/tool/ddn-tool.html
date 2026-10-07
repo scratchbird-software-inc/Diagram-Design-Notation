@@ -9313,6 +9313,23 @@ const BARE_CSS = ':host{height:100%}.top,.tools,.advanced,.viewport-tools,.sourc
 /* Phase 9 hover affordance: a soft glow for nodes/frames/fields, a stroke
  * highlight for relation paths and labels. CSS rules beat SVG presentation
  * attributes, so inline fills/strokes are restyled without touching geometry. */
+/* Stage-overlay styles — the context menu, rubber band, resize handles and
+ * multi-select highlight are appended to the component's SHADOW ROOT, where
+ * the page stylesheet cannot reach (the "unstyled buttons in flow" report).
+ * Injected into the shadow root at mount alongside HOVER_CSS. */
+const STAGE_CSS =
+  '.ddn-ctx{position:absolute;z-index:9;background:#fff;border:1px solid #cbd5e3;border-radius:10px;padding:5px;box-shadow:0 12px 32px #243b5933;min-width:210px;box-sizing:border-box}' +
+  '.ddn-ctx button{display:block;width:100%;text-align:left;border:0;background:transparent;border-radius:6px;padding:4px 9px;font-size:12.5px;color:#20304a;cursor:pointer}' +
+  '.ddn-ctx button:hover:not(:disabled){background:#eef4ff}' +
+  '.ddn-ctx button:disabled{opacity:.45;cursor:not-allowed}' +
+  '.ddn-ctx .ddn-menu-head{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:#66809f;padding:4px 9px 2px}' +
+  '.ddn-ctx .ddn-menu-sep{border-top:1px solid #e3eaf3;margin:4px 0}' +
+  '#ddn-rubberband{position:absolute;z-index:8;border:1.5px dashed #245ac8;background:#245ac81a;pointer-events:none;box-sizing:border-box}' +
+  '.ddn-node.ddn-multisel{filter:drop-shadow(0 0 3px #d97706) drop-shadow(0 0 1px #d97706)}' +
+  '.ddn-resize-handle{position:absolute;z-index:8;width:8px;height:8px;background:#fff;border:1.5px solid #245ac8;border-radius:2px;box-shadow:0 1px 3px #243b5940;touch-action:none;box-sizing:border-box}' +
+  '.ddn-resize-n,.ddn-resize-s{cursor:ns-resize}.ddn-resize-e,.ddn-resize-w{cursor:ew-resize}' +
+  '.ddn-resize-ne,.ddn-resize-sw{cursor:nesw-resize}.ddn-resize-nw,.ddn-resize-se{cursor:nwse-resize}' +
+  '.ddn-resize-ghost{position:absolute;z-index:7;border:1.5px dashed #245ac8;background:#245ac812;pointer-events:none;box-sizing:border-box}';
 const HOVER_CSS =
   '.ddn-node.ddn-hover,.ddn-frame.ddn-hover,.ddn-field.ddn-hover{filter:drop-shadow(0 0 3px #245ac8) drop-shadow(0 0 1px #245ac8)}' +
   '.ddn-rel.ddn-hover path{stroke:#245ac8!important;stroke-width:2.5px!important}' +
@@ -9383,6 +9400,10 @@ function mount() {
   hoverStyle.id = 'ddn-tool-hover';
   hoverStyle.textContent = HOVER_CSS;
   diagram.shadowRoot.append(hoverStyle);
+  const stageStyle = document.createElement('style');
+  stageStyle.id = 'ddn-tool-stage';
+  stageStyle.textContent = STAGE_CSS;
+  diagram.shadowRoot.append(stageStyle);
   diagram.addEventListener('ddn-render-start', () => {
     /* D7: non-blocking busy affordance — the previous picture dims (the
      * component's stale idiom) and the stage spinner shows until the
