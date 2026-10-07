@@ -83,7 +83,15 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-creator-sep { display: none; }
 .ddn-creator-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .ddn-creator-side { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
-.ddn-creator-side .ddn-palette-all { white-space: normal; }
+.ddn-creator-row { display: flex; align-items: center; gap: 6px; width: 100%; }
+.ddn-creator-side .ddn-palette-all { white-space: nowrap; font-size: 11.5px; color: #40536b; display: flex; align-items: center; gap: 4px; }
+#ddn-palette-search { flex: 1; min-width: 0; }
+#ddn-family-select { flex: 1; min-width: 0; font-size: 11.5px; max-width: 100%; }
+/* Content-sized Creator drawer: open height follows content (left column vs
+ * the active tab's icon rows), capped; the icon area scrolls past the cap. */
+#ddn-drawer-creator[data-state="open"] { flex: 0 0 auto; max-height: 380px; }
+#ddn-drawer-creator .ddn-drawer-body { flex: none; }
+#ddn-drawer-creator .ddn-creator-main { min-height: 0; }
 /* Belt and braces: every icon SVG in the left column is explicitly sized —
  * an unsized SVG inside a stretched button renders as a giant box (the
  * oversized paste/hamburger reports). */

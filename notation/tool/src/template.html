@@ -151,14 +151,19 @@
           </button>
         </div>
         <div class="ddn-creator-side">
-          <input id="ddn-palette-search" type="search" placeholder="Find a kind…" aria-label="Find an object kind">
-          <label id="ddn-palette-all-wrap" class="ddn-palette-all"><input id="ddn-palette-all" type="checkbox"> All installed kinds</label>
+          <div class="ddn-creator-row">
+            <input id="ddn-palette-search" type="search" placeholder="Find a kind…" aria-label="Find an object kind">
+            <label id="ddn-palette-all-wrap" class="ddn-palette-all" title="Offer every installed kind, past the capability filter"><input id="ddn-palette-all" type="checkbox"> All installed</label>
+          </div>
+          <div class="ddn-creator-row">
+            <select id="ddn-family-select" aria-label="Icon palette family" title="Icon palettes — swap the tab set (display only; the view type is untouched)"></select>
+            <button id="ddn-palette-family" type="button" title="Icon palettes — swap the tab set (display only; the view type is untouched)" aria-haspopup="true">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div id="ddn-palette-family-menu" class="ddn-menu" hidden></div>
           <button id="ddn-add-existing" type="button" class="ddn-mini" title="Add existing definition to this view — workspace definitions not yet in the view's select list (one occurrence per definition per view this revision; duplicate occurrences ride the AUD-004 occurrence contract draft)">Add existing…</button>
           <div id="ddn-existing-menu" class="ddn-menu" hidden></div>
-          <button id="ddn-palette-family" type="button" title="Icon palettes — swap the tab set (display only; the view type is untouched)" aria-haspopup="true">
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-          </button>
-          <div id="ddn-palette-family-menu" class="ddn-menu" hidden></div>
         </div>
         </div>
         <div class="ddn-creator-main">

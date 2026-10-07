@@ -161,7 +161,7 @@ const els = {
   cutBtn: $('ddn-cut'), copyBtn: $('ddn-copy'), pasteBtn: $('ddn-clipboard-paste'),
   boldToggle: $('ddn-bold-toggle'), italicToggle: $('ddn-italic-toggle'),
   creatorTabs: $('ddn-creator-tabs'), creatorIcons: $('ddn-creator-icons'),
-  paletteFamily: $('ddn-palette-family'), paletteFamilyMenu: $('ddn-palette-family-menu'),
+  paletteFamily: $('ddn-palette-family'), paletteFamilyMenu: $('ddn-palette-family-menu'), familySelect: $('ddn-family-select'),
   addExisting: $('ddn-add-existing'), existingMenu: $('ddn-existing-menu'),
   paletteSearch: $('ddn-palette-search'),
   paletteHint: $('ddn-palette-hint'), paletteAll: $('ddn-palette-all'), paletteAllWrap: $('ddn-palette-all-wrap'),
@@ -3364,6 +3364,7 @@ function creatorIcon(k) {
 function buildCreator() {
   drawerEls.creator.style.setProperty('--ddn-tab-active', TAB_ACTIVE);
   drawerEls.creator.style.setProperty('--ddn-tab-inactive', TAB_INACTIVE);
+  buildPaletteFamilyMenu();
   const dataBound = !graphEditable();
   els.paletteHint.hidden = !dataBound;
   els.creatorTabs.hidden = dataBound;
@@ -3404,22 +3405,31 @@ function buildCreator() {
   els.creatorIcons.replaceChildren(...shown.map(creatorIcon));
   if (!shown.length) els.creatorIcons.append(dim(q ? 'no kind matches “' + els.paletteSearch.value + '”' : 'no kinds in this group'));
 }
+function setPaletteFamily(id, label) {
+  creator.family = id;
+  creator.tab = null;
+  els.paletteFamilyMenu.hidden = true;
+  buildCreator();
+  status('palette family: ' + label + ' (display only — the view type is unchanged)');
+}
 function buildPaletteFamilyMenu() {
   const fams = paletteFamilies();
+  if (els.familySelect && els.familySelect.options.length !== fams.length) {
+    els.familySelect.replaceChildren(...fams.map(f => new Option(f.label, f.id)));
+  }
+  if (els.familySelect) els.familySelect.value = creator.family;
   els.paletteFamilyMenu.replaceChildren(
     ...fams.map(f => {
       const b = document.createElement('button');
       b.type = 'button'; b.textContent = f.label; b.setAttribute('aria-checked', String(f.id === creator.family));
-      b.addEventListener('click', () => {
-        creator.family = f.id;
-        creator.tab = null;
-        els.paletteFamilyMenu.hidden = true;
-        buildCreator();
-        status('palette family: ' + f.label + ' (display only — the view type is unchanged)');
-      });
+      b.addEventListener('click', () => setPaletteFamily(f.id, f.label));
       return b;
     }));
 }
+if (els.familySelect) els.familySelect.addEventListener('change', () => {
+  const f = paletteFamilies().find(x => x.id === els.familySelect.value);
+  if (f) setPaletteFamily(f.id, f.label);
+});
 els.paletteFamily.addEventListener('click', () => {
   buildPaletteFamilyMenu();
   els.paletteFamilyMenu.hidden = !els.paletteFamilyMenu.hidden;
