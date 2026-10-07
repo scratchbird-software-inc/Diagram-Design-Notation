@@ -4018,12 +4018,19 @@ function ctxMenu(x, y, entries) {
     menu.append(b);
   }
   const r = stage.getBoundingClientRect();
-  menu.style.left = Math.min(x - r.left, r.width - 230) + 'px';
-  menu.style.top = Math.min(y - r.top, r.height - Math.min(320, entries.length * 26 + 16)) + 'px';
+  /* Clamp INSIDE the stage: a negative top/left renders the menu off-screen
+   * (the "no context menu" report on short stages); cap the height and let it
+   * scroll instead. */
+  const menuH = Math.min(320, entries.length * 26 + 16);
+  menu.style.maxHeight = menuH + 'px';
+  menu.style.overflowY = 'auto';
+  menu.style.left = Math.max(0, Math.min(x - r.left, r.width - 230)) + 'px';
+  menu.style.top = Math.max(0, Math.min(y - r.top, r.height - menuH)) + 'px';
   stage.append(menu);
   return menu;
 }
 document.addEventListener('pointerdown', e => { if (!e.target.closest || !e.target.closest('.ddn-ctx')) closeCtxMenu(); }, true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCtxMenu(); });
 
 function openInspectorFor(id, relation) {
   let ir = null;
