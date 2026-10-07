@@ -9628,8 +9628,17 @@ api.authoring={
   const parent=n.path.includes('.')?n.path.slice(0,n.path.lastIndexOf('.')):'';
   let copyId=n.id+'_copy',i=2;while(taken.has(parent?parent+'.'+copyId:copyId))copyId=n.id+'_copy'+(i++);
   const kind=n.props.kind?JSON.stringify(n.props.kind):JSON.stringify('object');
-  const code='object '+copyId+' '+JSON.stringify((n.label||n.id)+' copy')+' { kind: '+kind+'; }';
-  return apply(ws,b,[{file:n.source,start:n.end,end:n.end,text:'\n    '+code+'\n'}],entry,view);
+  /* Deep copy: the declaration text verbatim with the fresh id (every flat
+  * property, text { }/stroke { } group, and the fields tree), so customized
+  * elements duplicate faithfully — except `numeral`, which is identity-
+  * bearing and never duplicated (ch.55 §S5). */
+ let code=ws.getFiles()[n.source].slice(n.start,n.end).trim();
+ const head=code.match(/^object\s+[A-Za-z_][A-Za-z0-9_-]*/);
+ code=(head?code.replace(head[0],'object '+copyId):'object '+copyId+' '+JSON.stringify((n.label||n.id)+' copy')+' { kind: '+kind+'; }');
+ code=code.replace(/^object(\s+[A-Za-z_][A-Za-z0-9_-]*)\s+"([^"]*)"/,'object$1 "$2 copy"');
+ code=code.replace(/\n[ \t]*numeral:[^;\n]*;\n?/g,'\n');
+ code=code.replace(/[ \t]*numeral:[^;\n]*;\s*/g,'');
+ return apply(ws,b,[{file:n.source,start:n.end,end:n.end,text:'\n    '+code+'\n'}],entry,view);
  },
  /* DDN 0.8 (ch. 57 §D5) "pin result": after a Tidy re-layout, write the
   * computed positions of the FREE elements as place pins in one undoable

@@ -162,7 +162,6 @@ const els = {
   boldToggle: $('ddn-bold-toggle'), italicToggle: $('ddn-italic-toggle'),
   creatorTabs: $('ddn-creator-tabs'), creatorIcons: $('ddn-creator-icons'),
   paletteFamily: $('ddn-palette-family'), paletteFamilyMenu: $('ddn-palette-family-menu'), familySelect: $('ddn-family-select'),
-  addExisting: $('ddn-add-existing'), existingMenu: $('ddn-existing-menu'),
   paletteSearch: $('ddn-palette-search'),
   paletteHint: $('ddn-palette-hint'), paletteAll: $('ddn-palette-all'), paletteAllWrap: $('ddn-palette-all-wrap'),
   viewKind: $('ddn-view-kind'), projectionKind: $('ddn-projection-kind'),
@@ -3361,6 +3360,115 @@ function creatorIcon(k) {
   b.addEventListener('click', () => armPlacement(k.id));
   return b;
 }
+/* "Existing" virtual tab (owner decision): always appended to the tab bar
+ * for EVERY palette family — one library of the workspace's existing element
+ * definitions (sorted by kind then label), identical under every family.
+ * Drag = DUPLICATE (fresh id, properties copied via authoring.duplicate,
+ * placed through the negotiate-placement path); click = add-to-view when the
+ * definition isn't shown (selectInView), select-on-canvas when it is. */
+function existingItems() {
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  if (!ir) return [];
+  return (ir.elements || []).slice().sort((a, b) => String(a.kind || '').localeCompare(String(b.kind || '')) || String(a.name || a.id).localeCompare(String(b.name || b.id)));
+}
+function existingTile(n) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'ddn-creator-icon'; b.dataset.existing = n.id;
+  b.title = (n.name || n.id) + ' (' + (n.kind || '?') + ') — drag to duplicate with a fresh id; click to add to the view / select';
+  b.append(paletteGlyph((A.kinds.find(k => k.id === n.kind) || A.kinds[0])), (() => { const s = document.createElement('span'); s.textContent = n.name || n.id; return s; })());
+  b.addEventListener('pointerdown', e => startExistingDrag(e, n));
+  b.addEventListener('click', () => existingClick(n));
+  return b;
+}
+function existingClick(n) {
+  guard(() => {
+    const ir = state.ws.resolve(state.entry, state.view);
+    const shown = (ir.view.selected || []).includes(n.id);
+    if (!shown) {
+      guided(() => A.authoring.selectInView(state.ws, state.entry, state.view, n.id));
+      const settled = state.diagram && state.diagram.ready;
+      const msg = () => status('added ' + n.id + ' to this view — it was already defined, no copy was made');
+      if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+      else msg();
+    } else {
+      state.selected = n.id; state.selectedRelation = null; state.selectedIds = [n.id];
+      inspector(n.id, ir, null);
+      autoDrawerForSelection(true);
+      syncResizeHandles();
+      status('selected ' + n.id + ' — it is already in this view');
+    }
+  });
+}
+function startExistingDrag(e, def) {
+  if (e.button !== 0) return;
+  e.preventDefault();
+  const startX = e.clientX, startY = e.clientY;
+  let ghost = null;
+  const move = ev => {
+    if (!ghost && Math.hypot(ev.clientX - startX, ev.clientY - startY) < 4) return;
+    if (!ghost) {
+      ghost = document.createElement('div');
+      ghost.id = 'ddn-drag-ghost';
+      ghost.append(paletteGlyph((A.kinds.find(k => k.id === def.kind) || A.kinds[0])), document.createTextNode((def.name || def.id) + ' (copy)'));
+      document.body.append(ghost);
+    }
+    ghost.style.left = (ev.clientX + 12) + 'px';
+    ghost.style.top = (ev.clientY + 12) + 'px';
+  };
+  const up = ev => {
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+    document.removeEventListener('pointercancel', up);
+    if (!ghost) return;
+    ghost.remove();
+    const stage = stageEl();
+    if (!stage) return;
+    const r = stage.getBoundingClientRect();
+    if (ev.clientX < r.left || ev.clientX > r.right || ev.clientY < r.top || ev.clientY > r.bottom) { status('drop on the diagram to place the duplicate — the pointer ended outside the canvas'); return; }
+    const p = stageWorldPoint(ev);
+    if (!p) { status('drop inside the diagram to place the duplicate'); return; }
+    dropDuplicate(def, p.x, p.y);
+  };
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+  document.addEventListener('pointercancel', up);
+}
+/* Drag-from-Existing = DUPLICATE: authoring.duplicate mints the fresh id and
+ * copies properties (numerals are never duplicated per ch.55 §S5), then the
+ * copy is pinned through the same negotiate-placement path as palette drops. */
+function dropDuplicate(def, x, y) {
+  guard(() => {
+    flush();
+    let nuid = null, nudged = false;
+    guided(() => {
+      A.authoring.duplicate(state.ws, state.entry, state.view, def.id);
+      const after = state.ws.resolve(state.entry, state.view);
+      nuid = after.elements.map(n2 => n2.id).filter(u => /_copy\d*$/.test(u)).sort().at(-1) || null;
+      if (!nuid) throw Object.assign(new Error('duplicate produced no copy'), { code: 'DDN-T100' });
+      if (graphEditable() && Number.isFinite(x) && Number.isFinite(y)) {
+        A.authoring.selectInView(state.ws, state.entry, state.view, nuid);
+        const scene = state.diagram.result && state.diagram.result.scene;
+        const lp = (after.view.profiles && after.view.profiles.layout) || {};
+        const slot = findFreeSlot(x, y, 270, 100, quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20);
+        if (slot) { nudged = slot.nudged; x = slot.x; y = slot.y; }
+        A.authoring.pin(state.ws, state.entry, state.view, nuid, x, y);
+        state.selected = nuid;
+        state.selectedRelation = null;
+        state.selectedIds = [nuid];
+      }
+    });
+    if (!graphEditable()) {
+      status('duplicated ' + def.id + ' into the model — this view is data-bound, so the copy has no position here; edit it in the Source drawer');
+      return;
+    }
+    const settled = state.diagram && state.diagram.ready;
+    const msg = () => status('duplicated ' + def.id + ' as a fresh element (' + (nudged ? 'nudged off the drop point' : 'at ' + Math.round(x) + ',' + Math.round(y)) + ') — customize it freely; the original is untouched');
+    if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+    else msg();
+  });
+}
+
 function buildCreator() {
   drawerEls.creator.style.setProperty('--ddn-tab-active', TAB_ACTIVE);
   drawerEls.creator.style.setProperty('--ddn-tab-inactive', TAB_INACTIVE);
@@ -3393,17 +3501,28 @@ function buildCreator() {
     if (ia < 0 && ib < 0) return a.localeCompare(b);
     if (ia < 0) return 1; if (ib < 0) return -1; return ia - ib;
   });
-  if (q || !names.includes(creator.tab)) creator.tab = q ? null : names[0];
-  els.creatorTabs.replaceChildren(...(q ? [] : names.map(name => {
+  if (q || (!names.includes(creator.tab) && creator.tab !== 'Existing')) creator.tab = q ? null : names[0];
+  const tabNames = q ? [] : [...names, 'Existing'];
+  els.creatorTabs.replaceChildren(...tabNames.map(name => {
     const b = document.createElement('button');
     b.type = 'button'; b.role = 'tab'; b.textContent = name;
     b.setAttribute('aria-selected', String(name === creator.tab));
     b.addEventListener('click', () => { creator.tab = name; buildCreator(); });
     return b;
-  })));
-  const shown = q ? kinds : (groups.get(creator.tab) || []);
-  els.creatorIcons.replaceChildren(...shown.map(creatorIcon));
-  if (!shown.length) els.creatorIcons.append(dim(q ? 'no kind matches “' + els.paletteSearch.value + '”' : 'no kinds in this group'));
+  }));
+  let shown;
+  if (q) {
+    /* Search covers kinds AND existing definitions ("find a kind" is names,
+     * not kinds — Existing items match by name/kind too). */
+    const ex = existingItems().filter(n => ((n.name || '') + ' ' + n.id + ' ' + (n.kind || '')).toLowerCase().includes(q));
+    shown = kinds.map(creatorIcon).concat(ex.map(existingTile));
+  } else if (creator.tab === 'Existing') {
+    shown = existingItems().map(existingTile);
+  } else {
+    shown = (groups.get(creator.tab) || []).map(creatorIcon);
+  }
+  els.creatorIcons.replaceChildren(...shown);
+  if (!shown.length) els.creatorIcons.append(dim(q ? 'no kind or definition matches “' + els.paletteSearch.value + '”' : 'nothing here yet'));
 }
 function setPaletteFamily(id, label) {
   creator.family = id;
@@ -3436,37 +3555,7 @@ els.paletteFamily.addEventListener('click', () => {
 });
 document.addEventListener('click', e => {
   if (!els.paletteFamilyMenu.hidden && !e.target.closest('#ddn-palette-family, #ddn-palette-family-menu')) els.paletteFamilyMenu.hidden = true;
-  if (!els.existingMenu.hidden && !e.target.closest('#ddn-add-existing, #ddn-existing-menu')) els.existingMenu.hidden = true;
 });
-
-/* 0.9 AUD-003: add an existing definition to the view — one occurrence per
- * definition per view is the current runtime contract (duplicate select
- * entries are deduped by the builder; distinct occurrences ride the AUD-004
- * occurrence-contract draft). Coded refusals (select-all views, DDN-E006)
- * surface in the status line. */
-els.addExisting.addEventListener('click', () => guard(() => {
-  if (els.existingMenu.hidden) {
-    const ir = state.ws.resolve(state.entry, state.view);
-    const node = viewSourceNode();
-    const sel = node ? node.props.select : undefined;
-    const shown = new Set(ir.view.selected);
-    const avail = ir.elements.filter(n => !shown.has(n.id));
-    const entries = [];
-    if (sel === undefined || sel === 'all') entries.push(dim('This view selects all data — every definition already renders.'));
-    else if (!avail.length) entries.push(dim('Every definition is already in this view.'));
-    for (const n of avail.slice(0, 60)) {
-      const b = document.createElement('button');
-      b.type = 'button'; b.textContent = n.name + ' (' + n.id.split('::').pop() + ')';
-      b.addEventListener('click', () => {
-        els.existingMenu.hidden = true;
-        guidedInspector(() => A.authoring.selectInView(state.ws, state.entry, state.view, n.id));
-      });
-      entries.push(b);
-    }
-    els.existingMenu.replaceChildren(...entries);
-    els.existingMenu.hidden = false;
-  } else els.existingMenu.hidden = true;
-}));
 
 /* Pointer-based ghost drag from a palette icon onto the canvas (works through
  * the component's coordinate transform at any zoom; the drop reuses the
