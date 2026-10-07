@@ -1178,6 +1178,33 @@ test('0.9 designer batch 2: reverseRelation remap + projection residue keys + de
   assert.throws(() => A.authoring.setProjectionProperty(ws3, 'm.ddn', 'v', 'bogus_key', 1), e => e.code === 'DDN-E001', 'unknown projection keys stay refused');
 });
 
+test('collision-negotiating placement: findFreeSlot spiral search (pure)', () => {
+  const N = (x, y, w = 270, h = 100) => ({ x, y, w, h });
+  /* empty space: exact point, no nudge */
+  assert.deepEqual(T.findFreeSlot(500, 500, 270, 100, 16, [], 32, 20), { x: 500, y: 500, nudged: false });
+  /* on a node: nudges to the nearest free slot, never overlapping */
+  const nodes = [N(0, 0), N(300, 0)];
+  const s1 = T.findFreeSlot(10, 10, 270, 100, 16, nodes, 32, 20);
+  assert.ok(s1 && s1.nudged, 'drop on an element nudges');
+  assert.ok(nodes.every(n => s1.x - 16 >= n.x + n.w || s1.x + 286 <= n.x || s1.y - 16 >= n.y + n.h || s1.y + 116 <= n.y), 'slot is clear with clearance');
+  /* exact Chebyshev order: ring 1 right slot wins deterministically */
+  const s2 = T.findFreeSlot(0, 0, 270, 100, 16, [N(0, 0)], 32, 20);
+  assert.ok(s2 && s2.nudged && !(s2.x === 0 && s2.y === 0), 'ring search finds a slot');
+  /* saturated neighbourhood: null → caller falls back to the crash-guard */
+  const wall = [];
+  for (let i = -20; i < 40; i++) for (let j = -20; j < 20; j++) wall.push(N(i * 400, j * 200));
+  assert.equal(T.findFreeSlot(0, 0, 270, 100, 16, wall, 32, 2), null, 'no slot inside the ring cap returns null');
+  /* sequential centre drops negotiate a row: slot of the previous slot stays free */
+  const placed = [N(0, 0)];
+  for (let k = 0; k < 3; k++) {
+    const s = T.findFreeSlot(10, 10, 270, 100, 16, placed, 32, 20);
+    assert.ok(s, 'slot found for drop ' + (k + 1));
+    placed.push(N(s.x, s.y));
+  }
+  for (let i = 0; i < placed.length; i++) for (let j = i + 1; j < placed.length; j++)
+    assert.ok(placed[i].x + 270 + 16 <= placed[j].x || placed[j].x + 270 + 16 <= placed[i].x || placed[i].y + 100 + 16 <= placed[j].y || placed[j].y + 100 + 16 <= placed[i].y, 'no overlaps in the negotiated cluster');
+});
+
 test('0.9 AUD-003: convertKind (extension loss discipline) + moveField (reorder/reparent) + selectInView', () => {
   const A = require('../dist/ddn.global.js');
   const SRC = 'ddn "0.6";\nmodule "m";\ndata model {\n    object a "Alpha" { kind: "uml.class";  x_c4tag: { tags: ["t"] }; }\n    object t "Table" { kind: table;\n        fields {\n            field f1;\n            field f2;\n            field grp { key: primary; }\n        }\n    }\n    object leaf "Leaf" { kind: table; }\n}\nview v "V" { data: [@model]; publication { size: content; fit: none; } }\n';

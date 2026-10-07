@@ -79,7 +79,7 @@ function paletteFilter(kinds, projection, showAll) {
 
 const pure = {
   DRAWERS, DRAWER_STATES, GEAR_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig, parseToolbarParam,
-  computeFitScale, overrideRuleFor, typographyRuleFor, recentColours, relationColourRuleFor, lineStyleRuleFor, outlineRuleFor, overrideCss, toolOverrides, viewListFrom,
+  computeFitScale, overrideRuleFor, typographyRuleFor, recentColours, relationColourRuleFor, lineStyleRuleFor, outlineRuleFor, overrideCss, toolOverrides, viewListFrom, findFreeSlot,
   overrideProfileWrites, cssOverlayRecord, pickEntryView,
   isPlausibleSourceFile, freshLocalId, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
   templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic,
@@ -3525,6 +3525,35 @@ function nodeIdAt(e) {
   return g ? g.id : null;
 }
 
+/* Collision-negotiating placement (owner: "adding elements should have the
+ * existing and new elements negotiate their locations"). A drop point pins
+ * top-left at (x,y); the target rect (the standard node box) padded by
+ * object_clearance must not intersect any existing node rect. When it would,
+ * an outward spiral (perimeter of Chebyshev rings, grid_step apart,
+ * deterministic first-fit) finds the nearest free slot. No slot within 20
+ * rings → null (caller falls back to the plain drop + crash-guard). */
+function findFreeSlot(x, y, w, h, pad, nodes, step, rings) {
+  const clear = (nx, ny) => (nodes || []).every(n =>
+    nx - pad >= n.x + n.w || nx + w + pad <= n.x || ny - pad >= n.y + n.h || ny + h + pad <= n.y);
+  if (clear(x, y)) return { x, y, nudged: false };
+  const s = step > 0 ? step : 32;
+  for (let r = 1; r <= (rings || 20); r++) {
+    for (let i = -r; i <= r; i++) {
+      for (const [dx, dy] of [[i, -r], [i, r]]) {
+        const nx = Math.round(x + dx * s), ny = Math.round(y + dy * s);
+        if (clear(nx, ny)) return { x: nx, y: ny, nudged: true };
+      }
+    }
+    for (let j = -r + 1; j <= r - 1; j++) {
+      for (const [dx, dy] of [[-r, j], [r, j]]) {
+        const nx = Math.round(x + dx * s), ny = Math.round(y + dy * s);
+        if (clear(nx, ny)) return { x: nx, y: ny, nudged: true };
+      }
+    }
+  }
+  return null;
+}
+
 /* Click-to-place: create the element at the clicked spot and pin it there —
  * one guided source edit; the new element stays selected for renaming. */
 function placeElement(kind, x, y) {
@@ -3541,16 +3570,35 @@ function placeElement(kind, x, y) {
      * good picture, and say why. */
     const wasRendered = !!(state.diagram && state.diagram.result);
     const revBefore = state.ws.revision;
+    let uid = id, nudged = false;
     guided(() => {
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: 'New ' + label.toLowerCase(), kind });
       const after = state.ws.resolve(state.entry, state.view);
-      const uid = after.elements.map(n2 => n2.id).find(u => u === id || u.endsWith('.' + id)) || id;
-      if (Number.isFinite(x) && Number.isFinite(y) && graphEditable())
+      uid = after.elements.map(n2 => n2.id).find(u => u === id || u.endsWith('.' + id)) || id;
+      if (Number.isFinite(x) && Number.isFinite(y) && graphEditable()) {
+        /* Negotiate before pinning: if the drop rect would collide, spiral
+         * out to the nearest free slot (keeps bounds compact on tight pages;
+         * the crash-guard stays the last resort when no slot exists). */
+        const scene = state.diagram.result && state.diagram.result.scene;
+        const lp = (ir.view.profiles && ir.view.profiles.layout) || {};
+        const slot = findFreeSlot(x, y, 270, 100,
+          quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20);
+        if (slot) { nudged = slot.nudged; x = slot.x; y = slot.y; }
         A.authoring.pin(state.ws, state.entry, state.view, uid, x, y);
+      }
       state.selected = uid;
       state.selectedRelation = null;
-      status('placed ' + uid + (Number.isFinite(x) ? ' at ' + Math.round(x) + ',' + Math.round(y) : '') + ' — rename it in the inspector');
+      status(nudged
+        ? 'placed ' + uid + ' beside the existing element (nudged off the drop point to avoid overlap) — rename it in the inspector'
+        : 'placed ' + uid + (Number.isFinite(x) ? ' at ' + Math.round(x) + ',' + Math.round(y) : '') + ' — rename it in the inspector');
     });
+    /* The re-render's handler clears the status line — re-deliver the
+     * placement message after THIS add's render settles. */
+    const settled = state.diagram && state.diagram.ready;
+    const msg = () => status(nudged
+      ? 'placed ' + uid + ' beside the existing element (nudged off the drop point to avoid overlap) — rename it in the inspector'
+      : 'placed ' + uid + (Number.isFinite(x) ? ' at ' + Math.round(x) + ',' + Math.round(y) : '') + ' — rename it in the inspector');
+    if (settled && typeof settled.then === 'function') settled.then(msg, msg);
     const revAfter = state.ws.revision;
     const ready = state.diagram && state.diagram.ready;
     if (wasRendered && ready && typeof ready.catch === 'function') ready.catch(e => {
