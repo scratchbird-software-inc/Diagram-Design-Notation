@@ -3461,7 +3461,7 @@ function startPaletteDrag(e, kind) {
     const stage = stageEl();
     if (!stage) return;
     const r = stage.getBoundingClientRect();
-    if (ev.clientX < r.left || ev.clientX > r.right || ev.clientY < r.top || ev.clientY > r.bottom) return;
+    if (ev.clientX < r.left || ev.clientX > r.right || ev.clientY < r.top || ev.clientY > r.bottom) { status('drop on the diagram to place the element — the pointer ended outside the canvas'); return; }
     const p = stageWorldPoint(ev);
     if (!p) { status('drop inside the diagram to place the element'); return; }
     placeElement(kind.id, p.x, p.y);
@@ -3551,12 +3551,21 @@ function placeElement(kind, x, y) {
       state.selectedRelation = null;
       status('placed ' + uid + (Number.isFinite(x) ? ' at ' + Math.round(x) + ',' + Math.round(y) : '') + ' — rename it in the inspector');
     });
+    const revAfter = state.ws.revision;
     const ready = state.diagram && state.diagram.ready;
-    if (wasRendered && ready && typeof ready.catch === 'function') ready.catch(() => {
-      if (!state.ws || state.ws.revision === revBefore) return;
+    if (wasRendered && ready && typeof ready.catch === 'function') ready.catch(e => {
+      /* Ownership check (owner report "second drop removes both"): this catch
+       * fires whenever THIS add's render rejects — including a superseded
+       * render that a LATER edit replaced. Reverting then would roll back
+       * someone else's good work. Only the latest edit owns the failure. */
+      if (!state.ws || state.ws.revision !== revAfter) return;
       guard(() => {
+        /* undo() bumps the revision FORWARD (it is itself a transaction) — a
+         * `while revision > revBefore` loop never converges and drains the
+         * whole history (the "both elements disappear" report). Undo exactly
+         * the transactions this add made (addElement + pin). */
         let h = state.ws.history();
-        while (state.ws.revision > revBefore && h && h.canUndo) { state.ws.undo(); h = state.ws.history(); }
+        for (let i = 0, steps = revAfter - revBefore; i < steps && h && h.canUndo; i++) { state.ws.undo(); h = state.ws.history(); }
         state.selected = null; state.selectedRelation = null; state.selectedIds = [];
         entriesUI(state.view);
         showSource(state.currentFile);
