@@ -12224,26 +12224,52 @@ function viewProjection() {
   } catch { return { kind: 'graph', profile: 'ddn@1' }; }
 }
 
-/* Phase 12 Creator drawer: one tab per registry palette group
- * (A.capabilities.paletteGroups order), icons wrap within a tab, headers wrap
- * across rows. The hamburger swaps the palette FAMILY (display only — never
- * the view type); 'ddn' (the full registry, grouped) stays the default, and
- * every registered profile/pack tag from the kinds' allowed_in contracts is
- * an alternative family. paletteKindsFor() is the seam a future view-type-
- * driven tab bar plugs into. */
+/* Phase 12 Creator drawer: the ddn family shows one tab per registry palette
+ * group (A.capabilities.paletteGroups order), icons wrap within a tab, headers
+ * wrap across rows. The hamburger swaps the palette FAMILY (display only —
+ * never the view type); 'ddn' (the full registry, grouped) stays the default.
+ * Alternative families are GROUPED (owner decision): the profile/pack tags
+ * from the kinds' allowed_in contracts collapse to their prefix before the
+ * first dot (bpmn, c4, uml, …), and each family's variations render as the
+ * sub-set tabs (see paletteSubsets). */
 const PALETTE_BASE_HUE = 216;
 const TAB_ACTIVE = 'hsl(' + PALETTE_BASE_HUE + ' 72% 42%)';
 const TAB_INACTIVE = 'hsl(' + PALETTE_BASE_HUE + ' 12% 62%)'; /* active hue, 10% grey shift */
 const creator = { family: 'ddn', tab: null };
+/* Grouped palette families (owner decision): the ~100 individual profile/pack
+ * tags from the kinds' allowed_in contracts group into FAMILIES by the prefix
+ * before the first dot (bpmn, c4, chen, uml, …); each family's variations are
+ * the SUB-SET tabs (bpmn → basic/choreography/conversation/process). Versions
+ * of one sub-set (uml.activity@1/@2) merge into a single tab whose kind set is
+ * the union. Bare tags (chen, sequence, timing, …) are a sub-set of their own
+ * family. Everything is derived from the registry data — no hardcoded list. */
+let paletteSubsetCache = null;
+function paletteSubsets() {
+  if (paletteSubsetCache) return paletteSubsetCache;
+  const fams = new Map();
+  for (const k of A.kinds) for (const t of k.allowed_in || []) {
+    if (t === 'graph') continue;
+    const dot = t.indexOf('.');
+    const fam = dot < 0 ? t : t.slice(0, dot);
+    const sub = dot < 0 ? t : t.slice(dot + 1).replace(/@\d+$/, '');
+    if (!fams.has(fam)) fams.set(fam, new Map());
+    const subs = fams.get(fam);
+    if (!subs.has(sub)) subs.set(sub, []);
+    subs.get(sub).push(t);
+  }
+  paletteSubsetCache = fams;
+  return fams;
+}
 function paletteFamilies() {
-  const tags = new Set();
-  for (const k of A.kinds) for (const t of k.allowed_in || []) if (t !== 'graph') tags.add(t);
   return [{ id: 'ddn', label: 'ddn — full registry' },
-    ...[...tags].sort().map(t => ({ id: t, label: t }))];
+    ...[...paletteSubsets().keys()].sort().map(p => ({ id: p, label: p }))];
 }
 function paletteKindsFor(family) {
   if (family === 'ddn') return paletteFilter(A.kinds, viewProjection(), els.paletteAll.checked);
-  return A.kinds.filter(k => (k.allowed_in || []).includes(family));
+  const subs = paletteSubsets().get(family);
+  if (!subs) return [];
+  const tags = new Set([].concat(...[...subs.values()]));
+  return A.kinds.filter(k => (k.allowed_in || []).some(t => tags.has(t)));
 }
 function paletteGlyph(k) {
   const icon = document.createElement('span'); icon.className = 'ddn-palette-glyph'; icon.setAttribute('aria-hidden', 'true');
@@ -12388,20 +12414,35 @@ function buildCreator() {
   const q = els.paletteSearch.value.trim().toLowerCase();
   const base = paletteKindsFor(creator.family);
   const kinds = q
-    ? A.kinds.filter(k => (k.id + ' ' + k.label + ' ' + k.code).toLowerCase().includes(q))
+    ? base.filter(k => (k.id + ' ' + k.label + ' ' + k.code).toLowerCase().includes(q))
     : base;
-  const order = (A.capabilities && A.capabilities.paletteGroups) || [];
-  const groups = new Map();
-  for (const k of kinds) {
-    const name = k.group || 'Other';
-    if (!groups.has(name)) groups.set(name, []);
-    groups.get(name).push(k);
+  /* ddn keeps its registry GROUP tabs; grouped families get one tab per
+   * sub-set, with an 'All' union tab first when the family has >1 sub-set. */
+  let names, tabKinds;
+  if (creator.family === 'ddn') {
+    const order = (A.capabilities && A.capabilities.paletteGroups) || [];
+    const groups = new Map();
+    for (const k of kinds) {
+      const name = k.group || 'Other';
+      if (!groups.has(name)) groups.set(name, []);
+      groups.get(name).push(k);
+    }
+    names = [...groups.keys()].sort((a, b) => {
+      const ia = order.indexOf(a), ib = order.indexOf(b);
+      if (ia < 0 && ib < 0) return a.localeCompare(b);
+      if (ia < 0) return 1; if (ib < 0) return -1; return ia - ib;
+    });
+    tabKinds = name => groups.get(name) || [];
+  } else {
+    const subs = paletteSubsets().get(creator.family) || new Map();
+    const subNames = [...subs.keys()].sort();
+    names = subNames.length > 1 ? ['All', ...subNames] : subNames;
+    tabKinds = name => {
+      if (name === 'All') return base;
+      const tags = new Set(subs.get(name) || []);
+      return base.filter(k => (k.allowed_in || []).some(t => tags.has(t)));
+    };
   }
-  const names = [...groups.keys()].sort((a, b) => {
-    const ia = order.indexOf(a), ib = order.indexOf(b);
-    if (ia < 0 && ib < 0) return a.localeCompare(b);
-    if (ia < 0) return 1; if (ib < 0) return -1; return ia - ib;
-  });
   if (q || (!names.includes(creator.tab) && creator.tab !== 'Existing')) creator.tab = q ? null : names[0];
   const tabNames = q ? [] : [...names, 'Existing'];
   els.creatorTabs.replaceChildren(...tabNames.map(name => {
@@ -12420,7 +12461,7 @@ function buildCreator() {
   } else if (creator.tab === 'Existing') {
     shown = existingItems().map(existingTile);
   } else {
-    shown = (groups.get(creator.tab) || []).map(creatorIcon);
+    shown = tabKinds(creator.tab).map(creatorIcon);
   }
   els.creatorIcons.replaceChildren(...shown);
   if (!shown.length) els.creatorIcons.append(dim(q ? 'no kind or definition matches “' + els.paletteSearch.value + '”' : 'nothing here yet'));
