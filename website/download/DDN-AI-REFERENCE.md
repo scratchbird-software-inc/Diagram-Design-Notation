@@ -2147,7 +2147,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- generated: do not edit (diagnostics) -->
-## 9. Diagnostics and error recovery (500 codes, machine-extracted from runtime + Studio sources; 149 carry a hand-authored FIX)
+## 9. Diagnostics and error recovery (500 codes, machine-extracted from runtime + Studio sources; 150 carry a hand-authored FIX)
 
 `check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).
 
@@ -2210,7 +2210,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-I028 | error | Unknown interaction metadata property | - |
 | DDN-I030 | error | A visual anchor fraction must be strictly between 0 and 1 and cannot override a field/port endpoint<br>Invalid endpoint side | - |
 | DDN-I031 | error | Curved routing belongs to the ordinary graph projection; the experimental interaction profile uses fixed participant lanes. No silent geometry fallback. | - |
-| DDN-I032 | error | Experimental interaction publication has no approved payload/occurrence redaction closure; use an explicitly allowlisted ordinary graph view. No SVG is emitted. | - |
+| DDN-I033 | error | Interaction redaction must pass through the occurrence/payload closure in ddn-export; apply the export projection (the renderer does this itself).<br>fullPublished data viewlogicalwarn | The interaction export closure left nothing to publish: widen the export elements allowlist to cover the exchanges and their payload contracts (whole-or-nothing per exchange), or export full. |
 | DDN-ID01 | error | Identifier  contains a zero-width, bidirectional-control or other format character (UTS #39 profile: no invisible or reordering characters in identifiers)<br>Zero-width, bidirectional-control or format character U+ in source (UTS #39 profile: no invisible or reordering characters) | Remove the invisible character (zero-width space, ZWJ/ZWNJ, bidi control or other format character) from the identifier; such characters are legal only inside display strings. |
 | DDN-ID02 | error | Identifier  mixes scripts (, other); write single-script identifiers (UTS #39 confusable profile) — a mixed-language name belongs in a label string | Write the identifier in a single script (digits, marks, _ and - are script-neutral); put mixed-language names in a quoted label instead. |
 | DDN-ID03 | error | Identifier  is not in NFC; write the composed form (normalization is never applied silently — identity is lexical) | Write the identifier in NFC composed form (for example é as a single code point); normalization is never applied silently. |
@@ -2593,7 +2593,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN076 | warning/info | Inline child rendered below configured minimum<br>Inline child text is below final minimum; enlarge the child or link a detail viewInline child rendered below configured minimum | - |
 | DDN077 | warning/info | Required measured fonts unavailable for projectionSome projection text used estimated metrics. Browser-specific shaping is not certified. | - |
 | DDN078 | error | Subdiagram reference target must be a safe relative identifier: <g class="ddn-subdiagram" data-view="${esc(d.target)}"><a href="${esc(d.targetLocal)}.svg">frame · diagram reference</a></g> | - |
-| DDN099 | error | Load ddn-contracts.js before ddn-core.js<br>Load layout/text/export modules before rendering | - |
+| DDN099 | error | Load ddn-contracts.js before ddn-core.js<br>Load ddn-export.js before rendering a redacted interaction view<br>Load layout/text/export modules before rendering | - |
 | DDN100 | error | No endpoint contract for | - |
 | DDN101 | error | Missing  member | - |
 | DDN102 | error | Unspecified  kind cannot satisfy<br>cannot use<br>requires distinct object identities<br>requires object endpoints | Endpoint kinds violate the verb's contract — check the verb's source/target kind columns in the relationship table and change the kind or the verb. |
@@ -2625,7 +2625,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN141 | error | UI binding requires a unique control and an existing field<br>UI command needs authorization, validation, concurrency, failure and audit contracts<br>UI needs explicit field bindings and command contracts | - |
 | DDN142 | error | Report columns must bind existing source fields<br>Report needs grain, cutoff, columns and reconciliation<br>Unknown report aggregation; register an algorithm contract | - |
 | DDN150 | error | Public sample export needs a separately approved payload fixture; unsupported in redacted profile<br>key | - |
-| DDN151 | error | preservepublished::nkindlevelshapepresencenullablekeydatatypedomainunitmaturityworkloadroletemporaldistributionlocationdirection | - |
+| DDN151 | error | preservepublished::n | - |
 | DDN152 | error | samplesampleobject | - |
 | DDN153 | error | (no literal message) | - |
 | DDN154 | error | Export allowlist contains an unresolved objectpreserve | - |

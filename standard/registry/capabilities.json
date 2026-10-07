@@ -4299,7 +4299,6 @@
  "arbitrary host-language rule execution and general-purpose engineering solvers. Bounded decision-table/rule evaluation IS supported within the declared FEEL-equivalent capability tier. The full DMN-FEEL surface \u2014 including externally-defined functions (DMN \u00a710.3.2.13.3), which are carried as opaque references \u2014 is available only through a host-supplied FEEL reference engine identified in the file; engineering solvers (e.g. SysML constraint causality selection) remain host responsibilities behind the same solver contract",
  "third-party Vega runtime execution unverified in build environment",
  "curved routes in the fixed-lane experimental interaction profile (DDN-I031)",
- "redacted interaction SVG without an occurrence/payload closure (DDN-I032)",
  "automatic cross-page tiling or pagination",
  "arbitrary collapsed process visual ports",
  "universal Unicode/font fallback certification",

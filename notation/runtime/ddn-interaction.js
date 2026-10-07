@@ -16,7 +16,13 @@ const fail=(code,message)=>{throw new DDN.DDNError(code,message);};
 function validate(ir){
   const p=ir.view.profiles, profile=p.layout.x_interaction;
   if(profile!==PROFILE)fail('DDN-I001','Unsupported interaction projection '+profile);
-  if(p.export?.mode==='redacted')fail('DDN-I032','Experimental interaction publication has no approved payload/occurrence redaction closure; use an explicitly allowlisted ordinary graph view. No SVG is emitted.');
+  /* 0.8 amendment (ch. 11): the occurrence/payload export closure is now
+   * implemented in ddn-export — redacted requests reach this renderer only
+   * through the allowlist projection (render() applies it). A projected IR
+   * carries no free-text notes by closure, so the note rule applies to
+   * authored (unprojected) IRs only. */
+  const projected=ir.publication?.audience==='allowlisted';
+  if(p.export?.mode==='redacted'&&!projected)fail('DDN-I033','Interaction redaction must pass through the occurrence/payload closure in ddn-export; apply the export projection (the renderer does this itself).');
   if(p.layout.routing==='curved'||Object.values(ir.view.routes||{}).some(r=>r.routing==='curved'))fail('DDN-I031','Curved routing belongs to the ordinary graph projection; the experimental interaction profile uses fixed participant lanes. No silent geometry fallback.');
   if(p.legend.mode!=='numbers'||p.legend.placement!=='right')fail('DDN-I002','Interaction 0.1 requires a right-hand numbered relationship key');
   const sequence=p.layout.x_sequence;
@@ -38,7 +44,7 @@ function validate(ir){
     if(!['request','response','challenge','internal','event'].includes(m.form))fail('DDN-I010','Unsupported message form '+m.form);
     if(!['A','B','C','D'].includes(m.phase))fail('DDN-I011','This scenario uses phases A through D');
     if(!m.payload?.$ref||!elements.has(m.payload.$ref)||!['message','record'].includes(elements.get(m.payload.$ref).kind))fail('DDN-I012','Payload must reference an in-scope message or record contract');
-    if(typeof m.note!=='string')fail('DDN-I027','The explanatory note must be text');
+    if(typeof m.note!=='string'&&!projected)fail('DDN-I027','The explanatory note must be text');
     if(Object.keys(m).some(k=>!['sequence','step','display_order','after','phase','form','payload','reply_to','note'].includes(k)))fail('DDN-I028','Unknown interaction metadata property');
     if(m.form==='internal'&&(r.from.element!==r.to.element||r.kind!=='invoke'))fail('DDN-I013','Internal events are same-participant invoke relationships');
     if(m.form!=='internal'&&r.kind!=='flow')fail('DDN-I014','Network/local payload exchanges retain the core flow relationship');
@@ -63,6 +69,14 @@ function validate(ir){
 }
 function render(ir,registry,defs,options={}){
   if(!ir.view.profiles.layout.x_interaction)return Base.render(ir,registry,defs,options);
+  /* 0.8 amendment (ch. 11): redacted interaction export passes through the
+   * occurrence/payload closure (ddn-export), never bypassing the selected
+   * export policy. The projected IR re-enters validate below. */
+  if(ir.view.profiles.export?.mode==='redacted'&&ir.publication?.audience!=='allowlisted'){
+   const Export=namespace('DDNExport');
+   if(!Export)fail('DDN099','Load ddn-export.js before rendering a redacted interaction view');
+   ir=Export.project(ir);
+  }
   const model=validate(ir),p=ir.view.profiles,t=Base.themes[p.style.theme],look=p.style.look;
   const rowH=q(p.layout.x_row_height,68),W=q(p.publication.width,1840),H=q(p.publication.height,400);
   if(rowH<60||rowH>160)fail('DDN-I023','row height must be between 60px and 160px');
@@ -114,7 +128,7 @@ function render(ir,registry,defs,options={}){
     scene.routes.push({id:r.id,points});scene.messageRows.push({id:r.id,step:m.step,callout:ir.view.keys[r.id],y,phase:m.phase,from:r.from.element,to:r.to.element,form:m.form,after:m.after.map(x=>x.$ref),payload:m.payload.$ref});
   });
   const omitted=model.externalPredecessors.length?'Boundary prerequisites retained: '+model.externalPredecessors.map(x=>model.steps.find(r=>r.id===x.predecessor).properties.x_protocol.step).join(', ')+'.':'No hidden predecessor before the first displayed event.';
-  out+=text(30,H-43,omitted,11,t.muted)+text(30,H-20,'Proposed architecture · no authentication or SQL is executed · source: session-bootstrap/model.ddn',11,t.muted)+text(W-30,H-20,'Interaction renderer '+VERSION+' / DDN '+DDN.VERSION,11,t.muted,400,'text-anchor="end"')+'</svg>';
+  out+=text(30,H-43,omitted,11,t.muted)+text(30,H-20,'Proposed architecture · no authentication or SQL is executed · '+(ir.publication?.audience==='allowlisted'?'allowlist projection (DDN-PUBLIC)':'source: session-bootstrap/model.ddn'),11,t.muted)+text(W-30,H-20,'Interaction renderer '+VERSION+' / DDN '+DDN.VERSION,11,t.muted,400,'text-anchor="end"')+'</svg>';
   const diagnostics=[...ir.diagnostics,{code:'DDN-IW01',severity:'warning',message:'Experimental interaction projection validates declared predecessor/correlation metadata. It does not validate cryptographic security, real network behavior or full UML sequence semantics.'}];
   return {svg:out,scene,diagnostics};
 }

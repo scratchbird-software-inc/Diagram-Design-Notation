@@ -212,6 +212,7 @@
     "DDN-DF04": "An operand shows two elements with the same local id; narrow the view with select:/exclude: so each diff identity is unique.",
     "DDN-ID01": "Remove the invisible character (zero-width space, ZWJ/ZWNJ, bidi control or other format character) from the identifier; such characters are legal only inside display strings.",
     "DDN-ID02": "Write the identifier in a single script (digits, marks, _ and - are script-neutral); put mixed-language names in a quoted label instead.",
-    "DDN-ID03": "Write the identifier in NFC composed form (for example \u00e9 as a single code point); normalization is never applied silently."
+    "DDN-ID03": "Write the identifier in NFC composed form (for example \u00e9 as a single code point); normalization is never applied silently.",
+    "DDN-I033": "The interaction export closure left nothing to publish: widen the export elements allowlist to cover the exchanges and their payload contracts (whole-or-nothing per exchange), or export full."
   }
 }

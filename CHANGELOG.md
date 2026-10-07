@@ -8,6 +8,32 @@ Component-level history predating the monorepo import lives in
 
 ### Added
 
+- **Fixed-lane occurrence/payload export closure (0.8 amendment, spec ch. 11;
+  closes the 0.9 closure-audit item).** Redacted export of a fixed-lane
+  interaction view (`session-bootstrap@0.1`) now passes through the same
+  allowlist projection as ordinary graphs, with occurrence rules: an exchange
+  survives only when its endpoints AND its payload contract are all
+  allowlisted (never a partial payload); structural choreography
+  (`sequence`/`step`/`display_order`/`after`/`phase`/`form`/`reply_to`, the
+  layout interaction config, participant roles/zones) survives; free-text
+  `note` drops like all free-text metadata; identifiers alias per the
+  selected `identifier_mode`. Empty closures and unprojected redacted
+  requests are `DDN-I033`; `DDN-I032` ("no approved closure") is retired.
+  Policy violations keep their existing codes (DDN150–154). Suite
+  `notation/tests/interaction-export.js` (5/5).
+
+- **Quantitative multi-series + stacking pinned (spec ch. 19 prose fix).**
+  Multi-series grouped bars, multi-line, stacked bars/areas, percent stacks
+  and overlay layers shipped with `chart.quality@1` (spec ch. 22, 0.7);
+  ch. 19's stale "not implemented in this increment" sentence is corrected
+  (histograms also ch. 22; intervals/log scales/geo/multi-axis/responsive
+  dashboards remain out of scope — Weaver). Arc marks (pie/donut) stay
+  single-series in `chart.basic@1` and reject series/stacking (`DDN-QC001`).
+  The contract is pinned by the new 8-test suite
+  (`notation/tests/chart-series.js`, scene-mark level: group slots, cumulative
+  stack offsets, percent sums to 100, zero-fill synthetic marks,
+  `series_missing` gap/zero/error + `DDN-QC020`, determinism).
+
 - **Mermaid import (0.9, reference-tool only — the spec stays Mermaid-free).**
   The designer's Files drawer gains an **Import…** command (ch. 57 §57.4
   surface): paste Mermaid source and the popup previews the conversion

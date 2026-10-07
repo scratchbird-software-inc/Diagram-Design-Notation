@@ -14133,7 +14133,7 @@
         "view": "fig1",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "a7db52ab051fbaf47c1e20d5ee8513df36445767c161b2482ce3650ff4b67576",
+        "sha256": "b55e5cab30ea41da121de6e4833e24787d7dff71682a3434845b45f0acfcf2df",
         "modelFingerprint": "6615e05538617bb7",
         "warnings": [
           "DDN-TW01"
@@ -14168,8 +14168,8 @@
         "expectation": "Only the label of Start / review changes; numerals, anchors and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "a7db52ab051fbaf47c1e20d5ee8513df36445767c161b2482ce3650ff4b67576",
-        "after": "898ea6ace2e52425a39482a2600ec7495a1c1493b6f7bd81a259fee70518ac32",
+        "before": "b55e5cab30ea41da121de6e4833e24787d7dff71682a3434845b45f0acfcf2df",
+        "after": "ac4eae3036f3248ae94d112f7423272fd3c03e3e1c6c553b1240f8a407fe2161",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14227,7 +14227,7 @@
         "view": "overview",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "67b2808e81e8dfae6e5d9398e404147751d7ba914ac652fa4c00bca202a9de41",
+        "sha256": "c48c916eafb26275975730cb15199cef871555fb36189703c892012b453ae7f5",
         "modelFingerprint": "7028a8b9e541938b",
         "warnings": [
           "DDN-TW01"
@@ -14263,8 +14263,8 @@
         "expectation": "Only the label of Edge gateway / review changes; chrome, page geometry and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "67b2808e81e8dfae6e5d9398e404147751d7ba914ac652fa4c00bca202a9de41",
-        "after": "b70a46d0eb502004c8949ab7faee3fdd0e3a607f735737cc8ca8bb5aa7b58f7c",
+        "before": "c48c916eafb26275975730cb15199cef871555fb36189703c892012b453ae7f5",
+        "after": "9b4d767f68890b96ebe1d98269f4251c69496b30ff32a6e6184f293656af5974",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,
@@ -14409,7 +14409,7 @@
         "view": "main",
         "profile": "ddn@1",
         "projection": "graph",
-        "sha256": "f001bce4e60eaddc3f27544f9375358214c9849755e16922ca778b69d642ebc2",
+        "sha256": "38b525b62068352d2b5bbe7500272501c78b4af728dcc64be892115bf72c6eee",
         "modelFingerprint": "c9e99204b79c983e",
         "warnings": [
           "DDN-TW01"
@@ -14445,8 +14445,8 @@
         "expectation": "Only the label of Invoice gateway / review changes; text properties, chrome and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "f001bce4e60eaddc3f27544f9375358214c9849755e16922ca778b69d642ebc2",
-        "after": "8ccc313715c6fcba46b37e7b84e9cfb9cf3165f2bdcf498bc59a7644cb36b094",
+        "before": "38b525b62068352d2b5bbe7500272501c78b4af728dcc64be892115bf72c6eee",
+        "after": "9a07a769a2bb8bae3958462b43b1f05fd8b5fe506f0fca6653edfb58354c1031",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,

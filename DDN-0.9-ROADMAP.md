@@ -135,8 +135,14 @@ rationale:
       series/transform; decision input/output domain editing; timeline drag
 - [ ] Descriptor fields: priority, batch applicability, destructive-change
       warning; continuous sliders; full impacted-scope preview
-- [ ] Fixed-lane occurrence/payload export closure (ch. 11:33)
-- [ ] Quantitative: multiple series, stacking (dashboards/responsive = Weaver)
+- [x] Fixed-lane occurrence/payload export closure (ch. 11:33) — implemented
+      0.8.x amendment (2026-10-07): allowlist projection + whole-or-nothing
+      occurrence rules in ddn-export.js, DDN-I033; DDN-I032 retired
+- [x] Quantitative: multiple series, stacking (dashboards/responsive = Weaver)
+      — already implemented by chart.quality@1 (spec ch. 22, 0.7); stale
+      "not implemented" prose in ch. 19 corrected, contract pinned by
+      notation/tests/chart-series.js (group/stack/percent/overlay,
+      series_missing gap/zero/error, arc exclusion)
 
 ## Explicitly NOT 0.9 (assigned elsewhere)
 

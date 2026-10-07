@@ -4113,20 +4113,58 @@
    const allowed=new Set(policy.elements.map(ref)),allowedFields=new Set(policy.fields.map(ref)),all=new Set(ir.elements.map(n=>n.id));
    for(const id of allowed)if(!all.has(id))throw Object.assign(new Error('Export allowlist contains an unresolved object'),{code:'DDN151'});
    const names=new Map(),alias=id=>{if(!names.has(id))names.set(id,policy.identifier_mode==='preserve'?id:'published::n'+String(names.size+1).padStart(4,'0'));return names.get(id);};
+   /* 0.8 amendment (ch. 11, fixed-lane occurrence/payload export closure): a
+    * fixed-lane interaction view (layout.x_interaction) exports through the
+    * SAME allowlist projection, with the occurrence rules of the chapter: an
+    * exchange survives only when its endpoints AND its payload contract are
+    * all allowlisted (never a partial payload); occurrence metadata keeps the
+    * structural choreography subset (sequence/step/display_order/after/phase/
+    * form/reply_to — note is free text and is dropped, exactly like other
+    * free-text metadata); payload message/record contracts and participant
+    * roles/zones export like ordinary elements under the same allowlists. The
+    * closure never bypasses the selected export policy. */
+   const interaction=ir.view.profiles.layout?.x_interaction?ir.view.profiles.layout:null;
+   const INTERACTION_ELEMENT_PROPS=['x_protocol_role','x_zone'];
    const safeProperties=new Set(['kind','level','shape','presence','nullable','key','datatype','domain','unit','maturity','workload','role','temporal','distribution','location','direction']);
    const keep=new Set(policy.properties||[]);
    for(const key of keep)if(!safeProperties.has(key))throw Object.assign(new Error('Redacted property is not in the safe structural vocabulary: '+key),{code:'DDN152'});
    const approved=[...ir.elements].filter(n=>allowed.has(n.id)&&n.type!=='sample'&&n.kind!=='sample');
    approved.sort((a,b)=>a.id.localeCompare(b.id)).forEach(n=>{alias(n.id);n.fields.filter(f=>allowedFields.has(f.id)).forEach(f=>alias(f.id));});
    function value(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(value).filter(x=>x!==undefined);if(v.$ref)return names.has(v.$ref)?{$ref:alias(v.$ref)}:undefined;const out={};for(const[k,x]of Object.entries(v)){const p=value(x);if(p!==undefined)out[k]=p;}return out;}
-   function props(p){const out={};for(const[k,v]of Object.entries(p||{}))if(keep.has(k)){const x=value(v);if(x!==undefined)out[k]=x;}return out;}
+   function props(p){const out={};for(const[k,v]of Object.entries(p||{}))if(keep.has(k)||(interaction&&INTERACTION_ELEMENT_PROPS.includes(k))){const x=value(v);if(x!==undefined)out[k]=x;}return out;}
    const elements=approved.map(n=>({id:alias(n.id),ref:alias(n.id),local:alias(n.id).split('::')[1],name:n.name,type:n.type,kind:n.kind,kindCode:n.kindCode,properties:props(n.properties),fields:n.fields.filter(f=>allowedFields.has(f.id)).map(f=>{
     if(f.parent&&!allowedFields.has(f.parent))throw Object.assign(new Error('A nested field export must explicitly include its ancestor fields'),{code:'DDN153'});
     return {id:alias(f.id),local:f.local,name:f.name,path:f.path,depth:f.depth,parent:f.parent?alias(f.parent):null,properties:props(f.properties)};
    }),ports:[]}));
    const selected=ir.view.selected.filter(id=>allowed.has(id)&&approved.some(n=>n.id===id)).map(alias),shown=new Set(selected);
-   const rels=ir.relations.filter(r=>allowed.has(r.from.element)&&allowed.has(r.to.element)&&(!r.from.member||allowedFields.has(r.from.member))&&(!r.to.member||allowedFields.has(r.to.member))).map(r=>({id:alias(r.id),ref:alias(r.id),name:r.kind,kind:r.kind,kindCode:r.kindCode,from:{element:alias(r.from.element),...(r.from.member?{member:alias(r.from.member),role:'field'}:{})},to:{element:alias(r.to.element),...(r.to.member?{member:alias(r.to.member),role:'field'}:{})},properties:{}}));
+   /* Occurrence closure (ch. 11): whole-or-nothing per exchange — a dropped
+    * payload or endpoint drops the exchange, never a partial payload.
+    * Surviving exchanges are aliased up front so after/reply_to references
+    * resolve regardless of declaration order. */
+   const surviving=ir.relations.filter(r=>allowed.has(r.from.element)&&allowed.has(r.to.element)&&(!r.from.member||allowedFields.has(r.from.member))&&(!r.to.member||allowedFields.has(r.to.member)))
+    .filter(r=>!interaction||!r.properties?.x_protocol||allowed.has(r.properties.x_protocol.payload?.$ref));
+   if(interaction)surviving.forEach(r=>alias(r.id));
+   const rels=surviving.map(r=>{
+    if(interaction&&r.properties?.x_protocol){
+     const m=r.properties.x_protocol;
+     const occ={sequence:m.sequence,step:m.step,display_order:m.display_order,
+      after:(m.after||[]).map(x=>names.has(x.$ref)?{$ref:alias(x.$ref)}:null).filter(Boolean),
+      phase:m.phase,form:m.form,payload:{$ref:alias(m.payload.$ref)}};
+     if(m.reply_to?.$ref&&names.has(m.reply_to.$ref))occ.reply_to={$ref:alias(m.reply_to.$ref)};
+     /* note is free text: dropped, exactly like source locations and other
+      * free-text metadata in this projection (see DDN-PUBLIC). */
+     return {id:alias(r.id),ref:alias(r.id),name:r.name,kind:r.kind,kindCode:r.kindCode,
+      from:{element:alias(r.from.element),...(r.from.member?{member:alias(r.from.member),role:'field'}:{})},
+      to:{element:alias(r.to.element),...(r.to.member?{member:alias(r.to.member),role:'field'}:{})},
+      properties:{x_protocol:occ}};
+    }
+    return {id:alias(r.id),ref:alias(r.id),name:r.kind,kind:r.kind,kindCode:r.kindCode,from:{element:alias(r.from.element),...(r.from.member?{member:alias(r.from.member),role:'field'}:{})},to:{element:alias(r.to.element),...(r.to.member?{member:alias(r.to.member),role:'field'}:{})},properties:{}};
+   });
+   if(interaction&&!rels.some(r=>r.properties?.x_protocol))throw Object.assign(new Error('The occurrence/payload closure leaves no exportable exchanges; widen the elements allowlist to cover the exchanges and their payload contracts, or export full'),{code:'DDN-I033'});
    const profiles=copy(ir.view.profiles);profiles.export={mode:'full'};delete profiles.publication.caption;profiles.publication.title=policy.title||'Published data view';profiles.validation={mode:'logical',unknown_extensions:'warn'};profiles.legend.keys={};delete profiles.legend.keyset;delete profiles.layout.root;for(const group of Object.values(profiles))if(group&&typeof group==='object')for(const key of Object.keys(group))if(key.startsWith('x_'))delete group[key];
+   /* Occurrence closure (ch. 11): the interaction profile's structural layout
+    * config is choreography, not payload — it survives the x_ strip. */
+   if(interaction){profiles.layout.x_interaction=interaction.x_interaction;if(interaction.x_sequence!==undefined)profiles.layout.x_sequence=interaction.x_sequence;if(interaction.x_phases!==undefined)profiles.layout.x_phases=copy(interaction.x_phases);if(interaction.x_row_height!==undefined)profiles.layout.x_row_height=interaction.x_row_height;}
    const keys={};for(const r of ir.relations)if(names.has(r.id)&&ir.view.keys[r.id])keys[alias(r.id)]=ir.view.keys[r.id];
    const output={format:'ddn-resolved@0.3',language:'0.3',registry:ir.registry,entry:'published.ddn',view:{id:'published::view',name:policy.title||'Published data view',local:'published',selected,relations:rels.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element)).map(r=>r.id),profiles,keys,placements:{},routes:{},subdiagrams:[],frames:[]},elements,relations:rels,diagnostics:[{code:'DDN-PUBLIC',severity:'info',message:'Allowlist projection. Source locations, free-text metadata, examples, and inline views removed.'}],publication:{audience:'allowlisted',sourceIncluded:false,samplesIncluded:false}};
    // Deliberately no counts or identifiers of excluded records: those can themselves disclose information.
@@ -7080,7 +7118,13 @@
   function validate(ir){
     const p=ir.view.profiles, profile=p.layout.x_interaction;
     if(profile!==PROFILE)fail('DDN-I001','Unsupported interaction projection '+profile);
-    if(p.export?.mode==='redacted')fail('DDN-I032','Experimental interaction publication has no approved payload/occurrence redaction closure; use an explicitly allowlisted ordinary graph view. No SVG is emitted.');
+    /* 0.8 amendment (ch. 11): the occurrence/payload export closure is now
+     * implemented in ddn-export — redacted requests reach this renderer only
+     * through the allowlist projection (render() applies it). A projected IR
+     * carries no free-text notes by closure, so the note rule applies to
+     * authored (unprojected) IRs only. */
+    const projected=ir.publication?.audience==='allowlisted';
+    if(p.export?.mode==='redacted'&&!projected)fail('DDN-I033','Interaction redaction must pass through the occurrence/payload closure in ddn-export; apply the export projection (the renderer does this itself).');
     if(p.layout.routing==='curved'||Object.values(ir.view.routes||{}).some(r=>r.routing==='curved'))fail('DDN-I031','Curved routing belongs to the ordinary graph projection; the experimental interaction profile uses fixed participant lanes. No silent geometry fallback.');
     if(p.legend.mode!=='numbers'||p.legend.placement!=='right')fail('DDN-I002','Interaction 0.1 requires a right-hand numbered relationship key');
     const sequence=p.layout.x_sequence;
@@ -7102,7 +7146,7 @@
       if(!['request','response','challenge','internal','event'].includes(m.form))fail('DDN-I010','Unsupported message form '+m.form);
       if(!['A','B','C','D'].includes(m.phase))fail('DDN-I011','This scenario uses phases A through D');
       if(!m.payload?.$ref||!elements.has(m.payload.$ref)||!['message','record'].includes(elements.get(m.payload.$ref).kind))fail('DDN-I012','Payload must reference an in-scope message or record contract');
-      if(typeof m.note!=='string')fail('DDN-I027','The explanatory note must be text');
+      if(typeof m.note!=='string'&&!projected)fail('DDN-I027','The explanatory note must be text');
       if(Object.keys(m).some(k=>!['sequence','step','display_order','after','phase','form','payload','reply_to','note'].includes(k)))fail('DDN-I028','Unknown interaction metadata property');
       if(m.form==='internal'&&(r.from.element!==r.to.element||r.kind!=='invoke'))fail('DDN-I013','Internal events are same-participant invoke relationships');
       if(m.form!=='internal'&&r.kind!=='flow')fail('DDN-I014','Network/local payload exchanges retain the core flow relationship');
@@ -7127,6 +7171,14 @@
   }
   function render$1(ir,registry,defs,options={}){
     if(!ir.view.profiles.layout.x_interaction)return api$5.render(ir,registry,defs,options);
+    /* 0.8 amendment (ch. 11): redacted interaction export passes through the
+     * occurrence/payload closure (ddn-export), never bypassing the selected
+     * export policy. The projected IR re-enters validate below. */
+    if(ir.view.profiles.export?.mode==='redacted'&&ir.publication?.audience!=='allowlisted'){
+     const Export=namespace('DDNExport');
+     if(!Export)fail('DDN099','Load ddn-export.js before rendering a redacted interaction view');
+     ir=Export.project(ir);
+    }
     const model=validate(ir),p=ir.view.profiles,t=api$5.themes[p.style.theme],look=p.style.look;
     const rowH=q$1(p.layout.x_row_height,68),W=q$1(p.publication.width,1840),H=q$1(p.publication.height,400);
     if(rowH<60||rowH>160)fail('DDN-I023','row height must be between 60px and 160px');
@@ -7178,7 +7230,7 @@
       scene.routes.push({id:r.id,points});scene.messageRows.push({id:r.id,step:m.step,callout:ir.view.keys[r.id],y,phase:m.phase,from:r.from.element,to:r.to.element,form:m.form,after:m.after.map(x=>x.$ref),payload:m.payload.$ref});
     });
     const omitted=model.externalPredecessors.length?'Boundary prerequisites retained: '+model.externalPredecessors.map(x=>model.steps.find(r=>r.id===x.predecessor).properties.x_protocol.step).join(', ')+'.':'No hidden predecessor before the first displayed event.';
-    out+=text(30,H-43,omitted,11,t.muted)+text(30,H-20,'Proposed architecture · no authentication or SQL is executed · source: session-bootstrap/model.ddn',11,t.muted)+text(W-30,H-20,'Interaction renderer '+VERSION$2+' / DDN '+DDN.VERSION,11,t.muted,400,'text-anchor="end"')+'</svg>';
+    out+=text(30,H-43,omitted,11,t.muted)+text(30,H-20,'Proposed architecture · no authentication or SQL is executed · '+(ir.publication?.audience==='allowlisted'?'allowlist projection (DDN-PUBLIC)':'source: session-bootstrap/model.ddn'),11,t.muted)+text(W-30,H-20,'Interaction renderer '+VERSION$2+' / DDN '+DDN.VERSION,11,t.muted,400,'text-anchor="end"')+'</svg>';
     const diagnostics=[...ir.diagnostics,{code:'DDN-IW01',severity:'warning',message:'Experimental interaction projection validates declared predecessor/correlation metadata. It does not validate cryptographic security, real network behavior or full UML sequence semantics.'}];
     return {svg:out,scene,diagnostics};
   }
