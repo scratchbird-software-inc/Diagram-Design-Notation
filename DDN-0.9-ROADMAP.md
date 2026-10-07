@@ -119,7 +119,11 @@ rationale:
       Designer diff UI remains reference-tool follow-up.
 - [ ] Assertion evaluation (owner decision pending: 0.9 vs Weaver orchestration)
 - [ ] Mermaid import (designer "Import…" command)
-- [ ] Unicode identifiers (UAX #31 / UTS #39 profiles)
+- [x] Unicode identifiers (UAX #31 / UTS #39 profiles) — implemented 0.8.x
+      amendment (spec ch. 01 + S06, EBNF updated): UAX #31 ID_Start/Continue
+      plus `_`/`-`, UTS #39 profile (NFC, no format/bidi characters, single
+      script per identifier), DDN-ID01–ID03; ASCII fully backward-compatible,
+      no dialect gate (pre-0.9 rejects cleanly as DDN006)
 - [ ] Chen profile completions (pending owner: 0.9 vs close notation-only)
 - [ ] Calendar/locale time semantics (pending owner)
 - [ ] AUD-003 command set remainder (kind conversion, deep field

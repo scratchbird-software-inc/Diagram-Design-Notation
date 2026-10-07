@@ -19,7 +19,7 @@
  * when any inventory item is unmet (sections present, 98 profiles annotated,
  * >=20 recipes, <=440 KiB — budget raised from 350→380 KiB at B1-063 (UML
  * completion), 380→400 KiB at B1-073 (UAF grid), 400→420 KiB at B1-081,
- * and 420→452 KiB for the DDN 0.8 section (§14: view kinds, publication
+ * and 420→454 KiB for the DDN 0.8 section (§14: view kinds, publication
  * chrome, text-fit, markings — hand-authored prose + verified recipes)
  * (the continuing machinery program — SoaML/UAF/MSC/IDEF0/Petri/ORM/VSM keep
  * growing the machine-extracted vocabulary; the file is generated, so the
@@ -343,7 +343,7 @@ export function completenessReport(text, S, diagnostics, validation) {
     { ok: S.diagnosticFixes.requiredCoverage.every(c => S.diagnosticFixes.fixes[c]) && fixedCount >= S.diagnosticFixes.requiredCoverage.length, label: 'D2.9 error-recovery FIX column for ' + S.diagnosticFixes.requiredCoverage.length + ' common codes (' + fixedCount + ' of ' + diagnostics.length + ' codes carry fixes)' },
     { ok: validation && validation.blocks >= 20, label: 'D2.10 worked recipes: ' + (validation ? validation.blocks : 0) + ' ```ddn blocks (>=20 required), ' + (validation ? validation.checked : 0) + ' check+render runs, all pass' },
     has(/## 12\. Multi-file authoring[\s\S]*single-file self-contained is preferred/i, 'D2.11 multi-file pattern + single-file preference note'),
-    { ok: Buffer.byteLength(text, 'utf8') <= 452 * 1024, label: 'D4 size ' + (Buffer.byteLength(text, 'utf8') / 1024).toFixed(1) + ' KiB <= 452 KiB (raised 420→452 for the DDN 0.8 §14 sections + reuse/diff amendments)' },
+    { ok: Buffer.byteLength(text, 'utf8') <= 454 * 1024, label: 'D4 size ' + (Buffer.byteLength(text, 'utf8') / 1024).toFixed(1) + ' KiB <= 454 KiB (raised 420→454 for the DDN 0.8 §14 sections + reuse/diff/unicode amendments)' },
   ];
   return checks;
 }

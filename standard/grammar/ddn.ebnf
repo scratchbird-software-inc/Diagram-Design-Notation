@@ -125,7 +125,16 @@ entry          = ( identifier | string ), ":", value ;
 atom           = identifier ;
 quantity       = number, unit ;
 unit           = "px" | "pt" | "mm" | "cm" | "in" | "ms" | "s" | "min" | "h" | "d" | "%" ;
-identifier     = ( letter | "_" ), { letter | digit | "_" | "-" } ;
+identifier     = ustart , { ucontinue | "-" } ;
+(* 0.8 amendment (Unicode identifiers, ch. 01): identifiers follow UAX #31 —
+   ID_Start then ID_Continue — plus the ASCII separators "_" and "-", so
+   every ASCII identifier is unchanged. UTS #39 profile (conservative):
+   NFC required (DDN-ID03; no silent normalization), no zero-width /
+   bidi-control / format characters (DDN-ID01), single script per
+   identifier (DDN-ID02; Common/Inherited characters and separators are
+   script-neutral). *)
+ustart         = "_" | ? UAX #31 ID_Start ? ;
+ucontinue      = "_" | ? UAX #31 ID_Continue ? ;
 letter         = "A" … "Z" | "a" … "z" ;
 digit          = "0" … "9" ;
 number         = [ "-" ], ( "0" | nonzero, { digit } ), [ ".", digit, { digit } ], [ exponent ] ;

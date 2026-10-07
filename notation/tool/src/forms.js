@@ -131,7 +131,8 @@ function parseDraft(d, raw) {
     case 'reference': {
       if (blank) return { ok: true, value: undefined };
       const id = String(raw).trim().replace(/^@/, '');
-      if (!/^[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*$/.test(id)) return bad('DDN-UI04', d.label + ' must be a stable reference path (identifiers joined by dots).');
+      /* Unicode identifiers (spec ch. 01 amendment): UAX #31 profile, mirrors ddn-core ID_SRC. */
+      if (!new RegExp('^[\\p{ID_Start}_][\\p{ID_Continue}_-]*(\\.[\\p{ID_Start}_][\\p{ID_Continue}_-]*)*$','u').test(id)) return bad('DDN-UI04', d.label + ' must be a stable reference path (identifiers joined by dots).');
       return { ok: true, value: { $ref: id } };
     }
     case 'string-list': {

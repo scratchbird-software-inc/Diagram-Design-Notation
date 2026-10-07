@@ -6,6 +6,22 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Unicode identifiers (0.8 amendment, spec ch. 01 + S06; EBNF updated).**
+  Structural identifiers now follow UAX #31 — `ID_Start` then `ID_Continue`,
+  plus the ASCII separators `_` and `-` — so every ASCII identifier is
+  unchanged and all existing sources are byte-identical. The UTS #39 security
+  profile is conservative and lexed with coded errors: NFC required
+  (`DDN-ID03`; never silently normalized — identity is lexical), no
+  zero-width/bidi-control/format characters (`DDN-ID01`; they remain legal
+  inside display strings), single script per identifier (`DDN-ID02`;
+  Common/Inherited characters and separators are script-neutral). No dialect
+  gate: the rule is lexical and pre-0.9 processors reject such files cleanly
+  as `DDN006`. Module identities follow the same profile; fragment
+  substitution, `ref:` anchors, reference paths and the designer/studio id
+  inputs (`tool/src/forms.js`, `tool/src/sheets.js`) share the grammar.
+  Skeleton/confusable tables documented as future work. 9-test suite
+  (`notation/tests/unicode-identifiers.js`, registered
+  `test:unicode-identifiers`), AI reference §2.2 + `DDN-IDxx` fixes.
 - **Diff views (0.8 amendment, spec ch. 55 §55.6; closes the 0.8 S6 deferral in
   DDN-GAPS.md).** `view review { diff: [@v1, @v2]; }` renders the union of
   both views' visible models with per-member states. Members match by **local

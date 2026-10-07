@@ -9,7 +9,7 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 - Diagram profiles: **150** (`profiles/catalogue.json .profiles`)
 - Projection kinds: **12** (`graph`, `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`, `fishbone`, `decision`, `sequence`, `timing`, `geo`)
 - Endpoint marks: 12; object families: 12; relation families: 8; facets: 118; view types: 20; registered data properties: 108
-- Diagnostic codes: **496** extracted from the runtime (reference runtime + Studio `src/`)
+- Diagnostic codes: **499** extracted from the runtime (reference runtime + Studio `src/`)
 <!-- /generated (counts) -->
 
 ## 1. Purpose and the generate → check → fix loop
@@ -58,7 +58,7 @@ module "shop.views";                // further sections (multi-module)
 ### 2.2 Comments, identifiers, strings, values
 
 - Comments: `// line` and `/* block */` (blocks do NOT nest; unterminated → DDN002).
-- Identifiers: ASCII `[A-Za-z_][A-Za-z0-9_-]*`. A quoted label is never identity. An explicit `uid: "..."` property preserves identity across refactoring (workspace-unique; DDN026 on collision).
+- Identifiers: UAX #31 (0.8 amendment) — `ID_Start` then `ID_Continue`, plus the ASCII separators `_` and `-`; ASCII `[A-Za-z_][A-Za-z0-9_-]*` remains a valid subset. UTS #39 profile: NFC required (**DDN-ID03**; never silently normalized), no zero-width/bidi-control/format characters (**DDN-ID01**), single script per identifier (**DDN-ID02**; digits/marks/separators are script-neutral, so `数据1` is fine but `数据db` is not). No dialect gate — pre-0.9 processors reject such files cleanly as DDN006. A quoted label is never identity. An explicit `uid: "..."` property preserves identity across refactoring (workspace-unique; DDN026 on collision).
 - Strings: JSON-style double-quoted with JSON escapes; no raw newline (DDN003); surrogate pairs must be valid (DDN004). **Profile-defined dotted kind names and profile ids MUST be quoted** (`kind: "c4.system";`, `profile: "chart.basic@1";`) because `.`/`@` are not identifier characters. Plain core keywords (`table`, `assoc`) are written unquoted.
 - Numbers: finite (DDN005); quantities are number+unit with no space: lengths `px|pt|mm|cm|in`, temporal `ms|s|min|h|d`, `%`. Geometry contexts reject temporal units (DDN032). Internal geometry is px (pt = 96/72 px, mm = 96/25.4 px, cm = 96/2.54 px, in = 96 px).
 - Colours: CSS colour strings (`"#B45309"`, named colours) wherever a colour property exists (`marker_color`, `pulse_color`, theme-driven styling otherwise).
@@ -2147,7 +2147,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- generated: do not edit (diagnostics) -->
-## 9. Diagnostics and error recovery (497 codes, machine-extracted from runtime + Studio sources; 146 carry a hand-authored FIX)
+## 9. Diagnostics and error recovery (500 codes, machine-extracted from runtime + Studio sources; 149 carry a hand-authored FIX)
 
 `check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).
 
@@ -2176,7 +2176,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-E018 | error | Unknown  chrome value ; expected<br>Unknown banner chrome value ; expected on, off, or replacement text of 1..200 characters | - |
 | DDN-FG01 | error | declares no parameters; remove the argument list<br>takes  argument(s) (); found | Bind exactly as many arguments as the fragment declares parameters (use: @name(a1, …)), or remove the argument list for a parameterless definition. |
 | DDN-FG02 | error | Unknown parameter ${} in a fragment string; declared parameters: | Use only the fragment's declared parameters in ${name} interpolations; a literal ${ is written $${. |
-| DDN-FG03 | error | Parameter  substitutes into a declaration id, which needs an identifier ([A-Za-z_][A-Za-z0-9_-]*); found<br>Parameter  substitutes into a reference; the argument must be an identifier path or a @reference; found | Pass an identifier-shaped argument ([A-Za-z_][A-Za-z0-9_-]*) when the parameter substitutes into a declaration id or reference. |
+| DDN-FG03 | error | Parameter  substitutes into a declaration id, which needs an identifier (UAX #31 ID_Start/ID_Continue plus _ and -); found<br>Parameter  substitutes into a reference; the argument must be an identifier path or a @reference; found | Pass an identifier-shaped argument ([A-Za-z_][A-Za-z0-9_-]*) when the parameter substitutes into a declaration id or reference. |
 | DDN-FG04 | error | use: cycle through definitions: | Break the use: cycle between definitions — expand one level inline or restructure the fragment graph. |
 | DDN-FG05 | error | Definition nesting exceeds the cap of 8 levels | Flatten the definition nesting (cap is 8 levels); expand intermediate fragments inline where the chain is deeper. |
 | DDN-FG06 | error | A fragment declares at most 8 parameters<br>A parameterized fragment declares at least one parameter<br>Duplicate parameter  in fragment | Declare 1-8 unique parameters: fragment name(p1, p2) — no duplicates, no empty list. |
@@ -2211,6 +2211,9 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-I030 | error | A visual anchor fraction must be strictly between 0 and 1 and cannot override a field/port endpoint<br>Invalid endpoint side | - |
 | DDN-I031 | error | Curved routing belongs to the ordinary graph projection; the experimental interaction profile uses fixed participant lanes. No silent geometry fallback. | - |
 | DDN-I032 | error | Experimental interaction publication has no approved payload/occurrence redaction closure; use an explicitly allowlisted ordinary graph view. No SVG is emitted. | - |
+| DDN-ID01 | error | Identifier  contains a zero-width, bidirectional-control or other format character (UTS #39 profile: no invisible or reordering characters in identifiers)<br>Zero-width, bidirectional-control or format character U+ in source (UTS #39 profile: no invisible or reordering characters) | Remove the invisible character (zero-width space, ZWJ/ZWNJ, bidi control or other format character) from the identifier; such characters are legal only inside display strings. |
+| DDN-ID02 | error | Identifier  mixes scripts (, other); write single-script identifiers (UTS #39 confusable profile) — a mixed-language name belongs in a label string | Write the identifier in a single script (digits, marks, _ and - are script-neutral); put mixed-language names in a quoted label instead. |
+| DDN-ID03 | error | Identifier  is not in NFC; write the composed form (normalization is never applied silently — identity is lexical) | Write the identifier in NFC composed form (for example é as a single code point); normalization is never applied silently. |
 | DDN-IO01 | error | No DDN source files were found.<br>Select at least one source file. | - |
 | DDN-IO02 | error | Sources outside workspace manifest root.<br>Unsafe ZIP path or symbolic link. | - |
 | DDN-IO03 | error | Duplicate archive path:<br>Two selected files have the same path: | - |
@@ -3954,7 +3957,16 @@ entry          = ( identifier | string ), ":", value ;
 atom           = identifier ;
 quantity       = number, unit ;
 unit           = "px" | "pt" | "mm" | "cm" | "in" | "ms" | "s" | "min" | "h" | "d" | "%" ;
-identifier     = ( letter | "_" ), { letter | digit | "_" | "-" } ;
+identifier     = ustart , { ucontinue | "-" } ;
+(* 0.8 amendment (Unicode identifiers, ch. 01): identifiers follow UAX #31 —
+   ID_Start then ID_Continue — plus the ASCII separators "_" and "-", so
+   every ASCII identifier is unchanged. UTS #39 profile (conservative):
+   NFC required (DDN-ID03; no silent normalization), no zero-width /
+   bidi-control / format characters (DDN-ID01), single script per
+   identifier (DDN-ID02; Common/Inherited characters and separators are
+   script-neutral). *)
+ustart         = "_" | ? UAX #31 ID_Start ? ;
+ucontinue      = "_" | ? UAX #31 ID_Continue ? ;
 letter         = "A" … "Z" | "a" … "z" ;
 digit          = "0" … "9" ;
 number         = [ "-" ], ( "0" | nonzero, { digit } ), [ ".", digit, { digit } ], [ exponent ] ;

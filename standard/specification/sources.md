@@ -26,6 +26,8 @@
 
 [Unicode UAX #31](https://www.unicode.org/reports/tr31/) and [UTS #39](https://www.unicode.org/reports/tr39/) inform future identifier and confusable-character profiles. The DDN 0.3 reference uses ASCII identifiers and Unicode string values; Unicode identifiers are not silently enabled.
 
+**0.8 amendment:** the identifier grammar now follows UAX #31 (ID_Start/ID_Continue plus `_` and `-`) with a conservative UTS #39 profile — NFC required, no format/bidi-control characters, single script per identifier (coded errors DDN-ID01–ID03; see chapter 01). ASCII identifiers remain a valid subset; skeleton/confusable tables remain future work.
+
 ## S07 — Accessibility
 
 [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and [Understanding Use of Color](https://www.w3.org/WAI/WCAG21/Understanding/use-of-color.html) support non-colour alternatives and accessible interaction. DDN includes accessibility requirements and a monochrome mode; this bundle has not been independently accessibility-certified.

@@ -43,6 +43,7 @@
 <p><a href="https://spec.commonmark.org/0.31.2/">CommonMark 0.31.2</a> defines fenced code blocks and their info strings. A <code>ddn</code> fence needs a DDN-aware build or host extension; ordinary Markdown does not automatically interpret this language. Static image/link publication is the portable fallback.</p>
 <h2>S06 — Unicode identity policies</h2>
 <p><a href="https://www.unicode.org/reports/tr31/">Unicode UAX #31</a> and <a href="https://www.unicode.org/reports/tr39/">UTS #39</a> inform future identifier and confusable-character profiles. The DDN 0.3 reference uses ASCII identifiers and Unicode string values; Unicode identifiers are not silently enabled.</p>
+<p><strong>0.8 amendment:</strong> the identifier grammar now follows UAX #31 (ID_Start/ID_Continue plus <code>_</code> and <code>-</code>) with a conservative UTS #39 profile — NFC required, no format/bidi-control characters, single script per identifier (coded errors DDN-ID01–ID03; see chapter 01). ASCII identifiers remain a valid subset; skeleton/confusable tables remain future work.</p>
 <h2>S07 — Accessibility</h2>
 <p><a href="https://www.w3.org/TR/WCAG22/">WCAG 2.2</a> and <a href="https://www.w3.org/WAI/WCAG21/Understanding/use-of-color.html">Understanding Use of Color</a> support non-colour alternatives and accessible interaction. DDN includes accessibility requirements and a monochrome mode; this bundle has not been independently accessibility-certified.</p>
 <h2>S08 — SVG coordinate systems</h2>

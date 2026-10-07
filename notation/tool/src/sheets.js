@@ -127,7 +127,7 @@ function cmmnOutline(ir) {
 function sentryCommit(current, draft) {
   const d = draft || {};
   if (d.on !== 'entry' && d.on !== 'exit') return { action: 'error', code: 'DDN-UI07', message: 'A sentry needs its trigger: on = entry or exit.' };
-  const refOK = s => /^@?[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*$/.test(s);
+  const refOK = s => /^@?[\p{ID_Start}_][\p{ID_Continue}_-]*(\.[\p{ID_Start}_][\p{ID_Continue}_-]*)*$/u.test(s); /* UAX #31 profile, mirrors ddn-core ID_SRC */
   const value = { on: d.on };
   if (d.attach && String(d.attach).trim()) {
     const r = String(d.attach).trim().replace(/^@/, '');
@@ -179,7 +179,7 @@ const CMMN_DECORATOR_ROLES = ['stage', 'task', 'milestone'];
  * UML multiplicity grammar (mirrors the DDN-PJ149/151 check in
  * ddn-profiles.js; the commit-time build stays the authority). */
 const MULT_RE = /^(\d+|\*)(\.\.(\d+|\*))?$/;
-const refOK = s => /^@?[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*$/.test(s);
+const refOK = s => /^@?[\p{ID_Start}_][\p{ID_Continue}_-]*(\.[\p{ID_Start}_][\p{ID_Continue}_-]*)*$/u.test(s); /* UAX #31 profile, mirrors ddn-core ID_SRC */
 const cleanRef = s => String(s || '').trim().replace(/^@/, '');
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -432,7 +432,7 @@ function renumberPlan(elements, { start = 10, step = 10 } = {}) {
 
 /* refAnchorScan(ir): the ref: anchors currently declared in element/relation
  * labels and text (chapter 55 §S4 grammar) — [{site, siteName, anchor}]. */
-const REF_RE = /\bref:([A-Za-z_][A-Za-z0-9_-]*)/g;
+const REF_RE = /\bref:([\p{ID_Start}_][\p{ID_Continue}_-]*)/gu;
 function refAnchorScan(ir) {
   const out = [];
   const scan = (text, site, siteName) => {

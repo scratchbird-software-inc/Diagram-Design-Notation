@@ -92,7 +92,7 @@
   },
   "diagnostics": {
     "documentedFixes": {
-      "value": 146,
+      "value": 149,
       "source": "tools/ai-reference/diagnostic-fixes.json (fixes)"
     }
   },

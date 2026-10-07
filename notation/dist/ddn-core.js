@@ -2255,6 +2255,33 @@
       }
     }
     function fail(code,msg,t,source){throw new DDNError(code,msg,source,t?.start||0);}
+    /* 0.8 amendment (Unicode identifiers, spec ch. 01): identifiers follow
+     * UAX #31 — ID_Start followed by ID_Continue — plus the ASCII separators
+     * '_' and '-', so the kebab-case convention and every ASCII identifier are
+     * unchanged. The UTS #39 security profile (conservative): identifiers must
+     * be in NFC (DDN-ID03 — no silent normalization, identity is lexical),
+     * carry no zero-width/bidi-control/format characters (DDN-ID01), and use a
+     * single script per identifier (DDN-ID02 — Common/Inherited characters and
+     * separators are script-neutral). Pre-0.9 processors reject such files
+     * cleanly as DDN006 parse errors, so no dialect gate is needed. */
+    const ID_SRC='[\\p{ID_Start}_][\\p{ID_Continue}_-]*';
+    const IDENT_RE_U=new RegExp('^'+ID_SRC+'$','u');
+    const ID_LEX_RE=new RegExp('^'+ID_SRC,'u');
+    const REFPATH_RE_U=new RegExp('^'+ID_SRC+'(\\.'+ID_SRC+')*$','u');
+    const ID_SCRIPTS=['Latin','Greek','Cyrillic','Han','Hiragana','Katakana','Hangul','Arabic','Hebrew','Devanagari','Thai','Armenian','Georgian'];
+    const ID_SCRIPT_RE=new Map(ID_SCRIPTS.map(sc=>[sc,new RegExp('\\p{Script='+sc+'}','u')]));
+    function checkUnicodeId(name,t,source){
+      if(name!==name.normalize('NFC'))fail('DDN-ID03','Identifier '+JSON.stringify(name)+' is not in NFC; write the composed form (normalization is never applied silently — identity is lexical)',t,source);
+      if(/\p{Cf}/u.test(name))fail('DDN-ID01','Identifier '+JSON.stringify(name)+' contains a zero-width, bidirectional-control or other format character (UTS #39 profile: no invisible or reordering characters in identifiers)',t,source);
+      const scripts=new Set();let other=false;
+      for(const ch of name){
+        if(/[\p{Script=Common}\p{Script=Inherited}\p{M}_-]/u.test(ch))continue;
+        let hit=null;
+        for(const sc of ID_SCRIPTS)if(ID_SCRIPT_RE.get(sc).test(ch)){hit=sc;break;}
+        if(hit)scripts.add(hit);else other=true;
+      }
+      if(scripts.size>1||(scripts.size===1&&other))fail('DDN-ID02','Identifier '+JSON.stringify(name)+' mixes scripts ('+[...scripts].join(', ')+(other?', other':'')+'); write single-script identifiers (UTS #39 confusable profile) — a mixed-language name belongs in a label string',t,source);
+    }
     function lex(text, source='input.ddn') {
       if (typeof text!=='string') throw new TypeError('Source must be a UTF-8 decoded string');
       if (text.length>2_000_000) fail('DDN001','Source exceeds demonstrator size limit',null,source);
@@ -2279,8 +2306,9 @@
           const unit=text.slice(i).match(/^(?:px|pt|mm|cm|in|ms|min|s|h|d|%)(?![A-Za-z0-9_])/);
           if(unit){i+=unit[0].length;out.push({type:'quantity',value:{$quantity:value,unit:unit[0]},start,end:i});}
           else out.push({type:'number',value,start,end:i});continue;}
-        const id=text.slice(i).match(/^[A-Za-z_][A-Za-z0-9_-]*/);
-        if(id){let name=id[0];if(name.endsWith('-')&&text[i+name.length]==='>')name=name.slice(0,-1);i+=name.length;out.push({type:'id',value:name,start,end:i});continue;}
+        const id=text.slice(i).match(ID_LEX_RE);
+        if(id){let name=id[0];if(name.endsWith('-')&&text[i+name.length]==='>')name=name.slice(0,-1);i+=name.length;if(/[^\x00-\x7F]/.test(name))checkUnicodeId(name,{start},source);out.push({type:'id',value:name,start,end:i});continue;}
+        if(/\p{Cf}/u.test(c))fail('DDN-ID01','Zero-width, bidirectional-control or format character U+'+c.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')+' in source (UTS #39 profile: no invisible or reordering characters)',{start},source);
         if('{}[]:;,.@()'.includes(c)){out.push({type:c,value:c,start,end:++i});continue;}
         fail('DDN006',`Unexpected character ${JSON.stringify(c)}`,{start},source);
       }
@@ -2615,7 +2643,9 @@
       while(peek().type==='id'&&peek().value==='import')importLine();
       do{
         expect('id','module');let module=expect('string').value;expect(';');
-        if(!/^[A-Za-z0-9][A-Za-z0-9._:/-]*$/.test(module))fail('DDN013','Invalid module identity',tokens[pos-2],source);
+        /* Unicode identifiers (ch. 01 amendment): module identities follow the same UAX #31 profile, with the existing . : / - separators. */
+        if(!/^[\p{ID_Start}0-9][\p{ID_Continue}._:/-]*$/u.test(module))fail('DDN013','Invalid module identity',tokens[pos-2],source);
+        if(/[^\x00-\x7F]/.test(module))for(const part of module.split('.'))checkUnicodeId(part,{start:0},source);
         if(!sections.length)while(peek().type==='id'&&peek().value==='import')importLine();
         const decls=[];
         while(peek().type!=='eof'&&!(peek().type==='id'&&peek().value==='module')){
@@ -2706,7 +2736,7 @@
             // (/, :, leading digit) must not be substituted: it would produce
             // text the internal re-parse cannot tokenize.
             if(module&&module!==tokens[i+1].value){
-              if(/^[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*$/.test(module))edits.push({start:tokens[i+1].start,end:tokens[i+1].end,text:module});
+              if(REFPATH_RE_U.test(module))edits.push({start:tokens[i+1].start,end:tokens[i+1].end,text:module});
               else diagnostics.push({code:'DDN-W014',severity:'warning',message:'Cannot canonicalize @'+tokens[i+1].value+'.'+rest.join('.')+' in '+path+': module identity '+JSON.stringify(module)+' is not expressible as a reference; reference left as-is.',source:path});
             }
             else if(!module)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Cannot canonicalize @'+tokens[i+1].value+'.'+rest.join('.')+' in '+path+'; reference left as-is.',source:path});
@@ -2835,7 +2865,7 @@
        * string (labels, string values). $${ escapes to a literal ${. Args are
        * bound positionally (DDN-FG01 arity); an arg that cannot serve the
        * position it lands in is DDN-FG03; an unknown ${name} is DDN-FG02. */
-      const IDENT_RE=/^[A-Za-z_][A-Za-z0-9_-]*$/,REFPATH_RE=/^[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*$/;
+      const IDENT_RE=IDENT_RE_U,REFPATH_RE=REFPATH_RE_U;
       function bindArgs(def,r,node,at,enclosing){
         if(!def.params?.length){if(r.$args)throw new DDNError('DDN-FG01','@'+r.$ref+' declares no parameters; remove the argument list',node.source,at);return null;}
         if(!r.$args||r.$args.length!==def.params.length)throw new DDNError('DDN-FG01','@'+r.$ref+' takes '+def.params.length+' argument(s) ('+def.params.join(', ')+'); found '+(r.$args?r.$args.length:0),node.source,at);
@@ -2846,7 +2876,7 @@
         return new Map(def.params.map((p,i)=>{const a=r.$args[i];return [p,typeof a==='string'&&enclosing?.includes(a)?{$pt:a}:a];}));
       }
       function substString(s,mapping,node){
-        return s.replace(/\$\$\{|\$\{([A-Za-z_][A-Za-z0-9_-]*)\}/g,(m,name)=>{
+        return s.replace(/\$\$\{|\$\{([\p{ID_Start}_][\p{ID_Continue}_-]*)\}/gu,(m,name)=>{
           if(name===undefined)return '${';
           if(!mapping.has(name))throw new DDNError('DDN-FG02','Unknown parameter ${'+name+'} in a fragment string; declared parameters: '+[...mapping.keys()].map(p=>'${'+p+'}').join(', '),node.source,node.start);
           const v=mapping.get(name);
@@ -2871,7 +2901,7 @@
       function substNode(n,mapping){
         if(!mapping)return n;
         if(n.id&&mapping.has(n.id)){const a=mapping.get(n.id),t=a&&typeof a==='object'&&a.$pt?a.$pt:a;
-          if(typeof t!=='string'||!IDENT_RE.test(t))throw new DDNError('DDN-FG03','Parameter '+n.id+' substitutes into a declaration id, which needs an identifier ([A-Za-z_][A-Za-z0-9_-]*); found '+JSON.stringify(a),n.source,n.start);
+          if(typeof t!=='string'||!IDENT_RE.test(t))throw new DDNError('DDN-FG03','Parameter '+n.id+' substitutes into a declaration id, which needs an identifier (UAX #31 ID_Start/ID_Continue plus _ and -); found '+JSON.stringify(a),n.source,n.start);
           n.id=t;}
         if(typeof n.label==='string')n.label=substString(n.label,mapping,n);
         n.props=substValue(n.props,mapping,n);
@@ -3646,7 +3676,7 @@
       if(view.props.generator!==undefined){if(typeof view.props.generator!=='string'||!view.props.generator.length)throw new DDNError('DDN046','generator provenance must be nonempty text',view.source,view.start);provenance08.generator=view.props.generator;}
       /* ref: anchors (chapter 55 §S4): parsed and validated here; the anchor
        * resolves to the target's numeral or label at render time (render phase). */
-      const refAnchors08=[],REF_RE=/\bref:([A-Za-z_][A-Za-z0-9_-]*)/g;
+      const refAnchors08=[],REF_RE=/\bref:([\p{ID_Start}_][\p{ID_Continue}_-]*)/gu;
       const scanRefs=(text,siteUid,siteNode)=>{
         if(typeof text!=='string'||!text.includes('ref:'))return;
         for(const m of text.matchAll(REF_RE)){
