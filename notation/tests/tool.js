@@ -1178,6 +1178,30 @@ test('0.9 designer batch 2: reverseRelation remap + projection residue keys + de
   assert.throws(() => A.authoring.setProjectionProperty(ws3, 'm.ddn', 'v', 'bogus_key', 1), e => e.code === 'DDN-E001', 'unknown projection keys stay refused');
 });
 
+test('resizeCommit: handle → constraint mapping (DDN-TF02 clamped, wrap flag)', () => {
+  const B = { x: 0, y: 0, w: 270, h: 100 };
+  /* east drag +60 → max_width 330 + needs-wrap flag */
+  const e = T.resizeCommit('e', B, 60, 0);
+  assert.deepEqual(e.max_width, { $quantity: 330, unit: 'px' });
+  assert.ok(e._needsWrap && !e.max_height, 'width-only write carries the wrap flag');
+  /* west drag +40 → grows 310 */
+  assert.deepEqual(T.resizeCommit('w', B, -40, 0).max_width, { $quantity: 310, unit: 'px' });
+  /* south drag +50 → max_height 150, no wrap flag */
+  const s = T.resizeCommit('s', B, 0, 50);
+  assert.deepEqual(s.max_height, { $quantity: 150, unit: 'px' });
+  assert.ok(!s._needsWrap, 'height-only write never forces wrap');
+  /* diagonal: both */
+  const se = T.resizeCommit('se', B, 60, 50);
+  assert.ok(se.max_width && se.max_height, 'corner writes both');
+  /* north/nw sign handling */
+  assert.deepEqual(T.resizeCommit('n', B, 0, -30).max_height, { $quantity: 130, unit: 'px' });
+  /* clamps: below 40 floors at 40 (DDN-TF02 floor), above 4000 caps */
+  assert.deepEqual(T.resizeCommit('e', B, -500, 0).max_width, { $quantity: 40, unit: 'px' });
+  assert.deepEqual(T.resizeCommit('s', B, 0, 99999).max_height, { $quantity: 4000, unit: 'px' });
+  /* no-op deltas yield no writes */
+  assert.deepEqual(T.resizeCommit('n', B, 0, 0), {}, 'zero drag writes nothing');
+});
+
 test('collision-negotiating placement: findFreeSlot spiral search (pure)', () => {
   const N = (x, y, w = 270, h = 100) => ({ x, y, w, h });
   /* empty space: exact point, no nudge */

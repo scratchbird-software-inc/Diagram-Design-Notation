@@ -119,6 +119,14 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 /* pointer-tool rubber band + multi-select highlight */
 #ddn-rubberband { position: absolute; z-index: 8; border: 1.5px dashed #245ac8; background: #245ac81a; pointer-events: none; }
 .ddn-node.ddn-multisel { filter: drop-shadow(0 0 3px #d97706) drop-shadow(0 0 1px #d97706); }
+/* canvas resize handles (0.9): 8px squares on the selected element's bounds;
+ * ghost previews the drag; both live in the component's canvas layer. */
+.ddn-resize-handle { position: absolute; z-index: 8; width: 8px; height: 8px; background: #fff; border: 1.5px solid #245ac8; border-radius: 2px; box-shadow: 0 1px 3px #243b5940; touch-action: none; }
+.ddn-resize-n, .ddn-resize-s { cursor: ns-resize; }
+.ddn-resize-e, .ddn-resize-w { cursor: ew-resize; }
+.ddn-resize-ne, .ddn-resize-sw { cursor: nesw-resize; }
+.ddn-resize-nw, .ddn-resize-se { cursor: nwse-resize; }
+.ddn-resize-ghost { z-index: 7; border: 1.5px dashed #245ac8; background: #245ac812; pointer-events: none; }
 /* pointer-based palette drag ghost */
 #ddn-drag-ghost { position: fixed; z-index: 20; pointer-events: none; display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #a9c4f5; border-radius: 8px; padding: 4px 8px; font-size: 11.5px; box-shadow: 0 8px 22px #243b5940; opacity: .92; }
 #ddn-drag-ghost .ddn-palette-glyph { width: 18px; height: 18px; }

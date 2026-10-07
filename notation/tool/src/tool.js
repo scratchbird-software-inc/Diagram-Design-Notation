@@ -79,7 +79,7 @@ function paletteFilter(kinds, projection, showAll) {
 
 const pure = {
   DRAWERS, DRAWER_STATES, GEAR_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig, parseToolbarParam,
-  computeFitScale, overrideRuleFor, typographyRuleFor, recentColours, relationColourRuleFor, lineStyleRuleFor, outlineRuleFor, overrideCss, toolOverrides, viewListFrom, findFreeSlot,
+  computeFitScale, overrideRuleFor, typographyRuleFor, recentColours, relationColourRuleFor, lineStyleRuleFor, outlineRuleFor, overrideCss, toolOverrides, viewListFrom, findFreeSlot, resizeCommit,
   overrideProfileWrites, cssOverlayRecord, pickEntryView,
   isPlausibleSourceFile, freshLocalId, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
   templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic,
@@ -520,6 +520,8 @@ function mount() {
     attachPointerSelect();
     attachContextMenu();
     attachHover();
+    syncResizeHandles();
+    { const st = stageEl(); if (st && !st.dataset.toolResizeTrack) { st.dataset.toolResizeTrack = 'true'; st.addEventListener('scroll', () => syncResizeHandles(), { passive: true }); } }
     updateCreatorGate();
     syncQuickToggles();
     refreshInspector();
@@ -558,6 +560,7 @@ function currentScale() {
   return (parseFloat(svg.style.width) || w) / w;
 }
 function applyFit() {
+  syncResizeHandles();
   const d = state.diagram;
   if (!d || !d.result) return;
   const stage = stageEl();
@@ -2012,6 +2015,7 @@ function onSelect(detail) {
   syncQuickToggles();
   inspector(id, ir, relation);
   autoDrawerForSelection(true);
+  syncResizeHandles();
   if (design.pointer) {
     if (state.config.drawers.properties !== 'open') setDrawer('properties', 'open', true);
     renderPropertiesPanel();
@@ -2027,6 +2031,7 @@ function deselect() {
   applyOverrideCss();
   refreshEditors();
   syncQuickToggles();
+  clearResizeHandles();
   els.inspectorControls.hidden = true;
   inspectorNote('');
   els.selectionSummary.textContent = 'Click an object or relation in the diagram.';
@@ -3655,6 +3660,148 @@ function connectElements(from, to, kind, name) {
   });
 }
 
+/* 0.9 owner request: canvas resize handles. Elements have no explicit size —
+ * boxes are text-derived and bounded by max_width/max_height/min_font/text_fit
+ * (ch.54/§6C). A single selected element gets 8 handles on its rendered
+ * bounds (overlay divs in the stage's canvas layer — they scroll with pan and
+ * are recomputed on render/zoom; pure CSS show/hide, never a re-render).
+ * Dragging previews a ghost outline; release writes the bound via
+ * authoring.setElementProperties: width → max_width (+ text_fit: wrap when
+ * unset, since a width bound only bites with wrapping), height → max_height.
+ * Handles win hit priority over the node body (capture phase), so pin-drag is
+ * untouched; multi-select and data-bound projections show nothing. */
+const RESIZE_DIRS = ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'];
+/* Pure handle→constraint mapping (node-testable): a drag of `dx,dy` world px
+ * along `dir` from `bounds` yields the clamped write set (DDN-TF02 40..4000). */
+function resizeCommit(dir, bounds, dx, dy) {
+  const dw = dir.includes('e') ? dx : dir.includes('w') ? -dx : 0;
+  const dh = dir.includes('s') ? dy : dir.includes('n') ? -dy : 0;
+  const clamp = v => Math.max(40, Math.min(4000, Math.round(v)));
+  const out = {};
+  if (dw) {
+    const w = clamp(bounds.w + dw);
+    if (w !== bounds.w) { out.max_width = { $quantity: w, unit: 'px' }; out._needsWrap = true; }
+  }
+  if (dh) {
+    const h = clamp(bounds.h + dh);
+    if (h !== bounds.h) out.max_height = { $quantity: h, unit: 'px' };
+  }
+  return out;
+}
+const resizeState = { handleEls: [], ghost: null, drag: null, explained: false };
+function resizeTargets() {
+  const d = state.diagram;
+  if (!d || !d.result || !state.config.design || !graphEditable()) return null;
+  if (state.selectedRelation || !state.selected || (state.selectedIds || []).length !== 1) return null;
+  const g = d.result.scene.nodes.find(n => n.id === state.selected);
+  return g ? { id: state.selected, bounds: { x: g.x, y: g.y, w: g.w, h: g.h } } : null;
+}
+function clearResizeHandles() {
+  for (const h of resizeState.handleEls) h.remove();
+  resizeState.handleEls = [];
+  if (resizeState.ghost) { resizeState.ghost.remove(); resizeState.ghost = null; }
+  resizeState.drag = null;
+}
+function syncResizeHandles() {
+  clearResizeHandles();
+  const t = resizeTargets();
+  if (!t) return;
+  const stage = stageEl();
+  if (!stage) return;
+  const canvas = stage.querySelector('.canvas');
+  if (!canvas) return;
+  const drawing = canvas.querySelector('svg g[id$="drawing"]');
+  if (!drawing) return;
+  const ctm = drawing.getScreenCTM();
+  if (!ctm) return;
+  const cr = canvas.getBoundingClientRect();
+  const toClient = (wx, wy) => { const p = new DOMPoint(wx, wy).matrixTransform(ctm); return { x: p.x - cr.x, y: p.y - cr.y }; };
+  const { x, y, w, h } = t.bounds;
+  const corners = {
+    nw: toClient(x, y), n: toClient(x + w / 2, y), ne: toClient(x + w, y),
+    e: toClient(x + w, y + h / 2), se: toClient(x + w, y + h), s: toClient(x + w / 2, y + h),
+    sw: toClient(x, y + h), w: toClient(x, y + h / 2)
+  };
+  for (const dir of RESIZE_DIRS) {
+    const p = corners[dir];
+    const el = document.createElement('div');
+    el.className = 'ddn-resize-handle ddn-resize-' + dir;
+    el.dataset.dir = dir;
+    el.dataset.node = t.id;
+    el.style.left = (p.x - 4) + 'px';
+    el.style.top = (p.y - 4) + 'px';
+    el.title = 'Resize — sets the element\'s max bounds (size is text-derived)';
+    el.setAttribute('aria-label', 'resize handle ' + dir);
+    el.addEventListener('pointerdown', e => startResizeDrag(e, dir, t));
+    canvas.append(el);
+    resizeState.handleEls.push(el);
+  }
+}
+function startResizeDrag(e, dir, target) {
+  if (e.button !== 0) return;
+  e.stopPropagation(); e.preventDefault();
+  const stage = stageEl();
+  const canvas = stage.querySelector('.canvas');
+  const drawing = canvas.querySelector('svg g[id$="drawing"]');
+  const inv = drawing.getScreenCTM().inverse();
+  const scale = 1 / (Math.abs(inv.a) || 1);
+  const start = new DOMPoint(e.clientX, e.clientY).matrixTransform(inv);
+  const ghost = document.createElement('div');
+  ghost.className = 'ddn-resize-ghost';
+  ghost.style.position = 'absolute';
+  stage.append(ghost);
+  resizeState.ghost = ghost;
+  resizeState.drag = { dir, start, target, ghost, scale, canvas };
+  try { e.target.setPointerCapture(e.pointerId); } catch { /* synthetic */ }
+  const move = ev => {
+    const d = resizeState.drag;
+    if (!d) return;
+    const p = new DOMPoint(ev.clientX, ev.clientY).matrixTransform(drawing.getScreenCTM().inverse());
+    const dx = p.x - d.start.x, dy = p.y - d.start.y;
+    const dw = d.dir.includes('e') ? dx : d.dir.includes('w') ? -dx : 0;
+    const dh = d.dir.includes('s') ? dy : d.dir.includes('n') ? -dy : 0;
+    const cr = d.canvas.getBoundingClientRect();
+    const b = d.target.bounds;
+    const nw = Math.max(40, b.w + dw), nh = Math.max(40, b.h + dh);
+    const toC = (wx, wy) => { const q = new DOMPoint(wx, wy).matrixTransform(drawing.getScreenCTM()); return { x: q.x - cr.x, y: q.y - cr.y }; };
+    const x1 = d.dir.includes('w') ? b.x + (b.w - nw) : b.x;
+    const y1 = d.dir.includes('n') ? b.y + (b.h - nh) : b.y;
+    const p1 = toC(x1, y1), p2 = toC(x1 + nw, y1 + nh);
+    d.ghost.style.left = Math.min(p1.x, p2.x) + 'px';
+    d.ghost.style.top = Math.min(p1.y, p2.y) + 'px';
+    d.ghost.style.width = Math.abs(p2.x - p1.x) + 'px';
+    d.ghost.style.height = Math.abs(p2.y - p1.y) + 'px';
+    d.dx = dx; d.dy = dy;
+  };
+  const up = ev => {
+    const d = resizeState.drag;
+    resizeState.drag = null;
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+    document.removeEventListener('pointercancel', up);
+    if (!d) return;
+    d.ghost.remove();
+    resizeState.ghost = null;
+    const write = resizeCommit(d.dir, d.target.bounds, d.dx || 0, d.dy || 0);
+    const props = {};
+    for (const [k, v] of Object.entries(write)) if (!k.startsWith('_')) props[k] = v;
+    if (!Object.keys(props).length) return;
+    const flat = flatPropsOf(d.target.id);
+    if (write._needsWrap && flat.text_fit === undefined) props.text_fit = 'wrap';
+    guard(() => guided(() => A.authoring.setElementProperties(state.ws, state.entry, state.view, d.target.id, props)));
+    if (!resizeState.explained) {
+      resizeState.explained = true;
+      const settled = state.diagram && state.diagram.ready;
+      const note = () => status('size is text-derived; handles set the element\'s max bounds — the box re-wraps/re-shrinks within them');
+      if (settled && typeof settled.then === 'function') settled.then(note, note);
+      else note();
+    }
+  };
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+  document.addEventListener('pointercancel', up);
+}
+
 /* Design gesture clicks intercept the stage in the CAPTURE phase, ahead of the
  * component's own select/pan handlers, and are consumed (no selection, no pan)
  * until the gesture completes or Esc cancels. */
@@ -3766,6 +3913,7 @@ els.italicToggle.addEventListener('click', () => typographyQuickToggle('italic')
  * (scene bounds — the same world math as drag-to-pin). The selection feeds the
  * inspector's multi-selection helpers and the Properties drawer. */
 function applyMultiSelect() {
+  if ((state.selectedIds || []).length !== 1) clearResizeHandles();
   const ids = state.selectedIds;
   state.selected = ids.length === 1 ? ids[0] : null;
   state.selectedRelation = null;
