@@ -158,7 +158,7 @@ const els = {
   sheetTitle: $('ddn-sheet-title'), sheetEmpty: $('ddn-sheet-empty'),
   sheetOutline: $('ddn-sheet-outline'), sheetEditor: $('ddn-sheet-editor'),
   pointerToggle: $('ddn-pointer-toggle'),
-  cutBtn: $('ddn-cut'), copyBtn: $('ddn-copy'), pasteBtn: $('ddn-paste'),
+  cutBtn: $('ddn-cut'), copyBtn: $('ddn-copy'), pasteBtn: $('ddn-clipboard-paste'),
   boldToggle: $('ddn-bold-toggle'), italicToggle: $('ddn-italic-toggle'),
   creatorTabs: $('ddn-creator-tabs'), creatorIcons: $('ddn-creator-icons'),
   paletteFamily: $('ddn-palette-family'), paletteFamilyMenu: $('ddn-palette-family-menu'),

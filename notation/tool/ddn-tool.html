@@ -512,7 +512,7 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
           <button id="ddn-copy" type="button" title="Copy — the selected element's definition goes to the element clipboard">
             <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="9" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M10.5 5.5v-3h-8v9h3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
           </button>
-          <button id="ddn-paste" type="button" title="Paste — create a new element from the clipboard with a fresh identifier">
+          <button id="ddn-clipboard-paste" type="button" title="Paste — create a new element from the clipboard with a fresh identifier">
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5h6v2H5z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><rect x="3.5" y="4.5" width="9" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
           </button>
           <span class="ddn-creator-sep"></span>
@@ -9034,7 +9034,7 @@ const els = {
   sheetTitle: $('ddn-sheet-title'), sheetEmpty: $('ddn-sheet-empty'),
   sheetOutline: $('ddn-sheet-outline'), sheetEditor: $('ddn-sheet-editor'),
   pointerToggle: $('ddn-pointer-toggle'),
-  cutBtn: $('ddn-cut'), copyBtn: $('ddn-copy'), pasteBtn: $('ddn-paste'),
+  cutBtn: $('ddn-cut'), copyBtn: $('ddn-copy'), pasteBtn: $('ddn-clipboard-paste'),
   boldToggle: $('ddn-bold-toggle'), italicToggle: $('ddn-italic-toggle'),
   creatorTabs: $('ddn-creator-tabs'), creatorIcons: $('ddn-creator-icons'),
   paletteFamily: $('ddn-palette-family'), paletteFamilyMenu: $('ddn-palette-family-menu'),
