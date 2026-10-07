@@ -73,12 +73,17 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
  * center tabbed palette, right search/hamburger. Tab colours are computed
  * from one base hue (active + 10% grey-shifted inactive, set as CSS vars). */
 .ddn-creator-body { display: flex; gap: 12px; align-items: stretch; }
-.ddn-creator-fixed { flex: none; display: flex; align-items: center; gap: 4px; border-right: 1px solid #e3eaf3; padding-right: 10px; }
+/* Phase 12 follow-up (owner): the left zone stacks the fixed tool grid above
+ * the search/toggle/add-existing/hamburger cluster; the tabbed palette owns
+ * the full remaining width. */
+.ddn-creator-left { flex: 0 0 auto; max-width: 240px; display: flex; flex-direction: column; gap: 8px; border-right: 1px solid #e3eaf3; padding-right: 10px; }
+.ddn-creator-fixed { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 .ddn-creator-fixed button { padding: 5px 6px; }
 .ddn-creator-fixed button svg { width: 15px; height: 15px; display: block; }
-.ddn-creator-sep { width: 1px; align-self: stretch; background: #dbe3ed; margin: 0 3px; }
+.ddn-creator-sep { display: none; }
 .ddn-creator-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.ddn-creator-side { flex: none; position: relative; display: flex; align-items: center; gap: 6px; border-left: 1px solid #e3eaf3; padding-left: 10px; }
+.ddn-creator-side { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
+.ddn-creator-side .ddn-palette-all { white-space: normal; }
 #ddn-creator-tabs { display: flex; flex-wrap: wrap; gap: 2px 4px; justify-content: flex-start; margin-bottom: 6px; }
 #ddn-creator-tabs button { border: 1px solid transparent; border-radius: 7px 7px 0 0; padding: 3px 10px; font-size: 11.5px; background: var(--ddn-tab-inactive, #8b93a0); color: #fff; }
 #ddn-creator-tabs button[aria-selected="true"] { background: var(--ddn-tab-active, #245ac8); border-color: var(--ddn-tab-active, #245ac8); font-weight: 600; }
@@ -89,7 +94,8 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-creator-icon .ddn-palette-glyph svg { width: 22px; height: 22px; }
 .ddn-creator-icon span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #ddn-palette-family-menu, #ddn-existing-menu { position: absolute; top: calc(100% + 4px); right: 0; z-index: 8; }
-#ddn-existing-menu { right: auto; left: 0; top: 100%; max-height: 300px; overflow: auto; }
+#ddn-existing-menu { right: auto; left: 0; top: 100%; max-height: 300px; overflow: auto; z-index: 8; }
+.ddn-creator-left #ddn-palette-family-menu { position: absolute; left: 0; right: auto; top: 100%; }
 #ddn-palette-search { width: 150px; box-sizing: border-box; }
 .ddn-menu { background: #fff; border: 1px solid #cbd5e3; border-radius: 10px; padding: 6px; box-shadow: 0 12px 32px #243b5933; min-width: 220px; max-height: 320px; overflow: auto; }
 .ddn-menu button { display: block; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 6px; padding: 4px 8px; font-size: 12.5px; }
