@@ -1081,7 +1081,7 @@ function buildLineEditor() {
     const spec = lineSpec();
     const srcRow = document.createElement('div'); srcRow.className = 'ddn-colour-row';
     const srcLab = document.createElement('span'); srcLab.className = 'ddn-colour-label'; srcLab.textContent = 'Line colour (source)';
-    const scw = colourWidget('source line colour for relation ' + id, spec.color || '#888888', v => commitLine({ color: v }));
+    const scw = colourWidget('source line colour for relation ' + id, spec.color || '#888888', v => commitLine({ color: v }), { live: false });
     const lclr = document.createElement('button'); lclr.type = 'button'; lclr.className = 'ddn-mini'; lclr.textContent = 'clear';
     lclr.title = 'Remove the whole line { } group from source';
     lclr.addEventListener('click', () => { delete p.relationColours[id]; delete p.lineStyles['rel:' + id]; applyOverrideCss(); guard(() => guided(() => A.authoring.setElementGroup(state.ws, state.entry, state.view, id, 'line', null))); lineEd._sig = null; buildLineEditor(); });
@@ -1165,7 +1165,7 @@ function buildShapeEditor() {
       delete p.objectColours[id]; applyOverrideCss();
       guard(() => guided(() => A.authoring.setElementProperties(state.ws, state.entry, state.view, id, { fill: v })));
       shapeEd._sig = null;
-    });
+    }, { live: false });
     fillRow.append(flab, fcw.root);
     body.append(fillRow);
     const spec = () => groupSpecOf(id, 'stroke');
@@ -1178,7 +1178,7 @@ function buildShapeEditor() {
     const sc = spec();
     const srow = document.createElement('div'); srow.className = 'ddn-colour-row';
     const slab = document.createElement('span'); slab.className = 'ddn-colour-label'; slab.textContent = 'Stroke colour (source)';
-    const scw = colourWidget('source stroke colour for element ' + id, sc.color || '#203047', v => commitStroke({ color: v }));
+    const scw = colourWidget('source stroke colour for element ' + id, sc.color || '#203047', v => commitStroke({ color: v }), { live: false });
     srow.append(slab, scw.root);
     body.append(srow);
     const wt = document.createElement('input'); wt.type = 'number'; wt.min = 0.25; wt.max = 16; wt.step = 0.25; wt.placeholder = 'source'; wt.value = sc.weight != null ? String(sc.weight) : '';
@@ -1803,7 +1803,7 @@ const backgroundInputs = {};
   /* Phase 9: the background colour uses the shared colour widget (recent-
    * colour history) — picking a colour writes immediately, like the other
    * colour entries. */
-  backgroundInputs.color = colourWidget('Background colour', '#ffffff', () => { if (backgroundInputs.kind.value === 'color') commit(); });
+  backgroundInputs.color = colourWidget('Background colour', '#ffffff', () => { if (backgroundInputs.kind.value === 'color') commit(); }, { live: false });
   const cRow = document.createElement('div'); cRow.className = 'ddn-colour-row';
   const cLab = document.createElement('span'); cLab.className = 'ddn-colour-label'; cLab.textContent = 'Colour';
   cRow.append(cLab, backgroundInputs.color.root);
@@ -1882,7 +1882,10 @@ function recordColour(colour) {
     }
   } catch { /* invalid colour — never recorded */ }
 }
-function colourWidget(ariaLabel, current, onPick) {
+/* 0.9 (spec 05 commit behavior): continuous colour drags preview live only on
+ * session-preview channels; source-writing widgets commit ONCE on release
+ * ('change'), never a transaction per drag tick. */
+function colourWidget(ariaLabel, current, onPick, opts) {
   const wrap = document.createElement('span'); wrap.className = 'ddn-colour-widget';
   const inp = document.createElement('input'); inp.type = 'color'; inp.value = current || '#888888';
   inp.setAttribute('aria-label', ariaLabel);
@@ -1899,8 +1902,9 @@ function colourWidget(ariaLabel, current, onPick) {
       }));
     }
   };
-  inp.addEventListener('input', () => onPick(inp.value));
-  inp.addEventListener('change', () => recordColour(inp.value));
+  const live = !opts || opts.live !== false;
+  inp.addEventListener('input', () => { if (live) onPick(inp.value); });
+  inp.addEventListener('change', () => { if (!live) onPick(inp.value); recordColour(inp.value); });
   wrap.append(inp, swatches);
   w.refreshSwatches();
   colourWidgetRegistry.push(w);
@@ -2229,9 +2233,10 @@ function refreshTypeSheet() {
     },
     /* Phase 6b hooks (matrix/chart/timeline/decision/fishbone/panels bodies). */
     setProjection(key, value) { A.authoring.setProjectionProperty(state.ws, state.entry, state.view, key, value); },
+    setProjectionDomain(spec) { A.authoring.setProjectionDomain(state.ws, state.entry, state.view, spec); },
     setMatrixCells(changes) { A.authoring.setMatrixCells(state.ws, state.entry, state.view, changes); },
     setRecordValue(uid, key, value) { A.authoring.setRecordValue(state.ws, state.entry, state.view, uid, key, value); },
-    capabilities() { return A.inspect(state.entry, state.view).capabilities; },
+    capabilities() { return state.ws.inspect(state.entry, state.view).capabilities; },
     views() { return state.ws.views(state.entry); },
     openView(viewId) {
       const idx = (state.viewList || []).findIndex(v => v.entry === state.entry && v.view === viewId);
@@ -2395,6 +2400,15 @@ function viewUsageList(uid) {
   }
   return usedInViews(views, uid);
 }
+/* 0.9 descriptor fields: impacted-scope preview — a model-level edit on a
+ * definition used in several views previews its scope before committing
+ * (destructive or meaning-changing changes; ordinary labels keep the
+ * persistent banner). */
+function impactConfirm(uid) {
+  const n = sharedViews(uid).length;
+  if (n <= 1) return true;
+  return confirm('This definition is used in ' + n + ' views — the change affects all of them. Continue?');
+}
 
 function inspector(id, ir, relation) {
   if (!ir) return;
@@ -2411,7 +2425,7 @@ function inspector(id, ir, relation) {
   els.inspectorControls.hidden = false;
   buildMeaningTab(els.inspectorMeaning, id, ir, { node, relation, fieldItem, multi });
   buildViewTab(els.inspectorView, id, ir, { node, relation, fieldItem, multi });
-  buildDetailsTab(els.inspectorDetails, id, ir, { node, relation, fieldItem });
+  buildDetailsTab(els.inspectorDetails, id, ir, { node, relation, fieldItem, multi });
 }
 
 /* Phase 8: the pointer-selection tool's bottom Properties drawer — JUST the
@@ -2487,7 +2501,7 @@ function buildMeaningTab(panel, id, ir, ctx) {
   }
   const label = document.createElement('input');
   label.type = 'text'; label.value = (node || relation || fieldItem).name || '';
-  label.addEventListener('change', () => guidedInspector(() => A.authoring.setLabel(state.ws, state.entry, state.view, uid, label.value)));
+  label.addEventListener('change', () => { if (!impactConfirm(uid)) { label.value = (node || relation || fieldItem).name || ''; return; } guidedInspector(() => A.authoring.setLabel(state.ws, state.entry, state.view, uid, label.value)); });
   inField(panel, 'Label', label);
 
   /* Kind / verb. Relations: the verb list is filtered by endpoint-pair
@@ -2509,7 +2523,7 @@ function buildMeaningTab(panel, id, ir, ctx) {
     }
     const kind = selectInput(options.map(k => [k.id, k.label + ' (' + k.id + ')']), 'Kind');
     kind.value = (node || relation).kind || '';
-    kind.addEventListener('change', () => guidedInspector(() => A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'kind', kind.value)));
+    kind.addEventListener('change', () => { const old = (node || relation).kind || ''; if (!impactConfirm(uid)) { kind.value = old; return; } guidedInspector(() => A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'kind', kind.value)); });
     inField(panel, relation ? 'Verb' : 'Kind', kind);
     if (note) inNote(panel, note);
   }
@@ -2517,7 +2531,7 @@ function buildMeaningTab(panel, id, ir, ctx) {
   const desc = document.createElement('input');
   desc.type = 'text'; desc.placeholder = 'blank = removed';
   desc.value = typeof ((node || relation || fieldItem).properties || {}).description === 'string' ? (node || relation || fieldItem).properties.description : '';
-  desc.addEventListener('change', () => guidedInspector(() => A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'description', desc.value.trim() || undefined)));
+  desc.addEventListener('change', () => { const old = desc.value; if (!impactConfirm(uid)) { desc.value = old; return; } guidedInspector(() => A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'description', desc.value.trim() || undefined)); });
   inField(panel, 'Description', desc);
 
   if (node) {
@@ -2650,6 +2664,13 @@ function buildRelationMeaning(panel, relation, ir) {
   scope.addEventListener('change', () => guidedInspector(() => A.authoring.setRelationProps(state.ws, state.entry, state.view, uid, { scope: scope.value.trim() || undefined })));
   inField(panel, 'Scope', scope);
 
+  /* 0.9: reverse the relation — endpoints swapped, direction-prefixed
+   * properties (marks, cardinality bounds, end labels) remapped, one
+   * undoable transaction. (No attachment-policy keys exist in the relation
+   * contracts — intentionally not offered.) */
+  const rr = document.createElement('div'); rr.className = 'ddn-row';
+  inButton(rr, 'Reverse relation', 'Swap endpoints; marks, cardinality bounds and end labels remap (one undoable transaction)', () => guidedInspector(() => A.authoring.reverseRelation(state.ws, state.entry, state.view, uid)));
+  panel.append(rr);
   const mh = document.createElement('h4'); mh.textContent = 'Endpoint marks (visual shorthand)';
   panel.append(mh);
   for (const end of ['source', 'target']) {
@@ -2765,14 +2786,40 @@ function buildViewTab(panel, id, ir, ctx) {
  * distinct from blanking it: a blank draft commits `undefined` (removal),
  * never an empty value. --- */
 function buildDetailsTab(panel, id, ir, ctx) {
-  const { relation, fieldItem } = ctx;
+  const { relation, fieldItem, multi } = ctx;
   panel.replaceChildren();
-  let src = null;
-  try { src = A.authoring.sourceOf(state.ws, state.entry, state.view, id); } catch { /* preset-expanded */ }
-  if (!src) { inNote(panel, 'This declaration has no editable source of its own (expanded from a shared definition); edit the definition in source.'); return; }
   const target = relation ? 'relation' : fieldItem ? 'field' : 'element';
   const proj = (ir.view && ir.view.profiles && ir.view.profiles.projection) || {};
   const capabilities = [proj.profile, proj.kind].filter(Boolean);
+  /* 0.9 descriptor `batch`: on a multi-selection, only batch-applicable
+   * descriptors are offered; a commit writes every selected definition in one
+   * guided pass (the core validates each write). */
+  if (multi && multi.count > 1) {
+    const batchable = descriptorsForTarget(FORM_DESCRIPTORS, 'element', { props: {}, capabilities }).filter(d => d.batch === true);
+    if (!batchable.length) { inNote(panel, 'No batch-applicable properties for this selection — batch edits are limited to descriptors flagged safe (spec 05).'); return; }
+    const ids = (state.selectedIds || []).filter(u => !ir.relations.some(r => r.id === u));
+    inNote(panel, ids.length + ' definitions selected — batch edits write every selected definition (one validated write each); only batch-safe properties are offered.');
+    const form = FRM.renderForm(panel, batchable, {
+      flat: true,
+      getValue: () => undefined,
+      note: inspectorNote,
+      commit(d, v) {
+        flush();
+        if (!confirm('Apply ' + d.label + ' to ' + ids.length + ' selected definitions?')) return;
+        for (const uid of ids) A.authoring.setElementProperties(state.ws, state.entry, state.view, uid, { [d.key]: v });
+        showSource(state.currentFile);
+        updateHistory();
+        inspectorNote('');
+        status('batch edit applied to ' + ids.length + ' definitions — undo restores the previous source');
+        refreshInspector();
+      }
+    });
+    form.sync();
+    return;
+  }
+  let src = null;
+  try { src = A.authoring.sourceOf(state.ws, state.entry, state.view, id); } catch { /* preset-expanded */ }
+  if (!src) { inNote(panel, 'This declaration has no editable source of its own (expanded from a shared definition); edit the definition in source.'); return; }
   const ownedByMeaning = ['kind', 'description'];
   const visible = descriptorsForTarget(FORM_DESCRIPTORS, target, { props: src.properties, capabilities })
     .filter(d => !ownedByMeaning.includes(d.key));
@@ -3659,6 +3706,7 @@ function relationCtxEntries(id, gx, gy) {
     { head: id },
     { label: 'Edit label…', fn: () => { openInspectorFor(id, true); status('edit the label in the Inspector (Meaning tab)'); } },
     { label: 'Cardinality…', title: 'Open the cardinality editor in the Inspector', fn: () => openInspectorFor(id, true) },
+    { label: 'Reverse relation', title: 'Swap endpoints and remap the direction-prefixed properties (marks, cardinality bounds, end labels) — one undoable transaction', fn: () => guided(() => { A.authoring.reverseRelation(state.ws, state.entry, state.view, id); status('reversed ' + id + ' — endpoints swapped; marks, cardinality bounds and end labels remapped'); }) },
     { label: 'Delete', fn: () => guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, id)) },
     '-',
     { label: 'Properties', fn: () => openPropertiesFor(id, true) }

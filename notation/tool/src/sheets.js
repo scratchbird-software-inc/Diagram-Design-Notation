@@ -1675,6 +1675,39 @@ function renderMatrixSheet(target, hooks) {
     disc.disabled = !batch.length;
     bar.append(commitB, disc);
     editorEl.append(bar);
+
+    /* 0.9 sheet residue (designer/specification/09): row/column selectors
+     * (projection.rows / projection.columns are the declared bound lists) and
+     * the duplicate-cell policy (projection.duplicates: error|join — join is
+     * refused by RACI/CRUD, DDN-PJ014). Rows/columns add from the view's
+     * selected data elements; removing one leaves its cell relations behind —
+     * the core judges (DDN-PJ013/015 family) and the error surfaces. */
+    editorEl.append(el('h4', '', 'Rows / columns / duplicate policy — this view only'));
+    const members = (p.rows || []).map(r => r.$ref), cols = (p.columns || []).map(r => r.$ref);
+    const inList = new Set([...members, ...cols]);
+    const candidates = (ir.elements || []).filter(n => !inList.has(n.id) && (n.properties && n.properties.x_record || true));
+    for (const [listKey, label] of [['rows', 'Row'], ['columns', 'Column']]) {
+      const list = (p[listKey] || []).map(r => r.$ref);
+      const row = el('div', 'ddn-row');
+      row.append(el('span', 'ddn-dim', label + 's (' + list.length + '): ' + list.map(u => u.split('.').pop()).join(', ')));
+      const pick = selectOf([['', '— add element —'], ...candidates.map(n => [n.id, (n.name || n.local || n.id)])], '', 'add ' + label.toLowerCase());
+      pick.addEventListener('change', () => {
+        if (!pick.value) return;
+        commit(() => hooks.setProjection(listKey, hooks.sourceRefs([...list, pick.value])));
+      });
+      row.append(pick);
+      const rm = selectOf([['', '— remove —'], ...list.map(u => [u, u.split('.').pop()])], '', 'remove ' + label.toLowerCase());
+      rm.addEventListener('change', () => {
+        if (!rm.value) return;
+        commit(() => hooks.setProjection(listKey, hooks.sourceRefs(list.filter(u => u !== rm.value))));
+      });
+      row.append(rm);
+      editorEl.append(row);
+    }
+    const dupPolicy = selectOf([['', 'default (error)'], ['error', 'error — one assignment per cell'], ['join', 'join — merge duplicates into one cell']], p.duplicates || '', 'duplicate policy');
+    dupPolicy.addEventListener('change', () => commit(() => hooks.setProjection('duplicates', dupPolicy.value || undefined)));
+    editorEl.append(fieldRow('Duplicate policy ', dupPolicy));
+    if (['matrix.raci@1', 'matrix.crud@1'].includes(p.profile)) editorEl.append(el('p', 'ddn-dim', 'RACI/CRUD require one declared assignment per cell (DDN-PJ014) — the join policy is refused for this profile on commit.'));
   }
 
   paint();
@@ -1773,6 +1806,26 @@ function renderChartSheet(target, hooks) {
     bindRow('Missing policy', ['error', 'skip'], p.missing, 'missing');
     if (planError) editorEl.append(el('p', 'ddn-sheet-error', planError + ' The source stays committed and saveable; fix the binding above.'));
     editorEl.append(el('p', 'ddn-dim', 'Field pickers offer only keys present on the bound records; y/size offer keys numeric on every record that declares them. Aggregates never create an editable synthetic total record; edit the input records.'));
+
+    /* 0.9 sheet residue (09): chart.quality@1 series/transform surface —
+     * series binding (a view-scope x_record path), arrangement
+     * (group/stack/percent), transform (identity/histogram/pareto/waterfall/
+     * boxplot — DDN-QC001 contracts), series_missing policy (gap/zero/error —
+     * DDN-QC020). Series membership is data-derived (a series exists iff a
+     * bound record carries that value), so the list is read-only with counts
+     * and the contract's limits are named, not faked. */
+    if (p.profile === 'chart.quality@1') {
+      editorEl.append(el('h4', '', 'Series & transforms — chart.quality@1 (this view)'));
+      bindRow('Series binding', paths(keys), p.series, 'series');
+      bindRow('Arrangement', ['group', 'stack', 'percent'], p.arrangement, 'arrangement');
+      bindRow('Transform', ['identity', 'histogram', 'pareto', 'waterfall', 'boxplot'], p.transform || 'identity', 'transform');
+      bindRow('Missing series policy', ['gap', 'zero', 'error'], p.series_missing, 'series_missing');
+      if (p.series) {
+        const counts = new Map();
+        for (const n of records) { const v = n.properties.x_record[String(p.series).split('.').at(-1)]; counts.set(String(v), (counts.get(String(v)) || 0) + 1); }
+        editorEl.append(el('p', 'ddn-dim', 'Series present (data-derived): ' + [...counts].map(([v, c]) => v + '×' + c).join(', ') + '. Membership follows the bound records — add/edit records above; the contract has no per-series order or per-series missing policy (series_missing is view-wide).'));
+      }
+    }
   }
 
   paint();
@@ -2054,6 +2107,50 @@ function renderDecisionSheet(target, hooks) {
       hooks.addDecisionRule({ id: idI.value.trim(), label: labelI.value.trim() || idI.value.trim(), then });
     })));
     editorEl.append(bar);
+
+    /* 0.9 sheet residue (09): input/output domain editing — the declared
+     * domains the typed predicate cells read (checkDecisionRule stays the
+     * pre-check authority; the commit-time build re-validates). */
+    editorEl.append(el('h4', '', 'Input domains & outputs — this view only (projection.inputs / outputs)'));
+    for (const d of inputs) {
+      const row = el('div', 'ddn-row');
+      row.append(el('span', '', d.key + ' (' + d.type + (d.values ? ': ' + d.values.join('|') : d.min !== undefined || d.max !== undefined ? ': ' + (d.min ?? '') + '…' + (d.max ?? '') : '') + (d.optional ? ', optional' : '') + ')'));
+      row.append(mini('Remove', 'Remove this input domain — rules referencing it fail validation at commit (coded error surfaces)', () => commit(() => {
+        hooks.setProjection('inputs', inputs.filter(x => x.key !== d.key));
+      })));
+      editorEl.append(row);
+    }
+    const inKey = textInput('', 'input_key', 'New input key');
+    const inType = selectOf([['enum', 'enum'], ['number', 'number'], ['boolean', 'boolean']], 'enum', 'input type');
+    const inVals = textInput('', 'enum values', 'enum values, comma-separated (or min,max for number)');
+    const addRow = el('div', 'ddn-row');
+    addRow.append(inKey, inType, inVals, mini('＋ Add input', 'Add a declared input domain (enum values or number min/max from the text field)', () => commit(() => {
+      const key = inKey.value.trim();
+      if (!key) throw Object.assign(new Error('An input domain needs a key.'), { code: 'DDN-UI19' });
+      if (inputs.some(x => x.key === key)) throw Object.assign(new Error('Duplicate input key ' + key + '.'), { code: 'DDN-UI19' });
+      const d = { key, type: inType.value };
+      const raw = inVals.value.trim();
+      if (inType.value === 'enum') { d.values = raw.split(',').map(x => x.trim()).filter(Boolean); if (!d.values.length) throw Object.assign(new Error('An enum input needs at least one declared value.'), { code: 'DDN-UI19' }); }
+      else if (inType.value === 'number' && raw) { const [lo, hi] = raw.split(',').map(x => Number(x.trim())); if (Number.isFinite(lo)) d.min = lo; if (Number.isFinite(hi)) d.max = hi; }
+      hooks.setProjection('inputs', [...inputs, d]);
+      paint();
+    })));
+    editorEl.append(addRow);
+    editorEl.append(el('p', 'ddn-dim', 'Outputs (' + outputs.length + '): ' + outputs.join(', ')));
+    const outRow = el('div', 'ddn-row');
+    const outKey = textInput('', 'output_key', 'New output key');
+    outRow.append(outKey, mini('＋ Add output', 'Add an output key (rules give it a value per row)', () => commit(() => {
+      const key = outKey.value.trim();
+      if (!key) throw Object.assign(new Error('An output needs a key.'), { code: 'DDN-UI19' });
+      if (outputs.includes(key)) throw Object.assign(new Error('Duplicate output key ' + key + '.'), { code: 'DDN-UI19' });
+      hooks.setProjectionDomain({ outputs: [...outputs, key] });
+      paint();
+    })));
+    for (const o of outputs) outRow.append(mini('Remove ' + o, 'Remove this output — rule outcomes for it are dropped in the same transaction', () => commit(() => {
+      hooks.setProjectionDomain({ outputs: outputs.filter(x => x !== o) });
+      paint();
+    })));
+    editorEl.append(outRow);
 
     /* One typed predicate cell (prototype port: op picker + per-op control). */
     function predCell(rule, d) {

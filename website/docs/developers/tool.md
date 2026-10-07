@@ -96,7 +96,12 @@ legal verbs — confirming adds the element (fresh id, pinned beside the
 source), adds the relation and runs auto-layout in one guided transaction,
 with the numbered-legend callout key assigned in the same write when the
 view's legend is `mode: numbers` (the authoring layer keeps the DDN061
-invariant).
+invariant). Relation menus also carry **Reverse relation**
+(`authoring.reverseRelation`): endpoints swap and the direction-prefixed
+properties (endpoint marks, cardinality bounds, `x_endlabels` roles)
+remap in one undoable transaction; double-reverse is the identity. (There
+is intentionally no attachment-policy editing — the relation contracts
+carry no attachment-policy keys.)
 
 While the **inspector** or **properties** drawer is open, hovering the
 canvas highlights whatever a click would select — a soft glow on elements,
@@ -173,7 +178,16 @@ hide, pin, per-occurrence display), and **Details** (a descriptor-generated
 form over the element's registered properties, editable through
 `authoring.setElementProperties`). Every control group across the document,
 style and inspector drawers is labeled with its write scope — **Model**,
-**View override** or **Session preview**.
+**View override** or **Session preview**. Descriptor-driven forms (spec 05)
+support `priority` (ordering within a group), `batch` applicability
+(batch-safe descriptors appear on multi-selection edits and write every
+selected definition, confirmed first) and destructive-change `warning`
+(a confirm dialog naming the consequence before commit); all three ride an
+optional `ui` record on the registry property contracts and regenerate with
+`designer/contracts/build-form-descriptors.mjs`. Model-level edits on a
+definition used in several views preview the impacted scope ("used in n
+views — continue?") before committing. Source-bound colour widgets commit
+once on release, never a transaction per drag tick.
 
 The **type sheet** is a contextual bottom drawer for the active view's
 projection type. It auto-opens when the view has a registered sheet body —
@@ -185,7 +199,17 @@ sequence (lifelines, messages, fragments), BPMN (events/gateways), patent
 (dates/dependencies), decision (typed predicate cells), fishbone (rib tree)
 and panels (grid/child-view slots) — and auto-closes when it has none;
 opening or closing it by hand pins that choice for the view until the view
-changes.
+changes. The data-projection sheets also edit their structure: the **matrix**
+sheet adds/removes bound rows and columns (`projection.rows`/`columns`) and
+sets the duplicate-cell policy (`projection.duplicates`, error|join —
+RACI/CRUD refuse join per DDN-PJ014); the **chart** sheet exposes the
+chart.quality@1 series binding, arrangement (group/stack/percent), transform
+(identity/histogram/pareto/waterfall/boxplot) and the view-wide
+`series_missing` policy (gap/zero/error) — series membership is data-derived
+and listed read-only with counts; the **decision** sheet edits the declared
+input domains and output keys, with output additions atomically defaulting
+every bound rule (`authoring.setProjectionDomain` — DDN-QD003's interlock
+never sees a half-written state).
 
 Each drawer has four states — `open`, `closed`, `none` (icon hidden,
 unavailable to everyone), `api` (icon hidden, not user-openable, but openable

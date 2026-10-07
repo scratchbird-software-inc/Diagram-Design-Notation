@@ -129,12 +129,20 @@ rationale:
 - [ ] AUD-003 command set remainder (kind conversion, deep field
       reorder/reparent, multi-occurrence, typed scope membership) (pending owner)
 - [ ] AUD-004 versioned occurrence contract (grammar RFC)
-- [ ] Canvas multi-select gestures (designer)
-- [ ] Attachment-policy editing + Reverse relation op (designer)
-- [ ] Sheet residue: matrix row/col selectors + duplicate policy; chart.quality
+- [x] Canvas multi-select gestures (designer) — pointer tool: ctrl/shift-click toggle + rubber-band on empty canvas (phase 12; headless-verified)
+- [x] Profile-filtered specialized shelves (designer) — the Creator drawer's hamburger swaps palette families from the registry's allowed_in profile/pack tags (display-only, never touches view type); capability filtering on by default (phase 12; headless-verified)
+- [x] Attachment-policy editing + Reverse relation op (designer) — reverseRelation in authoring (endpoint swap + mark/cardinality/endlabel remap, one transaction; double-reverse identity); attachment-policy editing OMITTED: the relation contracts carry no attachment/attachment_policy keys (registry-verified)
+- [x] Sheet residue: matrix row/col selectors + duplicate policy; chart.quality
       series/transform; decision input/output domain editing; timeline drag
-- [ ] Descriptor fields: priority, batch applicability, destructive-change
-      warning; continuous sliders; full impacted-scope preview
+      — timeline start/end already edit per row (phase 6b), ticked as delivered;
+      decision outputs add is atomic with rule defaults (new
+      authoring.setProjectionDomain, DDN-QD003 interlock)
+- [x] Descriptor fields: priority, batch applicability, destructive-change
+      warning; continuous sliders; full impacted-scope preview — ui{} records
+      on registry properties → generator → forms.js (priority order, confirm()
+      warnings); batch flag wires multi-select Details; source-bound colour
+      widgets commit once on release; impacted-scope confirm on shared
+      definitions
 - [x] Fixed-lane occurrence/payload export closure (ch. 11:33) — implemented
       0.8.x amendment (2026-10-07): allowlist projection + whole-or-nothing
       occurrence rules in ddn-export.js, DDN-I033; DDN-I032 retired

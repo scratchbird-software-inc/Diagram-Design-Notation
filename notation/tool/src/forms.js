@@ -272,6 +272,8 @@ function createControl(d, hooks) {
 
   let input, read, write;
   const simpleCommit = () => {
+    /* 0.9 descriptor `warning`: destructive-change text confirmed first. */
+    if (d.warning && typeof host.confirm === 'function' && !host.confirm(d.warning)) return;
     const p = parseDraft(d, read());
     if (!p.ok) { fail(p); return; }
     try { hooks.commit(d, p.value); clear(); } catch (e) { fail(e); }
@@ -373,6 +375,7 @@ function createControl(d, hooks) {
       catch (e) { preview.textContent = d.key + ': (invalid draft — ' + (e.message || e) + ')'; }
     };
     applyB.addEventListener('click', () => {
+      if (d.warning && typeof host.confirm === 'function' && !host.confirm(d.warning)) return;
       let values;
       try { values = readSubs(); } catch (e) { fail(e); return; }
       const outcome = commitRecord(d, values);
@@ -447,7 +450,10 @@ function renderForm(parent, descriptors, opts) {
       if (o.scopeLabel) { const s = el('span', 'ddn-scope ddn-scope-source', o.scopeLabel); h.append(s); }
       sec.append(h);
     }
-    for (const d of g.descriptors) {
+    /* 0.9 descriptor `priority`: lower sorts first within the group; order is
+     * stable for equal/declared-absent priorities. */
+    const ordered = g.descriptors.slice().sort((a, b) => (a.priority || 0) - (b.priority || 0));
+    for (const d of ordered) {
       const ctl = createControl(d, {
         commit: (dd, v) => o.commit(dd, v),
         candidates: o.candidates,

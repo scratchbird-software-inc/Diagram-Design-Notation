@@ -70,6 +70,15 @@ for (const p of dataProperties.properties) {
     validation: {},
     provenance: { source: 'standard/registry/data-properties.json', version: dataProperties.version }
   };
+  /* 0.9 descriptor fields (spec 05): priority (ordering within the group),
+   * batch applicability (safe on multi-selection edits) and destructive-change
+   * warning (confirm dialog text before commit) ride an optional `ui` record
+   * on the registry property contract. */
+  if (p.ui && typeof p.ui === 'object' && !Array.isArray(p.ui)) {
+    if (Number.isInteger(p.ui.priority)) d.priority = p.ui.priority;
+    if (typeof p.ui.batch === 'boolean') d.batch = p.ui.batch;
+    if (typeof p.ui.warning === 'string' && p.ui.warning) d.warning = p.ui.warning;
+  }
   const choices = FORMS.choicesForShape(p.value_shape);
   if (widget === 'select' && choices) d.choices = choices;
   if (widget === 'number') Object.assign(d, numberHints(p.value_shape));

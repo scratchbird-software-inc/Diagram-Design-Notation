@@ -32,7 +32,11 @@
       "constraint": "Literal explanatory content, never executable markup.",
       "default": "absent / not asserted",
       "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
-      "validation_stage": "logical unless constraint states physical, observed or publication"
+      "validation_stage": "logical unless constraint states physical, observed or publication",
+      "ui": {
+        "priority": -10,
+        "batch": true
+      }
     },
     {
       "path": "aliases",
@@ -59,7 +63,11 @@
       "constraint": "Canonical registry ID after alias resolution; display look cannot change it.",
       "default": "absent / not asserted",
       "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
-      "validation_stage": "logical unless constraint states physical, observed or publication"
+      "validation_stage": "logical unless constraint states physical, observed or publication",
+      "ui": {
+        "priority": -20,
+        "warning": "Changing kind re-types every occurrence of this definition in every view that uses it."
+      }
     },
     {
       "path": "level",
@@ -439,7 +447,11 @@
       "constraint": "Normalizes to a fixed family, verb, orientation and compatible endpoints.",
       "default": "absent / not asserted",
       "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
-      "validation_stage": "logical unless constraint states physical, observed or publication"
+      "validation_stage": "logical unless constraint states physical, observed or publication",
+      "ui": {
+        "priority": -20,
+        "warning": "Changing kind re-types every occurrence of this definition in every view that uses it."
+      }
     },
     {
       "path": "source_mark",
@@ -475,7 +487,10 @@
       "constraint": "A drawn relation does not imply database enforcement.",
       "default": "absent / not asserted",
       "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
-      "validation_stage": "logical unless constraint states physical, observed or publication"
+      "validation_stage": "logical unless constraint states physical, observed or publication",
+      "ui": {
+        "warning": "Enforcement changes this relation’s contractual meaning in every view that renders it."
+      }
     },
     {
       "path": "scope",

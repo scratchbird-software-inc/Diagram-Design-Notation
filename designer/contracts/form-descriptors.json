@@ -71,7 +71,9 @@
       "provenance": {
         "source": "standard/registry/data-properties.json",
         "version": "0.3.0-draft.2"
-      }
+      },
+      "priority": -10,
+      "batch": true
     },
     {
       "id": "ddn.prop.aliases",
@@ -117,7 +119,9 @@
       "provenance": {
         "source": "standard/registry/data-properties.json",
         "version": "0.3.0-draft.2"
-      }
+      },
+      "priority": -20,
+      "warning": "Changing kind re-types every occurrence of this definition in every view that uses it."
     },
     {
       "id": "ddn.prop.level",
@@ -852,7 +856,9 @@
       "provenance": {
         "source": "standard/registry/data-properties.json",
         "version": "0.3.0-draft.2"
-      }
+      },
+      "priority": -20,
+      "warning": "Changing kind re-types every occurrence of this definition in every view that uses it."
     },
     {
       "id": "ddn.prop.source_mark",
@@ -919,6 +925,7 @@
         "source": "standard/registry/data-properties.json",
         "version": "0.3.0-draft.2"
       },
+      "warning": "Enforcement changes this relation’s contractual meaning in every view that renders it.",
       "choices": [
         "database",
         "application",

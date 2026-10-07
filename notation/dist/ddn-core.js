@@ -5277,8 +5277,42 @@
     * serialize through the canonical `value` writer; `undefined` removes the
     * key. One validated, undoable transaction; the commit-time build re-checks
     * every DDN-PJ/QD/QP rule for the projection kind. */
+   /* 0.9 sheet residue: decision input/output domain edits are atomic — adding
+    * an output must patch every bound rule's x_rule.then with the default in
+    * the SAME transaction (DDN-QD003 rejects rule sets missing a scalar output,
+    * and an unknown output key in a rule is likewise refused). `inputs`/
+    * `outputs` replace the projection lists; `fill` is the default value given
+    * to a newly added output on every bound rule ('undecided' per the sheet's
+    * add-rule default). */
+   setProjectionDomain(ws,entry,view,{inputs,outputs,fill='undecided'}={}){
+    const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];
+    const node=v.children.find(n=>n.type==='projection');
+    if(!node)fail('DDN-E006','The active view declares no projection { } group.');
+    const edits=[];
+    if(inputs!==undefined)edits.push(property(text,node,'inputs',inputs));
+    if(outputs!==undefined)edits.push(property(text,node,'outputs',outputs));
+    if(outputs!==undefined&&Array.isArray(outputs)){
+     const before=(node.props.outputs||[]);
+     const added=outputs.filter(k=>!before.includes(k));
+     if(added.length){
+      const p=(b.ir.view.profiles&&b.ir.view.profiles.projection)||{};
+      for(const rref of p.records||[]){
+       const uid=typeof rref==='string'?rref:rref.$ref;
+       const n=find(b,uid);
+       const rule=n.props.x_rule;
+       if(rule&&rule.then){
+        const then={...rule.then};
+        for(const k of added)if(then[k]===undefined)then[k]=fill;
+        edits.push(property(ws.getFiles()[n.source],n,'x_rule',{...rule,then}));
+       }
+      }
+     }
+    }
+    if(!edits.length)return ws.revision;
+    return apply(ws,b,edits,entry,view);
+   },
    setProjectionProperty(ws,entry,view,key,val){
-    const ALLOWED=['mark','x','y','size','unit','x_type','aggregate','missing','series','series_missing','records','dependencies','hit_policy','coverage','order','panels'];
+    const ALLOWED=['mark','x','y','size','unit','x_type','aggregate','missing','series','series_missing','records','dependencies','hit_policy','coverage','order','panels','rows','columns','duplicates','transform','arrangement','inputs','outputs','bins'];
     if(!ALLOWED.includes(key))fail('DDN-E001','Unknown or unsupported projection property key: '+String(key)+' (allowed: '+ALLOWED.join(', ')+')');
     const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];
     const node=v.children.find(n=>n.type==='projection');
@@ -5297,6 +5331,28 @@
     const edit=property(text,node,key,norm(val));
     if(!edit)return ws.revision;
     return apply(ws,b,[edit],entry,view);
+   },
+   /* 0.9 designer (roadmap): reverse a relation — swap the endpoints and remap
+    * every direction-prefixed property pair (source_mark↔target_mark,
+    * source_min/max↔target_min/max, x_endlabels.source↔x_endlabels.target) in
+    * one validated, undoable transaction. Direction-neutral properties (kind,
+    * enforcement, scope, x_return, line { }) are untouched. */
+   reverseRelation(ws,entry,view,id){
+    const b=build(ws,entry,view),n=find(b,id);
+    if(n.type!=='relation')fail('DDN-E006','reverseRelation targets a relation definition.');
+    const text=ws.getFiles()[n.source],edits=[];
+    /* Relation endpoints parse as { $ref, $offset } — $offset is the '@' token
+     * start; the span covers the @ sign plus the reference path. */
+    const spanOf=ref=>{const start=ref.$offset,end=start+1+String(ref.$ref).length;if(text[start]!=='@')fail('DDN-E001','Reverse relation: endpoint span drifted from the parse offset.');return {start,end};};
+    const fs=spanOf(n.from),ts=spanOf(n.to);
+    edits.push({file:n.source,start:fs.start,end:fs.end,text:text.slice(ts.start,ts.end)});
+    edits.push({file:n.source,start:ts.start,end:ts.end,text:text.slice(fs.start,fs.end)});
+    const PAIRS={source_mark:'target_mark',target_mark:'source_mark',source_min:'target_min',target_min:'source_min',source_max:'target_max',target_max:'source_max'};
+    const newVals={};
+    for(const k of Object.keys(PAIRS))newVals[k]=n.props[PAIRS[k]];
+    for(const k of Object.keys(PAIRS))if(n.props[k]!==undefined||newVals[k]!==undefined)edits.push(property(text,n,k,newVals[k]));
+    if(n.props.x_endlabels){const e=n.props.x_endlabels,out={};if(e.target!==undefined)out.source=e.target;if(e.source!==undefined)out.target=e.source;edits.push(property(text,n,'x_endlabels',out));}
+    return apply(ws,b,edits,entry,view);
    },
    /* Designer phase 6b (data-projection sheets): rewrite a view-body list
     * property (select/exclude/data) from definition uids — the delete paths of

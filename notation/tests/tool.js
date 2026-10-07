@@ -1138,6 +1138,66 @@ test('0.9 Mermaid import: pure converter per diagram type (reference-tool, spec 
   assert.throws(() => M.mermaidToDdn('pie title Pets'), e => e.code === 'DDN-MP01');
 });
 
+test('0.9 designer batch 2: reverseRelation remap + projection residue keys + descriptor fields', () => {
+  const A = require('../dist/ddn.global.js');
+  const SRC = 'ddn "0.6";\nmodule "m";\ndata model {\n    object a "Alpha" { kind: "uml.class"; }\n    object b "Beta" { kind: "uml.class"; }\n    relation r "employs" @a -> @b { kind: "uml.association"; source_mark: "one"; target_mark: "zeromany"; source_min: 1; x_endlabels: { source: { role: "employer"; }; target: { role: "employee"; }; }; }\n}\nview v "V" { data: [@model]; }\n';
+  const ws = A.createWorkspace({ 'm.ddn': SRC });
+  A.authoring.reverseRelation(ws, 'm.ddn', 'v', 'm::model.r');
+  const r = ws.resolve('m.ddn', 'v').relations[0];
+  assert.ok(r.from.element.endsWith('.b') && r.to.element.endsWith('.a'), 'endpoints swapped');
+  assert.equal(r.properties.source_mark, 'zeromany');
+  assert.equal(r.properties.target_mark, 'one');
+  assert.equal(r.properties.target_min, 1, 'min/max remap');
+  assert.equal(r.properties.x_endlabels.source.role, 'employee', 'endlabels swapped');
+  A.authoring.reverseRelation(ws, 'm.ddn', 'v', 'm::model.r');
+  const r2 = ws.resolve('m.ddn', 'v').relations[0];
+  assert.ok(r2.from.element.endsWith('.a') && r2.properties.source_mark === 'one', 'double reverse is identity');
+  assert.throws(() => A.authoring.reverseRelation(ws, 'm.ddn', 'v', 'm::model.a'), e => e.code === 'DDN-E006', 'element target refused');
+  // sheet residue projection keys now writable
+  const CH = 'ddn "0.6";\nmodule "m";\ndata model {\n    object s0 "S0" { kind: record; x_record: {"stage": "a", "count": 2, "series": "x"}; }\n    object s1 "S1" { kind: record; x_record: {"stage": "b", "count": 3, "series": "y"}; }\n}\nview v "V" { data: [@model]; projection { kind: "chart"; profile: "chart.quality@1"; records: [@model.s0, @model.s1]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; mark: "bar"; } }\n';
+  const ws2 = A.createWorkspace({ 'm.ddn': CH });
+  A.authoring.setProjectionProperty(ws2, 'm.ddn', 'v', 'series_missing', 'zero');
+  A.authoring.setProjectionProperty(ws2, 'm.ddn', 'v', 'arrangement', 'stack');
+  assert.throws(() => A.authoring.setProjectionProperty(ws2, 'm.ddn', 'v', 'transform', 'histogram'), e => e.code === 'DDN-QC001', 'transform refuses combination with a series binding');
+  /* bins/transform interlock (DDN-QC010: bins is only meaningful for
+   * histogram): edit bins on a histogram view — the fixture authors the pair. */
+  const ws2b = A.createWorkspace({ 'm.ddn': CH.replace(' series: "x_record.series";', '').replace('mark: "bar"; }', 'mark: "bar"; transform: "histogram"; bins: [1, 2, 4]; }') });
+  A.authoring.setProjectionProperty(ws2b, 'm.ddn', 'v', 'bins', [1, 2, 5]);
+  assert.ok(ws2b.getFiles()['m.ddn'].includes('bins: [1, 2, 5]'), 'bins edit on a histogram view writes');
+  const src2 = ws2.getFiles()['m.ddn'];
+  assert.ok(src2.includes('series_missing: "zero";') && src2.includes('arrangement: "stack";'), 'chart residue keys serialize');
+  const DC = 'ddn "0.6";\nmodule "m";\ndata model {\n    object r1 "High" { kind: "rule.row"; x_rule: { when: {}; then: { route: "accept" }; }; }\n}\nview v "V" { data: [@model]; projection { kind: "decision"; profile: "decision.rules@1"; records: [@model.r1]; inputs: [{ "key": "s", "type": "boolean" }]; outputs: ["route"]; hit_policy: "unique"; coverage: "report"; analysis_budget: 4096; } }\n';
+  const ws3 = A.createWorkspace({ 'm.ddn': DC });
+  A.authoring.setProjectionProperty(ws3, 'm.ddn', 'v', 'inputs', [{ key: 's', type: 'boolean' }, { key: 'score', type: 'number', min: 0, max: 10 }]);
+  /* outputs additions are atomic with the rule defaults (DDN-QD003) — the
+   * sheet's Add output goes through setProjectionDomain. */
+  A.authoring.setProjectionDomain(ws3, 'm.ddn', 'v', { outputs: ['route', 'audit'] });
+  const src3 = ws3.getFiles()['m.ddn'];
+  assert.ok(src3.includes('"score"') && src3.includes('outputs: ["route", "audit"]'), 'decision domain keys serialize');
+  ws3.renderSync({ entry: 'm.ddn', view: 'v' });
+  assert.throws(() => A.authoring.setProjectionProperty(ws3, 'm.ddn', 'v', 'bogus_key', 1), e => e.code === 'DDN-E001', 'unknown projection keys stay refused');
+});
+
+test('0.9 descriptor fields: priority ordering, destructive warning, batch flag (forms.js)', () => {
+  const FRM = require('../tool/src/forms.js');
+  // priority: lower sorts first within a group, stable for ties
+  const d = [
+    { id: 'g.b', key: 'b', label: 'B', targets: ['element'], group: 'G' },
+    { id: 'g.a', key: 'a', label: 'A', targets: ['element'], group: 'G', priority: -5 },
+    { id: 'g.c', key: 'c', label: 'C', targets: ['element'], group: 'G', priority: 2 }
+  ];
+  const groups = FRM.groupDescriptors(d);
+  const sorted = groups[0].descriptors.slice().sort((a, b) => (a.priority || 0) - (b.priority || 0));
+  assert.deepEqual(sorted.map(x => x.key), ['a', 'b', 'c'], 'priority orders within group');
+  // registry pass-through reached the generated descriptors
+  const all = require('../../designer/contracts/form-descriptors.json');
+  const list = all.descriptors || all;
+  const kind = (Array.isArray(list) ? list : Object.values(list)).find(x => x.key === 'kind');
+  const desc = (Array.isArray(list) ? list : Object.values(list)).find(x => x.key === 'description');
+  assert.ok(kind && kind.warning && kind.priority === -20, 'kind carries the destructive-change warning + priority');
+  assert.ok(desc && desc.batch === true && desc.priority === -10, 'description is batch-applicable');
+});
+
 test('phase 8/12 drawers join the drawer model (creator top, properties bottom; relation retired)', () => {
   for (const name of ['creator', 'properties']) {
     assert.ok(T.DRAWERS.includes(name), name + ' missing from DRAWERS');
