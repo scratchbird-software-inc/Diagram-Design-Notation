@@ -1178,6 +1178,47 @@ test('0.9 designer batch 2: reverseRelation remap + projection residue keys + de
   assert.throws(() => A.authoring.setProjectionProperty(ws3, 'm.ddn', 'v', 'bogus_key', 1), e => e.code === 'DDN-E001', 'unknown projection keys stay refused');
 });
 
+test('0.9 AUD-003: convertKind (extension loss discipline) + moveField (reorder/reparent) + selectInView', () => {
+  const A = require('../dist/ddn.global.js');
+  const SRC = 'ddn "0.6";\nmodule "m";\ndata model {\n    object a "Alpha" { kind: "uml.class";  x_c4tag: { tags: ["t"] }; }\n    object t "Table" { kind: table;\n        fields {\n            field f1;\n            field f2;\n            field grp { key: primary; }\n        }\n    }\n    object leaf "Leaf" { kind: table; }\n}\nview v "V" { data: [@model]; publication { size: content; fit: none; } }\n';
+  /* convertKind: refusal without the flag, listed drop with it, icon kept,
+   * content-bearing extensions refuse outright, commit-time legality judges. */
+  let ws = A.createWorkspace({ 'm.ddn': SRC });
+  assert.throws(() => A.authoring.convertKind(ws, 'm.ddn', 'v', 'm::model.a', 'uml.interface'), e => e.code === 'DDN-E001' && /drop extension/i.test(e.message), 'drops need the explicit flag');
+  ws = A.createWorkspace({ 'm.ddn': SRC });
+  A.authoring.convertKind(ws, 'm.ddn', 'v', 'm::model.a', 'uml.interface', { dropExtensions: true });
+  const t = ws.getFiles()['m.ddn'];
+  assert.ok(t.includes('kind: "uml.interface"')  && !t.includes('x_c4tag'), 'conversion writes; decoration dropped');
+  ws.renderSync({ entry: 'm.ddn', view: 'v' });
+  ws = A.createWorkspace({ 'm.ddn': SRC.replace('x_c4tag: { tags: ["t"] };', 'x_record: {"k": 1};') });
+  assert.throws(() => A.authoring.convertKind(ws, 'm.ddn', 'v', 'm::model.a', 'uml.interface', { dropExtensions: true }), e => e.code === 'DDN-E001' && /content-bearing/.test(e.message), 'x_record refuses outright');
+  assert.throws(() => A.authoring.convertKind(A.createWorkspace({ 'm.ddn': SRC }), 'm.ddn', 'v', 'm::model.a', 'nope.kind'), e => e.code === 'DDN-E001', 'unknown kind refused');
+  /* moveField: reorder, reparent under a field, reparent to a bare object,
+   * cycle refusal. */
+  ws = A.createWorkspace({ 'm.ddn': SRC });
+  A.authoring.moveField(ws, 'm.ddn', 'v', 'm::model.t.f1', { beforeUid: 'm::model.t.grp' });
+  assert.deepEqual(ws.getFiles()['m.ddn'].match(/field \w+/g), ['field f2', 'field f1', 'field grp'], 'reorder within the group');
+  ws = A.createWorkspace({ 'm.ddn': SRC });
+  A.authoring.moveField(ws, 'm.ddn', 'v', 'm::model.t.f1', { parentUid: 'm::model.t.grp' });
+  let ir = ws.resolve('m.ddn', 'v');
+  const tel = ir.elements.find(e => e.id.endsWith('.t'));
+  assert.ok((tel.fields || []).some(f => f.name === 'f1' && f.parent && f.parent.endsWith('.grp')), 'f1 nested under grp');
+  ws = A.createWorkspace({ 'm.ddn': SRC });
+  A.authoring.moveField(ws, 'm.ddn', 'v', 'm::model.t.f2', { parentUid: 'm::model.leaf' });
+  ir = ws.resolve('m.ddn', 'v');
+  assert.ok((ir.elements.find(e => e.id.endsWith('.leaf')).fields || []).some(f => f.name === 'f2'), 'reparent creates the fields group on a bare object');
+  ws.renderSync({ entry: 'm.ddn', view: 'v' });
+  assert.throws(() => A.authoring.moveField(A.createWorkspace({ 'm.ddn': SRC }), 'm.ddn', 'v', 'm::model.t.grp', { parentUid: 'm::model.t.grp' }), e => e.code === 'DDN-E006', 'cycle refused');
+  /* multi-occurrence contract: the builder dedupes duplicate select entries
+   * (distinct occurrences ride the AUD-004 draft); selectInView adds once and
+   * refuses coded on select-all views. */
+  const DUP = 'ddn "0.6";\nmodule "m";\ndata model {\n    object a "Alpha" { kind: application; }\n}\nview v "V" { data: [@model]; select: [@model.a, @model.a]; }\n';
+  const dws = A.createWorkspace({ 'm.ddn': DUP });
+  assert.equal(dws.resolve('m.ddn', 'v').view.selected.length, 1, 'duplicate occurrences dedupe this revision');
+  const ALL = 'ddn "0.6";\nmodule "m";\ndata model {\n    object a "Alpha" { kind: application; }\n}\nview v "V" { data: [@model]; }\n';
+  assert.throws(() => A.authoring.selectInView(A.createWorkspace({ 'm.ddn': ALL }), 'm.ddn', 'v', 'm::model.a'), e => e.code === 'DDN-E006', 'select-all view refuses list edits');
+});
+
 test('0.9 descriptor fields: priority ordering, destructive warning, batch flag (forms.js)', () => {
   const FRM = require('../tool/src/forms.js');
   // priority: lower sorts first within a group, stable for ties

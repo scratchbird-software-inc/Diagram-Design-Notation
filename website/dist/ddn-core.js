@@ -5516,6 +5516,84 @@
     * removes the property. One validated source transaction. Phase 8: `kind`
     * (the view's registered view kind, chapter 52 — DDN-VP01 validates the
     * registry on commit) joins for the Style & Layout view-type control. */
+   /* 0.9 AUD-003: convert a definition's kind between compatible kinds — one
+    * validated, undoable transaction. Content-bearing extensions (x_record,
+    * x_rule, x_transition, x_message, x_event, x_gateway, x_member, x_sentry,
+    * x_planning, x_cmmn, x_template, x_endlabels, x_association_class, x_nary,
+    * x_genset, x_fragment, x_invariant, x_activation) are model data — their
+    * loss is refused outright; remaining x_* decoration keys (x_icon is generic
+    * and kept) drop only with an explicit dropExtensions:true (the UI lists them
+    * in a confirm first). Kind/capability compatibilty is re-judged by the
+    * commit-time build (DDN-VP04 family); the UI pre-filters targets. */
+   convertKind(ws,entry,view,id,newKind,{dropExtensions=false}={}){
+    if(!api.kinds.some(k=>k.id===newKind))fail('DDN-E001','Unknown object kind '+JSON.stringify(newKind)+'.');
+    const b=build(ws,entry,view),n=find(b,id);
+    if(n.type!=='object')fail('DDN-E006','convertKind targets an element definition.');
+    const old=n.props.kind||'object';
+    if(old===newKind)return ws.revision;
+    const CONTENT=['x_record','x_rule','x_transition','x_message','x_event','x_gateway','x_member','x_sentry','x_planning','x_cmmn','x_template','x_endlabels','x_association_class','x_nary','x_genset','x_fragment','x_invariant','x_activation','x_states','x_story','x_requirement'];
+    const ext=Object.keys(n.props).filter(k=>k.startsWith('x_')&&k!=='x_icon');
+    const content=ext.filter(k=>CONTENT.includes(k));
+    if(content.length)fail('DDN-E001','Kind conversion refused: '+id+' carries content-bearing extensions ('+content.join(', ')+') whose semantics are kind-bound; migrate them by hand.');
+    if(ext.length&&!dropExtensions)fail('DDN-E001','Kind conversion would drop extension properties: '+ext.join(', ')+'. Re-run with dropExtensions:true after listing the loss to the user.');
+    const edits=[property(text0(n),n,'kind',newKind)];
+    if(dropExtensions)for(const k of ext)edits.push(property(text0(n),n,k,undefined));
+    return apply(ws,b,edits,entry,view);
+    function text0(node){return ws.getFiles()[node.source];}
+   },
+   /* 0.9 AUD-003: deep field reorder/reparent — a span move of the field's
+    * declaration. Reorder: beforeUid names a sibling (same parent). Reparent:
+    * parentUid names an object or field; the field lands in its fields { }
+    * group (created when absent). The structural contract is DDN042 (nested
+    * fields accept only a fields block; variants/discriminators carry no
+    * nesting coupling in the registry) — re-validated at commit. */
+   moveField(ws,entry,view,fieldUid,{beforeUid,parentUid}={}){
+    const b=build(ws,entry,view),f=find(b,fieldUid);
+    if(f.type!=='field')fail('DDN-E006','moveField targets a field definition.');
+    if(!beforeUid&&!parentUid)fail('DDN-E001','moveField needs beforeUid (reorder) or parentUid (reparent).');
+    if(beforeUid&&parentUid)fail('DDN-E001','moveField takes one of beforeUid or parentUid.');
+    const parentPath=n=>n.path.split('.').slice(0,-1).join('.');
+    const text=ws.getFiles()[f.source];
+    let start=f.start,end=f.end;
+    const ls=text.lastIndexOf('\n',start-1)+1;
+    if(/^[ \t]*$/.test(text.slice(ls,start)))start=ls;
+    if(text[end]==='\n')end++;
+    const cut=text.slice(start,end),rest=text.slice(0,start)+text.slice(end);
+    const shift=end-start;
+    /* Whole-file rewrite (the moveDeclaration pattern): one span, no mixed
+     * coordinate frames. */
+    const whole=body=>apply(ws,b,[{file:f.source,start:0,end:text.length,text:body}],entry,view);
+    if(beforeUid){
+     const to=find(b,beforeUid);
+     if(to.type!=='field')fail('DDN-E001','Reorder targets a sibling field.');
+     if(parentPath(f)!==parentPath(to))fail('DDN-E006','Reorder across parents is a reparent — pass parentUid. The source is unchanged.');
+     const at=to.start>start?to.start-shift:to.start;
+     return whole(rest.slice(0,at)+cut+rest.slice(at));
+    }
+    const parent=find(b,parentUid);
+    if(!['object','field'].includes(parent.type))fail('DDN-E001','Fields reparent under an object or a field.');
+    if(parentUid===fieldUid||parent.path.startsWith(f.path+'.'))fail('DDN-E006','A field cannot move under itself or its own descendant.');
+    if(parentPath(f)===parent.path)fail('DDN-E001','That field is already a member of '+parentUid+'.');
+    const pStart=parent.start>start?parent.start-shift:parent.start;
+    const pLineStart=rest.lastIndexOf('\n',pStart-1)+1;
+    const pIndent=(rest.slice(pLineStart,pStart).match(/^[ \t]*/)||[''])[0];
+    const fieldIndent=pIndent+'        ';
+    const fieldLines=cut.trim().split('\n').map(l=>fieldIndent+l.trim()).join('\n');
+    const groupNode=(parent.children||[]).find(x=>x.group&&x.type==='fields');
+    if(groupNode){
+     const gEnd=groupNode.bodyEnd>start?groupNode.bodyEnd-shift:groupNode.bodyEnd;
+     return whole(rest.slice(0,gEnd)+fieldLines+'\n'+pIndent+'    '+rest.slice(gEnd));
+    }
+    if(parent.bodyEnd!==undefined){
+     const pEnd=parent.bodyEnd>start?parent.bodyEnd-shift:parent.bodyEnd;
+     const block='\n'+pIndent+'    fields {\n'+fieldLines+'\n'+pIndent+'    }\n'+pIndent;
+     return whole(rest.slice(0,pEnd)+block+rest.slice(pEnd));
+    }
+    /* Leaf declaration without a body: object x "X"; — wrap inline. */
+    const pEnd=parent.end>start?parent.end-shift:parent.end;
+    const inline=rest.slice(0,pEnd).replace(/;\s*$/,'')+' { fields { '+cut.trim()+' } }';
+    return whole(inline+rest.slice(pEnd));
+   },
    setViewProperties(ws,entry,view,props){
     const ALLOWED=['title','description','source','generator','kind'];
     if(!props||typeof props!=='object'||Array.isArray(props))fail('DDN-E001','View property writes need a {key: value} record.');

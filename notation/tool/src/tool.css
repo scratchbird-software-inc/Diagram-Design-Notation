@@ -88,7 +88,8 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-creator-icon .ddn-palette-glyph { width: 22px; height: 22px; }
 .ddn-creator-icon .ddn-palette-glyph svg { width: 22px; height: 22px; }
 .ddn-creator-icon span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#ddn-palette-family-menu { position: absolute; top: calc(100% + 4px); right: 0; z-index: 8; }
+#ddn-palette-family-menu, #ddn-existing-menu { position: absolute; top: calc(100% + 4px); right: 0; z-index: 8; }
+#ddn-existing-menu { right: auto; left: 0; top: 100%; max-height: 300px; overflow: auto; }
 #ddn-palette-search { width: 150px; box-sizing: border-box; }
 .ddn-menu { background: #fff; border: 1px solid #cbd5e3; border-radius: 10px; padding: 6px; box-shadow: 0 12px 32px #243b5933; min-width: 220px; max-height: 320px; overflow: auto; }
 .ddn-menu button { display: block; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 6px; padding: 4px 8px; font-size: 12.5px; }

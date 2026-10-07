@@ -140,8 +140,10 @@ rationale:
       arithmetic (DDN-PJ222); DST durations documented elapsed-time; locale
       date formats refused (nondeterministic); business-day calendars out of
       scope
-- [ ] AUD-003 command set remainder (kind conversion, deep field
-      reorder/reparent, multi-occurrence, typed scope membership) (pending owner)
+- [x] AUD-003 command set remainder (designer) — convertKind + moveField +
+      scope/membership editor + Add-existing shipped (2026-10-07);
+      multi-occurrence BLOCKED on AUD-004 (builder dedupes duplicate select
+      entries this revision — distinct occurrences need the occurrence-contract RFC)
 - [x] AUD-004 versioned occurrence contract (grammar RFC) — DRAFT RFC written
       as spec ch. 03 amendment (occurrence model, occ qualifier, relation
       visibility override, uid-at-migration path); deliberately NOT

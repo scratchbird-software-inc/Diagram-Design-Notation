@@ -162,6 +162,7 @@ const els = {
   boldToggle: $('ddn-bold-toggle'), italicToggle: $('ddn-italic-toggle'),
   creatorTabs: $('ddn-creator-tabs'), creatorIcons: $('ddn-creator-icons'),
   paletteFamily: $('ddn-palette-family'), paletteFamilyMenu: $('ddn-palette-family-menu'),
+  addExisting: $('ddn-add-existing'), existingMenu: $('ddn-existing-menu'),
   paletteSearch: $('ddn-palette-search'),
   paletteHint: $('ddn-palette-hint'), paletteAll: $('ddn-palette-all'), paletteAllWrap: $('ddn-palette-all-wrap'),
   viewKind: $('ddn-view-kind'), projectionKind: $('ddn-projection-kind'),
@@ -2405,7 +2406,7 @@ function viewUsageList(uid) {
  * (destructive or meaning-changing changes; ordinary labels keep the
  * persistent banner). */
 function impactConfirm(uid) {
-  const n = sharedViews(uid).length;
+  const n = viewUsageList(uid).length;
   if (n <= 1) return true;
   return confirm('This definition is used in ' + n + ' views — the change affects all of them. Continue?');
 }
@@ -2547,7 +2548,10 @@ function buildMeaningTab(panel, id, ir, ctx) {
     f.append(lab, cur, row);
     panel.append(f);
 
-    /* Fields list (shared definition members). */
+    /* Fields tree (0.9 AUD-003): shared definition members with reorder /
+     * reparent — one moveField transaction per op; the structural contract is
+     * DDN042 (nested fields accept only a fields block; the registry carries
+     * no variant/discriminator nesting coupling). */
     const fields = node.fields || [];
     if (fields.length) {
       const h = document.createElement('h4'); h.textContent = 'Fields';
@@ -2555,7 +2559,25 @@ function buildMeaningTab(panel, id, ir, ctx) {
       const ul = document.createElement('ul'); ul.className = 'ddn-fields-list';
       for (const fld of fields) {
         const li = document.createElement('li');
+        const depth = fld.depth || 0;
+        li.style.paddingLeft = (depth * 14) + 'px';
         li.textContent = (fld.name || fld.local) + (fld.properties && fld.properties.datatype ? ' : ' + fld.properties.datatype : '');
+        const fid = fld.id;
+        const sibs = fields.filter(x => (x.parent || null) === (fld.parent || null));
+        const idx = sibs.findIndex(x => x.id === fid);
+        const mk = (label, title, fn, dis) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ddn-mini'; b.textContent = label; b.title = title; b.disabled = !!dis; b.addEventListener('click', () => { if (!impactConfirm(uid)) return; guidedInspector(() => fn()); }); return b; };
+        li.append(' ');
+        li.append(mk('↑', 'Move up within its group', () => A.authoring.moveField(state.ws, state.entry, state.view, fid, { beforeUid: sibs[idx - 1].id }), idx <= 0));
+        li.append(mk('↓', 'Move down within its group (swap with the next field)', () => A.authoring.moveField(state.ws, state.entry, state.view, sibs[idx + 1].id, { beforeUid: fid }), idx >= sibs.length - 1));
+        /* Reparent: pick a new parent among the element + other fields. */
+        const parentSel = selectInput([['', 'reparent…'], [uid, '(top level)'], ...fields.filter(x => x.id !== fid && !(x.id + '.').startsWith(fid + '.') && x.id !== fid).map(x => [x.id, x.name || x.local])], 'Reparent ' + (fld.name || fld.local));
+        parentSel.addEventListener('change', () => {
+          if (!parentSel.value) return;
+          const target = parentSel.value === uid ? uid : parentSel.value;
+          if (!impactConfirm(uid)) { parentSel.value = ''; return; }
+          guidedInspector(() => A.authoring.moveField(state.ws, state.entry, state.view, fid, { parentUid: target }));
+        });
+        li.append(parentSel);
         ul.append(li);
       }
       panel.append(ul);
@@ -2573,11 +2595,15 @@ function buildMeaningTab(panel, id, ir, ctx) {
 
   if (relation) buildRelationMeaning(panel, relation, ir);
 
+  if (node && multi.count <= 1) {
+    try { buildScopeEditor(panel, uid, ir); } catch (e) { inspectorNote((e && e.code ? e.code + ': ' : '') + (e && e.message || e)); }
+  }
   /* Source location + definition actions. */
   let src = null;
   try { src = A.authoring.sourceOf(state.ws, state.entry, state.view, uid); } catch { /* preset-expanded */ }
   if (src) inNote(panel, 'Source: ' + src.file + ':' + src.start + ' (' + src.type + ' ' + src.id + ')');
   const actions = document.createElement('div'); actions.className = 'ddn-row';
+  if (node) inButton(actions, 'Convert kind…', 'Convert this definition to a compatible kind (same family) — profile-bound extension properties are listed and dropped on confirm; content-bearing ones refuse', () => openConvertModal(uid));
   if (node) inButton(actions, 'Duplicate', 'Duplicate — a new element with a fresh uid (unconnected, no numeral); the original is untouched', () => {
     guidedInspector(() => {
       A.authoring.duplicate(state.ws, state.entry, state.view, uid);
@@ -2593,6 +2619,113 @@ function buildMeaningTab(panel, id, ir, ctx) {
       guidedInspector(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, uid));
   });
   panel.append(actions);
+}
+
+/* 0.9 AUD-003: kind conversion modal — target kinds filtered to the current
+ * kind's capability family (same palette group or a shared allowed_in tag);
+ * view-capability impact is warned+confirmed; extension loss is listed and
+ * confirmed (x_icon is generic and kept); content-bearing extensions refuse
+ * outright (authoring.convertKind re-checks everything at commit). */
+function openConvertModal(uid) {
+  try {
+    const src = A.authoring.sourceOf(state.ws, state.entry, state.view, uid);
+    if (src.type !== 'object') { inspectorNote('Kind conversion targets element definitions.'); return; }
+    const cur = (src.properties.kind) || 'object';
+    const curKind = A.kinds.find(k => k.id === cur);
+    const family = k => curKind && (k.group === curKind.group || (k.allowed_in || []).some(t => (curKind.allowed_in || []).includes(t)));
+    const targets = A.kinds.filter(k => k.id !== cur && family(k));
+    const views = viewUsageList(uid);
+    const exts = Object.keys(src.properties).filter(k => k.startsWith('x_') && k !== 'x_icon');
+    const m = document.createElement('div');
+    m.className = 'ddn-modal'; m.id = 'ddn-convert-modal';
+    m.setAttribute('role', 'dialog');
+    const h = document.createElement('h3'); h.textContent = 'Convert kind — ' + src.id + ' (' + cur + ')';
+    const sel = selectInput(targets.map(k => [k.id, k.label + ' (' + k.id + ')']), 'Convert to kind');
+    m.append(h, sel);
+    const note = document.createElement('p'); note.className = 'ddn-dim';
+    note.textContent = targets.length ? '' : 'No compatible kind in this capability family.';
+    m.append(note);
+    if (exts.length) m.append(dim('Extension properties dropped on conversion: ' + exts.join(', ') + '. (x_icon is generic and kept; content-bearing extensions refuse the conversion.)'));
+    if (views.length > 1) m.append(dim('Used in ' + views.length + ' views — the new kind may not be allowed everywhere (capability impact is confirmed below).'));
+    const row = document.createElement('div'); row.className = 'ddn-row';
+    inButton(row, 'Convert', 'Convert in one undoable, core-validated transaction', () => {
+      const nv = sel.value;
+      const disallowed = views.filter(v => {
+        const tags = (A.kinds.find(k => k.id === nv) || {}).allowed_in || ['graph'];
+        return !tags.includes('graph') && !(tags.includes((v.profile || '')) || tags.includes(v.kind || ''));
+      });
+      if (disallowed.length && !confirm('Kind ' + nv + ' is not registered for the profile/kind of ' + disallowed.length + ' view(s) using this definition (' + disallowed.map(v => v.view).join(', ') + '). The source validator will judge. Continue?')) return;
+      if (exts.length && !confirm('Conversion drops: ' + exts.join(', ') + ' — the definition keeps everything else. Continue?')) return;
+      guidedInspector(() => A.authoring.convertKind(state.ws, state.entry, state.view, uid, nv, { dropExtensions: true }));
+      m.remove();
+    });
+    inButton(row, 'Cancel', '', () => m.remove());
+    m.append(row);
+    els.inspectorMeaning.append(m);
+  } catch (e) { inspectorNote((e && e.code ? e.code + ': ' : '') + (e && e.message || e)); }
+}
+
+/* 0.9 AUD-003: typed scope/membership editor (spec 05 "Scope" — the channels
+ * stay separate and each is honest about its edit path):
+ *  · namespace (module/block) — source structure, read-only + Go to source;
+ *  · placement (this view's select membership) — editable via setViewList /
+ *    selectInView / hide;
+ *  · layout-group (frame membership) — editable via setFrameMembers;
+ *  · ownership (owner model property) — editable reference text via
+ *    setProperty. */
+function buildScopeEditor(panel, uid, ir) {
+  const h = document.createElement('h4'); h.textContent = 'Scope & membership';
+  panel.append(h);
+  const src = A.authoring.sourceOf(state.ws, state.entry, state.view, uid);
+  const node = viewSourceNode();
+  /* namespace */
+  const nsRow = document.createElement('div'); nsRow.className = 'ddn-row';
+  nsRow.append(dim('Namespace: ' + src.file.replace(/\.ddn$/, '') + ' module block — read-only (source structure).'));
+  inButton(nsRow, 'Go to source', 'Open the Source drawer at the definition', () => goToSource(uid));
+  panel.append(nsRow);
+  /* placement — the IR carries resolved uid lists, so membership and edits
+   * never re-resolve source refs here. */
+  const sel = node ? node.props.select : undefined;
+  const plRow = document.createElement('div'); plRow.className = 'ddn-row';
+  if (sel === undefined || sel === 'all') {
+    plRow.append(dim('Placement: this view selects all data — no membership list to edit.'));
+  } else {
+    const selectedUids = ir.view.selected || [];
+    const inView = selectedUids.includes(uid);
+    const c = document.createElement('input'); c.type = 'checkbox'; c.checked = inView; c.setAttribute('aria-label', 'Shown in this view');
+    c.addEventListener('change', () => guard(() => {
+      flush();
+      if (c.checked) guidedInspector(() => A.authoring.selectInView(state.ws, state.entry, state.view, uid));
+      else guidedInspector(() => A.authoring.setViewList(state.ws, state.entry, state.view, 'select', selectedUids.filter(u => u !== uid)));
+    }));
+    const l = document.createElement('label'); l.className = 'ddn-check'; l.append(c, ' Shown in this view');
+    plRow.append(l);
+  }
+  panel.append(plRow);
+  /* layout-group (frame) membership */
+  const frames = (ir.view.frames || []);
+  if (frames.length) {
+    const fRow = document.createElement('div');
+    fRow.append(dim('Layout groups:'));
+    for (const fr of frames) {
+      const memberUids = (fr.members || []).map(r => typeof r === 'string' ? r : r.$ref);
+      const member = memberUids.includes(uid);
+      const c = document.createElement('input'); c.type = 'checkbox'; c.checked = member; c.setAttribute('aria-label', 'member of frame ' + (fr.name || fr.id));
+      c.addEventListener('change', () => guard(() => {
+        flush();
+        guidedInspector(() => A.authoring.setFrameMembers(state.ws, state.entry, state.view, fr.id, c.checked ? [...memberUids, uid] : memberUids.filter(u => u !== uid)));
+      }));
+      const l = document.createElement('label'); l.className = 'ddn-check'; l.append(c, ' ' + (fr.name || fr.id));
+      fRow.append(l);
+    }
+    panel.append(fRow);
+  }
+  /* ownership */
+  const ow = document.createElement('input'); ow.type = 'text'; ow.placeholder = 'responsible-party reference (blank = remove)';
+  ow.value = typeof (ir.elements.find(n => n.id === uid) || {}).properties?.owner === 'string' ? (ir.elements.find(n => n.id === uid)).properties.owner : '';
+  ow.setAttribute('aria-label', 'Owner');
+  ow.addEventListener('change', () => { if (!impactConfirm(uid)) return; guidedInspector(() => A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'owner', ow.value.trim() || undefined)); });
+  inField(panel, 'Owner', ow);
 }
 
 /* Relation meaning controls (spec 05 cardinality / spec 07): verb above, plus
@@ -3267,7 +3400,37 @@ els.paletteFamily.addEventListener('click', () => {
 });
 document.addEventListener('click', e => {
   if (!els.paletteFamilyMenu.hidden && !e.target.closest('#ddn-palette-family, #ddn-palette-family-menu')) els.paletteFamilyMenu.hidden = true;
+  if (!els.existingMenu.hidden && !e.target.closest('#ddn-add-existing, #ddn-existing-menu')) els.existingMenu.hidden = true;
 });
+
+/* 0.9 AUD-003: add an existing definition to the view — one occurrence per
+ * definition per view is the current runtime contract (duplicate select
+ * entries are deduped by the builder; distinct occurrences ride the AUD-004
+ * occurrence-contract draft). Coded refusals (select-all views, DDN-E006)
+ * surface in the status line. */
+els.addExisting.addEventListener('click', () => guard(() => {
+  if (els.existingMenu.hidden) {
+    const ir = state.ws.resolve(state.entry, state.view);
+    const node = viewSourceNode();
+    const sel = node ? node.props.select : undefined;
+    const shown = new Set(ir.view.selected);
+    const avail = ir.elements.filter(n => !shown.has(n.id));
+    const entries = [];
+    if (sel === undefined || sel === 'all') entries.push(dim('This view selects all data — every definition already renders.'));
+    else if (!avail.length) entries.push(dim('Every definition is already in this view.'));
+    for (const n of avail.slice(0, 60)) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.textContent = n.name + ' (' + n.id.split('::').pop() + ')';
+      b.addEventListener('click', () => {
+        els.existingMenu.hidden = true;
+        guidedInspector(() => A.authoring.selectInView(state.ws, state.entry, state.view, n.id));
+      });
+      entries.push(b);
+    }
+    els.existingMenu.replaceChildren(...entries);
+    els.existingMenu.hidden = false;
+  } else els.existingMenu.hidden = true;
+}));
 
 /* Pointer-based ghost drag from a palette icon onto the canvas (works through
  * the component's coordinate transform at any zoom; the drop reuses the

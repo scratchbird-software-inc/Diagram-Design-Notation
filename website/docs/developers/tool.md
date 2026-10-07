@@ -172,6 +172,11 @@ used colours (most-recent-first, persisted in `localStorage` key
 `ddn-tool-colour-history`); all entries feed the same history.
 
 The **inspector** is the selection editor, with three tabs: **Meaning**
+(which also carries kind conversion — capability-family-filtered targets with
+listed extension-loss confirms — the fields tree with reorder/reparent, and
+the Scope & membership block: namespace read-only with a source jump,
+placement as the view's select-membership checkbox, layout-group frame
+membership, and the `owner` property), **This view**
 (model identity — label, kind, description, relation endpoints/cardinality,
 with a cardinality sentence preview), **This view** (view-scoped overrides —
 hide, pin, per-occurrence display), and **Details** (a descriptor-generated
