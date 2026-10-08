@@ -6,6 +6,26 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+### Changed
+
+- **Open/commercial boundary amended (owner direction, 2026-10-08).** The old
+  capability split ("open viewer/designer render DDN only; DDNA support is
+  commercial/closed") is **repealed**. The open tool includes full DDNA
+  support — companion files, trace replay AND trace generation, execution
+  engines, KEEL evaluation. The commercial product (ScratchWeaver)
+  differentiates **quantitatively and collaboratively**: per-view display
+  limits removed, concurrent editing, collaboration, history and extended
+  functionality — never a withheld capability class. The DDN
+  runtime/renderers stay notation-pure (that is an architecture statement,
+  not a licensing wall), and DDN-side association declarations remain inert
+  metadata to DDN-only parsers. Amended: `ddna/01-purpose-scope.md` (§1.2
+  decision 2, §1.7), `ddna/README.md`, `ddna/08-feature-catalog.md`
+  ([VS]/[DT] marks redefined as technical facts), `ddna/04-trace-format.md`
+  (§4.5), `ddna/09-decisions.md` (D9 amendment note), `ddna/11-alien-format-
+  import.md` (tier rules), `standard/specification/57-viewer-and-designer-
+  contract.md` (§57.6), and the submission source in
+  `tools/build-submission.mjs` (regenerated `standard/submission/`).
+
 ### Added
 
 - **Assertion evaluation (0.8 amendment, spec ch. 55 §55.2; 0.9 closure,

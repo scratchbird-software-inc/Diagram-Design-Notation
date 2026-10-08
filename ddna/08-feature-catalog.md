@@ -9,6 +9,14 @@ ddna-defined semantics. Tagging per feature: **core** (v1 scope),
 Tags in this draft are the corpus' recommendations; final v1 scoping is
 owner's.
 
+> **2026-10-08 boundary amendment (chapter 1 §1.2):** the [VS]/[DT] marks
+> are **technical facts, not a licensing wall** — [VS] means "safe for a
+> passive viewer" (pure playback), [DT] means "interactive tool feature"
+> (generation, execution, evaluation). Both classes ship in the **open
+> tool**; the commercial tier differentiates quantitatively (per-view display
+> limits removed) and collaboratively (concurrent editing, history), never
+> by withholding a capability class.
+
 ## 8.1 Cross-cutting features (all families)
 
 | Id | Feature | Mark | Tag |

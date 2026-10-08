@@ -16,13 +16,13 @@ that is not DDN or DDNA.
    into DDNA's own expression form where possible; where a construct
    cannot be converted it is carried as an **opaque host reference**
    (KEEL), never parsed or evaluated in alien dialect by our tools.
-3. **Product tiers.** The **open designer does simple import, no export** —
-   "simple" is a deliberate product-tier limit, not a technical ceiling;
-   exact scope is set per format at converter-spec time. The **commercial
-   tier does full import and full export.**
+3. **Product tiers (2026-10-08 amendment).** The open designer imports;
+   tier differences are **quantitative and collaborative** (per-view display
+   limits, concurrency, extended workflows — chapter 1 §1.2), not a
+   capability split — import itself is no longer a tiered feature class.
+   Exact scale limits are set per format at converter-spec time.
 4. **Export from the *standard* side remains out of scope** unless
-   separately decided — but the commercial tier does full export, so the
-   specification does not preclude export mappings.
+   separately decided; the specification does not preclude export mappings.
 5. **Re-reading the standing exclusions.** The inventory entries classed
    STANDING under "interchange policy" (61 in the exclusion sweep) are
    re-read as "no NATIVE support" — import converters are a separate,
@@ -31,10 +31,11 @@ that is not DDN or DDNA.
 ## 11.2 Where importers live (ratified D9)
 
 Conversion libraries live in a **shared converter core** (open or
-dual-licensed). The open designer's simple import and the commercial full
-import share that one core; product tiers gate **scope/depth, never
-code** — there are no per-product converter forks, so conversion fidelity
-is identical across tiers.
+dual-licensed). The open designer's import and the commercial import share
+that one core; product tiers gate **scope/depth, never code** — there are
+no per-product converter forks, so conversion fidelity is identical across
+tiers. (2026-10-08: per chapter 1 §1.2, tier differences are quantitative
+and collaborative — no capability class is withheld from the open tool.)
 
 ## 11.3 Design constraints on converters (corpus-derived)
 
@@ -63,7 +64,7 @@ is identical across tiers.
 
 | Format | Tier-1 (simple) scope sketch | Notes |
 | --- | --- | --- |
-| BPMN XML/DI | processes, tasks, gateways, sequence flows, pools/lanes | choreography/conversation depth is commercial; DI coordinates are re-laid-out, never trusted (DDN owns layout) |
+| BPMN XML/DI | processes, tasks, gateways, sequence flows, pools/lanes | choreography/conversation depth is a scale limit (2026-10-08 model), not a withheld capability; DI coordinates are re-laid-out, never trusted (DDN owns layout) |
 | DMN XML | DRDs + decision tables with the seven hit policies | rule order normative (§11.3.1); FEEL bodies convert or carry opaque per §11.1.2 |
 | CMMN XML | case plans, tasks, stages, sentries, milestones | decorator flags map to DDN's x_cmmn contract |
 | XMI/UMLDI | class/activity/state-machine/sequence diagrams, single metamodel pin | ownedBehavior context binding required (§11.3.5) |

@@ -29,13 +29,19 @@ preference.
 
 Binding decisions (owner's words, DDNA-NOTES.md):
 
-1. **Both standards open, tools closed.** DDN and DDNA are open file-format
-   standards. Only the DDNA *tools* are closed source. Anyone may implement
-   DDNA from the open standard; closure is at the tool/product level, never
-   the specification.
-2. **Viewer/designer render DDN only.** The open-source ddn-viewer and
-   ddn-designer support DDN, not DDNA. Commercial tools support DDNA in
-   addition to DDN.
+1. **Both standards open.** DDN and DDNA are open file-format
+   standards. Anyone may implement DDNA from the open standard; product
+   differentiation lives at the tool/product level, never in the
+   specification.
+2. **The open tool includes DDNA (2026-10-08 owner direction, superseding
+   the 2026-09-29 capability split).** The open-source ddn-viewer and
+   ddn-designer support DDN *and* DDNA: companion files, trace replay **and**
+   trace generation, execution engines and KEEL evaluation are all in the
+   open tool. The commercial product (ScratchWeaver) differentiates
+   **quantitatively and collaboratively**, not by capability: it removes the
+   open tool's per-view display limits (how many elements/traces/etc. one
+   view may display) and adds concurrent editing, collaboration, history and
+   extended functionality.
 3. **DDNA expands DDN, never replaces it.** DDN remains complete and
    self-sufficient without DDNA.
 4. **DDNA never silently redefines notation.** The automation layer must
@@ -145,10 +151,18 @@ Binding (owner's words, 2026-09-29, ratified):
 - Execution claims beyond the claims table (chapter 3) and the claims
   policy (chapter 10).
 
-## 1.7 The separation rule (standing)
+## 1.7 The separation rule (standing; amended 2026-10-08)
 
-DDNA content must not leak into the open DDN repo's dialect, tools,
-examples, or galleries. DDNA references in DDN files stay inert metadata.
-DDNA files and examples live with the DDNA specification work (this open
-standard) and the closed-source tooling. The open DDN repo needs at most a
+DDNA content must not leak into the open DDN repo's **dialect, runtime or
+renderers** — engine purity is an architecture statement, not a licensing
+boundary: the DDN render pipeline stays notation-only, and DDNA references
+in DDN files stay inert metadata. DDNA files and examples live with the DDNA
+specification work (this open standard). The open DDN repo needs at most a
 documented file-format relationship — this chapter is that document.
+
+~~DDNA content must not leak into the open DDN repo's dialect, tools,
+examples, or galleries.~~ As of 2026-10-08 the **tool-side** wall is
+repealed (§1.2 decision 2): the open viewer/designer implement DDNA.
+What remains standing is only the engine/format separation above plus the
+existing technical caps (per-view display limits) that the commercial
+product removes.

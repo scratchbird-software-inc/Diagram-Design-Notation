@@ -224,9 +224,14 @@ base identities is a validation error, which makes bare \`@id\`
 references unambiguous. Alien formats are **import-only**: DDN and DDNA
 are the only formats tools display, render, or execute.
 
-Both standards are open; the tools are closed. The open-source viewer and
-designer implement DDN only; DDNA tool support is commercial and closed
-source. Closure lives at the tool/product level, never in the
+Both standards are open, and the open tool implements both. The
+open-source viewer and designer implement DDN *and* DDNA — companion
+files, trace replay and generation, execution engines, KEEL evaluation
+(2026-10-08 owner direction). The commercial product differentiates
+quantitatively and collaboratively — it removes the open tool's per-view
+display limits and adds concurrent editing, collaboration, history and
+extended functionality — never by withholding a capability class.
+Differentiation lives at the tool/product level, never in the
 specification.
 
 ## 2. Architecture and file model

@@ -106,9 +106,16 @@ it changes the session layout state, not the source. It never relaxes
   build-time codegen step for end users, or a third-party runtime
   dependency.
 - A commercial offering is a **hosted superset consuming the same runtime
-  bundles** — additional formats (PDF/PPTX), storage, collaboration —
-  delivered around, never as a fork of, the runtime. Any divergence in
-  check/render behavior between OSS and hosted use of the same source is a
-  defect, and the conformance vectors (chapter 58) run against both.
+  bundles** — additional formats (PDF/PPTX), storage, collaboration, and
+  removal of the per-view display limits — delivered around, never as a
+  fork of, the runtime. Any divergence in check/render behavior between OSS
+  and hosted use of the same source is a defect, and the conformance
+  vectors (chapter 58) run against both.
+- **2026-10-08 owner policy:** DDNA automation (companion files, trace
+  replay and generation, execution engines, KEEL evaluation) is in scope
+  for the open tool; the commercial/open boundary is quantitative
+  (display/scale limits) and collaborative (concurrent editing, history,
+  extended functionality), never capability-gating.
 - Feature-gating in the superset happens at the application layer (export
-  formats, hosting), never by patching runtime diagnostics or rendering.
+  formats, hosting, scale limits, collaboration), never by patching runtime
+  diagnostics or rendering.

@@ -24,10 +24,15 @@ without DDNA.
   XML, CMMN XML, SysML XMI, PNML, FEEL/OCL/ALF text, MSC/Z.120 PR forms,
   vendor stencils…) may be imported — read and converted into DDN/DDNA —
   but are never displayed or executed natively.
-- **Both standards are open; the tools are closed.** Anyone may implement
-  DDNA from the open standard. The open-source ddn-viewer and ddn-designer
-  implement DDN only; DDNA tool support is commercial and closed source.
-  Closure lives at the tool/product level, never in the specification.
+- **Both standards are open; the open tool implements both.** Anyone may
+  implement DDNA from the open standard. The open-source ddn-viewer and
+  ddn-designer implement DDN *and* DDNA — companion files, trace replay and
+  generation, execution engines, KEEL evaluation (2026-10-08 owner
+  direction). The commercial product (ScratchWeaver) differentiates
+  quantitatively and collaboratively, not by capability: it removes the
+  open tool's per-view display limits and adds concurrent editing,
+  collaboration, history and extended functionality. Differentiation lives
+  at the tool/product level, never in the specification.
 
 ## Relationship to `standard/`
 
@@ -35,10 +40,12 @@ Sibling documents. `standard/` holds the **DDN proposed standard** (the
 notation/language, its registry, profiles and schemas). `ddna/` holds the
 **DDNA proposed standard** (automation: traces, expression references,
 runtime models, conformance claims). DDNA cites DDN; DDN never requires
-DDNA. The separation rule stands for everything else: no DDNA execution
-machinery, examples, or DDNA references appear in the DDN runtime, viewer,
-designer, galleries, or examples — DDN-side association declarations are
-inert metadata to a DDN-only tool.
+DDNA. The separation rule stands for the engine and dialect: no DDNA
+execution machinery in the DDN *runtime/renderers*, and DDN-side
+association declarations are inert metadata to a DDN-only parser. The open
+tool (viewer/designer) implements both formats (2026-10-08 policy); what
+the commercial product adds is scale (display limits removed), concurrent
+editing and collaboration — not capabilities withheld from the open tool.
 
 ## Document map
 

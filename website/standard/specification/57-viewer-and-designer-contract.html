@@ -81,9 +81,11 @@ view main {
 <ul><li>The open-source footprint is exactly: the existing runtime bundles plus</li></ul>
 <p>  the editor component. No 0.8 feature may add a server dependency, a   build-time codegen step for end users, or a third-party runtime   dependency.</p>
 <ul><li>A commercial offering is a **hosted superset consuming the same runtime</li></ul>
-<p>  bundles** — additional formats (PDF/PPTX), storage, collaboration —   delivered around, never as a fork of, the runtime. Any divergence in   check/render behavior between OSS and hosted use of the same source is a   defect, and the conformance vectors (chapter 58) run against both.</p>
+<p>  bundles** — additional formats (PDF/PPTX), storage, collaboration, and   removal of the per-view display limits — delivered around, never as a   fork of, the runtime. Any divergence in check/render behavior between OSS   and hosted use of the same source is a defect, and the conformance   vectors (chapter 58) run against both.</p>
+<ul><li><strong>2026-10-08 owner policy:</strong> DDNA automation (companion files, trace</li></ul>
+<p>  replay and generation, execution engines, KEEL evaluation) is in scope   for the open tool; the commercial/open boundary is quantitative   (display/scale limits) and collaborative (concurrent editing, history,   extended functionality), never capability-gating.</p>
 <ul><li>Feature-gating in the superset happens at the application layer (export</li></ul>
-<p>  formats, hosting), never by patching runtime diagnostics or rendering.</p>
+<p>  formats, hosting, scale limits, collaboration), never by patching runtime   diagnostics or rendering.</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>

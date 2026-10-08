@@ -13,8 +13,9 @@ Every operational family in the corpus reduces replay and simulation to
 simultaneity is excluded"), fUML §2.3 (any legal interleaving conforms) and
 Z.120 §4.1 (traces are sequentializations). The artifact every family
 needs is therefore a single, stamped, replayable trace format. Trace
-*generation* is always a DDNA-tool feature; trace *replay* is pure playback
-of static file data (`[viewer-safe]`, §4.5).
+*generation* is an interactive-tool (`[DT]`) feature; trace *replay* is pure
+playback of static file data (`[viewer-safe]`, §4.5) — both ship in the open
+tool (chapter 1 §1.2, 2026-10-08).
 
 ## 4.2 Structure: the per-event record
 
@@ -131,6 +132,11 @@ A DDNA file carrying traces must declare, in-file:
 
 A trace file is pure static data; replaying or stepping through a stored
 trace is `[viewer-safe]` in every family (the corpus' flagship recurring
-candidate). Trace *generation* is always a DDNA-tool feature. This is the
-boundary the free/commercial split follows for traces: reading is free,
-producing is not.
+candidate). Trace *generation* is an interactive-tool (`[DT]`) feature.
+~~This is the boundary the free/commercial split follows for traces:
+reading is free, producing is not.~~ **2026-10-08 amendment:** both reading
+and producing ship in the open tool (chapter 1 §1.2); [VS] stays meaningful
+as the technical fact "a passive viewer can play this back without an
+execution engine", and the commercial tier's trace differentiation is
+quantitative (trace sizes/steps displayable) and collaborative, not a
+generation lock.

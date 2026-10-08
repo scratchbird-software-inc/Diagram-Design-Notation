@@ -92,10 +92,13 @@ of result metadata.
 
 **Decision:** conversion libraries live in a SHARED (open or
 dual-licensed) converter core; product tiers gate scope/depth, not code.
-**Rationale:** the open designer's simple import and the commercial full
-import must share one converter core or they drift. **Consequences:**
-chapter 11's tier rules reference the shared core; no per-product
-converter forks.
+**Rationale:** the open designer's import and the commercial full import
+must share one converter core or they drift. **Consequences:** chapter 11's
+tier rules reference the shared core; no per-product converter forks.
+**2026-10-08 amendment:** "scope/depth" is now read quantitatively and
+collaboratively per chapter 1 §1.2 (per-view limits, concurrent editing,
+extended functionality) — the commercial tier no longer gates a capability
+class out of the open tool.
 
 ## D10 — DDN-side association mechanism
 
