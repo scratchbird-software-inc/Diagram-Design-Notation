@@ -3750,14 +3750,19 @@ function fixedPageLiveArea() {
   /* The render's drawingBounds are wider than the raw node rects (label/icon
    * allowance, route points, +30 slack — the same bounds DDN074 measures).
    * Clamp NODE rects against the live area shrunk by the observed padding so
-   * the pinned result stays inside the page instead of throwing DDN074. */
+   * the pinned result stays inside the page instead of throwing DDN074.
+   * Padding is CAPPED: once a pin exists, pin-centring mirrors the bounds
+   * around the pinned group and the raw padding would swallow the whole page
+   * (the "page is full after one snap-back" deadlock). 160px covers the real
+   * label/route slack; pinClamped's preflight handles the mirror. */
   const nodes = scene.nodes || [], b = scene.drawingBounds;
   let pl = 0, pt = 0, pr = 0, pb = 0;
   if (nodes.length && b) {
+    const cap = v => Math.min(160, Math.max(0, v));
     const minX = Math.min(...nodes.map(n => n.x)), minY = Math.min(...nodes.map(n => n.y));
     const maxX = Math.max(...nodes.map(n => n.x + n.w)), maxY = Math.max(...nodes.map(n => n.y + n.h));
-    pl = Math.max(0, minX - b.x); pt = Math.max(0, minY - b.y);
-    pr = Math.max(0, b.x + b.w - maxX); pb = Math.max(0, b.y + b.h - maxY);
+    pl = cap(minX - b.x); pt = cap(minY - b.y);
+    pr = cap(b.x + b.w - maxX); pb = cap(b.y + b.h - maxY);
   }
   return { x: a.x + pl, y: a.y + pt, w: Math.max(60, a.w - pl - pr - 30), h: Math.max(60, a.h - pt - pb - 30) };
 }
