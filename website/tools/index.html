@@ -12004,6 +12004,43 @@ function attachDeselect() {
 /* Escape deselects (and opens Document) when no popup or armed gesture owns
  * the key. Capture phase so the check runs before the popup-closing handlers
  * mutate their hidden state. */
+/* Delete/Backspace deletes the selection (owner request) — the SAME path as
+ * the context-menu Delete… action: one confirm with the WW-006 blast radius,
+ * then one guided block of authoring.deleteDefinition calls (undoable). */
+function deleteDefinitionConfirmed(id) {
+  if (!confirm('Delete ' + id + '? It is used in ' + usageBlast(id) + '.')) return false;
+  guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, id));
+  return true;
+}
+function deleteSelection() {
+  const ids = [...new Set((state.selectedIds || []).filter(Boolean))];
+  const targets = ids.length ? ids : (state.selectedRelation ? [state.selectedRelation] : (state.selected ? [state.selected] : []));
+  if (!targets.length) return;
+  const label = targets.length === 1 ? targets[0] : targets.length + ' selected definitions';
+  const blast = targets.length === 1 ? ' It is used in ' + usageBlast(targets[0]) + '.' : '';
+  if (!confirm('Delete ' + label + '?' + blast)) return;
+  guided(() => {
+    /* The current view's select list is a reference too (DDN-E004) — drop
+     * the deleted ids from it first, same pattern as the type sheet. */
+    const cur = state.ws.resolve(state.entry, state.view);
+    const shown = cur.view.selected || [];
+    const remaining = shown.filter(u => !targets.includes(u));
+    if (remaining.length !== shown.length) A.authoring.setViewList(state.ws, state.entry, state.view, 'select', remaining);
+    for (const id of targets) A.authoring.deleteDefinition(state.ws, state.entry, state.view, id);
+  });
+}
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Delete' && e.key !== 'Backspace') return;
+  const t = e.target;
+  /* Never while typing: source drawer, inspector fields, inline editor. */
+  if (t && (t.isContentEditable || (t.closest && t.closest('input, textarea, select, .ddn-inline-edit')))) return;
+  if (!els.aeModal.hidden || !els.arModal.hidden || !els.templatePopup.hidden || !els.iconPopup.hidden || !els.settingsPopup.hidden) return;
+  const stage = stageEl();
+  if (stage && stage.querySelector('.ddn-inline-edit')) return; // the dblclick editor owns its keys
+  if (!(state.selected || state.selectedRelation || (state.selectedIds || []).length)) return;
+  e.preventDefault();
+  deleteSelection();
+}, true);
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (design.placing) return;
@@ -14593,10 +14630,7 @@ function elementCtxEntries(id, gx, gy) {
     { head: id },
     { label: 'Rename…', title: 'Select and edit the label in the Inspector', fn: () => { openInspectorFor(id, false); status('rename in the Inspector (Meaning tab, Label field)'); } },
     { label: 'Duplicate', fn: () => guided(() => A.authoring.duplicate(state.ws, state.entry, state.view, id)) },
-    { label: 'Delete…', title: 'Delete the definition — blocked while references depend on it', fn: () => {
-      if (!confirm('Delete ' + id + '? It is used in ' + usageBlast(id) + '.')) return;
-      guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, id));
-    } },
+    { label: 'Delete…', title: 'Delete the definition — blocked while references depend on it', fn: () => deleteDefinitionConfirmed(id) },
     { label: 'Hide in this view', fn: () => guided(() => A.authoring.hide(state.ws, state.entry, state.view, id)) },
     '-',
     isPinned
@@ -14618,7 +14652,7 @@ function relationCtxEntries(id, gx, gy) {
     { label: 'Edit label…', fn: () => { openInspectorFor(id, true); status('edit the label in the Inspector (Meaning tab)'); } },
     { label: 'Cardinality…', title: 'Open the cardinality editor in the Inspector', fn: () => openInspectorFor(id, true) },
     { label: 'Reverse relation', title: 'Swap endpoints and remap the direction-prefixed properties (marks, cardinality bounds, end labels) — one undoable transaction', fn: () => guided(() => { A.authoring.reverseRelation(state.ws, state.entry, state.view, id); status('reversed ' + id + ' — endpoints swapped; marks, cardinality bounds and end labels remapped'); }) },
-    { label: 'Delete', fn: () => guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, id)) },
+    { label: 'Delete', fn: () => deleteDefinitionConfirmed(id) },
     '-',
     { label: 'Properties', fn: () => openPropertiesFor(id, true) }
   ];
