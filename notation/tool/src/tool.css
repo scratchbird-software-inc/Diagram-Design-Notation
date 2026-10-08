@@ -16,6 +16,28 @@ button:hover:not(:disabled) { background: #eef4ff; border-color: #8babe8; }
 button:disabled, select:disabled, input:disabled { opacity: .45; cursor: not-allowed; }
 button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-mini { padding: 2px 8px; font-size: 12px; }
+/* WW-005 provenance chips on view-scoped drawer values. */
+.ddn-prov { font-size: 9.5px; text-transform: uppercase; letter-spacing: .05em; padding: 1px 6px; border-radius: 8px; background: #e3eaf3; color: #66809f; white-space: nowrap; }
+.ddn-prov[data-scope="view"] { background: #dbeafe; color: #245ac8; }
+.ddn-prov[data-scope="session"] { background: #fef3c7; color: #92400e; }
+.ddn-reset-inherited { font-size: 10px; padding: 1px 6px; }
+/* WW-004 data sheet tables. */
+.ddn-data-block { margin: 8px 0 14px; }
+.ddn-data-block h4 { margin: 4px 0; font-size: 12.5px; }
+.ddn-data-table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.ddn-data-table th { text-align: left; color: #66809f; font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; padding: 2px 6px; border-bottom: 1px solid #e3eaf3; }
+.ddn-data-table td { padding: 1px 4px; border-bottom: 1px solid #f0f4f9; }
+.ddn-data-cell { width: 100%; border: 1px solid transparent; border-radius: 4px; padding: 2px 4px; font: inherit; background: transparent; box-sizing: border-box; }
+.ddn-data-cell:focus { border-color: #245ac8; background: #fff; outline: none; }
+/* WW-001 workspace outline tree. */
+.ddn-tree { list-style: none; margin: 0; padding: 0; }
+.ddn-tree ul { list-style: none; margin: 0; padding-left: 16px; border-left: 1px solid #e3eaf3; }
+.ddn-tree .ddn-tree-file > button { font-weight: 600; }
+.ddn-tree .ddn-tree-role { font-size: 10.5px; color: #66809f; margin-left: 6px; }
+.ddn-tree .ddn-tree-views button { display: block; width: 100%; text-align: left; border: 0; background: transparent; padding: 2px 4px 2px 18px; font-size: 12px; color: #20304a; cursor: pointer; border-radius: 5px; }
+.ddn-tree .ddn-tree-views button:hover { background: #eef4ff; }
+.ddn-tree .ddn-tree-views button.selected { background: #dbeafe; color: #245ac8; }
+.ddn-tree .ddn-tree-toggle { border: 0; background: transparent; cursor: pointer; font-size: 10px; width: 16px; padding: 0; color: #66809f; }
 .ddn-mini-link { display: block; padding: 4px 2px 2px; font-size: 12px; }
 .ddn-dim { color: #61718a; font-size: 12px; }
 .ddn-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 6px 0; }

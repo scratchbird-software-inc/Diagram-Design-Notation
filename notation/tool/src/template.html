@@ -105,6 +105,8 @@
       <ul id="ddn-file-list"></ul>
       <div class="ddn-row">
         <button id="ddn-file-new" type="button" class="ddn-mini">New file</button>
+        <button id="ddn-file-new-data" type="button" class="ddn-mini" title="WW-002: declarations file with no view — offers the import line into the current file">New data file</button>
+        <button id="ddn-file-new-view" type="button" class="ddn-mini" title="WW-002: view file importing the current file, with a skeleton view over chosen elements — opens it">New view file</button>
         <button id="ddn-file-rename" type="button" class="ddn-mini">Rename</button>
         <button id="ddn-file-delete" type="button" class="ddn-mini">Delete</button>
       </div>
@@ -211,6 +213,7 @@
         <p id="ddn-sheet-empty" class="ddn-dim">This view has no type sheet — sheets exist for diagram types with a structured editing surface (CMMN case plans first; more bodies arrive in later phases).</p>
         <div id="ddn-sheet-outline" hidden></div>
         <div id="ddn-sheet-editor" hidden></div>
+        <div id="ddn-sheet-data" hidden></div>
       </div>
     </aside>
     <aside id="ddn-drawer-properties" class="ddn-drawer ddn-bottom" data-state="closed" aria-label="Properties drawer">
@@ -281,6 +284,7 @@
         <label class="ddn-field"><span>Active view</span><select id="ddn-view-picker" aria-label="View"></select></label>
         <label class="ddn-field"><span>View kind</span><select id="ddn-view-kind" aria-label="View kind"></select></label>
         <label class="ddn-field"><span>Projection kind</span><select id="ddn-projection-kind" aria-label="Projection kind"></select></label>
+        <button id="ddn-view-new" type="button" class="ddn-mini" title="WW-003: create a new view over the same declarations — pick a name, projection and destination file">New view from current data…</button>
         <p class="ddn-dim" id="ddn-view-kind-hint">View kind binds the view's vocabulary (DDN-VP rules) and drives capability filtering, the Creator palette and the Type sheet. Projection kind retypes a data-bound view. Both write to source.</p>
       </div>
     </div>

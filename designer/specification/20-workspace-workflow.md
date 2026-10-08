@@ -2,6 +2,27 @@
 
 **DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
+> **Implementation status (2026-10-08, implemented):** all seven requirements
+> are shipped in the live unified tool (`notation/tool/src/`, `?mode=design`).
+> WW-001: the Files drawer renders the workspace as an import tree
+> (`filesUI`/`fileRoleSummary` in `tool.js`) — entry root, imports nested,
+> per-file role summaries from parse facts, no-view files labelled "data
+> only". WW-002: "New data file" and "New view file" intents beside "New
+> file"; both preflight parse/render and undo on failure. WW-003: "New view
+> from current data…" in Style & Layout reuses the current view's data/select
+> lines verbatim, imports the data-owning files for new destinations
+> (`refOwnerFiles`), and declares data-bound binding stubs with real record
+> keys when derivable, placeholder INCOMPLETE stubs otherwise. WW-004: the
+> Type sheet's Data body (`renderDataSheet`) edits records of every data
+> block grouped by owning file through `authoring.setRecordValue`. WW-005:
+> every Document drawer value carries a This view / Inherited / Session
+> preview chip plus Reset-to-inherited (one-key removal via
+> `setViewProfile`/`setViewProperties` with `undefined`). WW-006: selection
+> status names the owning file when it differs from the view's file, and
+> delete confirms report "used in n views across m files" with the file list.
+> WW-007: bundle/split round trips verified byte-identical (probe
+> `/tmp/ww007.js`); no code change was needed.
+
 > **Placement.** This chapter specifies the work process for workspaces whose
 > notation is spread across more than one `.ddn` file: shared declarations in
 > data/model files, one or more view files importing them, and several people

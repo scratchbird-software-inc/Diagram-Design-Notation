@@ -136,7 +136,7 @@ const els = {
   fileInput: $('ddn-file-input'), folderInput: $('ddn-folder-input'),
   catalogue: $('ddn-catalogue'), catalogueSearch: $('ddn-catalogue-search'),
   fileList: $('ddn-file-list'), fileCount: $('ddn-file-count'),
-  fileNew: $('ddn-file-new'), fileRename: $('ddn-file-rename'), fileDelete: $('ddn-file-delete'),
+  fileNew: $('ddn-file-new'), fileNewData: $('ddn-file-new-data'), fileNewView: $('ddn-file-new-view'), fileRename: $('ddn-file-rename'), fileDelete: $('ddn-file-delete'),
   downloadFile: $('ddn-download-file'), downloadZip: $('ddn-download-zip'), downloadJson: $('ddn-download-json'),
   paste: $('ddn-paste'), loadPaste: $('ddn-load-paste'),
   sourceFile: $('ddn-source-file'), source: $('ddn-source'), sourceError: $('ddn-source-error'),
@@ -156,7 +156,7 @@ const els = {
   arTo: $('ddn-ar-to'), arKind: $('ddn-ar-kind'), arNote: $('ddn-ar-note'), arCreate: $('ddn-ar-create'), arCancel: $('ddn-ar-cancel'),
   tidy: $('ddn-tidy'),
   sheetTitle: $('ddn-sheet-title'), sheetEmpty: $('ddn-sheet-empty'),
-  sheetOutline: $('ddn-sheet-outline'), sheetEditor: $('ddn-sheet-editor'),
+  sheetOutline: $('ddn-sheet-outline'), sheetEditor: $('ddn-sheet-editor'), sheetData: $('ddn-sheet-data'),
   pointerToggle: $('ddn-pointer-toggle'),
   cutBtn: $('ddn-cut'), copyBtn: $('ddn-copy'), pasteBtn: $('ddn-clipboard-paste'),
   boldToggle: $('ddn-bold-toggle'), italicToggle: $('ddn-italic-toggle'),
@@ -164,7 +164,7 @@ const els = {
   paletteFamily: $('ddn-palette-family'), paletteFamilyMenu: $('ddn-palette-family-menu'), familySelect: $('ddn-family-select'),
   paletteSearch: $('ddn-palette-search'),
   paletteHint: $('ddn-palette-hint'), paletteAll: $('ddn-palette-all'), paletteAllWrap: $('ddn-palette-all-wrap'),
-  viewKind: $('ddn-view-kind'), projectionKind: $('ddn-projection-kind'),
+  viewKind: $('ddn-view-kind'), projectionKind: $('ddn-projection-kind'), viewNew: $('ddn-view-new'),
   propertiesTitle: $('ddn-properties-title'), propertiesEmpty: $('ddn-properties-empty'), propertiesContent: $('ddn-properties-content'),
   rightSplitter: $('ddn-right-splitter'),
   exportSvg: $('ddn-export-svg'), exportPng: $('ddn-export-png'), exportWebp: $('ddn-export-webp'), saveExample: $('ddn-save-example'),
@@ -1648,6 +1648,18 @@ const DOCUMENT_FIELDS = [
     ['Placement', 'placement', ['right', 'bottom', 'none']],
     ['Width (px)', 'width', 'quantity', 100, 2000]
   ]],
+  /* WW-005: style/layout envelope keys join the Document drawer so every
+   * view-scoped standard value carries the provenance chip in one place. */
+  ['Style', 'style', [
+    ['Look', 'look', ['classic', 'handDrawn', 'neo']],
+    ['Theme', 'theme', ['default', 'neutral', 'dark', 'night', 'forest', 'base']],
+    ['Font', 'font', ['sans', 'serif', 'mono', 'handwriting']]
+  ]],
+  ['Layout', 'layout', [
+    ['Placement', 'algorithm', ['auto', 'grid', 'manual', 'layered', 'tree', 'mindmap', 'grouped', 'fit_grid', 'circular', 'radial', 'spanning_tree', 'organic', 'ladder']],
+    ['Centre', 'center', ['content', 'pins']],
+    ['Routing', 'routing', ['orthogonal', 'straight', 'curved', 'string']]
+  ]],
   ['View', 'view', [
     ['View title', 'title', 'text'],
     ['Description', 'description', 'text'],
@@ -1723,11 +1735,26 @@ for (const [group, profile, fields] of DOCUMENT_FIELDS) {
       input.min = min; input.max = max; input.step = step || 1; input.placeholder = 'source';
       input.addEventListener('change', commit);
     }
-    docInputs[profile + '.' + key] = { input, kind };
+    /* WW-005: per-value provenance — "This view" when the key is authored in
+     * the view block, "Session preview" when a presentation override covers it,
+     * "Inherited" otherwise; authored values get a Reset-to-inherited action
+     * that removes exactly that key. */
+    const prov = document.createElement('span');
+    prov.className = 'ddn-prov';
+    const reset = document.createElement('button');
+    reset.type = 'button'; reset.className = 'ddn-mini ddn-reset-inherited';
+    reset.textContent = 'Reset to inherited'; reset.hidden = true;
+    reset.title = 'Remove this key from the view block — the inherited/default value applies';
+    reset.addEventListener('click', () => guard(() => guided(() => profile === 'view'
+      ? A.authoring.setViewProperties(state.ws, state.entry, state.view, { [writeKey]: undefined })
+      : A.authoring.setViewProfile(state.ws, state.entry, state.view, { [profile]: { [writeKey]: undefined } }))));
+    docInputs[profile + '.' + key] = { input, kind, prov, reset, profile, key: writeKey };
     /* Labels repeat across groups (Width, Title) — qualify so assistive tech
      * and probes can tell Publication Width from Legend Width. */
     input.setAttribute('aria-label', group + ' ' + label);
     field(g, label, input);
+    const row = input.closest('.ddn-field');
+    if (row) row.append(prov, reset);
   }
   if (profile === 'publication') g.append(dim('Content scale grows or shrinks the drawing itself — geometry and all text together (0.25–4, default 1) — before Fit is applied, so Fit "contain" and the minimum-text check (DDN071) judge the scaled result, and Fit "none" renders at exactly that scale with DDN074 overflow rules on the scaled size. Embedding scale is different: it declares how much the embedding context enlarges the rendered SVG (1 = as-rendered). It never changes geometry or fonts in the file itself — it only scales the effective sizes the minimum-text and print lint checks enforce (DDN071/DDN-PS01/PS02), so a value above 1 asserts "this will be displayed larger". All renderers cap embedding scale at 4 (DDN070/DDN-PJ062).'));
   if (profile === 'legend') {
@@ -1863,6 +1890,8 @@ function syncDocumentForm() {
   const node = viewSourceNode();
   const groupNode = g => node && (node.children || []).find(x => x.group && x.type === g);
   const propsOf = g => { const c = groupNode(g); return (c && c.props) || {}; };
+  /* WW-005: session-preview coverage from the presentation override channel. */
+  const preview = overrideProfileWrites((state.presentation && state.presentation.options) || {});
   for (const [, profile, fields] of DOCUMENT_FIELDS) {
     const p = profile === 'view' ? ((node && node.props) || {}) : propsOf(profile);
     for (const [, key, kind] of fields) {
@@ -1875,6 +1904,13 @@ function syncDocumentForm() {
       else if (kind === 'number') rec.input.value = v == null ? '' : String(v);
       else if (kind === 'text') rec.input.value = typeof v === 'string' ? v : '';
       else rec.input.value = typeof v === 'string' && rec.input.querySelector('option[value="' + v + '"]') ? v : '';
+      if (rec.prov) {
+        const authored = Object.prototype.hasOwnProperty.call(p, rec.key) && (rec.key !== 'banner' || typeof p.banner === 'string');
+        const previewed = !authored && !!(preview[profile] && Object.prototype.hasOwnProperty.call(preview[profile], rec.key));
+        rec.prov.textContent = authored ? 'This view' : previewed ? 'Session preview (not saved)' : 'Inherited';
+        rec.prov.dataset.scope = authored ? 'view' : previewed ? 'session' : 'inherited';
+        rec.reset.hidden = !authored;
+      }
     }
   }
   const pub = groupNode('publication');
@@ -2045,11 +2081,11 @@ function onSelect(detail) {
   if (relation) {
     state.selectedRelation = relation.id;
     state.selected = null;
-    status('selected relation ' + relation.id);
+    status('selected relation ' + relation.id + writeTargetNote(relation.id));
   } else {
     state.selected = id;
     state.selectedRelation = null;
-    status('selected ' + id);
+    status('selected ' + id + writeTargetNote(id));
   }
   applyOverrideCss();
   refreshEditors();
@@ -2171,6 +2207,91 @@ function selectFromSheet(uid) {
   if (ir) inspector(uid, ir, null);
   autoDrawerForSelection(true);
 }
+/* WW-004 — Data body in the bottom Type sheet: every data block in the
+ * workspace, grouped by owning file (the header names it — writes land there
+ * through authoring.setRecordValue regardless of the view on screen). Cell
+ * commits follow the chart sheet's typed discipline: numeric cells accept
+ * numbers only, blank removes the key. Adding a record inserts one source
+ * line at the block's body end in the owning file. Editing never touches view
+ * definitions; bound views re-render on commit via the render event. */
+function renderDataSheet() {
+  if (!els.sheetData) return;
+  const files = state.ws.getFiles();
+  const sections = [];
+  for (const [file, text] of Object.entries(files).sort()) {
+    let doc = null;
+    try { doc = A.parse(text, file); } catch { continue; }
+    for (const d of doc.declarations.filter(x => x.type === 'data')) {
+      const records = (d.children || []).filter(c => c.type === 'object' && c.props && c.props.x_record && typeof c.props.x_record === 'object' && !Array.isArray(c.props.x_record));
+      if (records.length) sections.push({ file, data: d, records, mod: doc.module });
+    }
+  }
+  els.sheetData.hidden = !sections.length;
+  els.sheetData.replaceChildren(...sections.map(sec => {
+    const wrap = document.createElement('div');
+    wrap.className = 'ddn-data-block';
+    const h = document.createElement('h4');
+    h.textContent = 'data ' + sec.data.id + ' — ' + sec.file;
+    h.title = 'Records of data block ' + sec.data.id + '; edits write to ' + sec.file + ' regardless of the view on screen';
+    const keys = [];
+    for (const r of sec.records) for (const k of Object.keys(r.props.x_record)) if (!keys.includes(k)) keys.push(k);
+    const table = document.createElement('table');
+    table.className = 'ddn-data-table';
+    const thead = document.createElement('thead');
+    const hr = document.createElement('tr');
+    hr.append(...['id', ...keys].map(t => { const th = document.createElement('th'); th.textContent = t; return th; }));
+    thead.append(hr);
+    table.append(thead);
+    const tbody = document.createElement('tbody');
+    for (const r of sec.records) {
+      const tr = document.createElement('tr');
+      const idTd = document.createElement('td');
+      idTd.textContent = r.id;
+      tr.append(idTd);
+      const uid = sec.mod + '::' + sec.data.id + '.' + r.id;
+      for (const k of keys) {
+        const td = document.createElement('td');
+        const inp = document.createElement('input');
+        inp.className = 'ddn-data-cell';
+        const cur = r.props.x_record[k];
+        inp.value = cur === undefined || cur === null ? '' : String(cur);
+        inp.setAttribute('aria-label', sec.data.id + ' ' + r.id + ' ' + k + ' (' + sec.file + ')');
+        inp.addEventListener('change', () => guard(() => {
+          const raw = inp.value;
+          let val;
+          if (raw.trim() === '') val = undefined;
+          else if (typeof cur === 'number') {
+            if (!Number.isFinite(Number(raw))) { status('numeric record keys accept numbers only — nothing changed'); inp.value = String(cur); return; }
+            val = Number(raw);
+          } else val = raw;
+          guided(() => A.authoring.setRecordValue(state.ws, state.entry, state.view, uid, k, val));
+        }));
+        td.append(inp);
+        tr.append(td);
+      }
+      tbody.append(tr);
+    }
+    table.append(tbody);
+    const add = document.createElement('button');
+    add.type = 'button'; add.className = 'ddn-mini'; add.textContent = 'Add record';
+    add.title = 'Append a record to data ' + sec.data.id + ' in ' + sec.file + ' (keys pre-filled by type)';
+    add.addEventListener('click', () => guard(() => {
+      const taken = new Set(sec.records.map(r => r.id));
+      let rid = sec.data.id + '_r' + (sec.records.length + 1), n2 = 2;
+      while (taken.has(rid)) rid = sec.data.id + '_r' + (sec.records.length + n2++);
+      const first = sec.records[0].props.x_record;
+      const fill = keys.map(k => {
+        const v = first[k];
+        return k + ': ' + (typeof v === 'number' ? '0' : typeof v === 'boolean' ? 'false' : JSON.stringify(''));
+      }).join(', ');
+      guided(() => state.ws.applyEdits([{ file: sec.file, start: sec.data.bodyEnd, end: sec.data.bodyEnd, text: '\n    object ' + rid + ' ' + JSON.stringify(rid) + ' { kind: record; x_record: { ' + fill + ' }; }\n' }], { expectedRevision: state.ws.revision }));
+      status('added record ' + rid + ' to ' + sec.data.id + ' in ' + sec.file);
+    }));
+    wrap.append(h, table, add);
+    return wrap;
+  }));
+}
+
 function refreshTypeSheet() {
   /* Phase 6b: auto-added definitions land in an explicit select list
    * (addLocal); the chart/decision delete flows drop that ref first so
@@ -2193,6 +2314,7 @@ function refreshTypeSheet() {
   els.sheetEmpty.hidden = has;
   els.sheetOutline.hidden = !has;
   els.sheetEditor.hidden = !has;
+  renderDataSheet();
   if (!has) { state.sheet = null; return; }
   let ir = null;
   try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
@@ -2447,6 +2569,20 @@ function viewUsageList(uid) {
   }
   return usedInViews(views, uid);
 }
+/* WW-006 — cross-file awareness: the file a selection's definition OWNS (its
+ * edits write there), and the blast-radius text for destructive actions. */
+function owningFileOf(uid) {
+  try { return A.authoring.sourceOf(state.ws, state.entry, state.view, uid).file; } catch { return null; }
+}
+function writeTargetNote(uid) {
+  const f = owningFileOf(uid);
+  return f && f !== state.entry ? ' — writes to ' + f : '';
+}
+function usageBlast(uid) {
+  const uses = viewUsageList(uid);
+  const files = [...new Set(uses.map(u => u.entry))];
+  return uses.length + ' view' + (uses.length === 1 ? '' : 's') + ' across ' + files.length + ' file' + (files.length === 1 ? '' : 's') + (files.length ? ' (' + files.join(', ') + ')' : '');
+}
 /* 0.9 descriptor fields: impacted-scope preview — a model-level edit on a
  * definition used in several views previews its scope before committing
  * (destructive or meaning-changing changes; ordinary labels keep the
@@ -2661,7 +2797,7 @@ function buildMeaningTab(panel, id, ir, ctx) {
   });
   inButton(actions, 'Go to source', 'Open the Source drawer at this definition', () => goToSource(uid));
   inButton(actions, 'Delete', 'Delete this semantic definition (referenced definitions are blocked; use Hide for appearance-only removal)', () => {
-    if (confirm('Delete this semantic definition? Referenced definitions are blocked; use Hide for appearance-only removal.'))
+    if (confirm('Delete this semantic definition? It is used in ' + usageBlast(uid) + '. Referenced definitions are blocked; use Hide for appearance-only removal.'))
       guidedInspector(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, uid));
   });
   panel.append(actions);
@@ -4455,7 +4591,10 @@ function elementCtxEntries(id, gx, gy) {
     { head: id },
     { label: 'Rename…', title: 'Select and edit the label in the Inspector', fn: () => { openInspectorFor(id, false); status('rename in the Inspector (Meaning tab, Label field)'); } },
     { label: 'Duplicate', fn: () => guided(() => A.authoring.duplicate(state.ws, state.entry, state.view, id)) },
-    { label: 'Delete…', title: 'Delete the definition — blocked while references depend on it', fn: () => guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, id)) },
+    { label: 'Delete…', title: 'Delete the definition — blocked while references depend on it', fn: () => {
+      if (!confirm('Delete ' + id + '? It is used in ' + usageBlast(id) + '.')) return;
+      guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, id));
+    } },
     { label: 'Hide in this view', fn: () => guided(() => A.authoring.hide(state.ws, state.entry, state.view, id)) },
     '-',
     isPinned
@@ -4830,15 +4969,220 @@ function syncViewControls() {
   els.projectionKind.disabled = els.projectionKind.disabled || !ir;
 }
 
+/* WW-003 — New view from current data: one command creates a valid view over
+ * the same declarations — name, view kind / projection, destination (this
+ * file, a new view file, or an existing one). The source view is never
+ * touched; the write is a single undoable workspace transaction. Data-bound
+ * projections get a binding stub derived from the records' actual keys; when
+ * no usable fields exist the stub is declared with placeholder bindings and
+ * flagged INCOMPLETE (the renderer's DDN-PJ banners name what is missing) —
+ * never silently omitted. */
+/* Resolve which files a view's refs draw from: `@alias.block.x` aliases map
+ * through the view file's import lines; anything else is a local block of the
+ * view's own file. A new view file must import the DATA-owning files, not the
+ * view file it was derived from (the refs re-resolve there). */
+function refOwnerFiles(viewText) {
+  const entryText = state.ws.getFiles()[state.entry] || '';
+  const importMap = {};
+  for (const im of entryText.matchAll(/import\s+"([^"]+)"\s+as\s+([A-Za-z0-9_]+)\s*;/g)) importMap[im[2]] = im[1];
+  const dir = state.entry.includes('/') ? state.entry.slice(0, state.entry.lastIndexOf('/')) : '';
+  const norm = p => {
+    const parts = [];
+    for (const seg of p.split('/')) {
+      if (seg === '.' || seg === '') continue;
+      if (seg === '..') parts.pop(); else parts.push(seg);
+    }
+    return parts.join('/');
+  };
+  const files = new Set();
+  for (const m2 of viewText.matchAll(/@([A-Za-z0-9_]+)\./g)) {
+    const first = m2[1];
+    if (importMap[first]) files.add(norm((dir ? dir + '/' : '') + importMap[first]));
+  }
+  if (!files.size) files.add(state.entry);
+  return [...files];
+}
+function newViewFromCurrentData() {
+  flush();
+  const ir = state.ws.resolve(state.entry, state.view);
+  const vid = prompt('New view id (snake_case)', state.view + '_2');  if (!vid) return;
+  if (!/^[a-z][a-z0-9_]*$/.test(vid)) throw new Error('View id must be snake_case (got ' + vid + ')');
+  const proj = (prompt('Projection kind — ' + PROJECTION_KINDS.join(', '), 'graph') || 'graph').trim();
+  if (!PROJECTION_KINDS.includes(proj)) throw new Error('Unknown projection kind: ' + proj);
+  const kind = (prompt('View kind (blank = untyped) — ' + Object.keys(A.viewProfiles.VIEW_KINDS).slice(0, 8).join(', ') + ', …', '') || '').trim();
+  const dest = (prompt('Destination file — "." for this file (' + state.entry + '), or a kebab-case .ddn path (created if missing)', '.') || '.').trim();
+  /* Reuse the current view's data/select lines verbatim — the new view is
+   * bound to exactly the same declarations by construction. */
+  const node = viewSourceNode();
+  if (!node) throw new Error('the current view has no source declaration to derive from');
+  const viewText = state.ws.getFiles()[node.source].slice(node.start, node.end);
+  const dataM = viewText.match(/data:\s*(\[[^\]]*\]|@[A-Za-z0-9_.:*-]+)\s*;/);
+  if (!dataM) throw new Error('the current view declares no data: list to derive from');
+  let body = '    ' + dataM[0] + '\n';
+  if (kind) body = '    kind: ' + JSON.stringify(kind) + ';\n' + body;
+  if (proj === 'graph') {
+    const selM = viewText.match(/select:\s*(\[[^\]]*\]|@[A-Za-z0-9_.:*-]+)\s*;/);
+    if (selM) body += '    ' + selM[0] + '\n';
+  } else {
+    /* Data-bound stub: bind the records actually present; x/y take the first
+     * string and first numeric record keys (the chart sheet's data-aware
+     * default). Without usable keys the placeholders stay and the render
+     * flags the stub INCOMPLETE (DDN-PJ030 names the missing bindings). */
+    const records = (ir.elements || []).filter(n => n.kind === 'record');
+    const keys = [];
+    for (const r of records) for (const k of Object.keys((r.properties && r.properties.x_record) || {})) if (!keys.includes(k)) keys.push(k);
+    const xKey = keys.find(k => records.some(r => typeof r.properties.x_record[k] === 'string'));
+    const yKey = keys.find(k => records.every(r => typeof r.properties.x_record[k] === 'number' || r.properties.x_record[k] === undefined) && records.some(r => typeof r.properties.x_record[k] === 'number'));
+    const refs = records.map(r => '@' + A.authoring.referenceFor(state.ws, state.entry, state.view, r.id, null)).join(', ');
+    body += '    projection {\n        kind: ' + proj + ';\n' +
+      (proj === 'chart' ? '        profile: "chart.basic@1";\n' : '') +
+      (refs ? '        records: [' + refs + '];\n' : '') +
+      (proj === 'chart' ? '        mark: bar;\n        x: "x_record.' + (xKey || 'TODO_label') + '";\n        y: "x_record.' + (yKey || 'TODO_value') + '";\n' : '') +
+      '    }\n';
+    if (!xKey || !yKey) body += '    // INCOMPLETE: bind the projection to record fields (x/y TODO placeholders) — the renderer flags this view until the bindings name real fields.\n';
+  }
+  const decl = 'view ' + vid + ' ' + JSON.stringify(vid) + ' {\n' + body + '}\n';
+  const files = state.ws.getFiles();
+  let destFile = dest;
+  if (dest === '.') destFile = state.entry;
+  if (Object.prototype.hasOwnProperty.call(files, destFile)) {
+    const text = files[destFile];
+    /* Duplicate view id in the destination file is a hard no. */
+    if (A.parse(text, destFile).declarations.some(d => d.type === 'view' && d.id === vid)) throw new Error('view ' + vid + ' already exists in ' + destFile);
+    state.ws.applyEdits([{ file: destFile, start: text.length, end: text.length, text: '\n' + decl }], { expectedRevision: state.ws.revision });
+  } else {
+    if (!/^[a-z0-9][a-z0-9-]*(\/[a-z0-9][a-z0-9-]*)*\.ddn$/.test(destFile)) throw new Error('Naming convention: kebab-case .ddn path (got ' + destFile + ')');
+    /* A new view file imports the data-owning files so the refs resolve. */
+    const mod = 'user.' + destFile.replace(/\.ddn$/i, '').replace(/[^A-Za-z0-9]/g, '_');
+    const imports = refOwnerFiles(viewText).filter(f => f !== destFile)
+      .map(f => importLineFor(destFile, f)).filter(Boolean).join('\n');
+    state.ws.updateFiles({ [destFile]: 'ddn "0.6";\nmodule "' + mod + '";\n' + (imports ? imports + '\n' : '') + '\n' + decl });
+  }
+  /* Graph views must render clean immediately; a data-bound stub may render
+   * with the explicit INCOMPLETE flag (its DDN-PJ diagnostic) instead. */
+  try {
+    state.ws.renderSync({ entry: destFile, view: vid, noMotion: true });
+  } catch (e) {
+    if (proj === 'graph' || !e || !String(e.code || '').startsWith('DDN-PJ')) { state.ws.undo(); throw e; }
+    state.entry = destFile; state.view = vid;
+    entriesUI(vid);
+    mount();
+    status('created view ' + vid + ' in ' + destFile + ' with an INCOMPLETE binding stub — ' + e.code + ' names what to bind');
+    return;
+  }
+  state.entry = destFile; state.view = vid;
+  entriesUI(vid);
+  mount();
+  status('created view ' + vid + ' in ' + destFile + ' over the same data — undo removes it');
+}
+els.viewNew.addEventListener('click', () => guard(() => newViewFromCurrentData()));
+
+/* WW-001 — the Files drawer presents the workspace as an import tree: entry
+ * file at the root, imported files nested beneath their importer, each file
+ * expandable to its views, with a role summary from parse facts. Files with
+ * no views are labelled data files, not errors. */
+function fileRoleSummary(name) {
+  try {
+    const doc = A.parse(state.ws.getFiles()[name], name);
+    const views = doc.declarations.filter(d => d.type === 'view');
+    const elements = doc.declarations.filter(d => d.type === 'object' || d.type === 'relation').length;
+    const datas = doc.declarations.filter(d => d.type === 'data').length;
+    if (!views.length) return { summary: 'data only', views: [] };
+    const parts = [views.length + ' view' + (views.length === 1 ? '' : 's')];
+    if (elements) parts.push(elements + ' elements');
+    if (datas) parts.push(datas + ' data block' + (datas === 1 ? '' : 's'));
+    return { summary: parts.join(' · '), views: views.map(v => v.id) };
+  } catch { return { summary: 'parse error — see Source', views: [] }; }
+}
+function importChildrenOf(name, edges) { return (edges[name] || []).filter(p => Object.prototype.hasOwnProperty.call(state.ws.getFiles(), p)); }
 function filesUI() {
   const fs = state.ws.getFiles();
   els.fileCount.textContent = '(' + Object.keys(fs).length + ')';
-  els.fileList.replaceChildren(...Object.keys(fs).sort().map(n => {
-    const li = document.createElement('li'), b = document.createElement('button');
-    b.textContent = n; b.title = n;
-    b.className = n === state.currentFile ? 'selected' : '';
-    b.addEventListener('click', () => guard(() => { setDrawer('source', 'open', true); showSource(n); }));
-    li.append(b);
+  const edges = {};
+  for (const [name, text] of Object.entries(fs)) {
+    edges[name] = [];
+    for (const m of text.matchAll(/import\s+"([^"]+)"\s+as\s+[A-Za-z0-9_]+\s*;/g)) edges[name].push(m[1]);
+  }
+  els.fileList.className = 'ddn-tree';
+  /* Default-expanded; the set tracks COLLAPSED files so newly created files
+   * arrive open (the outline is the workspace's table of contents). */
+  const collapsed = state.outlineCollapsed || (state.outlineCollapsed = new Set());
+  const expanded = { has: name => !collapsed.has(name) };
+  const openView = (file, vid) => guard(() => {
+    flush();
+    state.entry = file; state.view = vid;
+    entriesUI(vid);
+    mount();
+  });
+  const fileNode = (name, depth) => {
+    const li = document.createElement('li');
+    li.className = 'ddn-tree-file';
+    const role = fileRoleSummary(name);
+    const row = document.createElement('div');
+    const kids = importChildrenOf(name, edges);
+    const tog = document.createElement('button');
+    tog.type = 'button'; tog.className = 'ddn-tree-toggle';
+    const collapsible = kids.length || role.views.length;
+    tog.textContent = collapsible ? (expanded.has(name) ? '▾' : '▸') : '·';
+    tog.title = collapsible ? 'expand/collapse' : '';
+    tog.addEventListener('click', () => { if (!collapsible) return; if (collapsed.has(name)) collapsed.delete(name); else collapsed.add(name); filesUI(); });
+    const b = document.createElement('button');
+    b.textContent = name; b.title = name + ' — show in the Source drawer';
+    b.className = name === state.currentFile ? 'selected' : '';
+    b.addEventListener('click', () => guard(() => { setDrawer('source', 'open', true); showSource(name); }));
+    const rs = document.createElement('span');
+    rs.className = 'ddn-tree-role';
+    rs.textContent = role.summary;
+    if (!role.views.length) rs.dataset.role = 'data';
+    row.append(tog, b, rs);
+    li.append(row);
+    if (collapsible && expanded.has(name)) {
+      const sub = document.createElement('ul');
+      if (role.views.length) {
+        const vli = document.createElement('li');
+        vli.className = 'ddn-tree-views';
+        for (const vid of role.views) {
+          const vb = document.createElement('button');
+          vb.type = 'button'; vb.textContent = 'view: ' + vid;
+          vb.className = (name === state.entry && vid === state.view) ? 'selected' : '';
+          vb.addEventListener('click', () => openView(name, vid));
+          vli.append(vb);
+        }
+        sub.append(vli);
+      }
+      for (const k of kids) sub.append(fileNode(k, depth + 1));
+      li.append(sub);
+    }
+    return li;
+  };
+  const seen = new Set();
+  /* Depth-first from the entry so the tree order follows the import closure;
+   * files outside the closure append at the root (still listed, never lost). */
+  const ordered = [];
+  const visit = name => {
+    if (seen.has(name)) return;
+    seen.add(name);
+    ordered.push(name);
+    for (const k of importChildrenOf(name, edges)) visit(k);
+  };
+  if (Object.prototype.hasOwnProperty.call(fs, state.entry)) visit(state.entry);
+  for (const n of Object.keys(fs).sort()) visit(n);
+  /* Nest: each file appears under its first importer in the visit order. */
+  const parentOf = {};
+  for (const [importer, kids] of Object.entries(edges)) for (const k of kids) if (!(k in parentOf)) parentOf[k] = importer;
+  const items = [];
+  const emit = (name, depth, guardSet) => {
+    if (guardSet.has(name)) return;
+    guardSet.add(name);
+    items.push({ name, depth });
+    for (const k of importChildrenOf(name, edges)) if (parentOf[k] === name) emit(k, depth + 1, guardSet);
+  };
+  const emitted = new Set();
+  for (const n of ordered) if (!parentOf[n] || !Object.prototype.hasOwnProperty.call(fs, parentOf[n])) emit(n, 0, emitted);
+  for (const n of ordered) if (!emitted.has(n)) emit(n, 0, emitted);
+  els.fileList.replaceChildren(...items.map(it => {
+    const li = fileNode(it.name, it.depth);
+    li.style.paddingLeft = (it.depth * 14) + 'px';
     return li;
   }));
   els.sourceFile.replaceChildren(...Object.keys(fs).sort().map(n => new Option(n, n)));
@@ -5145,6 +5489,71 @@ els.fileNew.addEventListener('click', () => guard(() => {
   setDrawer('source', 'open', true);
   showSource(path);
   updateHistory();
+}));
+/* WW-002 — New data file: declarations only, no view; offers the import line
+ * into the current file (same confirm flow as New file). Parses clean by
+ * construction — the skeleton is a complete data block. */
+els.fileNewData.addEventListener('click', () => guard(() => {
+  const existing = state.ws.getFiles();
+  const path = prompt('New DATA file (kebab-case .ddn) — declarations only, no view', suggestFileName(state.currentFile, existing).replace('.ddn', '-data.ddn'));
+  if (!path) return;
+  if (!/^[a-z0-9][a-z0-9-]*(\/[a-z0-9][a-z0-9-]*)*\.ddn$/.test(path)) throw new Error('Naming convention: kebab-case .ddn path (got ' + path + ')');
+  if (Object.prototype.hasOwnProperty.call(existing, path)) throw new Error('File exists.');
+  const m = 'user.' + path.replace(/\.ddn$/i, '').replace(/[^A-Za-z0-9]/g, '_');
+  state.ws.updateFiles({ [path]: 'ddn "0.6";\nmodule "' + m + '";\n\ndata model {\n    // Add definitions here.\n}\n' });
+  /* Parse-clean guarantee before the import offer. */
+  A.parse(state.ws.getFiles()[path], path);
+  const importer = state.currentFile, line = importLineFor(importer, path);
+  if (line && importer !== path && confirm('Insert `' + line + '` into ' + importer + ' so views there can use these declarations?')) {
+    const text = state.ws.getFiles()[importer];
+    const headerEnd = text.indexOf('\n', text.indexOf('module '));
+    const at = headerEnd > 0 ? headerEnd + 1 : 0;
+    state.ws.applyEdits([{ file: importer, start: at, end: at, text: line + '\n' }], { expectedRevision: state.ws.revision });
+  }
+  filesUI();
+  setDrawer('source', 'open', true);
+  showSource(path);
+  updateHistory();
+  status('created data file ' + path + ' — declarations only; it shows as "data only" in the outline');
+}));
+/* WW-002 — New view file: imports the current file and declares one skeleton
+ * view over a chosen set of the current view's elements; opens the view. The
+ * file renders immediately (preflighted — a failed skeleton is undone). */
+els.fileNewView.addEventListener('click', () => guard(() => {
+  flush();
+  const ir = state.ws.resolve(state.entry, state.view);
+  const existing = state.ws.getFiles();
+  const path = prompt('New VIEW file (kebab-case .ddn)', 'views/' + state.view + '-views.ddn');
+  if (!path) return;
+  if (!/^[a-z0-9][a-z0-9-]*(\/[a-z0-9][a-z0-9-]*)*\.ddn$/.test(path)) throw new Error('Naming convention: kebab-case .ddn path (got ' + path + ')');
+  if (Object.prototype.hasOwnProperty.call(existing, path)) throw new Error('File exists.');
+  const vid = prompt('View id (snake_case)', path.split('/').pop().replace(/\.ddn$/, '').replace(/[^a-z0-9_]/g, '_'));
+  if (!vid) return;
+  if (!/^[a-z][a-z0-9_]*$/.test(vid)) throw new Error('View id must be snake_case (got ' + vid + ')');
+  const which = (prompt('Elements to show — comma-separated local ids, blank = everything the current view shows', '') || '').trim();
+  const node = viewSourceNode();
+  const viewText = state.ws.getFiles()[node.source].slice(node.start, node.end);
+  const dataM = viewText.match(/data:\s*(\[[^\]]*\]|@[A-Za-z0-9_.:*-]+)\s*;/);
+  if (!dataM) throw new Error('the current view declares no data: list to derive from');
+  let selUids = (ir.view.selected || []).slice();
+  if (which) {
+    const wanted = which.split(',').map(s => s.trim()).filter(Boolean);
+    selUids = selUids.filter(u => wanted.some(w2 => u === w2 || u.endsWith('.' + w2)));
+    if (!selUids.length) throw new Error('none of those ids are in the current view: ' + which);
+  }
+  const selRefs = selUids.map(u => '@' + A.authoring.referenceFor(state.ws, state.entry, state.view, u, null)).join(', ');
+  const mod = 'user.' + path.replace(/\.ddn$/i, '').replace(/[^A-Za-z0-9]/g, '_');
+  const imports = refOwnerFiles(viewText).filter(f => f !== path)
+    .map(f => importLineFor(path, f)).filter(Boolean).join('\n');
+  const decl = 'view ' + vid + ' ' + JSON.stringify(vid) + ' {\n    ' + dataM[0] + '\n' + (selRefs ? '    select: [' + selRefs + '];\n' : '') + '}\n';
+  state.ws.updateFiles({ [path]: 'ddn "0.6";\nmodule "' + mod + '";\n' + (imports ? imports + '\n' : '') + '\n' + decl });
+  try { state.ws.renderSync({ entry: path, view: vid, noMotion: true }); }
+  catch (e) { state.ws.undo(); throw e; }
+  state.entry = path; state.view = vid;
+  entriesUI(vid);
+  filesUI();
+  mount();
+  status('created view file ' + path + ' with view ' + vid + ' — it imports ' + state.currentFile + '; undo removes it');
 }));
 els.fileRename.addEventListener('click', () => guard(() => {
   flush();
