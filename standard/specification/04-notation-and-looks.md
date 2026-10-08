@@ -221,6 +221,80 @@ view v {
 
 (0.8 syntax — requires `ddn "0.6";`: `opacity` on elements; element sizing keys are chapter-54 syntax.)
 
+## 6D. Structured field columns, column widths and free-form details (0.8 amendment)
+
+> **0.8 draft amendment:** this section is gated on source version `ddn "0.6";` — below it, a `columns { }` group is `DDN-V04`. Elements declaring no `columns` group render exactly as before (the legacy single-line field row).
+
+Some elements need their fields displayed as **rows and columns** rather than single composed lines — an ERD table row wants `Name · DataType · Domain · DataLength · Key · System · Calculation · Notes` in cells, not one wrapped string. This section defines the column model, the width model and per-element column visibility. Editing the resulting grid like a spreadsheet is the designer surface (non-normative, chapter 57); the model here is presentation-bearing source and round-trips canonically.
+
+### 6D.1 Column declaration
+
+An element gains an optional first-class `columns { … }` group. Each column binds a **property path** of the field record (chapter 02 field properties and their `x_` extensions — the same binding discipline as chapter 16's chart bindings, never expressions), with an optional display label, a width (§6D.2) and a visibility default (§6D.3):
+
+```text
+object customer "Customer" {
+  kind: table;
+  columns {
+    name     { label: "Name";       width: equal; }
+    datatype { label: "DataType";   width: 14ch; }
+    domain   { label: "Domain";     width: 12ch; visibility: hidden; }
+    length   { label: "DataLength"; width: 8ch; }
+    key      { label: "Key";        width: 6ch; }
+    system   { label: "System";     width: 10ch; visibility: on_demand; }
+    calc     { label: "Calculation"; path: "x_calc.expression"; width: 25%; }
+    notes    { label: "Notes";      path: "description"; width: equal; }
+  }
+  fields { customer_id { key: primary; datatype: integer; } display_name; status; }
+}
+```
+
+(0.8 syntax — requires `ddn "0.6";`: `columns { }` on elements. Shown as
+`text` because the group lands with the implementing engine change; the
+doc-snippet parse gate only checks implemented syntax.)
+
+- The column id doubles as the default binding: id `name`/`datatype`/`domain`/`key`/`description` bind the same-named field property; `path:` overrides with any safe property path (chapter 16's binding grammar — dotted, `x_` allowed, no reserved `__proto__` family). Unknown group keys and duplicate column ids are `DDN-CL01`.
+- A field supplies one row; each bound value renders in its cell. Absent values render empty (never guessed). Column cells are single-line with the §54.7 visible clip — columns never wrap.
+- Registry kinds MAY declare a default `column_schema` (registry presentation metadata, like silhouettes — `table`'s default is the ERD column set above) so conforming ERD tables need no group; an element's `columns { }` replaces the kind schema wholesale (no keywise merge).
+- Rendering order: columns display in declaration order (never re-sorted); rows are the element's fields in field order, nested fields indenting the first column by depth.
+- The legacy detail lines (domain/type rows) do not render in column mode — their content lives in cells.
+
+### 6D.2 Column widths (relative)
+
+Column widths are **relative to the element's width**: when the element resizes (authored `max_width`, placement, `text_fit`), columns grow and shrink with it. Per column, `width` is:
+
+| Value | Meaning |
+|---|---|
+| `equal` (default) | an equal proportional share of the width remaining after fixed columns |
+| `12ch` (N characters) | a **fixed** width of N × the average character advance of the base font at the effective size (measured, not guessed — like every text width in this standard) |
+| `30%` (percent) | N% of the width remaining after fixed-`ch` columns; `%` columns share proportionally when they do not sum to 100 |
+
+`min_chars` / `max_chars` clamp any column's resolved width (measured as above). Order of resolution: fixed `ch` columns first (clamped), then `%` columns, then `equal` columns share what remains (never less than `min_chars`, and a zero remainder is a `DDN-CL02` error only if a required column cannot show — otherwise the §54.7 clip applies per cell). Invalid width forms, negative percentages, `min_chars > max_chars`, or a `path`/`width`/`visibility` value outside this grammar are `DDN-CL02`.
+
+### 6D.3 Column visibility
+
+Default is **show every declared column**. Per column, one key —
+`visibility:` — with three values:
+
+- `shown` (default) — the column displays.
+- `hidden` — hidden unless a view or element re-enables it.
+- `on_demand` — a kind/schema-declared "hidden unless requested" column
+  (the ERD *System* idiom: database system columns that exist but are
+  usually noise); `visibility: shown` re-enables it, `hidden` is stronger.
+
+Per-element override without re-declaring the schema: a partial entry
+`columns { system { visibility: shown; } }` merges over the kind schema
+**for visibility only** (any other key in a partial entry is `DDN-CL03`,
+as is hiding the binding key column of a `table` whose relations key off
+it).
+
+### 6D.4 Free-form details (reuse, not a new property)
+
+Elements that need prose beyond the name but less formal than a field list use the **existing `description` property** (chapter 10: literal explanatory content, element/field/port/relation). This amendment standardizes the presentation: `description` renders as the element's wrapped body text — as note/sticky kinds already paint it (§6 typography) — on any element whose `display.fields` show it (view-level `display { details: show|hide; }` is NOT added; per-element visibility of descriptions stays as-is). No new property is invented; older tools already carry it.
+
+**Validation summary.** `DDN-CL01` malformed `columns` group (unknown key, duplicate column id) · `DDN-CL02` invalid width grammar (`width`, `min_chars`/`max_chars`) · `DDN-CL03` visibility conflict (a visibility-only override carrying other keys, hiding a relation-keyed column). All three are gated `DDN-V04` below `ddn "0.6";`.
+
+**Spreadsheet editing (non-normative).** The designer's field grid (chapter 57 surface): cells commit to the bound field properties through the same authoring commands as the form editor; column visibility toggles write `visible:` keys; horizontal scrolling inside a clipped cell is the §54.7 edit-surface rule. No tool behavior is normative here.
+
 ## 7. Label modes and completeness
 
 Kind text, kind icons and discriminator tokens are independently optional subject to unambiguous recovery. Relation labels support `text`, `tokens`, `numbers` and `none`. With `none` no relation label or badge renders at all; the label corridor space is reclaimed, and the relationship key disappears for the same reason it does under full inline text — there is nothing left to decode — unless the author explicitly sets `chrome.legend: 'on'`. Numbered mode replaces full midpoint wording, not direction or structural participation endpoints. A relation's legend entry includes its source, target, verb and selected qualifiers. The text alternative should include field-level endpoints even when the drawing collapses them. The `concept.map@1` profile proves relation labels are first-class: concept maps require an explicit author-written relation name on every link and reject bare verb defaults (`DDN-PJ104`).

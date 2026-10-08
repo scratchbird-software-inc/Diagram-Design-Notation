@@ -28,6 +28,29 @@ Component-level history predating the monorepo import lives in
 
 ### Added
 
+- **Notation feature-set specification (owner directive 2026-10-08; spec
+  only, no runtime change yet).** Four amendments:
+  - **Title wrapping norm** (spec ch. 54 §54.6): titles wrap at the element's
+    laid-out width (grapheme-breaking unbroken words) and grow height;
+    codified uniformly across silhouettes incl. the previously growing edge
+    cases (circles, small-marker name captions).
+  - **Field text model** (spec ch. 54 §54.7, **behavior default change**):
+    field text no longer wraps by default — it visibly clips with an
+    ellipsis at the field box; `text_wrap: on|off` opts in per field with a
+    per-element default (field > element > off; `DDN-FL01`, `DDN-V04` gated).
+    Edit-scroll is non-normative designer surface. Impact measured for the
+    owner: core vectors 0 figures affected; patent-drafts corpus **72 of 277
+    figures** have a currently-wrapped field row and will change geometry.
+  - **Structured field columns + relative widths + visibility** (spec ch. 04
+    §6D): first-class `columns { }` group binding field property paths
+    (chapter-16 binding discipline), kind-level default `column_schema`
+    (the ERD set: Name/DataType/Domain/DataLength/Key/System/Calculation/
+    Notes), per-column `width: equal|Nch|N%` with `min_chars`/`max_chars`
+    clamps (fixed ch columns first, % of remainder, equal share last), and
+    one `visibility: shown|hidden|on_demand` key with a visibility-only
+    partial override. Free-form details reuse the existing `description`
+    property (no new property). Coded errors `DDN-CL01`–`DDN-CL03`, `DDN-V04`
+    gated; spreadsheet editing is non-normative designer surface.
 - **DDNA open-tool integration specification (`ddna/13-open-tool-integration.md`).**
   New chapter fixing how the open tool hosts DDNA under the 2026-10-08
   boundary: companions as first-class workspace citizens (Files-outline

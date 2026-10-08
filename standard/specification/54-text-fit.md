@@ -137,7 +137,75 @@ artboards grow with the final post-fit bounds (§54.2), so `wrap`/`grow`
 results are always fully visible; print-size lint (chapter 53 §53.5) does not
 fire on content-sized output.
 
-## 54.6 Diagnostic codes allocated by this chapter
+## 54.6 Title wrapping norm (0.8 amendment)
+
+> **0.8 draft amendment:** codifies and completes the title rule. Sources do
+> not change; no new key is introduced. Plain card silhouettes already wrap
+> (so most renders are byte-identical); the silhouette edge cases listed
+> below change geometry and are re-recorded per case with justification.
+
+**The element's title wraps based upon the size of the element it names.**
+The title text measures against the element's laid-out width and wraps onto
+as many lines as needed, breaking unbroken words by grapheme when a single
+word exceeds the width; the element's **height grows** to hold the result.
+The width never grows from title text. Formally:
+
+1. Title measurement consumes the resolved text properties (chapter 04 §6A)
+   exactly as today, and wrapping recomputes at the effective width after
+   `text_fit` sizing (§54.1) and `content_scale` composition — order is:
+   resolve width → wrap title (and fields) → grow height → apply `text_fit`
+   bounds → diagnose residual overflow per §54.3.
+2. The rule holds uniformly across silhouettes: plain cards (already
+   wrapping, unchanged), profile silhouettes that proportion-wrap (compact
+   shapes, unchanged), and the previously growing edge cases — circles
+   (whose width followed height), small markers with the name painted below
+   (pseudostates, initial/final, flow finals), and any path that measured
+   the name into the width. These now wrap the name to at most the greater
+   of the silhouette's registered minimum width and any authored
+   `max_width`, growing height (or the below-glyph caption stack) instead.
+3. A title that still cannot fit after the §54.2 loop is a residual
+   overflow — diagnosed (§54.3), never silently clipped.
+
+## 54.7 Field text: no-wrap default with visible clip (0.8 amendment)
+
+> **0.8 draft amendment — behavior default change.** Until this amendment,
+> field row text wrapped by default. The default is now **no-wrap with a
+> visible clip**, with a per-field (and per-element default) opt-in to wrap.
+> `text_wrap` is a 0.8 (0.6-dialect) property — below `ddn "0.6";` it is
+> `DDN-V04`; sources declaring no `text_wrap` keep the new default
+> (this is the deliberate default change — see the impact note below).
+
+- `text_wrap: on | off` — field property (per field) and element property
+  (per-element field default; per-key precedence field > element > off).
+  `DDN-FL01` for any other value.
+- **No-wrap (default):** a field row whose text exceeds the field box is
+  **visibly clipped** at the box edge with an ellipsis marker — the §54.3
+  residual-overflow convention: never invisible text, always a visible
+  truncation signal. The full text remains in the model, in exports, and in
+  the accessible label (`<title>` / `aria-label`). Height does not grow;
+  one-line rows stay one line.
+- **Wrap (`on`):** the legacy behavior — the field text wraps at the field
+  box width and the row grows.
+- The clip is a *rendering* behavior. Horizontal scrolling to either end of
+  the full text while **editing** is a *designer* behavior (non-normative
+  tool surface, chapter 57): the field editor accepts and scrolls the full
+  text regardless of the painted clip; the clip never loses or rejects
+  input.
+- Detail lines under fields (domain/type rows, chapter 04) follow the same
+  rule with the same key.
+- Column cells under the §6D column model use the column's own rule
+  (single-line clip per cell; columns do not wrap).
+
+**Impact note (for the owner, per directive):** measured against the
+0.8 vector corpus and the 277-figure patent-drafts corpus: core vectors —
+0 figures with wrapped field rows (no change); patent corpus — **72 of
+277 figures** contain at least one node with a currently-wrapped field row
+and will change geometry under the new default (rows become one-line
+clipped rows with ellipsis). Titles are unaffected in those figures
+(they already wrap — 266/277 have wrapped titles that keep identical
+geometry). Per-case re-recording justification lives with the vectors.
+
+## 54.8 Diagnostic codes allocated by this chapter
 
 | Code | Severity | Meaning |
 |---|---|---|
@@ -148,5 +216,6 @@ fire on content-sized output.
 | `DDN-TF05` | warning | Pin/engine mismatch; pinned metrics ignored for this render. |
 | `DDN-LW07` | warning | Residual text overflow after two passes (wrap/grow); message names the remedy. |
 | `DDN-LW08` | warning | `shrink` reached `min_font` and still overflows. |
+| `DDN-FL01` | error | `text_wrap` is not `on` or `off` (§54.7). |
 
 `DDN-LW07/08` continue the existing layout-warning family (`DDN-LW01`–`LW06`).
