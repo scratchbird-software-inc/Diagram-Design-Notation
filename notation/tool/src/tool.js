@@ -2153,8 +2153,8 @@ function attachDeselect() {
   stage.addEventListener('click', e => {
     if (state.panning || design.placing) return;
     const path = e.composedPath ? e.composedPath() : [];
-    const hit = path.length && path[0] && path[0].closest ? path[0].closest('[data-id],[data-member],[data-property]') : null;
-    if (hit) return; // a diagram element was clicked — ddn-select owns this click
+    const hit = path.length && path[0] && path[0].closest ? path[0].closest('[data-id],[data-member],[data-property],.ddn-resize-handle') : null;
+    if (hit) return; // a diagram element (or a resize handle) was clicked — ddn-select / the handle owns this click
     deselect();
   });
 }
