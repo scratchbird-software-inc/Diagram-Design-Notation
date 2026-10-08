@@ -14,12 +14,12 @@ is the primary interface — distinct from the source-first Studio in
 
 ## Contents
 
-- `specification/` — 20 chapters: charter and non-negotiables (VE-001…VE-008),
+- `specification/` — 21 chapters: charter and non-negotiables (VE-001…VE-008),
   audit of the current runtime (AUD-001…010), research synthesis, IA/screens,
   shape model, property system, creation/clipboard, connections, layout/pins,
   projections, commands/transactions/drafts, source round-trip, validation,
   architecture, accessibility, security, performance, delivery, proposed API
-  changes, guidelines.
+  changes, guidelines, multi-file workspace/data/view workflow (WW-001…007).
 - `contracts/` — proposed JSON Schemas (command, editor-descriptor,
   shape-recipe, session, change-plan), `kind-ui-map.json` and
   `relation-ui-map.json` (all 333 kinds / 172 relation verbs),
