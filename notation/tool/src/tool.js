@@ -3184,6 +3184,7 @@ function attachDrag() {
       A.authoring.pin(state.ws, state.entry, state.view, d.id, d.g.x + d.dx, d.g.y + d.dy);
       showSource(state.currentFile);
       state.selected = d.id;
+      state.selectedIds = [d.id];
       status('pinned occurrence in source — undo restores the previous source');
     });
   };
@@ -3754,6 +3755,7 @@ function placeElement(kind, x, y) {
       }
       state.selected = uid;
       state.selectedRelation = null;
+      state.selectedIds = [uid];
       status(nudged
         ? 'placed ' + uid + ' beside the existing element (nudged off the drop point to avoid overlap) — rename it in the inspector'
         : 'placed ' + uid + (Number.isFinite(x) ? ' at ' + Math.round(x) + ',' + Math.round(y) : '') + ' — rename it in the inspector');
@@ -4031,6 +4033,7 @@ function pasteElement() {
       if (Object.keys(props).length) A.authoring.setElementProperties(state.ws, state.entry, state.view, uid, props);
       state.selected = uid;
       state.selectedRelation = null;
+      state.selectedIds = [uid];
       status('pasted as ' + uid + ' — a fresh identifier; ref: anchors elsewhere keep pointing at the original');
     });
   });
@@ -4074,7 +4077,6 @@ els.italicToggle.addEventListener('click', () => typographyQuickToggle('italic')
  * (scene bounds — the same world math as drag-to-pin). The selection feeds the
  * inspector's multi-selection helpers and the Properties drawer. */
 function applyMultiSelect() {
-  if ((state.selectedIds || []).length !== 1) clearResizeHandles();
   const ids = state.selectedIds;
   state.selected = ids.length === 1 ? ids[0] : null;
   state.selectedRelation = null;
@@ -4091,6 +4093,9 @@ function applyMultiSelect() {
     for (const el of stage.querySelectorAll('.ddn-node.ddn-multisel')) el.classList.remove('ddn-multisel');
     for (const id of ids) for (const el of stage.querySelectorAll('.ddn-node[data-id="' + cssString(id) + '"]')) el.classList.add('ddn-multisel');
   }
+  /* Single selection through the pointer tool gets the same resize handles as
+   * a component selection (owner report: glow but no handles after a click). */
+  syncResizeHandles();
   status(ids.length ? ids.length + ' selected' : 'selection cleared');
 }
 function clearMultiSelect() {
@@ -5275,7 +5280,7 @@ host.DDNTool = Object.assign({}, pure, {
   setKindColour: (code, col) => { state.presentation.kindColours[code] = col; applyOverrideCss(); },
   setVerbColour: (code, col) => { state.presentation.verbColours[code] = col; applyOverrideCss(); },
   setObjectColour: (id, col) => { state.presentation.objectColours[id] = col; applyOverrideCss(); },
-  selectObject: id => { state.selected = id; state.selectedRelation = null; refreshEditors(); },
+  selectObject: id => { state.selected = id; state.selectedRelation = null; state.selectedIds = [id]; refreshEditors(); },
   selectRelation: id => { state.selectedRelation = id; state.selected = null; refreshEditors(); applyOverrideCss(); },
   setVerbRouting: (verb, v) => { state.presentation.verbRouting[verb] = v; repopulateOverridePanels(); rerender(); },
   setRelationRouting: (id, v) => { state.presentation.relationRouting[id] = v; rerender(); },
