@@ -173,6 +173,8 @@ const els = {
   replay: $('ddn-replay'), replaySource: $('ddn-replay-source'), replayStart: $('ddn-replay-start'), replayStop: $('ddn-replay-stop'),
   replayStep: $('ddn-replay-step'), replayReset: $('ddn-replay-reset'), replaySpeed: $('ddn-replay-speed'),
   replayStatus: $('ddn-replay-status'), replayNote: $('ddn-replay-note'), replayTable: $('ddn-replay-table'),
+  exec: $('ddn-exec'), execEngine: $('ddn-exec-engine'), execInputs: $('ddn-exec-inputs'),
+  execRun: $('ddn-exec-run'), execDownload: $('ddn-exec-download'), execStatus: $('ddn-exec-status'),
   animStep: $('ddn-anim-step'), animSpeed: $('ddn-anim-speed'), animFlow: $('ddn-anim-flow'),
   animFlowField: $('ddn-anim-flow-field'), animStatus: $('ddn-anim-status')
 };
@@ -4870,7 +4872,8 @@ function refreshAnimation() {
   const motionEls = svg ? [...svg.querySelectorAll('.ddn-motion, .ddn-flow')] : [];
   const hasMotion = motionEls.length > 0;
   refreshReplay();
-  const hasReplay = replay.traces.length > 0;
+  refreshExec();
+  const hasReplay = replay.traces.length > 0 || !els.exec.hidden;
   els.animEmpty.hidden = hasMotion || hasReplay;
   if (!hasMotion && hasReplay) els.animEmpty.textContent = 'No SMIL animation in this view — trace replay is below.';
   els.animControls.hidden = !hasMotion;
@@ -4968,10 +4971,14 @@ els.animStep.addEventListener('click', () => guard(() => {
  * workspace's companions (sidecar or inline spelling); the mode badge shows
  * the trace's declared replay_mode, never silently switched (OT-032). */
 const DDT = host.DDNToolDdnaTrace;
+const KEEL0 = host.DDNToolKeel;
 const replay = { traces: [], sel: '', idx: 0, timer: null, note: '' };
 function replayScan() {
   if (!state.ws) return { traces: [], diags: [] };
-  return DDT.collectTraces(state.ws.getFiles(), (t, n) => A.parse(t, n), state.traceFiles || {}, isCompanionFile);
+  const r = DDT.collectTraces(state.ws.getFiles(), (t, n) => A.parse(t, n), state.traceFiles || {}, isCompanionFile);
+  /* Generated traces (Phase C runs) join the picker; they live in the tool,
+   * never in source. */
+  return { traces: r.traces.concat(state.generatedTraces || []), diags: r.diags };
 }
 function replayNodeFor(key) {
   const svg = svgEl();
@@ -5101,7 +5108,126 @@ els.replayStep.addEventListener('click', () => guard(() => {
   replayStepOnce();
 }));
 els.replayReset.addEventListener('click', () => guard(() => replayReset()));
-els.replaySource.addEventListener('change', () => guard(() => { replay.sel = els.replaySource.value; replayReset(); }));
+els.replaySource.addEventListener('change', () => guard(() => { replay.sel = els.replaySource.value; replayReset(); replayVerifiedCheck(); }));
+
+/* ------------------------------------------------ DDNA Phase C: execution
+ * (ddna ch.13 §13.4). Run an engine for the workspace's companion → a
+ * §13.3.1 trace document lands in the replay picker (generated, deterministic
+ * per OT-041) and downloads as a sidecar. Budgets per §13.6 (DDN-A004 marks
+ * truncation); unavailable classes are DDN-A006; KEEL above the open ceiling
+ * skips with DDN-A005 (never a silent stub, never a crash). */
+const DDE = host.DDNToolDdnaEngine;
+state.generatedTraces = [];
+function ddnaCompanionCtx(companionName) {
+  const files = state.ws.getFiles();
+  const containers = architectureContainers(files, (t, n) => A.parse(t, n));
+  const features = { profile: null, keel: [] };
+  try {
+    const doc = A.parse(files[companionName], companionName);
+    const walk = n => {
+      const pr = n.props || {};
+      if (pr.x_profile) features.profile = { id: n.id, ...pr.x_profile };
+      if (pr.x_keel) features.keel.push({ id: pr.x_keel.id || n.id, ...pr.x_keel });
+      for (const c of n.children || []) walk(c);
+    };
+    for (const d of doc.declarations || []) walk(d);
+  } catch { /* companion parse errors are reported by the core path */ }
+  /* Above-ceiling KEEL languages never evaluate (DDN-A005, OT-052). */
+  features.keel = features.keel.filter(k => KEEL0.tierAvailable(k.language));
+  const data = { objects: [], relations: [] };
+  for (const base of servedBases(companionName, containers, files)) {
+    let doc = null;
+    try { doc = A.parse(files[base], base); } catch { continue; }
+    const walk = n => {
+      if (n.type === 'object') data.objects.push(n);
+      if (n.type === 'relation') data.relations.push(n);
+      for (const c of n.children || []) walk(c);
+    };
+    for (const d of doc.declarations || []) if (d.type === 'data') walk(d);
+  }
+  return { features, data };
+}
+function ddnaActiveCompanion() {
+  const files = state.ws ? state.ws.getFiles() : {};
+  const companions = Object.keys(files).filter(n => isCompanionFile(n, files[n]));
+  if (!companions.length) return null;
+  const containers = architectureContainers(files, (t, n) => A.parse(t, n));
+  /* Prefer the companion serving the current view's file. */
+  return companions.find(c => servedBases(c, containers, files).includes(state.entry)) || companions[0];
+}
+function refreshExec() {
+  const comp = state.ws ? ddnaActiveCompanion() : null;
+  if (!comp) { els.exec.hidden = true; return; }
+  const { features } = ddnaCompanionCtx(comp);
+  const cls = features.profile ? DDE.classifyProfile(features.profile) : {};
+  els.exec.hidden = false;
+  if (cls.engine) {
+    els.execEngine.textContent = 'engine: ' + DDE.ENGINE_LABELS[cls.engine] + ' · companion ' + comp + (features.profile && features.profile.replay ? ' · profile ' + features.profile.replay : '');
+    els.execRun.disabled = false;
+    els.execRun.dataset.engine = cls.engine;
+    els.execRun.dataset.companion = comp;
+  } else {
+    els.execEngine.textContent = cls.unavailable
+      ? 'no engine for ' + cls.unavailable.toUpperCase() + ' (' + cls.label + ') in the open tool — DDN-A006'
+      : 'companion ' + comp + ' declares no executable profile class';
+    els.execRun.disabled = true;
+    els.execRun.dataset.engine = '';
+    els.execRun.dataset.companion = comp;
+  }
+}
+els.execRun.addEventListener('click', () => guard(() => {
+  const engineId = els.execRun.dataset.engine, comp = els.execRun.dataset.companion;
+  if (!engineId) return;
+  const { features, data } = ddnaCompanionCtx(comp);
+  let inputs = {};
+  const raw = els.execInputs.value.trim();
+  if (raw) {
+    try { inputs = JSON.parse(raw); } catch (e) { status('inputs must be a JSON record: ' + e.message); return; }
+  }
+  const run = DDE.runEngine(engineId, { features, data, inputs, clock: DDE.makeClock() },
+    { companion: comp, base: state.entry });
+  if (run.error) { els.execStatus.textContent = run.error + ' — no engine installed for this class'; return; }
+  /* Shape-validate the generated trace with the shared Phase B validator —
+   * generation and replay share one record model (OT-022). */
+  const check = DDT.validateTraceDocument(JSON.stringify(run.doc), 'generated');
+  if (check.diags.length) { els.execStatus.textContent = 'generated trace failed self-validation: ' + check.diags[0].message; return; }
+  const id = 'generated:' + comp + '#' + run.events.length + ':' + Date.now();
+  state.generatedTraces.push({ id, label: 'generated · ' + DDE.ENGINE_LABELS[engineId], companion: comp, doc: run.doc, events: run.events, replayMode: run.doc.replay_mode, profile: run.doc.semantic_profile, appliesTo: [], source: 'generated' });
+  state.execLast = run.doc;
+  els.execDownload.hidden = false;
+  refreshReplay();
+  replay.sel = id;
+  els.replaySource.value = id;
+  replayReset();
+  replayVerifiedCheck();
+  els.execStatus.textContent = 'generated ' + run.events.length + ' events (' + DDE.ENGINE_LABELS[engineId] + ')' +
+    (run.budget.exceeded ? ' — TRUNCATED at ' + run.budget.exceeded + ' (DDN-A004; trace marked complete:false)' : ' — complete; pick it in the replay list above') +
+    (run.result && run.result.ledger !== undefined ? ' · ledger ' + run.result.ledger : '');
+  if (run.budget.exceeded) status('DDN-A004: run truncated at ' + run.budget.exceeded + ' — partial trace marked complete:false');
+}));
+els.execDownload.addEventListener('click', () => guard(() => {
+  if (!state.execLast) return;
+  A.io.download((state.execLast.companion || 'trace').replace(/\.ddn$/, '') + '.ddnatrace.json', JSON.stringify(state.execLast, null, 2), 'application/json');
+  status('downloaded the generated trace sidecar — drop it next to the companion to replay it from disk');
+}));
+/* OT-032/A007: a verified-mode trace is re-run against its engine at
+ * selection; divergence names the first divergent event. (Faithful traces
+ * replay verbatim, unchecked.) */
+function replayVerifiedCheck() {
+  const t = replay.traces.find(x => x.id === replay.sel);
+  if (!t || t.replayMode !== 'verified') return;
+  const comp = t.companion;
+  const { features, data } = ddnaCompanionCtx(comp);
+  const cls = features.profile ? DDE.classifyProfile(features.profile) : {};
+  if (!cls.engine) { replay.note = 'verified replay: no engine for this class (DDN-A006) — replaying recorded events verbatim'; replayStatus(); return; }
+  const fresh = DDE.runEngine(cls.engine, { features, data, inputs: {}, clock: DDE.makeClock() }, { companion: comp, base: state.entry });
+  const verdict = DDE.verifyReplay(t.events, () => fresh.events);
+  if (verdict.diverged) {
+    replay.note = 'DDN-A007: verified replay diverged at event seq ' + verdict.seq + ' — recorded ' + String(verdict.got).slice(0, 80);
+    status('DDN-A007: verified replay diverged from recomputation at event ' + verdict.seq);
+  } else replay.note = 'verified replay: recomputation matches the recorded trace';
+  replayStatus();
+}
 function refreshReplay() {
   const { traces } = replayScan();
   replay.traces = traces;
@@ -5598,6 +5724,9 @@ function collectDiagnostics() {
       return ids;
     };
     for (const d of DDT.traceDiagnostics(files, (t, n) => A.parse(t, n), state.traceFiles || {}, isCompanionFile, baseIdsFor)) out.push(d);
+    /* Phase C (§13.4/§13.5): unavailable engine classes (A006) and
+     * above-ceiling KEEL languages (A005) degrade at load, never crash. */
+    for (const d of DDE.engineDiagnostics(files, (t, n) => A.parse(t, n), isCompanionFile)) out.push(d);
   }
   return out;
 }

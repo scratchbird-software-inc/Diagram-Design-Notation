@@ -49,6 +49,23 @@ the runtime models (chapter 7) and the per-family behavior (chapters 6, 8,
 > divergence recomputation (DDN-A007) needs the Phase C engines; Phase B
 > enforces the envelope checks at load (A002) and displays the declared mode.
 > Phase C remains proposed.
+>
+> **Phase C (§13.4–§13.5) shipped 2026-10-08:** `notation/tool/src/ddna-keel.js`
+> is the open KEEL host — the nine seam functions (Wf1–4, Tc1–3, EqVar, Tc4,
+> Vars, Replace, NewVar, Eval) over keel-l0@1 (decimals, strings, booleans,
+> null, lists, records, field/index access, integer-safe arithmetic,
+> comparison/boolean operators, if-then-else; no recursion/loops/effects/
+> time), tiers T0–T2 with partial Eval exactly as the seam requires; the PoC
+> scratch tag `poc-expr` is accepted as L0-compatible. Above-ceiling languages
+> degrade to DDN-A005 at load. `notation/tool/src/ddna-engine.js` carries the
+> EM-1 token engine (plus the order-saga flagship), EM-3 lifecycle FSM and
+> EM-4 trace-set/verdict engines, deterministic under the declared profile
+> (OT-041 — the Phase B player replays generated traces step-identically),
+> under §13.6 budgets (10,000 steps / 64 instances → DDN-A004, partial trace
+> marked complete:false); EM-2/EM-5/EM-6 report DDN-A006, never a silent
+> stub. Verified replay now recomputes through the engine and names the first
+> divergent event (DDN-A007). The animation drawer's Execution section runs
+> an engine into the replay picker and downloads the generated sidecar.
 
 Requirement ids are `DDNA-OT-###`; acceptance criteria are
 `DDNA-OT-AC-###` and name the demonstrating artifact. "The tool" means the

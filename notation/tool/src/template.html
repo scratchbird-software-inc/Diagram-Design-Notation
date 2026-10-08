@@ -353,6 +353,19 @@
           <table id="ddn-replay-table"><thead><tr><th>seq</th><th>clock</th><th>stepKind</th><th>instance</th><th>state</th><th>choices</th><th>verdict</th></tr></thead><tbody></tbody></table>
         </div>
       </div>
+      <!-- DDNA Phase C (ddna ch.13 §13.4): execution — run an engine, land in
+           the replay player above; the generated trace downloads as a
+           §13.3.1 sidecar. -->
+      <div id="ddn-exec" hidden>
+        <h3>Execution <span class="ddn-dim">(DDNA)</span></h3>
+        <p class="ddn-dim" id="ddn-exec-engine"></p>
+        <label class="ddn-field"><span>Inputs (JSON, optional)</span><input id="ddn-exec-inputs" type="text" placeholder='{"stock": 5}'></label>
+        <div class="ddn-row">
+          <button id="ddn-exec-run" type="button" class="ddn-mini" title="Run the execution engine — deterministic; the generated trace lands in the replay picker">Run engine → trace</button>
+          <button id="ddn-exec-download" type="button" class="ddn-mini" hidden title="Download the generated trace as a *.ddnatrace.json sidecar">Download sidecar</button>
+        </div>
+        <p id="ddn-exec-status" class="ddn-dim"></p>
+      </div>
     </div>
   </aside>
 </div>

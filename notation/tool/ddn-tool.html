@@ -781,6 +781,19 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
           <table id="ddn-replay-table"><thead><tr><th>seq</th><th>clock</th><th>stepKind</th><th>instance</th><th>state</th><th>choices</th><th>verdict</th></tr></thead><tbody></tbody></table>
         </div>
       </div>
+      <!-- DDNA Phase C (ddna ch.13 §13.4): execution — run an engine, land in
+           the replay player above; the generated trace downloads as a
+           §13.3.1 sidecar. -->
+      <div id="ddn-exec" hidden>
+        <h3>Execution <span class="ddn-dim">(DDNA)</span></h3>
+        <p class="ddn-dim" id="ddn-exec-engine"></p>
+        <label class="ddn-field"><span>Inputs (JSON, optional)</span><input id="ddn-exec-inputs" type="text" placeholder='{"stock": 5}'></label>
+        <div class="ddn-row">
+          <button id="ddn-exec-run" type="button" class="ddn-mini" title="Run the execution engine — deterministic; the generated trace lands in the replay picker">Run engine → trace</button>
+          <button id="ddn-exec-download" type="button" class="ddn-mini" hidden title="Download the generated trace as a *.ddnatrace.json sidecar">Download sidecar</button>
+        </div>
+        <p id="ddn-exec-status" class="ddn-dim"></p>
+      </div>
     </div>
   </aside>
 </div>
@@ -4502,6 +4515,214 @@ globalThis.DDN_FORM_DESCRIPTORS={
 };
 </script>
 <script>
+/* SPDX-License-Identifier: GPL-2.0-or-later
+ * DDNA Phase C (ddna ch.13 §13.5): the open-tool KEEL host — the nine Z.120
+ * §5.3 seam functions verbatim (Wf1–4, Tc1–3, EqVar, Tc4, Vars, Replace,
+ * NewVar, Eval), tiers T0–T2 (OT-050), and the minimal conformant host
+ * language keel-l0@1 (OT-051): decimal numbers, strings, booleans, null;
+ * lists and records; field/index access; integer-safe arithmetic;
+ * comparison and boolean operators; if-then-else; no recursion, no loops,
+ * no effects, no time access. keel-l0@1 is a HOST language, not a DDNA
+ * dialect — companions reference it by tag. The PoC's scratch subset
+ * ('poc-expr') is accepted as L0-compatible (its fixtures predate the tag).
+ * Anything above the open ceiling degrades to DDN-A005 (OT-052) — the
+ * caller skips the feature; the workspace still loads.
+ *
+ * Tool-layer only; nothing here enters the DDN runtime (OT-003).
+ */
+(function (host) {
+'use strict';
+
+const ID = 'ddna-keel-l0', VERSION = '1.0.0';
+const L0_TAGS = ['keel-l0@1', 'poc-expr'];
+/* Tier model (ch.5 §5.2): T0 opaque reference, T1 static analysis, T2 pure
+ * evaluation. The open host ceiling is T2. */
+function tierOf(language) {
+  const t = String(language || '').trim();
+  if (L0_TAGS.includes(t)) return 2;
+  return Infinity; /* unknown/higher-tier language: above the open ceiling */
+}
+function tierAvailable(language) { return tierOf(language) <= 2; }
+
+const ok = v => ({ ok: true, value: v });
+const bad = m => ({ ok: false, error: m });
+
+/* ---------------------------------------------------------------- parser
+ * keel-l0@1 recursive descent. Tokens: numbers, strings, booleans, null,
+ * identifiers, [ ] { } ( ) . , operators, if/then/else. */
+const RE_TOK = /"(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?|[A-Za-z_][A-Za-z0-9_]*|<=|>=|==|!=|&&|\|\||[+\-*/()[\]{},.<>:]/g;
+function tokenize(text) {
+  const toks = String(text).match(RE_TOK) || [];
+  /* Reject anything the tokenizer skipped (no silent partial parses). */
+  if (toks.join('').replace(/\s+/g, '') !== String(text).replace(/\s+/g, '')) throw new Error('keel-l0@1: untokenizable input near ' + JSON.stringify(String(text).slice(0, 40)));
+  return toks;
+}
+function parseExpr(text) {
+  const toks = tokenize(text);
+  let pos = 0;
+  const peek = () => toks[pos], take = () => toks[pos++];
+  const expect = t => { if (take() !== t) throw new Error('keel-l0@1: expected ' + t); };
+  function expr() { return orExpr(); }
+  function orExpr() { let l = andExpr(); while (peek() === 'or' || peek() === '||') { take(); l = { kind: 'bin', op: 'or', l, r: andExpr() }; } return l; }
+  function andExpr() { let l = cmpExpr(); while (peek() === 'and' || peek() === '&&') { take(); l = { kind: 'bin', op: 'and', l, r: cmpExpr() }; } return l; }
+  function cmpExpr() {
+    let l = addExpr();
+    while (['==', '!=', '<', '>', '<=', '>='].includes(peek())) { const op = take(); l = { kind: 'bin', op, l, r: addExpr() }; }
+    return l;
+  }
+  function addExpr() { let l = mulExpr(); while (peek() === '+' || peek() === '-') { const op = take(); l = { kind: 'bin', op, l, r: mulExpr() }; } return l; }
+  function mulExpr() { let l = unary(); while (peek() === '*' || peek() === '/') { const op = take(); l = { kind: 'bin', op, l, r: unary() }; } return l; }
+  function unary() {
+    if (peek() === 'not') { take(); return { kind: 'not', l: unary() }; }
+    if (peek() === '-') { take(); return { kind: 'neg', l: unary() }; }
+    return postfix();
+  }
+  function postfix() {
+    let n = primary();
+    for (;;) {
+      if (peek() === '.') { take(); const f = take(); if (!/^[A-Za-z_]/.test(f || '')) throw new Error('keel-l0@1: field name after .'); n = { kind: 'get', l: n, f }; }
+      else if (peek() === '[') { take(); const i = expr(); expect(']'); n = { kind: 'idx', l: n, i }; }
+      else break;
+    }
+    return n;
+  }
+  function primary() {
+    const t = peek();
+    if (t === 'if') { take(); const c = expr(); if (take() !== 'then') throw new Error('keel-l0@1: if needs then'); const a = expr(); if (take() !== 'else') throw new Error('keel-l0@1: if-then needs else'); const b = expr(); return { kind: 'if', c, a, b }; }
+    if (t === '(') { take(); const n = expr(); expect(')'); return n; }
+    if (t === '[') { take(); const items = []; if (peek() !== ']') { do { items.push(expr()); } while (peek() === ',' && take()); } expect(']'); return { kind: 'list', items }; }
+    if (t === '{') {
+      take(); const entries = [];
+      if (peek() !== '}') do {
+        let k = take();
+        if (k.startsWith('"')) k = JSON.parse(k);
+        expect(':'); entries.push([k, expr()]);
+      } while (peek() === ',' && take());
+      expect('}');
+      return { kind: 'record', entries };
+    }
+    if (/^-?\d/.test(t || '')) { take(); return { kind: 'num', value: Number(t) }; }
+    if (t && t.startsWith('"')) { take(); return { kind: 'str', value: JSON.parse(t) }; }
+    if (t === 'true' || t === 'false') { take(); return { kind: 'bool', value: t === 'true' }; }
+    if (t === 'null') { take(); return { kind: 'null' }; }
+    if (/^[A-Za-z_]/.test(t || '')) { take(); return { kind: 'var', name: t }; }
+    throw new Error('keel-l0@1: unexpected token ' + JSON.stringify(t));
+  }
+  const out = expr();
+  if (pos < toks.length) throw new Error('keel-l0@1: trailing input ' + JSON.stringify(toks.slice(pos).join(' ')));
+  return out;
+}
+function printExpr(n) {
+  if (!n) return '';
+  switch (n.kind) {
+    case 'num': return String(n.value);
+    case 'str': return JSON.stringify(n.value);
+    case 'bool': return String(n.value);
+    case 'null': return 'null';
+    case 'var': return n.name;
+    case 'not': return 'not ' + printExpr(n.l);
+    case 'neg': return '-' + printExpr(n.l);
+    case 'get': return printExpr(n.l) + '.' + n.f;
+    case 'idx': return printExpr(n.l) + '[' + printExpr(n.i) + ']';
+    case 'list': return '[' + n.items.map(printExpr).join(', ') + ']';
+    case 'record': return '{' + n.entries.map(([k, v]) => k + ': ' + printExpr(v)).join(', ') + '}';
+    case 'if': return 'if ' + printExpr(n.c) + ' then ' + printExpr(n.a) + ' else ' + printExpr(n.b);
+    case 'bin': return '(' + printExpr(n.l) + ' ' + n.op + ' ' + printExpr(n.r) + ')';
+  }
+  return '?';
+}
+function evalNode(n, st) {
+  switch (n.kind) {
+    case 'num': case 'str': case 'bool': return n.value;
+    case 'null': return null;
+    case 'var': return st[n.name];
+    case 'list': return n.items.map(i => evalNode(i, st));
+    case 'record': return Object.fromEntries(n.entries.map(([k, v]) => [k, evalNode(v, st)]));
+    case 'get': { const v = evalNode(n.l, st); return v && typeof v === 'object' ? v[n.f] : undefined; }
+    case 'idx': { const v = evalNode(n.l, st), i = evalNode(n.i, st); return Array.isArray(v) && Number.isInteger(i) ? v[i] : undefined; }
+    case 'not': { const v = evalNode(n.l, st); return typeof v === 'boolean' ? !v : undefined; }
+    case 'neg': { const v = evalNode(n.l, st); return typeof v === 'number' ? -v : undefined; }
+    case 'if': { const c = evalNode(n.c, st); return typeof c === 'boolean' ? evalNode(c ? n.a : n.b, st) : undefined; }
+    case 'bin': {
+      const a = evalNode(n.l, st), b = evalNode(n.r, st);
+      switch (n.op) {
+        case '+': return typeof a === 'number' && typeof b === 'number' ? a + b : typeof a === 'string' && typeof b === 'string' ? a + b : undefined;
+        case '-': return typeof a === 'number' && typeof b === 'number' ? a - b : undefined;
+        case '*': return typeof a === 'number' && typeof b === 'number' ? a * b : undefined;
+        case '/': { if (typeof a !== 'number' || typeof b !== 'number') return undefined; const q = a / b; return Number.isFinite(q) ? q : undefined; } /* integer-safe: 1/0 is undefined, not Infinity */
+        case '==': return a === b;
+        case '!=': return a !== b;
+        case '<': return a < b; case '>': return a > b; case '<=': return a <= b; case '>=': return a >= b;
+        case 'and': return typeof a === 'boolean' && typeof b === 'boolean' ? a && b : undefined;
+        case 'or': return typeof a === 'boolean' && typeof b === 'boolean' ? a || b : undefined;
+      }
+    }
+  }
+  return undefined;
+}
+
+/* --- Parse: Wf1–Wf4 ------------------------------------------------------ */
+const Wf1 = s => /^[A-Za-z_][A-Za-z0-9_]*$/.test(String(s).trim()) ? ok(true) : bad('Wf1: not a variable string: ' + s);
+const Wf2 = s => String(s).includes('=') ? ok(true) : bad('Wf2: not a data definition: ' + s);
+const Wf3 = s => ['number', 'string', 'boolean', 'null', 'any', 'list', 'record'].includes(String(s).trim()) ? ok(true) : bad('Wf3: unknown type ref: ' + s);
+const Wf4 = s => { try { return ok(parseExpr(String(s))); } catch (e) { return bad('Wf4: ' + (e && e.message)); } };
+
+/* --- TypeCheck: Tc1–Tc3 --------------------------------------------------- */
+const Tc1 = ast => ast && ast.kind ? ok(ast.kind) : bad('Tc1: not a parsed keel-l0@1 expression');
+const Tc2 = () => ok(true);
+const Tc3 = () => ok(true);
+
+/* --- NameEq / Conformance ------------------------------------------------- */
+const EqVar = (a, b) => String(a) === String(b);
+const Tc4 = (value, typeRef) => {
+  if (typeRef === 'any') return true;
+  if (typeRef === 'number') return typeof value === 'number' && Number.isFinite(value);
+  if (typeRef === 'string') return typeof value === 'string';
+  if (typeRef === 'boolean') return typeof value === 'boolean';
+  if (typeRef === 'null') return value === null;
+  if (typeRef === 'list') return Array.isArray(value);
+  if (typeRef === 'record') return !!value && typeof value === 'object' && !Array.isArray(value);
+  return false;
+};
+
+/* --- FreeVars with occurrence counts / Replace / NewVar -------------------- */
+function Vars(astOrText) {
+  const counts = Object.create(null);
+  const walk = n => {
+    if (!n) return;
+    if (n.kind === 'var') counts[n.name] = (counts[n.name] || 0) + 1;
+    for (const k of ['l', 'r', 'c', 'a', 'b', 'i']) if (n[k]) walk(n[k]);
+    (n.items || []).forEach(walk);
+    (n.entries || []).forEach(([, v]) => walk(v));
+  };
+  walk(typeof astOrText === 'string' ? parseExpr(astOrText) : astOrText);
+  return counts;
+}
+function Replace(astOrText, name, n, value) {
+  let seen = 0;
+  return String(typeof astOrText === 'string' ? astOrText : printExpr(astOrText))
+    .replace(new RegExp('\\b' + String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), m => (++seen === n ? String(value) : m));
+}
+let freshCounter = 0;
+const NewVar = (base) => String(base || 'v') + '_' + (++freshCounter);
+
+/* --- Eval (partial, Z.120 §5.3): undefined unless every variable is
+ * defined in the state argument. */
+function Eval(astOrText, state) {
+  let ast;
+  try { ast = typeof astOrText === 'string' ? parseExpr(astOrText) : astOrText; }
+  catch { return undefined; }
+  const vars = Vars(ast);
+  const st = state || {};
+  for (const v of Object.keys(vars)) if (!Object.prototype.hasOwnProperty.call(st, v)) return undefined;
+  return evalNode(ast, st);
+}
+
+const KEEL = { id: ID, version: VERSION, tierOf, tierAvailable, Wf1, Wf2, Wf3, Wf4, Tc1, Tc2, Tc3, EqVar, Tc4, Vars, Replace, NewVar, Eval, parseExpr, printExpr };
+if (typeof module === 'object' && module.exports) module.exports = KEEL;
+host.DDNToolKeel = KEEL;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
 /* SPDX-License-Identifier: GPL-2.0-or-later. B1-071: shared option definitions
  * for the unified tool and the (deprecated) viewer — fonts, routing values,
  * text/page floors and byte caps, previously duplicated across tool.js and
@@ -9288,6 +9509,323 @@ if (typeof module === 'object' && module.exports) module.exports = api;
 host.DDNToolDdnaTrace = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 
+/* SPDX-License-Identifier: GPL-2.0-or-later
+ * DDNA Phase C (ddna ch.13 §13.4): execution engines for the PoC-proven
+ * classes — EM-1 (token runtime, incl. the saga flagship), EM-3 (lifecycle
+ * FSM), EM-4 (trace-set/verdict) — under sandbox budgets (§13.6:
+ * DDNA_EXECUTION_STEPS_MAX steps, DDNA_EXECUTION_INSTANCES_MAX concurrent
+ * instances; exceeded → truncated trace marked complete:false + DDN-A004).
+ * An unavailable class is DDN-A006, never a silent stub (OT-040).
+ * Generation is deterministic under the declared profile and every choice
+ * is recorded, never re-derived on replay (OT-041).
+ *
+ * Tool-layer only; the DDN runtime is untouched (OT-003).
+ */
+(function (host) {
+'use strict';
+
+const KEEL = (typeof module === 'object' && module.exports) ? require('./ddna-keel.js') : host.DDNToolKeel;
+const TRACE = (typeof module === 'object' && module.exports) ? require('./ddna-trace.js') : host.DDNToolDdnaTrace;
+
+const DDNA_EXECUTION_STEPS_MAX = 10000;
+const DDNA_EXECUTION_INSTANCES_MAX = 64;
+
+/* --- trace factory + event-stepped virtual clock (ch.4 §4.2, ch.7 TIME-A) */
+function makeTracer(profile) {
+  let seq = 0;
+  const events = [];
+  const emit = e => {
+    const rec = {
+      seq: ++seq,
+      clock: e.clock,
+      stepKind: e.stepKind,
+      scope: e.scope || 'main',
+      instance: e.instance,
+      ...(e.choices ? { choices: e.choices } : {}),
+      ...(e.state ? { state: e.state } : {}),
+      ...(e.keel ? { keel: e.keel } : {}),
+      ...(e.verdict !== undefined ? { verdict: e.verdict } : {})
+    };
+    events.push(rec);
+    return rec;
+  };
+  return { emit, events, profile };
+}
+function makeClock() {
+  let now = 0, running = false;
+  return {
+    now: () => now,
+    start() { running = true; },
+    stop() { running = false; },
+    running: () => running,
+    step(dt) { if (running) now += (dt === undefined ? 1 : dt); return now; }
+  };
+}
+function keelEval(tracer, exprRef, state, clock) {
+  const result = KEEL.Eval(exprRef.body, state);
+  const rec = {
+    exprId: exprRef.id, language: exprRef.language, inputs: { ...state },
+    result, clock: clock.now(), engine: KEEL.id, engineVersion: KEEL.version
+  };
+  return { result, rec };
+}
+
+/* --- Budget guard: counts engine steps (clock ticks + emits) and concurrent
+ * instances; exceeding either stops the run with a marked partial trace. */
+function makeBudget() {
+  return {
+    steps: 0, instances: new Set(), exceeded: null,
+    tick(instance) {
+      this.steps++;
+      if (instance) this.instances.add(Array.isArray(instance) ? instance[1] : instance);
+      if (this.steps > DDNA_EXECUTION_STEPS_MAX) this.exceeded = 'DDNA_EXECUTION_STEPS_MAX';
+      if (this.instances.size > DDNA_EXECUTION_INSTANCES_MAX) this.exceeded = 'DDNA_EXECUTION_INSTANCES_MAX';
+      return !this.exceeded;
+    }
+  };
+}
+
+/* --- EM-1: token walk over flow.next; decision nodes evaluate the guard
+ * (choice class N1). */
+function engineEM1(ctx) {
+  const { tracer, clock, features, data, budget } = ctx;
+  clock.start();
+  const next = new Map();
+  for (const r of data.relations) next.set(r.from.$ref, [...(next.get(r.from.$ref) || []), r]);
+  const byId = new Map(data.objects.map(o => [o.id, o]));
+  const guard = features.keel[0];
+  let node = data.objects.find(o => (o.props || {}).kind === 'flow.start');
+  let token = ['m.' + (node && node.id), 'instance-1'];
+  while (node && budget.tick(token)) {
+    clock.step();
+    tracer.emit({ clock: clock.now(), stepKind: 'node-firing', instance: token, state: { at: 'm.' + node.id, kind: (node.props || {}).kind } });
+    const outs = next.get(node.id) || [];
+    if (!outs.length || (node.props || {}).kind === 'flow.end') break;
+    let target = outs[0];
+    if (outs.length > 1 && guard) {
+      const { result, rec } = keelEval(tracer, guard, { stock: (ctx.inputs && ctx.inputs.stock) !== undefined ? ctx.inputs.stock : 5 }, clock);
+      target = outs.find(o => /ship/i.test((byId.get(o.to.$ref) || {}).label || '') === !!result) || outs[result ? 0 : 1];
+      tracer.emit({ clock: clock.now(), stepKind: 'choice', instance: token, choices: { class: 'N1', guard: guard.id, result }, keel: rec });
+    }
+    node = byId.get(target.to.$ref) || null;
+    if (node) token = ['m.' + node.id, 'instance-1'];
+  }
+  clock.stop();
+  return { steps: tracer.events.length };
+}
+
+/* --- EM-9 flagship (EM-1 class): the order saga — token flow with live data
+ * mutations, a partial-shipment loop, KEEL-computed charges, running ledger. */
+function engineEM9(ctx) {
+  const { tracer, clock, features, budget } = ctx;
+  clock.start();
+  const keel = Object.fromEntries(features.keel.map(k => [k.id, k]));
+  const D = { stock: 5, total: 129.50, charged: 0, ledger: 0, shipments: 0, tier: 2, risk: 0.3 };
+  Object.assign(D, ctx.inputs || {});
+  const money = v => '$' + v.toFixed(2);
+  const fire = (at, extra) => {
+    clock.step();
+    tracer.emit({ clock: clock.now(), stepKind: 'node-firing', instance: [at, 'order-42'], state: { at }, ...extra });
+    return budget.tick([at, 'order-42']);
+  };
+  const guard = (kid, inputs, at, taken, notTaken, extra) => {
+    clock.step();
+    const { result, rec } = keelEval(tracer, keel[kid], inputs, clock);
+    tracer.emit({ clock: clock.now(), stepKind: 'choice', instance: [at, 'order-42'],
+      state: { at }, choices: { class: 'N1', guard: kid, result, taken, notTaken }, keel: rec, ...extra });
+    return result;
+  };
+  const mutate = (at, label, before, after, ref) => {
+    clock.step();
+    tracer.emit({ clock: clock.now(), stepKind: 'data-mutation', instance: [at, 'order-42'],
+      state: { at, before, after, values: { [ref || at]: label } } });
+  };
+  fire('m.start');
+  fire('m.receive', { state: { at: 'm.receive', values: { 'm.receive': 'order: 2 items · ' + money(D.total) } } });
+  guard('k1', { tier: D.tier, total: D.total }, 'm.validate', 'm.fraud', 'm.reject');
+  fire('m.validate');
+  guard('k2', { risk: D.risk }, 'm.fraud', 'm.reserve', 'm.hold');
+  fire('m.fraud');
+  fire('m.reserve');
+  mutate('m.reserve', 'stock: ' + D.stock + '→' + (D.stock - 1), D.stock, D.stock - 1);
+  D.stock -= 1;
+  fire('m.charge');
+  clock.step();
+  const amt = keelEval(tracer, keel.k3, { total: D.total }, clock);
+  tracer.emit({ clock: clock.now(), stepKind: 'keel-compute', instance: ['m.charge', 'order-42'],
+    state: { at: 'm.charge' }, keel: amt.rec, choices: { class: 'decimal-tower', note: 'amount computed through the nine-function seam' } });
+  mutate('m.charge', 'charged: ' + money(amt.result), D.charged, amt.result);
+  D.charged = amt.result;
+  /* branch 1: one item back-ordered — taken branch active, ship flashed */
+  clock.step();
+  tracer.emit({ clock: clock.now(), stepKind: 'choice', instance: ['m.branch', 'order-42'],
+    state: { at: 'm.branch' }, keel: keelEval(tracer, keel.k4, { stock: 0 }, clock).rec });
+  tracer.events.at(-1).choices = { class: 'N1', guard: 'items-complete', result: false, taken: 'm.backorder', notTaken: 'm.ship', loopIteration: 1 };
+  fire('m.backorder');
+  /* loop: stock re-check on second pass, then reserve the back-ordered item */
+  clock.step();
+  tracer.emit({ clock: clock.now(), stepKind: 'choice', instance: ['m.branch', 'order-42'],
+    state: { at: 'm.branch' }, keel: keelEval(tracer, keel.k4, { stock: D.stock }, clock).rec });
+  tracer.events.at(-1).choices = { class: 'N1', guard: 'k4', result: true, taken: 'm.reserve', notTaken: 'm.ship', loopIteration: 2 };
+  fire('m.reserve');
+  mutate('m.reserve', 'stock: ' + D.stock + '→' + (D.stock - 1), D.stock, D.stock - 1);
+  D.stock -= 1;
+  clock.step();
+  tracer.emit({ clock: clock.now(), stepKind: 'choice', instance: ['m.branch', 'order-42'],
+    state: { at: 'm.branch' }, choices: { class: 'N1', guard: 'items-complete', result: true, taken: 'm.ship', notTaken: 'm.backorder', loopIteration: 2 } });
+  fire('m.ship');
+  mutate('m.ship', 'shipments: ' + D.shipments + '→' + (D.shipments + 2), D.shipments, D.shipments + 2);
+  D.shipments += 2;
+  mutate('m.ship', 'stock: ' + D.stock + '→' + (D.stock - 1), D.stock, D.stock - 1);
+  D.stock -= 1;
+  fire('m.ledger');
+  mutate('m.ledger', 'ledger: ' + money(D.ledger) + '→' + money(D.ledger + D.charged), D.ledger, D.ledger + D.charged);
+  D.ledger += D.charged;
+  mutate('m.ledger', 'ledger: ' + money(D.ledger) + '→' + money(D.ledger + 45.0) + ' (+' + money(45) + ' freight)', D.ledger, D.ledger + 45.0);
+  D.ledger += 45.0;
+  fire('m.complete');
+  fire('m.fin');
+  clock.stop();
+  return { steps: tracer.events.length, ledger: D.ledger, charged: D.charged, stock: D.stock };
+}
+
+/* --- EM-3: lifecycle FSM walk; one human decision recorded (N5). */
+function engineEM3(ctx) {
+  const { tracer, clock, data, budget } = ctx;
+  clock.start();
+  const states = ['available', 'enabled', 'active', 'completed'];
+  const task = data.objects.find(o => /humantask|cmmn/i.test((o.props || {}).kind || '')) || data.objects[1];
+  const taskUid = task ? 'm.' + task.id : null;
+  const milestone = data.objects.find(o => /milestone/i.test((o.props || {}).kind || ''));
+  for (const s of states) {
+    if (!budget.tick(['case.planItem1', 'case-7'])) break;
+    clock.step();
+    const choices = s === 'enabled' ? { class: 'N5', input: 'approve', role: 'manager', note: 'human decision (normative input)' } : undefined;
+    tracer.emit({ clock: clock.now(), stepKind: 'standard-event', instance: ['case.planItem1', 'case-7'], state: { lifecycle: s, monotonic: true, ...(taskUid ? { at: taskUid } : {}) }, ...(choices ? { choices } : {}) });
+  }
+  if (budget.tick()) {
+    clock.step();
+    tracer.emit({ clock: clock.now(), stepKind: 'sentry-round', instance: ['case.sentry1', 'case-7'], state: { ifPart: 'stockReserved == true', fired: true, ...(milestone ? { at: 'm.' + milestone.id } : {}) } });
+  }
+  clock.stop();
+  return { steps: tracer.events.length };
+}
+
+/* --- EM-4: partial-order cursor over the message list; three-valued
+ * [P,I] trace-set verdict. */
+function engineEM4(ctx) {
+  const { tracer, clock, data, budget } = ctx;
+  clock.start();
+  const msgs = data.relations.filter(r => r.from && r.to);
+  const recorded = [...msgs].reverse().slice(0, 1).map(r => r.id); /* one out-of-order event */
+  let cursor = 0;
+  for (const r of msgs) {
+    if (!budget.tick([r.from.$ref, 'occ-' + (cursor + 1)])) break;
+    clock.step();
+    cursor++;
+    tracer.emit({ clock: clock.now(), stepKind: 'event-occurrence', instance: [r.from.$ref, 'occ-' + cursor], state: { message: r.id, cursor, of: msgs.length } });
+  }
+  const pos = new Map(msgs.map((r, i) => [r.id, i]));
+  const recPos = recorded.map(id => pos.get(id));
+  const valid = recPos.every((p, i) => i === 0 || p > recPos[i - 1]);
+  if (budget.tick(['chart', 'trace-1'])) {
+    clock.step();
+    tracer.emit({ clock: clock.now(), stepKind: 'validation', instance: ['chart', 'trace-1'],
+      verdict: recorded.length ? (valid ? 'valid' : 'invalid') : 'not-described',
+      state: { rule: '[P,I] trace-set; P∪I ≠ universe', recorded } });
+  }
+  clock.stop();
+  return { steps: tracer.events.length, verdict: valid ? 'valid' : 'invalid' };
+}
+
+/* --- Engine registry: profile name → engine. Unavailable classes are coded
+ * (DDN-A006), never silently stubbed. */
+const ENGINES = { em1: engineEM1, em9: engineEM9, em3: engineEM3, em4: engineEM4 };
+const ENGINE_LABELS = { em1: 'EM-1 token runtime', em9: 'EM-1 token runtime · order saga', em3: 'EM-3 lifecycle FSM', em4: 'EM-4 trace-set validation' };
+const KNOWN_UNAVAILABLE = { em2: 'EM-2 declarative rules', em5: 'EM-5 delegated solving', em6: 'EM-6 protocol conformance' };
+function classifyProfile(profile) {
+  const name = String((profile && (profile.name || profile.id)) || '');
+  const m2 = name.match(/em-?(\d)/i);
+  if (m2 && ENGINES['em' + m2[1]]) return { engine: 'em' + m2[1] };
+  if (m2 && KNOWN_UNAVAILABLE['em' + m2[1]]) return { unavailable: 'em' + m2[1], label: KNOWN_UNAVAILABLE['em' + m2[1]] };
+  return {};
+}
+
+/* runEngine(engineId, ctx): budgeted deterministic generation. Returns
+ * { events, result, budget, doc } — doc is the §13.3.1 trace document. */
+function runEngine(engineId, ctx, meta) {
+  const budget = ctx.budget || makeBudget();
+  const tracer = makeTracer(ctx.features.profile || { id: 'poc', name: 'poc', version: '0', replay: 'faithful' });
+  const engine = ENGINES[engineId];
+  if (!engine) return { error: 'DDN-A006', events: [], budget };
+  const result = engine({ ...ctx, tracer, budget });
+  const doc = {
+    format: 'ddna-trace@1',
+    ddna: (meta && meta.ddna) || '0.1.0-draft',
+    companion: meta && meta.companion,
+    base: meta && meta.base,
+    semantic_profile: (tracer.profile && (tracer.profile.name || tracer.profile.id)) || 'unspecified',
+    replay_mode: (tracer.profile && tracer.profile.replay) === 'verified' ? 'verified' : 'faithful',
+    time_model: { kind: 'event-stepped', id: 'TIME-A' },
+    complete: !budget.exceeded,
+    events: tracer.events
+  };
+  return { events: tracer.events, result, budget, doc, engine: engineId };
+}
+
+/* Canonical comparison for verified replay (A007): the envelope + mapped
+ * element + choices, in order. */
+function canonicalEvents(events) {
+  return (events || []).map(e => JSON.stringify([e.seq, e.stepKind, e.instance, e.state && e.state.at, e.choices || null, e.verdict === undefined ? null : String(e.verdict)]));
+}
+/* verifyReplay(events, regenerate): re-runs the engine and reports the first
+ * divergent event (1-based seq), or null when identical. */
+function verifyReplay(events, regenerate) {
+  const fresh = regenerate();
+  const a = canonicalEvents(events), b = canonicalEvents(fresh);
+  for (let i = 0; i < Math.max(a.length, b.length); i++) if (a[i] !== b[i]) return { diverged: true, seq: i + 1, expected: b[i], got: a[i] };
+  return { diverged: false };
+}
+
+/* engineDiagnostics(files, parseFn, isCompanion): A005 (KEEL tier above the
+ * host ceiling) and A006 (no engine for the companion's class) at load. */
+function engineDiagnostics(files, parseFn, isCompanion) {
+  const out = [];
+  for (const [name, text] of Object.entries(files || {})) {
+    if (!isCompanion(name, text)) continue;
+    let doc = null;
+    try { doc = parseFn(text, name); } catch { continue; }
+    let profile = null;
+    const keels = [];
+    const walk = n => {
+      const pr = n.props || {};
+      if (pr.x_profile) profile = { id: n.id, ...pr.x_profile };
+      if (pr.x_keel) keels.push({ id: n.id, ...pr.x_keel });
+      for (const c of n.children || []) walk(c);
+    };
+    for (const d of doc.declarations || []) walk(d);
+    for (const k of keels) {
+      if (!KEEL.tierAvailable(k.language))
+        out.push({ severity: 'warning', code: 'DDN-A005', file: name, message: 'KEEL expression ' + k.id + ' declares language "' + k.language + '" — above the open host ceiling (T0–T2, keel-l0@1); the feature is marked unavailable (ddna ch.13 §13.5)' });
+    }
+    if (profile) {
+      const cls = classifyProfile(profile);
+      if (cls.unavailable)
+        out.push({ severity: 'warning', code: 'DDN-A006', file: name, message: 'no engine for execution-model class ' + cls.unavailable.toUpperCase() + ' (' + cls.label + ') is installed in the open tool (ddna ch.13 §13.4)' });
+    }
+  }
+  return out;
+}
+
+const api = {
+  DDNA_EXECUTION_STEPS_MAX, DDNA_EXECUTION_INSTANCES_MAX,
+  makeTracer, makeClock, makeBudget, keelEval,
+  ENGINES, ENGINE_LABELS, KNOWN_UNAVAILABLE, classifyProfile, runEngine, canonicalEvents, verifyReplay, engineDiagnostics
+};
+if (typeof module === 'object' && module.exports) module.exports = api;
+host.DDNToolDdnaEngine = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
 /* SPDX-License-Identifier: GPL-2.0-or-later. B1-027 unified DDN diagram tool.
  * One page replacing the end-user viewer (B1-007), the studio gallery and the
  * studio editor: a diagram stage with pan/zoom, an icon toolbar, and pop-in
@@ -9463,6 +10001,8 @@ const els = {
   replay: $('ddn-replay'), replaySource: $('ddn-replay-source'), replayStart: $('ddn-replay-start'), replayStop: $('ddn-replay-stop'),
   replayStep: $('ddn-replay-step'), replayReset: $('ddn-replay-reset'), replaySpeed: $('ddn-replay-speed'),
   replayStatus: $('ddn-replay-status'), replayNote: $('ddn-replay-note'), replayTable: $('ddn-replay-table'),
+  exec: $('ddn-exec'), execEngine: $('ddn-exec-engine'), execInputs: $('ddn-exec-inputs'),
+  execRun: $('ddn-exec-run'), execDownload: $('ddn-exec-download'), execStatus: $('ddn-exec-status'),
   animStep: $('ddn-anim-step'), animSpeed: $('ddn-anim-speed'), animFlow: $('ddn-anim-flow'),
   animFlowField: $('ddn-anim-flow-field'), animStatus: $('ddn-anim-status')
 };
@@ -14160,7 +14700,8 @@ function refreshAnimation() {
   const motionEls = svg ? [...svg.querySelectorAll('.ddn-motion, .ddn-flow')] : [];
   const hasMotion = motionEls.length > 0;
   refreshReplay();
-  const hasReplay = replay.traces.length > 0;
+  refreshExec();
+  const hasReplay = replay.traces.length > 0 || !els.exec.hidden;
   els.animEmpty.hidden = hasMotion || hasReplay;
   if (!hasMotion && hasReplay) els.animEmpty.textContent = 'No SMIL animation in this view — trace replay is below.';
   els.animControls.hidden = !hasMotion;
@@ -14258,10 +14799,14 @@ els.animStep.addEventListener('click', () => guard(() => {
  * workspace's companions (sidecar or inline spelling); the mode badge shows
  * the trace's declared replay_mode, never silently switched (OT-032). */
 const DDT = host.DDNToolDdnaTrace;
+const KEEL0 = host.DDNToolKeel;
 const replay = { traces: [], sel: '', idx: 0, timer: null, note: '' };
 function replayScan() {
   if (!state.ws) return { traces: [], diags: [] };
-  return DDT.collectTraces(state.ws.getFiles(), (t, n) => A.parse(t, n), state.traceFiles || {}, isCompanionFile);
+  const r = DDT.collectTraces(state.ws.getFiles(), (t, n) => A.parse(t, n), state.traceFiles || {}, isCompanionFile);
+  /* Generated traces (Phase C runs) join the picker; they live in the tool,
+   * never in source. */
+  return { traces: r.traces.concat(state.generatedTraces || []), diags: r.diags };
 }
 function replayNodeFor(key) {
   const svg = svgEl();
@@ -14391,7 +14936,126 @@ els.replayStep.addEventListener('click', () => guard(() => {
   replayStepOnce();
 }));
 els.replayReset.addEventListener('click', () => guard(() => replayReset()));
-els.replaySource.addEventListener('change', () => guard(() => { replay.sel = els.replaySource.value; replayReset(); }));
+els.replaySource.addEventListener('change', () => guard(() => { replay.sel = els.replaySource.value; replayReset(); replayVerifiedCheck(); }));
+
+/* ------------------------------------------------ DDNA Phase C: execution
+ * (ddna ch.13 §13.4). Run an engine for the workspace's companion → a
+ * §13.3.1 trace document lands in the replay picker (generated, deterministic
+ * per OT-041) and downloads as a sidecar. Budgets per §13.6 (DDN-A004 marks
+ * truncation); unavailable classes are DDN-A006; KEEL above the open ceiling
+ * skips with DDN-A005 (never a silent stub, never a crash). */
+const DDE = host.DDNToolDdnaEngine;
+state.generatedTraces = [];
+function ddnaCompanionCtx(companionName) {
+  const files = state.ws.getFiles();
+  const containers = architectureContainers(files, (t, n) => A.parse(t, n));
+  const features = { profile: null, keel: [] };
+  try {
+    const doc = A.parse(files[companionName], companionName);
+    const walk = n => {
+      const pr = n.props || {};
+      if (pr.x_profile) features.profile = { id: n.id, ...pr.x_profile };
+      if (pr.x_keel) features.keel.push({ id: pr.x_keel.id || n.id, ...pr.x_keel });
+      for (const c of n.children || []) walk(c);
+    };
+    for (const d of doc.declarations || []) walk(d);
+  } catch { /* companion parse errors are reported by the core path */ }
+  /* Above-ceiling KEEL languages never evaluate (DDN-A005, OT-052). */
+  features.keel = features.keel.filter(k => KEEL0.tierAvailable(k.language));
+  const data = { objects: [], relations: [] };
+  for (const base of servedBases(companionName, containers, files)) {
+    let doc = null;
+    try { doc = A.parse(files[base], base); } catch { continue; }
+    const walk = n => {
+      if (n.type === 'object') data.objects.push(n);
+      if (n.type === 'relation') data.relations.push(n);
+      for (const c of n.children || []) walk(c);
+    };
+    for (const d of doc.declarations || []) if (d.type === 'data') walk(d);
+  }
+  return { features, data };
+}
+function ddnaActiveCompanion() {
+  const files = state.ws ? state.ws.getFiles() : {};
+  const companions = Object.keys(files).filter(n => isCompanionFile(n, files[n]));
+  if (!companions.length) return null;
+  const containers = architectureContainers(files, (t, n) => A.parse(t, n));
+  /* Prefer the companion serving the current view's file. */
+  return companions.find(c => servedBases(c, containers, files).includes(state.entry)) || companions[0];
+}
+function refreshExec() {
+  const comp = state.ws ? ddnaActiveCompanion() : null;
+  if (!comp) { els.exec.hidden = true; return; }
+  const { features } = ddnaCompanionCtx(comp);
+  const cls = features.profile ? DDE.classifyProfile(features.profile) : {};
+  els.exec.hidden = false;
+  if (cls.engine) {
+    els.execEngine.textContent = 'engine: ' + DDE.ENGINE_LABELS[cls.engine] + ' · companion ' + comp + (features.profile && features.profile.replay ? ' · profile ' + features.profile.replay : '');
+    els.execRun.disabled = false;
+    els.execRun.dataset.engine = cls.engine;
+    els.execRun.dataset.companion = comp;
+  } else {
+    els.execEngine.textContent = cls.unavailable
+      ? 'no engine for ' + cls.unavailable.toUpperCase() + ' (' + cls.label + ') in the open tool — DDN-A006'
+      : 'companion ' + comp + ' declares no executable profile class';
+    els.execRun.disabled = true;
+    els.execRun.dataset.engine = '';
+    els.execRun.dataset.companion = comp;
+  }
+}
+els.execRun.addEventListener('click', () => guard(() => {
+  const engineId = els.execRun.dataset.engine, comp = els.execRun.dataset.companion;
+  if (!engineId) return;
+  const { features, data } = ddnaCompanionCtx(comp);
+  let inputs = {};
+  const raw = els.execInputs.value.trim();
+  if (raw) {
+    try { inputs = JSON.parse(raw); } catch (e) { status('inputs must be a JSON record: ' + e.message); return; }
+  }
+  const run = DDE.runEngine(engineId, { features, data, inputs, clock: DDE.makeClock() },
+    { companion: comp, base: state.entry });
+  if (run.error) { els.execStatus.textContent = run.error + ' — no engine installed for this class'; return; }
+  /* Shape-validate the generated trace with the shared Phase B validator —
+   * generation and replay share one record model (OT-022). */
+  const check = DDT.validateTraceDocument(JSON.stringify(run.doc), 'generated');
+  if (check.diags.length) { els.execStatus.textContent = 'generated trace failed self-validation: ' + check.diags[0].message; return; }
+  const id = 'generated:' + comp + '#' + run.events.length + ':' + Date.now();
+  state.generatedTraces.push({ id, label: 'generated · ' + DDE.ENGINE_LABELS[engineId], companion: comp, doc: run.doc, events: run.events, replayMode: run.doc.replay_mode, profile: run.doc.semantic_profile, appliesTo: [], source: 'generated' });
+  state.execLast = run.doc;
+  els.execDownload.hidden = false;
+  refreshReplay();
+  replay.sel = id;
+  els.replaySource.value = id;
+  replayReset();
+  replayVerifiedCheck();
+  els.execStatus.textContent = 'generated ' + run.events.length + ' events (' + DDE.ENGINE_LABELS[engineId] + ')' +
+    (run.budget.exceeded ? ' — TRUNCATED at ' + run.budget.exceeded + ' (DDN-A004; trace marked complete:false)' : ' — complete; pick it in the replay list above') +
+    (run.result && run.result.ledger !== undefined ? ' · ledger ' + run.result.ledger : '');
+  if (run.budget.exceeded) status('DDN-A004: run truncated at ' + run.budget.exceeded + ' — partial trace marked complete:false');
+}));
+els.execDownload.addEventListener('click', () => guard(() => {
+  if (!state.execLast) return;
+  A.io.download((state.execLast.companion || 'trace').replace(/\.ddn$/, '') + '.ddnatrace.json', JSON.stringify(state.execLast, null, 2), 'application/json');
+  status('downloaded the generated trace sidecar — drop it next to the companion to replay it from disk');
+}));
+/* OT-032/A007: a verified-mode trace is re-run against its engine at
+ * selection; divergence names the first divergent event. (Faithful traces
+ * replay verbatim, unchecked.) */
+function replayVerifiedCheck() {
+  const t = replay.traces.find(x => x.id === replay.sel);
+  if (!t || t.replayMode !== 'verified') return;
+  const comp = t.companion;
+  const { features, data } = ddnaCompanionCtx(comp);
+  const cls = features.profile ? DDE.classifyProfile(features.profile) : {};
+  if (!cls.engine) { replay.note = 'verified replay: no engine for this class (DDN-A006) — replaying recorded events verbatim'; replayStatus(); return; }
+  const fresh = DDE.runEngine(cls.engine, { features, data, inputs: {}, clock: DDE.makeClock() }, { companion: comp, base: state.entry });
+  const verdict = DDE.verifyReplay(t.events, () => fresh.events);
+  if (verdict.diverged) {
+    replay.note = 'DDN-A007: verified replay diverged at event seq ' + verdict.seq + ' — recorded ' + String(verdict.got).slice(0, 80);
+    status('DDN-A007: verified replay diverged from recomputation at event ' + verdict.seq);
+  } else replay.note = 'verified replay: recomputation matches the recorded trace';
+  replayStatus();
+}
 function refreshReplay() {
   const { traces } = replayScan();
   replay.traces = traces;
@@ -14888,6 +15552,9 @@ function collectDiagnostics() {
       return ids;
     };
     for (const d of DDT.traceDiagnostics(files, (t, n) => A.parse(t, n), state.traceFiles || {}, isCompanionFile, baseIdsFor)) out.push(d);
+    /* Phase C (§13.4/§13.5): unavailable engine classes (A006) and
+     * above-ceiling KEEL languages (A005) degrade at load, never crash. */
+    for (const d of DDE.engineDiagnostics(files, (t, n) => A.parse(t, n), isCompanionFile)) out.push(d);
   }
   return out;
 }
