@@ -6445,8 +6445,14 @@
     if(['text','icon_token'].includes(p.display.kind)||mono)out+=text$1(x+14*s,y+53*s,p.display.kind==='text'?k.name:k.code,11*s,ink,650);
    }
    const elTextSpec=n.properties?.text||null;
-   if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650,elTextSpec)+'</g>';
-   else out+=multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650,elTextSpec);
+   /* Owner feedback: kind tags of 4+ characters (TERM, ENTITY…) under the icon
+    * ran into the name column. Shift the name column right of the rendered tag
+    * with a clear 10px gap — paint-only: node boxes and the title wrap budget
+    * are unchanged, so geometry conformance vectors are unaffected. */
+   const tagText=(['text','icon_token'].includes(p.display.kind)||mono)?(p.display.kind==='text'?k.name:k.code):'';
+   const nameX=x+Math.max(48*s,14*s+(tagText?api$a.measure(tagText,11*s,font,650).width+10*s:0));
+   if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(nameX,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650,elTextSpec)+'</g>';
+   else out+=multilines(nameX,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650,elTextSpec);
    if(plainIcon)out+=emitIcon(g,plainIcon);
    const artBind=artFor(g);
    if(artBind)out+=emitArt(g,artBind,p);

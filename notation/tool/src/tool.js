@@ -443,7 +443,8 @@ const STAGE_CSS =
   '.ddn-resize-handle{position:absolute;z-index:8;width:8px;height:8px;background:#fff;border:1.5px solid #245ac8;border-radius:2px;box-shadow:0 1px 3px #243b5940;touch-action:none;box-sizing:border-box}' +
   '.ddn-resize-n,.ddn-resize-s{cursor:ns-resize}.ddn-resize-e,.ddn-resize-w{cursor:ew-resize}' +
   '.ddn-resize-ne,.ddn-resize-sw{cursor:nesw-resize}.ddn-resize-nw,.ddn-resize-se{cursor:nwse-resize}' +
-  '.ddn-resize-ghost{position:absolute;z-index:7;border:1.5px dashed #245ac8;background:#245ac812;pointer-events:none;box-sizing:border-box}';
+  '.ddn-resize-ghost{position:absolute;z-index:7;border:1.5px dashed #245ac8;background:#245ac812;pointer-events:none;box-sizing:border-box}' +
+  '.ddn-inline-edit{position:absolute;z-index:9;font:13px system-ui,sans-serif;padding:2px 6px;border:1.5px solid #245ac8;border-radius:6px;background:#fff;color:#20304a;box-shadow:0 4px 14px #243b5933;box-sizing:border-box;outline:none;min-width:80px}';
 const HOVER_CSS =
   '.ddn-node.ddn-hover,.ddn-frame.ddn-hover,.ddn-field.ddn-hover{filter:drop-shadow(0 0 3px #245ac8) drop-shadow(0 0 1px #245ac8)}' +
   '.ddn-rel.ddn-hover path{stroke:#245ac8!important;stroke-width:2.5px!important}' +
@@ -4356,8 +4357,75 @@ function ctxMenu(x, y, entries) {
   stage.append(menu);
   return menu;
 }
-document.addEventListener('pointerdown', e => { if (!e.target.closest || !e.target.closest('.ddn-ctx')) closeCtxMenu(); }, true);
+/* Outside-click closer: the menu lives in the component's SHADOW ROOT, so at
+ * document level e.target is retargeted to the host and .closest('.ddn-ctx')
+ * never matches — a capture-phase pointerdown on a menu button removed the
+ * menu BEFORE the click, making every item dead (owner report). Walk the
+ * composed path instead. */
+document.addEventListener('pointerdown', e => {
+  const path = e.composedPath ? e.composedPath() : [];
+  if (!path.some(n => n && n.classList && n.classList.contains('ddn-ctx'))) closeCtxMenu();
+}, true);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCtxMenu(); });
+
+/* The inline label editor overlay (dblclick). The input is appended to the
+ * stage canvas — position:relative since the resize-handle fix — so rect
+ * arithmetic matches the handle overlay exactly. */
+function openInlineEditor(target) {
+  const stage = stageEl();
+  const canvas = stage && stage.querySelector('.canvas');
+  if (!canvas) return;
+  let current = '';
+  try {
+    const ir = state.ws.resolve(state.entry, state.view);
+    if (target.what === 'field') {
+      const f = ir.elements.flatMap(n => n.fields || []).find(f2 => f2.id === target.uid);
+      current = (f && (f.name || f.label)) || '';
+    } else if (target.what === 'relation label') {
+      const r = ir.relations.find(r2 => r2.id === target.uid);
+      current = (r && r.name) || '';
+    } else {
+      const n = ir.elements.find(n2 => n2.id === target.uid);
+      current = (n && n.name) || '';
+    }
+  } catch { current = ''; }
+  const cr = canvas.getBoundingClientRect();
+  const r = target.el.getBoundingClientRect();
+  const input = document.createElement('input');
+  input.className = 'ddn-inline-edit';
+  input.value = current;
+  input.setAttribute('aria-label', 'Edit ' + target.what + ' of ' + target.uid);
+  input.style.left = Math.max(0, r.left - cr.left - 2) + 'px';
+  input.style.top = Math.max(0, r.top - cr.top - 2) + 'px';
+  input.style.width = Math.max(90, r.width + 12) + 'px';
+  let done = false;
+  const close = commit => {
+    if (done) return;
+    done = true;
+    input.remove();
+    if (!commit) return;
+    const label = input.value.trim();
+    if (!label || label === current) return;
+    /* Same crash-guard semantics as every source write: guided() renders and
+     * a rejecting render surfaces through the component's ddn-error path. */
+    let wrote = false;
+    guard(() => guided(() => { A.authoring.setLabel(state.ws, state.entry, state.view, target.uid, label); wrote = true; }));
+    const settled = state.diagram && state.diagram.ready;
+    const msg = () => { if (wrote) status(target.what + ' updated — undo restores the previous label'); };
+    if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+    else msg();
+  };
+  input.addEventListener('keydown', ev => {
+    ev.stopPropagation();
+    if (ev.key === 'Enter') close(true);
+    else if (ev.key === 'Escape') close(false);
+  });
+  input.addEventListener('blur', () => close(true));
+  input.addEventListener('pointerdown', ev => ev.stopPropagation());
+  canvas.append(input);
+  input.focus();
+  input.select();
+}
 
 function openInspectorFor(id, relation) {
   let ir = null;
@@ -4427,6 +4495,30 @@ function attachContextMenu() {
   const stage = stageEl();
   if (!stage || stage.dataset.toolCtx) return;
   stage.dataset.toolCtx = 'true';
+  /* Double-click in-place label editing (owner request, 0.9): element names,
+   * relation labels, and field rows edit inline — an overlay input positioned
+   * over the text (same coordinate space as the resize handles), committing
+   * through authoring.setLabel so source stays canonical. Enter/blur commits,
+   * Escape cancels. */
+  stage.addEventListener('dblclick', e => {
+    if (design.placing || state.panning) return;
+    const nodeEl = e.target && e.target.closest && e.target.closest('.ddn-node[data-id]');
+    const fieldEl = e.target && e.target.closest && e.target.closest('.ddn-field[data-member]');
+    const relEl = e.target && e.target.closest && (e.target.closest('.ddn-rel[data-id]') || e.target.closest('.ddn-label[data-id]'));
+    let target = null;
+    if (fieldEl && nodeEl) {
+      /* data-member carries the field's FULL uid when the renderer has it;
+       * fall back to element-id.member for local ids. */
+      const member = fieldEl.dataset.member;
+      const uid = member.includes('::') ? member : nodeEl.dataset.id + '.' + member;
+      target = { uid, el: fieldEl, what: 'field' };
+    }
+    else if (relEl) target = { uid: relEl.dataset.id, el: relEl, what: 'relation label' };
+    else if (nodeEl) target = { uid: nodeEl.dataset.id, el: nodeEl, what: 'name' };
+    if (!target) return;
+    e.preventDefault(); e.stopPropagation();
+    openInlineEditor(target);
+  }, true);
   stage.addEventListener('contextmenu', e => {
     e.preventDefault(); e.stopPropagation();
     const relG = e.target && e.target.closest && (e.target.closest('.ddn-rel[data-id]') || e.target.closest('.ddn-label[data-id]'));
