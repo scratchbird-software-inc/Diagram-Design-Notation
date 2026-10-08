@@ -9448,6 +9448,17 @@ function mount() {
     attachHover();
     syncResizeHandles();
     { const st = stageEl(); if (st && !st.dataset.toolResizeTrack) { st.dataset.toolResizeTrack = 'true'; st.addEventListener('scroll', () => syncResizeHandles(), { passive: true }); } }
+    { const cv = canvasEl(); if (cv && !cv.dataset.toolResizeObs) { cv.dataset.toolResizeObs = 'true';
+      /* The component replaces the canvas's svg on EVERY render; any render
+       * path whose timing skips the ddn-render sync would leave the handles
+       * wiped or stale (the "flash then gone / stale box" report). Re-sync on
+       * canvas childList mutations that are not our own handle writes. */
+      new MutationObserver(muts => {
+        if (resizeState.syncing) return;
+        const ours = muts.every(m => [...m.addedNodes, ...m.removedNodes].every(n => n.nodeType === 1 && n.classList && n.classList.contains('ddn-resize-handle')));
+        if (!ours) syncResizeHandles();
+      }).observe(cv, { childList: true });
+    } }
     updateCreatorGate();
     syncQuickToggles();
     refreshInspector();
@@ -9476,6 +9487,7 @@ function sceneSize() {
   return s ? { w: s.width, h: s.height } : { w: 0, h: 0 };
 }
 function stageEl() { return state.diagram && state.diagram.shadowRoot.querySelector('.stage'); }
+function canvasEl() { const st = stageEl(); return st && st.querySelector('.canvas'); }
 function svgEl() { return state.diagram && state.diagram.shadowRoot.querySelector('.canvas>svg'); }
 
 /* ------------------------------------------------ viewport: fit/zoom/pan */
@@ -9486,9 +9498,8 @@ function currentScale() {
   return (parseFloat(svg.style.width) || w) / w;
 }
 function applyFit() {
-  syncResizeHandles();
   const d = state.diagram;
-  if (!d || !d.result) return;
+  if (!d || !d.result) { syncResizeHandles(); return; }
   const stage = stageEl();
   const { w, h } = sceneSize();
   if (state.fit === 'page' && state.zoom == null) { d.zoom = 'fit'; d.sizeSVG(); }
@@ -9496,6 +9507,10 @@ function applyFit() {
     const z = state.zoom != null ? state.zoom : computeFitScale(state.fit, Math.max(120, stage.clientWidth - 32), Math.max(120, stage.clientHeight - 32), w, h);
     d.zoom = z; d.sizeSVG();
   }
+  /* Sync AFTER sizeSVG: the zoom pass changes the drawing CTM, so handles
+   * positioned before it would land on the pre-fit picture (the "handles
+   * flash, then end up detached" half of the report). */
+  syncResizeHandles();
   const pct = Math.round(currentScale() * 100);
   els.zoomPct.textContent = pct + '%';
   els.zoom.value = String(Math.min(300, Math.max(10, pct)));
@@ -12903,6 +12918,8 @@ function clearResizeHandles() {
   resizeState.drag = null;
 }
 function syncResizeHandles() {
+  resizeState.syncing = true;
+  try {
   clearResizeHandles();
   const t = resizeTargets();
   if (!t) return;
@@ -12936,6 +12953,7 @@ function syncResizeHandles() {
     canvas.append(el);
     resizeState.handleEls.push(el);
   }
+  } finally { resizeState.syncing = false; }
 }
 function startResizeDrag(e, dir, target) {
   if (e.button !== 0) return;
