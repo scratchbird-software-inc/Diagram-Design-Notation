@@ -45,7 +45,7 @@ const SHT = __req('DDNToolSheets', './sheets.js');
 const { DRAWERS, DRAWER_STATES, GEAR_STATES, STORAGE_KEY, MODES, DEFAULT_MODE, parseMode, parseDrawersParam, cleanDrawerConfig, parseToolbarParam, resolveDrawerConfig } = PAR;
 const { computeFitScale, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem, pageDims, pageScaleFloor, artboardProblem } = PGF;
 const { slug, cssString, overrideRuleFor, typographyRuleFor, recentColours, relationColourRuleFor, lineStyleRuleFor, outlineRuleFor, overrideCss, toolOverrides, overrideProfileWrites, cssOverlayRecord } = PRE;
-const { pickEntryView, viewListFrom, isPlausibleSourceFile, freshLocalId, srcFromQuery, srcFetchErrorMessage, srcImportClosure, templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic } = FIL;
+const { pickEntryView, viewListFrom, isPlausibleSourceFile, freshLocalId, srcFromQuery, srcFetchErrorMessage, srcImportClosure, templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic, isCompanionFile, companionFacts, servedBases, architectureContainers, ddnaDiagnostics } = FIL;
 const { rasterCanvasSize, exportSvgWithOverrides, hopWindowsFromMarkers, nextHopTime, scaledDuration } = EXP;
 const { parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, workerBridgeError, createRenderBridge } = BRG;
 const { FONT_STACKS, ROUTING_VALUES, MIN_TEXT_PX, MAX_FILE_BYTES, MAX_RASTER_PX } = OPT;
@@ -2148,6 +2148,55 @@ els.inspectorTabs.addEventListener('click', e => {
 });
 
 function inspectorNote(msg) { els.inspectorError.textContent = msg || ''; }
+
+/* DDNA-OT-011: a companion opened from the outline renders READ-ONLY
+ * structured content in the Inspector — never a canvas (companions declare
+ * no view and are excluded from view picking). */
+function openCompanionInspector(file) {
+  guard(() => {
+    state.selected = null; state.selectedRelation = null; state.selectedIds = [];
+    const doc = A.parse(state.ws.getFiles()[file], file);
+    const body = document.createElement('div');
+    const h = document.createElement('h3');
+    h.textContent = 'ddna companion — ' + file;
+    body.append(h);
+    body.append(dim('Automation companion (DDNA). Read-only here; edit the source from the Source drawer. Declares no view — it is not a diagram source.'));
+    const carriers = [];
+    const walk = (n, path) => {
+      const pr = n.props || {};
+      for (const key of ['x_profile', 'x_keel', 'x_trace']) {
+        if (!pr[key]) continue;
+        const li = document.createElement('li');
+        const idPath = (path ? path + '.' : '') + n.id;
+        const det = key === 'x_profile' ? [pr[key].name, pr[key].version, pr[key].replay].filter(Boolean).join(' · ')
+          : key === 'x_keel' ? [pr[key].id, pr[key].language, String(pr[key].body || '').slice(0, 60)].filter(Boolean).join(' · ')
+          : [Object.keys(pr[key]).join(', ')].join('');
+        li.textContent = key.replace('x_', '') + ' — ' + idPath + (det ? ' — ' + det : '');
+        carriers.push(li);
+      }
+      for (const c of n.children || []) walk(c, (path ? path + '.' : '') + n.id);
+    };
+    for (const d of doc.declarations || []) walk(d, '');
+    const ul = document.createElement('ul');
+    ul.className = 'ddn-companion-decls';
+    if (carriers.length) ul.append(...carriers);
+    else ul.append(dim('no x_profile / x_keel / x_trace declarations parsed'));
+    body.append(ul);
+    const src = document.createElement('button');
+    src.type = 'button'; src.className = 'ddn-mini'; src.textContent = 'Show source';
+    src.addEventListener('click', () => guard(() => { setDrawer('source', 'open', true); showSource(file); }));
+    body.append(src);
+    els.inspectorDetails.replaceChildren(body);
+    els.inspectorControls.hidden = false;
+    els.inspectorMeaning.hidden = true;
+    els.inspectorView.hidden = true;
+    els.inspectorDetails.hidden = false;
+    els.selectionSummary.textContent = 'ddna companion: ' + file;
+    inspectorNote('');
+    setDrawer('inspector', 'open', true);
+    status('ddna companion ' + file + ' — read-only summary (it has no canvas view)');
+  });
+}
 /* Inspector commits surface coded errors ADJACENT to the controls (the
  * inspector error slot) rather than only in the status bar / source drawer —
  * the commit-time authority is core validation (DDN-PJ149 & friends), and its
@@ -5104,6 +5153,13 @@ function filesUI() {
     for (const m of text.matchAll(/import\s+"([^"]+)"\s+as\s+[A-Za-z0-9_]+\s*;/g)) edges[name].push(m[1]);
   }
   els.fileList.className = 'ddn-tree';
+  /* DDNA-OT-010: companions group under the base file(s) they serve (the
+   * architecture containers that name them), labelled, with automation
+   * facts in the role summary. Orphan companions list at the root. */
+  const containers = architectureContainers(fs, (t, n) => A.parse(t, n));
+  const companions = new Set(Object.keys(fs).filter(n => isCompanionFile(n, fs[n])));
+  const companionsOf = {};
+  for (const c of companions) for (const b of servedBases(c, containers, fs)) (companionsOf[b] = companionsOf[b] || []).push(c);
   /* Default-expanded; the set tracks COLLAPSED files so newly created files
    * arrive open (the outline is the workspace's table of contents). */
   const collapsed = state.outlineCollapsed || (state.outlineCollapsed = new Set());
@@ -5180,11 +5236,47 @@ function filesUI() {
   const emitted = new Set();
   for (const n of ordered) if (!parentOf[n] || !Object.prototype.hasOwnProperty.call(fs, parentOf[n])) emit(n, 0, emitted);
   for (const n of ordered) if (!emitted.has(n)) emit(n, 0, emitted);
-  els.fileList.replaceChildren(...items.map(it => {
+  const companionNode = (name, depth) => {
+    const li = document.createElement('li');
+    li.className = 'ddn-tree-file ddn-tree-companion';
+    li.dataset.companion = name;
+    const row = document.createElement('div');
+    const b = document.createElement('button');
+    b.textContent = name;
+    b.title = name + ' — ddna companion (automation); opens a read-only summary in the Inspector';
+    const chip = document.createElement('span');
+    chip.className = 'ddn-tree-role';
+    chip.dataset.role = 'companion';
+    chip.textContent = 'ddna companion · automation';
+    const f = companionFacts(fs[name], (t, n) => A.parse(t, n));
+    const rs = document.createElement('span');
+    rs.className = 'ddn-tree-role';
+    const parts = [];
+    if (f.profiles) parts.push(f.profiles + ' profile' + (f.profiles === 1 ? '' : 's'));
+    if (f.traces) parts.push(f.traces + ' trace' + (f.traces === 1 ? '' : 's'));
+    if (f.keels) parts.push(f.keels + ' keel refs');
+    parts.push('data only');
+    rs.textContent = parts.join(' · ');
+    b.addEventListener('click', () => openCompanionInspector(name));
+    row.append(b, chip, rs);
+    li.append(row);
+    li.style.paddingLeft = (depth * 14) + 'px';
+    return li;
+  };
+  els.fileList.replaceChildren(...items.flatMap(it => {
+    if (companions.has(it.name)) return [];
     const li = fileNode(it.name, it.depth);
     li.style.paddingLeft = (it.depth * 14) + 'px';
-    return li;
+    const out = [li];
+    for (const c of (companionsOf[it.name] || [])) out.push(companionNode(c, it.depth + 1));
+    return out;
   }));
+  /* Orphan companions (no serving base) still list — the A001 diagnostic
+   * names the broken association; hiding the file would hide the problem. */
+  for (const c of [...companions].sort()) {
+    if (Object.values(companionsOf).flat().includes(c)) continue;
+    els.fileList.append(companionNode(c, 0));
+  }
   els.sourceFile.replaceChildren(...Object.keys(fs).sort().map(n => new Option(n, n)));
   if (Object.prototype.hasOwnProperty.call(fs, state.currentFile)) els.sourceFile.value = state.currentFile;
   /* DDN 0.8 (ch. 57 §D3): multi-pane editing — one editor tab per workspace
@@ -5309,6 +5401,9 @@ function collectDiagnostics() {
   }
   const result = state.diagram && state.diagram.result;
   for (const d of (result && result.diagnostics) || []) out.push(stableDiagnostic(d, files, state.view));
+  /* DDNA-OT-013: companion association validity (DDN-A### family) is computed
+   * at the tool layer and surfaced through the same diagnostics drawer. */
+  for (const d of ddnaDiagnostics(files, (t, n) => A.parse(t, n))) out.push(d);
   return out;
 }
 function diagnosticsUI() {
@@ -5362,6 +5457,10 @@ function load(files, entry, view, options) {
   restoreToolPresentation();
   mount();
   updateHistory();
+  /* A workspace whose render fails at mount (e.g. a broken DDNA association,
+   * DDN-PJ216) still refreshes the diagnostics drawer here — the DDN-A001
+   * family must surface AT LOAD (OT-013), not only on a successful render. */
+  diagnosticsUI();
   repopulateOverridePanels();
   emitSourceChange();
   status('opened ' + Object.keys(files).length + ' file(s) — nothing leaves this page');
@@ -5568,7 +5667,12 @@ els.fileRename.addEventListener('click', () => guard(() => {
 }));
 els.fileDelete.addEventListener('click', () => guard(() => {
   flush();
-  if (!confirm('Delete ' + state.currentFile + ' from this in-memory workspace?')) return;
+  /* DDNA-OT-012: deleting a companion names its served bases (the blast
+   * radius of the association), per the WW-006 write-target rules. */
+  if (isCompanionFile(state.currentFile, state.ws.getFiles()[state.currentFile])) {
+    const bases = servedBases(state.currentFile, architectureContainers(state.ws.getFiles(), (t, n) => A.parse(t, n)), state.ws.getFiles());
+    if (!confirm('Delete ddna companion ' + state.currentFile + '? It serves ' + (bases.length ? bases.join(', ') : 'no base files') + '.')) return;
+  } else if (!confirm('Delete ' + state.currentFile + ' from this in-memory workspace?')) return;
   state.ws.removeFile(state.currentFile, { force: true });
   const first = Object.keys(state.ws.getFiles())[0] || '';
   entriesUI(state.view);

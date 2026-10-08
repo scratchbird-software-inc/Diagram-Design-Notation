@@ -11,6 +11,25 @@ format semantics — the trace format (chapter 4), the KEEL seam (chapter 5),
 the runtime models (chapter 7) and the per-family behavior (chapters 6, 8,
 `families/`) are normative where written, and are referenced, not repeated.
 
+> **Implementation status (2026-10-08, Phase A landed):** §13.2 is shipped in
+> the live unified tool, tool-layer only (OT-003: `notation/dist` is
+> byte-identical — the checks live in `notation/tool/src/files.js`:
+> `isCompanionFile` / `companionFacts` / `architectureContainers` /
+> `servedBases` / `ddnaDiagnostics`). OT-010: the Files outline nests
+> companions under each serving base with the `ddna companion · automation`
+> label and automation-fact role summaries (profiles/traces/keel refs from
+> parse facts). OT-011: `pickEntryView` skips companions explicitly, and
+> opening one renders a read-only declaration summary in the Inspector (never
+> a canvas). OT-012: companion delete confirms name the served base files.
+> OT-013: `ddnaDiagnostics` emits DDN-A001 (missing container target, orphan
+> companion, cross-base identity collision per §1.5, unresolved x_link target
+> — absent files note the graceful DDN-PJW07 path) and DDN-A008 (version
+> coupling) through the diagnostics drawer at load; `load()` refreshes the
+> drawer even when the render gates with DDN-PJ216. Phase A note: a missing
+> architecture-container file still blocks the canvas render with DDN-PJ216
+> (runtime is unchanged in Phase A); the DDN-A001 diagnostic names the broken
+> association at load as specified. Phases B/C remain proposed.
+
 Requirement ids are `DDNA-OT-###`; acceptance criteria are
 `DDNA-OT-AC-###` and name the demonstrating artifact. "The tool" means the
 open unified viewer/designer built on the open DDN runtime. "Commercial

@@ -30,6 +30,10 @@ function pickEntryView(files, opts, parseFn) {
     throw toolError('DDN-T104', 'setSource: no file declares a view "' + opts.view + '"');
   }
   for (const name of names) {
+    /* DDNA-OT-011: companion files are never entries — they are automation
+     * companions, not diagram sources (explicit, not incidental to their
+     * lacking views). */
+    if (isCompanionFile(name, files[name])) continue;
     const views = viewsOf(name);
     if (views.length) return { entry: name, view: views[0].id };
   }
@@ -167,8 +171,155 @@ function stableDiagnostic(d, files, view) {
   return out;
 }
 
+/* ------------------------------------------------------------------ *
+ * DDNA Phase A (ddna ch.13 §13.2): companion detection and association
+ * checks — tool-layer only (DDNA-OT-003: the runtime is untouched, dist
+ * stays byte-identical). A companion is a plain DDN file named
+ * *.ddna.ddn or carrying automation extension keys (x_profile / x_keel /
+ * x_trace). Associations ride DDN's architecture containers (files: [...])
+ * and x_link metadata (ddna ch.1 §1.4). Diagnostics are the §13.7 DDN-A###
+ * family, surfaced through the tool's diagnostics drawer.
+ * ------------------------------------------------------------------ */
+function isCompanionFile(name, text) {
+  if (/\.ddna\.ddn$/.test(name)) return true;
+  return /x_(profile|keel|trace)\s*:/.test(String(text || ''));
+}
+function normalizeWsPath(fromFile, p) {
+  const dir = fromFile.includes('/') ? fromFile.slice(0, fromFile.lastIndexOf('/')) : '';
+  const parts = [];
+  for (const seg of (dir ? dir + '/' + p : p).split('/')) {
+    if (seg === '' || seg === '.') continue;
+    if (seg === '..') parts.pop(); else parts.push(seg);
+  }
+  return parts.join('/');
+}
+/* companionFacts(text, parseFn): automation content counts from parse facts
+ * (x_profile / x_keel / x_trace carriers anywhere in the declaration tree). */
+function companionFacts(text, parseFn) {
+  const facts = { profiles: 0, keels: 0, traces: 0, parseError: null };
+  let doc = null;
+  try { doc = parseFn(text, 'file'); } catch (e) { facts.parseError = e && e.message; return facts; }
+  const walk = n => {
+    const pr = n.props || {};
+    if (pr.x_profile) facts.profiles++;
+    if (pr.x_keel) facts.keels++;
+    if (pr.x_trace) facts.traces++;
+    for (const c of n.children || []) walk(c);
+  };
+  for (const d of doc.declarations || []) walk(d);
+  return facts;
+}
+/* architectureContainers(files, parseFn): every container with normalized
+ * base paths and its declaring file. */
+function architectureContainers(files, parseFn) {
+  const out = [];
+  for (const [name, text] of Object.entries(files || {})) {
+    let doc = null;
+    try { doc = parseFn(text, name); } catch { continue; }
+    for (const d of doc.declarations || []) {
+      if (d.type !== 'architecture') continue;
+      const list = Array.isArray(d.props && d.props.files) ? d.props.files : [];
+      out.push({ file: name, id: d.id, bases: list.filter(f => typeof f === 'string').map(f => normalizeWsPath(name, f)) });
+    }
+  }
+  return out;
+}
+/* servedBases(companionName, containers, files): the files whose containers
+ * name the companion — the declaring file plus the container's other
+ * existing bases. */
+function servedBases(companion, containers, files) {
+  const out = new Set();
+  for (const c of containers) {
+    if (!c.bases.includes(companion)) continue;
+    out.add(c.file);
+    for (const b of c.bases) if (b !== companion && Object.prototype.hasOwnProperty.call(files, b)) out.add(b);
+  }
+  return [...out].sort();
+}
+/* ddnaDiagnostics(files, parseFn): §13.7 association validity at load/save.
+ * A001 association target unresolved (missing container file, orphan
+ * companion, unresolved x_link in a companion, cross-base identity
+ * collision per ddna ch.1 §1.5); A008 version coupling mismatch. */
+function ddnaDiagnostics(files, parseFn) {
+  const out = [];
+  const names = Object.keys(files || {});
+  if (!names.some(n => isCompanionFile(n, files[n]))) {
+    /* No companions: still check containers for missing DDNA-named bases. */
+  }
+  const docs = {};
+  for (const n of names) { try { docs[n] = parseFn(files[n], n); } catch { /* parse errors are reported by the core path */ } }
+  const containers = architectureContainers(files, parseFn);
+  /* Missing container targets (companions or bases). The runtime gates the
+   * render with DDN-PJ216; the DDNA layer reports A001 at load. */
+  for (const c of containers) for (const b of c.bases) {
+    if (!Object.prototype.hasOwnProperty.call(files, b))
+      out.push({ severity: 'error', code: 'DDN-A001', file: c.file,
+        message: 'architecture ' + c.id + ' names ' + b + ' — the file is not in the workspace (missing base/companion); the association is unresolved' });
+  }
+  const companions = names.filter(n => isCompanionFile(n, files[n]));
+  for (const comp of companions) {
+    const served = servedBases(comp, containers, files);
+    if (!served.length)
+      out.push({ severity: 'error', code: 'DDN-A001', file: comp,
+        message: 'ddna companion ' + comp + ' is not associated with any base — no architecture container names it (ddna ch.1 §1.4)' });
+    /* §1.5 rule 1: no identity collision across the served bases. */
+    if (served.length > 1) {
+      const seenMod = new Map(), seenUid = new Map();
+      for (const base of served) {
+        const doc = docs[base];
+        if (!doc) continue;
+        if (seenMod.has(doc.module))
+          out.push({ severity: 'error', code: 'DDN-A001', file: comp, message: 'companion ' + comp + ' serves bases with a duplicate module "' + doc.module + '" (' + seenMod.get(doc.module) + ', ' + base + ') — base identities must be unique across served bases (ddna ch.1 §1.5)' });
+        else seenMod.set(doc.module, base);
+        const walk = (n, path) => {
+          const uid = doc.module + '::' + (path ? path + '.' : '') + n.id;
+          if (seenUid.has(uid))
+            out.push({ severity: 'error', code: 'DDN-A001', file: comp, message: 'companion ' + comp + ' serves bases with colliding identity ' + uid + ' (' + seenUid.get(uid) + ', ' + base + ') (ddna ch.1 §1.5)' });
+          else seenUid.set(uid, base);
+          for (const c of n.children || []) walk(c, (path ? path + '.' : '') + n.id);
+        };
+        for (const d of doc.declarations || []) if (d.type === 'data' || d.type === 'view' || d.type === 'architecture') walk(d, '');
+      }
+      /* §1.3 version coupling: the companion's recorded DDN version target
+       * must match the served bases' header version. */
+      const verOf = n => { const m2 = String(files[n] || '').match(/ddn\s+"([0-9.]+)"/); return m2 && m2[1]; };
+      const cv = verOf(comp);
+      for (const base of served) {
+        const bv = verOf(base);
+        if (cv && bv && cv !== bv)
+          out.push({ severity: 'error', code: 'DDN-A008', file: comp, message: 'companion ' + comp + ' targets ddn ' + cv + ' but served base ' + base + ' is ddn ' + bv + ' (ddna ch.1 §1.3 version coupling)' });
+      }
+    }
+    /* x_link associations inside companions: absent target file is the
+     * graceful DDN-PJW07 path at the DDN layer plus A001 here; a present
+     * file with an unresolvable target identity is A001 outright. */
+    const doc = docs[comp];
+    if (doc) {
+      const walk = n => {
+        const xl = n.props && n.props.x_link;
+        if (xl && typeof xl.file === 'string' && typeof xl.target === 'string') {
+          const q = normalizeWsPath(comp, xl.file);
+          if (!Object.prototype.hasOwnProperty.call(files, q))
+            out.push({ severity: 'error', code: 'DDN-A001', file: comp, message: 'x_link target file ' + q + ' is absent — the DDN layer marks it unresolved (DDN-PJW07), the DDNA association is broken' });
+          else if (docs[q]) {
+            const ids = new Set();
+            const collect = (x, path) => { ids.add((path ? path + '.' : '') + x.id); for (const c of x.children || []) collect(c, (path ? path + '.' : '') + x.id); };
+            for (const d2 of docs[q].declarations || []) collect(d2, '');
+            if (!ids.has(xl.target))
+              out.push({ severity: 'error', code: 'DDN-A001', file: comp, message: 'x_link target ' + xl.target + ' does not resolve in ' + q + ' — the base identity is missing' });
+          }
+        }
+        for (const c of n.children || []) walk(c);
+      };
+      for (const d of doc.declarations || []) walk(d);
+    }
+  }
+  return out;
+}
+
 const api = { pickEntryView, viewListFrom, isPlausibleSourceFile, freshLocalId, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
-  templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic };
+  templateList, suggestFileName, aliasForFile, importLineFor, stableDiagnostic,
+  isCompanionFile, normalizeWsPath, companionFacts, architectureContainers, servedBases, ddnaDiagnostics };
 if (typeof module === 'object' && module.exports) module.exports = api;
 host.DDNToolFiles = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
