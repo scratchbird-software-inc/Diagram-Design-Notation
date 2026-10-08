@@ -11990,6 +11990,11 @@ function attachDeselect() {
   stage.dataset.toolDeselect = 'true';
   stage.addEventListener('click', e => {
     if (state.panning || design.placing) return;
+    /* After a drag-pins move the browser retargets the trailing click to the
+     * capture element (the canvas) — it reads as an empty-canvas click but
+     * is the end of the drag, and moving an element must KEEP it selected.
+     * Swallow exactly one. */
+    if (state.dragMovedRecently) { state.dragMovedRecently = false; return; }
     const path = e.composedPath ? e.composedPath() : [];
     const hit = path.length && path[0] && path[0].closest ? path[0].closest('[data-id],[data-member],[data-property],.ddn-resize-handle') : null;
     if (hit) return; // a diagram element (or a resize handle) was clicked — ddn-select / the handle owns this click
@@ -13265,6 +13270,9 @@ function attachDrag() {
     if (!drag) return;
     const d = drag; drag = null;
     d.el.removeAttribute('transform');
+    /* A promoted drag (capture was taken) ends with a trailing click on the
+     * capture element — attachDeselect swallows exactly one (see it). */
+    state.dragMovedRecently = true;
     if (!cancel && Math.hypot(d.dx, d.dy) > 2) guard(() => {
       flush();
       /* Fixed-page clamp: the move stops at the edge of the live area instead
