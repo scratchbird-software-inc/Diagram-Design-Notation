@@ -14274,6 +14274,9 @@ function applyMultiSelect() {
   const ids = state.selectedIds;
   state.selected = ids.length === 1 ? ids[0] : null;
   state.selectedRelation = null;
+  /* Handles first: a downstream drawer/inspector failure must not leave the
+   * selection without its resize handles (the click-path regression). */
+  syncResizeHandles();
   let ir = null;
   try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
   inspector(state.selected || ids[0], ir, null);
@@ -14287,9 +14290,6 @@ function applyMultiSelect() {
     for (const el of stage.querySelectorAll('.ddn-node.ddn-multisel')) el.classList.remove('ddn-multisel');
     for (const id of ids) for (const el of stage.querySelectorAll('.ddn-node[data-id="' + cssString(id) + '"]')) el.classList.add('ddn-multisel');
   }
-  /* Single selection through the pointer tool gets the same resize handles as
-   * a component selection (owner report: glow but no handles after a click). */
-  syncResizeHandles();
   status(ids.length ? ids.length + ' selected' : 'selection cleared');
 }
 function clearMultiSelect() {
@@ -14301,6 +14301,12 @@ function attachPointerSelect() {
   const stage = stageEl();
   if (!stage || stage.dataset.toolPointer) return;
   stage.dataset.toolPointer = 'true';
+  /* Trailing-edge handle re-sync (owner report: click-selection loses the
+   * resize handles on some real-pointer sequences). Whichever click path ran
+   * — component ddn-select, pointer-tool multi-select, a suppressed drag,
+   * a render landing mid-gesture — the handles are recomputed against the
+   * FINAL selection state once the click settles. */
+  stage.addEventListener('click', () => { setTimeout(() => syncResizeHandles(), 0); });
   stage.addEventListener('click', e => {
     if (!design.pointer || design.placing) return;
     const el = e.target && e.target.closest && e.target.closest('.ddn-node[data-id]');
