@@ -14062,6 +14062,12 @@ function resizeTargets() {
 function clearResizeHandles() {
   for (const h of resizeState.handleEls) h.remove();
   resizeState.handleEls = [];
+  /* Sweep beyond the tracking array: any handle div whose reference was lost
+   * (a canvas element replaced wholesale, a sync path that appended without
+   * tracking) must not linger — handles never accumulate (the Firefox
+   * screencast's stale-squares symptom). */
+  const stage = stageEl();
+  if (stage) for (const h of stage.querySelectorAll('.ddn-resize-handle')) h.remove();
   if (resizeState.ghost) { resizeState.ghost.remove(); resizeState.ghost = null; }
   resizeState.drag = null;
 }
@@ -14387,8 +14393,12 @@ function attachPointerSelect() {
  * marks, graphEditable for pin/hide availability) — nothing hardcoded that a
  * contract can answer. */
 function closeCtxMenu() {
-  const stage = stageEl();
-  if (stage) for (const m of stage.querySelectorAll('.ddn-ctx')) m.remove();
+  /* Idempotent close: sweep every component instance's shadow root, not just
+   * the current stage — a menu created before a remount must never survive
+   * into a second visible instance (the double-menu symptom). */
+  for (const c of document.getElementById('ddn-diagram').children) {
+    if (c.shadowRoot) for (const m of c.shadowRoot.querySelectorAll('.ddn-ctx')) m.remove();
+  }
 }
 function ctxMenu(x, y, entries) {
   closeCtxMenu();
