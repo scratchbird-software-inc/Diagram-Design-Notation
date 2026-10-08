@@ -538,14 +538,24 @@ function mount() {
   stageStyle.id = 'ddn-tool-stage';
   stageStyle.textContent = STAGE_CSS;
   diagram.shadowRoot.append(stageStyle);
+  /* Auto-translate hardening (owner screencast): the overlay container gets
+   * the class opt-out too — belt and braces under <html translate="no">. */
+  { const st = diagram.shadowRoot.querySelector('.stage'); if (st) st.classList.add('notranslate'); }
   diagram.addEventListener('ddn-render-start', () => {
     /* D7: non-blocking busy affordance — the previous picture dims (the
      * component's stale idiom) and the stage spinner shows until the
-     * matching ddn-render/ddn-error. */
-    els.diagramHost.classList.add('ddn-rendering');
-    if (els.busy) els.busy.hidden = false;
+     * matching ddn-render/ddn-error. Shown only after a beat: quick
+     * re-renders (palette drops, inline edits) would otherwise flash the
+     * dimmed old picture against the new one (the screencast's doubled-
+     * render ghost). */
+    clearTimeout(state._busyTimer);
+    state._busyTimer = setTimeout(() => {
+      els.diagramHost.classList.add('ddn-rendering');
+      if (els.busy) els.busy.hidden = false;
+    }, 250);
   });
   diagram.addEventListener('ddn-render', e => {
+    clearTimeout(state._busyTimer);
     els.diagramHost.classList.remove('ddn-rendering');
     if (els.busy) els.busy.hidden = true;
     els.diagramHost.setAttribute('data-ddn-render-mode', renderMode());
@@ -587,6 +597,7 @@ function mount() {
     status();
   });
   diagram.addEventListener('ddn-error', e => {
+    clearTimeout(state._busyTimer);
     els.diagramHost.classList.remove('ddn-rendering');
     if (els.busy) els.busy.hidden = true;
     els.diagramHost.removeAttribute('data-ddn-rendered');
@@ -4318,6 +4329,12 @@ function startResizeDrag(e, dir, target) {
     const flat = flatPropsOf(d.target.id);
     if (write._needsWrap && flat.text_fit === undefined) props.text_fit = 'wrap';
     guard(() => guided(() => A.authoring.setElementProperties(state.ws, state.entry, state.view, d.target.id, props)));
+    /* Trailing-edge handle re-sync (screencast repro: after a resize commit
+     * the handles vanished for good). Whatever the commit's render chain did,
+     * the selected element ends with synced handles once it settles. */
+    { const settled = state.diagram && state.diagram.ready;
+      if (settled && typeof settled.then === 'function') settled.then(() => syncResizeHandles(), () => syncResizeHandles());
+      else syncResizeHandles(); }
     if (!resizeState.explained) {
       resizeState.explained = true;
       const settled = state.diagram && state.diagram.ready;
