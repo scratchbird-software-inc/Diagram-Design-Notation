@@ -11226,7 +11226,12 @@ function buildSizeEditor() {
   if (!isEl) return;
   const elId = sizeEd.target.value.slice(3);
   const flats = flatPropsOf(elId);
-  const commit = patch => guard(() => guided(() => A.authoring.setElementProperties(state.ws, state.entry, state.view, elId, patch)));
+  const commit = patch => {
+    /* Same content-minimum discipline as the handle commit: a below-minimum
+     * entry is rejected with the previous value kept, never an engine error. */
+    const r = resizeWritePreflight(elId, patch);
+    if (r.error) status('that value is below the content minimum (' + (r.error.code || 'render rejected') + ') — the previous value was kept');
+  };
   const fit = selectInput([['', 'As authored / default'], ['wrap', 'wrap'], ['grow', 'grow'], ['shrink', 'shrink']], 'element text fit');
   fit.value = typeof flats.text_fit === 'string' ? flats.text_fit : '';
   fit.addEventListener('change', () => commit({ text_fit: fit.value || undefined }));
@@ -14064,6 +14069,31 @@ function resizeCommit(dir, bounds, dx, dy) {
   return out;
 }
 const resizeState = { handleEls: [], ghost: null, drag: null, explained: false };
+/* Resize writes must never land the element unrenderable (owner report:
+ * DDN-LW07 after a handle drag). Second safety net after the content-minimum
+ * clamp: preflight the write with renderSync (the pinClamped pattern); on
+ * rejection undo and retreat the bounds toward the current rendered box —
+ * the box stops at the minimum size that actually renders. With `bounds`
+ * omitted a single attempt is made (dialog entry: reject + keep previous).
+ * Returns { error, props, retreated }. */
+function resizeWritePreflight(id, props, bounds) {
+  const step = (cur, target, i) => Math.round(cur + (target - cur) * Math.min(1, 0.35 * i));
+  for (let i = 0; ; i++) {
+    const cand = { ...props };
+    if (bounds) {
+      if (cand.max_width) cand.max_width = { $quantity: Math.min(Math.round(bounds.w), step(props.max_width.$quantity, bounds.w, i)), unit: 'px' };
+      if (cand.max_height) cand.max_height = { $quantity: Math.min(Math.round(bounds.h), step(props.max_height.$quantity, bounds.h, i)), unit: 'px' };
+    }
+    let failed = null;
+    guard(() => guided(() => {
+      A.authoring.setElementProperties(state.ws, state.entry, state.view, id, cand);
+      try { state.ws.renderSync({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true }); }
+      catch (e) { state.ws.undo(); failed = e; }
+    }));
+    if (!failed) return { error: null, props: cand, retreated: i > 0 };
+    if (!bounds || i >= 8) return { error: failed };
+  }
+}
 function resizeTargets() {
   const d = state.diagram;
   if (!d || !d.result || !state.config.design || !graphEditable()) return null;
@@ -14146,7 +14176,9 @@ function startResizeDrag(e, dir, target) {
     const dh = d.dir.includes('s') ? dy : d.dir.includes('n') ? -dy : 0;
     const cr = d.canvas.getBoundingClientRect();
     const b = d.target.bounds;
-    const nw = Math.max(40, b.w + dw), nh = Math.max(40, b.h + dh);
+    /* Ghost honesty: the preview never shrinks below the rendered box's
+     * current height — the same content minimum the commit clamps to. */
+    const nw = Math.max(40, b.w + dw), nh = Math.max(40, b.h + dh, b.h);
     const toC = (wx, wy) => { const q = new DOMPoint(wx, wy).matrixTransform(drawing.getScreenCTM()); return { x: q.x - cr.x, y: q.y - cr.y }; };
     const x1 = d.dir.includes('w') ? b.x + (b.w - nw) : b.x;
     const y1 = d.dir.includes('n') ? b.y + (b.h - nh) : b.y;
@@ -14167,6 +14199,12 @@ function startResizeDrag(e, dir, target) {
     d.ghost.remove();
     resizeState.ghost = null;
     const write = resizeCommit(d.dir, d.target.bounds, d.dx || 0, d.dy || 0);
+    /* Content minimum (owner report: a resize drag landed the element
+     * unrenderable, DDN-LW07): the committed max bound never goes below the
+     * rendered box's current height — the text-derived minimum. The box
+     * simply stops shrinking there. */
+    let atMinimum = false;
+    if (write.max_height && write.max_height.$quantity < Math.round(d.target.bounds.h)) { write.max_height.$quantity = Math.round(d.target.bounds.h); atMinimum = true; }
     /* Fixed-page clamp: bounds may not push the element's box past the live
      * area edge — the max bound stops at the page edge. */
     const area = fixedPageLiveArea();
@@ -14179,7 +14217,17 @@ function startResizeDrag(e, dir, target) {
     if (!Object.keys(props).length) return;
     const flat = flatPropsOf(d.target.id);
     if (write._needsWrap && flat.text_fit === undefined) props.text_fit = 'wrap';
-    guard(() => guided(() => A.authoring.setElementProperties(state.ws, state.entry, state.view, d.target.id, props)));
+    const r = resizeWritePreflight(d.target.id, props, d.target.bounds);
+    const note2 = r.error ? 'that size is below the content minimum (' + (r.error.code || 'render rejected') + ') — the previous size was kept'
+      : (atMinimum || r.retreated) ? 'at the content minimum — the box stops shrinking at its text-derived size' : null;
+    if (note2) {
+      if (!r.error) resizeState.explained = true;
+      /* The commit's re-render clears the status line — deliver after it settles. */
+      const settled = state.diagram && state.diagram.ready;
+      const msg = () => status(note2);
+      if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+      else msg();
+    }
     /* Trailing-edge handle re-sync (screencast repro: after a resize commit
      * the handles vanished for good). Whatever the commit's render chain did,
      * the selected element ends with synced handles once it settles. */
