@@ -11,7 +11,7 @@ format semantics — the trace format (chapter 4), the KEEL seam (chapter 5),
 the runtime models (chapter 7) and the per-family behavior (chapters 6, 8,
 `families/`) are normative where written, and are referenced, not repeated.
 
-> **Implementation status (2026-10-08, Phase A landed):** §13.2 is shipped in
+> **Implementation status (2026-10-08, Phases A and B landed):** §13.2 is shipped in
 > the live unified tool, tool-layer only (OT-003: `notation/dist` is
 > byte-identical — the checks live in `notation/tool/src/files.js`:
 > `isCompanionFile` / `companionFacts` / `architectureContainers` /
@@ -28,7 +28,27 @@ the runtime models (chapter 7) and the per-family behavior (chapters 6, 8,
 > drawer even when the render gates with DDN-PJ216. Phase A note: a missing
 > architecture-container file still blocks the canvas render with DDN-PJ216
 > (runtime is unchanged in Phase A); the DDN-A001 diagnostic names the broken
-> association at load as specified. Phases B/C remain proposed.
+> association at load as specified.
+>
+> **Phase B (§13.3) shipped 2026-10-08:** `notation/tool/src/ddna-trace.js`
+> (registered in `TOOL_MODULES`) hosts the shared trace validator —
+> sidecar `*.ddnatrace.json` shape checks (DDN-A002: format/version stamp,
+> workspace-relative paths, replay_mode, time_model, ch.4 §4.2 envelope
+> monotonicity), identity coverage against the served bases (DDN-A003), and
+> the inline `x_trace` fixture spelling through the same validator (OT-022).
+> Sidecars live in a tool-level store (the runtime workspace accepts `.ddn`
+> sources only): folder/file open captures them, hosts inject them with
+> `DDNTool.addTraceFile`. The animation drawer carries the replay mode
+> (OT-030/031/033): trace picker with event counts and the declared mode
+> (never silently switched), start/stop/step/reset with speed, virtual-clock
+> readout, the PoC render model (active glow, done dim, EM-1 token badges,
+> verdict colours, live value overlays, not-taken branch flash), and the
+> trace table. §13.6 limits are enforced display-side with DDN-A004
+> truncation marks (10,000 events per trace; 500 table rows; 64 value
+> overlays). Replay is read-only — it never writes to source. Verified-mode
+> divergence recomputation (DDN-A007) needs the Phase C engines; Phase B
+> enforces the envelope checks at load (A002) and displays the declared mode.
+> Phase C remains proposed.
 
 Requirement ids are `DDNA-OT-###`; acceptance criteria are
 `DDNA-OT-AC-###` and name the demonstrating artifact. "The tool" means the

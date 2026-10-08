@@ -41,6 +41,13 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-data-table td { padding: 1px 4px; border-bottom: 1px solid #f0f4f9; }
 .ddn-data-cell { width: 100%; border: 1px solid transparent; border-radius: 4px; padding: 2px 4px; font: inherit; background: transparent; box-sizing: border-box; }
 .ddn-data-cell:focus { border-color: #245ac8; background: #fff; outline: none; }
+/* DDNA Phase B replay table (drawer-side). */
+#ddn-replay h3 { margin: 12px 0 4px; }
+#ddn-replay-table-wrap { max-height: 260px; overflow: auto; margin-top: 6px; }
+#ddn-replay-table { border-collapse: collapse; width: 100%; font: 10.5px ui-monospace, monospace; }
+#ddn-replay-table th, #ddn-replay-table td { border: 1px solid #e3eaf3; padding: 2px 6px; text-align: left; vertical-align: top; }
+#ddn-replay-table th { position: sticky; top: 0; background: #f0f4f9; }
+#ddn-replay-table tr.ddna-row-active td { background: #fef3c7; }
 /* WW-001 workspace outline tree. */
 .ddn-tree { list-style: none; margin: 0; padding: 0; }
 .ddn-tree ul { list-style: none; margin: 0; padding-left: 16px; border-left: 1px solid #e3eaf3; }
@@ -747,6 +754,32 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
           <select id="ddn-anim-flow" aria-label="Flow to step through"></select>
         </label>
         <p id="ddn-anim-status" class="ddn-dim"></p>
+      </div>
+      <!-- DDNA Phase B (ddna ch.13 §13.3.2): trace replay, a second mode of
+           this drawer. Read-only — replay never writes to source. -->
+      <div id="ddn-replay" hidden>
+        <h3>Trace replay <span class="ddn-dim">(DDNA)</span></h3>
+        <label class="ddn-field"><span>Trace</span><select id="ddn-replay-source" aria-label="Trace to replay"></select></label>
+        <div class="ddn-row">
+          <button id="ddn-replay-start" type="button" class="ddn-mini" title="Play the recorded trace">Start</button>
+          <button id="ddn-replay-stop" type="button" class="ddn-mini">Stop</button>
+          <button id="ddn-replay-step" type="button" class="ddn-mini" title="Advance exactly one recorded event">Step</button>
+          <button id="ddn-replay-reset" type="button" class="ddn-mini">Reset</button>
+        </div>
+        <label class="ddn-field"><span>Speed</span>
+          <select id="ddn-replay-speed" aria-label="Replay speed">
+            <option value="2000">0.25×</option>
+            <option value="1000">0.5×</option>
+            <option value="500" selected>1×</option>
+            <option value="250">2×</option>
+            <option value="125">4×</option>
+          </select>
+        </label>
+        <p id="ddn-replay-status" class="ddn-dim"></p>
+        <p id="ddn-replay-note" class="ddn-dim" hidden></p>
+        <div id="ddn-replay-table-wrap">
+          <table id="ddn-replay-table"><thead><tr><th>seq</th><th>clock</th><th>stepKind</th><th>instance</th><th>state</th><th>choices</th><th>verdict</th></tr></thead><tbody></tbody></table>
+        </div>
       </div>
     </div>
   </aside>
@@ -9076,6 +9109,185 @@ if (typeof module === 'object' && module.exports) module.exports = api;
 host.DDNMermaidImport = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 
+/* SPDX-License-Identifier: GPL-2.0-or-later
+ * DDNA Phase B (ddna ch.13 §13.3): trace loading, the shared validator for
+ * the sidecar and inline spellings (OT-020/021/022), identity coverage
+ * (DDN-A003), shape checks (DDN-A002), and the §13.6 display limits
+ * (DDN-A004). Tool-layer only — the DDN runtime is untouched (OT-003) and
+ * replay never writes to source.
+ *
+ * Trace document (canonical sidecar *.ddnatrace.json, ch.13 §13.3.1):
+ *   { format: "ddna-trace@1", ddna, companion, base, semantic_profile,
+ *     replay_mode: "verified"|"faithful", time_model: {…}, events: […] }
+ * The inline fixture spelling (OT-022) is x_trace: { name?, replay?,
+ * applies_to: [@id …], events: [ … ] } on a companion declaration — the same
+ * record model, the same validator.
+ */
+(function (host) {
+'use strict';
+
+/* §13.6 open-tool display limits (named constants, display-side only). */
+const DDNA_TRACE_EVENTS_MAX = 10000;
+const DDNA_TRACE_TABLE_ROWS_MAX = 500;
+const DDNA_REPLAY_VALUE_OVERLAY_MAX = 64;
+
+const REPLAY_MODES = ['verified', 'faithful'];
+/* Workspace-relative path (DDN §53.3): inside the workspace, not absolute,
+ * no parent escapes, no URLs. */
+const wsPathOk = p => typeof p === 'string' && !!p.length && !p.startsWith('/') && !p.includes('..') && !/^[a-z][a-z0-9+.-]*:\/\//i.test(p);
+
+function diag(severity, code, file, message) { return { severity, code, file, message }; }
+
+/* Shape checks (DDN-A002). Returns { doc, diags } — doc is the parsed trace
+ * when usable; diags list every violation (never throws). */
+function validateTraceDocument(raw, path) {
+  const diags = [];
+  let doc = raw;
+  if (typeof raw === 'string') {
+    try { doc = JSON.parse(raw); }
+    catch (e) { return { doc: null, diags: [diag('error', 'DDN-A002', path, 'trace file is not valid JSON: ' + (e && e.message))] }; }
+  }
+  if (!doc || typeof doc !== 'object' || Array.isArray(doc))
+    return { doc: null, diags: [diag('error', 'DDN-A002', path, 'trace document must be one JSON record')] };
+  if (doc.format !== 'ddna-trace@1') diags.push(diag('error', 'DDN-A002', path, 'format must be "ddna-trace@1" (got ' + JSON.stringify(doc.format) + ')'));
+  if (typeof doc.ddna !== 'string' || !doc.ddna) diags.push(diag('error', 'DDN-A002', path, 'the ddna standard version stamp is required'));
+  for (const k of ['companion', 'base']) {
+    if (!wsPathOk(doc[k]))
+      diags.push(diag('error', 'DDN-A002', path, k + ' must be a workspace-relative path inside the workspace (DDN §53.3), got ' + JSON.stringify(doc[k])));
+  }
+  if (typeof doc.semantic_profile !== 'string' || !doc.semantic_profile) diags.push(diag('error', 'DDN-A002', path, 'semantic_profile stamp is required (ch.4 §4.2.5)'));
+  if (!REPLAY_MODES.includes(doc.replay_mode)) diags.push(diag('error', 'DDN-A002', path, 'replay_mode must be verified|faithful (ch.4 §4.3), got ' + JSON.stringify(doc.replay_mode)));
+  if (!doc.time_model || typeof doc.time_model !== 'object') diags.push(diag('error', 'DDN-A002', path, 'time_model record is required (ch.7 TIME-A)'));
+  if (!Array.isArray(doc.events)) diags.push(diag('error', 'DDN-A002', path, 'events must be an array'));
+  else diags.push(...validateEvents(doc.events, path));
+  return { doc: diags.some(d => d.severity === 'error') ? null : doc, diags };
+}
+
+/* The ch.4 §4.2 envelope: monotonic seq, virtual clock, stepKind, instance
+ * pair. Shared by both spellings. */
+function validateEvents(events, path) {
+  const diags = [];
+  let lastSeq = 0, lastClock = -Infinity;
+  events.forEach((e, i) => {
+    const where = 'event #' + (i + 1) + (path ? ' of ' + path : '');
+    if (!e || typeof e !== 'object' || Array.isArray(e)) { diags.push(diag('error', 'DDN-A002', path, where + ' must be a record')); return; }
+    if (!Number.isInteger(e.seq) || e.seq <= lastSeq) diags.push(diag('error', 'DDN-A002', path, where + ' breaks the monotonic envelope sequence'));
+    else lastSeq = e.seq;
+    if (typeof e.clock !== 'number' || !Number.isFinite(e.clock)) diags.push(diag('error', 'DDN-A002', path, where + ' needs a finite virtual-clock value'));
+    else if (e.clock < lastClock) diags.push(diag('error', 'DDN-A002', path, where + ' moves the virtual clock backwards'));
+    else lastClock = e.clock;
+    if (typeof e.stepKind !== 'string' || !e.stepKind) diags.push(diag('error', 'DDN-A002', path, where + ' needs a stepKind'));
+    if (!Array.isArray(e.instance) || typeof e.instance[0] !== 'string') diags.push(diag('error', 'DDN-A002', path, where + ' needs an instance [elementKey, discriminator] pair'));
+  });
+  return diags;
+}
+
+/* Identity coverage (DDN-A003, OT-021): every event's element key must
+ * resolve to a base identity covered by applies_to. Keys are block-relative
+ * refs ('m.receive'); applies_to entries may be '@m.receive', 'm.receive' or
+ * fully qualified 'module::m.receive' — normalize all to the block-relative
+ * tail. */
+function refTail(ref) {
+  let s = typeof ref === 'string' ? ref : (ref && typeof ref === 'object' ? String(ref.$ref || '') : String(ref || ''));
+  s = s.replace(/^@/, '');
+  const i = s.indexOf('::');
+  return i >= 0 ? s.slice(i + 2) : s;
+}
+function validateCoverage(events, appliesTo, baseIds, path) {
+  const diags = [];
+  const covered = new Set((appliesTo || []).map(refTail));
+  const known = new Set(baseIds || []);
+  const bad = new Map();
+  for (const e of events || []) {
+    const key = (e && e.state && e.state.at) || (e && e.instance && e.instance[0]);
+    if (!key) continue;
+    const tail = refTail(key);
+    if (covered.size && !covered.has(tail)) bad.set(tail, 'not covered by the trace applies_to');
+    else if (known.size && !known.has(tail)) bad.set(tail, 'not a base identity');
+  }
+  for (const [b, why] of bad) diags.push(diag('error', 'DDN-A003', path, 'trace event names ' + b + ' — ' + why));
+  return diags;
+}
+
+/* Inline spelling (OT-022): x_trace on a companion declaration. */
+function validateInlineTrace(rec, carrierId, companionPath) {
+  const path = companionPath + '#' + carrierId;
+  const diags = [];
+  if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return { trace: null, diags: [diag('error', 'DDN-A002', path, 'x_trace must be a record')] };
+  if (rec.file !== undefined && (typeof rec.file !== 'string' || !rec.file.endsWith('.ddnatrace.json')))
+    diags.push(diag('error', 'DDN-A002', path, 'x_trace.file must name a *.ddnatrace.json sidecar'));
+  if (rec.applies_to !== undefined && !Array.isArray(rec.applies_to)) diags.push(diag('error', 'DDN-A002', path, 'x_trace.applies_to must be a ref list'));
+  if (rec.events !== undefined) {
+    if (!Array.isArray(rec.events)) diags.push(diag('error', 'DDN-A002', path, 'inline x_trace.events must be an array'));
+    else diags.push(...validateEvents(rec.events, path));
+  }
+  return { diags };
+}
+
+/* collectTraces(files, parseFn, traceFiles): every trace declared by the
+ * workspace's companions — sidecar references resolved from the tool-level
+ * sidecar store, inline events taken verbatim. Returns
+ * { traces: [{ id, label, companion, doc, events, replayMode, profile,
+ *   appliesTo, source }], diags }. */
+function collectTraces(files, parseFn, traceFiles, isCompanion) {
+  const traces = [];
+  const diags = [];
+  for (const [name, text] of Object.entries(files || {})) {
+    if (!isCompanion(name, text)) continue;
+    let doc = null;
+    try { doc = parseFn(text, name); } catch { continue; }
+    const walk = n => {
+      const xt = n.props && n.props.x_trace;
+      if (xt && typeof xt === 'object') {
+        const carrier = n.id;
+        const check = validateInlineTrace(xt, carrier, name);
+        diags.push(...check.diags);
+        const labelBase = xt.name || carrier;
+        if (typeof xt.file === 'string') {
+          const side = traceFiles && traceFiles[xt.file];
+          if (side === undefined) {
+            diags.push(diag('error', 'DDN-A001', name, 'x_trace sidecar ' + xt.file + ' is not loaded — the trace association is unresolved'));
+          } else {
+            const v = validateTraceDocument(side, xt.file);
+            diags.push(...v.diags);
+            if (v.doc) traces.push({ id: name + '#' + carrier, label: labelBase + ' (' + xt.file + ')', companion: name, doc: v.doc, events: v.doc.events, replayMode: v.doc.replay_mode, profile: v.doc.semantic_profile, appliesTo: xt.applies_to || [], source: 'sidecar' });
+          }
+        } else if (Array.isArray(xt.events)) {
+          traces.push({ id: name + '#' + carrier, label: labelBase + ' (inline)', companion: name, doc: null, events: xt.events, replayMode: xt.replay || 'faithful', profile: xt.profile || 'inline', appliesTo: xt.applies_to || [], source: 'inline' });
+        }
+      }
+      for (const c of n.children || []) walk(c);
+    };
+    for (const d of doc.declarations || []) walk(d);
+  }
+  /* §13.6: the event cap applies per trace; truncation is marked, never
+   * silent (DDN-A004). */
+  for (const t of traces) {
+    if (t.events.length > DDNA_TRACE_EVENTS_MAX) {
+      diags.push(diag('warning', 'DDN-A004', t.companion, 'trace ' + t.label + ' has ' + t.events.length + ' events — the open tool replays the first ' + DDNA_TRACE_EVENTS_MAX + ' (DDNA_TRACE_EVENTS_MAX); the rest is truncated, marked, not dropped silently'));
+      t.truncated = DDNA_TRACE_EVENTS_MAX;
+      t.events = t.events.slice(0, DDNA_TRACE_EVENTS_MAX);
+    }
+  }
+  return { traces, diags };
+}
+
+/* traceDiagnostics: collectTraces + coverage (A003) against the served bases'
+ * identity space. baseIdsFor(trace) → block-relative ids ('m.receive'). */
+function traceDiagnostics(files, parseFn, traceFiles, isCompanion, baseIdsFor) {
+  const { traces, diags } = collectTraces(files, parseFn, traceFiles, isCompanion);
+  for (const t of traces) diags.push(...validateCoverage(t.events, t.appliesTo, baseIdsFor ? baseIdsFor(t) : [], t.id));
+  return diags;
+}
+
+const api = {
+  DDNA_TRACE_EVENTS_MAX, DDNA_TRACE_TABLE_ROWS_MAX, DDNA_REPLAY_VALUE_OVERLAY_MAX,
+  validateTraceDocument, validateEvents, validateInlineTrace, validateCoverage, collectTraces, traceDiagnostics, refTail
+};
+if (typeof module === 'object' && module.exports) module.exports = api;
+host.DDNToolDdnaTrace = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
 /* SPDX-License-Identifier: GPL-2.0-or-later. B1-027 unified DDN diagram tool.
  * One page replacing the end-user viewer (B1-007), the studio gallery and the
  * studio editor: a diagram stage with pan/zoom, an icon toolbar, and pop-in
@@ -9248,6 +9460,9 @@ const els = {
   exportSvg: $('ddn-export-svg'), exportPng: $('ddn-export-png'), exportWebp: $('ddn-export-webp'), saveExample: $('ddn-save-example'),
   exportMotion: $('ddn-export-motion'),
   animEmpty: $('ddn-anim-empty'), animControls: $('ddn-anim-controls'), animToggle: $('ddn-anim-toggle'),
+  replay: $('ddn-replay'), replaySource: $('ddn-replay-source'), replayStart: $('ddn-replay-start'), replayStop: $('ddn-replay-stop'),
+  replayStep: $('ddn-replay-step'), replayReset: $('ddn-replay-reset'), replaySpeed: $('ddn-replay-speed'),
+  replayStatus: $('ddn-replay-status'), replayNote: $('ddn-replay-note'), replayTable: $('ddn-replay-table'),
   animStep: $('ddn-anim-step'), animSpeed: $('ddn-anim-speed'), animFlow: $('ddn-anim-flow'),
   animFlowField: $('ddn-anim-flow-field'), animStatus: $('ddn-anim-status')
 };
@@ -9274,7 +9489,11 @@ const state = {
   presentation: emptyPresentation(), selected: null, selectedRelation: null, selectedIds: [],
   fit: 'page', config: resolveDrawerConfig(DEFAULT_MODE, null, null),
   catalogueIndex: -1, overrideStyle: null, panning: false,
-  sheet: null, sheetManual: null
+  sheet: null, sheetManual: null,
+  /* DDNA Phase B: sidecar *.ddnatrace.json contents live OUTSIDE the
+   * workspace map (the runtime accepts .ddn sources only); the tool captures
+   * them at file/folder open and hosts inject them with addTraceFile. */
+  traceFiles: {}
 };
 let timer = null, unsubscribe = null;
 
@@ -9522,7 +9741,17 @@ const STAGE_CSS =
   '.ddn-resize-n,.ddn-resize-s{cursor:ns-resize}.ddn-resize-e,.ddn-resize-w{cursor:ew-resize}' +
   '.ddn-resize-ne,.ddn-resize-sw{cursor:nesw-resize}.ddn-resize-nw,.ddn-resize-se{cursor:nwse-resize}' +
   '.ddn-resize-ghost{position:absolute;z-index:7;border:1.5px dashed #245ac8;background:#245ac812;pointer-events:none;box-sizing:border-box}' +
-  '.ddn-inline-edit{position:absolute;z-index:9;font:13px system-ui,sans-serif;padding:2px 6px;border:1.5px solid #245ac8;border-radius:6px;background:#fff;color:#20304a;box-shadow:0 4px 14px #243b5933;box-sizing:border-box;outline:none;min-width:80px}';
+  '.ddn-inline-edit{position:absolute;z-index:9;font:13px system-ui,sans-serif;padding:2px 6px;border:1.5px solid #245ac8;border-radius:6px;background:#fff;color:#20304a;box-shadow:0 4px 14px #243b5933;box-sizing:border-box;outline:none;min-width:80px}' +
+  /* DDNA Phase B replay visuals (ddna ch.13 §13.3.2, PoC-proven model):
+   * active glow, completed dim, verdict colours, token badges, value
+   * overlays, not-taken flash — DOM classes on the rendered svg only. */
+  '.ddna-active{filter:drop-shadow(0 0 6px #f59e0b)}' +
+  '.ddna-done{opacity:.45}' +
+  '.ddna-pass{filter:drop-shadow(0 0 6px #16a34a)}' +
+  '.ddna-fail{filter:drop-shadow(0 0 6px #dc2626)}' +
+  '.ddna-flash{filter:drop-shadow(0 0 8px #60a5fa)}' +
+  '.ddna-token text{font:bold 10px ui-monospace,monospace;fill:#fff}' +
+  '.ddna-value text{font:10px ui-monospace,monospace;fill:#0f5132}';
 const HOVER_CSS =
   '.ddn-node.ddn-hover,.ddn-frame.ddn-hover,.ddn-field.ddn-hover{filter:drop-shadow(0 0 3px #245ac8) drop-shadow(0 0 1px #245ac8)}' +
   '.ddn-rel.ddn-hover path{stroke:#245ac8!important;stroke-width:2.5px!important}' +
@@ -13930,11 +14159,15 @@ function refreshAnimation() {
   const svg = svgEl();
   const motionEls = svg ? [...svg.querySelectorAll('.ddn-motion, .ddn-flow')] : [];
   const hasMotion = motionEls.length > 0;
-  els.animEmpty.hidden = hasMotion;
+  refreshReplay();
+  const hasReplay = replay.traces.length > 0;
+  els.animEmpty.hidden = hasMotion || hasReplay;
+  if (!hasMotion && hasReplay) els.animEmpty.textContent = 'No SMIL animation in this view — trace replay is below.';
   els.animControls.hidden = !hasMotion;
   // The icon is hidden when there is no animation to drive; a configured
-  // 'open' state still applies once motion appears.
-  iconEls.animation.hidden = !state.config.icons || state.config.drawers.animation === 'none' || !hasMotion;
+  // 'open' state still applies once motion appears. DDNA traces count as
+  // animation-drawer content (Phase B: replay is the drawer's second mode).
+  iconEls.animation.hidden = !state.config.icons || state.config.drawers.animation === 'none' || (!hasMotion && !hasReplay);
   if (!hasMotion) { anim.flows = []; anim.selectedFlow = ''; return; }
   for (const el of svg.querySelectorAll('animateMotion, animate')) {
     if (!anim.baseDurs.has(el)) {
@@ -14018,7 +14251,162 @@ els.animStep.addEventListener('click', () => guard(() => {
   }
 }));
 
-/* ------------------------------------------------ loading / workspace */
+/* ------------------------------------------------ DDNA Phase B: trace replay
+ * (ddna ch.13 §13.3.2 — a second mode of the animation drawer). Read-only:
+ * replay applies DOM classes/badges to the rendered svg and never writes to
+ * source. The trace source picker lists every trace declared by the
+ * workspace's companions (sidecar or inline spelling); the mode badge shows
+ * the trace's declared replay_mode, never silently switched (OT-032). */
+const DDT = host.DDNToolDdnaTrace;
+const replay = { traces: [], sel: '', idx: 0, timer: null, note: '' };
+function replayScan() {
+  if (!state.ws) return { traces: [], diags: [] };
+  return DDT.collectTraces(state.ws.getFiles(), (t, n) => A.parse(t, n), state.traceFiles || {}, isCompanionFile);
+}
+function replayNodeFor(key) {
+  const svg = svgEl();
+  if (!svg || !key) return null;
+  const tail = DDT.refTail(key);
+  return svg.querySelector('[data-id$="' + cssString('::' + tail) + '"]') || svg.querySelector('[data-id="' + cssString(tail) + '"]');
+}
+function replayClearVisual() {
+  const svg = svgEl();
+  if (!svg) return;
+  for (const el of svg.querySelectorAll('.ddna-active,.ddna-done,.ddna-pass,.ddna-fail,.ddna-flash')) el.classList.remove('ddna-active', 'ddna-done', 'ddna-pass', 'ddna-fail', 'ddna-flash');
+  for (const el of svg.querySelectorAll('.ddna-token,.ddna-value')) el.remove();
+}
+function replaySetActive(el) {
+  const svg = svgEl();
+  if (!el || !svg) return;
+  for (const prev of svg.querySelectorAll('.ddna-active')) { prev.classList.remove('ddna-active'); prev.classList.add('ddna-done'); }
+  el.classList.remove('ddna-done');
+  el.classList.add('ddna-active');
+}
+function replayTokenBadge(el, count) {
+  const svg = svgEl();
+  if (!svg) return;
+  for (const t of svg.querySelectorAll('.ddna-token')) t.remove();
+  if (!el || !el.getBBox) return;
+  const b = el.getBBox(), g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('class', 'ddna-token');
+  const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  c.setAttribute('cx', b.x + b.width - 4); c.setAttribute('cy', b.y + 4);
+  c.setAttribute('r', 9); c.setAttribute('fill', '#f59e0b'); c.setAttribute('stroke', '#fff');
+  const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  t.setAttribute('x', b.x + b.width - 4); t.setAttribute('y', b.y + 7.5);
+  t.setAttribute('text-anchor', 'middle'); t.textContent = count;
+  g.append(c, t); el.appendChild(g);
+}
+function replayValueLabel(el, label) {
+  if (!el || !el.getBBox) return;
+  const svg = svgEl();
+  /* §13.6: at most DDNA_REPLAY_VALUE_OVERLAY_MAX simultaneous overlays —
+   * excess marks truncation (DDN-A004), never silently dropped. */
+  if (svg.querySelectorAll('.ddna-value').length >= DDT.DDNA_REPLAY_VALUE_OVERLAY_MAX) {
+    replay.note = 'value overlays truncated at ' + DDT.DDNA_REPLAY_VALUE_OVERLAY_MAX + ' (DDN-A004 · DDNA_REPLAY_VALUE_OVERLAY_MAX)';
+    return;
+  }
+  for (const v of el.querySelectorAll(':scope > .ddna-value')) v.remove();
+  const b = el.getBBox(), g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('class', 'ddna-value');
+  const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  t.setAttribute('x', b.x + b.width / 2); t.setAttribute('y', b.y + b.height + 14);
+  t.setAttribute('text-anchor', 'middle'); t.textContent = label;
+  g.appendChild(t); el.appendChild(g);
+}
+function replayApplyVisual(e) {
+  const svg = svgEl();
+  if (!svg) return;
+  for (const el of svg.querySelectorAll('.ddna-flash')) el.classList.remove('ddna-flash');
+  const ref = (e.state && e.state.at) || (e.instance && e.instance[0]);
+  const el = replayNodeFor(ref) || (e.state && e.state.message && replayNodeFor(e.state.message));
+  if (el) {
+    replaySetActive(el);
+    if (e.stepKind === 'node-firing') replayTokenBadge(el, 1); /* EM-1 token position */
+  }
+  if (e.state && e.state.values) for (const [r, label] of Object.entries(e.state.values)) replayValueLabel(replayNodeFor(r), label);
+  if (e.choices && e.choices.notTaken) { const nt = replayNodeFor(e.choices.notTaken); if (nt) nt.classList.add('ddna-flash'); }
+  /* OT-033: verdicts render as recorded (three-valued where the family
+   * defines them); the tool never invents one. */
+  if (e.verdict !== undefined) {
+    const pass = /^(valid|compatible|deterministic)/.test(String(e.verdict));
+    const cls = pass ? 'ddna-pass' : 'ddna-fail';
+    const targets = el ? [el] : [...svg.querySelectorAll('.ddn-rel[data-id]')];
+    for (const t of targets) t.classList.add(cls);
+  }
+}
+function replayAppendRow(e) {
+  const tbody = els.replayTable.querySelector('tbody');
+  /* §13.6: the table renders up to DDNA_TRACE_TABLE_ROWS_MAX rows; the trace
+   * itself still replays fully. */
+  if (tbody.rows.length >= DDT.DDNA_TRACE_TABLE_ROWS_MAX) {
+    replay.note = 'trace table shows the first ' + DDT.DDNA_TRACE_TABLE_ROWS_MAX + ' rows (DDN-A004 · DDNA_TRACE_TABLE_ROWS_MAX) — replay continues';
+    return;
+  }
+  const tr = tbody.insertRow();
+  tr.className = 'ddna-row-active';
+  for (const prev of tbody.querySelectorAll('.ddna-row-active')) if (prev !== tr) prev.classList.remove('ddna-row-active');
+  for (const c of [e.seq, e.clock, e.stepKind, '[' + (e.instance || []).join(', ') + ']',
+    e.state ? JSON.stringify(e.state) : '', e.choices ? JSON.stringify(e.choices) : '',
+    e.verdict !== undefined ? String(e.verdict) : ''])
+    tr.insertCell().textContent = c === undefined ? '' : c;
+}
+function replayStatus(note) {
+  const t = replay.traces.find(x => x.id === replay.sel);
+  const total = t ? t.events.length : 0;
+  const clock = replay.idx && t && replay.idx <= t.events.length ? t.events[replay.idx - 1].clock : 0;
+  els.replayStatus.textContent = (note ? note + ' — ' : '') +
+    (t ? 'step ' + replay.idx + '/' + total + ' · t=' + clock + ' · ' + t.replayMode + ' mode' : 'no trace') +
+    (replay.timer ? ' · playing' : '');
+  els.replayNote.hidden = !replay.note && !(t && t.truncated);
+  els.replayNote.textContent = replay.note || (t && t.truncated ? 'trace truncated to ' + t.truncated + ' events (DDN-A004)' : '');
+}
+function replayReset() {
+  if (replay.timer) { clearInterval(replay.timer); replay.timer = null; }
+  replay.idx = 0; replay.note = '';
+  replayClearVisual();
+  els.replayTable.querySelector('tbody').replaceChildren();
+  replayStatus('reset');
+}
+function replayStepOnce() {
+  const t = replay.traces.find(x => x.id === replay.sel);
+  if (!t || replay.idx >= t.events.length) { if (t) replayStatus('done'); return false; }
+  const e = t.events[replay.idx++];
+  replayAppendRow(e);
+  replayApplyVisual(e);
+  replayStatus();
+  return replay.idx < t.events.length;
+}
+els.replayStart.addEventListener('click', () => guard(() => {
+  if (replay.timer) return;
+  replay.timer = setInterval(() => { if (!replayStepOnce()) { clearInterval(replay.timer); replay.timer = null; replayStatus('done'); } }, Number(els.replaySpeed.value) || 500);
+  replayStatus('running');
+}));
+els.replayStop.addEventListener('click', () => guard(() => {
+  if (replay.timer) { clearInterval(replay.timer); replay.timer = null; }
+  replayStatus('stopped');
+}));
+els.replayStep.addEventListener('click', () => guard(() => {
+  if (replay.timer) { clearInterval(replay.timer); replay.timer = null; }
+  replayStepOnce();
+}));
+els.replayReset.addEventListener('click', () => guard(() => replayReset()));
+els.replaySource.addEventListener('change', () => guard(() => { replay.sel = els.replaySource.value; replayReset(); }));
+function refreshReplay() {
+  const { traces } = replayScan();
+  replay.traces = traces;
+  if (!traces.some(t => t.id === replay.sel)) replay.sel = traces.length ? traces[0].id : '';
+  /* A trace list change invalidates the playhead — clamp it into range. */
+  const cur = traces.find(t => t.id === replay.sel);
+  if (!cur || replay.idx > cur.events.length) replay.idx = cur ? Math.min(replay.idx, cur.events.length) : 0;
+  els.replaySource.replaceChildren(...traces.map(t => new Option(t.label + ' · ' + t.events.length + ' events · ' + t.replayMode, t.id)));
+  els.replaySource.value = replay.sel;
+  els.replay.hidden = !traces.length;
+  /* A re-render replaces the stage svg — the visual replay state is gone;
+   * the playhead keeps its place and the next step re-paints from it. */
+  replayClearVisual();
+  replayStatus();
+}
 
 function catalogueClosure(file) {
   const out = Object.create(null);
@@ -14482,6 +14870,25 @@ function collectDiagnostics() {
   /* DDNA-OT-013: companion association validity (DDN-A### family) is computed
    * at the tool layer and surfaced through the same diagnostics drawer. */
   for (const d of ddnaDiagnostics(files, (t, n) => A.parse(t, n))) out.push(d);
+  /* Phase B (OT-020/021/022 + §13.6): trace shape (A002), identity coverage
+   * (A003) against the served bases, display-limit truncation (A004). */
+  if (state.ws) {
+    const containers = architectureContainers(files, (t, n) => A.parse(t, n));
+    const baseIdsFor = trace => {
+      const ids = [];
+      for (const base of servedBases(trace.companion, containers, files)) {
+        let doc = null;
+        try { doc = A.parse(files[base], base); } catch { continue; }
+        const walk = (n, path) => {
+          if (n.type === 'object' || n.type === 'relation') ids.push(path + '.' + n.id);
+          for (const c of n.children || []) walk(c, path + '.' + n.id);
+        };
+        for (const d of doc.declarations || []) if (d.type === 'data') for (const c of d.children || []) walk(c, d.id);
+      }
+      return ids;
+    };
+    for (const d of DDT.traceDiagnostics(files, (t, n) => A.parse(t, n), state.traceFiles || {}, isCompanionFile, baseIdsFor)) out.push(d);
+  }
   return out;
 }
 function diagnosticsUI() {
@@ -14593,6 +15000,15 @@ function syncUrl() {
 /* ------------------------------------------------ files drawer I/O */
 
 async function openFiles(input, directory) {
+  /* DDNA Phase B: io.open ignores non-source files; capture the trace
+   * sidecars it skips (names only there) into the tool-level store. */
+  state.traceFiles = {};
+  for (const f of Array.from(input || [])) {
+    let name = directory ? (f.webkitRelativePath || f.name) : f.name;
+    if (directory && name.includes('/')) name = name.split('/').slice(1).join('/');
+    if (!name.endsWith('.ddnatrace.json')) continue;
+    try { state.traceFiles[name] = await f.text(); } catch { /* unreadable sidecar reported at validation time */ }
+  }
   const result = await A.io.open(input, { directory });
   if (state.mergeNext) {
     flush();
@@ -15116,6 +15532,9 @@ function boot() {
 host.DDNTool = Object.assign({}, pure, {
   loadFiles: (files, entry, view) => load(files, entry, view),
   setSource, getSource, onSourceChange, offSourceChange,
+  /* DDNA Phase B: host/probe sidecar injection (folder/file open captures
+   * them automatically; this is the programmatic channel). */
+  addTraceFile: (path, text) => { state.traceFiles[String(path)] = String(text); if (state.diagram) refreshAnimation(); diagnosticsUI(); },
   SOURCE_NOTIFY_DEBOUNCE_MS,
   loadExample, setFit, zoomStep, applyOverrideCss, exportSvgString, rasterize,
   setDrawer, setToolbar, getDrawerConfig: () => JSON.parse(JSON.stringify(state.config)),

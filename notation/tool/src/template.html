@@ -327,6 +327,32 @@
         </label>
         <p id="ddn-anim-status" class="ddn-dim"></p>
       </div>
+      <!-- DDNA Phase B (ddna ch.13 §13.3.2): trace replay, a second mode of
+           this drawer. Read-only — replay never writes to source. -->
+      <div id="ddn-replay" hidden>
+        <h3>Trace replay <span class="ddn-dim">(DDNA)</span></h3>
+        <label class="ddn-field"><span>Trace</span><select id="ddn-replay-source" aria-label="Trace to replay"></select></label>
+        <div class="ddn-row">
+          <button id="ddn-replay-start" type="button" class="ddn-mini" title="Play the recorded trace">Start</button>
+          <button id="ddn-replay-stop" type="button" class="ddn-mini">Stop</button>
+          <button id="ddn-replay-step" type="button" class="ddn-mini" title="Advance exactly one recorded event">Step</button>
+          <button id="ddn-replay-reset" type="button" class="ddn-mini">Reset</button>
+        </div>
+        <label class="ddn-field"><span>Speed</span>
+          <select id="ddn-replay-speed" aria-label="Replay speed">
+            <option value="2000">0.25×</option>
+            <option value="1000">0.5×</option>
+            <option value="500" selected>1×</option>
+            <option value="250">2×</option>
+            <option value="125">4×</option>
+          </select>
+        </label>
+        <p id="ddn-replay-status" class="ddn-dim"></p>
+        <p id="ddn-replay-note" class="ddn-dim" hidden></p>
+        <div id="ddn-replay-table-wrap">
+          <table id="ddn-replay-table"><thead><tr><th>seq</th><th>clock</th><th>stepKind</th><th>instance</th><th>state</th><th>choices</th><th>verdict</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
     </div>
   </aside>
 </div>
