@@ -106,7 +106,7 @@
       "source": "standard/schemas/*.schema.json"
     },
     "ddnaChapters": {
-      "value": 14,
+      "value": 15,
       "source": "ddna/*.md (incl. README + appendix)"
     },
     "ddnaFamilyChapters": {

@@ -28,6 +28,22 @@ Component-level history predating the monorepo import lives in
 
 ### Added
 
+- **DDNA open-tool integration specification (`ddna/13-open-tool-integration.md`).**
+  New chapter fixing how the open tool hosts DDNA under the 2026-10-08
+  boundary: companions as first-class workspace citizens (Files-outline
+  grouping, role summaries, read-only companion content, never a view
+  source); the stored-trace convention (canonical `*.ddnatrace.json`
+  sidecar referenced by companion `x_trace`, chapter-4 field groups
+  verbatim; inline `x_trace` kept as the fixture spelling — one validator);
+  the replay player in the animation drawer (trace picker, virtual clock,
+  verified vs faithful modes, N1–N8 choice consumption, verdicts, overlays);
+  Phase-C execution engines (EM-1/EM-3/EM-4 first, PoC-proven); the open
+  KEEL host (nine seam functions, tiers T0–T2, the `keel-l0@1` minimal
+  expression language; ScratchRobin/Weaver's fuller KEEL supersedes
+  commercially); the quantitative display-limit constants (§13.6) as the
+  only gating; and the new `DDN-A###` diagnostics family (A001–A008).
+  Normative ids `DDNA-OT-###` with acceptance criteria. `ddna/README.md`
+  document map updated.
 - **Assertion evaluation (0.8 amendment, spec ch. 55 §55.2; 0.9 closure,
   conservative read).** Structured assertion *elements* (the chapter-10
   record: `subject`/`property`/`value` + `state`/`basis`/`source`/
