@@ -13217,7 +13217,7 @@ function attachDrag() {
   const canvas = diagram && diagram.shadowRoot.querySelector('.canvas');
   if (!canvas || canvas.dataset.toolDrag) return;
   canvas.dataset.toolDrag = 'true';
-  let drag = null;
+  let drag = null, candidate = null;
   canvas.addEventListener('pointerdown', e => {
     if (!els.dragMode.checked || e.button !== 0) return;
     if (design.placing) return; // an armed placement gesture owns the stage
@@ -13227,12 +13227,23 @@ function attachDrag() {
     if (!el || !g || !drawing || diagram.capabilities.sequence || diagram.capabilities.graphControls === false) return;
     const inv = drawing.getScreenCTM() && drawing.getScreenCTM().inverse();
     if (!inv) return;
-    const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(inv);
-    drag = { el, g, id: g.id, start: point, dx: 0, dy: 0 };
-    try { canvas.setPointerCapture(e.pointerId); } catch { /* synthetic events have no active pointer */ }
-    e.preventDefault();
+    /* Drag pins vs click selection (owner-confirmed root cause): capturing
+     * the pointer on PRESS retargets the trailing click to the canvas, so
+     * the component's node click→ddn-select never fires for real mice
+     * (synthetic events have no active pointer — setPointerCapture throws —
+     * which is why every headless harness passed). Track a candidate only;
+     * the drag begins — and captures — once movement crosses 4px. Below
+     * threshold the gesture is a plain click and selection proceeds. */
+    candidate = { el, g, id: g.id, sx: e.clientX, sy: e.clientY, start: new DOMPoint(e.clientX, e.clientY).matrixTransform(inv) };
   });
   canvas.addEventListener('pointermove', e => {
+    if (!drag && candidate) {
+      if (Math.hypot(e.clientX - candidate.sx, e.clientY - candidate.sy) < 4) return;
+      drag = { el: candidate.el, g: candidate.g, id: candidate.id, start: candidate.start, dx: 0, dy: 0 };
+      candidate = null;
+      try { canvas.setPointerCapture(e.pointerId); } catch { /* synthetic events have no active pointer */ }
+      e.preventDefault();
+    }
     if (!drag) return;
     const inv = drawingInv(drag.el);
     if (!inv) return;
@@ -13245,6 +13256,7 @@ function attachDrag() {
     return drawing && drawing.getScreenCTM() && drawing.getScreenCTM().inverse();
   }
   const finish = (e, cancel) => {
+    candidate = null;
     if (!drag) return;
     const d = drag; drag = null;
     d.el.removeAttribute('transform');
