@@ -12041,6 +12041,16 @@ document.addEventListener('keydown', e => {
   e.preventDefault();
   deleteSelection();
 }, true);
+/* Convention undo/redo keys (the toolbar buttons are the discoverable form;
+ * these match them). Text inputs keep their native undo. */
+document.addEventListener('keydown', e => {
+  if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+  const t = e.target;
+  if (t && (t.isContentEditable || (t.closest && t.closest('input, textarea, select, .ddn-inline-edit')))) return;
+  const k = e.key.toLowerCase();
+  if (k === 'z' && !e.shiftKey) { e.preventDefault(); els.undo.click(); }
+  else if (k === 'y' || (k === 'z' && e.shiftKey)) { e.preventDefault(); els.redo.click(); }
+}, true);
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (design.placing) return;
@@ -12057,6 +12067,19 @@ els.inspectorTabs.addEventListener('click', e => {
     panel.hidden = name !== b.dataset.tab;
 });
 
+/* Text writes must never leave the workspace unrenderable (owner report: a
+ * 200-char unbroken field label blew the page extent up → DDN074). Same
+ * discipline as pinClamped / resizeWritePreflight: write, renderSync, undo
+ * on rejection — the previous text is kept and the status explains. */
+function textWritePreflight(action) {
+  let failed = null;
+  guard(() => guided(() => {
+    action();
+    try { state.ws.renderSync({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true }); }
+    catch (e) { state.ws.undo(); failed = e; }
+  }));
+  return failed;
+}
 function inspectorNote(msg) { els.inspectorError.textContent = msg || ''; }
 
 /* DDNA-OT-011: a companion opened from the outline renders READ-ONLY
@@ -12643,7 +12666,17 @@ function buildMeaningTab(panel, id, ir, ctx) {
   }
   const label = document.createElement('input');
   label.type = 'text'; label.value = (node || relation || fieldItem).name || '';
-  label.addEventListener('change', () => { if (!impactConfirm(uid)) { label.value = (node || relation || fieldItem).name || ''; return; } guidedInspector(() => A.authoring.setLabel(state.ws, state.entry, state.view, uid, label.value)); });
+  label.addEventListener('change', () => { if (!impactConfirm(uid)) { label.value = (node || relation || fieldItem).name || ''; return; }
+    const failed = textWritePreflight(() => A.authoring.setLabel(state.ws, state.entry, state.view, uid, label.value));
+    if (failed) {
+      label.value = (node || relation || fieldItem).name || '';
+      /* The preflight's re-render clears the status line — deliver after it settles. */
+      const settled = state.diagram && state.diagram.ready;
+      const msg = () => status('that text does not fit the page (' + (failed.code || 'render rejected') + ') — the previous label was kept');
+      if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+      else msg();
+    }
+  });
   inField(panel, 'Label', label);
 
   /* Kind / verb. Relations: the verb list is filtered by endpoint-pair
@@ -12673,7 +12706,16 @@ function buildMeaningTab(panel, id, ir, ctx) {
   const desc = document.createElement('input');
   desc.type = 'text'; desc.placeholder = 'blank = removed';
   desc.value = typeof ((node || relation || fieldItem).properties || {}).description === 'string' ? (node || relation || fieldItem).properties.description : '';
-  desc.addEventListener('change', () => { const old = desc.value; if (!impactConfirm(uid)) { desc.value = old; return; } guidedInspector(() => A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'description', desc.value.trim() || undefined)); });
+  desc.addEventListener('change', () => { const old = desc.value; if (!impactConfirm(uid)) { desc.value = old; return; }
+    const failed = textWritePreflight(() => A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'description', desc.value.trim() || undefined));
+    if (failed) {
+      desc.value = old;
+      const settled = state.diagram && state.diagram.ready;
+      const msg = () => status('that text does not fit the page (' + (failed.code || 'render rejected') + ') — the previous description was kept');
+      if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+      else msg();
+    }
+  });
   inField(panel, 'Description', desc);
 
   if (node) {
@@ -12728,7 +12770,8 @@ function buildMeaningTab(panel, id, ir, ctx) {
     const afName = document.createElement('input'); afName.type = 'text'; afName.placeholder = 'display name (optional)'; afName.setAttribute('aria-label', 'New field name');
     inButton(af, 'Add field', 'Add a field member to this definition', () => {
       if (!afId.value.trim()) { inspectorNote('A field needs a stable identifier.'); return; }
-      guidedInspector(() => A.authoring.addField(state.ws, state.entry, state.view, uid, { id: afId.value.trim(), name: afName.value.trim() }));
+      const failed = textWritePreflight(() => A.authoring.addField(state.ws, state.entry, state.view, uid, { id: afId.value.trim(), name: afName.value.trim() }));
+      if (failed) inspectorNote('that field name does not fit the page (' + (failed.code || 'render rejected') + ') — nothing was added');
     });
     af.append(afId, afName);
     panel.append(af);
@@ -14581,12 +14624,17 @@ function openInlineEditor(target) {
     if (!commit) return;
     const label = input.value.trim();
     if (!label || label === current) return;
-    /* Same crash-guard semantics as every source write: guided() renders and
-     * a rejecting render surfaces through the component's ddn-error path. */
+    /* Same crash-guard semantics as every source write — plus the text
+     * preflight: a label that makes the render reject is undone, the previous
+     * label kept. */
     let wrote = false;
-    guard(() => guided(() => { A.authoring.setLabel(state.ws, state.entry, state.view, target.uid, label); wrote = true; }));
+    const failed = textWritePreflight(() => { A.authoring.setLabel(state.ws, state.entry, state.view, target.uid, label); wrote = true; });
+    if (failed) wrote = false;
     const settled = state.diagram && state.diagram.ready;
-    const msg = () => { if (wrote) status(target.what + ' updated — undo restores the previous label'); };
+    const msg = () => {
+      if (failed) status('that text does not fit the page (' + (failed.code || 'render rejected') + ') — the previous label was kept');
+      else if (wrote) status(target.what + ' updated — undo restores the previous label');
+    };
     if (settled && typeof settled.then === 'function') settled.then(msg, msg);
     else msg();
   };
@@ -15614,8 +15662,12 @@ els.apply.addEventListener('click', () => guard(() => {
   diagnosticsUI();
 }));
 els.discard.addEventListener('click', () => guard(() => showSource(state.currentFile)));
-els.undo.addEventListener('click', () => guard(() => { flush(); state.ws.undo(); entriesUI(state.view); showSource(Object.prototype.hasOwnProperty.call(state.ws.getFiles(), state.currentFile) ? state.currentFile : Object.keys(state.ws.getFiles())[0]); updateHistory(); }));
-els.redo.addEventListener('click', () => guard(() => { flush(); state.ws.redo(); entriesUI(state.view); showSource(Object.prototype.hasOwnProperty.call(state.ws.getFiles(), state.currentFile) ? state.currentFile : Object.keys(state.ws.getFiles())[0]); updateHistory(); }));
+/* Undo/redo must RE-RENDER (owner report "unrecoverable after an erroring
+ * commit"): reverting source without redrawing left the canvas in the error
+ * banner state forever. refreshAfterSourceWrite drives the recovery render;
+ * the toolbar buttons are the discoverable affordance (ctrl+Z/ctrl+Y too). */
+els.undo.addEventListener('click', () => guard(() => { flush(); state.ws.undo(); entriesUI(state.view); showSource(Object.prototype.hasOwnProperty.call(state.ws.getFiles(), state.currentFile) ? state.currentFile : Object.keys(state.ws.getFiles())[0]); updateHistory(); refreshAfterSourceWrite(); }));
+els.redo.addEventListener('click', () => guard(() => { flush(); state.ws.redo(); entriesUI(state.view); showSource(Object.prototype.hasOwnProperty.call(state.ws.getFiles(), state.currentFile) ? state.currentFile : Object.keys(state.ws.getFiles())[0]); updateHistory(); refreshAfterSourceWrite(); }));
 els.find.addEventListener('click', () => {
   const q = prompt('Find text', state.search);
   if (q === null || !q) return;
