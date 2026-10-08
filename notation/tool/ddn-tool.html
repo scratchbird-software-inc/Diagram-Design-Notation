@@ -9336,6 +9336,11 @@ const STAGE_CSS =
   '.ddn-ctx .ddn-menu-sep{border-top:1px solid #e3eaf3;margin:4px 0}' +
   '#ddn-rubberband{position:absolute;z-index:8;border:1.5px dashed #245ac8;background:#245ac81a;pointer-events:none;box-sizing:border-box}' +
   '.ddn-node.ddn-multisel{filter:drop-shadow(0 0 3px #d97706) drop-shadow(0 0 1px #d97706)}' +
+  /* Overlay anchor: handles/ghost are absolutely positioned in .canvas, whose
+   * own rect is the reference the coordinates are computed against — it must
+   * be the containing block (it is display:flex static by default, so handles
+   * otherwise anchor to the padded .stage and sit shifted up-left). */
+  '.canvas{position:relative}' +
   '.ddn-resize-handle{position:absolute;z-index:8;width:8px;height:8px;background:#fff;border:1.5px solid #245ac8;border-radius:2px;box-shadow:0 1px 3px #243b5940;touch-action:none;box-sizing:border-box}' +
   '.ddn-resize-n,.ddn-resize-s{cursor:ns-resize}.ddn-resize-e,.ddn-resize-w{cursor:ew-resize}' +
   '.ddn-resize-ne,.ddn-resize-sw{cursor:nesw-resize}.ddn-resize-nw,.ddn-resize-se{cursor:nwse-resize}' +
@@ -12061,7 +12066,7 @@ function attachDrag() {
     if (!inv) return;
     const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(inv);
     drag = { el, g, id: g.id, start: point, dx: 0, dy: 0 };
-    canvas.setPointerCapture(e.pointerId);
+    try { canvas.setPointerCapture(e.pointerId); } catch { /* synthetic events have no active pointer */ }
     e.preventDefault();
   });
   canvas.addEventListener('pointermove', e => {
@@ -12083,15 +12088,16 @@ function attachDrag() {
     if (!cancel && Math.hypot(d.dx, d.dy) > 2) guard(() => {
       flush();
       /* Fixed-page clamp: the move stops at the edge of the live area instead
-       * of pushing geometry outside the page (owner decision). */
-      const area = fixedPageLiveArea();
-      const to = clampToLiveArea(d.g.x + d.dx, d.g.y + d.dy, d.g.w, d.g.h, area);
-      A.authoring.pin(state.ws, state.entry, state.view, d.id, to.x, to.y);
+       * of pushing geometry outside the page (owner decision). pinClamped
+       * preflights the render — pin-centring can overflow a fixed page even
+       * when the box itself is inside. */
+      const pinned = pinClamped(d.id, d.g.x + d.dx, d.g.y + d.dy, d.g.w, d.g.h);
+      if (!pinned) { status('the fixed page has no room there — the move was cancelled; the element keeps its previous position'); return; }
       showSource(state.currentFile);
       state.selected = d.id;
       state.selectedIds = [d.id];
       /* The pin's re-render clears the status line — deliver after it settles. */
-      const msg = () => status(to.clamped
+      const msg = () => status(pinned.clamped
         ? 'pinned at the page edge — the live area of a fixed page cannot be exceeded'
         : 'pinned occurrence in source — undo restores the previous source');
       const settled = state.diagram && state.diagram.ready;
@@ -12407,7 +12413,13 @@ function dropDuplicate(def, x, y) {
           return findFreeSlot(x, y, 270, 100, quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20);
         })();
         if (slot) { nudged = nudged || slot.nudged; x = slot.x; y = slot.y; }
-        A.authoring.pin(state.ws, state.entry, state.view, nuid, x, y);
+        const pinned = pinClamped(nuid, x, y, 270, 100);
+        if (!pinned) {
+          /* Full fixed page: keep the copy but leave it unpinned. */
+          status('duplicated ' + def.id + ' — the page has no room to place the copy, so it is unpinned; enlarge the page or switch the size preset to content');
+          return;
+        }
+        nudged = nudged || pinned.clamped; x = pinned.x; y = pinned.y;
         state.selected = nuid;
         state.selectedRelation = null;
         state.selectedIds = [nuid];
@@ -12656,6 +12668,33 @@ function clampToLiveArea(x, y, w, h, area) {
   const ny = Math.max(area.y, Math.min(y, area.y + Math.max(0, area.h - Math.min(h, area.h))));
   return { x: nx, y: ny, clamped: nx !== x || ny !== y };
 }
+/* Fixed-page preflight (owner report "drag to the edge → DDN074 banner + snap
+ * back"): the geometric clamp keeps the pinned box inside the live area, but
+ * the engine centres the drawing bounds on the pinned group (layout center)
+ * and re-places unpinned nodes around pins, so a legal-looking pin can still
+ * overflow a fixed page. Preflight the real render and retreat the candidate
+ * toward the live-area centre until the page accepts it. Returns null when no
+ * retreat fits — the page is genuinely full; the caller leaves no pin. */
+function pinClamped(uid, x, y, w, h) {
+  const area = fixedPageLiveArea();
+  if (!area) { A.authoring.pin(state.ws, state.entry, state.view, uid, x, y); return { x, y, clamped: false }; }
+  const c = clampToLiveArea(x, y, w || 270, h || 100, area);
+  let cx = c.x, cy = c.y, clamped = c.clamped;
+  for (let i = 0; ; i++) {
+    A.authoring.pin(state.ws, state.entry, state.view, uid, cx, cy);
+    try {
+      state.ws.renderSync({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true });
+      return { x: cx, y: cy, clamped };
+    } catch (e) {
+      state.ws.undo();
+      if (!e || (e.code !== 'DDN074' && e.code !== 'DDN071' && e.code !== 'DDN072')) throw e;
+      if (i >= 8) return null;
+      clamped = true;
+      cx = Math.round(cx + (area.x + area.w / 2 - (cx + (w || 270) / 2)) * 0.35);
+      cy = Math.round(cy + (area.y + area.h / 2 - (cy + (h || 100) / 2)) * 0.35);
+    }
+  }
+}
 /* Collision-negotiating placement (owner: "adding elements should have the
  * existing and new elements negotiate their locations"). A drop point pins
  * top-left at (x,y); the target rect (the standard node box) padded by
@@ -12737,8 +12776,15 @@ function placeElement(kind, x, y) {
             quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20);
         })();
         if (slot) { nudged = nudged || slot.nudged; x = slot.x; y = slot.y; }
-        A.authoring.pin(state.ws, state.entry, state.view, uid, x, y);
+        const pinned = pinClamped(uid, x, y, 270, 100);
+        if (!pinned) {
+          /* Fixed page genuinely full: the pin attempts are already undone;
+           * one more undo removes the add — nothing is placed. */
+          state.ws.undo();
+          uid = null;
+        } else { nudged = nudged || pinned.clamped; x = pinned.x; y = pinned.y; }
       }
+      if (!uid) { status('the fixed page is full — there is no room for another element; enlarge the page or switch the size preset to content'); return; }
       state.selected = uid;
       state.selectedRelation = null;
       state.selectedIds = [uid];
