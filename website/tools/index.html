@@ -12082,11 +12082,21 @@ function attachDrag() {
     d.el.removeAttribute('transform');
     if (!cancel && Math.hypot(d.dx, d.dy) > 2) guard(() => {
       flush();
-      A.authoring.pin(state.ws, state.entry, state.view, d.id, d.g.x + d.dx, d.g.y + d.dy);
+      /* Fixed-page clamp: the move stops at the edge of the live area instead
+       * of pushing geometry outside the page (owner decision). */
+      const area = fixedPageLiveArea();
+      const to = clampToLiveArea(d.g.x + d.dx, d.g.y + d.dy, d.g.w, d.g.h, area);
+      A.authoring.pin(state.ws, state.entry, state.view, d.id, to.x, to.y);
       showSource(state.currentFile);
       state.selected = d.id;
       state.selectedIds = [d.id];
-      status('pinned occurrence in source — undo restores the previous source');
+      /* The pin's re-render clears the status line — deliver after it settles. */
+      const msg = () => status(to.clamped
+        ? 'pinned at the page edge — the live area of a fixed page cannot be exceeded'
+        : 'pinned occurrence in source — undo restores the previous source');
+      const settled = state.diagram && state.diagram.ready;
+      if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+      else msg();
     });
   };
   canvas.addEventListener('pointerup', e => finish(e));
@@ -12369,17 +12379,34 @@ function dropDuplicate(def, x, y) {
   guard(() => {
     flush();
     let nuid = null, nudged = false;
+    /* Fixed-page clamp (same rule as placeElement): negotiate inside the live
+     * area first; a full page means no duplicate is created. */
+    const placeable = graphEditable() && Number.isFinite(x) && Number.isFinite(y);
+    const area = placeable ? fixedPageLiveArea() : null;
+    let preSlot = null;
+    if (area) {
+      const c = clampToLiveArea(x, y, 270, 100, area);
+      x = c.x; y = c.y;
+      const scene = state.diagram.result && state.diagram.result.scene;
+      let lp = {};
+      try { lp = (state.ws.resolve(state.entry, state.view).view.profiles || {}).layout || {}; } catch { lp = {}; }
+      preSlot = findFreeSlot(x, y, 270, 100, quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20, area);
+      if (!preSlot) { status('the fixed page is full — there is no room for a copy; enlarge the page or switch the size preset to content'); return; }
+      nudged = preSlot.nudged || c.clamped; x = preSlot.x; y = preSlot.y;
+    }
     guided(() => {
       A.authoring.duplicate(state.ws, state.entry, state.view, def.id);
       const after = state.ws.resolve(state.entry, state.view);
       nuid = after.elements.map(n2 => n2.id).filter(u => /_copy\d*$/.test(u)).sort().at(-1) || null;
       if (!nuid) throw Object.assign(new Error('duplicate produced no copy'), { code: 'DDN-T100' });
-      if (graphEditable() && Number.isFinite(x) && Number.isFinite(y)) {
+      if (placeable) {
         A.authoring.selectInView(state.ws, state.entry, state.view, nuid);
-        const scene = state.diagram.result && state.diagram.result.scene;
-        const lp = (after.view.profiles && after.view.profiles.layout) || {};
-        const slot = findFreeSlot(x, y, 270, 100, quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20);
-        if (slot) { nudged = slot.nudged; x = slot.x; y = slot.y; }
+        const slot = preSlot || (() => {
+          const scene = state.diagram.result && state.diagram.result.scene;
+          const lp = (after.view.profiles && after.view.profiles.layout) || {};
+          return findFreeSlot(x, y, 270, 100, quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20);
+        })();
+        if (slot) { nudged = nudged || slot.nudged; x = slot.x; y = slot.y; }
         A.authoring.pin(state.ws, state.entry, state.view, nuid, x, y);
         state.selected = nuid;
         state.selectedRelation = null;
@@ -12593,16 +12620,56 @@ function nodeIdAt(e) {
   return g ? g.id : null;
 }
 
+/* Fixed-page placement clamp (owner decision, ch.06 publication contract): on
+ * a fixed size preset (anything but 'content') the page never grows — the
+ * engine already contain-scales or raises DDN074; the designer additionally
+ * stops geometry at the edge of the live area instead of overflowing. The
+ * live area is the last render's drawingArea mapped back to world coordinates
+ * through the page transform (scene.origin + scale). 'content' auto-grows and
+ * returns null (no clamp). */
+function fixedPageLiveArea() {
+  let ir = null;
+  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  const pub = ir && ir.view.profiles && ir.view.profiles.publication;
+  if (!pub || !pub.size || pub.size === 'content') return null;
+  const scene = state.diagram && state.diagram.result && state.diagram.result.scene;
+  if (!scene || !scene.drawingArea || !scene.scale) return null;
+  const da = scene.drawingArea, s = scene.scale, o = scene.origin || [0, 0];
+  const a = { x: (da.x - o[0]) / s, y: (da.y - o[1]) / s, w: da.w / s, h: da.h / s };
+  /* The render's drawingBounds are wider than the raw node rects (label/icon
+   * allowance, route points, +30 slack — the same bounds DDN074 measures).
+   * Clamp NODE rects against the live area shrunk by the observed padding so
+   * the pinned result stays inside the page instead of throwing DDN074. */
+  const nodes = scene.nodes || [], b = scene.drawingBounds;
+  let pl = 0, pt = 0, pr = 0, pb = 0;
+  if (nodes.length && b) {
+    const minX = Math.min(...nodes.map(n => n.x)), minY = Math.min(...nodes.map(n => n.y));
+    const maxX = Math.max(...nodes.map(n => n.x + n.w)), maxY = Math.max(...nodes.map(n => n.y + n.h));
+    pl = Math.max(0, minX - b.x); pt = Math.max(0, minY - b.y);
+    pr = Math.max(0, b.x + b.w - maxX); pb = Math.max(0, b.y + b.h - maxY);
+  }
+  return { x: a.x + pl, y: a.y + pt, w: Math.max(60, a.w - pl - pr - 30), h: Math.max(60, a.h - pt - pb - 30) };
+}
+function clampToLiveArea(x, y, w, h, area) {
+  if (!area) return { x, y, clamped: false };
+  const nx = Math.max(area.x, Math.min(x, area.x + Math.max(0, area.w - Math.min(w, area.w))));
+  const ny = Math.max(area.y, Math.min(y, area.y + Math.max(0, area.h - Math.min(h, area.h))));
+  return { x: nx, y: ny, clamped: nx !== x || ny !== y };
+}
 /* Collision-negotiating placement (owner: "adding elements should have the
  * existing and new elements negotiate their locations"). A drop point pins
  * top-left at (x,y); the target rect (the standard node box) padded by
  * object_clearance must not intersect any existing node rect. When it would,
  * an outward spiral (perimeter of Chebyshev rings, grid_step apart,
  * deterministic first-fit) finds the nearest free slot. No slot within 20
- * rings → null (caller falls back to the plain drop + crash-guard). */
-function findFreeSlot(x, y, w, h, pad, nodes, step, rings) {
-  const clear = (nx, ny) => (nodes || []).every(n =>
-    nx - pad >= n.x + n.w || nx + w + pad <= n.x || ny - pad >= n.y + n.h || ny + h + pad <= n.y);
+ * rings → null (caller falls back to the plain drop + crash-guard). The
+ * optional `area` (fixed-page live area) confines the spiral: candidates must
+ * fit inside it, and null then means the page is genuinely full. */
+function findFreeSlot(x, y, w, h, pad, nodes, step, rings, area) {
+  const clear = (nx, ny) =>
+    (!area || (nx >= area.x && ny >= area.y && nx + w <= area.x + area.w && ny + h <= area.y + area.h)) &&
+    (nodes || []).every(n =>
+      nx - pad >= n.x + n.w || nx + w + pad <= n.x || ny - pad >= n.y + n.h || ny + h + pad <= n.y);
   if (clear(x, y)) return { x, y, nudged: false };
   const s = step > 0 ? step : 32;
   for (let r = 1; r <= (rings || 20); r++) {
@@ -12639,19 +12706,37 @@ function placeElement(kind, x, y) {
     const wasRendered = !!(state.diagram && state.diagram.result);
     const revBefore = state.ws.revision;
     let uid = id, nudged = false;
+    /* Fixed-page clamp: negotiate the slot BEFORE writing — on a fixed preset
+     * the spiral is confined to the live area, and a null slot means the page
+     * is genuinely full: no placement, just the explanation. */
+    const placeable = Number.isFinite(x) && Number.isFinite(y) && graphEditable();
+    const area = placeable ? fixedPageLiveArea() : null;
+    let preSlot = null;
+    if (area) {
+      const c = clampToLiveArea(x, y, 270, 100, area);
+      x = c.x; y = c.y;
+      const scene = state.diagram.result && state.diagram.result.scene;
+      const lp = (ir.view.profiles && ir.view.profiles.layout) || {};
+      preSlot = findFreeSlot(x, y, 270, 100,
+        quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20, area);
+      if (!preSlot) { status('the fixed page is full — there is no room for another element; enlarge the page or switch the size preset to content'); return; }
+      nudged = preSlot.nudged || c.clamped; x = preSlot.x; y = preSlot.y;
+    }
     guided(() => {
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: 'New ' + label.toLowerCase(), kind });
       const after = state.ws.resolve(state.entry, state.view);
       uid = after.elements.map(n2 => n2.id).find(u => u === id || u.endsWith('.' + id)) || id;
-      if (Number.isFinite(x) && Number.isFinite(y) && graphEditable()) {
+      if (placeable) {
         /* Negotiate before pinning: if the drop rect would collide, spiral
          * out to the nearest free slot (keeps bounds compact on tight pages;
          * the crash-guard stays the last resort when no slot exists). */
-        const scene = state.diagram.result && state.diagram.result.scene;
-        const lp = (ir.view.profiles && ir.view.profiles.layout) || {};
-        const slot = findFreeSlot(x, y, 270, 100,
-          quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20);
-        if (slot) { nudged = slot.nudged; x = slot.x; y = slot.y; }
+        const slot = preSlot || (() => {
+          const scene = state.diagram.result && state.diagram.result.scene;
+          const lp = (ir.view.profiles && ir.view.profiles.layout) || {};
+          return findFreeSlot(x, y, 270, 100,
+            quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20);
+        })();
+        if (slot) { nudged = nudged || slot.nudged; x = slot.x; y = slot.y; }
         A.authoring.pin(state.ws, state.entry, state.view, uid, x, y);
       }
       state.selected = uid;
@@ -12847,6 +12932,13 @@ function startResizeDrag(e, dir, target) {
     d.ghost.remove();
     resizeState.ghost = null;
     const write = resizeCommit(d.dir, d.target.bounds, d.dx || 0, d.dy || 0);
+    /* Fixed-page clamp: bounds may not push the element's box past the live
+     * area edge — the max bound stops at the page edge. */
+    const area = fixedPageLiveArea();
+    if (area) {
+      if (write.max_width) write.max_width.$quantity = Math.max(40, Math.min(write.max_width.$quantity, Math.floor(area.x + area.w - d.target.bounds.x)));
+      if (write.max_height) write.max_height.$quantity = Math.max(40, Math.min(write.max_height.$quantity, Math.floor(area.y + area.h - d.target.bounds.y)));
+    }
     const props = {};
     for (const [k, v] of Object.entries(write)) if (!k.startsWith('_')) props[k] = v;
     if (!Object.keys(props).length) return;
