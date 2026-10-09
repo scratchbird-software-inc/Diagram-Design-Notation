@@ -20,7 +20,8 @@
         "ddn-resolved@0.3",
         "ddn-resolved@0.4",
         "ddn-resolved@0.5",
-        "ddn-resolved@0.6"
+        "ddn-resolved@0.6",
+        "ddn-resolved@0.7"
       ]
     },
     "language": {
@@ -28,7 +29,8 @@
         "0.3",
         "0.4",
         "0.5",
-        "0.6"
+        "0.6",
+        "0.7"
       ]
     },
     "registry": {
@@ -1172,7 +1174,40 @@
           "type": "array"
         },
         "frames": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "scope",
+              "members"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "scope": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "within": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
         },
         "flows": {
           "type": "array",

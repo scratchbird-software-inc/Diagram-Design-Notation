@@ -1,0 +1,13 @@
+ddn "0.6";
+module "ddn.vectors.clip";
+data m {
+  object t "Field clipping" {
+    kind: table;
+    max_width: 180px;
+    fields {
+      clipped "This complete label remains accessible despite clipping";
+      wrapped "This field explicitly wraps and grows its row" { text_wrap: on; }
+    }
+  }
+}
+view main { data: [@m]; publication { size: content; } }

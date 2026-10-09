@@ -53,10 +53,14 @@ function toolStatus(dom) {
   return m ? m[1].replace(/<[^>]+>/g, '').trim() : '(status not found)';
 }
 
-function checkLink({ page, href, url }) {
+async function checkLink({ page, href, url }) {
   const u = new URL(url);
   if (!u.searchParams.has('worker')) u.searchParams.set('worker', 'off');
-  const dom = dumpDom(u.origin + u.pathname + u.search);
+  const dom = await new Promise((resolve, reject) => {
+    cp.execFile(BIN, ['--headless', '--disable-gpu', '--no-sandbox', '--window-size=1400,900',
+      '--virtual-time-budget=15000', '--dump-dom', u.origin + u.pathname + u.search],
+    { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }, (error, stdout) => error ? reject(error) : resolve(stdout));
+  });
   const label = page + ' -> ' + href;
   assert.ok(dom.includes('data-ddn-rendered='), 'tool did not render for ' + label + ' — status: ' + toolStatus(dom));
   assert.ok(!toolStatus(dom).startsWith('Error:'), 'tool error for ' + label + ': ' + toolStatus(dom));
@@ -101,7 +105,7 @@ server.stdout.on('data', () => { ready = true; });
     const workers = Array.from({ length: 8 }, async () => {
       while (next < unique.length) {
         const link = unique[next++];
-        try { checkLink(link); }
+        try { await checkLink(link); }
         catch (e) { failures.push(link.page + ' -> ' + link.href + '\n  ' + String(e.message).split('\n')[0]); }
       }
     });

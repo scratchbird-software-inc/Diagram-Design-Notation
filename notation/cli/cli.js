@@ -100,7 +100,7 @@ function main(){
  const root=path.resolve(get('--workspace')||'.'),absolute=path.resolve(file),entry=path.relative(root,absolute).split(path.sep).join('/');
  if(entry.startsWith('../'))throw new Error('Entry is outside workspace');
  const files={},visited=new Set();
- function load(name){if(visited.has(name))return;visited.add(name);const full=path.resolve(root,name),real=fs.realpathSync(full);if(real!==root&&!real.startsWith(root+path.sep))throw new Error('Import or symlink escapes workspace');const bytes=fs.readFileSync(real);const text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);files[name]=text;const ast=DDN.parse(text,name);for(const imp of ast.imports){const next=path.posix.normalize(path.posix.join(path.posix.dirname(name),imp.path));if(next.startsWith('../')||path.isAbsolute(imp.path)||/^[a-z]+:/i.test(imp.path))throw new Error('Unsafe import path');load(next);}
+ function load(name){if(visited.has(name))return;visited.add(name);const full=path.resolve(root,name),real=fs.realpathSync(full);if(real!==root&&!real.startsWith(root+path.sep))throw new Error('Import or symlink escapes workspace');const bytes=fs.readFileSync(real);const text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);files[name]=text;if(/\.ddnn$/i.test(name)){DDN.documents.read(text);return;}const ast=DDN.parse(text,name);for(const imp of ast.imports){const next=path.posix.normalize(path.posix.join(path.posix.dirname(name),imp.path));if(next.startsWith('../')||path.isAbsolute(imp.path)||/^[a-z]+:/i.test(imp.path))throw new Error('Unsafe import path');load(next);}
   /* B1-090: architecture bases and x_link files join the workspace too. */
   const extra=(rel=>{if(!rel||rel.startsWith('../')||path.isAbsolute(rel)||/^[a-z]+:/i.test(rel))throw new Error('Unsafe architecture/x_link path');load(path.posix.normalize(path.posix.join(path.posix.dirname(name),rel)));});
   /* 0.8 (ch. 53 §53.3): publication chrome backgrounds reference workspace
@@ -117,7 +117,7 @@ function main(){
     const ext=next.split('.').pop().toLowerCase(),bytes=fs.readFileSync(real);
     if(['png','webp'].includes(ext)){visited.add(next);files[next]=bytes.toString('base64');}
     else if(ext==='svg'||ext==='json'){visited.add(next);files[next]=new TextDecoder('utf-8',{fatal:true}).decode(bytes);}}catch{}});
-  const walk=n=>{if(n.type==='architecture')for(const f of n.props?.files||[])extra(f);if(n.props?.x_link?.file)extra(n.props.x_link.file);
+  const walk=n=>{if(n.group&&n.type==='document'&&n.props?.file)extra(n.props.file);if(n.type==='architecture')for(const f of n.props?.files||[])extra(f);if(n.props?.x_link?.file)extra(n.props.x_link.file);
    if(n.type==='background'){asset(n.props?.image);asset(n.props?.pattern);}
    if(n.type==='style'&&n.props?.font_pin)asset(n.props.font_pin);
    for(const c of n.children||[])walk(c);};

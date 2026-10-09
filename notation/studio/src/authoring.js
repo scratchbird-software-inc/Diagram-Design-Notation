@@ -1,3 +1,4 @@
+import {authoringBuild} from './draft-context.js';
 /* SPDX-License-Identifier: GPL-2.0-or-later. Source-span edits; no global string replacement.
  * Guided actions validate the resulting workspace before atomic application.
  * Raw text editing intentionally permits temporarily invalid source.
@@ -6,10 +7,29 @@ export function installAuthoring(api,backend,assets){
 'use strict';
 const D=backend.DDN,fail=(code,message)=>{throw Object.assign(new Error(message),{code});};
 const idOK=id=>{if(!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(id)||['__proto__','constructor','prototype'].includes(id))fail('DDN-E001','Use a valid, nonreserved DDN identifier.');return id;};
-function value(v){if(v===null)return'null';if(typeof v==='string')return JSON.stringify(v);if(typeof v==='boolean'||typeof v==='number')return String(v);if(Array.isArray(v))return'['+v.map(value).join(', ')+']';if(v?.$ref)return'@'+v.$ref;if(v?.$quantity!==undefined)return String(v.$quantity)+v.unit;if(v?.$state)return v.$state;if(v?.$missing)return'missing';return'{ '+Object.entries(v||{}).map(([k,x])=>JSON.stringify(k)+': '+value(x)).join(', ')+' }';}
-function build(ws,entry,view){return D.build(ws.getFiles(),entry,view,assets.registry);}
-function refFor(b,doc,id){const node=[...b.workspace.symbols.values()].find(n=>n.uid===id);if(!node)fail('DDN-E002','Model identity is not in this workspace.');let answer=null;const seen=new Set();function visit(d,prefix){if(seen.has(d)||answer)return;seen.add(d);if(d===node.doc.file){answer=(prefix?prefix+'.':'')+(!prefix&&node.doc.module!==doc.module?node.doc.module+'.':'')+node.path;return;}for(const [alias,child]of d.imported)visit(child,(prefix?prefix+'.':'')+alias);}visit(doc.file,'');if(!answer)fail('DDN-E003','The edited source does not import the target definition. Add the required import explicitly.');return answer;}
-function find(b,id){const n=[...b.workspace.symbols.values()].find(n=>n.uid===id);if(!n)fail('DDN-E002','Definition not found.');
+function value(v){if(v===null)return'null';if(typeof v==='string')return JSON.stringify(v);if(typeof v==='boolean'||typeof v==='number')return String(v);if(Array.isArray(v))return'['+v.map(value).join(', ')+']';if(v?.$ref)return'@'+v.$ref+(v.$occ!==undefined?'#'+v.$occ:'');if(v?.$quantity!==undefined)return String(v.$quantity)+v.unit;if(v?.$state)return v.$state;if(v?.$missing)return'missing';return'{ '+Object.entries(v||{}).map(([k,x])=>JSON.stringify(k)+': '+value(x)).join(', ')+' }';}
+function build(ws,entry,view){return authoringBuild(D,ws,entry,view,assets.registry);}
+function occurrence(b,id){
+ const v=b.ir.view,layer=v.occurrences;
+ const o=layer&&[...layer.elements,...layer.relations].find(o=>o.id===id);
+ if(o)return o;
+ if(!layer&&(v.selected.includes(id)||v.relations.includes(id)))return {id,source:id,number:1};
+ fail('DDN-E002','Occurrence is not visible in this view.');
+}
+function modelId(b,id){
+ if(b.workspace.uidMap.has(id))return id;
+ const layer=b.ir.view.occurrences;if(!layer)return id;
+ const o=[...layer.elements,...layer.relations].find(o=>o.id===id);if(o)return o.source;
+ for(const e of layer.elements)for(const f of b.ir.elements.find(n=>n.id===e.source).fields)if(D.occurrenceId(b.ir.view.id,f.id,e.number)===id)return f.id;
+ return id;
+}
+function occurrenceRef(b,id,explicit=false){const o=occurrence(b,id);return {$ref:refFor(b,b.viewNode.doc,o.source),...(explicit||o.number!==1?{$occ:o.number}:{})};}
+function targetId(b,n){return D.occurrenceId(b.ir.view.id,b.workspace.resolve(n.target,n,true).uid,n.target.$occ??1);}
+function placement(b,id){return b.viewNode.children.find(n=>n.type==='place'&&targetId(b,n)===id);}
+function graphOccurrences(b){if(b.ir.view.profiles.projection.kind!=='graph'||b.ir.view.profiles.layout.x_interaction)fail('DDN-OC04','Explicit occurrences require a graph view without fixed-lane interactions.');if(!['0.6','0.7'].includes(b.viewNode.doc.file.version))fail('DDN-V04','Explicit occurrences require ddn "0.6" or later.');}
+function nextOccurrence(b,source,refs){let n=1;for(const r of refs||[])if(b.workspace.resolve(r,b.viewNode,true).uid===source)n=Math.max(n,r.$occ??1);return n+1;}
+function refFor(b,doc,id){id=modelId(b,id);const node=[...b.workspace.symbols.values()].find(n=>n.uid===id);if(!node)fail('DDN-E002','Model identity is not in this workspace.');let answer=null;const seen=new Set();function visit(d,prefix){if(seen.has(d)||answer)return;seen.add(d);if(d===node.doc.file){answer=(prefix?prefix+'.':'')+((!prefix&&node.doc.module!==doc.module||prefix&&node.doc!==node.doc.file.moduleRecords[0])?node.doc.module+'.':'')+node.path;return;}for(const [alias,child]of d.imported)visit(child,(prefix?prefix+'.':'')+alias);}visit(doc.file,'');if(!answer)fail('DDN-E003','The edited source does not import the target definition. Add the required import explicitly.');return answer;}
+function find(b,id){id=modelId(b,id);const n=[...b.workspace.symbols.values()].find(n=>n.uid===id);if(!n)fail('DDN-E002','Definition not found.');
  /* B1-041 D8: a declaration expanded from a shared fields/ports/fragment
   * definition has no source text of its own at the application site — its
   * spans point into the shared definition. Inspector edits must never
@@ -43,7 +63,40 @@ function recordEdit(text,n,record){
  return {file:n.source,start:n.start,end:n.end,text:code};
 }
 function addLocal(ws,entry,view,code,newObjectId,extra){const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source],data=v.doc.declarations.find(n=>n.type==='data'&&n.id==='editor_data'),edits=[];if(data)edits.push({file:v.source,start:data.bodyEnd,end:data.bodyEnd,text:'\n    '+code+'\n'});else{edits.push({file:v.source,start:v.start,end:v.start,text:'data editor_data {\n    '+code+'\n}\n\n'});const ds=Array.isArray(v.props.data)?v.props.data:[v.props.data];edits.push(property(text,v,'data',[...ds,{$ref:'editor_data'}]));}if(newObjectId&&v.props.select)edits.push(property(text,v,'select',[...v.props.select,{$ref:'editor_data.'+newObjectId}]));if(extra)edits.push(...extra);return apply(ws,b,edits,entry,view);}
+function contentGroup(n,type,props){const g=n.children.find(c=>c.group&&c.type===type),body=props==null?'':type+' { '+Object.entries(props).map(([k,v])=>k+': '+value(v)+';').join(' ')+' }';if(g)return {file:n.source,start:g.start,end:g.end,text:body};if(!body)return null;if(n.bodyEnd===undefined)return {file:n.source,start:n.end-1,end:n.end,text:' { '+body+' }'};return {file:n.source,start:n.bodyEnd,end:n.bodyEnd,text:'\n    '+body+'\n'};}
+function contentCommit(ws,b,edits,extra={}){const files=ws.getFiles(),next={...extra},by=new Map();for(const e of edits.filter(Boolean)){if(!by.has(e.file))by.set(e.file,[]);by.get(e.file).push(e);}for(const [file,list]of by){let text=files[file];for(const e of list.sort((a,b)=>b.start-a.start))text=text.slice(0,e.start)+e.text+text.slice(e.end);const ts=D.lex(text,file);if(ts[0]?.value==='ddn'&&ts[1]?.value!=='0.7')text=text.slice(0,ts[1].start)+'"0.7"'+text.slice(ts[1].end);next[file]=text;}return ws.commitFiles(next,{expectedRevision:ws.revision,entry:b.ir.entry,view:b.ir.view.id});}
 api.authoring={
+ columnLayout(ws,entry,view,id){const b=build(ws,entry,view),n=find(b,id),g=n.children.find(c=>c.group&&c.type==='columns');return g?g.children.map(c=>({id:c.type,...clone(c.props)})):null;},
+ setColumnLayout(ws,entry,view,id,columns){
+  const b=build(ws,entry,view),n=find(b,id);if(n.type!=='object')fail('DDN-E001','Column layout targets an element.');
+  if(columns!==null&&(!Array.isArray(columns)||columns.length>32))fail('DDN-CL01','Column layout needs at most 32 column records or null.');
+  const seen=new Set();for(const col of columns||[]){idOK(col.id);if(seen.has(col.id))fail('DDN-CL01','Duplicate column ID');seen.add(col.id);if(Object.keys(col).some(k=>!['id','label','path','width','min_chars','max_chars','visibility'].includes(k)))fail('DDN-CL01','Unknown column setting');}
+  const group=n.children.find(c=>c.group&&c.type==='columns'),body=columns===null?'':'columns { '+columns.map(({id,...props})=>id+' { '+Object.entries(props).map(([k,v])=>k+': '+value(v)+';').join(' ')+' }').join(' ')+' }';
+  if(!group&&!body)return ws.revision;
+  const edit=group?{file:n.source,start:group.start,end:group.end,text:body}:n.bodyEnd!==undefined?{file:n.source,start:n.bodyEnd,end:n.bodyEnd,text:' '+body+' '}:{file:n.source,start:n.end-1,end:n.end,text:' { '+body+' }'};
+  return apply(ws,b,[edit],entry,view);
+ },
+ setComposition(ws,entry,view,id,props,{scope='appearance'}={}){
+  const b=build(ws,entry,view);if(!['appearance','element'].includes(scope))fail('DDN-CE01','Composition scope must be appearance or element');if(props!==null)D.documents.composition(props,{},true);
+  const n=find(b,modelId(b,id));if(n.type==='relation')fail('DDN-CE01','Relations do not have element sections');
+  if(scope==='element'){const g=n.children.find(c=>c.group&&c.type==='composition');return contentCommit(ws,b,[contentGroup(n,'composition',props===null?null:{...g?.props,...props})]);}
+  const pl=placement(b,id);if(pl){const g=pl.children.find(c=>c.group&&c.type==='composition');return contentCommit(ws,b,[contentGroup(pl,'composition',props===null?null:{...g?.props,...props})]);}
+  if(props===null)return ws.revision;const v=b.viewNode;return contentCommit(ws,b,[{file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    place '+value(occurrenceRef(b,id))+' { composition { '+Object.entries(props).map(([k,v])=>k+': '+value(v)+';').join(' ')+' } }\n'}]);
+ },
+ setDocument(ws,entry,view,id,input,{file,documentId}={}){
+  const b=build(ws,entry,view),n=find(b,modelId(b,id));if(n.type==='relation')fail('DDN-NT01','Only elements have document content');
+  if(input===null)return contentCommit(ws,b,[contentGroup(n,'document',null)]);
+  const d=D.documents.document(input);const old=n.children.find(c=>c.group&&c.type==='document');
+  if(file===undefined&&old?.props.file){file=api.resolvePath(n.source,old.props.file);documentId=old.props.id;}
+  if(file!==undefined&&file!==null){api.pathChecked(file);if(!/\.ddnn$/i.test(file))fail('DDN-NT01','Document storage needs .ddnn');if(typeof documentId!=='string'||!documentId)fail('DDN-NT01','Choose a stable document ID');const files=ws.getFiles(),side=files[file]?D.documents.read(files[file]):{format:'ddnn@1',documents:{}};
+   const current=old?.props.file&&api.resolvePath(n.source,old.props.file)===file&&old.props.id===documentId;
+   if(Object.hasOwn(side.documents,documentId)&&!current)fail('DDN-NT01','Document ID already exists; reference it explicitly instead of overwriting');
+   side.documents[documentId]=d;const text=JSON.stringify(side,null,2)+'\n';D.documents.read(text);
+   return contentCommit(ws,b,[contentGroup(n,'document',{file:api.relative(n.source,file),id:documentId})],{[file]:text});
+  }
+  return contentCommit(ws,b,[contentGroup(n,'document',d)]);
+ },
+
  setMatrixCell(ws,entry,view,row,column,newValue,options={}){if(!options||typeof options!=='object'||Array.isArray(options)||Object.keys(options).some(k=>!['remove','id'].includes(k))||options.remove!==undefined&&typeof options.remove!=='boolean')fail('DDN-E007','Matrix edit options require a boolean remove flag and optional id');return this.setMatrixCells(ws,entry,view,[{row,column,...(options.remove?{remove:true}:{value:newValue}),...(options.id?{id:options.id}:{})}]);},
  setMatrixCells(ws,entry,view,changes){
   const b=build(ws,entry,view),p=b.ir.view.profiles.projection,v=b.viewNode,files=ws.getFiles();
@@ -231,7 +284,7 @@ api.authoring={
   const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];
   const node=v.children.find(n=>n.type==='frame'&&n.id===frameId);
   if(!node)fail('DDN-E002','Frame not found in this view: '+frameId);
-  const members=memberUids.map(uid=>({$ref:refFor(b,v.doc,uid)}));
+  const members=memberUids.map(uid=>b.ir.view.occurrences?occurrenceRef(b,uid):{$ref:refFor(b,v.doc,uid)});
   return apply(ws,b,[property(text,node,'members',members)],entry,view);
  },
  /* Designer phase 5 (CMMN outline "add stage"): insert a frame child into the
@@ -248,7 +301,7 @@ api.authoring={
   const q=x=>({$quantity:Math.round(x*1000)/1000,unit:'px'});
   const geom=(key,pair)=>{if(pair===undefined)return'';if(!Array.isArray(pair)||pair.length!==2||!pair.every(Number.isFinite))fail('DDN-E001',key+' is a pair of finite pixel numbers.');return' '+key+': '+value([q(pair[0]),q(pair[1])])+';';};
   const scope=scopeUid?refFor(b,v.doc,scopeUid):null;
-  const members=(memberUids||[]).map(uid=>'@'+refFor(b,v.doc,uid));
+  const members=(memberUids||[]).map(uid=>b.ir.view.occurrences?value(occurrenceRef(b,uid)):'@'+refFor(b,v.doc,uid));
   const code='frame '+id+' '+JSON.stringify(name||id)+' {'+(scope?' scope: @'+scope+';':'')+' members: ['+members.join(', ')+'];'+geom('at',at)+geom('size',size)+' }';
   return apply(ws,b,[{file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    '+code+'\n'}],entry,view);
  },
@@ -437,9 +490,49 @@ api.authoring={
   if(!['select','exclude','data'].includes(key))fail('DDN-E001','View list writes target select, exclude or data (got '+key+').');
   if(uids!==null&&!Array.isArray(uids))fail('DDN-E001','View list writes need a uid array (or null to remove).');
   const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source];
-  return apply(ws,b,[property(text,v,key,uids===null?undefined:uids.map(uid=>({$ref:refFor(b,v.doc,uid)})))],entry,view);
+  return apply(ws,b,[property(text,v,key,uids===null?undefined:uids.map(uid=>key==='data'?{$ref:refFor(b,v.doc,uid)}:(()=>{try{return occurrenceRef(b,uid);}catch{return {$ref:refFor(b,v.doc,uid)};}})()))],entry,view);
  },
  value,
+ renameDefinition(ws,entry,view,id,newId){
+  idOK(newId);const b=build(ws,entry,view),n=find(b,id);if(!['object','field','relation'].includes(n.type))fail('DDN-E006','Rename targets element, field or relation definitions');if(n.id===newId)return ws.revision;
+  const files=ws.getFiles(),edits=[],seen=new Set(),depth=n.path.split('.').length;
+  const tokens=D.lex(files[n.source],n.source).filter(t=>t.start>=n.start&&t.end<=(n.bodyStart??n.end));const token=tokens.find((t,i)=>t.type==='id'&&t.value===n.id&&(i>0||n.type==='field'));
+  if(!token)fail('DDN-E001','Cannot locate definition identifier');edits.push({file:n.source,start:token.start,end:token.end,text:newId});
+  for(const file of Object.keys(files)){if(!/\.ddna?(?:\.ddn)?$/.test(file))continue;
+   const world=D.createWorkspace(files,file,D.typedKindWords(assets.registry),D.relationKindWords(assets.registry));
+   const visit=(raw,parent)=>{const node=raw.doc?raw:parent;
+    const inspect=value=>{if(!value||typeof value!=='object')return;if(value.$ref){
+     const key=node.source+':'+value.$offset;if(seen.has(key))return;seen.add(key);
+     let target;try{target=world.resolve(value,node,true);}catch{return;}
+     if(target.source!==n.source||!(target.path===n.path||target.path.startsWith(n.path+'.')))return;
+     const parts=value.$ref.split('.'),index=parts.length-(target.path.split('.').length-depth)-1;
+     if(parts[index]!==n.id)fail('DDN-E001','Cannot safely rewrite reference '+value.$ref);parts[index]=newId;
+     const start=value.$offset+1,end=start+value.$ref.length;if(files[node.source].slice(start,end)!==value.$ref)fail('DDN-E001','Reference source span changed');edits.push({file:node.source,start,end,text:parts.join('.')});return;
+    }if(Array.isArray(value))value.forEach(inspect);else for(const v of Object.values(value))inspect(v);};
+    inspect(raw.props);inspect(raw.from);inspect(raw.to);inspect(raw.target);
+    for(const child of raw.children||[])visit(child,node);
+   };
+   for(const doc of world.docs.values())for(const node of doc.declarations||[])visit(node,node);
+  }
+  // Declarative DDNA targets are schema-defined strings, not DDN @references.
+  // Resolve only companions explicitly associated with the renamed base file.
+  const docs=new Map(Object.entries(files).filter(([file])=>/\.ddna?(?:\.ddn)?$/.test(file)).map(([file,text])=>[file,D.parse(text,file)]));
+  for(const [file,doc] of docs){if(!/\.ddna(?:\.ddn)?$/.test(file))continue;const bases=new Set();
+   for(const [owner,base] of docs)for(const container of base.declarations.filter(x=>x.type==='architecture')){
+    const paths=(container.props.files||[]).filter(x=>typeof x==='string').map(x=>api.resolvePath(owner,x));
+    if(paths.includes(file)){bases.add(owner);for(const path of paths)if(path!==file&&docs.has(path))bases.add(path);}
+   }
+   if(!bases.has(n.source))continue;
+   const visit=raw=>{if(raw.props?.x_profile?.nodes){const span=propSpan(files[file],raw,'x_profile'),tokens=D.lex(files[file],file).filter(t=>t.start>=span.start&&t.end<=span.end);
+    for(let i=0;i<tokens.length-2;i++)if(tokens[i].value==='target'&&tokens[i+1].type===':'&&tokens[i+2].type==='string'){
+     const token=tokens[i+2],target=token.value,qualified=target===n.doc.module+'::'+n.path,local=target===n.path;if(!qualified&&!local)continue;
+     if(local){let matches=0;for(const path of bases){const base=docs.get(path);for(const section of base?.sections||[base]){const walk=(node,prefix)=>{const full=prefix?prefix+'.'+node.id:node.id;if(node.type==='object'&&full===target)matches++;for(const child of node.children||[])walk(child,full);};for(const node of section?.declarations||[])if(node.type==='data')walk(node,'');}}if(matches!==1)fail('DDN-E001','Ambiguous declarative target '+target+'; qualify it before renaming');}
+     const next=n.path.split('.');next[next.length-1]=newId;edits.push({file,start:token.start,end:token.end,text:JSON.stringify((qualified?n.doc.module+'::':'')+next.join('.'))});
+    }
+   }for(const child of raw.children||[])visit(child);};for(const node of doc.declarations)visit(node);
+  }
+  return apply(ws,b,edits,entry,view);
+ },
  setLabel(ws,entry,view,id,label){if(typeof label!=='string'||label.length>4096)fail('DDN-E001','Label must be text up to 4096 characters.');const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[labelEdit(ws.getFiles()[n.source],n,label)],entry,view);},
  setProperty(ws,entry,view,id,key,v){idOK(key);const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[property(ws.getFiles()[n.source],n,key,v)],entry,view);},
  /* Designer phase 4 (spec 05 descriptor-driven forms): generic batch property
@@ -493,10 +586,10 @@ api.authoring={
   }
   for(const [id,hint]of Object.entries(routes||{})){
    if(!hint||typeof hint!=='object'||Array.isArray(hint))fail('DDN-E001','Route hints need a {routing, curve?} record.');
-   const ref=refFor(b,v.doc,id);
-   const node=v.children.find(n=>n.type==='route'&&(()=>{try{return b.workspace.resolve(n.target,n).uid===id;}catch{return false;}})());
+   const ref=value(occurrenceRef(b,id)).slice(1);
+   const node=v.children.find(n=>n.type==='route'&&targetId(b,n)===id);
    if(node)for(const [key,val]of Object.entries(hint))edits.push(property(text,node,key,val));
-   else edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    route @'+ref+' {\n        '+Object.entries(hint).map(([k,x])=>k+': '+value(x)+';').join('\n        ')+'\n    }\n'});
+   else edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    route @'+ref+' {\n        '+Object.entries(hint).filter(([,x])=>x!==undefined).map(([k,x])=>k+': '+value(x)+';').join('\n        ')+'\n    }\n'});
   }
   if(presentation!==undefined)edits.push(property(text,v,'x_tool_presentation',presentation===null?undefined:presentation));
   return apply(ws,b,edits,entry,view);
@@ -693,10 +786,103 @@ api.authoring={
   if(!edits.length)return ws.revision;
   return apply(ws,b,edits,entry,view);
  },
- pin(ws,entry,view,id,x,y){if(!['graph'].includes(ws.resolve(entry,view).view.profiles.projection?.kind||'graph'))fail('DDN-E006','This view uses data-bound coordinates; edit the underlying values rather than pinning a mark.');if(!Number.isFinite(x)||!Number.isFinite(y)||Math.abs(x)>1e7||Math.abs(y)>1e7)fail('DDN-E001','Position must be finite, bounded world coordinates.');const b=build(ws,entry,view),v=b.viewNode,ref=refFor(b,v.doc,id),pl=v.children.find(n=>n.type==='place'&&b.workspace.resolve(n.target,n).uid===id),at=[{$quantity:Math.round(x*1000)/1000,unit:'px'},{$quantity:Math.round(y*1000)/1000,unit:'px'}];const edit=pl?property(ws.getFiles()[pl.source],pl,'at',at):{file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    place @'+ref+' { at: '+value(at)+'; }\n'};return apply(ws,b,[edit],entry,view);},
- unpin(ws,entry,view,id){const b=build(ws,entry,view),v=b.viewNode,pl=v.children.find(n=>n.type==='place'&&b.workspace.resolve(n.target,n).uid===id);if(!pl||pl.props.at===undefined)return false;const e=Object.keys(pl.props).length===1?{file:pl.source,start:pl.start,end:pl.end,text:''}:property(ws.getFiles()[pl.source],pl,'at',undefined);return apply(ws,b,[e],entry,view);},
- hide(ws,entry,view,id){const b=build(ws,entry,view),v=b.viewNode,ref=refFor(b,v.doc,id),list=v.props.exclude||[];if(list.some(r=>b.workspace.resolve(r,v).uid===id))return false;return apply(ws,b,[property(ws.getFiles()[v.source],v,'exclude',[...list,{$ref:ref}])],entry,view);},
- addElement(ws,entry,view,{id,name,kind='object'}){idOK(id);if(!api.kinds.some(k=>k.id===kind))fail('DDN-E001','Unknown object kind.');return addLocal(ws,entry,view,'object '+id+' '+JSON.stringify(name||id)+' { kind: '+JSON.stringify(kind)+'; }',id);},
+ pin(ws,entry,view,id,x,y){if(!['graph'].includes(ws.resolve(entry,view).view.profiles.projection?.kind||'graph'))fail('DDN-E006','This view uses data-bound coordinates; edit the underlying values rather than pinning a mark.');if(!Number.isFinite(x)||!Number.isFinite(y)||Math.abs(x)>1e7||Math.abs(y)>1e7)fail('DDN-E001','Position must be finite, bounded world coordinates.');const b=build(ws,entry,view),v=b.viewNode,ref=value(occurrenceRef(b,id)).slice(1),pl=placement(b,id),at=[{$quantity:Math.round(x*1000)/1000,unit:'px'},{$quantity:Math.round(y*1000)/1000,unit:'px'}];const edit=pl?property(ws.getFiles()[pl.source],pl,'at',at):{file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    place @'+ref+' { at: '+value(at)+'; }\n'};return apply(ws,b,[edit],entry,view);},
+ unpin(ws,entry,view,id){const b=build(ws,entry,view),v=b.viewNode,pl=placement(b,id);if(!pl||pl.props.at===undefined)return false;const e=Object.keys(pl.props).length===1&&!pl.children.length?{file:pl.source,start:pl.start,end:pl.end,text:''}:property(ws.getFiles()[pl.source],pl,'at',undefined);return apply(ws,b,[e],entry,view);},
+ /* Explicit appearance commands keep every edit in one validated transaction. */
+ occurrences(ws,entry,view){const b=build(ws,entry,view);return b.ir.view.occurrences||{version:1,elements:b.ir.view.selected.map(id=>({id,source:id,number:1})),relations:b.ir.view.relations.map(id=>{const r=b.ir.relations.find(r=>r.id===id);return {id,source:id,number:1,from:r.from.element,to:r.to.element};})};},
+ addOccurrence(ws,entry,view,id,options={}){
+  const b=build(ws,entry,view),v=b.viewNode;graphOccurrences(b);const source=modelId(b,id);
+  if(!b.ir.elements.some(e=>e.id===source))fail('DDN-E002','Choose an element in the view data scope.');
+  const refs=Array.isArray(v.props.select)?v.props.select:b.ir.elements.map(e=>({$ref:refFor(b,v.doc,e.id)}));
+  const number=options.number??nextOccurrence(b,source,[...refs,...(v.props.exclude||[])]);
+  if(!Number.isSafeInteger(number)||number<2)fail('DDN-OC01','A new occurrence number must be an integer >= 2.');
+  const oid=D.occurrenceId(b.ir.view.id,source,number);
+  if((b.ir.view.occurrences?.elements||[]).some(o=>o.id===oid))fail('DDN-OC02','This occurrence already exists.');
+  const ref={$ref:refFor(b,v.doc,source),$occ:number},edits=[],text=ws.getFiles()[v.source];
+  if(!refs.some(r=>b.workspace.resolve(r,v,true).uid===source&&(r.$occ??1)===number))edits.push(property(text,v,'select',[...refs,ref]));
+  if(v.props.exclude){const filtered=v.props.exclude.flatMap(r=>{if(b.workspace.resolve(r,v,true).uid!==source)return [r];if(r.$occ===number)return [];if(r.$occ!==undefined)return [r];return refs.filter(x=>b.workspace.resolve(x,v,true).uid===source&&(x.$occ??1)!==number).map(x=>({...x,$occ:x.$occ??1}));});if(JSON.stringify(filtered)!==JSON.stringify(v.props.exclude))edits.push(property(text,v,'exclude',filtered));}
+  if(options.x!==undefined||options.y!==undefined){if(!Number.isFinite(options.x)||!Number.isFinite(options.y)||Math.max(Math.abs(options.x),Math.abs(options.y))>1e7)fail('DDN-E001','Position must contain finite bounded x and y.');edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    place '+value(ref)+' { at: '+value([{$quantity:options.x,unit:'px'},{$quantity:options.y,unit:'px'}])+'; }\n'});}
+  const revision=apply(ws,b,edits,entry,view);return {revision,occurrenceId:oid,sourceId:source,number};
+ },
+ addRelationOccurrence(ws,entry,view,id,{from,to,number}={}){
+  const b=build(ws,entry,view),v=b.viewNode;graphOccurrences(b);const source=modelId(b,id);
+  if(!b.ir.relations.some(r=>r.id===source))fail('DDN-E002','Choose a relation in the view data scope.');
+  const refs=v.props.show||[];number=number??nextOccurrence(b,source,[...refs,...(v.props.hide||[])]);
+  if(!Number.isSafeInteger(number)||number<2)fail('DDN-OC01','A new relation occurrence number must be an integer >= 2.');
+  const oid=D.occurrenceId(b.ir.view.id,source,number);if((b.ir.view.occurrences?.relations||[]).some(o=>o.id===oid))fail('DDN-OC02','This relation occurrence already exists.');
+  const ref={$ref:refFor(b,v.doc,source),$occ:number},text=ws.getFiles()[v.source],edits=[property(text,v,'show',[...refs,ref])];
+  if(v.props.hide){const known=[{$ref:ref.$ref,$occ:1},...refs.filter(r=>b.workspace.resolve(r,v,true).uid===source)];const hidden=v.props.hide.flatMap(r=>{if(b.workspace.resolve(r,v,true).uid!==source)return [r];if(r.$occ===number)return [];if(r.$occ!==undefined)return [r];return known.filter(x=>(x.$occ??1)!==number).map(x=>({...x,$occ:x.$occ??1}));});if(JSON.stringify(hidden)!==JSON.stringify(v.props.hide))edits.push(property(text,v,'hide',hidden));}
+  // Both ends are explicit: the author never gets a guessed connector copy.
+  const f=occurrenceRef(b,from,true),t=occurrenceRef(b,to,true);
+  edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    route '+value(ref)+' { from: '+value(f)+'; to: '+value(t)+'; }\n'});
+  const revision=apply(ws,b,edits,entry,view);return {revision,occurrenceId:oid,sourceId:source,number};
+ },
+ occurrencePresentation(ws,entry,view,id){const b=build(ws,entry,view);return clone(placement(b,id)?.props||{});},
+ setOccurrencePresentation(ws,entry,view,id,props){
+  const b=build(ws,entry,view),v=b.viewNode;graphOccurrences(b);const o=occurrence(b,id),isRelation=b.ir.relations.some(r=>r.id===o.source),type=isRelation?'route':'place';
+  const allowed=isRelation?['line']:['fill','opacity','text','stroke','text_fit','max_width','max_height','min_font','marks','size'];
+  if(!props||typeof props!=='object'||Array.isArray(props)||Object.keys(props).some(k=>!allowed.includes(k)))fail('DDN-OC01','Unsupported occurrence presentation property.');
+  if(props.size!==undefined&&props.size!==null&&(!Array.isArray(props.size)||props.size.length!==2||props.size.some(v=>!Number.isFinite(D.quantity(v,NaN))||D.quantity(v,NaN)<=0||D.quantity(v,NaN)>50000)))fail('DDN-OC01','Occurrence size must be two positive bounded lengths.');
+  const n=v.children.find(n=>n.type===type&&targetId(b,n)===id),text=ws.getFiles()[v.source],edits=[];
+  const render=(k,x)=>['text','stroke','line'].includes(k)?k+' { '+Object.entries(x).map(([p,v])=>p+': '+value(v)+';').join(' ')+' }':k+': '+value(x)+';';
+  if(!n){const body=Object.entries(props).filter(([,x])=>x!==undefined&&x!==null).map(([k,x])=>render(k,x)).join(' ');if(body)edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    '+type+' '+value(occurrenceRef(b,id))+' { '+body+' }\n'});}
+  else for(const [k,x]of Object.entries(props)){
+   if(['text','stroke','line'].includes(k)){const child=n.children.find(c=>c.group&&c.type===k);const code=x==null?'':render(k,x);if(child)edits.push({file:n.source,start:child.start,end:child.end,text:code});else if(code)edits.push({file:n.source,start:n.bodyEnd,end:n.bodyEnd,text:' '+code+' '});}
+   else edits.push(property(text,n,k,x===null?undefined:x));
+  }
+  return edits.filter(Boolean).length?apply(ws,b,edits,entry,view):ws.revision;
+ },
+ hide(ws,entry,view,id){
+  const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source],o=occurrence(b,id),isRelation=b.ir.relations.some(r=>r.id===o.source);
+  // Legacy views keep the old syntax; occurrence-aware views address one copy.
+  const explicit=!!b.ir.view.occurrences||isRelation,ref=occurrenceRef(b,id,explicit),key=isRelation?'hide':'exclude',list=v.props[key]||[],edits=[];
+  if(list.some(r=>b.workspace.resolve(r,v,true).uid===o.source&&(r.$occ===undefined||(r.$occ??1)===o.number)))return false;
+  edits.push(property(text,v,key,[...list,ref]));
+  const runs=b.ir.view.occurrences?.relations||b.ir.view.relations.map(id=>{const r=b.ir.relations.find(r=>r.id===id);return {id,source:id,number:1,from:r.from.element,to:r.to.element};});
+  const affected=isRelation?[]:runs.filter(r=>r.from===id||r.to===id);
+  if(affected.length&&explicit){const hidden=[...(v.props.hide||[])];for(const r of affected)if(!hidden.some(h=>b.workspace.resolve(h,v,true).uid===r.source&&(h.$occ===undefined||h.$occ===r.number)))hidden.push({$ref:refFor(b,v.doc,r.source),$occ:r.number});edits.push(property(text,v,'hide',hidden));}
+  for(const n of v.children){if((n.type==='place'&&targetId(b,n)===id)||(n.type==='route'&&(targetId(b,n)===id||affected.some(r=>r.id===targetId(b,n)))))edits.push({file:n.source,start:n.start,end:n.end,text:''});
+   if(n.type==='frame'&&n.props.members){const members=n.props.members.filter(r=>D.occurrenceId(b.ir.view.id,b.workspace.resolve(r,n,true).uid,r.$occ??1)!==id);if(members.length!==n.props.members.length)edits.push(property(text,n,'members',members));}
+  }
+  return apply(ws,b,edits,entry,view);
+ },
+ creationDestinations(ws){
+  const out=[];
+  for(const [file,text] of Object.entries(ws.getFiles())){
+   if(!file.endsWith('.ddn')||/\.ddna\.ddn$/.test(file))continue;
+   let doc;try{doc=D.parse(text,file);}catch{continue;}
+   for(const section of doc.sections||[{module:doc.module,declarations:doc.declarations}])for(const n of section.declarations||[])if(n.type==='data')out.push({file,module:section.module,block:n.id});
+  }
+  return out.sort((a,b)=>a.file.localeCompare(b.file)||a.module.localeCompare(b.module)||a.block.localeCompare(b.block));
+ },
+ addElement(ws,entry,view,{id,name,kind='object',destination}){
+  idOK(id);if(!api.kinds.some(k=>k.id===kind))fail('DDN-E001','Unknown object kind.');
+  const code='object '+id+' '+JSON.stringify(name||id)+' { kind: '+JSON.stringify(kind)+'; }';
+  if(!destination)return addLocal(ws,entry,view,code,id);
+  const b=build(ws,entry,view),v=b.viewNode,files=ws.getFiles(),dest=destination;
+  if(!dest||typeof dest!=='object'||!api.authoring.creationDestinations(ws).some(d=>d.file===dest.file&&d.module===dest.module&&d.block===dest.block))fail('DDN-E001','Choose an existing writable data block.');
+  const doc=D.parse(files[dest.file],dest.file),sections=doc.sections||[{module:doc.module,declarations:doc.declarations}],section=sections.find(s=>s.module===dest.module),data=section.declarations.find(n=>n.type==='data'&&n.id===dest.block);
+  if(data.children.some(n=>n.id===id))fail('DDN-E001','An identity with this name already exists in the destination.');
+  const edits=[{file:dest.file,start:data.bodyEnd,end:data.bodyEnd,text:'\n    '+code+'\n'}];
+  let prefix='';
+  if(dest.file===v.source){if(dest.module!==v.doc.module)prefix=dest.module+'.';}
+  else{
+   // Reuse a direct import when possible; otherwise add a collision-free alias.
+   const imports=[...v.doc.file.imported.entries()];
+   const existing=imports.find(([,d])=>d.source===dest.file||d.name===dest.file);
+   if(existing)prefix=existing[0]+'.';
+   else{
+    const used=new Set([...imports.map(([a])=>a),...v.doc.declarations.map(d=>d.id)]);let alias='created_model',i=2;while(used.has(alias))alias='created_model_'+i++;
+    const at=D.lex(files[v.source],v.source).find(t=>t.type==='id'&&t.value==='module').start;
+    edits.push({file:v.source,start:at,end:at,text:'import '+JSON.stringify(api.relative(v.source,dest.file))+' as '+alias+';\n'});prefix=alias+'.';
+   }
+   if(section!==sections[0])prefix+=dest.module+'.';
+  }
+  const dataRef=prefix+dest.block,objectRef=dataRef+'.'+id,old=Array.isArray(v.props.data)?v.props.data:v.props.data?[v.props.data]:[];
+  if(!old.some(r=>r.$ref===dataRef))edits.push(property(files[v.source],v,'data',[...old,{$ref:dataRef}]));
+  if(v.props.select||!old.some(r=>r.$ref===dataRef))edits.push(property(files[v.source],v,'select',[...(v.props.select||b.ir.view.selected.map(uid=>({$ref:refFor(b,v.doc,uid)}))),{$ref:objectRef}]));
+  return apply(ws,b,edits,entry,view);
+ },
  addField(ws,entry,view,parentId,{id,name}){idOK(id);const b=build(ws,entry,view),n=find(b,parentId),fields=n.children.find(g=>g.group&&g.type==='fields');const code='field '+id+(name?' '+JSON.stringify(name):'')+';';let edit;if(fields)edit={file:n.source,start:fields.bodyEnd,end:fields.bodyEnd,text:'\n        '+code+'\n    '};else if(n.bodyEnd!==undefined)edit={file:n.source,start:n.bodyEnd,end:n.bodyEnd,text:'\n    fields { '+code+' }\n'};else edit={file:n.source,start:n.end-1,end:n.end,text:' { fields { '+code+' } }'};return apply(ws,b,[edit],entry,view);},
  addRelation(ws,entry,view,{id,name,kind='assoc',from,to}){
   idOK(id);if(!api.relations.some(k=>k.id===kind))fail('DDN-E001','Unknown relationship kind.');
@@ -715,9 +901,11 @@ api.authoring={
    if(lg)extra.push(property(ws.getFiles()[v.source],lg,'keys',keys));
    else extra.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    legend {\n        keys: '+value(keys)+';\n    }\n'});
   }
+  const fromOcc=b.ir.view.occurrences?.elements.find(o=>o.id===from),toOcc=b.ir.view.occurrences?.elements.find(o=>o.id===to);
+  if(fromOcc?.number>1||toOcc?.number>1)extra.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    route @editor_data.'+id+' { from: '+value(occurrenceRef(b,from,true))+'; to: '+value(occurrenceRef(b,to,true))+'; }\n'});
   return addLocal(ws,entry,view,'relation '+id+' '+JSON.stringify(name||id)+' @'+src+' -> @'+dst+' { kind: '+JSON.stringify(kind)+'; }',undefined,extra);
  },
- deleteDefinition(ws,entry,view,id){const b=build(ws,entry,view),n=find(b,id),files=ws.getFiles();let references=0;for(const d of b.workspace.docs.values())for(const t of D.lex(files[d.source],d.source))if(t.type==='@'&&(d.source!==n.source||t.start<n.start||t.start>=n.end)){
+ deleteDefinition(ws,entry,view,id){const b=build(ws,entry,view),n=find(b,id),files=ws.getFiles();id=n.uid;let references=0;for(const d of b.workspace.docs.values())for(const t of D.lex(files[d.source],d.source))if(t.type==='@'&&(d.source!==n.source||t.start<n.start||t.start>=n.end)){
   // Resolve complete reference against its indexed lexical owner.
   const owner=[...b.workspace.symbols.values()].filter(x=>x.source===d.source&&x.start<=t.start&&x.end>=t.end).sort((a,b)=>(a.end-a.start)-(b.end-b.start))[0];if(!owner)continue;
   const tail=files[d.source].slice(t.end).match(/^[A-Za-z_][A-Za-z0-9_-]*(?:\.[A-Za-z_][A-Za-z0-9_-]*)*/);if(tail)try{const target=b.workspace.resolve({$ref:tail[0]},owner);if(target.uid===id||target.uid.startsWith(id+'.'))references++;}catch{}
@@ -761,7 +949,7 @@ api.authoring={
   for(const id of ids){
    const p=positions[id];
    if(!p||!Number.isFinite(p.x)||!Number.isFinite(p.y)||Math.abs(p.x)>1e7||Math.abs(p.y)>1e7)fail('DDN-E001','Positions must be finite, bounded world coordinates.');
-   const ref=refFor(b,v.doc,id),pl=v.children.find(n=>n.type==='place'&&b.workspace.resolve(n.target,n).uid===id);
+   const ref=value(occurrenceRef(b,id)).slice(1),pl=placement(b,id);
    const at=[{$quantity:Math.round(p.x*1000)/1000,unit:'px'},{$quantity:Math.round(p.y*1000)/1000,unit:'px'}];
    edits.push(pl?property(files[pl.source],pl,'at',at):{file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    place @'+ref+' { at: '+value(at)+'; }\n'});
   }

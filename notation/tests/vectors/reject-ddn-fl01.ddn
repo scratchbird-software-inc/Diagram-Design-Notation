@@ -1,0 +1,4 @@
+ddn "0.6";
+module "ddn.vectors.badwrap";
+data m { object t { kind: table; text_wrap: invalid; } }
+view main { data: [@m]; }

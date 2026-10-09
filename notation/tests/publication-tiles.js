@@ -1,0 +1,13 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later. Client-side pages and continuations. */
+'use strict';const assert=require('node:assert/strict'),T=require('../tool/src/tiles.js');
+let passed=0,total=0;function test(n,f){total++;try{f();passed++;console.log('PASS',n);}catch(e){process.exitCode=1;console.error('FAIL',n,e.stack);}}
+const scene={width:1200,height:600,scale:1,origin:[0,0],routes:[{id:'edge',points:[[100,100],[1100,100]]}]};
+test('row-major pages cover the drawing without dropping right/bottom slivers',()=>{const p=T.plan({...scene,width:1201,height:601},{width:600,height:300});assert.equal(p.pages.length,9);assert.equal(p.pages.at(-1).x,1200);assert.equal(p.pages.at(-1).y,600);});
+test('binary route creates paired continuation links',()=>{const p=T.plan(scene,{width:600,height:600});assert.equal(p.pages[0].continuations[0].to,2);assert.equal(p.pages[1].continuations[0].to,1);assert.equal(p.pages[0].continuations[0].label,p.pages[1].continuations[0].label);});
+test('route continuation uses rendered scene origin and scale',()=>{const p=T.plan({...scene,origin:[100,30],scale:2,routes:[{id:'edge',points:[[0,10],[400,10]]}]},{width:600,height:600});assert.equal(p.pages[0].continuations[0].y,50);});
+test('shared polyline vertex does not duplicate continuation marker',()=>{const p=T.plan({...scene,routes:[{id:'edge',points:[[10,100],[600,100],[900,100]]}]},{width:600,height:600});assert.equal(p.pages[0].continuations.length,1);});
+test('overlap reduces stride and preserves page navigation',()=>{const p=T.plan(scene,{width:600,height:600,overlap:50});assert.equal(p.pages[1].x,550);assert.equal(p.pages.length,3);});
+test('one small page needs no continuation links',()=>{const p=T.plan({width:100,height:100,routes:[]},{width:600,height:600});assert.equal(p.pages.length,1);assert.deepEqual(p.pages[0].continuations,[]);});
+test('malformed dimensions and excessive page count reject',()=>{for(const options of [{width:0},{height:NaN},{overlap:300},{width:128,height:128}])assert.throws(()=>T.plan({...scene,width:100000,height:100000},options),e=>e.code==='DDN-PG01');});
+test('page SVG escapes metadata, embeds original drawing, includes manifest',()=>{const out=T.render('<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600"><path id="art"/></svg>',{...scene,routes:[{id:'<bad&"',points:[[100,100],[1100,100]]}]},{width:600,height:600});assert.equal(Object.keys(out.files).length,3);assert.match(out.files['page-001.svg'],/href="page-002.svg"/);assert.match(out.files['page-001.svg'],/&lt;bad&amp;&quot;/);assert.match(out.files['page-001.svg'],/id="art"/);assert.equal(JSON.parse(out.files['publication.json']).pages.length,2);});
+console.log(`Publication tiles: ${passed}/${total} passed`);

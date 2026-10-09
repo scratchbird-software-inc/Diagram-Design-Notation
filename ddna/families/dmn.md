@@ -1,5 +1,8 @@
 # Family chapter — DMN 1.4 (EM-2, declarative rules)
 
+> Implementation boundary (2026-10-09): [chapter 14](../14-bounded-declarative-evaluation.md) implements DDNA-defined KEEL L0 dependency graphs and bounded unique/first/collect tables. It does not implement the DMN/FEEL family contract below.
+
+
 **Status:** full draft, 2026-09-29. Class assignment per chapter 2 §2.3.
 Analysis source: dmn.md; expression inventory expr-feel-xpath.md. Claims
 pinned to DMN 1.4 (the 1.5 drift item is chapter 12 §5).

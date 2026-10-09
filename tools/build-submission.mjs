@@ -136,7 +136,7 @@ machine-readable catalogue that the specification and the runtime share.
 | Profile relation verbs | {{registry.profileRelations}} | profiles catalogue |
 | **Total element kinds** | **{{registry.totalKinds}}** | computed |
 | **Total relation verbs** | **{{registry.totalRelations}}** | computed |
-| Shape silhouettes | {{registry.shapes}} | profiles catalogue |
+| Registered silhouette identifiers | {{registry.shapes}} | profiles catalogue |
 | Installed profiles | {{profiles.installed}} | profiles catalogue |
 | Projection kinds | {{profiles.projectionKinds}} | language choices |
 | Documented diagnostics | {{diagnostics.documentedFixes}} | diagnostic fix guide |

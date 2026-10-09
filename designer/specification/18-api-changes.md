@@ -1,5 +1,10 @@
 # Required core/API extensions and compatibility plan
 
+> Current implementation (2026-10-09): [chapter 21](21-preview-apply.md)
+> defines the shipped preview/apply adapter and bounded core draft validation.
+> Earlier proposed method names and prototype status statements below are
+> historical; they do not override that implemented contract.
+
 **DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Existing API is not enough for full visual construction
@@ -30,3 +35,14 @@ The editor adapter accepts permitted write scopes and export policies from the h
 
 ## Prototype boundary
 The provided prototype uses current `DDNLive` actions for its functioning graph subset and limited runtime views for projected samples. Storyboard dialogs illustrate proposed richer flows. They are labeled as such. Do not ship the prototype as production or treat UI controls demonstrated without a corresponding source command as implemented model features.
+
+
+## Runtime update (2026-10-09)
+
+[Chapter 21](21-preview-apply.md) specifies the implemented public preview/apply
+adapter and core draft resolver. It qualifies the start-only flow construction
+case (AUD-001) and authoritative all-view validation for adapter actions
+(AUD-008). Classification is per validator site, with only the listed flow and
+activity obligations softened. Historical prototype prefix classification is
+not the runtime contract. Existing visual controls and other profile families
+must not be assumed to use this adapter automatically.

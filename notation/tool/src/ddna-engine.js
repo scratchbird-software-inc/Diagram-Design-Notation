@@ -14,6 +14,7 @@
 'use strict';
 
 const KEEL = (typeof module === 'object' && module.exports) ? require('./ddna-keel.js') : host.DDNToolKeel;
+const DECLARATIVE = (typeof module === 'object' && module.exports) ? require('./ddna-declarative.js') : host.DDNToolDeclarative;
 const TRACE = (typeof module === 'object' && module.exports) ? require('./ddna-trace.js') : host.DDNToolDdnaTrace;
 
 const DDNA_EXECUTION_STEPS_MAX = 10000;
@@ -229,11 +230,13 @@ function engineEM4(ctx) {
 
 /* --- Engine registry: profile name → engine. Unavailable classes are coded
  * (DDN-A006), never silently stubbed. */
-const ENGINES = { em1: engineEM1, em9: engineEM9, em3: engineEM3, em4: engineEM4 };
-const ENGINE_LABELS = { em1: 'EM-1 token runtime', em9: 'EM-1 token runtime · order saga', em3: 'EM-3 lifecycle FSM', em4: 'EM-4 trace-set validation' };
+const ENGINES = { em2: DECLARATIVE.run, em1: engineEM1, em9: engineEM9, em3: engineEM3, em4: engineEM4 };
+const ENGINE_LABELS = { em2: 'EM-2 bounded KEEL L0 graphs and tables', em1: 'EM-1 token runtime', em9: 'EM-1 token runtime · order saga', em3: 'EM-3 lifecycle FSM', em4: 'EM-4 trace-set validation' };
 const KNOWN_UNAVAILABLE = { em2: 'EM-2 declarative rules', em5: 'EM-5 delegated solving', em6: 'EM-6 protocol conformance' };
 function classifyProfile(profile) {
   const name = String((profile && (profile.name || profile.id)) || '');
+  if(DECLARATIVE.supports(name))return {engine:'em2'};
+  if(/em-?2/i.test(name))return {unavailable:'em2',label:KNOWN_UNAVAILABLE.em2};
   const m2 = name.match(/em-?(\d)/i);
   if (m2 && ENGINES['em' + m2[1]]) return { engine: 'em' + m2[1] };
   if (m2 && KNOWN_UNAVAILABLE['em' + m2[1]]) return { unavailable: 'em' + m2[1], label: KNOWN_UNAVAILABLE['em' + m2[1]] };
@@ -247,7 +250,9 @@ function runEngine(engineId, ctx, meta) {
   const tracer = makeTracer(ctx.features.profile || { id: 'poc', name: 'poc', version: '0', replay: 'faithful' });
   const engine = ENGINES[engineId];
   if (!engine) return { error: 'DDN-A006', events: [], budget };
-  const result = engine({ ...ctx, tracer, budget });
+  let result;
+  try { result = engine({ ...ctx, tracer, budget }); }
+  catch(e){if(engineId!=='em2'||!/^DDN-A00[4569]$/.test(e.code||''))throw e;return {error:e.code,message:e.message,events:tracer.events,budget};}
   const doc = {
     format: 'ddna-trace@1',
     ddna: (meta && meta.ddna) || '0.1.0-draft',
@@ -255,17 +260,18 @@ function runEngine(engineId, ctx, meta) {
     base: meta && meta.base,
     semantic_profile: (tracer.profile && (tracer.profile.name || tracer.profile.id)) || 'unspecified',
     replay_mode: (tracer.profile && tracer.profile.replay) === 'verified' ? 'verified' : 'faithful',
-    time_model: { kind: 'event-stepped', id: 'TIME-A' },
+    time_model: result.timeModel || { kind: 'event-stepped', id: 'TIME-A' },
+    ...(result.execution?{execution:result.execution}:{}),
     complete: !budget.exceeded,
     events: tracer.events
   };
   return { events: tracer.events, result, budget, doc, engine: engineId };
 }
 
-/* Canonical comparison for verified replay (A007): the envelope + mapped
- * element + choices, in order. */
+/* Verified replay compares every event field, with stable record-key order. */
 function canonicalEvents(events) {
-  return (events || []).map(e => JSON.stringify([e.seq, e.stepKind, e.instance, e.state && e.state.at, e.choices || null, e.verdict === undefined ? null : String(e.verdict)]));
+  const stable=v=>Array.isArray(v)?v.map(stable):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,stable(v[k])])):v;
+  return (events || []).map(e => JSON.stringify(stable(e)));
 }
 /* verifyReplay(events, regenerate): re-runs the engine and reports the first
  * divergent event (1-based seq), or null when identical. */
@@ -274,6 +280,23 @@ function verifyReplay(events, regenerate) {
   const a = canonicalEvents(events), b = canonicalEvents(fresh);
   for (let i = 0; i < Math.max(a.length, b.length); i++) if (a[i] !== b[i]) return { diverged: true, seq: i + 1, expected: b[i], got: a[i] };
   return { diverged: false };
+}
+
+/* The bounded declarative profile verifies its envelope as well as all event
+ * values. Unsupported or partial runs can never become verified successes. */
+function verifyDeclarativeTrace(doc,ctx,meta){
+  const bad=message=>({diverged:true,code:'DDN-A007',message});
+  const check=TRACE.validateTraceDocument(doc,'verified trace');
+  if(!check.doc)return bad(check.diags[0].message);
+  const name=ctx.features?.profile?.name||ctx.features?.profile?.id;
+  if(!DECLARATIVE.supports(name)||doc.semantic_profile!==name||doc.replay_mode!=='verified'||ctx.features.profile.replay!=='verified'||doc.complete!==true)return bad('A complete trace with the matching verified semantic profile is required');
+  if(!doc.execution||doc.execution.engine!==DECLARATIVE.engineId(name)||doc.execution.engineVersion!==DECLARATIVE.VERSION||!Object.hasOwn(doc.execution,'inputs'))return bad('Matching engine stamp and recorded execution inputs are required');
+  if(doc.time_model.kind!=='data'||doc.time_model.id!=='T5'||doc.time_model.clock!=='evaluation-index')return bad('Unexpected declarative time model');
+  if(meta?.companion&&doc.companion!==meta.companion)return bad('Trace companion association differs');
+  const fresh=runEngine('em2',{...ctx,inputs:doc.execution.inputs},meta);
+  if(fresh.error||fresh.budget.exceeded)return bad('Recomputation failed: '+(fresh.message||fresh.error||fresh.budget.exceeded));
+  const result=verifyReplay(doc.events,()=>fresh.events);
+  return result.diverged?{...result,code:'DDN-A007'}:result;
 }
 
 /* engineDiagnostics(files, parseFn, isCompanion): A005 (KEEL tier above the
@@ -309,7 +332,7 @@ function engineDiagnostics(files, parseFn, isCompanion) {
 const api = {
   DDNA_EXECUTION_STEPS_MAX, DDNA_EXECUTION_INSTANCES_MAX,
   makeTracer, makeClock, makeBudget, keelEval,
-  ENGINES, ENGINE_LABELS, KNOWN_UNAVAILABLE, classifyProfile, runEngine, canonicalEvents, verifyReplay, engineDiagnostics
+  ENGINES, ENGINE_LABELS, KNOWN_UNAVAILABLE, classifyProfile, runEngine, canonicalEvents, verifyReplay, verifyDeclarativeTrace, engineDiagnostics
 };
 if (typeof module === 'object' && module.exports) module.exports = api;
 host.DDNToolDdnaEngine = api;

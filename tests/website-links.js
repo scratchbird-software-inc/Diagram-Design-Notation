@@ -26,12 +26,15 @@ function* walk(dir) {
 
 const htmlFiles = [...walk(site)].filter(p => p.endsWith('.html'));
 const external = new Set();
+// Script bodies contain generated SVG/HTML strings, not document links. Keep
+// opening tags so external script src attributes still participate in checks.
+const pageMarkup = text => text.replace(/<!--[^]*?-->/g, '').replace(/(<script\b[^>]*>)[^]*?<\/script\s*>/gi, '$1</script>');
 
 test('every relative href/src in website/**/*.html resolves to a file on disk', () => {
   const broken = [];
   for (const page of htmlFiles) {
     const text = fs.readFileSync(page, 'utf8');
-    for (const m of text.matchAll(/(?:href|src)="([^"]+)"/g)) {
+    for (const m of pageMarkup(text).matchAll(/(?:href|src)="([^"]+)"/g)) {
       const u = m[1];
       if (u.includes('${') || u.includes('`') || /[()]/.test(u)) continue; // JS template/regex inside standalone pages, not a real link
       if (/^(https?:|mailto:|data:|javascript:)/.test(u)) { external.add(u.replace(/#.*$/, '').slice(0, 120)); continue; }
@@ -52,7 +55,7 @@ test('no link escapes above website/ and no absolute local paths in website/', (
     const text = fs.readFileSync(p, 'utf8');
     if (/(file:\/\/\/|\/home\/)/.test(text)) escapes.push(path.relative(site, p) + ': contains file:/// or /home/ path');
     if (!p.endsWith('.html')) continue;
-    for (const m of text.matchAll(/(?:href|src)="([^"]+)"/g)) {
+    for (const m of pageMarkup(text).matchAll(/(?:href|src)="([^"]+)"/g)) {
       const u = m[1];
       if (u.includes('${') || u.includes('`') || /[()]/.test(u)) continue;
       if (/^(https?:|mailto:|data:|javascript:|#)/.test(u)) continue;

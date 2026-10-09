@@ -1,6 +1,6 @@
 # DDN (Diagram Design Notation) — AI Authoring Reference
 
-Single self-contained authoring specification. An AI given ONLY this file plus a natural-language diagram request must be able to produce correct, current-dialect `.ddn` source for any diagram the runtime supports. Derived entirely from the authoritative repository sources of DDN runtime **0.8.0** (`notation/runtime/*`, `notation/cli/cli.js`) and standard 0.3/0.5/0.8 (`standard/grammar/ddn.ebnf`, `standard/registry/*`, `standard/specification/51–58` for the 0.8 dialect, §14); vocabulary and property tables are machine-extracted, not paraphrased. (DDN = the open-source language and project: reference runtime, CLI, free ddn-viewer and ddn-designer. ScratchWeaver sponsors the project; ScratchRobin owns backend evaluation (KEEL) — never in scope here.)
+Self-contained authoring reference for DDN runtime **0.8.0**, derived from `notation/runtime/`, the CLI, grammar, registry and standard. Property and vocabulary tables are generated. DDN is the open notation, runtime, viewer and designer; the open tool also hosts DDNA replay, generation and bounded KEEL evaluation.
 
 <!-- generated: do not edit (counts) -->
 **Vocabulary counts (generated from the registries + runtime sources):**
@@ -9,32 +9,27 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 - Diagram profiles: **151** (`profiles/catalogue.json .profiles`)
 - Projection kinds: **12** (`graph`, `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`, `fishbone`, `decision`, `sequence`, `timing`, `geo`)
 - Endpoint marks: 12; object families: 12; relation families: 8; facets: 118; view types: 20; registered data properties: 108
-- Diagnostic codes: **504** extracted from the runtime (reference runtime + Studio `src/`)
+- Diagnostic codes: **529** extracted from the runtime (reference runtime + Studio `src/`)
 <!-- /generated (counts) -->
 
 ## 1. Purpose and the generate → check → fix loop
 
 DDN is a text notation: one or more `module` sections per file; `data` blocks hold the model (objects, fields, relations); `format` blocks hold reusable presentation profiles; `view` blocks compose data + presentation into a renderable diagram. Everything is validated by a reference implementation.
 
-**Workflow:**
-1. Decide the diagram family with the decision guide (§6); write the `.ddn` file(s) per §2–§5.
-2. Validate: `node notation/cli/cli.js check <file.ddn> --workspace <dir>` — success prints `{"status":"pass-core",...}`; failure prints one JSON diagnostic `{"code":"DDN###","message":"...","source":"...","offset":N}`.
-3. Look the code up in §9 (FIX column), fix, re-run. Iterate until clean. `render` additionally runs layout/routing/publication checks (DDN200–224, DDN-PJ060+), so **run `render` too** for graph views when feasible.
+**Workflow:** choose a family (§6), write source (§2–§5), then run `node notation/cli/cli.js check <file.ddn> --workspace <dir>`. Success is `pass-core`; failures carry a diagnostic code, message and source offset. Use §9's FIX column and repeat. Also run `render`: it checks layout/routing/publication beyond core validation.
 
-### 1.1 AI authoring rules (normative DO / DON'T — known AI failure modes)
+### 1.1 AI authoring rules (normative DO / DON'T)
 
-- DO use ONLY kind keywords, verb keywords, profile ids, property keys and enum values enumerated in §3–§5 tables. DON'T invent kinds, verbs, properties, or profiles — unknown ones fail (DDN056, DDN033, DDN046, DDN-PF001).
-- DO quote dotted profile kinds/profile ids (`kind: "c4.system";`, `profile: "chart.basic@1";`). DON'T quote core keywords (`kind: table;`).
-- DO omit properties whose default you want — omitted ≠ asserted: the runtime resolves defaults (§3.5); a property you did not write is never written into the model. DON'T restate defaults "for clarity"; it bloats source and can override a referenced bundle.
-- DO treat the §3.5 defaults table as the effective configuration of every view, and the §3.4 whitelist as the ONLY legal property keys per declaration type.
-- DO give every `view` a `data: [@…];` array (DDN041) and run both `check` and `render` before declaring done.
-- DO model chart/table/geo/timeline data as `object … { kind: record; x_record: {…} }` elements (or a `records` block), bound explicitly via `records: [@…]`.
-- DON'T write `place`/`route`/`frame`/`subdiagram` geometry in any non-graph/chen projection (DDN-PJ002) — those are data-bound.
-- DON'T guess endpoint marks: structural marks (`one`, `zeromany`, …) only on structural-family relations, and `erd.crowfoot@1` requires BOTH marks on every relation (DDN-PJ087).
-- DON'T put `import` anywhere except before the FIRST `module` header (or immediately after it, before that section's first declaration) — DDN015.
-- DON'T write prose annotations as properties; use `description:` on a view or comments (`//`) outside declarations.
-- DON'T assume a relation exists because shapes are near each other — every edge is an explicit `relation` declaration.
-- DO check profile rules in §10 BEFORE choosing participant kinds/verbs; most first-attempt failures are DDN-PF/DDN-PJ/DDN-PX.
+- Use only listed kinds, verbs, profiles, properties and enums (§3–§5); unknown values fail DDN056/033/046/PF001.
+- Quote dotted kinds/profile ids (`kind: "c4.system";`); core keywords use `kind: table;`.
+- Omit unwanted defaults: omitted ≠ asserted. Restating defaults can override a referenced bundle. §3.5 lists defaults; §3.4 lists legal keys.
+- Every ordinary view needs `data: [@…];` (DDN041). Check and render before declaring done.
+- Chart/table/geo/timeline records use `kind: record; x_record: {…}` or a `records` block, with explicit bindings.
+- Geometry (`place`/`route`/`frame`/`subdiagram`) belongs to graph/chen; other projections have data-bound coordinates (DDN-PJ002).
+- Structural endpoint marks require structural-family relations; `erd.crowfoot@1` requires BOTH marks (DDN-PJ087).
+- Imports precede declarations in the first module section (DDN015).
+- Prose goes in `description:` or comments. Edges require explicit relations, not nearby shapes.
+- Check profile participant and verb rules in §10 first.
 
 ## 2. File anatomy
 
@@ -49,7 +44,7 @@ module "shop.views";                // further sections (multi-module)
 <top-level declarations>
 ```
 
-- **Version header**: `ddn "<version>";` — accepted versions are exactly `"0.2"`, `"0.3"`, `"0.4"`, `"0.5"`, `"0.6"` (DDN012 otherwise; `"0.6"` is the DDN 0.8 dialect, see §14). Write `"0.6"` for new files that use any 0.8 feature, `"0.5"` otherwise — an 0.8 construct in a ≤0.5 file is a DDN-V04 error, and 0.6 removes nothing. `0.2` sources are accepted through a compatibility reader and add warning DDN-W012. All files are UTF-8 (reader accepts BOM and CRLF; formatter convention is LF, no BOM). A source file may be at most 2,000,000 characters (DDN001).
+- **Version header**: `ddn "<version>";` — accepted versions are exactly `"0.2"`, `"0.3"`, `"0.4"`, `"0.5"`, `"0.6"`, `"0.7"` (DDN012 otherwise; `"0.6"` is the DDN 0.8 dialect, see §14). Write `"0.6"` for new files that use any 0.8 feature, `"0.5"` otherwise — an 0.8 construct in a ≤0.5 file is a DDN-V04 error, and 0.6 removes nothing. `0.2` sources are accepted through a compatibility reader and add warning DDN-W012. All files are UTF-8 (reader accepts BOM and CRLF; formatter convention is LF, no BOM). A source file may be at most 2,000,000 characters (DDN001).
 - **Module**: `module "<id>";` — the module is a stable namespace, not a file path. Id syntax: `/^[A-Za-z0-9][A-Za-z0-9._:/-]*$/` (DDN013). Module identity must be unique across the whole workspace (DDN023). Declaration identities must be unique across sections (symbol keys are `module::path`; DDN024).
 - **Imports**: `import "<path>" as <alias>;` — file-level only. Canonical position: before the FIRST module header. Legacy position: immediately after the FIRST module header, before that section's first declaration. Both sets merge into one file-level import list; alias uniqueness applies across the merged list (DDN014). An import anywhere else is DDN015. Older runtimes reject multi-section files cleanly with DDN010. Import paths must be workspace-relative POSIX paths: no scheme (`http:`), no leading `/` or `\`, no `\`, and `..` may not escape the workspace root (DDN020).
 - **Sibling visibility**: sections of the SAME file see each other through module-qualified references (`@shop.model.model`) with no import. Importing a multi-module file imports ALL its modules; `@alias.path` resolves against each section in order; module ids may be dotted, so the resolver matches the LONGEST module-id prefix first.
@@ -120,6 +115,9 @@ format styles {
 ### 3.3 `view <id> ["label"] { … }` — the composition point
 
 A view references one or more data blocks and a presentation, adds selection and local geometry:
+
+Dialect 0.6 flat graphs support `select: [@a, @a#2, @b]`: two appearances, one model definition. Ordinals are positive safe integers; bare references mean #1. `place @a#2 {at:[400px,200px];}` moves only that copy; text/stroke/fill/opacity/marks and sizing may override its presentation. `show:[@r#2]` adds a connector run; `route @r#2 {from:@a#2;to:@b;}` targets existing endpoint appearances. No automatic edge multiplication: default runs use the lowest visible ordinal. `exclude:[@a#2]` or `hide:[@r#2]` hides one; bare targets hide all copies. Both endpoints must be visible. Qualifiers are view-only; data-driven/iso/fixed-lane/n-ary addressing rejects DDN-OC04. Other occurrence errors: DDN-OC01–03. Model fingerprints stay unchanged.
+
 
 ```text
 view overview "Title" {
@@ -231,7 +229,9 @@ Labels, reference numerals and callout badges must not overlap each other or unr
   "graticule",
   "iso",
   "depth",
-  "fiscal_year_start"
+  "fiscal_year_start",
+  "calendar",
+  "timezone"
  ],
  "notation": [
   "registry"
@@ -302,7 +302,9 @@ Labels, reference numerals and callout badges must not overlap each other or unr
   "caption",
   "embedding_scale",
   "content_scale",
-  "metrics"
+  "metrics",
+  "note_mode",
+  "tiles"
  ],
  "legend": [
   "mode",
@@ -366,6 +368,8 @@ Labels, reference numerals and callout badges must not overlap each other or unr
   "banner",
   "select",
   "exclude",
+  "show",
+  "hide",
   "description",
   "uid",
   "validation",
@@ -377,13 +381,23 @@ Labels, reference numerals and callout badges must not overlap each other or unr
   "source",
   "generator",
   "assertions",
-  "diff"
+  "diff",
+  "diff_scope"
  ],
  "place": [
   "at",
-  "size"
+  "size",
+  "fill",
+  "opacity",
+  "text_fit",
+  "max_width",
+  "max_height",
+  "min_font",
+  "marks"
  ],
  "route": [
+  "from",
+  "to",
   "via",
   "source_side",
   "target_side",
@@ -408,6 +422,7 @@ Labels, reference numerals and callout badges must not overlap each other or unr
  "frame": [
   "scope",
   "members",
+  "within",
   "at",
   "size",
   "label",
@@ -440,6 +455,7 @@ Labels, reference numerals and callout badges must not overlap each other or unr
  ]
 }
 ```
+Frames in 0.6/0.7 accept `within: @parent` in the same view. The outermost frame counts as level 1; the registry limit is 4. Cycles and deeper nesting are errors. Graph boundaries enclose child frames; `confine` rejects children that cannot fit. See standard chapter 03.
 <!-- /generated (properties) -->
 
 <!-- generated: do not edit (defaults) -->
@@ -1964,7 +1980,9 @@ Unregistered `x_*` keys: preserved with warning DDN-W103 in logical mode; error 
   "dependencies",
   "filter",
   "order",
-  "fiscal_year_start"
+  "fiscal_year_start",
+  "calendar",
+  "timezone"
  ],
  "sequence": [
   "kind",
@@ -2150,7 +2168,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- generated: do not edit (diagnostics) -->
-## 9. Diagnostics and error recovery (506 codes, machine-extracted from runtime + Studio sources; 156 carry a hand-authored FIX)
+## 9. Diagnostics and error recovery (534 codes, machine-extracted from runtime + Studio sources; 161 carry a hand-authored FIX)
 
 `check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).
 
@@ -2159,17 +2177,23 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-AS01 | error | (code selected dynamically at the raise site; no static literal message) | The assertion contradicts the resolved model — review the claim or fix the model; this is a warning, not a build failure. |
 | DDN-AS02 | error | Assertion  subject does not name a model element, field or relation in scope ( | Point the assertion subject at a model element, field or relation in scope (@id of the declaration). |
 | DDN-AS03 | error | Assertion  basis must be intended, observed, inferred, measured or verified; found<br>Assertion  confidence must be a number in [0,1]<br>Assertion  observed_at must carry an explicit Z or ±HH:MM offset for absolute instants<br>Assertion  requires a nonempty property path string<br>Assertion  requires a subject reference<br>Assertion  requires an asserted value<br>Assertion  state must be known, undecided, not_applicable or conflicting; found<br>Assertion  with basis  requires a source (evidence reference) | Fix the assertion record: subject/property/value are required; state, basis, confidence and observed_at follow the chapter-10 shapes (observed/measured/verified needs a source; absolute instants need an explicit offset). |
+| DDN-CE01 | error | Composition scope must be appearance or element<br>Duplicate or nested  group<br>Relations do not have element sections<br>Unknown composition property<br>Use document/composition groups, not properties<br>composition must be a record<br>note_height must be 48..2000 px<br>note_wrap must be auto, on or off<br>order must list table and notes once each<br>publication.note_mode must be viewport or full<br>sections must be a nonempty unique list of name, type, table, notes | - |
+| DDN-CE02 | error | 0.7parameter_mode requires ddn "0.7" | - |
+| DDN-CL01 | error | Column layout needs at most 32 column records or null.<br>Duplicate column ID<br>Duplicate column id<br>Unknown column property<br>Unknown column setting<br>columns accepts only flat column entries (name { … }) | - |
+| DDN-CL02 | error | Column minimum widths exceed the element width<br>Column width is not finite<br>Fixed column widths exceed the element width<br>column  label must be text<br>column  min_chars exceeds max_chars<br>column  must be a nonnegative number<br>column  path must be a safe dotted property binding<br>column  visibility must be shown, hidden or on_demand<br>column  width must be equal, nonnegative Nch or N% | - |
+| DDN-CL03 | error | Cannot hide the key column of a table with relation-keyed fields<br>Visibility overrides must name schema columns and contain only visibility | - |
 | DDN-CW01 | warning/info | Cubic corridor spline used to retain clearance or routing hints for | - |
-| DDN-DF01 | error | diff and data are mutually exclusive; a diff view selects nothing of its own<br>diff must name exactly two views: diff: [@viewA, @viewB] | Write diff: [@viewA, @viewB] with exactly two view references, and no data: on the same view — diff and data are mutually exclusive. |
+| DDN-DF01 | error | diff and data are mutually exclusive; a diff view selects nothing of its own<br>diff must name exactly two views: diff: [@viewA, @viewB]<br>diff_scope requires a diff view and must be model or appearance | Write diff: [@viewA, @viewB] with exactly two view references, and no data: on the same view — diff and data are mutually exclusive. |
 | DDN-DF02 | error | diff reference  does not resolve to a view in this workspace | Point both diff references at views declared in this workspace (imports included); the reference must resolve to a view, not a data block or element. |
 | DDN-DF03 | error | a diff view cannot name itself<br>diff of a view against itself is meaningless; name two different views<br>diff-of-diff is not supported; diff references must name ordinary views | Name two different ordinary views — no self-pairs, no self-reference, and no diff-of-diff. |
 | DDN-DF04 | error | diff operand  contains two elements with the identity  (from  and ); narrow the operand with select/exclude | An operand shows two elements with the same local id; narrow the view with select:/exclude: so each diff identity is unique. |
-| DDN-E001 | error | A declaration cannot move before itself.<br>A declaration move needs a definition id and the declaration it moves before.<br>A frame label is non-empty text.<br>Data block name is required.<br>Extension properties are x_* records (got<br>Extension writes need a record, or undefined to remove.<br>Fields reparent under an object or a field.<br>Frame identifier already exists in this view:<br>Kind conversion refused:  carries content-bearing extensions () whose semantics are kind-bound; migrate them by hand.<br>Kind conversion would drop extension properties: . Re-run with dropExtensions:true after listing the loss to the user.<br>Label must be text up to 4096 characters.<br>Numeral writes carry 1..256 assignments per transaction.<br>Numeral writes need a {uid: numeral\\|null} record.<br>Only elements can be duplicated.<br>Position must be finite, bounded world coordinates.<br>Positions must be finite, bounded world coordinates.<br>Property  must be a finite scalar, record or array (or undefined to remove).<br>Property writes carry 1..40 keys per transaction.<br>Property writes need a {key: value} record.<br>Relation property writes need a {key: value} record.<br>Reorder targets a sibling field.<br>Reverse relation: endpoint span drifted from the parse offset.<br>Route hints need a {routing, curve?} record.<br>That field is already a member of<br>Unknown object kind<br>Unknown object kind.object  { kind: ; }fieldsfield<br>Unknown or unsupported projection property key:  (allowed:<br>Unknown publication chrome concern:  (allowed:<br>Unknown relation property:  (allowed:<br>Unknown relationship kind.<br>Unknown view metadata property:  (allowed:<br>Unknown view profile group:<br>Use a valid, nonreserved DDN identifier.<br>View chrome writes need a {concern: spec\\|null} record.<br>View list writes need a uid array (or null to remove).<br>View list writes target select, exclude or data (got<br>View profile group  needs a property record of at most 40 entries.<br>View profile writes need a {group: {key: value}} record.<br>View property writes need a {key: value} record.<br>background needs exactly one of color, image or pattern (or pass null to remove it).<br>definitionAt needs a workspace file and a valid text offset.<br>is a pair of finite pixel numbers (or null to auto-fit).<br>is a pair of finite pixel numbers.<br>moveField needs beforeUid (reorder) or parentUid (reparent).<br>moveField takes one of beforeUid or parentUid.<br>must be a nonnegative integer (or undefined to remove).<br>needs at least one run with a text (or pass null to remove the band).<br>numeral on  must be an integer in 1-99999 (or null to remove); found<br>pinAll is limited to 128 positions per transaction.<br>pinAll needs a {uid: {x, y}} record.<br>setFrameMembers needs a member uid array.<br>style text writes need a spec record or null.<br>writes need a spec record or null.<br>x_return is written true or omitted, never a literal false.<br>{ } group is registered for  declarations. | - |
-| DDN-E002 | error | Data block name is ambiguous across the workspace:  blocks)<br>Data block not found:<br>Definition not found.<br>Frame not found in this view:<br>Model identity is not in this workspace. | - |
+| DDN-DR01 | error | Draft IR requires explicit draft preview; rebuild strictly for publication. | - |
+| DDN-E001 | error | A declaration cannot move before itself.<br>A declaration move needs a definition id and the declaration it moves before.<br>A frame label is non-empty text.<br>Ambiguous declarative target ; qualify it before renaming<br>An identity with this name already exists in the destination.<br>Cannot locate definition identifier<br>Cannot safely rewrite reference<br>Choose an existing writable data block.<br>Column layout targets an element.<br>Data block name is required.<br>Extension properties are x_* records (got<br>Extension writes need a record, or undefined to remove.<br>Fields reparent under an object or a field.<br>Frame identifier already exists in this view:<br>Kind conversion refused:  carries content-bearing extensions () whose semantics are kind-bound; migrate them by hand.<br>Kind conversion would drop extension properties: . Re-run with dropExtensions:true after listing the loss to the user.<br>Label must be text up to 4096 characters.<br>Numeral writes carry 1..256 assignments per transaction.<br>Numeral writes need a {uid: numeral\\|null} record.<br>Only elements can be duplicated.<br>Position must be finite, bounded world coordinates.<br>Position must contain finite bounded x and y.\n place  { at:<br>Positions must be finite, bounded world coordinates.<br>Property  must be a finite scalar, record or array (or undefined to remove).<br>Property writes carry 1..40 keys per transaction.<br>Property writes need a {key: value} record.<br>Reference source span changed<br>Relation property writes need a {key: value} record.<br>Reorder targets a sibling field.<br>Reverse relation: endpoint span drifted from the parse offset.<br>Route hints need a {routing, curve?} record.<br>That field is already a member of<br>Unknown object kind<br>Unknown object kind.object  { kind: ; }object<br>Unknown or unsupported projection property key:  (allowed:<br>Unknown publication chrome concern:  (allowed:<br>Unknown relation property:  (allowed:<br>Unknown relationship kind.<br>Unknown view metadata property:  (allowed:<br>Unknown view profile group:<br>Use a valid, nonreserved DDN identifier.<br>View chrome writes need a {concern: spec\\|null} record.<br>View list writes need a uid array (or null to remove).<br>View list writes target select, exclude or data (got<br>View profile group  needs a property record of at most 40 entries.<br>View profile writes need a {group: {key: value}} record.<br>View property writes need a {key: value} record.<br>background needs exactly one of color, image or pattern (or pass null to remove it).<br>definitionAt needs a workspace file and a valid text offset.<br>is a pair of finite pixel numbers (or null to auto-fit).<br>is a pair of finite pixel numbers.<br>moveField needs beforeUid (reorder) or parentUid (reparent).<br>moveField takes one of beforeUid or parentUid.<br>must be a nonnegative integer (or undefined to remove).<br>needs at least one run with a text (or pass null to remove the band).<br>numeral on  must be an integer in 1-99999 (or null to remove); found<br>pinAll is limited to 128 positions per transaction.<br>pinAll needs a {uid: {x, y}} record.<br>setFrameMembers needs a member uid array.<br>style text writes need a spec record or null.<br>writes need a spec record or null.<br>x_return is written true or omitted, never a literal false.<br>{ } group is registered for  declarations. | - |
+| DDN-E002 | error | Choose a relation in the view data scope.<br>Choose an element in the view data scope.<br>Data block name is ambiguous across the workspace:  blocks)<br>Data block not found:<br>Definition not found.<br>Frame not found in this view:<br>Model identity is not in this workspace.<br>Occurrence is not visible in this view. | - |
 | DDN-E003 | error | The edited source does not import the target definition. Add the required import explicitly. | - |
 | DDN-E004 | error | references depend on this definition. Remove/reassign them in source first, or hide its appearance. | - |
 | DDN-E005 | error | This declaration is expanded from the shared  definition @. Inspector edits never rewrite a shared definition: edit the definition in source, or declare the member locally at the application site. | - |
-| DDN-E006 | error | A field cannot move under itself or its own descendant.<br>Declarations  and  are in different data blocks; declaration order is defined per data block. The source is unchanged.<br>Not an assignment relationship<br>Numerals attach to element definitions.numeral<br>Reorder across parents is a reparent — pass parentUid. The source is unchanged.<br>Selected object has no x_record value record<br>The active view declares no projection { } group.<br>The view select list is not editable.<br>This view selects all data; there is no select list to extend.<br>This view uses data-bound coordinates; edit the underlying values rather than pinning a mark.<br>convertKind targets an element definition.<br>moveField targets a field definition.<br>reverseRelation targets a relation definition.<br>setElementExtension targets an element or field definition.<br>setElementProperties targets an element, relation or field definition.<br>setRelationExtension targets a relation definition.<br>setRelationProps targets a relation definition. | - |
+| DDN-E006 | error | A field cannot move under itself or its own descendant.<br>Declarations  and  are in different data blocks; declaration order is defined per data block. The source is unchanged.<br>Not an assignment relationship<br>Numerals attach to element definitions.numeral<br>Rename targets element, field or relation definitions<br>Reorder across parents is a reparent — pass parentUid. The source is unchanged.<br>Selected object has no x_record value record<br>The active view declares no projection { } group.<br>The view select list is not editable.<br>This view selects all data; there is no select list to extend.<br>This view uses data-bound coordinates; edit the underlying values rather than pinning a mark.<br>convertKind targets an element definition.<br>moveField targets a field definition.<br>reverseRelation targets a relation definition.<br>setElementExtension targets an element or field definition.<br>setElementProperties targets an element, relation or field definition.<br>setRelationExtension targets a relation definition.<br>setRelationProps targets a relation definition. | - |
 | DDN-E007 | error | A joined cell is not a single editable assignment<br>Cell editing requires an explicit extension-property value binding<br>Cell identifier already exists<br>Cell outside bound matrix or duplicated in edit batch<br>Cell value must be a finite scalar<br>Invalid matrix operation<br>Matrix changes need a matrix view and 1..100 cell operations<br>Matrix edit options require a boolean remove flag and optional id<br>New assignments require a shared data block selected by this view; supply projection.write_data explicitly | - |
 | DDN-E010 | error | Interaction validation is provided by ddn-graph.js; load it after ddn-core.js.<br>No renderer registered for projection kind "". It is provided by ; load it after ddn-core.js and ddn-graph.js. Inline placeholder rendered instead (optional module).<br>No renderer registered for projection kind "It is provided by ; load it after ddn-core.jsddn-graph.js and ddn-graph.js.No runtime bundle provides it.<br>Projection  is provided by ddn-quality.js; load it after ddn-core.js and ddn-graph.js.<br>Renderer registration needs a projection kind name and a render function.<br>Vega-Lite export is provided by ddn-projections.js; load it after ddn-core.js and ddn-graph.js.<br>depth is rendered by the optional ddn-iso.js module; it is not loaded, so the view rendered flat. Load ddn-iso.js after ddn-core.js and ddn-graph.js. | Load the named optional bundle: ddn-geo.js for geo views, ddn-iso.js for iso/depth (the CLI pre-loads both). |
 | DDN-E011 | error | Data block  declares no records; its field shape cannot be inferred.<br>Duplicate record key:<br>Every record must carry the same keys as the first existing record of<br>Record key  collides with a non-record declaration in<br>Record key must be a valid, nonreserved DDN identifier.<br>Record keys are all-or-nothing: either every record carries key, or none does (order-sensitive positional refresh).<br>Record values must be finite scalars, or arrays/plain objects of them.<br>replaceData records must be an array of plain objects. | - |
@@ -2186,6 +2210,11 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-FG04 | error | use: cycle through definitions: | Break the use: cycle between definitions — expand one level inline or restructure the fragment graph. |
 | DDN-FG05 | error | Definition nesting exceeds the cap of 8 levels | Flatten the definition nesting (cap is 8 levels); expand intermediate fragments inline where the chain is deeper. |
 | DDN-FG06 | error | A fragment declares at most 8 parameters<br>A parameterized fragment declares at least one parameter<br>Duplicate parameter  in fragment | Declare 1-8 unique parameters: fragment name(p1, p2) — no duplicates, no empty list. |
+| DDN-FL01 | error | text_wrap must be on or off; found | - |
+| DDN-FR01 | error | within must reference a frame in the same view | - |
+| DDN-FR02 | error | Frame containment cycle at | - |
+| DDN-FR03 | error | Frame nesting exceeds registry depth limit<br>Registry max_frame_depth must be an integer from 1 to 4 | - |
+| DDN-FR04 | error | Nested frame content does not fit confined boundary | - |
 | DDN-I001 | error | Unsupported interaction projection | - |
 | DDN-I002 | error | Interaction 0.1 requires a right-hand numbered relationship key | - |
 | DDN-I003 | error | A nonempty x_sequence is required | - |
@@ -2251,6 +2280,15 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-MK04 | error | assertion on relation  must be plain text of 1-500 characters<br>assertion text on view  must be 1-500 characters | - |
 | DDN-MK05 | error | ref: names a missing element (anchor site | - |
 | DDN-MK06 | error | ref: is a self-reference within its own element's text | - |
+| DDN-NT01 | error | Choose a stable document ID<br>DDNN must be valid JSON<br>DDNN requires format ddnn@1 and a documents record<br>Document ID already exists; reference it explicitly instead of overwriting<br>Document format must be plain, markdown_text or code<br>Document language must be bounded text<br>Document must be a record<br>Document storage needs .ddnn<br>External document requires file .ddnn and id<br>Inline document does not accept an external id<br>Invalid document ID<br>Only elements have document content<br>Unknown document property<br>Unknown document rolestringDDN-NT02Document text must be a string of at most 1,000,000 UTF-16 unitsstringDocument language must be bounded textDDN-NT03<br>document must contain properties | - |
+| DDN-NT02 | error | DDNN document count exceeds 10,000<br>Document exceeds 20,000 logical lines<br>Document exceeds 50,000 text runs<br>Document text must be a string of at most 1,000,000 UTF-16 units<br>Inline nesting exceeds eight<br>List/quote nesting exceeds eight | - |
+| DDN-NT03 | error | Document digest does not match its exact UTF-8 content<br>Referenced document digest mismatch | - |
+| DDN-NT04 | error | Missing document<br>Missing document file | - |
+| DDN-NT05 | error | Embedded images are not supported in text documents<br>Raw HTML is not supported in text documents | - |
+| DDN-NT06 | error | Unclosed fenced code block | - |
+| DDN-OC01 | error | A new occurrence number must be an integer >= 2.<br>A new relation occurrence number must be an integer >= 2.<br>Occurrence number must be a positive safe integer<br>Occurrence qualifiers belong to view selection, placement, frames and routes, not model references<br>Occurrence qualifiers cannot be used in model presets or their arguments<br>Occurrence reference is not allowed in this model/property context<br>Occurrence size must be two positive bounded lengths.<br>Unsupported occurrence presentation property. | - |
+| DDN-OC02 | error | This occurrence already exists.<br>This relation occurrence already exists. | - |
+| DDN-OC04 | error | Explicit occurrences require a graph view without fixed-lane interactions. | - |
 | DDN-P002 | error | Invalid retained world coordinates.<br>Retained layout state has an invalid format or belongs to another view. | - |
 | DDN-P003 | error | No space for a new element without moving retained positions: | - |
 | DDN-P004 | error | Measured element lies outside a fixed frame: | - |
@@ -2272,11 +2310,12 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-PF007 | error | Activity projection accepts uml.flow links only<br>Flowchart projection accepts flow.* participants only<br>Flowchart projection accepts flow.next links only<br>accepts  participants only<br>accepts c4.rel links only<br>concept.map@1 accepts assoc and ref links only<br>concept.map@1 accepts object, entity, term, domain participants only<br>epc.basic@1 accepts epk.event, epk.function, epk.connector participants only<br>epc.basic@1 accepts epk.next links only<br>epc.complete@1 accepts epk.next/infoflow/assigned/links links only<br>epc.complete@1 accepts the epk.* vocabulary only<br>mindmap.basic@1 accepts assoc links only<br>mindmap.basic@1 accepts object, entity, term, domain participants only<br>mindmap.basic@1 requires layout algorithm mindmap<br>org.tree@1 accepts organization, team, role, analysis.role participants only<br>org.tree@1 accepts reports_to links only<br>wbs.tree@1 accepts analysis.decomposes links only<br>wbs.tree@1 accepts analysis.task participants only | - |
 | DDN-PF008 | error | Closed flowchart needs a start and an end<br>End cannot have outgoing control<br>Start cannot have incoming control | - |
 | DDN-PF009 | error | Decision requires at least two explicitly named, distinct branches | - |
-| DDN-PF010 | error | Every flowchart symbol must be reachable from a start and able to reach an end | - |
+| DDN-PF010 | error/incomplete | Every flowchart symbol must be reachable from a start and able to reach an end | - |
 | DDN-PF011 | error | DFD profile requires dfd participants and dfd.data links | - |
 | DDN-PF012 | error | DFD process number must be nonempty and unique | - |
 | DDN-PF013 | error | DFD process needs input and output | - |
 | DDN-PF014 | error | Requirement needs unique code and nonempty text | - |
+| DDN-PG01 | error | (no literal message) | Use tile widths/heights of 128–8192 px and overlap below half the shorter side; reduce export to at most 256 pages and 64 MiB. |
 | DDN-PI01 | info | Auto-placement paused; ${retained.length} free positions retained. New elements still need a seed position. | - |
 | DDN-PJ001 | error | Unsupported projection | - |
 | DDN-PJ002 | error | Cannot combine interaction and data-bound projections<br>Data-bound projections do not accept graph place/route/frame/subdiagram geometry; select a graph view | - |
@@ -2457,6 +2496,10 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-PJ218 | error | An n-ary Chen relationship needs at least three participant ends (two ends are a binary association)<br>N-ary Chen end  must reference a selected entity | An n-ary Chen relationship needs at least three participant ends, each referencing a selected entity (two ends are a binary association). |
 | DDN-PJ221 | error | Datetime x needs an explicit Z or ±HH:MM offset — never guessed from locale<br>Timeline datetimes need an explicit Z or ±HH:MM offset — never guessed from locale | Give the datetime an explicit Z or ±HH:MM offset (for example 2026-01-05T23:30:00+05:30); naive datetimes are never resolved against a locale. |
 | DDN-PJ222 | error | fiscal_year_start must be a real ISO YYYY-MM-DD date | Write fiscal_year_start as a real ISO YYYY-MM-DD date (for example "2025-07-01"); it is an annotation, never calendar arithmetic. |
+| DDN-PJ223 | error | Business weekdays are distinct ISO weekday numbers 1..7<br>Calendar interval exceeds 366000 days<br>Holidays must be distinct ISO dates (at most 10000)<br>Invalid calendar kind or fiscal start month<br>calendar must be a supported calendar record | Use an explicit gregorian/fiscal/business calendar with valid fiscal month, ISO weekdays and distinct ISO holiday dates. |
+| DDN-PJ224 | error | Invalid timezone offset<br>Unavailable timezone<br>timezone must be UTC, an explicit offset or an available named zone | Use UTC, an explicit ±HH:MM offset, or a named timezone available in the client. |
+| DDN-PJ225 | error | An element import cannot expose a private packaged element<br>Package dependencies start at a package and use element endpoints<br>Package merge cannot join a package to itself, its ancestor or its descendant<br>Package merge graph contains a cycle<br>Package ownership contains a cycle<br>Package ownership must reference a different uml.package | Declare acyclic package ownership, import public elements, and keep package merges acyclic and outside ancestor/descendant pairs. |
+| DDN-PJ226 | error | Connected endpoints do not collectively provide the required interfaces<br>Interface assertions belong to classifiers or their connectable members<br>Interface assertions reference distinct uml.interface definitions<br>Typed connector checks require explicit interface assertions on both endpoints<br>Typed interface assertions currently require binary connector records | Declare distinct interface references on both connector endpoints and collectively provide every required interface; use binary connectors for typed assertions. |
 | DDN-PJW01 | warning/info | Chen with n-ary associations; Extended binary Chen; Chen scalar/binary subset;  attribute and relationship occurrences are projections, not copied semantic entities. | - |
 | DDN-PJW02 | warning/info | Quantitative mark coordinates remain exact in every drawing style; styling does not change values. | - |
 | DDN-PJW03 | warning/info | Sequence participant  has no incident messages; it is drawn with an empty lifeline. | - |
@@ -2529,7 +2572,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN-TX04 | error | text decoration must be strike or none (underline is reserved for a future revision); found | Use decoration: strike or none; underline is reserved for a future revision. |
 | DDN-TX05 | error | text variant must be small-caps or normal; found | Use variant: small-caps or normal. |
 | DDN-TX06 | error | text color must be #rgb or #rrggbb; found | Write text color as #rgb or #rrggbb (for example "#1a7f37"). |
-| DDN-V04 | error | diff views are a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>fragment parameters are a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>in publication is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>publication_set on  is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>use: arguments are a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn " | - |
+| DDN-V04 | error | Documents and composition require ddn "0.7"<br>Explicit occurrences require ddn "0.6" or later.<br>Frame within requires ddn "0.6" or later<br>Occurrence references require ddn \"0.6\"<br>diff views are a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>fragment parameters are a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>in publication is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>publication_set on  is a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn "<br>s * label only (fields/details/notes stay role-baked this revision). */ const textGroup=group(n,<br>use: arguments are a 0.8 (0.6-dialect) construct; the minimum source version is ddn "0.6" but  declares ddn " | - |
 | DDN-V06 | info | File  declares ddn "", older than the workspace's newest source version  (informational only). | - |
 | DDN-VP01 | error | Unknown view kind ; registered kinds: | - |
 | DDN-VP02 | error | strictness declared without a view kind; strictness has nothing to bind to | - |
@@ -2585,13 +2628,13 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | DDN054 | error | Endpoint owner is outside the selected data modules<br>Relation endpoint is not a data element in scope | - |
 | DDN055 | error | Only relations accept header endpoints<br>Relation requires two endpoints | Give the relation both endpoints: relation id @source -> @target {…}. |
 | DDN056 | error | Unknown relationship kind | Use a verb keyword from the relationship tables (or a registered alias); quote dotted profile verbs like "uml.message". |
-| DDN057 | error | View selection contains a non-element or out-of-scope element | select:/exclude: entries must resolve to elements in the view's data scope; fix the ref or its data: list. |
+| DDN057 | error | (code selected dynamically at the raise site; no static literal message) | select:/exclude: entries must resolve to elements in the view's data scope; fix the ref or its data: list. |
 | DDN058 | error | Ambiguous legend key<br>Legend key refers to unknown relation | - |
 | DDN059 | error | Callout numbers must be positive integers | - |
 | DDN060 | error | Duplicate callout number | - |
 | DDN061 | error | Missing explicit callout number for | Number EVERY visible relation in legend.keys when mode: numbers — add the missing relation id or drop the relation. |
-| DDN062 | error | Placement target is not selected | place targets must be selected elements: remove the place block or add the element to the selection. |
-| DDN063 | error | Route target is not visible | route targets must be visible relations (both endpoints selected); fix the ref or the selection. |
+| DDN062 | error | (code selected dynamically at the raise site; no static literal message) | place targets must be selected elements: remove the place block or add the element to the selection. |
+| DDN063 | error | (code selected dynamically at the raise site; no static literal message) | route targets must be visible relations (both endpoints selected); fix the ref or the selection. |
 | DDN064 | error | Subdiagram target must be a view | - |
 | DDN065 | error | Recursive or excessive inline subdiagram expansion | - |
 | DDN070 | error | Page has no usable drawing area<br>content_scale must be a finite ratio in [0.25, 4]<br>embedding_scale must be >0 and <=4 | - |
@@ -2647,11 +2690,11 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | LIVE003 | error | ${k} must be between ${min} and ${max}.<br>must be boolean or null. | - |
 | LIVE010 | error | DDN source must be text, at most 2,000,000 characters per file.<br>Expected a source changes map.<br>Import escapes workspace.<br>Imports must be workspace relative.<br>Invalid workspace DDN path:<br>Workspace must be a filename-to-DDN-source map. | - |
 | LIVE011 | error | Workspace limit: 1,500 files and 12,000,000 source characters. | - |
-| LIVE012 | error | File not found.LIVE034Destination already exists.<br>Missing edited file.Structured edit<br>Missing entry: LIVE013Live view limit: 128 elements and 384 relationships. Split the model into linked views.<br>Missing source file.LIVE033File is imported by: Remove<br>Missing source file: | - |
+| LIVE012 | error | File not found.LIVE034Destination already exists.<br>Missing edited file.Structured edit<br>Missing entry: LIVE013<br>Missing source file.LIVE033File is imported by: Remove<br>Missing source file:<br>Validated file transaction requires entry/view | - |
 | LIVE013 | error | Live view limit: 128 elements and 384 relationships. Split the model into linked views. | - |
 | LIVE014 | error | Workspace name is required. | - |
 | LIVE015 | error | Unknown saved workspace format. | - |
-| LIVE016 | error | Workspace destroyed. | - |
+| LIVE016 | error | Workspace destroyed.<br>Workspace destroyed.graph | - |
 | LIVE020 | error | Interaction projection does not support<br>Interaction projection retains its fixed lanes and typography. | - |
 | LIVE021 | error | Data-bound coordinates cannot be replaced with automatic graph placement<br>Numbered relationships require a legend<br>Requested mark is not supported by this projection/transform<br>This projection does not allow graph setting | - |
 | LIVE022 | error | relationRouting key is not a verb or relation in this view:<br>relationRouting must be a record keyed by verb or relation id. | - |
@@ -2662,6 +2705,9 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | LIVE033 | error | File is imported by: | - |
 | LIVE034 | error | Destination already exists. | - |
 | LIVE040 | error | Render bridge must expose render(ir, engineOpts, flags). | - |
+| LIVE050 | error | Capture callbacks must be synchronous.<br>Capture requires a synchronous edit callback.<br>Preview requires entry, view and a nonempty operations array.<br>Unknown edit mode.LIVE030Source changed since this edit was prepared.function<br>Unsupported preview operation. | - |
+| LIVE051 | error | Writing this file is not authorized: | - |
+| LIVE052 | error | Unknown, cancelled or already applied plan. Preview again. | - |
 <!-- /generated (diagnostics) -->
 
 ## 10. Profile validation rules (enforced by `ddn-profiles.js` + `ddn-profile-quality.js`)
@@ -3632,7 +3678,7 @@ view fig1 "Sensor monitor" {
 }
 ```
 
-`kind: patent-figure` attaches the `mono_print` theme and the `patent.legal@1` chrome defaults (title block with `$title`/`$date`, `FIG. $figure` + `Page $page` footer, single border) as layer-2 defaults — any authored header/footer/border wins. The `embedding_scale` above is the DDN071 remedy idiom in action: a small drawing on a physical page must scale UP so the smallest text role clears `minimum_text` at 1:1 print scale.
+`kind: patent-figure` supplies `mono_print` and `patent.legal@1` chrome defaults; authored chrome wins. Increase `embedding_scale` when needed to clear `minimum_text` at 1:1 print scale (DDN071).
 
 ### 14.5 Publication sets (ch. 53 §53.4) and print-size lint (§53.5)
 
@@ -3670,6 +3716,8 @@ Print-size lint runs under `check` for physical paper sizes (never for `size: co
 
 `text_fit` on an element (or as a profile/bundle default) controls how boxes adapt to text. Bounds: `max_width`/`max_height` 40–4000px (**DDN-TF02**), `min_font` 6–64px and ≤ the effective base font (**DDN-TF03**), unknown mode **DDN-TF01**.
 
+Fields clip by default; `text_wrap: on` wraps (field > element > off; DDN-FL01). `columns { name {} datatype { width: 12ch; } }` enables cells (`Nch`/`N%`/`equal`; `visibility: shown|hidden|on_demand`). Empty group uses the kind schema. Requires 0.6; errors DDN-CL01–03. Full text stays accessible; see ch.04 §6D.
+
 | Mode | Behavior |
 |---|---|
 | `wrap` | Width fixed; text wraps; the box grows downward. Default when a width constraint exists. |
@@ -3706,7 +3754,7 @@ format shared {
 }
 ```
 
-Tooling note (verified behavior): the CLI side-loads `font_pin` metrics files exactly like background images/patterns — the asset walker resolves the workspace-relative path under the same containment rules (no absolute paths, no URLs, no escapes) and supplies it as UTF-8 text, so `cli.js check/render` works on `font_pin` sources directly. Pins are equally usable through the embedder API (supply the pin file in the `createWorkspace`/`build` files map, as the conformance vectors do).
+The CLI loads workspace-relative `font_pin` assets (no absolute paths, URLs or escapes). Embedders supply metrics files through the `createWorkspace`/`build` files map.
 
 ### 14.6A Portable text properties (ch. 04 §6A, ch. 53 §53.1)
 
@@ -3816,7 +3864,7 @@ Runtime modules (`notation/runtime/`, dependency-free ES modules sharing namespa
 | ddn-export.js | DDNExport | allowlist export: `project(ir)`, `serialize(ir)` (JSON or SQL DDL) |
 | ddn-defaults.js | DDNDefaults | read-only per-kind defaults: `forKind(idOrKeyword)` → deep copy |
 
-Distribution bundles (`notation/dist/`): `ddn-core` (parse/build/validate/export, no rendering); `ddn-graph` (+ graph renderer); `ddn-quality` (+ fishbone/decision); `ddn-projections` (+ chart/matrix/panels/timeline/table/sequence/timing/chen); `ddn-geo`/`ddn-iso` (optional, never in `ddn.global.js`); `ddn.global.js` = everything else. Each ships IIFE `.js`, minified `.min.js` + map, ESM, and TypeScript declarations. `DDNEngine` throws DDN-E010 naming a missing bundle — except geo/iso, which render coded placeholders (§5, §7.7). Geography data ships separately as `assets/geo/world-110m.json` (~96 KB, Natural Earth): name it via `geography: "assets/geo/world-110m.json"` (register first with `DDNGeo.registerGeography(name, geojson)`; the CLI pre-registers it) or bind inline GeoJSON via `geography: @data.record`.
+Bundles in `notation/dist/`: `ddn-core` parses/validates/exports; `ddn-graph` renders graphs; `ddn-quality` adds fishbone/decision; `ddn-projections` adds chart/matrix/panels/timeline/table/sequence/timing/chen. `ddn.global.js` combines these. Optional `ddn-geo`/`ddn-iso` load separately. Formats: IIFE, minified IIFE + map, ESM, TypeScript. Missing bundles: DDN-E010 (geo/iso show placeholders). Geography is separate: register GeoJSON with `DDNGeo.registerGeography(name, geojson)`, then name it with `geography:`; the CLI pre-registers `assets/geo/world-110m.json`. Inline GeoJSON binds via `geography: @data.record`.
 
 Core API essentials: `DDN.parse(text, name)` → parsed doc (throws `DDNError`); `DDN.build(files, entry, viewName, registry)` → `{ir, workspace}` (`files` = `{path: sourceText}`; runs all validators); `DDN.bundle` → `{text, diagnostics}`; `DDNExport.serialize(ir)` → JSON or SQL DDL; `DDN.semanticJSON(ir)` → canonical payload (basis of `modelFingerprint`).
 
@@ -3958,14 +4006,18 @@ flowDeclaration = "flow", identifier, [ string ], block ;
 steps          = "steps", ":", reference, { "->", reference }, ";" ;
 group          = identifier, block ;
 endpoints      = reference, "->", reference ;
-reference      = "@", identifier, { ".", identifier } ;
+reference      = "@", identifier, { ".", identifier }, [ "#", positiveInteger ] ;
+(* The qualifier is dialect-0.6 view-only syntax: select/exclude/show/hide,
+   place/route targets, route from/to and frame members. Semantic references
+   reject it. positiveInteger is bounded by the safe-integer range. *)
+positiveInteger = number ; (* positive integral value <= 9007199254740991 *)
 value          = string | quantity | number | reference | atom | array | record ;
 array          = "[", [ value, { ",", value }, [ "," ] ], "]" ;
 record         = "{", [ entry, { ( "," | ";" ), entry }, [ "," | ";" ] ], "}" ;
 entry          = ( identifier | string ), ":", value ;
 atom           = identifier ;
 quantity       = number, unit ;
-unit           = "px" | "pt" | "mm" | "cm" | "in" | "ms" | "s" | "min" | "h" | "d" | "%" ;
+unit           = "px" | "pt" | "mm" | "cm" | "in" | "ms" | "s" | "min" | "h" | "d" | "%" | "ch" ;
 identifier     = ustart , { ucontinue | "-" } ;
 (* 0.8 amendment (Unicode identifiers, ch. 01): identifiers follow UAX #31 —
    ID_Start then ID_Continue — plus the ASCII separators "_" and "-", so
@@ -3991,5 +4043,13 @@ blockComment   = "/*", { characterExceptClosingComment }, "*/" ;
    B1-033: a view-level flow block (multi-hop motion sequence) declares its hop chain
    with the steps production above; steps must resolve to selected elements joined by
    existing visible relations in their declared direction. *)
+
+(* Dialect 0.7: document/composition use the existing property-group syntax.
+   Chapter 59 defines their closed keys, values and appearance inheritance;
+   DDNN companions are JSON under schemas/ddnn.schema.json, not DDN imports. *)
 ```
 <!-- /generated (grammar) -->
+
+### Composable detail (source dialect 0.7; chapter 59)
+
+Opt in with `composition {sections:[name,type,table,notes];order:[table,notes];note_height:180px;note_wrap:auto;}`. Type defaults < element < appearance; hidden content remains semantic. `document {format:code;role:procedure_source;language:"sql";text:"BEGIN END;";}` stores exact source; plain and markdown_text are also supported. Markdown is text-only (no images/HTML/tables). `document {file:"project.ddnn";id:"body";}` references ddnn@1 JSON documents. Missing records/digest mismatches fail. DDNA stays automation; `.ddna` is accepted. Notes scroll per appearance; `publication {note_mode:full;}` expands static output. Database execution is outside scope.

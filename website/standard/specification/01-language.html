@@ -151,6 +151,8 @@ data model {
 <p>The resolved children have their own IDs, parent IDs, depth and dotted path. <code>@model.customer.contacts.value</code> is a field endpoint. Hiding child rows does not change that endpoint identity. Arrays/maps/sets/variants are structural declarations, not an implicit choice of SQL datatype or separate database table.</p>
 <h2>Errors and limits</h2>
 <p>The reader limits source size and nesting to protect local tools from resource exhaustion. Compile errors carry source/offset information where available. The semantic schema checker supports the explicitly listed subset in <code>registry/capabilities.json</code>; it is not a complete JSON Schema evaluator. Unknown extensions are preserved with warnings in logical mode and rejected in strict mode unless registered.</p>
+<h2>Composable content amendment</h2>
+<p>Source dialect <code>ddn &quot;0.7&quot;;</code> adds element <code>document</code> and <code>composition</code> groups, appearance composition overrides and procedure/function parameter modes. <a href="59-composable-elements.html">Chapter 59</a> defines the complete contract, DDNN storage and text-only Markdown profile. Older sources retain their established behavior.</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>

@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Additive profile-completion contracts. */
 import {publishNamespace} from './ddn-module-registry.js';
 import UNITS from './assets/units.js';
+import {validateUmlStructure} from './ddn-uml-structure.js';
 'use strict';
 function validate(ir,E){
  const ns=new Map(ir.elements.map(n=>[n.id,n])),shown=new Set(ir.view.selected),profile=ir.view.profiles.projection.profile;
@@ -9,6 +10,7 @@ function validate(ir,E){
  const REBADGE={'sysml.usecase@1':['uml.usecase@2','uml.usecase@3'],'sysml.activity@1':['uml.activity@1','uml.activity@2'],'sysml.statemachine@1':['uml.statemachine@1'],'sysml.sequence@1':['uml.sequence@2'],'c4.deployment@1':['uml.deployment@1'],'c4.dynamic@1':['uml.communication@1','uml.communication@2'],'msc.basic@1':['uml.sequence@2'],'sdl.process@1':['uml.statemachine@1']};
  const eff=new Set([profile,...(REBADGE[profile]||[])]);
  const fail=(c,m,n)=>{const e=new E(c,m,n?.source?.file||ir.view.source.file,n?.source?.start||ir.view.source.start);if(E===Error){e.code=c;e.message=m;}throw e;};
+ validateUmlStructure(ir,fail);
  const keys=(o,a,label,n)=>{if(!o||typeof o!=='object'||Array.isArray(o)||Object.keys(o).some(k=>!a.includes(k)))fail('DDN-PX001','Unknown or malformed '+label,n);};
  for(const n of ir.elements){
   if(n.properties.x_state){
@@ -209,7 +211,7 @@ function validate(ir,E){
  for(const n of ir.elements){
   if(n.properties.x_pack?.visibility!==undefined){
    const inPkg=(ir.view.frames||[]).some(f=>f.members.includes(n.id)&&ns.get(f.scope)?.kind==='uml.package');
-   if(!inPkg)fail('DDN-PJ171','x_pack.visibility on '+n.id+' is meaningless: the element is not a member of any uml.package frame in this view',n);
+   if(!inPkg&&!n.properties.x_pack.package)fail('DDN-PJ171','x_pack.visibility on '+n.id+' is meaningless: the element is not a member of any uml.package frame in this view',n);
   }
  }
  if(profile==='uml.interaction_overview@2'){

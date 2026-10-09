@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Explicit allowlist export, separate from display hiding.
  * The caller is responsible for authorization and classification decisions. This is not a DLP classifier.
  */
+import Occurrences from './ddn-occurrences.js';
 import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
 const ref=v=>typeof v==='string'?v:v?.$ref;
@@ -66,6 +67,13 @@ function project(ir){
  if(interaction){profiles.layout.x_interaction=interaction.x_interaction;if(interaction.x_sequence!==undefined)profiles.layout.x_sequence=interaction.x_sequence;if(interaction.x_phases!==undefined)profiles.layout.x_phases=copy(interaction.x_phases);if(interaction.x_row_height!==undefined)profiles.layout.x_row_height=interaction.x_row_height;}
  const keys={};for(const r of ir.relations)if(names.has(r.id)&&ir.view.keys[r.id])keys[alias(r.id)]=ir.view.keys[r.id];
  const output={format:'ddn-resolved@0.3',language:'0.3',registry:ir.registry,entry:'published.ddn',view:{id:'published::view',name:policy.title||'Published data view',local:'published',selected,relations:rels.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element)).map(r=>r.id),profiles,keys,placements:{},routes:{},subdiagrams:[],frames:[]},elements,relations:rels,diagnostics:[{code:'DDN-PUBLIC',severity:'info',message:'Allowlist projection. Source locations, free-text metadata, examples, and inline views removed.'}],publication:{audience:'allowlisted',sourceIncluded:false,samplesIncluded:false}};
+ if(ir.view.occurrences){
+  const mapId=new Map();
+  const elements=ir.view.occurrences.elements.filter(o=>names.has(o.source)&&allowed.has(o.source)).map(o=>{const source=alias(o.source),id=Occurrences.id(output.view.id,source,o.number);mapId.set(o.id,id);return {id,source,number:o.number};});
+  const relations=ir.view.occurrences.relations.filter(o=>rels.some(r=>r.id===names.get(o.source))&&mapId.has(o.from)&&mapId.has(o.to)).map(o=>({id:Occurrences.id(output.view.id,alias(o.source),o.number),source:alias(o.source),number:o.number,from:mapId.get(o.from),to:mapId.get(o.to)}));
+  output.view.occurrences={version:1,elements,relations};
+  output.view.selected=[...new Set(elements.map(o=>o.source))];output.view.relations=[...new Set(relations.map(o=>o.source))];
+ }
  // Deliberately no counts or identifiers of excluded records: those can themselves disclose information.
  return output;
 }

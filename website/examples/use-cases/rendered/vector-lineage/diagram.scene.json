@@ -29,7 +29,7 @@
     {
       "id": "ddn.usecases.vectors::model.embedding",
       "w": 270,
-      "h": 100,
+      "h": 152,
       "fields": [],
       "titleLines": [
         "Build embeddings"
@@ -38,7 +38,12 @@
       "scale": 1,
       "headerH": 64,
       "meaningLines": [],
-      "noteLines": [],
+      "noteLines": [
+        "Record the embedding model and",
+        "preprocessing version before",
+        "implementation approval."
+      ],
+      "noteTop": 64,
       "x": 390,
       "y": 0,
       "fieldRows": []
@@ -107,13 +112,21 @@
           50
         ],
         [
-          390,
+          314,
           50
+        ],
+        [
+          314,
+          76
+        ],
+        [
+          390,
+          76
         ]
       ],
       "label": {
-        "x": 315,
-        "y": 35,
+        "x": 337,
+        "y": 61,
         "w": 30,
         "h": 30
       },
@@ -126,11 +139,11 @@
       "points": [
         [
           660,
-          50
+          76
         ],
         [
           704,
-          50
+          76
         ],
         [
           704,
@@ -179,7 +192,7 @@
         "stage": "initial-clear-routing",
         "crossings": 0,
         "length": 290,
-        "bends": 2
+        "bends": 4
       },
       {
         "stage": "connection-points",
@@ -187,14 +200,14 @@
         "accepted": 0,
         "crossings": 0,
         "length": 290,
-        "bends": 2
+        "bends": 4
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
         "length": 290,
-        "bends": 2,
+        "bends": 4,
         "trials": 0,
         "accepted": 0
       },
@@ -203,13 +216,13 @@
         "accepted": 0,
         "crossings": 0,
         "length": 290,
-        "bends": 2
+        "bends": 4
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
         "length": 290,
-        "bends": 2
+        "bends": 4
       }
     ],
     "portTrials": 0,
@@ -224,13 +237,13 @@
         "crossings": 0,
         "localCrossings": 0,
         "length": 290,
-        "bends": 2
+        "bends": 4
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
         "length": 290,
-        "bends": 2
+        "bends": 4
       },
       "exhausted": false
     },

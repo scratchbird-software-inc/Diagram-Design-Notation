@@ -11,6 +11,22 @@
 
 The initial reusable recipes are rectangle, rounded rectangle, terminal, decision diamond, ellipse, circle, parallelogram, wavy document, predefined-process frame, data store, actor, package tab and component frame. Existing DDN note, frame, sample and card shapes remain available. This is a compositional implementation, not a source-level arbitrary SVG drawing language.
 
+The profile catalogue's `shapes` array is a generated, sorted inventory of
+registered silhouette identifiers. It includes kind defaults and variants
+selected by `DDNShapes.shapeOf` for installed profiles, including `bpmevent`.
+It is not a list of arbitrary source-level shape overrides or of every core
+card, icon, chart mark and decoration. Regenerate it with
+`npm run build:shape-catalogue`; `node tools/build-shape-catalogue.mjs --check`
+and the SDK asset build reject drift. The coverage test checks a visible,
+finite contour for every listed identifier and tests the packaged inventory.
+
+The legacy `intermediate` identifier uses the rectangular polygon fallback
+outside BPMN process/choreography/conversation profiles. Those profiles
+select the `bpmevent` recipe. This fallback is explicitly recorded in the
+build guard; new unknown identifiers cannot silently use it. The guard
+recognizes the renderer's literal equality and array-membership dispatch;
+changes to that dispatch structure must update the guard as well.
+
 The drawing look can be classic, handDrawn or neo. Controlled pen variation changes outlines, not the nominal obstacle/attachment model. Quantitative data marks do not inherit rough coordinates. Registered line families and dark/night color variants remain fixed; shapes do not reuse the meaning of an unrelated badge position.
 
 The native `tree` layout honours `direction`: with `down` (or `up`, mirrored) depth advances vertically and siblings stack along x using subtree widths, so a single-root hierarchy hangs as a top-down org chart; with the default `right` (or `left`) the original horizontal geometry is retained byte-identically. Mind maps ignore `direction` and remain horizontal.
@@ -399,3 +415,28 @@ no parallel mechanism:
 
 Example: `website/examples/basics/108-uaf-traceability.ddn` (multi-file UAF
 cross-domain traceability); tests `xref-compliance.js` + `xref-showcase.js`.
+
+### Explicit UML structural assertions
+
+`x_pack.package: @package` declares semantic package ownership independently of
+visual frames. Ownership must be acyclic. Package imports/access start at a
+package and cannot expose a private packaged element. Package merges require
+package endpoints, prohibit self/ancestor/descendant pairs, and must be acyclic
+(`DDN-PJ225`). These assertions validate a model; they do not execute package
+merge transformations or synthesize an imported namespace.
+
+Classifiers and their connectable members may declare
+`x_interfaces: {provides: [@interface], requires: [@interface]}`. Lists contain
+distinct `uml.interface` definitions, at most 64 per list. Once either endpoint
+of an assembly, delegation or connector declares interfaces, both endpoints
+must declare them. Required interfaces must be provided collectively by the
+connected peers, with interface generalization permitting a specialized provider
+to satisfy its ancestor interface. For delegation, the source boundary port's
+effective provided/required sets are reversed inside the component. Typed
+assertions currently require binary connectors (`DDN-PJ226`). Without assertions,
+existing untyped structural diagrams retain their behavior. This is interface
+identity/conformance checking, not operation-signature or executable behavior
+verification.
+
+The structural rules follow the package-merge constraints and effective-interface
+connector discussion in [OMG UML 2.5.1](https://www.omg.org/spec/UML/2.5.1/PDF).

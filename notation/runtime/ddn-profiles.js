@@ -131,7 +131,8 @@ function registry(base){
  out.extension_contracts.x_exception=def({type:'boolean'},['relation']);
  /* B1-061 : packaged-element visibility, interaction-use gates and
   * arguments, timing constraints. */
- out.extension_contracts.x_pack=def({type:'object',properties:{visibility:{enum:['public','private']}},additionalProperties:false},['object']);
+ out.extension_contracts.x_pack=def({type:'object',properties:{visibility:{enum:['public','private']},package:{type:'object'}},additionalProperties:false},['object']);
+ out.extension_contracts.x_interfaces=def({type:'object',properties:{provides:{type:'array',maxItems:64,items:{type:'object'}},requires:{type:'array',maxItems:64,items:{type:'object'}}},additionalProperties:false},['object','port','field']);
  out.extension_contracts.x_use=def({type:'object',properties:{arguments:{type:'array',maxItems:8,items:{type:'string',minLength:1}},gates:{type:'array',maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
  out.extension_contracts.x_timeconstraint=def({type:'array',minItems:1,maxItems:6,items:{type:'string',minLength:1}},['object']);
  /* B1-065 : SysML 1.6 — block compartments, port typing, value
@@ -152,10 +153,11 @@ function registry(base){
  cache.set(base,out);cache.set(out,out);return out;
 }
 const get=id=>catalogue.profiles.find(x=>x.id===id);
-function validate(ir,reg,ErrorClass){
+function validate(ir,reg,ErrorClass,draft=null){
  const p=ir.view.profiles.projection||{kind:'graph',profile:'ddn@1'},profile=get(p.profile),nodes=new Map(ir.elements.map(n=>[n.id,n])),rels=ir.relations;
  const diagnostics=[];
  const fail=(code,message,n)=>{throw new ErrorClass(code,message,n?.source?.file||ir.view.source?.file,n?.source?.start||ir.view.source?.start);};
+ const obligation=(code,message,n)=>{if(!draft)return fail(code,message,n);draft.push({code,severity:'incomplete',message,subjectId:n?.id,viewId:ir.view.id,source:n?.source?.file||ir.view.source?.file,offset:n?.source?.start??ir.view.source?.start??0});};
  if(!profile)fail('DDN-PF001','Unknown or uninstalled diagram profile '+p.profile);
  if(profile.projection!==p.kind)fail('DDN-PF002',p.profile+' requires projection '+profile.projection+', not '+p.kind);
  for(const n of ir.elements){
@@ -224,11 +226,11 @@ function validate(ir,reg,ErrorClass){
   if(['uml.activity@1','uml.activity@2','sysml.activity@1'].includes(p.profile)&&es.some(r=>r.kind!=='uml.flow'))fail('DDN-PF007','Activity projection accepts uml.flow links only');
   const control=es.filter(r=>(['uml.activity@1','uml.activity@2','sysml.activity@1'].includes(p.profile)?['uml.flow']:['flow.next','flow.continues']).includes(r.kind)),activeNodes=ns.filter(n=>n.kind!=='flow.annotation');
   const incoming=id=>control.filter(r=>r.to.element===id),outgoing=id=>control.filter(r=>r.from.element===id),starts=ns.filter(n=>n.kind==='flow.start'),ends=ns.filter(n=>n.kind==='flow.end'||(['uml.activity@2','sysml.activity@1'].includes(p.profile)&&n.kind==='flow.flowfinal'));
-  if(!starts.length||!ends.length)fail('DDN-PF008','Closed flowchart needs a start and an end');
+  if(!starts.length||!ends.length)obligation('DDN-PF008','Closed flowchart needs a start and an end');
   for(const n of ns){if(n.kind==='flow.start'&&incoming(n.id).length)fail('DDN-PF008','Start cannot have incoming control',n);if((n.kind==='flow.end'||(['uml.activity@2','sysml.activity@1'].includes(p.profile)&&n.kind==='flow.flowfinal'))&&outgoing(n.id).length)fail('DDN-PF008','End cannot have outgoing control',n);
-   if(n.kind==='flow.decision'){const branches=outgoing(n.id).map(r=>r.properties.x_diagram?.branch);if(branches.length<2||branches.some(x=>typeof x!=='string'||!x.trim())||new Set(branches).size!==branches.length)fail('DDN-PF009','Decision requires at least two explicitly named, distinct branches',n);}}
+   if(n.kind==='flow.decision'){const branches=outgoing(n.id).map(r=>r.properties.x_diagram?.branch);const named=branches.filter(x=>typeof x==='string'&&x.trim());if(branches.some(x=>x!==undefined&&typeof x!=='string')||new Set(named).size!==named.length)fail('DDN-PF009','Decision requires at least two explicitly named, distinct branches',n);if(branches.length<2||named.length!==branches.length)obligation('DDN-PF009','Decision requires at least two explicitly named, distinct branches',n);}}
   const reach=(roots,reverse)=>{const seen=new Set(roots.map(n=>n.id)),q=[...seen];while(q.length){const id=q.shift();for(const r of control){if((reverse?r.to.element:r.from.element)===id){const t=reverse?r.from.element:r.to.element;if(!seen.has(t)){seen.add(t);q.push(t);}}}}return seen;};
-  const a=reach(starts,false),b=reach(ends,true);if(activeNodes.some(n=>!a.has(n.id)||!b.has(n.id)))fail('DDN-PF010','Every flowchart symbol must be reachable from a start and able to reach an end');
+  const a=reach(starts,false),b=reach(ends,true);if(activeNodes.some(n=>!a.has(n.id)||!b.has(n.id)))obligation('DDN-PF010','Every flowchart symbol must be reachable from a start and able to reach an end');
  }
  if(p.profile.startsWith('dfd.')){
   if(ns.some(n=>!n.kind.startsWith('dfd.'))||es.some(r=>r.kind!=='dfd.data'))fail('DDN-PF011','DFD profile requires dfd participants and dfd.data links');

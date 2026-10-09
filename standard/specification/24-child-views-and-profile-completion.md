@@ -97,3 +97,25 @@ Studio retains raw script, file/folder/ZIP/JSON opening and downloads. New matri
 The mandatory corpus includes a dashboard using Pareto/histogram/heatmap/lifecycle children; the same child repeated twice; child-only data changing parent fingerprints; all IDs/references resolving; cycle/depth rejection; fixed-page readability rejection; source links and downloads; unchanged purchasing-route efficiency; weak-key and extension-point negatives; annotation and continuation checks. Each build regenerates runtime, websites, portable pages, source/output hashes and static fallbacks from the same code.
 
 [Q6] OMG UML 2.5.1 specification page and normative artifacts: https://www.omg.org/spec/UML/2.5.1/About-UML (checked 2026-09-08). No OMG artwork or proprietary implementation is copied.
+
+### Client-side tiled publication
+
+The designer/viewer Export drawer can paginate the current SVG into a row-major
+grid, keeping drawing coordinates and scale. `publication.tiles` stores optional
+`width`, `height` and `overlap` lengths (defaults 800, 600 and 0 pixels). Tile
+width/height are 128–8192 pixels; overlap must be nonnegative and smaller than
+half the shorter dimension. Invalid settings reject with `DDN-PG01`.
+
+Export produces a ZIP of numbered SVG pages and `publication.json`. Each SVG
+clips the same drawing to its tile and includes page position and neighbor links.
+Visible top-level relationship routes crossing tile boundaries receive numbered
+continuation labels linking to adjacent pages; manifest entries retain their
+relationship identities. Curved routes use the renderer's flattened route
+geometry. Page cuts preserve the existing layout rather than moving elements;
+a large element may span sheets. Child diagrams retain their rendered content;
+child-internal routes are not promoted into top-level continuation metadata.
+
+The output is bounded to 256 pages and 64 MiB of duplicated drawing content.
+The entire operation, ZIP creation and file download run in the browser. This
+is SVG sheet tiling, not printer-spooler integration or a layout solver that
+reflows the model to avoid page boundaries.

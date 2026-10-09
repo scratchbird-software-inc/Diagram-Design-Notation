@@ -97,7 +97,21 @@
       "aliases": [
         "obj"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.ent",
@@ -118,7 +132,21 @@
       "aliases": [
         "ent"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.rel",
@@ -137,7 +165,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "rel",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.dom",
@@ -158,7 +200,21 @@
       "aliases": [
         "dom"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.term",
@@ -177,7 +233,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "term",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.enum",
@@ -198,7 +268,21 @@
       "aliases": [
         "enum"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.rule",
@@ -217,7 +301,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "rule",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.unit",
@@ -236,7 +334,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "unit",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.agg",
@@ -257,7 +369,21 @@
       "aliases": [
         "agg"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.ctx",
@@ -278,7 +404,21 @@
       "aliases": [
         "ctx"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.bind",
@@ -299,7 +439,21 @@
       "aliases": [
         "bind"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.key",
@@ -320,7 +474,21 @@
       "aliases": [
         "key"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.tbl",
@@ -341,7 +509,89 @@
       "aliases": [
         "tbl"
       ],
-      "defaults": {}
+      "defaults": {},
+      "column_schema": [
+        {
+          "id": "name",
+          "label": "Name",
+          "width": {
+            "kind": "equal"
+          }
+        },
+        {
+          "id": "datatype",
+          "label": "DataType",
+          "width": {
+            "kind": "chars",
+            "n": 14
+          }
+        },
+        {
+          "id": "domain",
+          "label": "Domain",
+          "width": {
+            "kind": "chars",
+            "n": 12
+          },
+          "visibility": "hidden"
+        },
+        {
+          "id": "length",
+          "label": "DataLength",
+          "width": {
+            "kind": "chars",
+            "n": 8
+          }
+        },
+        {
+          "id": "key",
+          "label": "Key",
+          "width": {
+            "kind": "chars",
+            "n": 6
+          }
+        },
+        {
+          "id": "system",
+          "label": "System",
+          "path": "x_system",
+          "width": {
+            "kind": "chars",
+            "n": 10
+          },
+          "visibility": "on_demand"
+        },
+        {
+          "id": "calc",
+          "label": "Calculation",
+          "path": "x_calc.expression",
+          "width": {
+            "kind": "percent",
+            "n": 25
+          }
+        },
+        {
+          "id": "notes",
+          "label": "Notes",
+          "path": "description",
+          "width": {
+            "kind": "equal"
+          }
+        }
+      ],
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.viw",
@@ -362,7 +612,21 @@
       "aliases": [
         "viw"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.mvi",
@@ -383,7 +647,21 @@
       "aliases": [
         "mvi"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.ftb",
@@ -404,7 +682,21 @@
       "aliases": [
         "ftb"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.fun",
@@ -425,7 +717,21 @@
       "aliases": [
         "fun"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.prc",
@@ -446,7 +752,21 @@
       "aliases": [
         "prc"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.trg",
@@ -467,7 +787,21 @@
       "aliases": [
         "trg"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.seq",
@@ -488,7 +822,21 @@
       "aliases": [
         "seq"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.sdm",
@@ -509,7 +857,21 @@
       "aliases": [
         "sdm"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.typ",
@@ -530,7 +892,21 @@
       "aliases": [
         "typ"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.con",
@@ -551,7 +927,21 @@
       "aliases": [
         "con"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.idx",
@@ -572,7 +962,21 @@
       "aliases": [
         "idx"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.syn",
@@ -593,7 +997,21 @@
       "aliases": [
         "syn"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.opr",
@@ -612,7 +1030,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "opr",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.pkg",
@@ -631,7 +1063,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "pkg",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.ext",
@@ -650,7 +1096,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "ext",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.qry",
@@ -669,7 +1129,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "qry",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.pol",
@@ -688,7 +1162,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "pol",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.pub",
@@ -707,7 +1195,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "pub",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.sub",
@@ -726,7 +1228,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "sub",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.dst",
@@ -747,7 +1263,21 @@
       "aliases": [
         "dst"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.rec",
@@ -768,7 +1298,21 @@
       "aliases": [
         "rec"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.fld",
@@ -789,7 +1333,21 @@
       "aliases": [
         "fld"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.col",
@@ -810,7 +1368,21 @@
       "aliases": [
         "col"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.doc",
@@ -831,7 +1403,21 @@
       "aliases": [
         "doc"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.arr",
@@ -852,7 +1438,21 @@
       "aliases": [
         "arr"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.map",
@@ -871,7 +1471,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "map",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.set",
@@ -890,7 +1504,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "set",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.var",
@@ -911,7 +1539,21 @@
       "aliases": [
         "var"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.grf",
@@ -932,7 +1574,21 @@
       "aliases": [
         "grf"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.nod",
@@ -953,7 +1609,21 @@
       "aliases": [
         "nod"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.edg",
@@ -974,7 +1644,21 @@
       "aliases": [
         "edg"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.kvs",
@@ -995,7 +1679,21 @@
       "aliases": [
         "kvs"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.wcf",
@@ -1016,7 +1714,21 @@
       "aliases": [
         "wcf"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.tsr",
@@ -1037,7 +1749,21 @@
       "aliases": [
         "tsr"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.fil",
@@ -1058,7 +1784,21 @@
       "aliases": [
         "fil"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.fls",
@@ -1079,7 +1819,21 @@
       "aliases": [
         "fls"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.buk",
@@ -1100,7 +1854,21 @@
       "aliases": [
         "buk"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.man",
@@ -1121,7 +1889,21 @@
       "aliases": [
         "man"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.src",
@@ -1142,7 +1924,21 @@
       "aliases": [
         "src"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.vec",
@@ -1163,7 +1959,21 @@
       "aliases": [
         "vec"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.bin",
@@ -1184,7 +1994,21 @@
       "aliases": [
         "bin"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.ten",
@@ -1205,7 +2029,21 @@
       "aliases": [
         "ten"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.rdf",
@@ -1224,7 +2062,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "rdf",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.fct",
@@ -1245,7 +2097,21 @@
       "aliases": [
         "fct"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.dim",
@@ -1266,7 +2132,21 @@
       "aliases": [
         "dim"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.brg",
@@ -1287,7 +2167,21 @@
       "aliases": [
         "brg"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.cub",
@@ -1308,7 +2202,21 @@
       "aliases": [
         "cub"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.sem",
@@ -1329,7 +2237,21 @@
       "aliases": [
         "sem"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.met",
@@ -1350,7 +2272,21 @@
       "aliases": [
         "met"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.rpt",
@@ -1371,7 +2307,21 @@
       "aliases": [
         "rpt"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.dsh",
@@ -1392,7 +2342,21 @@
       "aliases": [
         "dsh"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.dpr",
@@ -1413,7 +2377,21 @@
       "aliases": [
         "dpr"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.ftr",
@@ -1434,7 +2412,21 @@
       "aliases": [
         "ftr"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.mlm",
@@ -1455,7 +2447,21 @@
       "aliases": [
         "mlm"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.exp",
@@ -1476,7 +2482,21 @@
       "aliases": [
         "exp"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.api",
@@ -1495,7 +2515,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "api",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.ept",
@@ -1516,7 +2550,21 @@
       "aliases": [
         "ept"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.top",
@@ -1537,7 +2585,21 @@
       "aliases": [
         "top"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.que",
@@ -1558,7 +2620,21 @@
       "aliases": [
         "que"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.msg",
@@ -1579,7 +2655,21 @@
       "aliases": [
         "msg"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.cmd",
@@ -1600,7 +2690,21 @@
       "aliases": [
         "cmd"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.cgr",
@@ -1621,7 +2725,21 @@
       "aliases": [
         "cgr"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.sbs",
@@ -1642,7 +2760,21 @@
       "aliases": [
         "sbs"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.schr",
@@ -1663,7 +2795,21 @@
       "aliases": [
         "schr"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.cnx",
@@ -1684,7 +2830,21 @@
       "aliases": [
         "cnx"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.whk",
@@ -1705,7 +2865,21 @@
       "aliases": [
         "whk"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.fed",
@@ -1726,7 +2900,21 @@
       "aliases": [
         "fed"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.act",
@@ -1747,7 +2935,21 @@
       "aliases": [
         "act"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.pip",
@@ -1768,7 +2970,21 @@
       "aliases": [
         "pip"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.job",
@@ -1787,7 +3003,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "job",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.run",
@@ -1806,7 +3036,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "run",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.scd",
@@ -1827,7 +3071,21 @@
       "aliases": [
         "scd"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.app",
@@ -1848,7 +3106,21 @@
       "aliases": [
         "app"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.qop",
@@ -1869,7 +3141,21 @@
       "aliases": [
         "qop"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.wop",
@@ -1890,7 +3176,21 @@
       "aliases": [
         "wop"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.chk",
@@ -1911,7 +3211,21 @@
       "aliases": [
         "chk"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.tst",
@@ -1932,7 +3246,21 @@
       "aliases": [
         "tst"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.hum",
@@ -1953,7 +3281,21 @@
       "aliases": [
         "hum"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.gat",
@@ -1974,7 +3316,21 @@
       "aliases": [
         "gat"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.cat",
@@ -1995,7 +3351,21 @@
       "aliases": [
         "cat"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.db",
@@ -2016,7 +3386,21 @@
       "aliases": [
         "db"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.scm",
@@ -2037,7 +3421,21 @@
       "aliases": [
         "scm"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.ksp",
@@ -2058,7 +3456,21 @@
       "aliases": [
         "ksp"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.nsp",
@@ -2079,7 +3491,21 @@
       "aliases": [
         "nsp"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.prj",
@@ -2100,7 +3526,21 @@
       "aliases": [
         "prj"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.dir",
@@ -2121,7 +3561,21 @@
       "aliases": [
         "dir"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.reg",
@@ -2142,7 +3596,21 @@
       "aliases": [
         "reg"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.cld",
@@ -2165,6 +3633,20 @@
       ],
       "defaults": {
         "location": "cloud"
+      },
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
       }
     },
     {
@@ -2186,7 +3668,21 @@
       "aliases": [
         "acc"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.rgn",
@@ -2207,7 +3703,21 @@
       "aliases": [
         "rgn"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.az",
@@ -2228,7 +3738,21 @@
       "aliases": [
         "az"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.site",
@@ -2249,7 +3773,21 @@
       "aliases": [
         "site"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.net",
@@ -2270,7 +3808,21 @@
       "aliases": [
         "net"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.clu",
@@ -2291,7 +3843,21 @@
       "aliases": [
         "clu"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.srv",
@@ -2312,7 +3878,21 @@
       "aliases": [
         "srv"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.host",
@@ -2333,7 +3913,21 @@
       "aliases": [
         "host"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.ctr",
@@ -2354,7 +3948,21 @@
       "aliases": [
         "ctr"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.vol",
@@ -2375,7 +3983,21 @@
       "aliases": [
         "vol"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.dev",
@@ -2396,7 +4018,21 @@
       "aliases": [
         "dev"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.env",
@@ -2417,7 +4053,21 @@
       "aliases": [
         "env"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.secz",
@@ -2438,7 +4088,21 @@
       "aliases": [
         "secz"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.prl",
@@ -2459,7 +4123,21 @@
       "aliases": [
         "prl"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.par",
@@ -2480,7 +4158,21 @@
       "aliases": [
         "par"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.shd",
@@ -2501,7 +4193,21 @@
       "aliases": [
         "shd"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.plc",
@@ -2522,7 +4228,21 @@
       "aliases": [
         "plc"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.rpl",
@@ -2543,7 +4263,21 @@
       "aliases": [
         "rpl"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.rps",
@@ -2564,7 +4298,21 @@
       "aliases": [
         "rps"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.cog",
@@ -2585,7 +4333,21 @@
       "aliases": [
         "cog"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.cac",
@@ -2608,6 +4370,20 @@
       ],
       "defaults": {
         "role": "cache"
+      },
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
       }
     },
     {
@@ -2629,7 +4405,21 @@
       "aliases": [
         "log"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.bal",
@@ -2650,7 +4440,21 @@
       "aliases": [
         "bal"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.snp",
@@ -2673,6 +4477,20 @@
       ],
       "defaults": {
         "temporal": "snapshot"
+      },
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
       }
     },
     {
@@ -2694,7 +4512,21 @@
       "aliases": [
         "bak"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.arc",
@@ -2717,6 +4549,20 @@
       ],
       "defaults": {
         "role": "archive"
+      },
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
       }
     },
     {
@@ -2738,7 +4584,21 @@
       "aliases": [
         "tln"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.rcp",
@@ -2759,7 +4619,21 @@
       "aliases": [
         "rcp"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.win",
@@ -2780,7 +4654,21 @@
       "aliases": [
         "win"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.hst",
@@ -2803,6 +4691,20 @@
       ],
       "defaults": {
         "temporal": "event_history"
+      },
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
       }
     },
     {
@@ -2824,7 +4726,21 @@
       "aliases": [
         "ret"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.org",
@@ -2845,7 +4761,21 @@
       "aliases": [
         "org"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.team",
@@ -2866,7 +4796,21 @@
       "aliases": [
         "team"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.role",
@@ -2885,7 +4829,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "role",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.dct",
@@ -2904,7 +4862,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "dct",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.gpo",
@@ -2923,7 +4895,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "gpo",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.qlr",
@@ -2942,7 +4928,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "qlr",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.slo",
@@ -2961,7 +4961,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "slo",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.entl",
@@ -2980,7 +4994,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "entl",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.cls",
@@ -2999,7 +5027,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "cls",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.prv",
@@ -3018,7 +5060,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "prv",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.dcl",
@@ -3037,7 +5093,21 @@
       "token_required_when_ambiguous": true,
       "keyword": "dcl",
       "aliases": [],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.note",
@@ -3058,7 +5128,20 @@
       "aliases": [
         "note"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.smp",
@@ -3079,7 +5162,21 @@
       "aliases": [
         "smp"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.fix",
@@ -3100,7 +5197,21 @@
       "aliases": [
         "fix"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.dec",
@@ -3121,7 +5232,20 @@
       "aliases": [
         "dec"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.iss",
@@ -3142,7 +5266,20 @@
       "aliases": [
         "iss"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.obs",
@@ -3163,7 +5300,20 @@
       "aliases": [
         "obs"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.chg",
@@ -3184,7 +5334,20 @@
       "aliases": [
         "chg"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.vie",
@@ -3205,7 +5368,21 @@
       "aliases": [
         "vie"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "table",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.extn",
@@ -3226,7 +5403,20 @@
       "aliases": [
         "extn"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     },
     {
       "id": "kind.note.sticky",
@@ -3235,7 +5425,7 @@
       "glyph": "note",
       "family": "evidence",
       "shape": "note.sticky",
-      "meaning": "Free-form workshop sticky note (collaborative whiteboard idiom): a coloured, optionally pinned note with body text only \u2014 no name/rows sections.",
+      "meaning": "Free-form workshop sticky note (collaborative whiteboard idiom): a coloured, optionally pinned note with body text only — no name/rows sections.",
       "text_label": "Sticky note",
       "icon_recipe": "sticky note + STKY discriminator",
       "slot": "NW",
@@ -3247,7 +5437,20 @@
       "aliases": [
         "sticky"
       ],
-      "defaults": {}
+      "defaults": {},
+      "composition_defaults": {
+        "sections": [
+          "name",
+          "type",
+          "notes"
+        ],
+        "order": [
+          "table",
+          "notes"
+        ],
+        "note_height": 180,
+        "note_wrap": "auto"
+      }
     }
   ],
   "facets": [
@@ -15184,49 +17387,49 @@
   "sources": [
     [
       "S1",
-      "W3C \u2014 Use of Color",
+      "W3C — Use of Color",
       "https://www.w3.org/WAI/WCAG21/Understanding/use-of-color.html",
       "Use non-colour redundancy; no claim that these artifacts have been accessibility-certified."
     ],
     [
       "S2",
-      "PostgreSQL \u2014 Schemas",
+      "PostgreSQL — Schemas",
       "https://www.postgresql.org/docs/current/ddl-schemas.html",
       "Namespace examples include objects beyond tables; vendor-specific namespace rules still need profiles."
     ],
     [
       "S3",
-      "W3C \u2014 PROV-DM",
+      "W3C — PROV-DM",
       "https://www.w3.org/TR/prov-dm/",
       "Entities, activities, agents and provenance relationships; visual lineage direction is stated separately."
     ],
     [
       "S4",
-      "JSON Schema \u2014 Null",
+      "JSON Schema — Null",
       "https://json-schema.org/understanding-json-schema/reference/null",
       "Missing property and null value are distinct."
     ],
     [
       "S5",
-      "Microsoft \u2014 Temporal tables",
+      "Microsoft — Temporal tables",
       "https://learn.microsoft.com/en-us/sql/relational-databases/tables/temporal/overview?view=sql-server-ver17",
       "Historical query support is distinguished from recovery capability."
     ],
     [
       "S6",
-      "PostgreSQL \u2014 Continuous archiving / PITR",
+      "PostgreSQL — Continuous archiving / PITR",
       "https://www.postgresql.org/docs/current/continuous-archiving.html",
       "Recovery depends on backup and log coverage; PITR is not a historical-query time axis."
     ],
     [
       "S7",
-      "Apache Kafka \u2014 Design",
+      "Apache Kafka — Design",
       "https://kafka.apache.org/40/design/design/",
       "End-to-end effects in external systems require cooperation; a technology glyph is not a guarantee."
     ],
     [
       "S8",
-      "W3C \u2014 SVG document structure",
+      "W3C — SVG document structure",
       "https://www.w3.org/TR/SVG/struct.html",
       "SVG definitions, reuse and descriptive metadata inform the artifact implementation."
     ]
@@ -17413,5 +19616,8 @@
       }
     }
   },
-  "capabilities_version": "ddn-reference@0.3.0-draft.1"
+  "capabilities_version": "ddn-reference@0.3.0-draft.1",
+  "limits": {
+    "max_frame_depth": 4
+  }
 }

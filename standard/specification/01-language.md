@@ -219,3 +219,7 @@ The resolved children have their own IDs, parent IDs, depth and dotted path. `@m
 ## Errors and limits
 
 The reader limits source size and nesting to protect local tools from resource exhaustion. Compile errors carry source/offset information where available. The semantic schema checker supports the explicitly listed subset in `registry/capabilities.json`; it is not a complete JSON Schema evaluator. Unknown extensions are preserved with warnings in logical mode and rejected in strict mode unless registered.
+
+## Composable content amendment
+
+Source dialect `ddn "0.7";` adds element `document` and `composition` groups, appearance composition overrides and procedure/function parameter modes. [Chapter 59](59-composable-elements.md) defines the complete contract, DDNN storage and text-only Markdown profile. Older sources retain their established behavior.

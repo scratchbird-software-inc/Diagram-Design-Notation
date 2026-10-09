@@ -1,0 +1,4 @@
+ddn "0.7";
+module "composed";
+data m { procedure p "Calculate total" { fields { amount {datatype:decimal;parameter_mode:in;} total {datatype:decimal;parameter_mode:out;} } document {format:code;role:procedure_source;language:"sql";text:"BEGIN\n    total := amount;\nEND;\n";} composition {sections:[name,type,table,notes];order:[table,notes];} } }
+view main {data:[@m];publication {size:content;} select:[@m.p,@m.p#2];place @m.p#2 {composition {sections:[name,type,notes];order:[notes,table];}} }

@@ -8,6 +8,14 @@ Component-level history predating the monorepo import lives in
 
 ### Changed
 
+- Added `ddna.em2.tables-l0@1` with unique, first and collect row policies, strict boolean predicates, bounded rule counts and full table evidence in verified replay. Rules remain explicit companion declarations; display tables and stored source code remain inert.
+
+- Added the bounded `ddna.em2.dag-l0@1` dependency evaluator in the tool, with exact input declarations, qualified targets, recorded environments/results and verified replay from recorded inputs. Full-event comparison detects altered results. KEEL L0 1.0.1 fixes subtraction tokenization. Full DMN/FEEL, EM-5 and EM-6 remain outstanding; procedure source remains inert text.
+
+- Profile silhouette metadata now derives all 55 registered identifiers, including profile-specific variants. SDK builds reject catalogue drift, and renderer coverage checks prevent unknown registrations from silently falling back.
+
+- Explicit frame containment (`within`) now supports four levels, checked parent references, cycle/depth errors, enclosing graph boundaries and inherited fixed-frame constraints. The maximum-nesting conformance vector is active, with a fifth-level rejection vector.
+
 - **Open/commercial boundary amended (owner direction, 2026-10-08).** The old
   capability split ("open viewer/designer render DDN only; DDNA support is
   commercial/closed") is **repealed**. The open tool includes full DDNA
@@ -28,8 +36,33 @@ Component-level history predating the monorepo import lives in
 
 ### Added
 
-- **Notation feature-set specification (owner directive 2026-10-08; spec
-  only, no runtime change yet).** Four amendments:
+- **Diagram file preview/apply (2026-10-09).** `workspace.editor()` prepares
+  isolated, reviewable DDN/DDNA/DDNN edits and applies them as one undoable
+  action, with revision checks, write policy and all-view validation. The core
+  draft resolver reports individually registered incomplete flow/activity
+  requirements while retaining hard errors and strict publication. The Source
+  drawer adds a sandboxed, visibly marked preview and explicit apply/cancel.
+  Source-0.7 diagrams now accept additional element appearances through the
+  authoring API. See designer chapter 21 for the supported operations and
+  performance boundaries. These are file edits; no database execution is added.
+
+- **Independent graph occurrences (2026-10-09).** Dialect-0.6 views can select
+  `@element#2` without duplicating the model. Versioned occurrence records carry
+  independent pins, presentation, frame membership and explicitly targeted
+  connector copies. Source maps, semantic edits, redaction, snapshots and undo
+  retain shared identity. The active designer exposes Add another appearance
+  and connector endpoint pickers. Legacy diagrams keep their scene ids and
+  rendering. See chapter 03 for projection boundaries and deferred RFC items.
+
+- **Notation amendment implementation (2026-10-09).** Completed the inherited
+  title-wrap, field-clipping and structured-column patch. Columns paint full
+  values, retain accessible text, validate schema overrides and safe bindings,
+  and resolve bounded widths against the final element width. UML/SysML fields
+  honor wrap overrides; marker captions and circle titles grow vertically.
+  Element descriptions render below field content. The field-presentation
+  regression suite covers source, IR, geometry, SVG and coded failures.
+
+- **Notation feature-set specification (owner directive 2026-10-08; implemented 2026-10-09).** Four amendments:
   - **Title wrapping norm** (spec ch. 54 §54.6): titles wrap at the element's
     laid-out width (grapheme-breaking unbroken words) and grow height;
     codified uniformly across silhouettes incl. the previously growing edge

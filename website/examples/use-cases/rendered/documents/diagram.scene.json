@@ -52,7 +52,7 @@
     {
       "id": "ddn.usecases.documents::model.contacts",
       "w": 270,
-      "h": 100,
+      "h": 134,
       "fields": [],
       "titleLines": [
         "Contacts array"
@@ -61,7 +61,11 @@
       "scale": 1,
       "headerH": 64,
       "meaningLines": [],
-      "noteLines": [],
+      "noteLines": [
+        "Embedded collection value, not an",
+        "independently stored table."
+      ],
+      "noteTop": 64,
       "x": 390,
       "y": 0,
       "fieldRows": []
@@ -128,21 +132,13 @@
           67
         ],
         [
-          314,
-          67
-        ],
-        [
-          314,
-          50
-        ],
-        [
           390,
-          50
+          67
         ]
       ],
       "label": {
-        "x": 337,
-        "y": 35,
+        "x": 315,
+        "y": 52,
         "w": 30,
         "h": 30
       },
@@ -155,11 +151,11 @@
       "points": [
         [
           660,
-          50
+          67
         ],
         [
           704,
-          50
+          67
         ],
         [
           704,
@@ -207,23 +203,23 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 0,
-        "length": 288,
-        "bends": 4
+        "length": 254,
+        "bends": 2
       },
       {
         "stage": "connection-points",
         "trials": 0,
         "accepted": 0,
         "crossings": 0,
-        "length": 288,
-        "bends": 4
+        "length": 254,
+        "bends": 2
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
-        "length": 288,
-        "bends": 4,
+        "length": 254,
+        "bends": 2,
         "trials": 0,
         "accepted": 0
       },
@@ -231,14 +227,14 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 0,
-        "length": 288,
-        "bends": 4
+        "length": 254,
+        "bends": 2
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
-        "length": 288,
-        "bends": 4
+        "length": 254,
+        "bends": 2
       }
     ],
     "portTrials": 0,
@@ -252,14 +248,14 @@
       "before": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 288,
-        "bends": 4
+        "length": 254,
+        "bends": 2
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 288,
-        "bends": 4
+        "length": 254,
+        "bends": 2
       },
       "exhausted": false
     },

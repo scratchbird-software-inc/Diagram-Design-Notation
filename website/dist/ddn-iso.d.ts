@@ -1,4 +1,4 @@
-/** DDN 0.7.0 public API. Source access is not a security boundary. */
+/** DDN 0.8.0 public API. Source access is not a security boundary. */
 export type SourceFiles = Record<string, string>;
 export type Placement = 'source'|'auto'|'grid'|'manual'|'fit_grid'|'circular'|'radial'|'layered'|'tree'|'spanning_tree'|'mindmap'|'grouped'|'organic';
 export type ProjectionKind = 'graph'|'chen'|'matrix'|'table'|'panels'|'chart'|'timeline'|'fishbone'|'decision';
@@ -25,13 +25,24 @@ export interface Options {
   curveRadius?: number|null;
 }
 export interface LayoutState { format:'ddn-layout-state@1'; view:string; positions:Record<string,[number,number]> }
-export interface Diagnostic {code:string;severity?:'info'|'warning'|'error';message:string;source?:string;offset?:number}
-export interface Scene {marks?:ProjectionMark[];projection?:{kind:ProjectionKind;profile:string;sourceIds?:string[];quantitative?:boolean;[key:string]:unknown};nodes:Array<{id:string;x:number;y:number;w:number;h:number;[key:string]:unknown}>; routes:Array<Record<string,unknown>>;layoutState?:LayoutState;[key:string]:unknown}
+export interface Diagnostic {code:string;severity?:'info'|'warning'|'error'|'incomplete';message:string;source?:string;offset?:number}
+export interface Scene {occurrences?:Array<{occurrence:string;source:string;number:number;owner?:string}>;marks?:ProjectionMark[];projection?:{kind:ProjectionKind;profile:string;sourceIds?:string[];quantitative?:boolean;[key:string]:unknown};nodes:Array<{id:string;x:number;y:number;w:number;h:number;[key:string]:unknown}>; routes:Array<Record<string,unknown>>;layoutState?:LayoutState;[key:string]:unknown}
 export interface RenderRequest {entry:string;view:string;overrides?:Options;layoutState?:LayoutState|null;noMotion?:boolean;isoFrom?:{depths?:Record<string,number>}|null}
 export interface RenderResult {svg:string;scene:Scene;layoutState:LayoutState|null;diagnostics:Diagnostic[];entry:string;view:string;revision:number;milliseconds:number;modelFingerprint:string;sourceMap:Record<string,Record<string,unknown>>;dependencies:string[];profiles:Record<string,unknown>;capabilities:Record<string,unknown>;keys:Record<string,number>;overrides:Options}
 export interface Snapshot extends RenderRequest {format:'ddn-workspace@1';runtime:Record<string,string>;files:SourceFiles}
 export interface TextEdit {file:string;start:number;end:number;text:string}
+export interface DraftResult {status:'valid'|'incomplete'|'invalid';ir:Record<string,unknown>|null;diagnostics:Diagnostic[]}
+export interface DraftPreview extends DraftResult {svg:string|null;scene:Scene|null}
+export type EditorOperation = {type:'files';changes:SourceFiles}|{type:'edits';edits:TextEdit[]}|{type:'authoring';method:string;args:unknown[]};
+export interface EditorRequest {entry:string;view:string;operations:EditorOperation[];mode?:'design'|'review';label?:string;expectedRevision?:number}
+export interface EditPlan {readonly format:'ddn-edit-plan@1';readonly baseRevision:number;readonly label:string;readonly entry:string;readonly view:string;readonly mode:'design'|'review';readonly status:'valid'|'incomplete';readonly changes:ReadonlyArray<{readonly file:string;readonly before:string|null;readonly after:string|null;readonly beforeHash:string|null;readonly afterHash:string|null}>;readonly results:ReadonlyArray<unknown>;readonly diagnostics:ReadonlyArray<Diagnostic>;readonly views:ReadonlyArray<{file:string;view:string;status:'valid'|'incomplete'|'invalid'}>}
+export interface EditorAdapter {readonly methods:ReadonlyArray<string>;preview(request:EditorRequest):EditPlan;capture(request:Omit<EditorRequest,'operations'>,edit:(draft:Workspace)=>unknown):EditPlan;apply(plan:EditPlan):number;cancel(plan:EditPlan):boolean;validate(entry:string,view:string):DraftResult;previewLayout(entry:string,view:string):DraftPreview;previewLayout(plan:EditPlan):DraftPreview}
 export interface Workspace {
+ editor(options?:{canWrite?:(file:string)=>boolean}):EditorAdapter;
+ validateDraft(entry:string,view:string):DraftResult;
+ previewDraft(entry:string,view:string):DraftPreview;
+ documents(entry:string,view:string):ResolvedDocument[];
+ commitFiles(changes:Record<string,string>,options:{expectedRevision?:number;entry:string;view:string}):number;
  readonly revision:number;getFiles():SourceFiles;entries():Array<{file:string;views:Array<{id:string;name:string}>}>;views(entry:string):Array<{id:string;name:string}>;
  analyze(file:string):Record<string,unknown>;resolve(entry:string,view:string):Record<string,unknown>;inspect(entry:string,view:string):Record<string,unknown>;
  updateFiles(changes:SourceFiles):number;replaceFiles(files:SourceFiles):number;removeFile(file:string,options?:{force?:boolean}):number;dependents(file:string):string[];renameFile(oldName:string,newName:string):number;
@@ -48,7 +59,17 @@ export interface DiagramElement extends HTMLElement {
  exportSVG():string;getState():Record<string,unknown>;destroy():void;
 }
 export interface MatrixEdit {row:string;column:string;value?:unknown;remove?:boolean;id?:string}
+export interface Occurrence {id:string;source:string;number:number;from?:string;to?:string}
+export interface OccurrenceLayer {version:1;elements:Occurrence[];relations:Occurrence[]}
+export interface AddedOccurrence {revision:number;occurrenceId:string;sourceId:string;number:number}
 export interface Authoring {
+ setComposition(ws:Workspace,entry:string,view:string,id:string,props:ElementComposition|null,options?:{scope?:'appearance'|'element'}):number;
+ setDocument(ws:Workspace,entry:string,view:string,id:string,input:TextDocument|null,storage?:{file?:string|null;documentId?:string}):number;
+ occurrences(ws:Workspace,entry:string,view:string):OccurrenceLayer;
+ addOccurrence(ws:Workspace,entry:string,view:string,id:string,options?:{number?:number;x?:number;y?:number}):AddedOccurrence;
+ addRelationOccurrence(ws:Workspace,entry:string,view:string,id:string,options:{from:string;to:string;number?:number}):AddedOccurrence;
+ occurrencePresentation(ws:Workspace,entry:string,view:string,id:string):Record<string,unknown>;
+ setOccurrencePresentation(ws:Workspace,entry:string,view:string,id:string,props:Record<string,unknown>):number;
  setMatrixCell(ws:Workspace,entry:string,view:string,row:string,column:string,value:unknown,options?:{remove?:boolean;id?:string}):number;
  setMatrixCells(ws:Workspace,entry:string,view:string,changes:MatrixEdit[]):number;
  setRecordValue(ws:Workspace,entry:string,view:string,id:string,key:string,value:unknown):number;
@@ -71,7 +92,11 @@ export interface Authoring {
  /** Designer phase 3: merge-write an x_* extension record on a relation (e.g. x_endlabels.source/target); a sub-record of null removes that key, undefined removes the extension. DDN-PJ149 is judged at commit. */
  setRelationExtension(ws:Workspace,entry:string,view:string,id:string,key:string,rec:Record<string,unknown>|undefined):number;
  pin(ws:Workspace,entry:string,view:string,id:string,x:number,y:number):number;unpin(ws:Workspace,entry:string,view:string,id:string):number|false;hide(ws:Workspace,entry:string,view:string,id:string):number|false;
- addElement(ws:Workspace,entry:string,view:string,data:{id:string;name?:string;kind?:string}):number;
+ renameDefinition(ws:Workspace,entry:string,view:string,id:string,newId:string):number;
+ columnLayout(ws:Workspace,entry:string,view:string,id:string):Array<Record<string,unknown>>|null;
+ setColumnLayout(ws:Workspace,entry:string,view:string,id:string,columns:Array<Record<string,unknown>>|null):number;
+ creationDestinations(ws:Workspace):Array<{file:string;module:string;block:string}>;
+ addElement(ws:Workspace,entry:string,view:string,data:{id:string;name?:string;kind?:string;destination?:{file:string;module:string;block:string}}):number;
  addField(ws:Workspace,entry:string,view:string,parent:string,data:{id:string;name?:string}):number;
  addRelation(ws:Workspace,entry:string,view:string,data:{id:string;name?:string;kind?:string;from:string;to:string}):number;
  deleteDefinition(ws:Workspace,entry:string,view:string,id:string):number;
@@ -104,12 +129,21 @@ export interface Glyphs {
 }
 export const glyphs:Glyphs;
 /** Designer phase 2: palette kind choice with capability metadata. */
-export interface KindChoice{id:string;label:string;code:string;group:string|null;allowed_in:string[]}
+export interface KindChoice{id:string;label:string;code:string;group:string|null;allowed_in:string[];composition?:ElementComposition}
 export interface VerbChoice{id:string;label:string;code:string;allowed_in:string[]}
 export const kinds:KindChoice[];
 export const relations:VerbChoice[];
 /** Legal verbs for an endpoint kind pair, from the merged registry's endpoint contracts (same data as the CLI verbs query). */
 export function legalVerbs(from:string,to:string):string[];
 export const capabilities:{viewCapabilities(projection:{kind?:string;profile?:string}|null|undefined):string[];allowedInView(allowed:string[],projection:{kind?:string;profile?:string}|null|undefined):boolean;paletteGroups:string[]};
-declare const DDNLive:{profileCatalogue:typeof profileCatalogue;VERSION:typeof VERSION;runtime:typeof runtime;createWorkspace:typeof createWorkspace;registerWorkspace:typeof registerWorkspace;mount:typeof mount;fromSnapshot:typeof fromSnapshot;authoring:Authoring;io:IO;parse:typeof parse;defaults:Defaults;glyphs:Glyphs;kinds:typeof kinds;relations:typeof relations;legalVerbs:typeof legalVerbs;capabilities:typeof capabilities;setTextProvider(fn:((text:string,size:number,font:string,weight:number)=>{width:number;ascent?:number;descent?:number})|null,name?:string):void;setTextMetrics(metrics:Record<string,unknown>):void};
+declare const DDNLive:{occurrenceId:typeof occurrenceId;expandOccurrences:typeof expandOccurrences;profileCatalogue:typeof profileCatalogue;VERSION:typeof VERSION;runtime:typeof runtime;createWorkspace:typeof createWorkspace;registerWorkspace:typeof registerWorkspace;mount:typeof mount;fromSnapshot:typeof fromSnapshot;authoring:Authoring;io:IO;parse:typeof parse;defaults:Defaults;glyphs:Glyphs;kinds:typeof kinds;relations:typeof relations;legalVerbs:typeof legalVerbs;capabilities:typeof capabilities;setTextProvider(fn:((text:string,size:number,font:string,weight:number)=>{width:number;ascent?:number;descent?:number})|null,name?:string):void;setTextMetrics(metrics:Record<string,unknown>):void};
 export default DDNLive;
+
+/** Stable, opaque visual id. Ordinal 1 keeps the historical model id. */
+export function occurrenceId(view:string,source:string,number?:number):string;
+/** Rendering/UI projection only; workspace.resolve remains semantic. */
+export function expandOccurrences(ir:any):any;
+
+export interface ElementComposition {sections?:Array<'name'|'type'|'table'|'notes'>;order?:Array<'table'|'notes'>;note_height?:number;note_wrap?:'auto'|'on'|'off'}
+export interface TextDocument {format?:'plain'|'markdown_text'|'code';role?:'note'|'procedure_source'|'function_source'|'source';language?:string;text:string;digest?:string}
+export interface ResolvedDocument extends TextDocument {elementId:string;storage?:{file:string;id:string}}

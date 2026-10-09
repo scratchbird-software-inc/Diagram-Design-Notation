@@ -38,5 +38,5 @@
       ]
     }
   },
-  "description": "Serialization schema only. The runtime additionally checks safe .ddn paths, UTF-8, aggregate budgets, source resolution, view scope and option contracts. File snapshots are internal source, not redacted exports."
+  "description": "Serialization schema only. The runtime additionally checks safe .ddn/.ddna/.ddnn paths, UTF-8, aggregate budgets, source resolution, view scope and option contracts. File snapshots are internal source, not redacted exports."
 }

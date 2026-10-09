@@ -1,0 +1,17 @@
+ddn "0.6";
+module "vectors.occurrences";
+data m {
+  object a "Customer" { kind: table; fields { id { key: primary; } } }
+  object b "Order" { kind: table; fields { customer_id; } }
+  relation r @a.id -> @b.customer_id { kind: ref; }
+}
+view main {
+  data: [@m];
+  select: [@m.a, @m.a#2, @m.b];
+  show: [@m.r#2];
+  place @m.a { at: [0px, 0px]; }
+  place @m.a#2 { at: [400px, 320px]; opacity: 0.8; }
+  place @m.b { at: [800px, 0px]; }
+  route @m.r#2 { from: @m.a#2; to: @m.b; }
+  publication { size: content; }
+}

@@ -11,7 +11,7 @@
     {
       "id": "ddn.usecases.sql::model.routine",
       "w": 270,
-      "h": 100,
+      "h": 152,
       "fields": [],
       "titleLines": [
         "Refresh open",
@@ -21,7 +21,11 @@
       "scale": 1,
       "headerH": 82,
       "meaningLines": [],
-      "noteLines": [],
+      "noteLines": [
+        "Definition of callable SQL code;",
+        "not an observed execution."
+      ],
+      "noteTop": 82,
       "x": 0,
       "y": 0,
       "fieldRows": []
@@ -128,11 +132,11 @@
       "points": [
         [
           270,
-          50
+          76
         ],
         [
           314,
-          50
+          76
         ],
         [
           314,
@@ -210,7 +214,7 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 0,
-        "length": 290,
+        "length": 282,
         "bends": 4
       },
       {
@@ -218,14 +222,14 @@
         "trials": 0,
         "accepted": 0,
         "crossings": 0,
-        "length": 290,
+        "length": 282,
         "bends": 4
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
-        "length": 290,
+        "length": 282,
         "bends": 4,
         "trials": 0,
         "accepted": 0
@@ -234,13 +238,13 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 0,
-        "length": 290,
+        "length": 282,
         "bends": 4
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
-        "length": 290,
+        "length": 282,
         "bends": 4
       }
     ],
@@ -255,13 +259,13 @@
       "before": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 290,
+        "length": 282,
         "bends": 4
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 290,
+        "length": 282,
         "bends": 4
       },
       "exhausted": false

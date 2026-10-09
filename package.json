@@ -16,7 +16,7 @@
     "test:normalize": "node tests/normalize-ddn.js",
     "test:packaging": "node tools/tests/packaging.js",
     "test:ai-reference": "node tests/ai-reference.js",
-    "test:site": "node tests/website-links.js && node tests/viewer-src-http.js && node tests/tool-worker-http.js && node tests/tool-host-io-http.js && node tests/example-links-http.js && node tests/tool-mindmap-http.js && node tests/tool-icon-picker-http.js && node tests/icons-page-http.js",
+    "test:site": "node tests/website-links.js && node tests/viewer-src-http.js && node tests/tool-worker-http.js && node tests/tool-host-io-http.js && node tests/example-links-http.js && node tests/tool-mindmap-http.js && node tests/tool-icon-picker-http.js && node tests/icons-page-http.js && node tests/field-presentation-browser.js && node tests/occurrences-browser.js && node tests/composition-browser.js && node tests/editor-preview-browser.js && node tests/ddna-declarative-browser.js && node tests/editor-gaps-browser.js",
     "test:brand": "node tests/brand-assets.js",
     "build:brand": "node tools/build-brand.mjs",
     "test:core": "npm --prefix notation run test:core",
@@ -26,7 +26,8 @@
     "serve": "node tools/serve.js",
     "build:tool": "node tools/build-tool.js",
     "test:submission": "node tests/submission-freshness.js",
-    "test:field-guide": "node tests/field-guide.js && node tests/field-guide-browser.js"
+    "test:field-guide": "node tests/field-guide.js && node tests/field-guide-browser.js",
+    "build:shape-catalogue": "node tools/build-shape-catalogue.mjs"
   },
   "engines": {
     "node": ">=22"

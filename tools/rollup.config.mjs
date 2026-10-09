@@ -36,8 +36,8 @@ const importMetaUndefined = {
 /* Bundle membership, from the historical BUNDLES map (load order preserved). */
 const RUNTIME = path.join(root, 'notation/runtime');
 const MEMBERS = {
-  core: ['ddn-defaults', 'ddn-quality-data', 'ddn-projection-data', 'ddn-profile-quality', 'ddn-profiles', 'ddn-contracts', 'ddn-core', 'ddn-patterns', 'ddn-export', 'ddn-engine'],
-  graph: ['ddn-palette', 'ddn-text', 'ddn-sketch', 'ddn-shapes', 'ddn-layout', 'ddn-placement', 'ddn-render', 'ddn-interaction'],
+  core: ['ddn-documents','ddn-occurrences', 'ddn-defaults', 'ddn-quality-data', 'ddn-projection-data', 'ddn-uml-structure', 'ddn-profile-quality', 'ddn-profiles', 'ddn-contracts', 'ddn-core', 'ddn-patterns', 'ddn-export', 'ddn-engine'],
+  graph: ['ddn-palette', 'ddn-text', 'ddn-field-layout','ddn-content', 'ddn-sketch', 'ddn-shapes', 'ddn-layout', 'ddn-placement', 'ddn-render', 'ddn-interaction'],
   quality: ['ddn-quality-render'],
   projections: ['ddn-projections'],
   geo: ['ddn-geo'],

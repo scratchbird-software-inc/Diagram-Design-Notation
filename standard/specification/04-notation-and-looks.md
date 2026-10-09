@@ -231,7 +231,7 @@ Some elements need their fields displayed as **rows and columns** rather than si
 
 An element gains an optional first-class `columns { … }` group. Each column binds a **property path** of the field record (chapter 02 field properties and their `x_` extensions — the same binding discipline as chapter 16's chart bindings, never expressions), with an optional display label, a width (§6D.2) and a visibility default (§6D.3):
 
-```text
+```ddn-0.8
 object customer "Customer" {
   kind: table;
   columns {
@@ -248,13 +248,11 @@ object customer "Customer" {
 }
 ```
 
-(0.8 syntax — requires `ddn "0.6";`: `columns { }` on elements. Shown as
-`text` because the group lands with the implementing engine change; the
-doc-snippet parse gate only checks implemented syntax.)
+(0.8 syntax — requires `ddn "0.6";`: `columns { }` on elements.)
 
 - The column id doubles as the default binding: id `name`/`datatype`/`domain`/`key`/`description` bind the same-named field property; `path:` overrides with any safe property path (chapter 16's binding grammar — dotted, `x_` allowed, no reserved `__proto__` family). Unknown group keys and duplicate column ids are `DDN-CL01`.
 - A field supplies one row; each bound value renders in its cell. Absent values render empty (never guessed). Column cells are single-line with the §54.7 visible clip — columns never wrap.
-- Registry kinds MAY declare a default `column_schema` (registry presentation metadata, like silhouettes — `table`'s default is the ERD column set above) so conforming ERD tables need no group; an element's `columns { }` replaces the kind schema wholesale (no keywise merge).
+- Registry kinds MAY declare a default `column_schema` (registry presentation metadata, like silhouettes — `table`'s default is the ERD column set above) so an empty `columns { }` selects that schema; omitting the group retains legacy field rows; an element's `columns { }` replaces the kind schema wholesale (no keywise merge).
 - Rendering order: columns display in declaration order (never re-sorted); rows are the element's fields in field order, nested fields indenting the first column by depth.
 - The legacy detail lines (domain/type rows) do not render in column mode — their content lives in cells.
 
@@ -265,8 +263,8 @@ Column widths are **relative to the element's width**: when the element resizes 
 | Value | Meaning |
 |---|---|
 | `equal` (default) | an equal proportional share of the width remaining after fixed columns |
-| `12ch` (N characters) | a **fixed** width of N × the average character advance of the base font at the effective size (measured, not guessed — like every text width in this standard) |
-| `30%` (percent) | N% of the width remaining after fixed-`ch` columns; `%` columns share proportionally when they do not sum to 100 |
+| `12ch` (N characters) | a **fixed** width of N × the mean measured advance of `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789` at the effective field font size and text properties |
+| `30%` (percent) | N% of the width remaining after fixed-`ch` columns; without equal-share columns, nonzero `%` weights divide all remaining space proportionally; with equal-share columns, percentages below 100 leave the balance to them and totals above 100 are normalized |
 
 `min_chars` / `max_chars` clamp any column's resolved width (measured as above). Order of resolution: fixed `ch` columns first (clamped), then `%` columns, then `equal` columns share what remains (never less than `min_chars`, and a zero remainder is a `DDN-CL02` error only if a required column cannot show — otherwise the §54.7 clip applies per cell). Invalid width forms, negative percentages, `min_chars > max_chars`, or a `path`/`width`/`visibility` value outside this grammar are `DDN-CL02`.
 
@@ -281,11 +279,13 @@ Default is **show every declared column**. Per column, one key —
   (the ERD *System* idiom: database system columns that exist but are
   usually noise); `visibility: shown` re-enables it, `hidden` is stronger.
 
+Columns contribute a natural minimum width before title wrapping when no placement size fixes the width. An authored `max_width` still caps it. Fixed widths are clamped before distributing the remainder; flexible minimum widths that cannot fit produce `DDN-CL02`. Zero-width optional cells retain accessible full text and paint inside an empty clip.
+
 Per-element override without re-declaring the schema: a partial entry
 `columns { system { visibility: shown; } }` merges over the kind schema
-**for visibility only** (any other key in a partial entry is `DDN-CL03`,
+**for visibility only**. If any entry contains only `visibility`, the whole group is an override group; all entries must name kind-schema columns and contain only `visibility`. A full replacement instead uses complete entries (an empty entry means the default binding and equal width). Unknown override columns or mixing partial and full entries is `DDN-CL03`,
 as is hiding the binding key column of a `table` whose relations key off
-it).
+it.
 
 ### 6D.4 Free-form details (reuse, not a new property)
 
@@ -293,7 +293,7 @@ Elements that need prose beyond the name but less formal than a field list use t
 
 **Validation summary.** `DDN-CL01` malformed `columns` group (unknown key, duplicate column id) · `DDN-CL02` invalid width grammar (`width`, `min_chars`/`max_chars`) · `DDN-CL03` visibility conflict (a visibility-only override carrying other keys, hiding a relation-keyed column). All three are gated `DDN-V04` below `ddn "0.6";`.
 
-**Spreadsheet editing (non-normative).** The designer's field grid (chapter 57 surface): cells commit to the bound field properties through the same authoring commands as the form editor; column visibility toggles write `visible:` keys; horizontal scrolling inside a clipped cell is the §54.7 edit-surface rule. No tool behavior is normative here.
+**Spreadsheet editing (non-normative).** The designer's field grid (chapter 57 surface): cells commit to the bound field properties through the same authoring commands as the form editor; column visibility toggles write `visibility:` keys; horizontal scrolling inside a clipped cell is the §54.7 edit-surface rule. No tool behavior is normative here.
 
 ## 7. Label modes and completeness
 

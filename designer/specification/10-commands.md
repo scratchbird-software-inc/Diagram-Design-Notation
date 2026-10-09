@@ -1,5 +1,10 @@
 # Commands, transactions and draft validation
 
+> Current implementation (2026-10-09): [chapter 21](21-preview-apply.md)
+> defines the shipped preview/apply adapter and bounded core draft validation.
+> Earlier proposed method names and prototype status statements below are
+> historical; they do not override that implemented contract.
+
 **DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Authoritative edit path
@@ -29,5 +34,31 @@ Maintain an index from definitions and format policies to consuming views and ch
 ## History and recovery
 One workspace history for both editors when attached to the same in-memory session. A source edit and a visual edit cannot be reordered across different revision bases silently. Undo is conditional on the exact source session or a reviewed rebase. Saving records a checkpoint; it does not erase history. Crash recovery is opt-in, versioned, and labeled browser-local. Recover before replacing the user's disk files; writes require explicit user consent.
 
-## New public seam (proposed)
+## Original public seam proposal (historical)
 Expose `prepareCommand`, `validateDraft`, `inspectSelection`, `previewLayout` and `commitPrepared` through an editor-specific adapter. These names are proposed, not methods of the current runtime. The current `DDNLive` API remains supported and the editor must not depend on unversioned internal closures for source manipulation.
+
+## Implemented graph occurrence operations (2026-10-09)
+
+The active SDK exposes `authoring.occurrences`, `addOccurrence`,
+`addRelationOccurrence` and `setOccurrencePresentation`. These use the version-1
+contract in standard chapter 03. Returned `occurrenceId` values are opaque;
+`sourceId` is the shared model identity. Pin/unpin/hide, frame membership and
+source maps address individual appearances. Definition edits accept an occurrence
+id and resolve it back to the single model definition. Each command is validated
+and undoable as one transaction, including cleanup of attached runs on hide.
+
+The Inspector's This view tab adds another appearance or a connector run with
+explicit endpoint pickers. Meaning remains shared; pin/hide and occurrence-aware
+resize are local. The model shelf continues to list definitions once. This does
+not implement the separate public prepare/commit adapter or draft resolver.
+
+
+## Implemented preview/apply adapter (2026-10-09, DDN-T04)
+
+The implemented contract is [chapter 21](21-preview-apply.md). User-facing
+terminology is **preview/apply**. It describes edits to notation files only;
+this project does not connect to databases or execute stored source code.
+`workspace.editor()` exposes `preview`, `apply`, `cancel`, `validate` and
+`previewLayout`. The old proposed `prepareCommand` / `commitPrepared` names
+are not public aliases. Consumers must use the implemented contract and its
+advertised method list, not assume the entire proposed command inventory ships.

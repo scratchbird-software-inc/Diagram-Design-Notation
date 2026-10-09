@@ -4,6 +4,8 @@
  */
 import {publishNamespace} from './ddn-module-registry.js';
 import Contracts from './ddn-contracts.js';
+import Occurrences from './ddn-occurrences.js';
+import Documents from './ddn-documents.js';
 import Profiles from './ddn-profiles.js';
 import ViewProfiles from './ddn-view-profiles.js';
 import RegistryCatalogue from './assets/catalogue.js';
@@ -12,7 +14,7 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
 import {namespace as ddnNamespace} from './ddn-module-registry.js';
   'use strict';
   const VERSION = '0.8.0';
-  const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5','0.6']);
+  const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5','0.6','0.7']);
   const V06=SOURCE_VERSIONS.indexOf('0.6');
   class DDNError extends Error {
     constructor(code, message, source, offset) {
@@ -74,13 +76,13 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       }
       const num=text.slice(i).match(/^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?/);
       if(num){i+=num[0].length;let value=Number(num[0]);if(!Number.isFinite(value))fail('DDN005','Nonfinite number',{start},source);
-        const unit=text.slice(i).match(/^(?:px|pt|mm|cm|in|ms|min|s|h|d|%)(?![A-Za-z0-9_])/);
+        const unit=text.slice(i).match(/^(?:px|pt|mm|cm|in|ms|min|s|h|d|%|ch)(?![A-Za-z0-9_])/);
         if(unit){i+=unit[0].length;out.push({type:'quantity',value:{$quantity:value,unit:unit[0]},start,end:i});}
         else out.push({type:'number',value,start,end:i});continue;}
       const id=text.slice(i).match(ID_LEX_RE);
       if(id){let name=id[0];if(name.endsWith('-')&&text[i+name.length]==='>')name=name.slice(0,-1);i+=name.length;if(/[^\x00-\x7F]/.test(name))checkUnicodeId(name,{start},source);out.push({type:'id',value:name,start,end:i});continue;}
       if(/\p{Cf}/u.test(c))fail('DDN-ID01','Zero-width, bidirectional-control or format character U+'+c.codePointAt(0).toString(16).toUpperCase().padStart(4,'0')+' in source (UTS #39 profile: no invisible or reordering characters)',{start},source);
-      if('{}[]:;,.@()'.includes(c)){out.push({type:c,value:c,start,end:++i});continue;}
+      if('{}[]:;,.@()#'.includes(c)){out.push({type:c,value:c,start,end:++i});continue;}
       fail('DDN006',`Unexpected character ${JSON.stringify(c)}`,{start},source);
     }
     out.push({type:'eof',value:'',start:i,end:i});return out;
@@ -190,7 +192,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     const relationKinds=relWords||(defaultRelationKinds||(defaultRelationKinds=relationKindWords(null)));
     const peek=(n=0)=>tokens[pos+n], take=()=>tokens[pos++];
     function expect(type,value){let t=take();if(t.type!==type||(value!==undefined&&t.value!==value))fail('DDN010',`Expected ${value||type}; found ${t.value||t.type}`,t,source);return t;}
-    function ref(){const t=expect('@');let parts=[expect('id').value];while(peek().type==='.'){take();parts.push(expect('id').value);}return {$ref:parts.join('.'),$offset:t.start};}
+    function ref(){const t=expect('@');let parts=[expect('id').value];while(peek().type==='.'){take();parts.push(expect('id').value);}const r={$ref:parts.join('.'),$offset:t.start};if(peek().type==='#'){take();const o=take();if(o.type!=='number'||!Number.isSafeInteger(o.value)||o.value<1)fail('DDN-OC01','Occurrence number must be a positive safe integer',o,source);r.$occ=o.value;}return r;}
     function value(){let t=peek();if(t.type==='@')return ref();if(['string','number','quantity'].includes(t.type))return take().value;
       if(t.type==='id'){take();if(t.value==='true')return true;if(t.value==='false')return false;if(t.value==='null')return null;if(['undecided','not_applicable','conflicting'].includes(t.value))return {$state:t.value};if(t.value==='missing')return {$missing:true};return t.value;}
       if(t.type==='['){take();const a=[];if(++depth>80)fail('DDN007','Maximum nesting exceeded',t,source);while(peek().type!==']'){a.push(value());if(peek().type!==',')break;take();}expect(']');depth--;return a;}
@@ -442,11 +444,34 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
   // strings and comments are untouched — because a dropped alias no longer
   // resolves once the sections are siblings (see decision record).
   function bundle(files,entry){
+    files={...files};const documentCache=new Map();
     if(!Object.hasOwn(files,entry))throw new DDNError('DDN022','Missing workspace file '+entry,entry);
     const set=new Set(),order=[];
     // Explicit stack: deep import chains must not exhaust the call stack.
     const pending=[entry];
     while(pending.length){const path=pending.pop();if(set.has(path)||!Object.hasOwn(files,path))continue;set.add(path);order.push(path);const d=parse(files[path],path);for(const imp of d.imports)pending.push(normalizePath(path,imp.path));}
+    for(const file of order){const text=files[file];if(!/\.ddn(a)?$/i.test(file))continue;const edits=[];let ast;try{ast=parse(text,file);}catch{continue;}
+     const visit=n=>{if(n.group&&n.type==='document'&&n.props.file!==undefined){const d=Documents.resolve(clean(n.props),files,file,normalizePath,documentCache);delete d.storage;edits.push({start:n.start,end:n.end,text:'document { '+Object.entries(d).map(([k,v])=>k+': '+JSON.stringify(v)+';').join(' ')+' }'});}for(const c of n.children||[])visit(c);};for(const n of ast.declarations)visit(n);for(const e of edits.sort((a,b)=>b.start-a.start))files[file]=files[file].slice(0,e.start)+e.text+files[file].slice(e.end);
+    }
+    // The section assembler removes header lines. Separate compact headers
+    // from adjacent declarations first, without touching strings or comments.
+    for(const file of order){
+      const text=files[file],tokens=lex(text,file),breaks=new Set();let depth=0;
+      for(let i=0;i<tokens.length;i++){
+        const t=tokens[i];
+        if(t.type==='{'||t.type==='[')depth++;
+        else if(t.type==='}'||t.type===']')depth--;
+        else if(depth===0&&t.type==='id'&&(!i||[';','}'].includes(tokens[i-1].type))&&['ddn','module','import'].includes(t.value)){
+          let j=i;while(tokens[j].type!==';'&&tokens[j].type!=='eof')j++;
+          if(tokens[j].type==='eof')break;
+          if(i&& !text.slice(tokens[i-1].end,t.start).includes('\n'))breaks.add(t.start);
+          const next=tokens[j+1];
+          if(next&&next.type!=='eof'&&!text.slice(tokens[j].end,next.start).includes('\n'))breaks.add(tokens[j].end);
+          i=j;
+        }
+      }
+      for(const at of [...breaks].sort((a,b)=>b-a))files[file]=files[file].slice(0,at)+'\n'+files[file].slice(at);
+    }
     // Symbol index: which module of each bundled file holds each declaration
     // path — needed when a dropped alias points at a multi-module file.
     const owner=new Map();
@@ -470,7 +495,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
         const t=tokens[i];
         if(t.type==='{'||t.type==='[')depth++;
         else if(t.type==='}'||t.type===']')depth--;
-        else if(depth===0&&t.type==='id'&&(t.value==='ddn'||t.value==='import'||t.value==='module')){
+        else if(depth===0&&t.type==='id'&&(!i||[';','}'].includes(tokens[i-1].type))&&(t.value==='ddn'||t.value==='import'||t.value==='module')){
           let j=i;while(tokens[j].type!==';'&&tokens[j].type!=='eof')j++;
           if(tokens[j].type==='eof')break;
           mark(t.start,tokens[j].end);
@@ -534,7 +559,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
   }
 
   function createWorkspace(files,entry,kindWords=null,relWords=null){
-    const docs=new Map(),modules=new Map(),symbols=new Map(),active=new Set();
+    const docs=new Map(),modules=new Map(),symbols=new Map(),active=new Set(),documentFiles=new Set(),documentCache=new Map();
     // Iterative load: deep import chains must not exhaust the call stack.
     // Frames preserve the original pre-order (a file's module sections are
     // registered before its imports are descended into).
@@ -618,6 +643,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
         noNested(n);}
     }
     function resolvePreset(r,rec){
+      const qualified=v=>v&&typeof v==='object'&&(v.$occ!==undefined||Object.values(v).some(qualified));if(qualified(r))throw new DDNError('DDN-OC01','Occurrence qualifiers cannot be used in model presets or their arguments',rec.source,r.$offset);
       const parts=r.$ref.split('.'),found=n=>n&&PRESET_DEFS.has(n.type)?n:null;
       if(rec.imported.has(parts[0])){const f=rec.imported.get(parts.shift());
         for(const m of f.moduleRecords){const n=found(symbols.get(m.module+'::'+parts.join('.')));if(n)return n;}}
@@ -737,6 +763,9 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     for(const d of modules.values())for(const n of d.declarations)if(PRESET_DEFS.has(n.type))ensureExpanded(n);
     for(const d of modules.values())for(const n of d.declarations)if(!PRESET_DEFS.has(n.type))expandUse(n,d);
     function index(n,d,parent=''){
+      const checkOcc=(v,allowed)=>{if(!v||typeof v!=='object')return;if(v.$occ!==undefined){if(SOURCE_VERSIONS.indexOf(d.file.version)<V06)throw new DDNError('DDN-V04','Occurrence references require ddn \"0.6\"',n.source,v.$offset);if(!allowed)throw new DDNError('DDN-OC01','Occurrence reference is not allowed in this model/property context',n.source,v.$offset);}else for(const x of Object.values(v))checkOcc(x,allowed);};
+      for(const [k,v]of Object.entries(n.props))checkOcc(v,n.type==='view'&&['select','exclude','show','hide'].includes(k)||n.type==='route'&&['from','to'].includes(k)||n.type==='frame'&&k==='members');
+      checkOcc(n.target,['place','route'].includes(n.type));checkOcc(n.from,false);checkOcc(n.to,false);
       n.doc=d;n.path=parent?(parent+'.'+n.id):n.id;n.uid=n.props.uid||`${d.module}::${n.path}`;
       if(PRESET_DEFS.has(n.type)&&!n.group)return; // pre-indexed template
       if(!n.group&&!['place','route'].includes(n.type)){let key=d.module+'::'+n.path;if(symbols.has(key))throw new DDNError(d.archBase?'DDN-PJ216':'DDN024',(d.archBase?'Identity collision across architecture bases: ':'Duplicate declaration ')+n.path,d.source,n.start);symbols.set(key,n);}
@@ -744,8 +773,12 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     }
     for(const d of modules.values())for(const n of d.declarations){if(!['data','format','view','architecture','publication_set',...PRESET_DEFS].includes(n.type))throw new DDNError('DDN025','Top-level declaration must be data, format, view, an architecture container, a publication_set, or a reuse definition (fields, ports, relation_props, preset, fragment)',d.source,n.start);index(n,d);}
     const uidMap=new Map();for(const n of symbols.values()){if(uidMap.has(n.uid))throw new DDNError(n.doc?.archBase?'DDN-PJ216':'DDN026',(n.doc?.archBase?'Identity collision across architecture bases (uid ':'Duplicate stable uid ')+n.uid+')',n.source,n.start);uidMap.set(n.uid,n);}
-    function resolve(r,context){if(!r||!r.$ref)throw new DDNError('DDN030','Expected a reference',context?.source,context?.start);const parts=r.$ref.split('.');let doc=context.doc;
-      if(doc.imported.has(parts[0])){const f=doc.imported.get(parts.shift());for(const rec of f.moduleRecords){let node=symbols.get(rec.module+'::'+parts.join('.'));if(node)return node;}}
+    function resolve(r,context,allowOccurrence=false){if(r?.$occ!==undefined&&!allowOccurrence)throw new DDNError('DDN-OC01','Occurrence qualifiers belong to view selection, placement, frames and routes, not model references',context?.source,r.$offset);if(!r||!r.$ref)throw new DDNError('DDN030','Expected a reference',context?.source,context?.start);const parts=r.$ref.split('.');let doc=context.doc;
+      if(doc.imported.has(parts[0])){const f=doc.imported.get(parts.shift());for(const rec of f.moduleRecords){let node=symbols.get(rec.module+'::'+parts.join('.'));if(node)return node;}
+        // Explicit section qualification disambiguates identical block paths
+        // in imported multi-module files; legacy alias.path keeps precedence.
+        for(let k=parts.length-1;k>=1;k--){const rec=f.moduleById.get(parts.slice(0,k).join('.'));if(rec){const node=symbols.get(rec.module+'::'+parts.slice(k).join('.'));if(node)return node;}}}
+
       else{
         // Sibling sections are visible via module-qualified ids; module ids
         // may themselves be dotted, so match the LONGEST module-id prefix.
@@ -761,7 +794,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
          if(rec?.archBase){const node=symbols.get(rec.module+'::'+parts.slice(k).join('.'));if(node)return node;}}}}
       throw new DDNError('DDN031','Unresolved reference @'+r.$ref,context.source,r.$offset||context.start);
     }
-    return {main,docs,modules,symbols,uidMap,resolve,files,archPaths,archContainers};
+    return {main,docs,modules,symbols,uidMap,resolve,files,archPaths,archContainers,documentFiles,documentCache};
   }
   function children(n,type){return n.children.filter(c=>c.type===type);}
   function group(n,name){return n.children.find(c=>c.group&&c.type===name);}
@@ -793,6 +826,43 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     if(raw.weight!==undefined){const w=quantity(raw.weight,NaN);if(!Number.isFinite(w)||w<0.25||w>16)fail('DDN-LN03',group+' weight must be a length from 0.25px to 16px; found '+JSON.stringify(raw.weight));out.weight=Math.round(w*1000)/1000;}
     if(raw.dash!==undefined){if(!['solid','dashed','dotted'].includes(raw.dash))fail('DDN-LN04',group+' dash must be solid, dashed or dotted (custom dash arrays are reserved for a future revision); found '+JSON.stringify(raw.dash));out.dash=raw.dash;}
     if(allowCorners&&raw.corners!==undefined){if(raw.corners!=='round')fail('DDN-LN05','stroke corners must be round (square corner treatment is reserved for a future revision); found '+JSON.stringify(raw.corners));}
+    return out;
+  }
+  /* 0.8 (chapter 04 §6D): structured field columns. One column record per
+   * group entry: {label?, path?, width?, min_chars?, max_chars?,
+   * visibility?}. width: equal (default) | <N>ch (fixed characters) | <N>%
+   * (percent of remainder). visibility: shown | hidden | on_demand. A
+   * visibility-only entry ({visibility} alone) is a partial override over
+   * the kind's registry column_schema; any other partial shape is DDN-CL03. */
+  const COLUMN_KEYS=['label','path','width','min_chars','max_chars','visibility'];
+  const COLUMN_PATH_RE=/^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
+  function normalizeColumns(children,fail,schema=[]){
+    const out={entries:[],partials:Object.create(null)},seen=new Set();
+    const partial=children.some(c=>Object.keys(c.props).length===1&&c.props.visibility!==undefined);
+    for(const c of children){
+      if(!c.group||c.children.length)fail('DDN-CL01','columns accepts only flat column entries (name { … })');
+      if(seen.has(c.type))fail('DDN-CL01','Duplicate column id '+c.type);
+      seen.add(c.type);
+      const p=c.props,e={id:c.type};
+      for(const k of Object.keys(p))if(!COLUMN_KEYS.includes(k))fail('DDN-CL01','Unknown column property '+k);
+      if(p.visibility!==undefined&&!['shown','hidden','on_demand'].includes(p.visibility))fail('DDN-CL02','column '+c.type+' visibility must be shown, hidden or on_demand');
+      if(partial){
+        if(Object.keys(p).length!==1||p.visibility===undefined||!schema.some(e=>e.id===c.type))fail('DDN-CL03','Visibility overrides must name schema columns and contain only visibility');
+        out.partials[c.type]=p.visibility;continue;
+      }
+      if(p.label!==undefined&&typeof p.label!=='string')fail('DDN-CL02','column '+c.type+' label must be text');
+      const binding=p.path??c.type;
+      if(typeof binding!=='string'||!COLUMN_PATH_RE.test(binding)||binding.split('.').some(k=>['__proto__','prototype','constructor'].includes(k)))fail('DDN-CL02','column '+c.type+' path must be a safe dotted property binding');
+      if(p.path!==undefined)e.path=p.path;
+      if(p.label!==undefined)e.label=p.label;
+      if(p.width===undefined||p.width==='equal')e.width={kind:'equal'};
+      else if(p.width&&Number.isFinite(p.width.$quantity)&&p.width.$quantity>=0&&['ch','%'].includes(p.width.unit))e.width={kind:p.width.unit==='ch'?'chars':'percent',n:p.width.$quantity};
+      else fail('DDN-CL02','column '+c.type+' width must be equal, nonnegative Nch or N%');
+      for(const k of ['min_chars','max_chars'])if(p[k]!==undefined){if(!Number.isFinite(p[k])||p[k]<0)fail('DDN-CL02','column '+c.type+' '+k+' must be a nonnegative number');e[k]=p[k];}
+      if(e.min_chars!==undefined&&e.max_chars!==undefined&&e.min_chars>e.max_chars)fail('DDN-CL02','column '+c.type+' min_chars exceeds max_chars');
+      if(p.visibility!==undefined)e.visibility=p.visibility;
+      out.entries.push(e);
+    }
     return out;
   }
   /* 0.8 (chapter 04 §6A): the portable text-property vocabulary, validated
@@ -827,20 +897,20 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
   };
   const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic','ladder'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved','string'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens','none'],placement:['right','bottom','none']},chrome:{legend:['auto','on','off'],title:['on','off'],footer:['on','off']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
   const PROPERTIES={
-    projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','x_completeness','traces','geography','method','graticule','iso','depth','fiscal_year_start'],
+    projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','x_completeness','traces','geography','method','graticule','iso','depth','fiscal_year_start','calendar','timezone'],
     notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure','font_pin','text_fit','max_width','max_height','min_font'],
     layout:['algorithm','auto_place','center','grid_step','optimize','endpoint_ordering','frame_overflow','direction','routing','curve','curve_tension','curve_radius','crossings','gap','columns','port_clearance','object_clearance','edge_clearance','junctions','shared_segments','row_gap','route_policy','quality','root','hierarchy','group_by'],
     display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
-    publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','content_scale','metrics'],
+    publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','content_scale','metrics','note_mode','tiles'],
     legend:['mode','placement','width','keys','keyset','scope'],
     chrome:['legend','title','footer','banner'],
     validation:['mode','unknown_extensions'],
     export:['mode','elements','fields','properties','include_samples','identifier_mode','title','format'],
     bundle:['projection','notation','style','layout','display','publication','legend','chrome','title','footer','banner','validation','export','spacing','kind','strictness'],
-    view:['projection','data','format','notation','style','layout','display','publication','legend','chrome','title','footer','banner','select','exclude','description','uid','validation','export','spacing','kind','strictness','theme','source','generator','assertions','diff'],
-    place:['at','size'],route:['via','source_side','target_side','callout','policy','source_fraction','target_fraction','routing','curve','curve_tension','curve_radius'],
+    view:['projection','data','format','notation','style','layout','display','publication','legend','chrome','title','footer','banner','select','exclude','show','hide','description','uid','validation','export','spacing','kind','strictness','theme','source','generator','assertions','diff','diff_scope'],
+    place:['at','size','fill','opacity','text_fit','max_width','max_height','min_font','marks'],route:['from','to','via','source_side','target_side','callout','policy','source_fraction','target_fraction','routing','curve','curve_tension','curve_radius'],
     subdiagram:['view','mode','at','size','label','binding','uid'],
-    frame:['scope','members','at','size','label','dimension'],
+    frame:['scope','members','within','at','size','label','dimension'],
     junction:['at','relations','network'],
     keyset:['keys','scope'],
     flow:['label','steps','marker','marker_color','marker_size','speed','rate','uid'],
@@ -974,7 +1044,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     }
     return {chrome:out,diagnostics:diags};
   }
-  function build(files,entry,viewName,registry,stack=[]){
+  function build(files,entry,viewName,registry,stack=[],draft=null){
     registry=Profiles.registry(registry);
     const ws=createWorkspace(files,entry,typedKindWords(registry),relationKindWords(registry));const all=[...ws.symbols.values()];const view=all.find(n=>n.type==='view'&&((viewName&&(n.id===viewName||n.path===viewName||n.uid===viewName))||(!viewName&&n.doc===ws.main)));
     if(!view)throw new DDNError('DDN040','View not found: '+(viewName||'(default)'),entry);
@@ -1003,6 +1073,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
      * diff and data are mutually exclusive; self-diffs and diff-of-diff are
      * rejected (an ordinary-view-only contract keeps expansion depth at 1). */
     let diff08=null;
+    if(view.props.diff_scope!==undefined&&(view.props.diff===undefined||!['model','appearance'].includes(view.props.diff_scope)))throw new DDNError('DDN-DF01','diff_scope requires a diff view and must be model or appearance',view.source,view.start);
     if(view.props.diff!==undefined){
       const d=view.props.diff;
       if(!Array.isArray(d)||d.length!==2)throw new DDNError('DDN-DF01','diff must name exactly two views: diff: [@viewA, @viewB]',view.source,view.start);
@@ -1021,7 +1092,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     const raw=usedData.flatMap(n=>n.children.filter(c=>!c.group));
     const elemTypes=['object','domain','sample','flow','assertion'];
     for(const n of raw){if(!elemTypes.includes(n.type)&&n.type!=='relation')throw new DDNError('DDN042','Unsupported data declaration '+n.type,n.source,n.start);}
-    for(const n of raw){if(n.from&&n.type!=='relation')throw new DDNError('DDN055','Only relations accept header endpoints',n.source,n.start);for(const g of n.children)if(g.group&&!(['fields','ports'].includes(g.type)||(g.type==='text'&&n.type!=='relation')||(g.type==='stroke'&&n.type!=='relation')||(g.type==='line'&&n.type==='relation')))throw new DDNError('DDN900','Reference model does not implement group '+g.type,n.source,g.start);for(const f of getFields(n))for(const g of f.children)if(!g.group||g.type!=='fields')throw new DDNError('DDN042','Nested fields accept only a fields block',f.source,f.start);}
+    for(const n of raw){if(n.from&&n.type!=='relation')throw new DDNError('DDN055','Only relations accept header endpoints',n.source,n.start);for(const g of n.children)if(g.group&&!(['fields','ports'].includes(g.type)||(g.type==='text'&&n.type!=='relation')||(g.type==='stroke'&&n.type!=='relation')||(['columns','document','composition'].includes(g.type)&&n.type!=='relation')||(g.type==='line'&&n.type==='relation')))throw new DDNError('DDN900','Reference model does not implement group '+g.type,n.source,g.start);for(const f of getFields(n))for(const g of f.children)if(!g.group||g.type!=='fields')throw new DDNError('DDN042','Nested fields accept only a fields block',f.source,f.start);}
     const rawNodes=raw.filter(n=>elemTypes.includes(n.type));
     const rawRelations=raw.filter(n=>n.type==='relation');
     const p={};for(const k of Object.keys(DEFAULTS))p[k]=JSON.parse(JSON.stringify(DEFAULTS[k]));
@@ -1167,6 +1238,8 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     for(const prop of ['object_clearance','edge_clearance','port_clearance','gap','row_gap'])if(quantity(p.layout[prop],0)<0)throw new DDNError('DDN046','Layout lengths cannot be negative: '+prop,view.source,view.start);
     if(p.layout.junctions!==undefined&&p.layout.junctions!=='explicit')throw new DDNError('DDN046','Only explicit junction semantics are allowed',view.source,view.start);
     if(p.layout.shared_segments!==undefined&&p.layout.shared_segments!=='forbidden')throw new DDNError('DDN046','Shared network trunks require an adopted network profile; independent sharing is forbidden',view.source,view.start);
+    if(p.publication.tiles!==undefined){const tile=p.publication.tiles,bad=msg=>{throw new DDNError('DDN-PG01',msg,view.source,view.start);};if(!tile||typeof tile!=='object'||Array.isArray(tile)||Object.keys(tile).some(k=>!['width','height','overlap'].includes(k)))bad('publication.tiles accepts width, height and overlap');for(const value of Object.values(tile))if(typeof value!=='number'&&(!value||typeof value!=='object'||typeof value.$quantity!=='number'))bad('Tile dimensions must be numbers or lengths');const w=quantity(tile.width,800),h=quantity(tile.height,600),o=quantity(tile.overlap,0);if(![w,h,o].every(Number.isFinite)||w<128||h<128||w>8192||h>8192||o<0||o>=Math.min(w,h)/2)bad('Invalid publication tile dimensions');p.publication.tiles={width:w,height:h,overlap:o};}
+    if(p.publication.note_mode!==undefined&&!['viewport','full'].includes(p.publication.note_mode))throw new DDNError('DDN-CE01','publication.note_mode must be viewport or full',view.source,view.start);
     if(p.publication.metrics!==undefined&&!['required','allow_estimated'].includes(p.publication.metrics))throw new DDNError('DDN046','metrics must be required or allow_estimated',view.source,view.start);
     if(quantity(p.publication.margin,32)<0||!Number.isFinite(quantity(p.publication.margin,32))||quantity(p.publication.margin,32)>10000)throw new DDNError('DDN046','Page margin must be a finite length from 0 to 10000px',view.source,view.start);
     for(const prop of ['width','height']){const v=quantity(p.publication[prop],prop==='width'?1280:800);if(!Number.isFinite(v)||v<64||v>100000)throw new DDNError('DDN046','publication.'+prop+' must be a finite length from 64 to 100000px',view.source,view.start);}
@@ -1188,6 +1261,14 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       const fields=getFields(n).map(f=>{let parentPath=f.path.split('.').slice(0,-1).join('.'),parentNode=ws.symbols.get(f.doc.module+'::'+parentPath);return {id:f.uid,name:f.label||f.id,local:f.id,path:f.path.slice(n.path.length+1),depth:f.path.split('.').length-n.path.split('.').length-1,parent:parentNode?.type==='field'?parentNode.uid:null,properties:resolveValue(f.props,f),source:{file:f.source,start:f.start,end:f.end}};});
       const ports=getPorts(n).map(f=>({id:f.uid,name:f.label||f.id,local:f.id,properties:resolveValue(f.props,f)}));
       const properties=resolveValue(n.props,n);
+      const dg=group(n,'document'),cg=group(n,'composition');
+      if(dg||cg){if(n.doc.file.version!=='0.7')throw new DDNError('DDN-V04','Documents and composition require ddn "0.7"',n.source,n.start);for(const g of [dg,cg].filter(Boolean))if(g.children.length||n.children.filter(c=>c.type===g.type).length!==1||n.props[g.type]!==undefined)throw new DDNError('DDN-CE01','Duplicate or nested '+g.type+' group',n.source,g.start);}
+      if(n.props.document!==undefined||n.props.composition!==undefined)throw new DDNError('DDN-CE01','Use document/composition groups, not properties',n.source,n.start);
+      try{
+       if(dg){properties.document=Documents.resolve(clean(dg.props),files,n.source,normalizePath,ws.documentCache);if(properties.document.storage)ws.documentFiles.add(properties.document.storage.file);}
+       if(dg||cg)properties.composition=Documents.composition(cg?clean(cg.props):{},k);
+       for(const f of fields)if(f.properties.parameter_mode!==undefined){if(!['procedure','function'].includes(k.keyword)||!['in','out','inout','return'].includes(f.properties.parameter_mode))throw Object.assign(new Error('parameter_mode requires a procedure/function field and in, out, inout or return'),{code:'DDN-CE02'});if(n.doc.file.version!=='0.7')throw Object.assign(new Error('parameter_mode requires ddn "0.7"'),{code:'DDN-V04'});}
+      }catch(e){if(e.code)throw new DDNError(e.code,e.message,n.source,dg?.start??cg?.start??n.start);throw e;}
       /* 0.8 (chapter 04 §6A): per-element label text properties ride the
        * property bag as a normalized record; they decorate the element's
        * label only (fields/details/notes stay role-baked this revision). */
@@ -1199,6 +1280,15 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       const strokeGroup=group(n,'stroke');
       if(strokeGroup){textGate(n,'A stroke { } group on an element');properties.stroke=normalizeStrokeProps(strokeGroup.props,(code,msg)=>{throw new DDNError(code,msg,strokeGroup.source,strokeGroup.start);},{allowCorners:true});}
       if(properties.fill!==undefined){textGate(n,'fill on an element');properties.fill=normalizeLineColor(properties.fill,(code,msg)=>{throw new DDNError(code,msg,n.source,n.start);});}
+      /* 0.8 (chapter 54 §54.7): field text wrap — field > element > off.
+       * 0.8 (chapter 04 §6D): the columns { } group (kind column_schema is
+       * registry metadata consulted at render; a bare group means "use the
+       * kind schema"). */
+      const twFail=(code,msg)=>{throw new DDNError(code,msg,n.source,n.start);};
+      if(properties.text_wrap!==undefined){textGate(n,'text_wrap on an element');if(!['on','off'].includes(properties.text_wrap))twFail('DDN-FL01','text_wrap must be on or off; found '+JSON.stringify(properties.text_wrap));}
+      const columnsGroup=group(n,'columns');
+      if(columnsGroup){textGate(n,'A columns { } group on an element');if(n.type==='sample')twFail('DDN-CL01','columns { } does not apply to sample declarations (the sample columns property already occupies columns)');if(n.children.filter(c=>c.group&&c.type==='columns').length>1)twFail('DDN-CL01','Duplicate columns group on '+n.id);if(Object.keys(columnsGroup.props).length)twFail('DDN-CL01','columns accepts entries, not properties');properties.columns=normalizeColumns(columnsGroup.children,twFail,k.column_schema||[]);}
+      const fields2=getFields(n);for(const f of fields2){if(f.props.text_wrap!==undefined){textGate(n,'text_wrap on a field');if(!['on','off'].includes(f.props.text_wrap))throw new DDNError('DDN-FL01','text_wrap must be on or off; found '+JSON.stringify(f.props.text_wrap),f.source,f.start);}}
       /* 0.8 (chapter 04 §6C): per-element content opacity — a plain 0..1
        * ratio painted as one SVG group opacity over the whole node (fill,
        * stroke and text together). Paint-only: hit-testing, measurement,
@@ -1231,8 +1321,14 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
      * is an authoring ambiguity (DDN-DF04). The diff view then flows through
      * selection/visibility/layout exactly like a data-backed view. */
     if(diff08){
-      const irA=build(files,diff08.a.source,diff08.a.uid,registry,[...stack,view.uid]).ir;
-      const irB=build(files,diff08.b.source,diff08.b.uid,registry,[...stack,view.uid]).ir;
+      let irA=build(files,diff08.a.source,diff08.a.uid,registry,[...stack,view.uid],draft).ir;
+      let irB=build(files,diff08.b.source,diff08.b.uid,registry,[...stack,view.uid],draft).ir;
+      if(view.props.diff_scope==='appearance'){
+        const prepare=ir=>{const expanded=Occurrences.expand(ir),mapping=new Map((expanded.occurrenceMapping||[]).map(o=>[o.occurrence,o]));
+          const key=(id,local)=>{const o=mapping.get(id);return (local??String(o?.source||id).split('.').at(-1))+'#'+(o?.number||1);};
+          return {...expanded,elements:expanded.elements.map(e=>({...e,_diffKey:key(e.id,e.local),_diffPlacement:expanded.view.placements[e.id]||{}})),relations:expanded.relations.map(r=>({...r,_diffKey:key(r.id,r.local),_diffFrom:key(r.from.element),_diffTo:key(r.to.element),_diffFromMember:r.from.member?key(r.from.member):null,_diffToMember:r.to.member?key(r.to.member):null,_diffRoute:Object.fromEntries(Object.entries(expanded.view.routes[r.id]||{}).filter(([key])=>!['from','to'].includes(key)))}))};};
+        irA=prepare(irA);irB=prepare(irB);
+      }
       /* The operand is the view's VISIBLE model: selected elements and the
        * relations visible between them (ir.view.relations), not the whole
        * underlying data blocks. */
@@ -1243,29 +1339,29 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       const relsA=irA.relations.filter(r=>visA.has(r.id)),relsB=irB.relations.filter(r=>visB.has(r.id));
       const localOf=(ref,local)=>local??String(ref).split('.').pop();
       const keyOf=(list,side)=>{const m=new Map();
-        for(const e of list){const k=localOf(e.ref,e.local);
+        for(const e of list){const k=e._diffKey??localOf(e.ref,e.local);
           if(m.has(k))throw new DDNError('DDN-DF04','diff operand '+side+' contains two elements with the identity '+JSON.stringify(k)+' (from '+m.get(k).ref+' and '+e.ref+'); narrow the operand with select/exclude',view.source,view.start);
           m.set(k,e);}
         return m;};
-      const cmpEl=el=>JSON.stringify({name:el.name,kind:el.kind,properties:el.properties,fields:(el.fields||[]).map(f=>[f.name,f.properties])});
+      const cmpEl=el=>JSON.stringify({name:el.name,kind:el.kind,properties:el.properties,fields:(el.fields||[]).map(f=>[f.name,f.properties]),...(el._diffKey?{placement:el._diffPlacement}:{})});
       const byIdA=keyOf(elsA,diff08.a.uid),byIdB=keyOf(elsB,diff08.b.uid);
       const counts={added:0,removed:0,changed:0,unchanged:0};
       const cmpRel=r=>JSON.stringify({name:r.name,kind:r.kind,
-       from:{element:String(r.from.element).split('.').pop(),member:r.from.member},
-       to:{element:String(r.to.element).split('.').pop(),member:r.to.member},properties:r.properties});
+       from:{element:r._diffFrom??String(r.from.element).split('.').pop(),member:r._diffKey?r._diffFromMember:r.from.member},
+       to:{element:r._diffTo??String(r.to.element).split('.').pop(),member:r._diffKey?r._diffToMember:r.to.member},properties:r.properties,...(r._diffKey?{route:r._diffRoute}:{})});
       const relA=keyOf(relsA,diff08.a.uid),relB=keyOf(relsB,diff08.b.uid);
       /* Union identities are re-keyed to the diff view: operand uids are
        * workspace-unique by construction (DDN026), so the union members get
        * synthetic per-state ids and relation endpoints re-point at the union
        * copy of their element (matched by the same local-id key). */
-      const elemKeyOf=e=>localOf(e.ref,e.local),unionId=(e,state)=>view.uid+'::'+state+'::'+elemKeyOf(e);
+      const elemKeyOf=e=>e._diffKey??localOf(e.ref,e.local),unionId=(e,state)=>view.uid+'::'+state+'::'+elemKeyOf(e);
       const byOrig=new Map(),newElems=[];
       for(const [k,e] of byIdA){const other=byIdB.get(k),state=!other?'removed':cmpEl(e)!==cmpEl(other)?'changed':'unchanged';counts[state]++;const id=unionId(e,state);byOrig.set(e.id,id);if(other)byOrig.set(other.id,id);newElems.push({...e,id,diffState:state});}
       for(const [k,e] of byIdB)if(!byIdA.has(k)){counts.added++;const id=unionId(e,'added');byOrig.set(e.id,id);newElems.push({...e,id,diffState:'added'});}
       const newRels=[];
       for(const [k,r] of relA){const other=relB.get(k),state=!other?'removed':cmpRel(r)!==cmpRel(other)?'changed':'unchanged';newRels.push({...r,diffState:state});}
       for(const [k,r] of relB)if(!relA.has(k))newRels.push({...r,diffState:'added'});
-      for(const r of newRels){r.id=view.uid+'::'+r.diffState+'::'+localOf(r.ref,r.local);r.from={...r.from,element:byOrig.get(r.from.element)||r.from.element};r.to={...r.to,element:byOrig.get(r.to.element)||r.to.element};}
+      for(const r of newRels){r.id=view.uid+'::'+r.diffState+'::'+elemKeyOf(r);r.from={...r.from,element:byOrig.get(r.from.element)||r.from.element};r.to={...r.to,element:byOrig.get(r.to.element)||r.to.element};}
       elements.push(...newElems);relations.push(...newRels);
       elementIds.clear();for(const n of elements)elementIds.add(n.id);
       diff08.aName=irA.view.name;diff08.bName=irB.view.name;diff08.counts=counts;
@@ -1286,10 +1382,17 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     }
     const MOTION_KEYS=['motion','marker','rate','speed','marker_size','marker_color','pulse_color'];
     for(const r of relations)if(MOTION_KEYS.some(k=>r.properties[k]!==undefined))validateMotionProps(r.properties,r.source.file,r.source.start);
-    let selected=view.props.select==='all'||view.props.select===undefined?elements.map(n=>n.id):view.props.select.map(r=>ws.resolve(r,view).uid);
-    if(!Array.isArray(selected)||selected.some(id=>!elementIds.has(id)))throw new DDNError('DDN057','View selection contains a non-element or out-of-scope element',view.source,view.start);
-    const excluded=(view.props.exclude||[]).map(r=>ws.resolve(r,view).uid);selected=[...new Set(selected)].filter(id=>!excluded.includes(id));
-    if(p.display.samples==='hide')selected=selected.filter(id=>elements.find(n=>n.id===id).type!=='sample');
+    let occurrenceMode=false;
+    const ocFail=(code,message,n=view)=>{throw new DDNError(code,message,n.source,n.start);};
+    const ocRef=(r,n=view)=>{if(r?.$occ!==undefined){textGate(n,'Occurrence reference');occurrenceMode=true;}const target=ws.resolve(r,n,true);return {id:Occurrences.id(view.uid,target.uid,r.$occ??1),source:target.uid,number:r.$occ??1};};
+    if(view.props.select!==undefined&&view.props.select!=='all'&&!Array.isArray(view.props.select))ocFail('DDN057','select must be all or an array of element references');
+    let elementOccurrences=view.props.select==='all'||view.props.select===undefined?elements.map(n=>({id:n.id,source:n.id,number:1})):view.props.select.map(r=>ocRef(r));
+    if(elementOccurrences.some(o=>!elementIds.has(o.source)))ocFail('DDN057','View selection contains a non-element or out-of-scope element');
+    if(view.props.exclude!==undefined&&!Array.isArray(view.props.exclude))ocFail('DDN057','exclude must be an array of references');
+    const excluded=(view.props.exclude||[]).map(r=>({...ocRef(r),all:r.$occ===undefined}));
+    elementOccurrences=[...new Map(elementOccurrences.map(o=>[o.id,o])).values()].filter(o=>!excluded.some(x=>x.source===o.source&&(x.all||x.number===o.number)));
+    if(p.display.samples==='hide')elementOccurrences=elementOccurrences.filter(o=>elements.find(n=>n.id===o.source).type!=='sample');
+    let selected=[...new Set(elementOccurrences.map(o=>o.source))];
     const shown=new Set(selected),visibleRelations=p.display.relations==='none'?[]:relations.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element));
     /* B1-090: cross-file traceability. Relations spanning architecture bases
      * require a covering container (DDN-PJ217); an outside endpoint renders as
@@ -1326,6 +1429,16 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
      r.properties={...r.properties,x_external:{file:outNode.doc.source,target:outNode.uid}};
      visibleRelations.push(r);
     }
+    for(const source of selected)if(!elementOccurrences.some(o=>o.source===source))elementOccurrences.push({id:source,source,number:1});
+    const defaultOccurrence=source=>elementOccurrences.filter(o=>o.source===source).sort((a,b)=>a.number-b.number)[0];
+    const relationOccurrence=(source,number=1)=>{const r=relations.find(r=>r.id===source);if(!r||!shown.has(r.from.element)||!shown.has(r.to.element))ocFail('DDN-OC03','A relation occurrence requires both endpoint elements to be visible');return {id:Occurrences.id(view.uid,source,number),source,number,from:defaultOccurrence(r.from.element).id,to:defaultOccurrence(r.to.element).id};};
+    let relationOccurrences=visibleRelations.map(r=>relationOccurrence(r.id));
+    for(const key of ['show','hide'])if(view.props[key]!==undefined){textGate(view,key+' relation occurrences');occurrenceMode=true;if(!Array.isArray(view.props[key]))ocFail('DDN-OC01',key+' must be an array of relation references');}
+    const hiddenRelations=(view.props.hide||[]).map(ref=>({...ocRef(ref),all:ref.$occ===undefined}));
+    for(const h of hiddenRelations)if(!relations.some(r=>r.id===h.source))ocFail('DDN-OC03','hide accepts only relations in scope');
+    for(const ref of view.props.show||[]){const o=ocRef(ref);if(!relations.some(r=>r.id===o.source))ocFail('DDN-OC03','show accepts only relations in scope');if(hiddenRelations.some(h=>h.source===o.source&&(h.all||h.number===o.number)))continue;if(p.display.relations==='none')ocFail('DDN-OC03','show conflicts with display.relations none');if(!relationOccurrences.some(r=>r.id===o.id))relationOccurrences.push(relationOccurrence(o.source,o.number));}
+    relationOccurrences=relationOccurrences.filter(o=>!hiddenRelations.some(h=>h.source===o.source&&(h.all||h.number===o.number)));
+    if(occurrenceMode){const ids=new Set(relationOccurrences.map(o=>o.source));visibleRelations.splice(0,visibleRelations.length,...relations.filter(r=>ids.has(r.id)));}
     const keys=Object.create(null),seen=new Map();
     for(const [ref,num] of Object.entries(p.legend.keys||{})){
       let matches=relations.filter(r=>r.id===ref||r.ref===ref||r.ref.split('.').at(-1)===ref);if(matches.length>1)throw new DDNError('DDN058','Ambiguous legend key '+ref,view.source,view.start);let target=matches[0];
@@ -1335,11 +1448,47 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     }
     if(p.legend.mode==='numbers')for(const r of visibleRelations)if(!keys[r.id])throw new DDNError('DDN061','Missing explicit callout number for '+r.ref,view.source,view.start);
     const placements=Object.create(null),routes=Object.create(null),subdiagrams=[],frames=[],flows=[];
+    const localFrames=new Map();for(const n of view.children)if(n.type==='frame'){localFrames.set(n.id,n);localFrames.set(view.id+'.'+n.id,n);}
     for(const n of view.children.filter(n=>!n.group)){
-      if(n.type==='place'){const target=ws.resolve(n.target,view);if(!shown.has(target.uid))throw new DDNError('DDN062','Placement target is not selected',n.source,n.start);placements[target.uid]=clean(n.props);}
-      else if(n.type==='route'){validateCurvePolicy(n.props,n.source,n.start);const target=ws.resolve(n.target,view);if(!visibleRelations.some(r=>r.id===target.uid))throw new DDNError('DDN063','Route target is not visible',n.source,n.start);routes[target.uid]=clean(n.props);}
-      else if(n.type==='subdiagram'){const target=ws.resolve(n.props.view,n);if(target.type!=='view')throw new DDNError('DDN064','Subdiagram target must be a view',n.source,n.start);if(!['reference','inline'].includes(n.props.mode))throw new DDNError('DDN900','Reference renderer supports reference and inline modes; balanced collapsed interfaces are specified separately',n.source,n.start);const child=n.props.mode==='inline'?build(files,target.source,target.uid,registry,[...stack,view.uid]).ir:null;subdiagrams.push({id:n.uid,target:target.uid,targetName:target.label||target.id,targetLocal:target.id,name:n.props.label||n.label||target.label||target.id,...clean(n.props),child});}
-      else if(n.type==='frame'){frames.push({id:n.uid,name:n.label||n.props.label||n.id,scope:n.props.scope?ws.resolve(n.props.scope,n).uid:null,members:(n.props.members||[]).map(r=>ws.resolve(r,n).uid),...Object.fromEntries(Object.entries(clean(n.props)).filter(([k])=>!['scope','members'].includes(k)))});}
+      if(n.type==='place'){
+        validateKnown(n,PROPERTIES.place);
+        const o=ocRef(n.target,view);if(!elementOccurrences.some(e=>e.id===o.id))ocFail('DDN062','Placement occurrence is not selected',n);
+        if(placements[o.id])ocFail('DDN-OC02','Duplicate placement for the same occurrence',n);
+        const props=clean(n.props),presentation={};
+        for(const k of ['fill','opacity','text_fit','max_width','max_height','min_font','marks'])if(props[k]!==undefined){textGate(n,'Occurrence presentation');presentation[k]=props[k];delete props[k];}
+        for(const c of n.children){if(!c.group||!['text','stroke','composition'].includes(c.type)||c.children.length||presentation[c.type])ocFail('DDN-OC01','place permits one text and one stroke group',c);textGate(n,'Occurrence presentation');if(c.type==='composition'){if(view.doc.file.version!=='0.7')ocFail('DDN-V04','composition requires ddn "0.7"',c);try{const owner=elements.find(e=>e.id===o.source);presentation.composition=Documents.composition({...owner.properties.composition,...clean(c.props)},kindEntry(registry,owner.kind));}catch(e){ocFail(e.code,e.message,c);}continue;}presentation[c.type]=c.type==='text'?txCheck(c.props,c.source,c.start):normalizeStrokeProps(c.props,(code,msg)=>ocFail(code,msg,c),{allowCorners:true});}
+        if(presentation.fill!==undefined)presentation.fill=normalizeLineColor(presentation.fill,(code,msg)=>ocFail(code,msg,n));
+        if(presentation.opacity!==undefined&&(typeof presentation.opacity!=='number'||presentation.opacity<0||presentation.opacity>1))ocFail('DDN-SZ01','Occurrence opacity must be from 0 to 1',n);
+        if(presentation.marks!==undefined){const allowed=Object.keys(ViewProfiles.MARKINGS);if(!Array.isArray(presentation.marks)||presentation.marks.some(m=>!allowed.includes(m)))ocFail('DDN-OC01','Occurrence marks must be a list of supported marks',n);}
+        tfCheck(presentation,n.source,n.start);
+        if(Object.keys(presentation).length){props.presentation=presentation;occurrenceMode=true;}
+        placements[o.id]=props;
+      }
+      else if(n.type==='route'){
+        validateKnown(n,PROPERTIES.route);
+        validateCurvePolicy(n.props,n.source,n.start);const o=ocRef(n.target,view),run=relationOccurrences.find(r=>r.id===o.id);
+        if(!run)ocFail('DDN063','Route occurrence is not visible; add it to show',n);
+        if(routes[o.id])ocFail('DDN-OC02','Duplicate route for the same occurrence',n);
+        const props=clean(n.props),rel=relations.find(r=>r.id===o.source);
+        for(const [end,endpoint] of [['source','from'],['target','to']]){
+          const side=props[end+'_side'],fraction=props[end+'_fraction'];
+          if(side!==undefined&&!['north','east','south','west'].includes(side))ocFail('DDN-I030','Endpoint side must be north, east, south or west',n);
+          if(fraction!==undefined&&(!Number.isFinite(fraction)||fraction<=0||fraction>=1||rel[endpoint]?.member))ocFail('DDN-I030','Anchor fraction must be strictly between 0 and 1 and cannot replace a member endpoint',n);
+        }
+
+        for(const side of ['from','to'])if(n.props[side]!==undefined){textGate(n,'Occurrence endpoint');occurrenceMode=true;const endpoint=ocRef(n.props[side],view);if(endpoint.source!==rel[side].element||!elementOccurrences.some(e=>e.id===endpoint.id))ocFail('DDN-OC03','Route '+side+' must name a visible occurrence of the existing model endpoint',n);run[side]=endpoint.id;delete props[side];}
+        for(const c of n.children){if(!c.group||c.type!=='line'||c.children.length||props.presentation)ocFail('DDN-OC01','route permits one line group',c);textGate(n,'Occurrence line');props.presentation={line:normalizeStrokeProps(c.props,(code,msg)=>ocFail(code,msg,c))};occurrenceMode=true;}
+        routes[o.id]=props;
+      }
+      else if(n.type==='subdiagram'){const target=ws.resolve(n.props.view,n);if(target.type!=='view')throw new DDNError('DDN064','Subdiagram target must be a view',n.source,n.start);if(!['reference','inline'].includes(n.props.mode))throw new DDNError('DDN900','Reference renderer supports reference and inline modes; balanced collapsed interfaces are specified separately',n.source,n.start);const child=n.props.mode==='inline'?build(files,target.source,target.uid,registry,[...stack,view.uid],draft).ir:null;subdiagrams.push({id:n.uid,target:target.uid,targetName:target.label||target.id,targetLocal:target.id,name:n.props.label||n.label||target.label||target.id,...clean(n.props),child});}
+      else if(n.type==='frame'){
+        if(n.props.within!==undefined){
+          if(!['0.6','0.7'].includes(view.doc.file.version))throw new DDNError('DDN-V04','Frame within requires ddn "0.6" or later',n.source,n.start);
+          const r=n.props.within;
+          const parent=r&&typeof r.$ref==='string'&&r.$occ===undefined?localFrames.get(r.$ref):null;
+          if(!parent)throw new DDNError('DDN-FR01','within must reference a frame in the same view',n.source,n.start);
+        }
+        frames.push({id:n.uid,name:n.label||n.props.label||n.id,scope:n.props.scope?ws.resolve(n.props.scope,n).uid:null,members:(n.props.members||[]).map(r=>{const o=ocRef(r,n);if(r.$occ!==undefined&&!elementOccurrences.some(e=>e.id===o.id))ocFail('DDN-OC03','Frame occurrence is not visible',n);return o.id;}),...Object.fromEntries(Object.entries(clean(n.props)).filter(([k])=>!['scope','members','within'].includes(k))),...(n.props.within?{within:localFrames.get(n.props.within.$ref).uid}:{})});}
       // B1-033 (D3): a flow block is a step-traceable multi-hop sequence. Each
       // hop resolves to the existing visible relation between consecutive
       // elements (steps follow relation direction); a hop without one is DDN-E013.
@@ -1358,6 +1507,19 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
         flows.push({id:n.uid,local:n.id,name:n.label||fprops.label||n.id,steps,hops,properties:fprops,source:{file:n.source,start:n.start,end:n.end}});
       }
       else throw new DDNError('DDN900','Reference renderer does not implement view declaration '+n.type,n.source,n.start);
+    }
+    // Bounded iterative walk: forward references are valid, cycles never recurse.
+    const frameById=new Map(frames.map(f=>[f.id,f]));
+    const frameLimit=registry.limits?.max_frame_depth??4;
+    if(!Number.isInteger(frameLimit)||frameLimit<1||frameLimit>4)throw new DDNError('DDN-FR03','Registry max_frame_depth must be an integer from 1 to 4',view.source,view.start);
+    for(const f of frames){
+      const seen=new Set();let current=f,depth=0;
+      while(current){
+        if(seen.has(current.id))throw new DDNError('DDN-FR02','Frame containment cycle at '+current.id,view.source,view.children.find(n=>n.uid===f.id).start);
+        seen.add(current.id);depth++;
+        if(depth>frameLimit)throw new DDNError('DDN-FR03','Frame nesting exceeds registry depth limit '+frameLimit,view.source,view.children.find(n=>n.uid===f.id).start);
+        current=frameById.get(current.within);
+      }
     }
     /* 0.8 core language (chapters 52 and 55): view kinds and strictness,
      * registered themes, reference numerals, markings, inert assertions,
@@ -1510,10 +1672,18 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     const maxDocVersion=Math.max(...[...ws.docs.values()].map(d=>SOURCE_VERSIONS.indexOf(d.version)));
     for(const d of ws.docs.values())if(SOURCE_VERSIONS.indexOf(d.version)<maxDocVersion)diags08.push({code:'DDN-V06',severity:'info',message:'File '+d.source+' declares ddn "'+d.version+'", older than the workspace\'s newest source version '+SOURCE_VERSIONS[maxDocVersion]+' (informational only).',source:d.source});
     const diagnostics=[...motionDiagnostics,...xrefDiags,...chrome08Diags,...diags08,...diags08x];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
-    const currentLanguage=[...ws.docs.values()].some(d=>d.version==='0.6')?'0.6':[...ws.docs.values()].some(d=>d.version==='0.5')?'0.5':[...ws.docs.values()].some(d=>d.version==='0.4')?'0.4':'0.3';
+    const currentLanguage=[...ws.docs.values()].some(d=>d.version==='0.7')?'0.7':[...ws.docs.values()].some(d=>d.version==='0.6')?'0.6':[...ws.docs.values()].some(d=>d.version==='0.5')?'0.5':[...ws.docs.values()].some(d=>d.version==='0.4')?'0.4':'0.3';
     const ir={format:'ddn-resolved@'+currentLanguage,language:currentLanguage,registry:'ddn-core@0.3',entry,view:{id:view.uid,name:view.label||view.id,local:view.id,selected,relations:visibleRelations.map(r=>r.id),profiles:p,keys,placements,routes,subdiagrams,frames,flows,source:{file:view.source,start:view.start,end:view.end,bodyEnd:view.bodyEnd}},elements,relations,diagnostics};
+    if(occurrenceMode){
+      if(p.projection.kind!=='graph'||p.layout.x_interaction)ocFail('DDN-OC04','Explicit occurrences require a graph projection without fixed-lane interactions');
+      if(visibleRelations.some(r=>r.properties.x_nary))ocFail('DDN-OC04','Explicit graph occurrences do not yet address n-ary connector legs');
+      const semanticIds=new Set([...ws.uidMap.keys(),...[...elements,...relations,...elements.flatMap(e=>[...e.fields,...e.ports])].map(n=>n.id)]);
+      for(const o of [...elementOccurrences,...relationOccurrences])if(o.number!==1&&semanticIds.has(o.id))ocFail('DDN-OC02','Occurrence identity collides with a model identity');
+      for(const o of elementOccurrences)if(o.number!==1){const e=elements.find(e=>e.id===o.source);for(const m of [...e.fields,...e.ports])if(semanticIds.has(Occurrences.id(view.uid,m.id,o.number)))ocFail('DDN-OC02','Occurrence member identity collides with a model identity');}
+      ir.view.occurrences={version:1,elements:elementOccurrences,relations:relationOccurrences};
+    }
     if(kind08!==undefined){ir.view.kind=kind08;ir.view.strictness=strictness08;}
-    if(diff08)ir.view.diff={a:diff08.a.uid,b:diff08.b.uid,aName:diff08.aName,bName:diff08.bName,counts:diff08.counts};
+    if(diff08)ir.view.diff={a:diff08.a.uid,b:diff08.b.uid,aName:diff08.aName,bName:diff08.bName,counts:diff08.counts,...(view.props.diff_scope?{scope:view.props.diff_scope}:{})};
     if(theme08!==undefined)ir.view.theme=theme08;
     if(assertions08)ir.view.assertions=assertions08;
     if(fontPin08)ir.view.fontPin=fontPin08;
@@ -1524,7 +1694,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       for(const panel of p.projection.panels){if(!panel.view)continue;
         const target=ws.uidMap.get(panel.view.$ref);
         if(!target||target.type!=='view')throw new DDNError('DDN-QP001','Panel view must resolve to a named view',view.source,view.start);
-        const child=build(files,target.source,target.uid,registry,[...stack,view.uid]).ir;
+        const child=build(files,target.source,target.uid,registry,[...stack,view.uid],draft).ir;
         if(child.view.profiles.projection.kind==='panels' && child.view.children?.length)throw new DDNError('DDN-QP002','Composed panels support one child-view level; recursive dashboards are not supported',view.source,view.start);
         if(child.view.selected.length>128 || child.view.relations.length>384)throw new DDNError('DDN-QP003','Child exceeds visible graph limits',view.source,view.start);
         ir.view.children.push({slot:panel.id,ir:child});
@@ -1539,7 +1709,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
         const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x=>x.type==='view'&&(x.id===target||x.uid===target));
         if(!tv)throw new DDNError('DDN-PJ197','Service contract '+(n.name||n.id)+' references unknown choreography view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
         if(tv.uid===view.uid||stack.includes(tv.uid))throw new DDNError('DDN-PJ197','Service contract '+(n.name||n.id)+' choreography binding must reference a different view (self-reference is not a choreography)',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
-        const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+        const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid],draft).ir;
         const cp=child.view.profiles.projection?.profile;
         if(!['uml.sequence@2','uml.statemachine@1'].includes(cp))throw new DDNError('DDN-PJ197','Service contract '+(n.name||n.id)+' binds view '+target+' ('+cp+'); a choreography binds a uml.sequence@2 or uml.statemachine@1 view',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
       }
@@ -1552,7 +1722,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
        const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x=>x.type==='view'&&(x.id===target||x.uid===target));
        if(!tv)throw new DDNError('DDN-PJ119','IDEF0 node '+(n.name||n.id)+' references unknown decomposition view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
        const parent=n.properties.x_idef0?.node||'';
-       const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+       const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid],draft).ir;
        if(child.view.profiles.projection?.profile!=='idef0.basic@1')throw new DDNError('DDN-PJ201','IDEF0 decomposition of '+(n.name||n.id)+' must target an idef0.basic@1 view',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
        for(const c of child.elements.filter(x=>x.kind==='idef0.activity')){
         const num=c.properties.x_idef0?.node||'';
@@ -1574,7 +1744,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
         if(!n.kind.startsWith('dmn.'))throw new DDNError('DDN-PJ192','x_subdiagram on '+n.kind+' under dmn.drd@1; only dmn.* nodes bind views',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
         const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x=>x.type==='view'&&(x.id===target||x.uid===target));
         if(!tv)throw new DDNError('DDN-PJ192','DMN node '+(n.name||n.id)+' references unknown view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
-        const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+        const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid],draft).ir;
         if(child.view.profiles.projection?.kind!=='decision')throw new DDNError('DDN-PJ192','DMN node '+(n.name||n.id)+' binds view '+target+' which is a '+child.view.profiles.projection?.kind+' projection; a dmn.decision binds a decision-projection (decision table) view',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
       }
     }
@@ -1588,7 +1758,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
         if(typeof target==='string'&&!viewIds.has(target))throw new DDNError('DDN-PJ119','Interaction overview node '+(n.name||n.id)+' references unknown view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
         if(typeof target==='string'&&p.projection.profile==='uml.interaction_overview@2'){
          const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x=>x.type==='view'&&x.id===target);
-         const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+         const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid],draft).ir;
          if(child.view.profiles.projection.profile==='uml.interaction_overview@2'&&child.elements.some(m=>m.properties.x_subdiagram))throw new DDNError('DDN-PJ174','Interaction overview inline expansion supports one level; nested expansions are not rendered',view.source,view.start);
          if(child.view.selected.length>128||child.view.relations.length>384)throw new DDNError('DDN-PJ174','Interaction overview child exceeds visible graph limits',view.source,view.start);
          ioChildren[n.id]=child;
@@ -1618,7 +1788,7 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
       const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x2=>x2.type==='view'&&(x2.id===target||x2.uid===target));
       if(!tv)throw new DDNError('DDN-PJ119','Drill-down node '+(n.name||n.id)+' references unknown view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
       if(tv.uid===view.uid||stack.includes(tv.uid))throw new DDNError('DDN-PJ198','Drill-down node '+(n.name||n.id)+' cannot render its own view as a child',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
-      const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+      const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid],draft).ir;
       if(child.elements.some(m=>{const mx=m.properties.x_subdiagram;return mx&&(mx.display==='inline'||mx.display==='thumbnail');}))throw new DDNError('DDN-PJ198','Drill-down children support one nesting level; '+(n.name||n.id)+"'s child declares its own inline/thumbnail node",n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
       if(child.view.selected.length>128||child.view.relations.length>384)throw new DDNError('DDN-PJ174','Drill-down child exceeds visible graph limits',view.source,view.start);
       drChildren[n.id]=child;
@@ -1626,7 +1796,8 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
      if(Object.keys(drChildren).length)ir.view.ioChildren={...(ir.view.ioChildren||{}),...drChildren};
     }
     if(!Contracts)throw new DDNError('DDN099','Load ddn-contracts.js before ddn-core.js');ir.diagnostics.push(...Contracts.validate(ir,registry,DDNError));
-    ir.diagnostics.push(...Profiles.validate(ir,registry,DDNError));
+    ir.diagnostics.push(...Profiles.validate(ir,registry,DDNError,draft));
+    if(draft)ir.validation={mode:"draft"};
     return {ir,workspace:ws,viewNode:view};
   }
   /* 0.8 (chapter 53 §53.4): multi-view publication sets. One ordered figure
@@ -1660,13 +1831,21 @@ import {namespace as ddnNamespace} from './ddn-module-registry.js';
     }
     return sets;
   }
-  function semanticJSON(ir){function canon(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(canon);const o={};for(const k of Object.keys(v).sort())if(!['source','ref','local'].includes(k))o[k]=canon(v[k]);return o;}const es=new Map(),rs=new Map();function visit(x){x.elements.forEach(n=>es.set(n.id,n));x.relations.forEach(n=>rs.set(n.id,n));for(const c of x.view?.children||[])visit(c.ir);}visit(ir);return {format:ir.format,elements:[...es.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon),relations:[...rs.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon)};}
+  // Draft obligations are collected at individual validator sites. All other
+  // validation remains strict, including errors encountered after an obligation.
+  function buildDraft(files,entry,viewName,registry){
+    const diagnostics=[];
+    try{const built=build(files,entry,viewName,registry,[],diagnostics);
+      return {...built,status:diagnostics.length?'incomplete':'valid',diagnostics:[...built.ir.diagnostics,...diagnostics]};
+    }catch(error){if(!error.code)throw error;return {status:'invalid',ir:null,diagnostics:[...diagnostics,{code:error.code,severity:'error',message:error.message,source:error.source||entry,offset:error.offset||0}]};}
+  }
+  function semanticJSON(ir){function canon(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(canon);const o={};for(const k of Object.keys(v).sort())if(!['source','ref','local'].includes(k))o[k]=canon(v[k]);return o;}const es=new Map(),rs=new Map();function visit(x){x.elements.forEach(n=>{if(n.properties.composition||n.properties.document){n={...n,properties:{...n.properties}};delete n.properties.composition;if(n.properties.document){n.properties.document={...n.properties.document};delete n.properties.document.storage;}}es.set(n.id,n);});x.relations.forEach(n=>rs.set(n.id,n));for(const c of x.view?.children||[])visit(c.ir);}visit(ir);return {format:ir.format,elements:[...es.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon),relations:[...rs.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon)};}
   /* B1-088: host-supplied icon packs — validated and sanitized exactly like
    * shipped packs before they can render. */
   /* Host pack registries are shared across bundles through the DDNPacks
    * namespace (first publish wins); never touch the module-local copy. */
   const Packs=ddnNamespace('DDNPacks');
   const registerIconPack=pack=>Packs.registerIconPack(pack,ICONLIBS.libraries);
-  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,normalizeTextProps,LINE_DASH_PATTERNS,profiles:Profiles,viewProfiles:ViewProfiles,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
+  const api={VERSION,SOURCE_VERSIONS,documents:Documents,occurrenceId:Occurrences.id,expandOccurrences:Occurrences.expand,DDNError,lex,parse,bundle,createWorkspace,build,buildDraft,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,normalizeTextProps,LINE_DASH_PATTERNS,profiles:Profiles,viewProfiles:ViewProfiles,extractPublicationChrome,publicationSets,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
   publishNamespace('DDN',api);
   export default api;

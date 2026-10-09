@@ -1,0 +1,4 @@
+ddn "0.6";
+module "ddn.vectors.badcolumn";
+data m { object t { kind: table; columns { name { width: -10%; } } } }
+view main { data: [@m]; }

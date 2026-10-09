@@ -15,7 +15,7 @@ const code=fn=>{try{fn();return null;}catch(e){return e.code;}};
 test('0.6 header accepted; unsupported versions stay DDN012',()=>{
  assert.ok(DDN.SOURCE_VERSIONS.includes('0.6'));
  assert.equal(DDN.parse('ddn "0.6"; module "a";').version,'0.6');
- for(const v of ['0.7','0.8','1.0','0.1'])assert.equal(code(()=>DDN.parse('ddn "'+v+'"; module "a";')),'DDN012',v);
+ for(const v of ['0.8','1.0','0.1'])assert.equal(code(()=>DDN.parse('ddn "'+v+'"; module "a";')),'DDN012',v);
 });
 
 test('0.6 file using no 0.8 constructs renders byte-identical to its 0.5 twin',()=>{

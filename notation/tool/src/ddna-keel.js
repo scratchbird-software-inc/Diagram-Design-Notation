@@ -16,7 +16,7 @@
 (function (host) {
 'use strict';
 
-const ID = 'ddna-keel-l0', VERSION = '1.0.0';
+const ID = 'ddna-keel-l0', VERSION = '1.0.1';
 const L0_TAGS = ['keel-l0@1', 'poc-expr'];
 /* Tier model (ch.5 §5.2): T0 opaque reference, T1 static analysis, T2 pure
  * evaluation. The open host ceiling is T2. */
@@ -33,7 +33,7 @@ const bad = m => ({ ok: false, error: m });
 /* ---------------------------------------------------------------- parser
  * keel-l0@1 recursive descent. Tokens: numbers, strings, booleans, null,
  * identifiers, [ ] { } ( ) . , operators, if/then/else. */
-const RE_TOK = /"(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?|[A-Za-z_][A-Za-z0-9_]*|<=|>=|==|!=|&&|\|\||[+\-*/()[\]{},.<>:]/g;
+const RE_TOK = /"(?:[^"\\]|\\.)*"|\d+(?:\.\d+)?|[A-Za-z_][A-Za-z0-9_]*|<=|>=|==|!=|&&|\|\||[+\-*/()[\]{},.<>:]/g;
 function tokenize(text) {
   const toks = String(text).match(RE_TOK) || [];
   /* Reject anything the tokenizer skipped (no silent partial parses). */

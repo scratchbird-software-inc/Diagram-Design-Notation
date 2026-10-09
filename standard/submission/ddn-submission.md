@@ -25,7 +25,7 @@ together; anyone may implement DDN from the documents alone.
 
 ## 2. Normative core (mapped to specification chapters)
 
-The normative core lives in `standard/specification/` — **62**
+The normative core lives in `standard/specification/` — **63**
 chapters covering: status and conformance scope (ch. 00); the language and
 decoding rules (ch. 01); the data model and executable contracts (ch. 02);
 views, selection and reuse definitions; routing and layout; publication;
@@ -33,7 +33,7 @@ security; notation profiles and diagram families (ch. 17, with per-family
 sections); quality projections and validation; cross-file addressing and
 architecture containers (§17.25); and the icon pack format (ch. 49) with
 its JSON Schema. The syntactic core has a formal EBNF grammar
-(`standard/grammar/ddn.ebnf`), and **9** JSON Schemas
+(`standard/grammar/ddn.ebnf`), and **10** JSON Schemas
 (draft 2020-12) cover the resolved IR, scene, values, extensions,
 publication manifest, layout state, workspace, and icon packs.
 
@@ -50,17 +50,17 @@ machine-readable catalogue that the specification and the runtime share.
 | Profile relation verbs | 94 | profiles catalogue |
 | **Total element kinds** | **375** | computed |
 | **Total relation verbs** | **185** | computed |
-| Shape silhouettes | 14 | profiles catalogue |
+| Registered silhouette identifiers | 55 | profiles catalogue |
 | Installed profiles | 151 | profiles catalogue |
 | Projection kinds | 12 | language choices |
-| Documented diagnostics | 156 | diagnostic fix guide |
+| Documented diagnostics | 161 | diagnostic fix guide |
 
 ## 4. Extension mechanism, profiles, and icon packs
 
 Three additive mechanisms keep the core small and everything else a
 versioned layer:
 
-- **Extension contracts** — **70** `x_*`-prefixed
+- **Extension contracts** — **71** `x_*`-prefixed
   contracts declared in the registry of extension contracts. Unknown
   extensions are carried (never silently dropped); known ones are
   schema-validated. Old processors pass new extensions through untouched.

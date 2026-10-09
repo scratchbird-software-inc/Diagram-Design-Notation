@@ -2,6 +2,7 @@
 import {publishNamespace} from './ddn-module-registry.js';
 import Sketch from './ddn-sketch.js';
 import Text from './ddn-text.js';
+import Fields from './ddn-field-layout.js';
 import Palette from './ddn-palette.js';
 'use strict';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
@@ -24,20 +25,20 @@ function measure(g,p){
   const proportion=g.silhouette==='diamond'?.60:['ellipse','circle'].includes(g.silhouette)?.68:.78;
   g.titleLines=Text.wrap(n.name,g.w*proportion,16*s,p.style.font,labelTs?.weight??600,labelTs);
   g.h=Math.max(g.h,(g.titleLines.length*21+55)*s*(g.silhouette==='diamond'?1.55:1));
-  if(g.silhouette==='circle'){g.w=Math.max(g.w,g.h);g.h=g.w;}
+  if(g.silhouette==='circle')g.h=Math.max(g.h,g.w);
   if(g.silhouette==='actor')g.h=Math.max(g.h,(140+g.titleLines.length*21)*s);
   g.fieldRows=[];
  }
- if(['uml.class','uml.interface','uml.enumeration','uml.metaclass','uml.stereotype'].includes(n.kind)){
+ if(!g.columnLayout&&['uml.class','uml.interface','uml.enumeration','uml.metaclass','uml.stereotype'].includes(n.kind)){
   const list=g.fieldRows.slice().sort((a,b)=>(a.field.properties.x_member?.kind==='operation')-(b.field.properties.x_member?.kind==='operation'));
-  let y=70*s,last=null;const div=[];
+  let y=Math.max(70*s,(49+g.titleLines.length*21)*s),last=null;const div=[];
   for(const row of list){const m=row.field.properties.x_member||{},type=m.kind||(n.kind==='uml.enumeration'?'literal':'attribute');if(type!==last){div.push({top:y,label:type==='operation'?'OPERATIONS':type==='literal'?'LITERALS':'ATTRIBUTES'});y+=25*s;last=type;}
    const prefix={public:'+',private:'−',protected:'#',package:'~'}[m.visibility]||'';
    const xp=row.field.properties.x_part;
    const adorned=(m.derived?'/':'')+row.field.name+(xp?(xp.classifier?': '+xp.classifier:'')+(xp.multiplicity?' ['+xp.multiplicity+']':''):'')+(m.multiplicity?' ['+m.multiplicity+']':'')+(m.modifiers?.length?' {'+m.modifiers.join(', ')+'}':'');
-   row.labelLines=Text.wrap((prefix?prefix+' ':'')+adorned,g.w-32*s,13.5*s,p.style.font,400);row.top=y;row.h=Math.max(row.h,(row.labelLines.length*18+row.detailLines.length*16+10)*s);y+=row.h;
+   const full=(prefix?prefix+' ':'')+adorned;const wrap=row.field.properties.text_wrap??n.properties.text_wrap??'off';row.labelLines=wrap==='on'?Text.wrap(full,g.w-32*s,13.5*s,p.style.font,p.style.text?.weight??400,p.style.text):[Fields.clip(full,g.w-32*s,13.5*s,p.style.font,400,p.style.text)];if(wrap!=='on'&&row.labelLines[0]!==full)row.fullLabel=full;row.top=y;row.h=Math.max(row.h,(row.labelLines.length*18+row.detailLines.length*16+10)*s);y+=row.h;
   }
-  g.fieldRows=list;g.compartments=div;g.h=Math.max(g.h,y+20*s);g.headerH=70*s;
+  g.fieldRows=list;g.compartments=div;g.h=Math.max(g.h,y+20*s);g.headerH=Math.max(70*s,(49+g.titleLines.length*21)*s);
  }
  if(n.kind==='req.requirement'){
   g.requirement=Text.wrap(n.properties.x_diagram?.text||'',g.w-32*s,13*s,p.style.font);g.h=Math.max(g.h,(95+g.requirement.length*19)*s);
@@ -49,33 +50,33 @@ function measure(g,p){
  const SYSML_KW={'sysml.block':'block','sysml.interfaceblock':'interfaceBlock','sysml.flowspec':'flowSpecification','sysml.valuetype':'valueType','sysml.constraint':'constraint','sysml.testcase':'testCase'};
  if(SYSML_KW[n.kind]&&(SYSML2||n.kind==='sysml.testcase')){
   g.sysmlKeyword=SYSML_KW[n.kind];
-  if(n.fields.length){
+  if(n.fields.length&&!g.columnLayout){
    const ORDER=['values','parts','references','operations','constraints'];
    const list=g.fieldRows.slice().sort((a,b)=>ORDER.indexOf(a.field.properties.x_block?.compartment||(n.kind==='sysml.constraint'?'constraints':'values'))-ORDER.indexOf(b.field.properties.x_block?.compartment||(n.kind==='sysml.constraint'?'constraints':'values')));
-   let y=70*s,last=null;const div=[];
+   let y=Math.max(70*s,(49+g.titleLines.length*21)*s),last=null;const div=[];
    for(const row of list){const comp=row.field.properties.x_block?.compartment||(n.kind==='sysml.constraint'?'constraints':'values');
     const xu=row.field.properties.x_unit;
     const adorned=row.field.name+(xu?': '+xu.unit:'');
-    row.labelLines=Text.wrap(adorned,g.w-32*s,13.5*s,p.style.font,400);
+    const wrap=row.field.properties.text_wrap??n.properties.text_wrap??'off';row.labelLines=wrap==='on'?Text.wrap(adorned,g.w-32*s,13.5*s,p.style.font,p.style.text?.weight??400,p.style.text):[Fields.clip(adorned,g.w-32*s,13.5*s,p.style.font,400,p.style.text)];if(wrap!=='on'&&row.labelLines[0]!==adorned)row.fullLabel=adorned;
     if(comp!==last){div.push({top:y,label:comp});y+=25*s;last=comp;}
     row.top=y;row.h=Math.max(row.h,(row.labelLines.length*18+row.detailLines.length*16+10)*s);y+=row.h;
    }
    g.fieldRows=list;g.compartments=div;g.h=Math.max(g.h,y+20*s);
   }
-  g.headerH=70*s;
+  g.headerH=Math.max(70*s,(49+g.titleLines.length*21)*s);
  }
  /* B1-072 : SoaML kind keywords — header only (no compartments);
   * servicecontract renders the collaboration glyph (see the collab branch). */
  const SOAML_KW={'soaml.participant':'participant','soaml.agent':'agent','soaml.serviceinterface':'ServiceInterface','soaml.servicecontract':'ServiceContract','soaml.capability':'capability','soaml.message':'message','soaml.milestone':'milestone'};
  if(SOAML_KW[n.kind]){
-  g.sysmlKeyword=SOAML_KW[n.kind];g.headerH=70*s;
+  g.sysmlKeyword=SOAML_KW[n.kind];g.headerH=Math.max(70*s,(49+g.titleLines.length*21)*s);
  }
  /* B1-072 : UAF 1.2 domain vocabulary — keyword headers. */
  /* B1-083: SDL — flag shapes carry their name; keyword headers on the rest. */
  const SDL_KW={'sdl.block':'block','sdl.agent':'agent','sdl.signalset':'signalset','sdl.procedure':'procedure'};
- if(SDL_KW[n.kind]){g.sysmlKeyword=SDL_KW[n.kind];g.headerH=70*s;}
+ if(SDL_KW[n.kind]){g.sysmlKeyword=SDL_KW[n.kind];g.headerH=Math.max(70*s,(49+g.titleLines.length*21)*s);}
   const UAF_KW={'uaf.capability':'Capability','uaf.enterprisegoal':'EnterpriseGoal','uaf.enterprisevision':'EnterpriseVision','uaf.strategicphase':'StrategicPhase','uaf.opperformer':'OperationalPerformer','uaf.opactivity':'OperationalActivity','uaf.opnode':'OperationalNode','uaf.opexchange':'OperationalExchange','uaf.servicespec':'ServiceSpecification','uaf.servicefunction':'ServiceFunction','uaf.servicepolicy':'ServicePolicy','uaf.system':'System','uaf.systemfunction':'SystemFunction','uaf.implementer':'Implementer','uaf.person':'Person','uaf.organization':'Organization','uaf.post':'Post','uaf.responsibility':'Responsibility','uaf.resourceperformer':'ResourcePerformer','uaf.resource':'Resource','uaf.resourcefunction':'ResourceFunction','uaf.technology':'Technology','uaf.securityelement':'SecurityElement','uaf.securitycontrol':'SecurityControl','uaf.threat':'Threat','uaf.asset':'Asset','uaf.project':'Project','uaf.projectmilestone':'ProjectMilestone','uaf.workpackage':'WorkPackage','uaf.standard':'Standard','uaf.standardcollection':'StandardCollection','uaf.protocol':'Protocol','uaf.actualresource':'ActualResource','uaf.actualorganization':'ActualOrganization','uaf.actualperson':'ActualPerson','uaf.dictionaryentry':'DictionaryEntry','uaf.archdesc':'ArchitectureDescription','uaf.viewpoint':'Viewpoint','uaf.modelref':'ModelReference'};
- if(UAF_KW[n.kind]){g.sysmlKeyword=UAF_KW[n.kind];g.headerH=70*s;}
+ if(UAF_KW[n.kind]){g.sysmlKeyword=UAF_KW[n.kind];g.headerH=Math.max(70*s,(49+g.titleLines.length*21)*s);}
  /* B1-080: ORM role boxes — fact types lay their fields out as a horizontal
   * row of role boxes instead of vertical field rows. */
  if(n.kind==='orm.facttype'&&n.fields.length){
@@ -83,7 +84,7 @@ function measure(g,p){
   g.roleRow={fields:n.fields,widths};
   g.w=Math.max(g.w,widths.reduce((a,b)=>a+b,0)+24*s);
   g.h=Math.max(g.h,120*s);
-  g.headerH=70*s;
+  g.headerH=Math.max(70*s,(49+g.titleLines.length*21)*s);
  }
  /* B1-066 : DMN boxed-expression presentation — text rows in a
   * bottom compartment. Display only; the text is never parsed or evaluated. */
@@ -93,11 +94,17 @@ function measure(g,p){
   g.boxedRows=wrapped;g.boxedH=wrapped.length*18*s+(rows.length?16*s:0);
   g.h=Math.max(g.h,g.h+24*s+g.boxedH);
  }
- if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,Text.measure(n.name,12*s,p.style.font,labelTs?.weight??400,labelTs).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+ /* 0.8 (chapter 54 §54.6): small markers wrap their caption to the greater
+  * of the registered minimum width and any authored max_width, growing the
+  * caption stack downward instead of widening from the unwrapped name. */
+ const markerCap=(minW)=>{const qn=(v,d)=>typeof v==='number'?v:v&&v.$quantity!==undefined?(v.$quantity*({px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96}[v.unit]??0))||d:d;const authored=qn(n.properties.max_width??p.style.max_width,NaN);return Math.max(minW,Number.isFinite(authored)?authored:0,g.fitWidth??0);};
+ const markerBox=(minW)=>{const cap=markerCap(minW),lines=Text.wrap(n.name,cap-24*s,12*s,p.style.font,labelTs?.weight??600,labelTs);
+  return{w:cap,h:85*s+Math.max(0,lines.length-1)*13*s,lines};};
+ if(['initial','final'].includes(g.silhouette)){const mb=markerBox(125*s);g.w=Math.max(125*s,mb.w);g.h=mb.h;g.markerHeight=85*s;g.fieldRows=[];g.titleLines=mb.lines;}
  /* B1-057 : pseudostate glyphs are small fixed markers with the name
   * below; states with activities/internal transitions/submachine grow a
   * compartment under the name. */
- if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){g.w=Math.max(110*s,Text.measure(n.name,12*s,p.style.font,labelTs?.weight??400,labelTs).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+ if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){const mb=markerBox(110*s);g.w=Math.max(110*s,mb.w);g.h=mb.h;g.markerHeight=85*s;g.fieldRows=[];g.titleLines=mb.lines;}
  if(n.kind==='state.state'){const x=n.properties.x_state||{};
   const acts=[...['entry','exit','do'].filter(k=>x[k]).map(k=>k+' / '+x[k]),...(x.internal||[])];
   if(acts.length||x.submachine){g.stateActs=acts;g.submachine=x.submachine;
@@ -114,6 +121,10 @@ function measure(g,p){
   const pw=Math.max(g.w,Math.max(...xp.items.map(it=>Text.measure(it,10.5*s,p.style.font,400).width))+24*s),ph=xp.items.length*16*s+24*s;
   g.w=Math.max(g.w,pw);g.planningH=ph+8*s;g.h+=g.planningH;
  }
+ if(g.columnLayout){const delta=g.headerH-g.columnLayout.top;g.columnLayout.top+=delta;for(const row of g.fieldRows)row.top+=delta;g.h+=Math.max(0,delta);}
+
+ if(g.noteLines.length){g.noteTop=Math.max(g.noteTop,g.headerH,...g.fieldRows.map(r=>r.top+r.h));g.h=Math.max(g.h,g.noteTop+(g.noteLines.length*18+34)*s);}
+
  return g;
 }
 /* Small-marker silhouettes paint a glyph much smaller than the node box (the
@@ -126,7 +137,7 @@ function measure(g,p){
  * each other's escape corridor (DDN215); the box edge keeps their stubs at
  * lane distance. */
 function markerOutline(g){
- const {x,y,w,h,silhouette:t,scale:s}=g,cx=x+w/2;
+ const {x,y,w,silhouette:t,scale:s}=g,h=g.markerHeight??g.h,cx=x+w/2;
  switch(t){
   case 'bpmevent':return{cx,cy:y+h/2-10*s,r:16*s};
   case 'userevent':return{cx,cy:y+h/2-8,r:15*s};
@@ -141,7 +152,7 @@ function markerOutline(g){
  return null;
 }
 function polygon(g){const{x,y,w,h,silhouette:t}=g;
- if(['initial','final'].includes(t)){const ps=[];for(let i=0;i<32;i++){const a=i/32*Math.PI*2;ps.push([x+w/2+12*g.scale*Math.cos(a),y+h/2-8*g.scale+12*g.scale*Math.sin(a)]);}return ps;}
+ if(['initial','final'].includes(t)){const ps=[];for(let i=0;i<32;i++){const a=i/32*Math.PI*2;ps.push([x+w/2+12*g.scale*Math.cos(a),y+(g.markerHeight??h)/2-8*g.scale+12*g.scale*Math.sin(a)]);}return ps;}
  const mk=markerOutline(g);
  if(mk){
   if(mk.diamond)return[[mk.cx,mk.cy-mk.r],[mk.cx+mk.r,mk.cy],[mk.cx,mk.cy+mk.r],[mk.cx-mk.r,mk.cy]];
@@ -169,7 +180,7 @@ if(t==='triangledown')return[[x,y],[x+w,y],[x+w/2,y+h]];
 function anchor(g,side,point){
  const {x,y,w,h,silhouette:t}=g;if(!t)return point;
  let px=point[0],py=point[1];const cx=x+w/2,cy=y+h/2;
- if(['initial','final'].includes(t)){const a={east:0,south:Math.PI/2,west:Math.PI,north:-Math.PI/2}[side];return [f(cx+12*g.scale*Math.cos(a)),f(cy-8*g.scale+12*g.scale*Math.sin(a))];}
+ if(['initial','final'].includes(t)){const a={east:0,south:Math.PI/2,west:Math.PI,north:-Math.PI/2}[side];return [f(cx+12*g.scale*Math.cos(a)),f(y+(g.markerHeight??h)/2-8*g.scale+12*g.scale*Math.sin(a))];}
  const mk=markerOutline(g);
  if(mk){
   /* Slot-preserving contour attachment (same idiom as the ellipse and
@@ -260,14 +271,15 @@ function render(g,p,theme){
  let out=`<g class="ddn-node ddn-kind-${slug(k.code)}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-shape="${esc(shape)}"${elOp!==undefined&&elOp<1?` opacity="${elOp}"`:''} tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
  if(planning)out+=`<g class="ddn-planning-table"><rect x="${f(planning.x)}" y="${f(planning.y)}" width="${f(planning.w)}" height="${f(planning.h)}" fill="${fill}" stroke="${ink}" stroke-width="1.3" stroke-dasharray="5 4"/>`+text(planning.x+8*s,planning.y+18*s,'Planning',10,650,'')+planning.items.map((it,i)=>text(planning.x+8*s,planning.y+(36+i*16)*s,it,10.5,400,'')).join('')+'</g>';
  if(['initial','final'].includes(shape)){
-  const cx=x+w/2,cy=y+h/2-8,r=12*s;
+  const cx=x+w/2,cy=y+(g.markerHeight??h)/2-8*s,r=12*s;
   if(shape==='initial')out+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${ink}"/>`;
   else out+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="${r*.65}" fill="${ink}"/>`;
-  out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
+  /* 0.8 (chapter 54 §54.6): the wrapped caption stack anchors at the box bottom. */
+  out+=g.titleLines.map((ln,li)=>text(cx,y+h-5*s-(g.titleLines.length-1-li)*13*s,ln,12,600,'text-anchor="middle"')).join('');return out+'</g>';
  }
  /* B1-057 : UML pseudostate markers. */
  if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar'].includes(shape)){
-  const cx=x+w/2,cy=y+h/2-8,r=12*s;
+  const cx=x+w/2,cy=y+(g.markerHeight??h)/2-8,r=12*s;
   if(shape==='junction')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(7*s)}" fill="${ink}"/>`;
   else if(shape==='choice')out+=`<path d="M${f(cx)} ${f(cy-r)}L${f(cx+r)} ${f(cy)}L${f(cx)} ${f(cy+r)}L${f(cx-r)} ${f(cy)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   else if(shape==='entrypoint')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(9*s)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
@@ -275,7 +287,8 @@ function render(g,p,theme){
   else if(shape==='terminate')out+=`<path d="M${f(cx-8*s)} ${f(cy-8*s)}L${f(cx+8*s)} ${f(cy+8*s)}M${f(cx+8*s)} ${f(cy-8*s)}L${f(cx-8*s)} ${f(cy+8*s)}" stroke="${ink}" stroke-width="2.2"/>`;
   else if(shape==='history')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`+text(cx,cy+4.5*s,k.keyword==='state.history_deep'?'H*':'H',13,650,'text-anchor="middle"');
   else if(shape==='forkbar')out+=`<rect x="${f(cx-32*s)}" y="${f(cy-4*s)}" width="${f(64*s)}" height="${f(8*s)}" rx="${f(2*s)}" fill="${ink}"/>`;
-  out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
+  /* 0.8 (chapter 54 §54.6): the wrapped caption stack anchors at the box bottom. */
+  out+=g.titleLines.map((ln,li)=>text(cx,y+h-5*s-(g.titleLines.length-1-li)*13*s,ln,12,600,'text-anchor="middle"')).join('');return out+'</g>';
  }
  /* B1-064: CMMN 1.1 — case plan clipboard, user event listener, case file
   * (reuses the dataobject fold), and x_cmmn/x_planning decorators. */
@@ -287,7 +300,7 @@ function render(g,p,theme){
   return out+'</g>';
  }
  if(shape==='userevent'){
-  const cx=x+w/2,cy=y+h/2-8,r=15*s;
+  const cx=x+w/2,cy=y+(g.markerHeight??h)/2-8,r=15*s;
   out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/><circle cx="${f(cx)}" cy="${f(cy)}" r="${f(r-3.5*s)}" fill="none" stroke="${ink}" stroke-width="1.2"/>`;
   out+=`<circle cx="${f(cx)}" cy="${f(cy-3.5*s)}" r="${f(2.6*s)}" fill="none" stroke="${ink}" stroke-width="1.5"/><path d="M${f(cx-4*s)} ${f(cy+5*s)}Q${f(cx)} ${f(cy-1*s)} ${f(cx+4*s)} ${f(cy+5*s)}" fill="none" stroke="${ink}" stroke-width="1.5"/>`;
   out+=text(cx,y+h-4*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
@@ -381,7 +394,7 @@ function render(g,p,theme){
   out+=text(x+w/2,y+(hasRows?24*s:h/2-10*s),g.sysmlKeyword?'«'+g.sysmlKeyword+'»':'«collaboration»',11,500,'text-anchor="middle"');
   out+=lines(g.titleLines,x+w/2,y+(hasRows?48*s:h/2+14*s),16,600);
   if(hasRows){out+=line(x+w*.18,y+62*s,x+w*.82,y+62*s,1);
-   for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+w/2,y+r.top+18*s,12.5,400)+'</g>';}
+   for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">${r.fullLabel||r.fullDetails?`<title>${esc([r.fullLabel||r.field.name,r.fullDetails].filter(Boolean).join(" · "))}</title>`:""}`+lines(r.labelLines,x+w/2,y+r.top+18*s,12.5,400)+'</g>';}
   return out+'</g>';
  }
  /* B1-058 : deployment silhouettes — 3D-box node (top/right depth
@@ -411,16 +424,17 @@ function render(g,p,theme){
   return out+'</g>';
  }
  if(shape==='hourglass'){
-  const cx=x+w/2,cy=y+h/2,hw=Math.min(w/2,26*s),hh=Math.min(h/2,20*s);
+  const cx=x+w/2,cy=y+(g.markerHeight??h)/2,hw=Math.min(w/2,26*s),hh=Math.min(h/2,20*s);
   out+=`<path d="M${f(cx-hw)} ${f(cy-hh)}L${f(cx+hw)} ${f(cy-hh)}L${f(cx-hw)} ${f(cy+hh)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   out+=`<path d="M${f(cx+hw)} ${f(cy-hh)}L${f(cx-hw)} ${f(cy+hh)}L${f(cx+hw)} ${f(cy+hh)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
-  out+=lines(g.titleLines,cx,y+h-5*s,12,600);
+  out+=g.titleLines.map((ln,li)=>text(cx,y+h-5*s-(g.titleLines.length-1-li)*13*s,ln,12,600,'text-anchor="middle"')).join('');
   return out+'</g>';
  }
  if(shape==='flowfinal'){
-  const cx=x+w/2,cy=y+h/2-8,r=11*s;
+  const cx=x+w/2,cy=y+(g.markerHeight??h)/2-8,r=11*s;
   out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="2"/><path d="M${f(cx-5*s)} ${f(cy-5*s)}L${f(cx+5*s)} ${f(cy+5*s)}M${f(cx+5*s)} ${f(cy-5*s)}L${f(cx-5*s)} ${f(cy+5*s)}" stroke="${ink}" stroke-width="1.8"/>`;
-  out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
+  /* 0.8 (chapter 54 §54.6): the wrapped caption stack anchors at the box bottom. */
+  out+=g.titleLines.map((ln,li)=>text(cx,y+h-5*s-(g.titleLines.length-1-li)*13*s,ln,12,600,'text-anchor="middle"')).join('');return out+'</g>';
  }
  if(shape==='actor'){
   /* B1-072 : SoaML agents are actors with a keyword header. */
@@ -478,7 +492,10 @@ function render(g,p,theme){
  if(n.properties.x_chen?.multivalued)out+=`<ellipse cx="${x+w/2}" cy="${y+h/2}" rx="${w/2-6*s}" ry="${h/2-6*s}" fill="none" stroke="${ink}" stroke-width="1.5"/>`;
  if(shape==='subprocess')out+=line(x+15*s,y,x+15*s,y+h)+line(x+w-15*s,y,x+w-15*s,y+h);
  if(shape==='component')out+=`<rect x="${x+w-40*s}" y="${y+13*s}" width="${23*s}" height="${25*s}" fill="${fill}" stroke="${ink}"/><rect x="${x+w-45*s}" y="${y+17*s}" width="${10*s}" height="${6*s}" fill="${fill}" stroke="${ink}"/><rect x="${x+w-45*s}" y="${y+29*s}" width="${10*s}" height="${6*s}" fill="${fill}" stroke="${ink}"/>`;
- if(g.extensionPoints){const yy=y+h*.35;out+=lines(g.titleLines,x+w/2,yy,16,600)+line(x+w*.16,y+h*.50,x+w*.84,y+h*.50)+text(x+w/2,y+h*.50+20*s,'extension points',11,600,'text-anchor="middle"')+lines(g.extensionPoints,x+w/2,y+h*.50+42*s,12,400);}
+ if(g.columnLayout){
+  out+=lines(g.titleLines,x+w/2,y+31*s,16,600);
+  out+=Fields.paint(g,(xx,yy,value,size,weight)=>text(xx,yy,value,size/s,weight),(x1,y1,x2,y2)=>line(x1,y1,x2,y2,.6));
+ }else if(g.extensionPoints){const yy=y+h*.35;out+=lines(g.titleLines,x+w/2,yy,16,600)+line(x+w*.16,y+h*.50,x+w*.84,y+h*.50)+text(x+w/2,y+h*.50+20*s,'extension points',11,600,'text-anchor="middle"')+lines(g.extensionPoints,x+w/2,y+h*.50+42*s,12,400);}
  else if(n.kind==='dfd.process'&&p.projection.profile==='dfd.gane_sarson@1'){
   const num=n.properties.x_diagram?.number||'',owner=n.properties.x_diagram?.owner||'Process';out+=line(x,y+30*s,x+w,y+30*s)+line(x,y+h-30*s,x+w,y+h-30*s)+text(x+15*s,y+21*s,num,12,600)+text(x+15*s,y+h-10*s,owner,11);out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s+5*s);
  }else if(g.sysmlKeyword){
@@ -486,11 +503,11 @@ function render(g,p,theme){
    * compartments (values/parts/references/operations/constraints). */
   out+=text(x+w/2,y+20*s,'«'+g.sysmlKeyword+'»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
   for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
-  for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';
- }else if(['uml.class','uml.interface','uml.enumeration','uml.metaclass','uml.stereotype'].includes(n.kind)){
+  for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">${r.fullLabel||r.fullDetails?`<title>${esc([r.fullLabel||r.field.name,r.fullDetails].filter(Boolean).join(" · "))}</title>`:""}`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';
+ }else if(!g.columnLayout&&['uml.class','uml.interface','uml.enumeration','uml.metaclass','uml.stereotype'].includes(n.kind)){
   out+=text(x+w/2,y+20*s,{['uml.interface']:'«interface»','uml.enumeration':'«enumeration»','uml.metaclass':'«metaclass»','uml.stereotype':'«stereotype»'}[n.kind]||'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
   for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
-  for(const r of g.fieldRows){const m=r.field.properties.x_member||{},extra=`${m.static?'text-decoration="underline"':''} ${m.abstract?'font-style="italic"':''}`;out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,extra)+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';}
+  for(const r of g.fieldRows){const m=r.field.properties.x_member||{},extra=`${m.static?'text-decoration="underline"':''} ${m.abstract?'font-style="italic"':''}`;out+=`<g class="ddn-field" data-member="${esc(r.id)}">${r.fullLabel||r.fullDetails?`<title>${esc([r.fullLabel||r.field.name,r.fullDetails].filter(Boolean).join(" · "))}</title>`:""}`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,extra)+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';}
  }else if(n.kind==='req.requirement'){
   out+=text(x+14*s,y+21*s,'«requirement» '+n.properties.x_diagram.code,11,600)+lines(g.titleLines,x+14*s,y+45*s,16,650,'')+line(x,y+68*s,x+w,y+68*s)+lines(g.requirement,x+14*s,y+90*s,13,400,'');
  }else if(n.kind==='state.state'&&(g.stateActs||g.submachine)){
@@ -511,7 +528,7 @@ function render(g,p,theme){
   }
   if(g.roleRow.fields.some(rf=>rf.properties.x_role?.mandatory))out+=`<circle data-mandatory="true" cx="${f(x+5*s)}" cy="${f(y+50*s)}" r="${f(3.5*s)}" fill="${ink}"/>`;
  }else if(g.fieldRows.length){
-  out+=lines(g.titleLines,x+16*s,y+31*s,16,600,'')+line(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s);for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+'</g>';
+  out+=lines(g.titleLines,x+16*s,y+31*s,16,600,'')+line(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s);for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">${r.fullLabel||r.fullDetails?`<title>${esc([r.fullLabel||r.field.name,r.fullDetails].filter(Boolean).join(" · "))}</title>`:""}`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+'</g>';
  }else{
   let yy=y+h/2-(g.titleLines.length-1)*10.5*s+5*s;if(shape==='package')yy+=10*s;
   /* B1-085: contact/coil names sit above the glyph, not at node centre. */

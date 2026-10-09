@@ -65,7 +65,7 @@
     {
       "id": "ddn.usecases.sql::model.routine",
       "w": 270,
-      "h": 100,
+      "h": 152,
       "fields": [],
       "titleLines": [
         "Refresh open",
@@ -75,7 +75,11 @@
       "scale": 1,
       "headerH": 82,
       "meaningLines": [],
-      "noteLines": [],
+      "noteLines": [
+        "Definition of callable SQL code;",
+        "not an observed execution."
+      ],
+      "noteTop": 82,
       "x": 390,
       "y": 0,
       "fieldRows": []
@@ -112,11 +116,11 @@
         ],
         [
           314,
-          116
+          168
         ],
         [
           736,
-          116
+          168
         ],
         [
           736,
@@ -129,7 +133,7 @@
       ],
       "label": {
         "x": 351.75,
-        "y": 101,
+        "y": 153,
         "w": 30,
         "h": 30
       },
@@ -142,11 +146,11 @@
       "points": [
         [
           660,
-          50
+          76
         ],
         [
           704,
-          50
+          76
         ],
         [
           704,
@@ -194,7 +198,7 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 0,
-        "length": 712,
+        "length": 842,
         "bends": 6
       },
       {
@@ -202,14 +206,14 @@
         "trials": 0,
         "accepted": 0,
         "crossings": 0,
-        "length": 712,
+        "length": 842,
         "bends": 6
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
-        "length": 712,
+        "length": 842,
         "bends": 6,
         "trials": 0,
         "accepted": 0
@@ -218,13 +222,13 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 0,
-        "length": 712,
+        "length": 842,
         "bends": 6
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
-        "length": 712,
+        "length": 842,
         "bends": 6
       }
     ],
@@ -239,13 +243,13 @@
       "before": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 712,
+        "length": 842,
         "bends": 6
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 712,
+        "length": 842,
         "bends": 6
       },
       "exhausted": false

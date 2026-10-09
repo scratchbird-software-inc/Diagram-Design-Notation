@@ -3,7 +3,7 @@ import {publishNamespace} from './ddn-module-registry.js';
 import Quality from './ddn-quality-data.js';
 'use strict';
 const common=['kind','profile','width','height'];
-const supported={graph:['kind','profile','inputs','analysis_budget','traces','iso','depth'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order','x_completeness'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','iso','depth'],timeline:[...common,'records','start','end','label','dependencies','filter','order','fiscal_year_start'],sequence:[...common],timing:[...common],geo:[...common,'records','mark','x','y','value','size','unit','filter','order','missing','geography','method','graticule']};
+const supported={graph:['kind','profile','inputs','analysis_budget','traces','iso','depth'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order','x_completeness'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','iso','depth'],timeline:[...common,'records','start','end','label','dependencies','filter','order','fiscal_year_start','calendar','timezone'],sequence:[...common],timing:[...common],geo:[...common,'records','mark','x','y','value','size','unit','filter','order','missing','geography','method','graticule']};
 const ref=x=>typeof x==='string'?x:x?.$ref;
 function get(record,path){
  if(typeof path!=='string'||!/^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/.test(path)||path.split('.').some(k=>['__proto__','prototype','constructor'].includes(k)))throw Object.assign(new Error('Unsafe property binding '+path),{code:'DDN-PJ004'});
@@ -25,12 +25,46 @@ function isoInstant(s){ /* → {t: epoch-ms of the UTC midnight of the instant's
  if(m){const t=Date.parse(s+'T00:00:00Z');if(!Number.isFinite(t)||new Date(t).toISOString().slice(0,10)!==s)return{error:'invalid'};return{t,iso:s,zoned:false};}
  m=s.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})$/);
  if(!m)return{error:/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)?'naive':'invalid'};
+ const local=isoInstant(m[1]);
+ if(local.error||Number(m[2])>23||Number(m[3])>59||Number(m[4]||0)>59||m[5]!=='Z'&&(Number(m[5].slice(1,3))>23||Number(m[5].slice(4))>59))return{error:'invalid'};
  const t=Date.parse(s);
  if(!Number.isFinite(t))return{error:'invalid'};
  const iso=new Date(t).toISOString().slice(0,10);
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))return{error:'invalid'};
  return{t:Date.parse(iso+'T00:00:00Z'),iso,zoned:true};
 }
 function date(s){const r=isoInstant(s);return r.error?NaN:r.t;}
+/* Explicit calendar calculations. Input remains ISO; timezone never defaults to
+ * the machine setting. Named zones use the browser's installed timezone data. */
+function calendarPolicy(p,fail){
+ const raw=p.calendar??{kind:'gregorian'};
+ if(!raw||typeof raw!=='object'||Array.isArray(raw)||Object.keys(raw).some(k=>!['kind','fiscal_start_month','weekdays','holidays'].includes(k)))fail('DDN-PJ223','calendar must be a supported calendar record');
+ const kind=raw.kind??'gregorian',month=raw.fiscal_start_month??1,weekdays=raw.weekdays??[1,2,3,4,5],holidays=raw.holidays??[];
+ if(!['gregorian','fiscal','business'].includes(kind)||!Number.isInteger(month)||month<1||month>12)fail('DDN-PJ223','Invalid calendar kind or fiscal start month');
+ if(!Array.isArray(weekdays)||!weekdays.length||weekdays.length>7||weekdays.some(x=>!Number.isInteger(x)||x<1||x>7)||new Set(weekdays).size!==weekdays.length)fail('DDN-PJ223','Business weekdays are distinct ISO weekday numbers 1..7');
+ if(!Array.isArray(holidays)||holidays.length>10000||new Set(holidays).size!==holidays.length)fail('DDN-PJ223','Holidays must be distinct ISO dates (at most 10000)');
+ const holidayDays=holidays.map(x=>{const d=isoInstant(x);if(d.error||d.zoned)fail('DDN-PJ223','Holidays must be distinct ISO dates (at most 10000)');return d.t;}).filter(t=>weekdays.includes(new Date(t).getUTCDay()||7)).sort((a,b)=>a-b);
+ const holidayIndex=t=>{let lo=0,hi=holidayDays.length;while(lo<hi){const mid=(lo+hi)>>>1;if(holidayDays[mid]<t)lo=mid+1;else hi=mid;}return lo;};
+ const timezone=p.timezone??'UTC';if(typeof timezone!=='string'||!timezone.length||timezone.length>128)fail('DDN-PJ224','timezone must be UTC, an explicit offset or an available named zone');
+ let formatter,offset;
+ if(timezone==='UTC')offset=0;
+ else if(/^[+-]\d{2}:\d{2}$/.test(timezone)){const h=Number(timezone.slice(1,3)),m=Number(timezone.slice(4));if(h>23||m>59)fail('DDN-PJ224','Invalid timezone offset');offset=(h*60+m)*(timezone[0]==='-'?-1:1);}
+ else try{formatter=new Intl.DateTimeFormat('en-US-u-ca-gregory-nu-latn',{timeZone:timezone,era:'short',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});}catch{fail('DDN-PJ224','Unavailable timezone '+timezone);}
+ const parts=t=>{
+  if(offset!==undefined){const date=new Date(t+offset*60000);return {iso:date.toISOString().slice(0,10),wall:t+offset*60000};}
+  const out={};for(const part of formatter.formatToParts(new Date(t)))out[part.type]=part.value;
+  const year=out.era==='BC'?1-Number(out.year):Number(out.year),iso=String(year).padStart(4,'0')+'-'+out.month+'-'+out.day,wall=Date.parse(iso+'T'+out.hour+':'+out.minute+':'+out.second+'Z')+((t%1000)+1000)%1000;
+  return {iso,wall};
+ };
+ const read=value=>{const result=isoInstant(value);if(result.error)return result;
+  if(!result.zoned)return {...result,instant:result.t,wall:result.t};
+  const instant=Date.parse(value),z=parts(instant);if(!/^\d{4}-\d{2}-\d{2}$/.test(z.iso)||!Number.isFinite(z.wall))return{error:'invalid'};return {...result,iso:z.iso,t:Date.parse(z.iso+'T00:00:00Z'),instant,wall:z.wall};
+ };
+ const businessDays=(a,b)=>{const days=(b-a)/86400000;if(days>366000)fail('DDN-PJ223','Calendar interval exceeds 366000 days');let count=0;const weeks=Math.floor(days/7);count=weeks*weekdays.length;for(let t=a+weeks*7*86400000;t<b;t+=86400000)if(weekdays.includes(new Date(t).getUTCDay()||7))count++;return count-holidayIndex(b)+holidayIndex(a);};
+ const fiscal=iso=>{const year=Number(iso.slice(0,4)),m=Number(iso.slice(5,7));return {year:year-(m<month?1:0),quarter:Math.floor(((m-month+12)%12)/3)+1};};
+ return {kind,timezone,month,weekdays,holidays,read,parts,businessDays,fiscal};
+}
+
 function plan(ir,ErrorClass=Error){
  const p=ir.view.profiles.projection||{kind:'graph',profile:'ddn@1'},kind=p.kind,byId=new Map(ir.elements.map(n=>[n.id,n])),byRel=new Map(ir.relations.map(r=>[r.id,r])),shown=new Set(ir.view.selected);
  const fail=(code,msg,n)=>{const e=new ErrorClass(code,msg,n?.source?.file||ir.view.source?.file,n?.source?.start||ir.view.source?.start);if(ErrorClass===Error){e.message=msg;e.code=code;}throw e;};
@@ -444,13 +478,14 @@ function plan(ir,ErrorClass=Error){
   return{kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(hierTree?{tree:hierTree}:{}),...(grid?{grid}:{}),...(net?{net}:{}),...(trendLine?{trendLine}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
  }
  if(kind==='timeline'){
-  const records=filtered(),items=records.map(n=>{const start=get(n,p.start),end=get(n,p.end),sd=isoInstant(start),ed=isoInstant(end);
+  const calendar=calendarPolicy(p,fail),explicitCalendar=p.calendar!==undefined||p.timezone!==undefined;
+  const records=filtered(),items=records.map(n=>{const start=get(n,p.start),end=get(n,p.end),sd=calendar.read(start),ed=calendar.read(end);
    if(sd.error==='naive'||ed.error==='naive')fail('DDN-PJ221','Timeline datetimes need an explicit Z or ±HH:MM offset — never guessed from locale',n);
    if(sd.error||ed.error)fail('DDN-PJ040','Timeline needs real ISO date-only or zoned start/end with end >= start',n);
-   const a=sd.t,b=ed.t;if(b<a)fail('DDN-PJ040','Timeline needs real ISO date-only or zoned start/end with end >= start',n);
-   /* zoned instants normalize to their UTC calendar date (date-scoped
-    * projection; ch. 19 §19.3); author strings stay as supplied for labels. */
-   return{id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start:sd.iso,end:ed.iso,a,b};});
+   const a=sd.t,b=ed.t;if(b<a||sd.zoned&&ed.zoned&&ed.instant<sd.instant)fail('DDN-PJ040','Timeline needs real ISO date-only or zoned start/end with end >= start',n);
+   /* Zoned instants use the explicit calendar zone (UTC by default);
+    * the model retains the supplied ISO strings. */
+   return{id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start:sd.iso,end:ed.iso,a,b,...(explicitCalendar?{calendarDays:(b-a)/86400000,businessDays:calendar.businessDays(a,b),fiscal:calendar.fiscal(sd.iso),...(sd.zoned&&ed.zoned?{elapsedHours:(ed.instant-sd.instant)/3600000,wallHours:(ed.wall-sd.wall)/3600000}:{})}: {})};});
   const by=new Map(items.map(n=>[n.id,n])),dependencies=[];
   for(const id of p.dependencies||[]){const r=resolve(id,'relation'),a=by.get(r.from.element),b=by.get(r.to.element);if(!a||!b||!['precede','analysis.precedes'].includes(r.kind))fail('DDN-PJ041','Timeline dependencies must be selected predecessor-to-successor links',r);if(a.b>b.a)fail('DDN-PJ042','Finish-to-start dependency contradicts supplied dates',r);dependencies.push(r);}
   const seen=new Set(),active=new Set();function visit(id){if(active.has(id))fail('DDN-PJ043','Timeline dependency cycle');if(seen.has(id))return;active.add(id);dependencies.filter(r=>r.from.element===id).forEach(r=>visit(r.to.element));active.delete(id);seen.add(id);}items.forEach(x=>visit(x.id));
@@ -458,7 +493,7 @@ function plan(ir,ErrorClass=Error){
    * arithmetic. fiscal_year_start is a real ISO date or DDN-PJ222. */
   let fiscalYearStart;
   if(p.fiscal_year_start!==undefined){const fr=isoInstant(p.fiscal_year_start);if(fr.error)fail('DDN-PJ222','fiscal_year_start must be a real ISO YYYY-MM-DD date');fiscalYearStart=fr.iso;}
-  return{kind,profile:p.profile,items,dependencies,...(fiscalYearStart?{fiscalYearStart}:{}),sourceIds:items.map(i=>i.id).concat(dependencies.map(d=>d.id)),quantitative:true};
+  return{kind,profile:p.profile,items,dependencies,...(explicitCalendar?{calendar:{kind:calendar.kind,timezone:calendar.timezone,fiscalStartMonth:calendar.month,weekdays:calendar.weekdays,holidays:calendar.holidays}}:{}),...(fiscalYearStart?{fiscalYearStart}:{}),sourceIds:items.map(i=>i.id).concat(dependencies.map(d=>d.id)),quantitative:true};
  }
  if(kind==='sequence'){
   const participants=orderedParticipants(ir,shown),byParticipant=new Map(participants.map(n=>[n.id,n]));

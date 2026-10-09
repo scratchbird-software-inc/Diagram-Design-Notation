@@ -1,0 +1,24 @@
+ddn "0.7";
+module "declarative.order.automation";
+data automation {
+  object profile {
+    kind: object;
+    x_profile: {
+      name: "ddna.em2.dag-l0@1";
+      replay: verified;
+      inputs: ["price", "quantity"];
+      nodes: [
+        { id: "gross"; target: "totals.gross"; expr: "gross_expr"; },
+        { id: "net"; target: "totals.net"; expr: "net_expr"; depends_on: ["gross"]; }
+      ];
+    };
+  }
+  object gross_expression {
+    kind: object;
+    x_keel: { id: "gross_expr"; language: "keel-l0@1"; body: "price * quantity"; };
+  }
+  object net_expression {
+    kind: object;
+    x_keel: { id: "net_expr"; language: "keel-l0@1"; body: "gross * 0.9"; };
+  }
+}

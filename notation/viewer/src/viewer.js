@@ -194,7 +194,7 @@ function viewListFrom(entries) {
  * (or embeds .ddn., e.g. archive members) or the browser typed it as text. */
 function isPlausibleSourceFile(f) {
   if (!f || typeof f.name !== 'string') return false;
-  return /\.ddn($|\.)/i.test(f.name) || (typeof f.type === 'string' && f.type.startsWith('text/'));
+  return /\.ddn[an]?($|\.)/i.test(f.name) || (typeof f.type === 'string' && f.type.startsWith('text/'));
 }
 
 /* Dropped/selected files are read fully into memory before parsing, so cap
@@ -654,9 +654,10 @@ function loadFromSrc(src) {
   srcImportClosure(src, host.location.href,
     url => fetch(url),
     (text, name) => {
-        const ast = DDNLive.parse(text, name), out = ast.imports.map(imp => imp.path);
+        const ast = /\.ddnn$/i.test(name)?{...DDNLive.documentFormats.read(text),imports:[],sections:[]}:DDNLive.parse(text, name), out = ast.imports.map(imp => imp.path);
         /* B1-090: architecture bases and x_link files join the fetch closure. */
         const walk = n => {
+          if (n.group && n.type === 'document' && n.props?.file) out.push(n.props.file);
           if (n.type === 'architecture') for (const f of (n.props && n.props.files) || []) out.push(f);
           if (n.props && n.props.x_link && n.props.x_link.file) out.push(n.props.x_link.file);
           for (const c of n.children || []) walk(c);

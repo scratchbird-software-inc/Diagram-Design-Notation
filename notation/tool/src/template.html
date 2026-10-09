@@ -101,7 +101,7 @@
           <div id="ddn-template-list" role="listbox" aria-label="Document templates"></div>
         </div>
       </div>
-      <input id="ddn-file-input" type="file" accept=".ddn,.zip,.json,text/plain" multiple hidden>
+      <input id="ddn-file-input" type="file" accept=".ddn,.ddna,.ddnn,.zip,.json,text/plain" multiple hidden>
       <input id="ddn-folder-input" type="file" webkitdirectory hidden>
       <h3>Example catalogue</h3>
       <input id="ddn-catalogue-search" type="search" placeholder="Search examples…" aria-label="Search examples">
@@ -115,6 +115,14 @@
         <button id="ddn-file-rename" type="button" class="ddn-mini">Rename</button>
         <button id="ddn-file-delete" type="button" class="ddn-mini">Delete</button>
       </div>
+      <details id="ddn-diff-workflow"><summary>Compare views</summary>
+        <button id="ddn-diff-refresh" type="button" class="ddn-mini">Choose views</button>
+        <label class="ddn-field"><span>Before</span><select id="ddn-diff-before" aria-label="Diff before view"></select></label>
+        <label class="ddn-field"><span>After</span><select id="ddn-diff-after" aria-label="Diff after view"></select></label>
+        <label class="ddn-field"><span>Compare</span><select id="ddn-diff-scope" aria-label="Diff scope"><option value="model">Model definitions</option><option value="appearance">Appearances and presentation</option></select></label>
+        <label class="ddn-field"><span>New file</span><input id="ddn-diff-file" value="comparison.ddn" aria-label="Diff output file"></label>
+        <button id="ddn-diff-create" type="button" class="ddn-mini">Create comparison view</button>
+      </details>
       <h3>Download</h3>
       <div class="ddn-row">
         <button id="ddn-download-file" type="button" class="ddn-mini" title="Download the current source file">File .ddn</button>
@@ -130,6 +138,7 @@
     <aside id="ddn-drawer-creator" class="ddn-drawer ddn-top" data-state="closed" aria-label="Creator drawer">
       <div class="ddn-drawer-head"><h2>Creator</h2><button class="ddn-mini" data-close type="button" title="Close creator drawer">×</button></div>
       <div class="ddn-drawer-body ddn-creator-body">
+        <label class="ddn-field"><span>Create in</span><select id="ddn-create-destination" aria-label="Create in"></select></label>
         <div class="ddn-creator-left">
         <div class="ddn-creator-fixed" role="toolbar" aria-label="Editing tools">
           <button id="ddn-pointer-toggle" type="button" aria-pressed="false" title="Pointer select — click selects, ctrl/shift-click toggles items, drag on empty canvas rubber-bands a multi-selection">
@@ -191,6 +200,7 @@
           <div id="ddn-source-tabs" role="tablist" aria-label="Workspace files — one tab per file"></div>
           <div class="ddn-row">
             <select id="ddn-source-file" aria-label="Workspace source file"></select>
+            <button id="ddn-preview-edit" type="button" title="Validate and preview this file edit before applying it">Preview edit</button>
             <button id="ddn-apply" type="button" title="Apply edits (Ctrl+Enter)">Apply</button>
             <button id="ddn-discard" type="button" class="ddn-mini">Discard</button>
             <label class="ddn-check" title="Apply edits automatically while typing"><input id="ddn-live-apply" type="checkbox"> Live apply</label>
@@ -205,6 +215,12 @@
           </div>
           <textarea id="ddn-source" spellcheck="false" aria-label="DDN source code"></textarea>
           <pre id="ddn-source-error" role="alert"></pre>
+          <section id="ddn-edit-preview" hidden aria-label="File edit preview">
+            <pre id="ddn-edit-summary" aria-live="polite"></pre>
+            <button id="ddn-apply-preview" type="button">Apply preview</button>
+            <button id="ddn-cancel-preview" type="button">Cancel preview</button>
+            <iframe id="ddn-edit-picture" title="Draft diagram preview" sandbox></iframe>
+          </section>
           <div id="ddn-diagnostics-wrap">
             <h3>Diagnostics <span id="ddn-diagnostics-count" class="ddn-dim"></span></h3>
             <ul id="ddn-diagnostics" aria-label="Check diagnostics — click to go to file:line"></ul>
@@ -303,6 +319,13 @@
     <div class="ddn-drawer-body">
       <p class="ddn-dim">Exports carry the active presentation overrides. Viewport zoom never changes export geometry.</p>
       <p><button id="ddn-export-svg" type="button">Export SVG</button></p>
+      <details><summary>Multiple SVG pages</summary>
+        <label>Page width (px) <input id="ddn-tile-width" type="number" min="128" max="8192" value="800"></label>
+        <label>Page height (px) <input id="ddn-tile-height" type="number" min="128" max="8192" value="600"></label>
+        <label>Overlap (px) <input id="ddn-tile-overlap" type="number" min="0" value="0"></label>
+        <button id="ddn-tile-save" type="button">Save page settings</button>
+        <button id="ddn-export-tiles" type="button">Export SVG pages ZIP</button>
+      </details>
       <p><button id="ddn-export-png" type="button">Export PNG (2×)</button></p>
       <p><button id="ddn-export-webp" type="button">Export WebP (2×)</button></p>
       <p><label class="ddn-check" title="Unchecked: re-render without SMIL animation for print/static targets (the --no-motion render option)"><input id="ddn-export-motion" type="checkbox" checked> Include animation (SMIL)</label></p>
@@ -312,6 +335,7 @@
   <aside id="ddn-drawer-animation" class="ddn-drawer ddn-right" data-state="closed" aria-label="Animation drawer">
     <div class="ddn-drawer-head"><h2>Animation</h2><button class="ddn-mini" data-close type="button" title="Close animation drawer">×</button></div>
     <div class="ddn-drawer-body">
+      <button id="ddn-create-rules" type="button" class="ddn-mini">Create decision rules for selected element</button>
       <p id="ddn-anim-empty" class="ddn-dim">No animation in this view.</p>
       <div id="ddn-anim-controls" hidden>
         <p class="ddn-dim">SMIL playback of the rendered diagram. Default is playing; your pause choice is kept for this session only. Speed re-times the SMIL durations (base values are re-derived from the SVG on every render); the playhead is not rescaled. Print targets: uncheck “Include animation” in the Export drawer.</p>
@@ -370,6 +394,8 @@
           <button id="ddn-exec-download" type="button" class="ddn-mini" hidden title="Download the generated trace as a *.ddnatrace.json sidecar">Download sidecar</button>
         </div>
         <p id="ddn-exec-status" class="ddn-dim"></p>
+        <button id="ddn-edit-rules" type="button" class="ddn-mini">Edit decision rules…</button>
+        <div id="ddn-rule-editor" hidden></div>
       </div>
     </div>
   </aside>

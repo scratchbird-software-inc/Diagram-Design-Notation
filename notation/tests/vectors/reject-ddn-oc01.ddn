@@ -1,0 +1,4 @@
+ddn "0.6";
+module "vectors.reject";
+data m { object a; }
+view main { data: [@m]; select: [@m.a#0]; }

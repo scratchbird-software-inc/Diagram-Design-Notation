@@ -6,7 +6,7 @@
 
 Sister project: [ScratchBird on GitHub](https://github.com/scratchbird-software-inc/ScratchBird) ([wiki](https://github.com/scratchbird-software-inc/ScratchBird/wiki)).
 
-The product family: **ddn / ddn-viewer / ddn-designer** (this open-source project, sponsored by ScratchWeaver); **[ScratchWeaver](https://scratchbird.ca/weaver)** is also the commercial full diagramming suite (subscription, some on-site licensing) built on ddn as its file format; **ScratchRobin** is the open-source database console / BI / analytics project that uses ddn/ddna in its own project and owns backend capabilities such as KEEL. KEEL is not part of ddn, ddn-viewer, or ddn-designer, and never will be.
+The product family: **ddn / ddn-viewer / ddn-designer** (this open-source project, sponsored by ScratchWeaver); **[ScratchWeaver](https://scratchbird.ca/weaver)** is also the commercial full diagramming suite (subscription, some on-site licensing) built on ddn as its file format; **ScratchRobin** is the open-source database console / BI / analytics project that uses ddn/ddna in its own project and owns backend capabilities such as KEEL. The open viewer/designer includes DDNA trace replay and generation with a bounded KEEL host (`keel-l0@1`, tiers T0–T2). ScratchRobin/Weaver can provide fuller execution services; the DDN rendering core remains notation-only. See [DDNA integration](ddna/13-open-tool-integration.md).
 
 A simple script language that allows complex diagrams to be created with just a few lines of text.  
 
@@ -34,6 +34,8 @@ The visual editors and viewers are not used in my other projects so they are ver
 | `tests/`    | **Repo-level tests**        | Website link-integrity and build-freshness gate; AI-REFERENCE.md ddn-block validation gate (skipped when the internal, gitignored AI-REFERENCE.md is absent)                                                                                                                                                                                                                                                                                                           |
 
 ## Status
+
+See [current work and qualification status](WORK-STATUS.md) for the consolidated takeover register.
 
 Currently this is still in very early development and released/made-public so that I can get some feedback before officially releasing it.
 

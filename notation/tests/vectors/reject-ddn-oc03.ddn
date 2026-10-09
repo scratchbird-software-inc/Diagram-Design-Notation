@@ -1,0 +1,4 @@
+ddn "0.6";
+module "vectors.reject";
+data m { object a; object b; relation r @a -> @b; }
+view main { data: [@m]; select: [@m.a, @m.a#2, @m.b]; route @m.r { from: @m.b; } }

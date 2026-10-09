@@ -25,9 +25,10 @@ function constraintsFor(ir) {
  // only under `confine`; under the default `expand` the frame rect grows to
  // enclose members instead of constraining them.
  if(ir.view.profiles?.layout?.frame_overflow!=='confine')return result;
- for (const frame of ir.view.frames || []) if(frame.at && frame.size) {
-  const next={x:q(frame.at[0])+20,y:q(frame.at[1])+54,w:q(frame.size[0])-40,h:q(frame.size[1])-76};
-  for(const id of frame.members) {
+ const frames=ir.view.frames||[],byId=new Map(frames.map(f=>[f.id,f]));
+ for(const owner of frames)for(let frame=owner,levels=1;frame;frame=byId.get(frame.within),levels++)if(frame.at&&frame.size){
+  const next={x:q(frame.at[0])+20*levels,y:q(frame.at[1])+54*levels,w:q(frame.size[0])-40*levels,h:q(frame.size[1])-76*levels};
+  for(const id of owner.members) {
    const old=result.get(id);
    if(!old) result.set(id,{...next});
    else {

@@ -1,0 +1,36 @@
+ddn "0.7";
+module "composed";
+
+data m {
+    procedure calculate_total "Calculate total" {
+        fields {
+            amount { datatype: decimal; parameter_mode: in; }
+            total { datatype: decimal; parameter_mode: out; }
+        }
+        columns {
+            mode { path: "parameter_mode"; }
+            name { path: "name"; }
+            type { path: "datatype"; }
+        }
+        document { file: "composable-procedure.ddnn"; id: "calculate-total"; }
+        composition {
+            sections: [name, type, table, notes];
+            order: [table, notes];
+            note_height: 180px;
+            note_wrap: off;
+        }
+    }
+}
+
+view main "One procedure, three presentations" {
+    data: [@m];
+    publication { size: content; }
+    layout { algorithm: grid; columns: 3; }
+    select: [@m.calculate_total, @m.calculate_total#2, @m.calculate_total#3];
+    place @m.calculate_total#2 {
+        composition { order: [notes, table]; }
+    }
+    place @m.calculate_total#3 {
+        composition { sections: [name, type]; }
+    }
+}

@@ -1,3 +1,4 @@
+import {installNoteScroll} from './note-scroll.js';
 /* SPDX-License-Identifier: GPL-2.0-or-later. UI is optional and isolated from host styles. */
 export function installComponents(api,host){
 if(!host.document||!host.customElements)return;
@@ -40,11 +41,11 @@ function safeSVG(svg,prefix){
 }
 class DDNExample extends HTMLElement{
  constructor(){super();this.attachShadow({mode:'open'});this.uid='ddnlive-'+(++seq)+'-';this.options={};this.pending=0;this.zoom='fit';this.result=null;this.started=false;this.destroyed=false;this.ready=Promise.resolve(null);this._controller=new AbortController();}
- connectedCallback(){if(this.shadowRoot.childNodes.length)return;this.drawUI();this._resize=new ResizeObserver(()=>{if(this.zoom==='fit')this.sizeSVG();});this._resize.observe(this.$('.stage'));
+ connectedCallback(){if(this.shadowRoot.childNodes.length)return;this.drawUI();this._resize=new ResizeObserver(()=>{if(this.zoom==='fit'&&!this._resizeFrame)this._resizeFrame=requestAnimationFrame(()=>{this._resizeFrame=0;if(!this.destroyed&&this.zoom==='fit')this.sizeSVG();});});this._resize.observe(this.$('.stage'));
   this._workspaceEvent=e=>{if(e.detail.id===this.getAttribute('workspace'))this.start();};host.addEventListener('ddn-workspace-ready',this._workspaceEvent,{signal:this._controller.signal});
   if(this.hasAttribute('eager'))this.start();else{this._observer=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){this._observer.disconnect();this.start();}},{rootMargin:'250px'});this._observer.observe(this);}
  }
- disconnectedCallback(){this._observer?.disconnect();this._resize?.disconnect();clearTimeout(this._timer);this._settleScheduled?.({superseded:true});this._settleScheduled=null;this.pending++;this._controller.abort();this._unsubscribe?.();this.destroyed=true;}
+ disconnectedCallback(){this._observer?.disconnect();this._resize?.disconnect();cancelAnimationFrame(this._resizeFrame);this._resizeFrame=0;clearTimeout(this._timer);this._settleScheduled?.({superseded:true});this._settleScheduled=null;this.pending++;this._controller.abort();this._unsubscribe?.();this.destroyed=true;}
  $(s){return this.shadowRoot.querySelector(s);} $all(s){return[...this.shadowRoot.querySelectorAll(s)];}
  configure({workspace,files,entry,view,overrides={},layoutState=null,title}){
   this.ws=workspace||(files?api.createWorkspace(files):this.ws);this.entry=entry;this.view=view;this.options={...overrides};this._layoutState=layoutState;this._title=title||null;
@@ -128,7 +129,7 @@ class DDNExample extends HTMLElement{
   try{
    const r=await this.ws.render({entry:this.entry,view:this.view,overrides:this.options,layoutState:this._layoutState?.view===this.entry+'#'+this.view?this._layoutState:null});if(token!==this.pending||this.destroyed)return;
    this.info={...this.info,profiles:r.profiles};this.capabilities=r.capabilities;this.syncUI();this.setAttribute('data-tone',r.profiles.style.theme);
-   const svg=safeSVG(r.svg,this.uid),serialized=new XMLSerializer().serializeToString(svg);this._layoutState=r.layoutState;this.result={...r,displaySVG:serialized};this.$('.canvas').replaceChildren(svg);this.$('.canvas').classList.remove('stale');this.sizeSVG();this.centerPins();this.$('[data-action=focus-pins]').disabled=!r.scene.focus;
+   const svg=safeSVG(r.svg,this.uid),serialized=new XMLSerializer().serializeToString(svg);this._layoutState=r.layoutState;this._noteOffsets??=new Map();installNoteScroll(svg,r.scene,this._noteOffsets);this.result={...r,displaySVG:serialized};this.$('.canvas').replaceChildren(svg);this.$('.canvas').classList.remove('stale');this.sizeSVG();this.centerPins();this.$('[data-action=focus-pins]').disabled=!r.scene.focus;
    this.$('.metrics').textContent=`${r.scene.marks?.length||r.scene.nodes?.length||0} ${r.scene.marks?'marks':'elements'} · ${r.scene.messageRows?.length||r.scene.routes?.length||0} ${r.capabilities.sequence?'exchanges':'relations'} · ${Math.round(r.milliseconds)} ms · ${Math.round(r.scene.width)} × ${Math.round(r.scene.height)} px${r.scene.layout?' · '+r.scene.layout.portChanges+' anchor changes · '+r.scene.layout.nodeMoves+' node moves · '+r.scene.layout.pinned.length+' fixed pins'+(r.scene.layout.pattern?' · '+r.scene.layout.pattern.pattern:'')+(r.scene.layout.autoPlace===false?' · placement paused':''):''}`;
    this.$('.fingerprint').textContent='Model '+r.modelFingerprint.slice(0,12)+' · presentation only';
    this.$('.diagnostics pre').textContent=[`Live component ${api.VERSION}; renderer ${api.runtime.core}.\n${r.capabilities.notes.join('\n')}`,...(r.scene.layout?['Layout stages: '+JSON.stringify(r.scene.layout.stages),'Pattern / centre: '+JSON.stringify(r.scene.layout.pattern)]:[]),...r.diagnostics.map(d=>`${d.severity.toUpperCase()} ${d.code}: ${d.message}`)].join('\n\n');

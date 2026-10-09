@@ -82,7 +82,7 @@ test('view/field kind words are typed declarations only inside data blocks', () 
   assert.deepEqual(ir.elements.map(n => n.kind).sort(), ['field', 'view']);
 });
 test('structural keywords keep their meaning in data position', () => {
-  const ir = build('ddn "0.5"; module "t"; data m { domain d {} sample s { columns: []; rows: []; } flow f {} assertion a {} } view v { data: [@m]; }').ir;
+  const ir = build('ddn "0.5"; module "t"; data m { domain d {} sample s { columns: []; rows: []; } flow f {} assertion a { subject: @d; property: "kind"; value: "domain"; } } view v { data: [@m]; }').ir;
   assert.deepEqual(ir.elements.map(n => n.type), ['domain', 'sample', 'flow', 'assertion']);
 });
 test('nested fields keyword still reads as a group, bare ids as fields', () => {

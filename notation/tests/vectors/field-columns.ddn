@@ -1,0 +1,10 @@
+ddn "0.6";
+module "ddn.vectors.columns";
+data m {
+  object t "Structured fields" {
+    kind: table;
+    columns { name { width: 40%; } datatype { width: 60%; } }
+    fields { identifier { datatype: integer; } display_name { datatype: string; } }
+  }
+}
+view main { data: [@m]; publication { size: content; } }

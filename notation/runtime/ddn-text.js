@@ -17,6 +17,7 @@ const FONTS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia,
 /* 0.8 (chapter 54 §54.4): measurement-engine identity. A font_pin records the
  * producing engine; a mismatch is DDN-TF05 (pin ignored) at render time. */
 const ENGINE='ddn-text@1';
+let metricsRevision=0;
 let cache=initial?.measurements||{},provider=null,providerName=null,context=null;const requests=new Map();const counts={estimated:0,canvas:0,cache:0,provider:0};
 /* 0.8 (chapter 04 §6A): portable text properties. Measurement consumes the
  * same decoration properties painting emits: an optional style record
@@ -29,8 +30,8 @@ const styleFlags=st=>st&&(st.italic||st.variant==='small-caps')?[st.italic?1:0,s
 const key=(s,size,font,weight,st)=>{const base=[String(s),+size,font,weight];const fl=styleFlags(st);return JSON.stringify(fl?base.concat(fl):base);};
 const segments=typeof Intl!=='undefined'&&Intl.Segmenter?new Intl.Segmenter('und',{granularity:'grapheme'}):null;
 const graphemes=s=>segments?[...segments.segment(String(s))].map(x=>x.segment):[...String(s)];
-function setMetrics(data){cache=data?.measurements||data||{};}
-function setProvider(fn,name='custom'){provider=fn;providerName=name;}
+function setMetrics(data){metricsRevision++;cache=data?.measurements||data||{};}
+function setProvider(fn,name='custom'){metricsRevision++;provider=fn;providerName=name;}
 function measure(s,size=14,font='sans',weight=400,st=null){s=String(s??'');const k=key(s,size,font,weight,st);let result;
  if(provider){counts.provider++;result=provider(s,size,FONTS[font]||font,weight);if(!result||!Number.isFinite(result.width))throw new Error('Text measurement provider returned invalid width');return {...result,method:providerName};}
  if(typeof document!=='undefined'&&document.createElement){try{context??=document.createElement('canvas').getContext('2d');if(context){counts.canvas++;context.font=`${st?.italic?'italic ':''}${st?.variant==='small-caps'?'small-caps ':''}${weight} ${size}px ${FONTS[font]||font}`;const m=context.measureText(s);return{width:m.width,ascent:m.actualBoundingBoxAscent||size*.85,descent:m.actualBoundingBoxDescent||size*.25,method:'browser-canvas'};}}catch{}}
@@ -60,6 +61,6 @@ function mergeSpec(base,over){if(!base&&!over)return null;const out={};for(const
 /* SVG attribute fragment for a resolved text-property record (painter side;
  * weight and fill are emitted by the caller since they already have slots). */
 function paintAttrs(spec){if(!spec)return'';let s='';if(spec.italic)s+=' font-style="italic"';if(spec.decoration==='strike')s+=' text-decoration="line-through"';if(spec.variant==='small-caps')s+=' font-variant-caps="small-caps"';return s;}
-const api={stats:()=>({...counts}),FONTS,ENGINE,engine:ENGINE,key,measure,wrap,graphemes,setMetrics,getMetrics:()=>cache,setProvider,pending,clearRequests,mergeSpec,paintAttrs};
+const api={revision:()=>metricsRevision,stats:()=>({...counts}),FONTS,ENGINE,engine:ENGINE,key,measure,wrap,graphemes,setMetrics,getMetrics:()=>cache,setProvider,pending,clearRequests,mergeSpec,paintAttrs};
 publishNamespace('DDNText',api);
 export default api;

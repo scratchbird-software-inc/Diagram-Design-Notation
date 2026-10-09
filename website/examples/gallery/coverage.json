@@ -422,6 +422,14 @@
       "wiki": "Diagrams-ERD-Notation",
       "svg": "profiles/chen-binary-2.svg"
     },
+    "chen.nary@3": {
+      "entry": "website/examples/gallery/src/chen-nary.ddn",
+      "view": "main",
+      "title": "main",
+      "kind": "chen",
+      "wiki": "Diagrams-ERD-Notation",
+      "svg": "profiles/chen-nary-3.svg"
+    },
     "cmmn.basic@1": {
       "entry": "website/examples/basics/49-cmmn.ddn",
       "view": "case",

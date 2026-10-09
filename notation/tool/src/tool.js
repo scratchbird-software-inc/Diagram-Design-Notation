@@ -112,6 +112,7 @@ if (typeof document === 'undefined' || !host.DDNLive) { host.DDNTool = pure; ret
 
 /* --- browser boot --- */
 const A = host.DDNLive;
+function parseSource(text,file){return /\.ddnn$/i.test(file||'')?{...A.documentFormats.read(text),declarations:[],imports:[],sections:[]}:A.parse(text,file);}
 const $ = id => document.getElementById(id);
 const DATA = globalThis.DDNLiveData || { files: {}, catalogue: { entries: [] } };
 
@@ -207,6 +208,11 @@ const state = {
    * them at file/folder open and hosts inject them with addTraceFile. */
   traceFiles: {}
 };
+/* The designer addresses visual occurrences; workspace.resolve remains the
+ * semantic model API. Definition edits map back through the authoring layer. */
+function toolIR() { return A.expandOccurrences(state.ws.resolve(state.entry, state.view)); }
+function appearanceLabel(id) { const source=sourceIdentity(id);if(source===id)return id;const layer=state.ws.resolve(state.entry,state.view).view.occurrences;const o=layer&&[...layer.elements,...layer.relations].find(o=>o.id===id);return o?source+' #'+o.number:source; }
+function sourceIdentity(id) { const mapped=state.diagram?.result?.sourceMap[id]?.sourceId;if(mapped)return mapped;const ir=state.ws.resolve(state.entry,state.view);return (ir.view.occurrences&&[...ir.view.occurrences.elements,...ir.view.occurrences.relations].find(o=>o.id===id)?.source)||id; }
 let timer = null, unsubscribe = null;
 
 /* ------------------------------------------------ render worker (B1-043, D1/D2)
@@ -1322,14 +1328,8 @@ function buildShapeEditor() {
   shapeEd.target.addEventListener('change', () => { shapeEd._sig = null; buildShapeEditor(); });
 }
 
-/* --- Sizing editor: the view's text-fit envelope, moved here from the
- * source-only style keys. Support matrix:
- *  · view — text_fit (wrap/grow/shrink), max_width, max_height, min_font:
- *    SOURCE writes (style {} profile keys), rendered through the P4 form
- *    generator like the other source-backed groups.
- *  · selected element — the property registry (data-properties.json +
- *    x_* contracts) defines NO element-level sizing keys; form-descriptors.json
- *    has none for elements. Per the support rule: omitted, with a note. */
+/* Sizing controls distinguish view defaults, shared definitions and one
+ * appearance. All writes preview and validate before a single undoable apply. */
 const sizeEd = { target: null, viewWrap: null, elWrap: null, _sig: null };
 {
   const g = appGroup(els.styleBody, 'Sizing', 'source');
@@ -1378,26 +1378,30 @@ const sizeEd = { target: null, viewWrap: null, elWrap: null, _sig: null };
 }
 function buildSizeEditor() {
   const id = state.selected;
-  const sig = JSON.stringify([sizeEd.target.value, id, id ? flatPropsOf(id) : null]);
+  const sig = JSON.stringify([sizeEd.target.value, id, state.ws?.revision, id ? flatPropsOf(id) : null]);
   if (sig === sizeEd._sig) return;
   sizeEd._sig = sig;
   const prev = sizeEd.target.value;
   const opts = [['view', 'View — style envelope (source)']];
-  if (id) opts.push(['el:' + id, 'Selected element ' + id + ' — source']);
+  if (id) { opts.push(['def:' + id, 'Element definition — all views']); if(graphEditable()) opts.push(['el:' + id, 'Selected appearance — this view']); }
   sizeEd.target.replaceChildren(...opts.map(([v, l]) => new Option(l, v)));
   sizeEd.target.value = opts.some(([v]) => v === prev) ? prev : 'view';
-  const isEl = sizeEd.target.value.startsWith('el:');
+  const isEl = sizeEd.target.value !== 'view';
   sizeEd.viewWrap.hidden = isEl;
   sizeEd.elWrap.hidden = !isEl;
   sizeEd.elWrap.replaceChildren();
   if (!isEl) return;
-  const elId = sizeEd.target.value.slice(3);
-  const flats = flatPropsOf(elId);
+  const definition=sizeEd.target.value.startsWith('def:');
+  const elId = sizeEd.target.value.slice(definition?4:3);
+  const flats = definition?flatPropsOf(elId):A.authoring.occurrencePresentation(state.ws,state.entry,state.view,elId);
   const commit = patch => {
     /* Same content-minimum discipline as the handle commit: a below-minimum
      * entry is rejected with the previous value kept, never an engine error. */
-    const r = resizeWritePreflight(elId, patch);
-    if (r.error) status('that value is below the content minimum (' + (r.error.code || 'render rejected') + ') — the previous value was kept');
+    try {
+      guided(()=>{const editor=state.ws.editor(),plan=editor.preview({entry:state.entry,view:state.view,operations:[{type:'authoring',method:definition?'setElementProperties':'setOccurrencePresentation',args:[elId,patch]}]});
+      try{editor.previewLayout(plan);editor.apply(plan);}catch(e){editor.cancel(plan);throw e;}});
+    } catch(e) {status((e.code||'Sizing rejected')+': '+e.message+' — source unchanged');}
+    sizeEd._sig=null;buildSizeEditor();
   };
   const fit = selectInput([['', 'As authored / default'], ['wrap', 'wrap'], ['grow', 'grow'], ['shrink', 'shrink']], 'element text fit');
   fit.value = typeof flats.text_fit === 'string' ? flats.text_fit : '';
@@ -1415,7 +1419,7 @@ function buildSizeEditor() {
   op.setAttribute('aria-label', 'element opacity');
   op.addEventListener('change', () => commit({ opacity: Number(op.value) >= 1 ? undefined : Number(op.value) }));
   field(sizeEd.elWrap, 'Opacity (0–1)', op);
-  sizeEd.elWrap.append(dim('Element keys override the view envelope per key (element > view > default). ' + PRECEDENCE_NOTE));
+  sizeEd.elWrap.append(dim(definition?'Changes affect this definition in every view; appearance overrides take precedence.':'Changes affect only this appearance. Empty fields inherit the element definition, then view defaults.'));
 }
 function sizeEdJumpToElement(id) {
   state.selected = id; state.selectedRelation = null; state.selectedIds = [id];
@@ -1428,6 +1432,8 @@ function sizeEdJumpToElement(id) {
   if (body) body.scrollTop = 0;
 }
 function refreshEditors() {
+  refreshTileSettings();
+  refreshCreationDestinations();
   buildFontEditor();
   buildLineEditor();
   buildShapeEditor();
@@ -1581,7 +1587,7 @@ function viewSourceNode() {
   try {
     const files = state.ws && state.ws.getFiles();
     if (!files || !state.entry || !Object.prototype.hasOwnProperty.call(files, state.entry)) return null;
-    const ast = A.parse(files[state.entry], state.entry);
+    const ast = parseSource(files[state.entry], state.entry);
     return (ast.declarations || []).find(n => n.type === 'view' && n.id === state.view) || null;
   } catch { return null; }
 }
@@ -1596,7 +1602,7 @@ function declarationNode(id) {
   try {
     const src = A.authoring.sourceOf(state.ws, state.entry, state.view, id);
     const files = state.ws.getFiles();
-    const ast = A.parse(files[src.file], src.file);
+    const ast = parseSource(files[src.file], src.file);
     const walk = nodes => {
       for (const n of nodes || []) {
         if (n.start === src.start) return n;
@@ -1713,7 +1719,7 @@ let legendHintEl = null;
  * order. */
 function legendKeyPlan() {
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { return null; }
+  try { ir = toolIR(); } catch { return null; }
   const authored = (ir.view.profiles.legend && ir.view.profiles.legend.keys) || {};
   const resolved = ir.view.keys || {};
   const used = new Set(Object.values(resolved));
@@ -2048,7 +2054,7 @@ function repopulateOverridePanels() {
   syncViewControls();
   if (drawerEls.creator.dataset.state === 'open') buildCreator();
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = toolIR(); } catch { ir = null; }
   const kindByKeyword = new Map(A.kinds.map(k => [k.id, k]));
   const verbByKeyword = new Map(A.relations.map(r => [r.id, r]));
   const kinds = new Map(), verbs = new Map();
@@ -2107,11 +2113,11 @@ function resetAppearance() {
 
 function onSelect(detail) {
   if (state.panning) return;
-  const ids = detail.sourceIds && detail.sourceIds.length ? detail.sourceIds : [detail.sourceId || detail.id];
+  const ids = detail.sourceIds && detail.sourceIds.length ? detail.sourceIds : [detail.occurrenceId || detail.sourceId || detail.id];
   state.selectedIds = ids.filter(Boolean);
   const id = state.selectedIds.length === 1 ? state.selectedIds[0] : (detail.sourceId || detail.id);
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = toolIR(); } catch { ir = null; }
   const relation = ir && ir.relations.find(r => r.id === id);
   if (relation) {
     state.selectedRelation = relation.id;
@@ -2189,7 +2195,7 @@ function deleteSelection() {
   guided(() => {
     /* The current view's select list is a reference too (DDN-E004) — drop
      * the deleted ids from it first, same pattern as the type sheet. */
-    const cur = state.ws.resolve(state.entry, state.view);
+    const cur = toolIR();
     const shown = cur.view.selected || [];
     const remaining = shown.filter(u => !targets.includes(u));
     if (remaining.length !== shown.length) A.authoring.setViewList(state.ws, state.entry, state.view, 'select', remaining);
@@ -2238,11 +2244,18 @@ els.inspectorTabs.addEventListener('click', e => {
  * 200-char unbroken field label blew the page extent up → DDN074). Same
  * discipline as pinClamped / resizeWritePreflight: write, renderSync, undo
  * on rejection — the previous text is kept and the status explains. */
+// Legacy geometry preflights need strict publication validation of the staged
+// files. Capture workspaces deliberately resolve draft IR for intermediate edits.
+function renderGuidedPreflight(options) {
+  if (!guidedCaptureActive) return state.ws.renderSync(options);
+  const strict = A.createWorkspace(state.ws.getFiles());
+  try { return strict.renderSync(options); } finally { strict.destroy(); }
+}
 function textWritePreflight(action) {
   let failed = null;
   guard(() => guided(() => {
     action();
-    try { state.ws.renderSync({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true }); }
+    try { renderGuidedPreflight({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true }); }
     catch (e) { state.ws.undo(); failed = e; }
   }));
   return failed;
@@ -2255,7 +2268,7 @@ function inspectorNote(msg) { els.inspectorError.textContent = msg || ''; }
 function openCompanionInspector(file) {
   guard(() => {
     state.selected = null; state.selectedRelation = null; state.selectedIds = [];
-    const doc = A.parse(state.ws.getFiles()[file], file);
+    const doc = parseSource(state.ws.getFiles()[file], file);
     const body = document.createElement('div');
     const h = document.createElement('h3');
     h.textContent = 'ddna companion — ' + file;
@@ -2301,10 +2314,21 @@ function openCompanionInspector(file) {
  * inspector error slot) rather than only in the status bar / source drawer —
  * the commit-time authority is core validation (DDN-PJ149 & friends), and its
  * coded failure lands here. */
+/* Legacy visual gestures prepare on an isolated draft. Reads within a gesture
+ * see its intermediate edits; only the validated final files reach live state. */
+let guidedCaptureActive=false;
+function captureGuidedEdit(action){
+ if(guidedCaptureActive)return action();
+ const live=state.ws,editor=live.editor(),before={selected:state.selected,selectedRelation:state.selectedRelation,selectedIds:[...state.selectedIds]},request={entry:state.entry,view:state.view};let plan;
+ try{
+  plan=editor.capture(request,scratch=>{guidedCaptureActive=true;state.ws=scratch;try{action();}finally{state.ws=live;guidedCaptureActive=false;}});
+  editor.previewLayout(plan);editor.apply(plan);
+ }catch(e){state.ws=live;guidedCaptureActive=false;Object.assign(state,before);if(plan)editor.cancel(plan);throw e;}
+}
 function guidedInspector(action) {
   try {
     flush();
-    action();
+    captureGuidedEdit(action);
     showSource(state.currentFile);
     updateHistory();
     inspectorNote('');
@@ -2319,7 +2343,7 @@ function refreshInspector() {
   if (state.config.drawers.properties === 'open') renderPropertiesPanel();
   if (!state.selected && !state.selectedRelation) return;
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { return; }
+  try { ir = toolIR(); } catch { return; }
   const id = state.selected || state.selectedRelation;
   inspector(id, ir, state.selectedRelation ? ir.relations.find(r => r.id === id) : null);
 }
@@ -2335,7 +2359,7 @@ function refreshInspector() {
 function sheetGuided(action, onError) {
   try {
     flush();
-    action();
+    captureGuidedEdit(action);
     showSource(state.currentFile);
     updateHistory();
     status('source edit applied — undo restores the previous source');
@@ -2352,7 +2376,7 @@ function selectFromSheet(uid) {
   applyOverrideCss();
   refreshEditors();
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = toolIR(); } catch { ir = null; }
   if (ir) inspector(uid, ir, null);
   autoDrawerForSelection(true);
 }
@@ -2369,7 +2393,7 @@ function renderDataSheet() {
   const sections = [];
   for (const [file, text] of Object.entries(files).sort()) {
     let doc = null;
-    try { doc = A.parse(text, file); } catch { continue; }
+    try { doc = parseSource(text, file); } catch { continue; }
     for (const d of doc.declarations.filter(x => x.type === 'data')) {
       const records = (d.children || []).filter(c => c.type === 'object' && c.props && c.props.x_record && typeof c.props.x_record === 'object' && !Array.isArray(c.props.x_record));
       if (records.length) sections.push({ file, data: d, records, mod: doc.module });
@@ -2446,7 +2470,7 @@ function refreshTypeSheet() {
    * (addLocal); the chart/decision delete flows drop that ref first so
    * deleteDefinition does not trip DDN-E004 on the auto-added occurrence. */
   const dropSelectRef = uid => {
-    const cur = state.ws.resolve(state.entry, state.view);
+    const cur = toolIR();
     if (!cur.view.selected.includes(uid)) return;
     A.authoring.setViewList(state.ws, state.entry, state.view, 'select', cur.view.selected.filter(u => u !== uid));
   };
@@ -2466,24 +2490,24 @@ function refreshTypeSheet() {
   renderDataSheet();
   if (!has) { state.sheet = null; return; }
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = toolIR(); } catch { ir = null; }
   if (!ir) { els.sheetEmpty.hidden = false; els.sheetEmpty.textContent = 'The view does not resolve — fix the source diagnostics first.'; return; }
   /* Stage-frame helpers shared by the add/reparent hooks. */
   const frameOfStage = stageUid => ((ir.view && ir.view.frames) || []).find(f => f.scope === stageUid);
   const frameLocalId = f => f.id.split('.').pop();
   state.sheet = SHT.RENDERERS[sheet.id]({ outline: els.sheetOutline, editor: els.sheetEditor }, {
-    ir: () => { try { return state.ws.resolve(state.entry, state.view); } catch { return ir; } },
+    ir: () => { try { return toolIR(); } catch { return ir; } },
     guided: sheetGuided,
     descriptors: () => FORM_DESCRIPTORS,
     selectedUid: () => state.selected,
     select: selectFromSheet,
     candidates: () => ir.elements.map(n => ({ ref: n.ref || n.local, label: n.name, kind: n.kind })),
     addElement(kind, intoStage, opts) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const id = (opts && opts.id) || freshLocalId(cur.elements.map(n => n.id), kind);
       const label = (A.kinds.find(k => k.id === kind) || {}).label || kind;
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: (opts && opts.name) || 'New ' + label.toLowerCase(), kind });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id)) || id;
       if (kind === 'cmmn.stage') {
         A.authoring.addFrame(state.ws, state.entry, state.view, { id: id + '_f', name: 'New ' + label.toLowerCase(), scopeUid: uid });
@@ -2495,20 +2519,20 @@ function refreshTypeSheet() {
       selectFromSheet(uid);
     },
     reparent(uid, stageUid) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       for (const f of (cur.view.frames || [])) {
         if (f.members.includes(uid)) A.authoring.setFrameMembers(state.ws, state.entry, state.view, frameLocalId(f), f.members.filter(m => m !== uid));
       }
       if (stageUid) {
         const f = frameOfStage(stageUid);
         if (!f) throw Object.assign(new Error('That stage has no frame in this view.'), { code: 'DDN-E002' });
-        const fresh = state.ws.resolve(state.entry, state.view);
+        const fresh = toolIR();
         const ff = (fresh.view.frames || []).find(x => x.scope === stageUid);
         A.authoring.setFrameMembers(state.ws, state.entry, state.view, frameLocalId(ff), [...ff.members, uid]);
       }
     },
     removeFromStage(uid) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       for (const f of (cur.view.frames || [])) {
         if (f.members.includes(uid)) A.authoring.setFrameMembers(state.ws, state.entry, state.view, frameLocalId(f), f.members.filter(m => m !== uid));
       }
@@ -2524,7 +2548,7 @@ function refreshTypeSheet() {
     plan() { return state.ws.projectionPlan(state.entry, state.view); },
     moveDeclaration(uid, beforeUid) { A.authoring.moveDeclaration(state.ws, state.entry, state.view, uid, beforeUid); },
     addSequenceMessage(args) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const id = args.id || freshLocalId(cur.relations.map(r => r.id), 'msg');
       A.authoring.addSequenceMessage(state.ws, state.entry, state.view, { ...args, id });
     },
@@ -2536,7 +2560,7 @@ function refreshTypeSheet() {
     /* Lane assignment with the one-lane policy + x_partition maintenance
      * (uml.activity@1; DDN-PJ114 is re-checked by the commit-time build). */
     assignToLane(frameLocalId, uid) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const frames = (cur.view.frames || []);
       const local = f => String(f.id).split('::').pop().split('.').pop();
       const plan = SHT.laneMembersPlan(frames, frameLocalId, uid, true);
@@ -2544,13 +2568,15 @@ function refreshTypeSheet() {
       A.authoring.setElementExtension(state.ws, state.entry, state.view, uid, 'x_partition', { lane: frameLocalId });
     },
     unassignFromLane(frameLocalId, uid) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const plan = SHT.laneMembersPlan((cur.view.frames || []), frameLocalId, uid, false);
       for (const w of plan.writes) A.authoring.setFrameMembers(state.ws, state.entry, state.view, w.frameId, w.members);
       A.authoring.setElementExtension(state.ws, state.entry, state.view, uid, 'x_partition', undefined);
     },
     /* Phase 6b hooks (matrix/chart/timeline/decision/fishbone/panels bodies). */
     setProjection(key, value) { A.authoring.setProjectionProperty(state.ws, state.entry, state.view, key, value); },
+    setCalendar(props) { applyInspectorOperations([{type:'authoring',method:'setViewProfile',args:[{projection:props}]}]); },
+    setTimelineValues(id,props) { applyInspectorOperations([{type:'authoring',method:'setElementProperties',args:[id,props]}]); },
     setProjectionDomain(spec) { A.authoring.setProjectionDomain(state.ws, state.entry, state.view, spec); },
     setMatrixCells(changes) { A.authoring.setMatrixCells(state.ws, state.entry, state.view, changes); },
     setRecordValue(uid, key, value) { A.authoring.setRecordValue(state.ws, state.entry, state.view, uid, key, value); },
@@ -2568,7 +2594,7 @@ function refreshTypeSheet() {
      * the view file's source form (alias-aware path). */
     sourceRefs(uids) { return uids.map(uid => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, uid) })); },
     addChartRecord() {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const p = cur.view.profiles.projection;
       const byId = new Map(cur.elements.map(n => [n.id, n]));
       const first = (p.records || []).map(r => byId.get(r.$ref)).find(n => n && n.properties.x_record && typeof n.properties.x_record === 'object');
@@ -2577,7 +2603,7 @@ function refreshTypeSheet() {
       for (const [k, v] of Object.entries(first.properties.x_record)) skeleton[k] = k === 'unit' ? v : typeof v === 'number' ? 0 : '';
       const id = freshLocalId(cur.elements.map(n => n.id), 'record');
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: 'New record', kind: 'record' });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
       A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'x_record', skeleton);
       A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
@@ -2585,7 +2611,7 @@ function refreshTypeSheet() {
       selectFromSheet(uid);
     },
     deleteChartRecord(uid) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const p = cur.view.profiles.projection;
       const kept = (p.records || []).map(r => r.$ref).filter(u => u !== uid);
       A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
@@ -2595,26 +2621,26 @@ function refreshTypeSheet() {
     },
     addTimelineRecord({ id, label, start, end, keys }) {
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: label, kind: 'record' });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
-      A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'x_record', { [keys.start]: start, [keys.end]: end });
-      const p = state.ws.resolve(state.entry, state.view).view.profiles.projection;
+      A.authoring.setElementProperties(state.ws, state.entry, state.view, uid, SHT.timelinePatch({properties:{}},after.view.profiles.projection,{start,end}));
+      const p = toolIR().view.profiles.projection;
       A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
         [...(p.records || []).map(r => r.$ref), uid].map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })));
       selectFromSheet(uid);
     },
     linkTimelineDependency({ name, from, to }) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const id = freshLocalId(cur.relations.map(r => r.id), 'precedes');
       A.authoring.addRelation(state.ws, state.entry, state.view, { id, name, kind: 'analysis.precedes', from, to });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const rid = after.relations.map(r => r.id).find(u => u === id || u.endsWith('.' + id));
       const p = after.view.profiles.projection;
       A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'dependencies',
         [...(p.dependencies || []).map(r => r.$ref), rid].map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })));
     },
     unlinkTimelineDependency(relationId) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const p = cur.view.profiles.projection;
       const kept = (p.dependencies || []).map(r => r.$ref).filter(u => u !== relationId);
       A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'dependencies',
@@ -2626,16 +2652,16 @@ function refreshTypeSheet() {
     },
     addDecisionRule({ id, label, then }) {
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: label, kind: 'rule.row' });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
       A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'x_rule', { when: {}, then });
-      const p = state.ws.resolve(state.entry, state.view).view.profiles.projection;
+      const p = toolIR().view.profiles.projection;
       A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
         [...(p.records || []).map(r => r.$ref), uid].map(u => ({ $ref: A.authoring.referenceFor(state.ws, state.entry, state.view, u) })));
       selectFromSheet(uid);
     },
     deleteDecisionRule(ruleId) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const p = cur.view.profiles.projection;
       const kept = (p.records || []).map(r => r.$ref).filter(u => u !== ruleId);
       A.authoring.setProjectionProperty(state.ws, state.entry, state.view, 'records',
@@ -2644,27 +2670,27 @@ function refreshTypeSheet() {
       A.authoring.deleteDefinition(state.ws, state.entry, state.view, ruleId);
     },
     addFishboneCategory({ id, label }) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const p = cur.view.profiles.projection;
       const plan = state.ws.projectionPlan(state.entry, state.view);
       if (plan.categories.length >= 12) throw Object.assign(new Error('Fishbone needs 1..12 root categories'), { code: 'DDN-QF003' });
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: label, kind: 'quality.category' });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
       A.authoring.addRelation(state.ws, state.entry, state.view, { id: id + '_to_effect', name: 'Possible cause category', kind: p.relation, from: uid, to: plan.effect.id });
       selectFromSheet(uid);
     },
     addFishboneCause({ id, label, parentId }) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const p = cur.view.profiles.projection;
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: label, kind: 'quality.cause' });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
       A.authoring.addRelation(state.ws, state.entry, state.view, { id: 'c_' + id, name: 'Possible contributing cause', kind: p.relation, from: uid, to: parentId });
       selectFromSheet(uid);
     },
     attachExistingCause({ causeId, parentId }) {
-      const cur = state.ws.resolve(state.entry, state.view);
+      const cur = toolIR();
       const p = cur.view.profiles.projection;
       const el2 = cur.elements.find(n => n.id === causeId);
       if (!el2 || !['quality.cause', 'quality.category'].includes(el2.kind)) throw Object.assign(new Error('Only an existing cause or category definition can be attached to a second branch — reuse never clones the definition.'), { code: 'DDN-E006' });
@@ -2686,10 +2712,10 @@ function refreshTypeSheet() {
     },
     addPanelItem({ panelId, id, label, description }) {
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: label, kind: 'note' });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id));
       if (description !== undefined) A.authoring.setProperty(state.ws, state.entry, state.view, uid, 'description', description);
-      const p = state.ws.resolve(state.entry, state.view).view.profiles.projection;
+      const p = toolIR().view.profiles.projection;
       const panels = (p.panels || []).map(v => v.id === panelId ? { ...v, items: [...(v.items || []).map(r => r.$ref), uid] } : v);
       this.setPanels(panels);
       selectFromSheet(uid);
@@ -2697,9 +2723,9 @@ function refreshTypeSheet() {
     addPanel({ id, title, row, column, firstItem }) {
       const noteId = id + '_note';
       A.authoring.addElement(state.ws, state.entry, state.view, { id: noteId, name: firstItem, kind: 'note' });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const uid = after.elements.map(n => n.id).find(u => u === noteId || u.endsWith('.' + noteId));
-      const p = state.ws.resolve(state.entry, state.view).view.profiles.projection;
+      const p = toolIR().view.profiles.projection;
       this.setPanels([...(p.panels || []), { id, title, row, column, items: [uid] }]);
       selectFromSheet(uid);
     }
@@ -2710,6 +2736,7 @@ function refreshTypeSheet() {
  * resolved model contains the definition uid. Resolving every view can fail
  * per view (broken sibling view) — those views are skipped, never fatal. */
 function viewUsageList(uid) {
+  uid = sourceIdentity(uid);
   const views = [];
   for (const e of state.ws.entries()) for (const v of e.views) {
     let ir = null;
@@ -2728,6 +2755,7 @@ function writeTargetNote(uid) {
   return f && f !== state.entry ? ' — writes to ' + f : '';
 }
 function usageBlast(uid) {
+  uid = sourceIdentity(uid);
   const uses = viewUsageList(uid);
   const files = [...new Set(uses.map(u => u.entry))];
   return uses.length + ' view' + (uses.length === 1 ? '' : 's') + ' across ' + files.length + ' file' + (files.length === 1 ? '' : 's') + (files.length ? ' (' + files.join(', ') + ')' : '');
@@ -2753,7 +2781,7 @@ function inspector(id, ir, relation) {
   const multi = multiSelection((state.selectedIds || []).map(u => ({ id: u, kind: null, isRelation: !!ir.relations.find(r => r.id === u) })));
   els.selectionSummary.textContent = multi.count > 1
     ? multi.count + ' items selected — ' + (multi.allElements ? 'elements' : multi.allRelations ? 'relations' : 'mixed elements and relations')
-    : item.name + ' · ' + (relation ? 'relationship' : fieldItem ? 'field' : node.kind) + ' — ' + id;
+    : item.name + ' · ' + (relation ? 'relationship' : fieldItem ? 'field' : node.kind) + ' — ' + appearanceLabel(id);
   els.inspectorControls.hidden = false;
   buildMeaningTab(els.inspectorMeaning, id, ir, { node, relation, fieldItem, multi });
   buildViewTab(els.inspectorView, id, ir, { node, relation, fieldItem, multi });
@@ -2766,7 +2794,7 @@ function inspector(id, ir, relation) {
 function renderPropertiesPanel() {
   const id = state.selected || state.selectedRelation;
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = toolIR(); } catch { ir = null; }
   const relation = ir && state.selectedRelation ? ir.relations.find(r => r.id === state.selectedRelation) : null;
   const node = ir && id ? ir.elements.find(n => n.id === id) : null;
   const fieldItem = ir && id ? ir.elements.flatMap(n => n.fields || []).find(f => f.id === id) : null;
@@ -2777,7 +2805,7 @@ function renderPropertiesPanel() {
     return;
   }
   const multi = multiSelection((state.selectedIds || []).map(u => ({ id: u, kind: null, isRelation: !!ir.relations.find(r => r.id === u) })));
-  els.propertiesTitle.textContent = (relation ? relation.name : node ? node.name : fieldItem.name) + ' · ' + (relation ? 'relationship' : fieldItem ? 'field' : node.kind) + ' — ' + id;
+  els.propertiesTitle.textContent = (relation ? relation.name : node ? node.name : fieldItem.name) + ' · ' + (relation ? 'relationship' : fieldItem ? 'field' : node.kind) + ' — ' + appearanceLabel(id);
   const meaning = document.createElement('div');
   const view = document.createElement('div');
   buildMeaningTab(meaning, id, ir, { node, relation, fieldItem, multi });
@@ -2815,6 +2843,49 @@ function goToSource(id) {
 /* --- Meaning tab: the shared model definition (spec 03). Edits write the
  * definition in source; the shared-scope impact note appears when the
  * definition is used in more than one view. --- */
+function applyInspectorOperations(operations){
+ const editor=state.ws.editor(),plan=editor.preview({entry:state.entry,view:state.view,operations});
+ try{editor.previewLayout(plan);editor.apply(plan);}catch(e){editor.cancel(plan);throw e;}
+}
+function fieldValueGrid(panel,uid,node){
+ if(!node.fields?.length)return;
+ const box=document.createElement('details');box.append(Object.assign(document.createElement('summary'),{textContent:'Field values'}));
+ const schema=(A.engineAssets.registry.kinds.find(k=>k.keyword===node.kind||k.aliases?.includes(node.kind))||{}).column_schema||[];
+ const columns=(node.properties.columns?.entries?.length?node.properties.columns.entries:schema.length?schema:[{id:'name'},{id:'datatype'},{id:'notes',path:'description'}]).filter(c=>(node.properties.columns?.partials?.[c.id]||c.visibility)!=='hidden');
+ const table=document.createElement('table'),head=table.createTHead().insertRow(),body=table.createTBody(),pending=new Map();
+ for(const c of columns){const th=document.createElement('th');th.textContent=c.label||c.id;head.append(th);}
+ for(const field of node.fields){const row=body.insertRow();for(const col of columns){const path=(col.path||col.id).split('.'),input=document.createElement('input');input.setAttribute('aria-label','Field '+field.local+' '+col.id);input.size=12;
+  const value=path[0]==='name'?field.name:path.reduce((o,k)=>o?.[k],field.properties);input.value=value===undefined?'':typeof value==='object'?JSON.stringify(value):String(value);
+  input.readOnly=path[0]==='id'||path.some(k=>['__proto__','prototype','constructor'].includes(k));
+  input.addEventListener('change',()=>{try{
+   let change=pending.get(field.id);if(!change){change={props:{},label:undefined};pending.set(field.id,change);}
+   if(path[0]==='name'){change.label=input.value;return;}
+   let next=input.value===''?undefined:typeof value==='boolean'?JSON.parse(input.value):typeof value==='number'?Number(input.value):typeof value==='object'&&value!==null?JSON.parse(input.value):input.value;
+   if(typeof value==='number'&&!Number.isFinite(next))throw Error('Expected finite number');if(typeof value==='boolean'&&next!==undefined&&typeof next!=='boolean')throw Error('Expected true or false');
+   if(path.length===1)change.props[path[0]]=next;
+   else{const root=path[0];if(!Object.hasOwn(change.props,root))change.props[root]=JSON.parse(JSON.stringify(field.properties[root]||{}));let at=change.props[root];for(const k of path.slice(1,-1)){at[k]??={};at=at[k];}if(next===undefined)delete at[path.at(-1)];else at[path.at(-1)]=next;}
+   input.setCustomValidity('');
+  }catch(e){input.setCustomValidity(e.message);input.reportValidity();}});row.insertCell().append(input);
+ }}box.append(table);
+ inButton(box,'Apply field values','Apply edited cells to shared field definitions',()=>{if([...box.querySelectorAll('input')].some(i=>!i.reportValidity())||!impactConfirm(uid))return;const operations=[];for(const [id,c]of pending){if(c.label!==undefined)operations.push({type:'authoring',method:'setLabel',args:[id,c.label]});if(Object.keys(c.props).length)operations.push({type:'authoring',method:'setElementProperties',args:[id,c.props]});}if(operations.length)guidedInspector(()=>applyInspectorOperations(operations));});panel.append(box);
+}
+function fieldColumnsEditor(panel,uid,node){
+ const box=document.createElement('details');box.append(Object.assign(document.createElement('summary'),{textContent:'Field columns'}));
+ const current=A.authoring.columnLayout(state.ws,state.entry,state.view,uid);
+ const mode=selectInput([['legacy','Legacy field rows'],['schema','Kind default columns'],['custom','Custom columns']], 'Field column mode');mode.value=current===null?'legacy':current.length?'custom':'schema';box.append(mode);
+ const schema=(A.engineAssets.registry.kinds.find(k=>k.keyword===node.kind||k.aliases?.includes(node.kind))||{}).column_schema||[];
+ const normalized=(node.properties.columns?.entries?.length?node.properties.columns.entries:schema).map(c=>({...c,width:!c.width||c.width.kind==='equal'?'equal':{$quantity:c.width.n,unit:c.width.kind==='chars'?'ch':'%'}}));
+ let rows=current?.length&&current.some(c=>c.width!==undefined||c.path!==undefined||c.label!==undefined)?current:normalized;
+ if(!rows.length)rows=[{id:'name',width:'equal'},{id:'datatype',width:'equal'}];
+ rows=rows.map(c=>({...c,...(node.properties.columns?.partials?.[c.id]?{visibility:node.properties.columns.partials[c.id]}:{}),width:c.width||'equal'}));const body=document.createElement('div');box.append(body);
+ const paint=()=>{body.replaceChildren();body.hidden=mode.value!=='custom';rows.forEach((c,i)=>{const line=document.createElement('div');line.className='ddn-row';
+  for(const key of ['id','label','path','width','min_chars','max_chars']){const input=document.createElement('input');input.setAttribute('aria-label','Column '+(i+1)+' '+key);input.placeholder=key;input.size=8;input.value=key==='width'?(typeof c.width==='string'?c.width:c.width.$quantity+c.width.unit):c[key]??'';input.addEventListener('change',()=>{if(input.value===''){delete c[key];return;}if(key==='width'){const m=input.value.match(/^(\d+(?:\.\d+)?)(ch|%)$/);c.width=m?{$quantity:Number(m[1]),unit:m[2]}:input.value;}else c[key]=['min_chars','max_chars'].includes(key)?Number(input.value):input.value;});line.append(input);}
+  const visibility=selectInput([['shown','Shown'],['hidden','Hidden'],['on_demand','On demand']],'Column '+(i+1)+' visibility');visibility.value=c.visibility||'shown';visibility.addEventListener('change',()=>c.visibility=visibility.value);line.append(visibility);
+  inButton(line,'↑','Move column up',()=>{if(i){[rows[i-1],rows[i]]=[rows[i],rows[i-1]];paint();}});inButton(line,'Remove','Remove column',()=>{rows.splice(i,1);paint();});body.append(line);
+ });};
+ mode.addEventListener('change',paint);paint();inButton(box,'Add column','Add a custom column',()=>{mode.value='custom';let i=1;while(rows.some(c=>c.id==='column'+i))i++;rows.push({id:'column'+i,width:'equal'});paint();});
+ inButton(box,'Apply columns','Apply column layout to the shared definition',()=>{if(!impactConfirm(uid))return;guidedInspector(()=>applyInspectorOperations([{type:'authoring',method:'setColumnLayout',args:[uid,mode.value==='legacy'?null:mode.value==='schema'?[]:rows]}]));});panel.append(box);
+}
 function buildMeaningTab(panel, id, ir, ctx) {
   const { node, relation, fieldItem, multi } = ctx;
   panel.replaceChildren();
@@ -2845,6 +2916,9 @@ function buildMeaningTab(panel, id, ir, ctx) {
     }
   });
   inField(panel, 'Label', label);
+  const identity=document.createElement('input');identity.value=A.authoring.sourceOf(state.ws,state.entry,state.view,uid).id;identity.setAttribute('aria-label','Definition identifier');
+  inField(panel,'Identifier',identity);inButton(panel,'Rename identifier','Rename the definition and resolved references across workspace files',()=>{if(!impactConfirm(uid))return;guidedInspector(()=>{applyInspectorOperations([{type:'authoring',method:'renameDefinition',args:[uid,identity.value.trim()]}]);state.selected=null;state.selectedRelation=null;state.selectedIds=[];});});
+
 
   /* Kind / verb. Relations: the verb list is filtered by endpoint-pair
    * legality (phase 2 legalVerbs over the same endpoint contracts the core
@@ -2902,6 +2976,8 @@ function buildMeaningTab(panel, id, ir, ctx) {
      * reparent — one moveField transaction per op; the structural contract is
      * DDN042 (nested fields accept only a fields block; the registry carries
      * no variant/discriminator nesting coupling). */
+    fieldColumnsEditor(panel,uid,node);
+    fieldValueGrid(panel,uid,node);
     const fields = node.fields || [];
     if (fields.length) {
       const h = document.createElement('h4'); h.textContent = 'Fields';
@@ -2928,6 +3004,8 @@ function buildMeaningTab(panel, id, ir, ctx) {
           guidedInspector(() => A.authoring.moveField(state.ws, state.entry, state.view, fid, { parentUid: target }));
         });
         li.append(parentSel);
+        const wrap=selectInput([['','Inherit wrapping'],['on','Wrap text'],['off','Clip text']],'Field '+(fld.name||fld.local)+' wrapping');wrap.value=fld.properties?.text_wrap||'';
+        wrap.addEventListener('change',()=>{if(impactConfirm(uid))guidedInspector(()=>applyInspectorOperations([{type:'authoring',method:'setProperty',args:[fid,'text_wrap',wrap.value||undefined]}]));});li.append(wrap);
         ul.append(li);
       }
       panel.append(ul);
@@ -2944,6 +3022,7 @@ function buildMeaningTab(panel, id, ir, ctx) {
     panel.append(af);
   }
 
+  if (node && multi.count <= 1) {buildSectionControls(panel,id,node,'element');buildDocumentEditor(panel,id,node);}
   if (relation) buildRelationMeaning(panel, relation, ir);
 
   if (node && multi.count <= 1) {
@@ -2958,7 +3037,7 @@ function buildMeaningTab(panel, id, ir, ctx) {
   if (node) inButton(actions, 'Duplicate', 'Duplicate — a new element with a fresh uid (unconnected, no numeral); the original is untouched', () => {
     guidedInspector(() => {
       A.authoring.duplicate(state.ws, state.entry, state.view, uid);
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const copy = after.elements.map(n => n.id).filter(u => /_copy\d*$/.test(u)).sort().at(-1);
       if (copy) { state.selected = copy; state.selectedRelation = null; state.selectedIds = [copy]; }
       status('duplicated as ' + (copy || 'a new uid') + ' — new identity, unconnected; ref: anchors still point at the original');
@@ -3150,8 +3229,7 @@ function buildRelationMeaning(panel, relation, ir) {
 
   /* 0.9: reverse the relation — endpoints swapped, direction-prefixed
    * properties (marks, cardinality bounds, end labels) remapped, one
-   * undoable transaction. (No attachment-policy keys exist in the relation
-   * contracts — intentionally not offered.) */
+   * undoable transaction. Endpoint geometry is authored in the Appearance tab. */
   const rr = document.createElement('div'); rr.className = 'ddn-row';
   inButton(rr, 'Reverse relation', 'Swap endpoints; marks, cardinality bounds and end labels remap (one undoable transaction)', () => guidedInspector(() => A.authoring.reverseRelation(state.ws, state.entry, state.view, uid)));
   panel.append(rr);
@@ -3216,6 +3294,27 @@ function buildRelationMeaning(panel, relation, ir) {
 /* --- This view tab: occurrence-level state (spec 03). Pin/unpin and hide
  * write per-view place/exclude records; the relation routing override is the
  * session-preview channel (never written to source from here). --- */
+function buildSectionControls(panel,id,node,scope){
+ const preset=A.kinds.find(k=>k.id===node.kind)?.composition||{sections:['name','type','table','notes'],order:['table','notes'],note_height:180,note_wrap:'auto'};
+ const cfg={...preset,...node.properties.composition},box=document.createElement('fieldset');box.className='ddn-section-controls';const legend=document.createElement('legend');legend.textContent=scope==='element'?'Default sections for this element':'Sections in this appearance';box.append(legend);
+ const checks={};for(const part of ['name','type','table','notes']){const input=document.createElement('input');input.type='checkbox';input.checked=cfg.sections.includes(part);input.setAttribute('aria-label',scope+' section '+part);checks[part]=input;inField(box,part==='type'?'Type':part[0].toUpperCase()+part.slice(1),input);}
+ const order=selectInput([['table-first','Table above notes'],['notes-first','Notes above table']],scope+' section order');order.value=cfg.order[0]==='notes'?'notes-first':'table-first';inField(box,'Order',order);
+ const height=document.createElement('input');height.type='number';height.min=48;height.max=2000;height.value=cfg.note_height;height.setAttribute('aria-label',scope+' note height');inField(box,'Note height (px)',height);
+ const wrap=selectInput([['auto','Automatic'],['on','Wrap lines'],['off','Horizontal scrolling']],scope+' note wrapping');wrap.value=cfg.note_wrap;inField(box,'Text wrapping',wrap);
+ inButton(box,'Apply sections','Save section selection and note viewport',()=>guidedInspector(()=>A.authoring.setComposition(state.ws,state.entry,state.view,id,{sections:Object.keys(checks).filter(k=>checks[k].checked),order:order.value==='notes-first'?['notes','table']:['table','notes'],note_height:Number(height.value),note_wrap:wrap.value},{scope})));
+ inButton(box,'Use defaults','Remove this section override',()=>guidedInspector(()=>A.authoring.setComposition(state.ws,state.entry,state.view,id,null,{scope})));panel.append(box);
+}
+function buildDocumentEditor(panel,id,node){const d=node.properties.document||{format:'plain',role:'note',text:node.properties.description||''};const box=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Text document';box.append(summary);
+ const format=selectInput([['plain','Plain text'],['markdown_text','Text Markdown'],['code','Literal code']],'Document format');format.value=d.format;inField(box,'Format',format);
+ const role=selectInput([['note','Note'],['procedure_source','Procedure source'],['function_source','Function source'],['source','Other source']],'Document role');role.value=d.role;inField(box,'Role',role);
+ const lang=document.createElement('input');lang.value=d.language||'';lang.setAttribute('aria-label','Document language');inField(box,'Language',lang);
+ const text=document.createElement('textarea');text.value=d.text;text.rows=12;text.spellcheck=false;text.setAttribute('aria-label','Document text');text.style.width='100%';text.style.fontFamily='monospace';box.append(text);
+ const file=document.createElement('input');file.value=d.storage?.file||'';file.placeholder='Inline, or project.ddnn';file.setAttribute('aria-label','Document file');inField(box,'Text file',file);
+ const did=document.createElement('input');did.value=d.storage?.id||'body';did.setAttribute('aria-label','Document ID');inField(box,'Document ID',did);
+ inNote(box,'Text is shared by all appearances. Code is stored exactly and is not executed.');
+ inButton(box,'Save document','Save full text and storage reference as one edit',()=>guidedInspector(()=>A.authoring.setDocument(state.ws,state.entry,state.view,id,{format:format.value,role:role.value,text:text.value,...(lang.value?{language:lang.value}:{})},file.value.trim()?{file:file.value.trim(),documentId:did.value.trim()}:{file:null})));
+ inButton(box,'Remove document','Remove the reference; an external record is retained',()=>guidedInspector(()=>A.authoring.setDocument(state.ws,state.entry,state.view,id,null)));panel.append(box);
+}
 function buildViewTab(panel, id, ir, ctx) {
   const { node, relation, multi } = ctx;
   panel.replaceChildren();
@@ -3226,6 +3325,7 @@ function buildViewTab(panel, id, ir, ctx) {
   }
   const noGraph = state.diagram && state.diagram.capabilities && state.diagram.capabilities.graphControls === false;
   if (node) {
+    if(!noGraph)buildSectionControls(panel,id,node,'appearance');
     const g = state.diagram && state.diagram.result && state.diagram.result.scene.nodes && state.diagram.result.scene.nodes.find(n => n.id === id);
     const row = document.createElement('div'); row.className = 'ddn-row';
     const px = document.createElement('input'); px.type = 'number'; px.step = 1; px.value = g ? Math.round(g.x) : 0; px.setAttribute('aria-label', 'Pin x (px)');
@@ -3239,6 +3339,11 @@ function buildViewTab(panel, id, ir, ctx) {
     for (const b of [pinB, unpinB, hideB]) b.disabled = !!noGraph;
     if (noGraph) inNote(panel, 'This projection fixes coordinates and content — occurrence pin/hide is unavailable here.');
     panel.append(brow);
+    const copyRow=document.createElement('div');copyRow.className='ddn-row';
+    const copyButton=inButton(copyRow,'Add another appearance','Show this same definition again; no model copy is created',()=>guidedInspector(()=>{const added=A.authoring.addOccurrence(state.ws,state.entry,state.view,id);state.selected=added.occurrenceId;state.selectedIds=[added.occurrenceId];}));
+    copyButton.disabled=ir.view.profiles.projection.kind!=='graph'||!!ir.view.profiles.layout.x_interaction;panel.append(copyRow);
+    const appearance=(ir.view.occurrences?.elements||[]).find(o=>o.id===id);
+    if(appearance)inNote(panel,'Appearance '+appearance.number+' of '+appearance.source+'. Meaning edits affect every appearance; pin, hide and resize affect this one.');
   } else if (relation) {
     const sel = selectInput(routingOptions(), 'routing for relation ' + id);
     sel.value = state.presentation.relationRouting[id] || 'source';
@@ -3248,7 +3353,30 @@ function buildViewTab(panel, id, ir, ctx) {
       rerender();
     });
     inField(panel, 'Routing (session preview)', sel);
+    if(!noGraph){
+      const heading=document.createElement('h4');heading.textContent='Endpoint attachments';panel.append(heading);
+      const hints=ir.view.routes[id]||{},inputs={};
+      for(const [end,endpoint] of [['source','from'],['target','to']]){
+        const side=selectInput([['','Automatic'],...['north','east','south','west'].map(x=>[x,x])],end+' attachment side');side.value=hints[end+'_side']||'';
+        const fraction=document.createElement('input');fraction.type='number';fraction.min='0.001';fraction.max='0.999';fraction.step='any';fraction.placeholder='Automatic';fraction.value=hints[end+'_fraction']??'';fraction.setAttribute('aria-label',end+' attachment fraction');fraction.disabled=!!relation[endpoint]?.member;
+        inputs[end]={side,fraction};inField(panel,end+' side',side);inField(panel,end+' fraction',fraction);
+      }
+      inNote(panel,'Saved for this connector appearance. Fractions run between 0 and 1; named field and port endpoints retain their identity.');
+      inButton(panel,'Apply attachments','Save endpoint geometry in this view',()=>guidedInspector(()=>{
+        const hint={};for(const end of ['source','target']){hint[end+'_side']=inputs[end].side.value||undefined;hint[end+'_fraction']=inputs[end].fraction.disabled||inputs[end].fraction.value===''?undefined:Number(inputs[end].fraction.value);}
+        applyInspectorOperations([{type:'authoring',method:'setViewProfile',args:[{},{routes:{[id]:hint}}]}]);
+      }));
+    }
+
     inNote(panel, 'Session preview only — saved appearance writes go through Style & Layout → Get source, or a route record in source.');
+    if(!noGraph){
+      const semantic=state.ws.resolve(state.entry,state.view),base=semantic.relations.find(r=>r.id===sourceIdentity(id));
+      const appearances=A.authoring.occurrences(state.ws,state.entry,state.view).elements;
+      const pick=end=>selectInput(appearances.filter(o=>o.source===base[end].element).map(o=>[o.id,(semantic.elements.find(e=>e.id===o.source)?.name||o.source)+' #'+o.number]),'Connector copy '+end+' appearance');
+      const from=pick('from'),to=pick('to');inField(panel,'Copy from',from);inField(panel,'Copy to',to);
+      const row=document.createElement('div');row.className='ddn-row';inButton(row,'Add connector appearance','Draw this same relationship between the selected appearances',()=>guidedInspector(()=>{const added=A.authoring.addRelationOccurrence(state.ws,state.entry,state.view,id,{from:from.value,to:to.value});state.selectedRelation=added.occurrenceId;state.selected=null;state.selectedIds=[added.occurrenceId];}));panel.append(row);
+    }
+
     const brow = document.createElement('div'); brow.className = 'ddn-row';
     inButton(brow, 'Hide', 'Exclude this relation from this view (appearance-only; the definition stays)', () => guidedInspector(() => A.authoring.hide(state.ws, state.entry, state.view, id)));
     panel.append(brow);
@@ -3353,7 +3481,7 @@ function buildDetailsTab(panel, id, ir, ctx) {
 
 function guided(action) {
   flush();
-  action();
+  captureGuidedEdit(action);
   showSource(state.currentFile);
   updateHistory();
   refreshAfterSourceWrite();
@@ -3377,6 +3505,25 @@ function refreshAfterSourceWrite() {
  * kind list is capability-filtered like the Add palette (an "all installed"
  * note appears when the filter would hide the list); the relation form has
  * source/target pickers and a verb list filtered by endpoint legality. */
+function createElementWithDestination(data){
+ const editor=state.ws.editor(),plan=editor.preview({entry:state.entry,view:state.view,operations:[{type:'authoring',method:'addElement',args:[data]}]});
+ try{editor.previewLayout(plan);return editor.apply(plan);}catch(e){editor.cancel(plan);throw e;}
+}
+function freshCreationId(base,ir){
+ const taken=(ir?.elements||[]).map(n=>n.id),destination=creationDestination();
+ if(destination){const doc=parseSource(state.ws.getFiles()[destination.file],destination.file),section=(doc.sections||[doc]).find(s=>s.module===destination.module),block=section?.declarations?.find(n=>n.type==='data'&&n.id===destination.block);for(const child of block?.children||[])taken.push(child.id);}
+ return freshLocalId(taken,base);
+}
+function creationDestination(){
+ const value=document.getElementById('ddn-create-destination').value;
+ return value?JSON.parse(value):undefined;
+}
+function refreshCreationDestinations(){
+ const select=document.getElementById('ddn-create-destination'),prev=select.value;
+ const dests=state.ws?A.authoring.creationDestinations(state.ws):[];
+ select.replaceChildren(new Option("Only this view's local data",''),...dests.map(d=>new Option(d.file+' / '+d.module+'::'+d.block,JSON.stringify(d))));
+ if([...select.options].some(o=>o.value===prev))select.value=prev;
+}
 function openAddElementModal() {
   if (!graphEditable()) { status('this view is data-bound — add records in the Source drawer instead'); return; }
   const proj = viewProjection();
@@ -3386,16 +3533,19 @@ function openAddElementModal() {
   els.aeKind.replaceChildren(...kinds.map(k => new Option(k.label + ' (' + k.id + ')', k.id)));
   els.aeNote.textContent = note;
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
-  els.aeId.value = freshLocalId(ir ? ir.elements.map(n => n.id) : [], kinds[0] ? kinds[0].id : 'object');
+  try { ir = toolIR(); } catch { ir = null; }
+  els.aeId.value = freshCreationId(kinds[0] ? kinds[0].id : 'object',ir);
   els.aeName.value = '';
+  refreshCreationDestinations();
+  els.aeNote.hidden=false;
+  els.aeNote.textContent += ' Create in: '+document.getElementById('ddn-create-destination').selectedOptions[0].textContent+'. Change this in the Creator drawer.';
   els.aeModal.hidden = false;
   els.aeName.focus();
 }
 function openAddRelationModal() {
   if (!graphEditable()) { status('connecting needs a graph projection — this view is data-bound'); return; }
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = toolIR(); } catch { ir = null; }
   const els2 = ir ? ir.elements : [];
   if (els2.length < 1) { status('no elements to connect yet'); return; }
   const opt = n => new Option((n.name || n.id) + ' — ' + n.id, n.id);
@@ -3428,8 +3578,8 @@ els.addElement.addEventListener('click', () => guard(openAddElementModal));
 els.addRelation.addEventListener('click', () => guard(openAddRelationModal));
 els.aeKind.addEventListener('change', () => {
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
-  els.aeId.value = freshLocalId(ir ? ir.elements.map(n => n.id) : [], els.aeKind.value);
+  try { ir = toolIR(); } catch { ir = null; }
+  els.aeId.value = freshCreationId(els.aeKind.value,ir);
 });
 els.aeCancel.addEventListener('click', () => { els.aeModal.hidden = true; });
 els.arCancel.addEventListener('click', () => { els.arModal.hidden = true; });
@@ -3440,8 +3590,8 @@ els.aeCreate.addEventListener('click', () => guard(() => {
   if (!id) { status('the element needs a stable identifier'); return; }
   els.aeModal.hidden = true;
   guided(() => {
-    A.authoring.addElement(state.ws, state.entry, state.view, { id, name, kind });
-    const after = state.ws.resolve(state.entry, state.view);
+    createElementWithDestination({ id, name, kind, destination:creationDestination() });
+    const after = toolIR();
     const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id)) || id;
     state.selected = uid; state.selectedRelation = null; state.selectedIds = [uid];
     status('added ' + uid + ' — it is selected for further edits');
@@ -3455,7 +3605,7 @@ els.arCreate.addEventListener('click', () => guard(() => {
   els.arModal.hidden = true;
   guided(() => {
     A.authoring.addRelation(state.ws, state.entry, state.view, { id, name, kind, from, to });
-    const after = state.ws.resolve(state.entry, state.view);
+    const after = toolIR();
     state.selectedRelation = after.relations.map(r => r.id).find(u => u === id || u.endsWith('.' + id)) || id;
     state.selected = null; state.selectedIds = [state.selectedRelation];
     status('connected ' + from + ' → ' + to + ' (' + kind + ') — relation ' + state.selectedRelation);
@@ -3669,7 +3819,7 @@ els.pointerToggle.addEventListener('click', () => {
  * stays permissive — the palette only filters what it offers. */
 function viewProjection() {
   try {
-    const ir = state.ws.resolve(state.entry, state.view);
+    const ir = toolIR();
     /* Phase 6a: viewKind joins the dispatch input — patent.legal@1 attaches
      * through the view kind, never the projection profile. */
     return { ...((ir && ir.view.profiles.projection) || { kind: 'graph', profile: 'ddn@1' }), viewKind: ir && ir.view.kind };
@@ -3747,7 +3897,7 @@ function creatorIcon(k) {
  * definition isn't shown (selectInView), select-on-canvas when it is. */
 function existingItems() {
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = state.ws.resolve(state.entry,state.view); } catch { ir = null; }
   if (!ir) return [];
   return (ir.elements || []).slice().sort((a, b) => String(a.kind || '').localeCompare(String(b.kind || '')) || String(a.name || a.id).localeCompare(String(b.name || b.id)));
 }
@@ -3762,7 +3912,7 @@ function existingTile(n) {
 }
 function existingClick(n) {
   guard(() => {
-    const ir = state.ws.resolve(state.entry, state.view);
+    const ir = toolIR();
     const shown = (ir.view.selected || []).includes(n.id);
     if (!shown) {
       guided(() => A.authoring.selectInView(state.ws, state.entry, state.view, n.id));
@@ -3830,14 +3980,14 @@ function dropDuplicate(def, x, y) {
       x = c.x; y = c.y;
       const scene = state.diagram.result && state.diagram.result.scene;
       let lp = {};
-      try { lp = (state.ws.resolve(state.entry, state.view).view.profiles || {}).layout || {}; } catch { lp = {}; }
+      try { lp = (toolIR().view.profiles || {}).layout || {}; } catch { lp = {}; }
       preSlot = findFreeSlot(x, y, 270, 100, quantityPx(lp.object_clearance, 16), scene ? scene.nodes : [], quantityPx(lp.grid_step, 32), 20, area);
       if (!preSlot) { status('the fixed page is full — there is no room for a copy; enlarge the page or switch the size preset to content'); return; }
       nudged = preSlot.nudged || c.clamped; x = preSlot.x; y = preSlot.y;
     }
     guided(() => {
       A.authoring.duplicate(state.ws, state.entry, state.view, def.id);
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       nuid = after.elements.map(n2 => n2.id).filter(u => /_copy\d*$/.test(u)).sort().at(-1) || null;
       if (!nuid) throw Object.assign(new Error('duplicate produced no copy'), { code: 'DDN-T100' });
       if (placeable) {
@@ -4037,7 +4187,7 @@ function buildIconPicker() {
         A.authoring.setProperty(state.ws, state.entry, state.view, state.selected, 'x_icon', { library: i.library, icon: i.icon });
         els.iconPopup.hidden = true;
         showSource(state.currentFile);
-        inspector(state.selected, state.ws.resolve(state.entry, state.view), null);
+        inspector(state.selected, toolIR(), null);
         status('icon ' + i.library + '/' + i.icon + ' set on the selected occurrence');
       });
     });
@@ -4076,7 +4226,7 @@ function nodeIdAt(e) {
  * returns null (no clamp). */
 function fixedPageLiveArea() {
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = toolIR(); } catch { ir = null; }
   const pub = ir && ir.view.profiles && ir.view.profiles.publication;
   if (!pub || !pub.size || pub.size === 'content') return null;
   const scene = state.diagram && state.diagram.result && state.diagram.result.scene;
@@ -4123,7 +4273,7 @@ function pinClamped(uid, x, y, w, h) {
   for (let i = 0; ; i++) {
     A.authoring.pin(state.ws, state.entry, state.view, uid, cx, cy);
     try {
-      state.ws.renderSync({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true });
+      renderGuidedPreflight({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true });
       return { x: cx, y: cy, clamped };
     } catch (e) {
       state.ws.undo();
@@ -4173,8 +4323,8 @@ function findFreeSlot(x, y, w, h, pad, nodes, step, rings, area) {
 function placeElement(kind, x, y) {
   guard(() => {
     flush();
-    const ir = state.ws.resolve(state.entry, state.view);
-    const id = freshLocalId(ir.elements.map(n2 => n2.id), kind);
+    const ir = toolIR();
+    const id = freshCreationId(kind,ir);
     const label = (A.kinds.find(k => k.id === kind) || {}).label || kind;
     /* Crash-guard (owner report "adding a second element crashes the
      * designer"): when the page was rendering fine and THIS placement makes
@@ -4202,8 +4352,8 @@ function placeElement(kind, x, y) {
       nudged = preSlot.nudged || c.clamped; x = preSlot.x; y = preSlot.y;
     }
     guided(() => {
-      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: 'New ' + label.toLowerCase(), kind });
-      const after = state.ws.resolve(state.entry, state.view);
+      createElementWithDestination({ id, name: 'New ' + label.toLowerCase(), kind, destination:creationDestination() });
+      const after = toolIR();
       uid = after.elements.map(n2 => n2.id).find(u => u === id || u.endsWith('.' + id)) || id;
       if (placeable) {
         /* Negotiate before pinning: if the drop rect would collide, spiral
@@ -4274,7 +4424,7 @@ function placeElement(kind, x, y) {
  * relation modal and the Link-to chain). */
 function elementKindOf(id) {
   try {
-    const ir = state.ws.resolve(state.entry, state.view);
+    const ir = toolIR();
     const el = ir.elements.find(n => n.id === id) || ir.elements.find(n => n.id.endsWith('.' + id));
     return el ? el.kind : null;
   } catch { return null; }
@@ -4282,12 +4432,12 @@ function elementKindOf(id) {
 function connectElements(from, to, kind, name) {
   guard(() => {
     flush();
-    const ir = state.ws.resolve(state.entry, state.view);
+    const ir = toolIR();
     const id = freshLocalId(ir.relations.map(r => r.id), 'relation');
     const label = (A.relations.find(r => r.id === kind) || {}).label || kind;
     guided(() => {
       A.authoring.addRelation(state.ws, state.entry, state.view, { id, name: name || label, kind, from, to });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       state.selectedRelation = after.relations.map(r => r.id).find(u => u === id || u.endsWith('.' + id)) || id;
       state.selected = null;
       status('connected ' + from + ' → ' + to + ' (' + kind + ') — relation ' + state.selectedRelation);
@@ -4341,8 +4491,9 @@ function resizeWritePreflight(id, props, bounds) {
     }
     let failed = null;
     guard(() => guided(() => {
-      A.authoring.setElementProperties(state.ws, state.entry, state.view, id, cand);
-      try { state.ws.renderSync({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true }); }
+      const occurrence = toolIR().view.occurrences?.elements.some(o => o.id === id);
+      (occurrence ? A.authoring.setOccurrencePresentation : A.authoring.setElementProperties)(state.ws, state.entry, state.view, id, cand);
+      try { renderGuidedPreflight({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true }); }
       catch (e) { state.ws.undo(); failed = e; }
     }));
     if (!failed) return { error: null, props: cand, retreated: i > 0 };
@@ -4559,11 +4710,11 @@ function pasteElement() {
   if (!data) { status('element clipboard is empty'); return; }
   guard(() => {
     flush();
-    const ir = state.ws.resolve(state.entry, state.view);
+    const ir = toolIR();
     const id = freshLocalId(ir.elements.map(n => n.id), data.kind || 'object');
     guided(() => {
       A.authoring.addElement(state.ws, state.entry, state.view, { id, name: data.name + ' (copy)', kind: data.kind || 'object' });
-      const after = state.ws.resolve(state.entry, state.view);
+      const after = toolIR();
       const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id)) || id;
       const props = { ...data.properties };
       delete props.kind;
@@ -4621,7 +4772,7 @@ function applyMultiSelect() {
    * selection without its resize handles (the click-path regression). */
   syncResizeHandles();
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = toolIR(); } catch { ir = null; }
   inspector(state.selected || ids[0], ir, null);
   if (design.pointer && ids.length) {
     if (state.config.drawers.properties !== 'open') setDrawer('properties', 'open', true);
@@ -4762,7 +4913,7 @@ function openInlineEditor(target) {
   if (!canvas) return;
   let current = '';
   try {
-    const ir = state.ws.resolve(state.entry, state.view);
+    const ir = toolIR();
     if (target.what === 'field') {
       const f = ir.elements.flatMap(n => n.fields || []).find(f2 => f2.id === target.uid);
       current = (f && (f.name || f.label)) || '';
@@ -4819,7 +4970,7 @@ function openInlineEditor(target) {
 
 function openInspectorFor(id, relation) {
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = toolIR(); } catch { ir = null; }
   if (relation) { state.selectedRelation = id; state.selected = null; }
   else { state.selected = id; state.selectedRelation = null; state.selectedIds = [id]; }
   inspector(id, ir, relation ? ir && ir.relations.find(r => r.id === id) : null);
@@ -4838,13 +4989,14 @@ function elementCtxEntries(id, gx, gy) {
   const isPinned = (() => {
     try {
       const node = viewSourceNode();
-      return !!(node && (node.children || []).some(x => x.type === 'place' && (() => { try { return state.ws.resolve(x.target, x).uid === id; } catch { return false; } })()));
+      return !!toolIR().view.placements[id]?.at;
     } catch { return false; }
   })();
   return [
-    { head: id },
+    { head: appearanceLabel(id) },
     { label: 'Rename…', title: 'Select and edit the label in the Inspector', fn: () => { openInspectorFor(id, false); status('rename in the Inspector (Meaning tab, Label field)'); } },
-    { label: 'Duplicate', fn: () => guided(() => A.authoring.duplicate(state.ws, state.entry, state.view, id)) },
+    { label: 'Duplicate definition', fn: () => guided(() => A.authoring.duplicate(state.ws, state.entry, state.view, id)) },
+    { label: 'Add another appearance', disabled: !editable, fn: () => guided(() => A.authoring.addOccurrence(state.ws, state.entry, state.view, id)) },
     { label: 'Delete…', title: 'Delete the definition — blocked while references depend on it', fn: () => deleteDefinitionConfirmed(id) },
     { label: 'Hide in this view', fn: () => guided(() => A.authoring.hide(state.ws, state.entry, state.view, id)) },
     '-',
@@ -4859,11 +5011,11 @@ function elementCtxEntries(id, gx, gy) {
 }
 function relationCtxEntries(id, gx, gy) {
   let rel = null, ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); rel = ir.relations.find(r => r.id === id); } catch { rel = null; }
+  try { ir = toolIR(); rel = ir.relations.find(r => r.id === id); } catch { rel = null; }
   const fromKind = rel && elementKindOf(rel.from.element), toKind = rel && elementKindOf(rel.to.element);
   const verbs = fromKind && toKind ? A.legalVerbs(fromKind, toKind) : [];
   const entries = [
-    { head: id },
+    { head: appearanceLabel(id) },
     { label: 'Edit label…', fn: () => { openInspectorFor(id, true); status('edit the label in the Inspector (Meaning tab)'); } },
     { label: 'Cardinality…', title: 'Open the cardinality editor in the Inspector', fn: () => openInspectorFor(id, true) },
     { label: 'Reverse relation', title: 'Swap endpoints and remap the direction-prefixed properties (marks, cardinality bounds, end labels) — one undoable transaction', fn: () => guided(() => { A.authoring.reverseRelation(state.ws, state.entry, state.view, id); status('reversed ' + id + ' — endpoints swapped; marks, cardinality bounds and end labels remapped'); }) },
@@ -4944,7 +5096,7 @@ function linkToStart(id, gx, gy) {
   const sourceKind = elementKindOf(id);
   if (!sourceKind) return;
   const kinds = linkTargetsFor(sourceKind);
-  const ir = state.ws.resolve(state.entry, state.view);
+  const ir = toolIR();
   const shown = new Set(ir.view.selected);
   const existing = ir.elements.filter(n => shown.has(n.id) && n.id !== id && A.legalVerbs(sourceKind, n.kind || '').length);
   const entries = [{ head: 'Link ' + id + ' to…' }];
@@ -4974,7 +5126,7 @@ function linkToVerbMenu(id, target, gx, gy) {
 function linkToCreate(id, target, verb) {
   guard(() => {
     flush();
-    const ir = state.ws.resolve(state.entry, state.view);
+    const ir = toolIR();
     const scene = state.diagram.result && state.diagram.result.scene;
     const g = scene && scene.nodes.find(n => n.id === id);
     const verbLabel = (A.relations.find(r => r.id === verb) || {}).label || verb;
@@ -4984,13 +5136,13 @@ function linkToCreate(id, target, verb) {
       if (target.newKind) {
         const nid = freshLocalId(ir.elements.map(n => n.id), target.newKind);
         const kLabel = (A.kinds.find(k => k.id === target.newKind) || {}).label || target.newKind;
-        A.authoring.addElement(state.ws, state.entry, state.view, { id: nid, name: 'New ' + kLabel.toLowerCase(), kind: target.newKind });
-        const after = state.ws.resolve(state.entry, state.view);
+        createElementWithDestination({ id: nid, name: 'New ' + kLabel.toLowerCase(), kind: target.newKind, destination:creationDestination() });
+        const after = toolIR();
         toId = after.elements.map(n => n.id).find(u => u === nid || u.endsWith('.' + nid)) || nid;
         if (g && graphEditable()) A.authoring.pin(state.ws, state.entry, state.view, toId, g.x + g.w + 120, g.y);
       }
       A.authoring.addRelation(state.ws, state.entry, state.view, { id: rid, name: verbLabel, kind: verb, from: id, to: toId });
-      const after2 = state.ws.resolve(state.entry, state.view);
+      const after2 = toolIR();
       state.selectedRelation = after2.relations.map(r => r.id).find(u => u === rid || u.endsWith('.' + rid)) || rid;
       state.selected = null;
       status('linked ' + id + ' → ' + toId + ' (' + verb + ') in one transaction — auto-layout follows, pins are respected');
@@ -5158,16 +5310,16 @@ const KEEL0 = host.DDNToolKeel;
 const replay = { traces: [], sel: '', idx: 0, timer: null, note: '' };
 function replayScan() {
   if (!state.ws) return { traces: [], diags: [] };
-  const r = DDT.collectTraces(state.ws.getFiles(), (t, n) => A.parse(t, n), state.traceFiles || {}, isCompanionFile);
+  const r = DDT.collectTraces(state.ws.getFiles(), (t, n) => parseSource(t, n), state.traceFiles || {}, isCompanionFile);
   /* Generated traces (Phase C runs) join the picker; they live in the tool,
    * never in source. */
   return { traces: r.traces.concat(state.generatedTraces || []), diags: r.diags };
 }
-function replayNodeFor(key) {
-  const svg = svgEl();
-  if (!svg || !key) return null;
-  const tail = DDT.refTail(key);
-  return svg.querySelector('[data-id$="' + cssString('::' + tail) + '"]') || svg.querySelector('[data-id="' + cssString(tail) + '"]');
+function replayNodesFor(key) {
+  const svg=svgEl();if(!svg||!key)return [];const raw=String(key).replace(/^@/,''),tail=DDT.refTail(key),scene=state.diagram?.result?.scene,ids=new Set();
+  const matches=id=>raw.includes('::')?id===raw:id===tail||id.endsWith('::'+tail);
+  for(const o of scene?.occurrences||[])if(matches(o.source))ids.add(o.occurrence);
+  return [...svg.querySelectorAll('.ddn-node[data-id],.ddn-rel[data-id]')].filter(el=>ids.has(el.getAttribute('data-id'))||matches(el.getAttribute('data-id')));
 }
 function replayClearVisual() {
   const svg = svgEl();
@@ -5185,7 +5337,6 @@ function replaySetActive(el) {
 function replayTokenBadge(el, count) {
   const svg = svgEl();
   if (!svg) return;
-  for (const t of svg.querySelectorAll('.ddna-token')) t.remove();
   if (!el || !el.getBBox) return;
   const b = el.getBBox(), g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   g.setAttribute('class', 'ddna-token');
@@ -5219,20 +5370,19 @@ function replayApplyVisual(e) {
   if (!svg) return;
   for (const el of svg.querySelectorAll('.ddna-flash')) el.classList.remove('ddna-flash');
   const ref = (e.state && e.state.at) || (e.instance && e.instance[0]);
-  const el = replayNodeFor(ref) || (e.state && e.state.message && replayNodeFor(e.state.message));
-  if (el) {
-    replaySetActive(el);
-    if (e.stepKind === 'node-firing') replayTokenBadge(el, 1); /* EM-1 token position */
-  }
-  if (e.state && e.state.values) for (const [r, label] of Object.entries(e.state.values)) replayValueLabel(replayNodeFor(r), label);
-  if (e.choices && e.choices.notTaken) { const nt = replayNodeFor(e.choices.notTaken); if (nt) nt.classList.add('ddna-flash'); }
+  let targets=replayNodesFor(ref);if(!targets.length&&e.state?.message)targets=replayNodesFor(e.state.message);
+  for(const prev of svg.querySelectorAll('.ddna-active')){prev.classList.remove('ddna-active');prev.classList.add('ddna-done');}
+  for(const t of svg.querySelectorAll('.ddna-token'))t.remove();
+  for(const el of targets){el.classList.remove('ddna-done');el.classList.add('ddna-active');if(e.stepKind==='node-firing')replayTokenBadge(el,1);}
+  if(e.state?.values)for(const [r,label]of Object.entries(e.state.values))for(const el of replayNodesFor(r))replayValueLabel(el,label);
+  if(e.choices?.notTaken)for(const el of replayNodesFor(e.choices.notTaken))el.classList.add('ddna-flash');
   /* OT-033: verdicts render as recorded (three-valued where the family
    * defines them); the tool never invents one. */
   if (e.verdict !== undefined) {
     const pass = /^(valid|compatible|deterministic)/.test(String(e.verdict));
     const cls = pass ? 'ddna-pass' : 'ddna-fail';
-    const targets = el ? [el] : [...svg.querySelectorAll('.ddn-rel[data-id]')];
-    for (const t of targets) t.classList.add(cls);
+    const verdictTargets = targets.length ? targets : [...svg.querySelectorAll('.ddn-rel[data-id]')];
+    for (const t of verdictTargets) t.classList.add(cls);
   }
 }
 function replayAppendRow(e) {
@@ -5301,12 +5451,37 @@ els.replaySource.addEventListener('change', () => guard(() => { replay.sel = els
  * skips with DDN-A005 (never a silent stub, never a crash). */
 const DDE = host.DDNToolDdnaEngine;
 state.generatedTraces = [];
+document.getElementById('ddn-create-rules').addEventListener('click',()=>guard(()=>{
+ if(!state.config.design)throw Error('Rule authoring requires design mode');flush();
+ const ir=state.ws.resolve(state.entry,state.view),node=ir.elements.find(n=>n.id===sourceIdentity(state.selected));if(!node)throw Error('Select an element for the initial decision target');
+ const files=state.ws.getFiles(),doc=parseSource(files[node.source.file],node.source.file),section=(doc.sections||[doc]).find(sec=>sec.declarations.some(d=>d.start<=node.source.start&&d.end>=node.source.end));
+ const target=section.module+'::'+node.ref,base=state.entry.replace(/\.ddn$/,'');let file=base+'.rules.ddna',i=2;while(files[file]!==undefined)file=base+'.rules'+(i++)+'.ddna';
+ const modules=new Set();for(const [name,text]of Object.entries(files))if(/\.ddna?(?:\.ddn)?$/.test(name))for(const sec of parseSource(text,name).sections||[])modules.add(sec.module);let mod='decision_rules',j=2;while(modules.has(mod))mod='decision_rules_'+j++;
+ const profile={name:'ddna.em2.dag-l0@1',replay:'verified',inputs:[],nodes:[{id:'decision1',target,expr:'expression1'}]},expression={id:'expression1',language:'keel-l0@1',body:'0'},version=parseSource(files[state.entry],state.entry).version;
+ const text='ddn '+JSON.stringify(version)+';\nmodule '+JSON.stringify(mod)+';\ndata automation { object profile {x_profile:'+A.authoring.value(profile)+';} object expression {x_keel:'+A.authoring.value(expression)+';} }\n';
+ const baseDoc=parseSource(files[state.entry],state.entry),taken=new Set(baseDoc.declarations.map(n=>n.id));let name='decision_rules',k=2;while(taken.has(name))name='decision_rules_'+k++;
+ const refs=[file,...(node.source.file===state.entry?[]:[node.source.file])].map(path=>A.relative(state.entry,path));
+ guided(()=>applyInspectorOperations([{type:'files',changes:{[file]:text,[state.entry]:files[state.entry]+'\narchitecture '+name+' {files:'+A.authoring.value(refs)+';}\n'}}]));
+ refreshAnimation();document.getElementById('ddn-edit-rules').click();
+}));
+document.getElementById('ddn-edit-rules').addEventListener('click',()=>guard(()=>{
+ if(!state.config.design){status('Rule editing is available in design mode.');return;}
+ const companion=ddnaActiveCompanion(),ctx=ddnaCompanionCtx(companion),root=document.getElementById('ddn-rule-editor');
+ if(!host.DDNToolDeclarative.supports(ctx.features.profile?.name)){status('Visual rule editing requires a bounded L0 graph or table companion.');return;}
+ const revision=state.ws.revision;root.hidden=false;
+ host.DDNToolRules.render(root,ctx.features,features=>{
+  if(state.ws.revision!==revision)throw toolError('LIVE030','Source changed; reopen the rule editor');
+  const inputs=Object.fromEntries(features.profile.inputs.map(k=>[k,null]));host.DDNToolDeclarative.compile(features,ctx.data,inputs);
+  const text=host.DDNToolRules.rewrite(state.ws.getFiles()[companion],features,parseSource,A.lex,A.authoring.value);
+  guided(()=>applyInspectorOperations([{type:'files',changes:{[companion]:text}}]));root.hidden=true;state.generatedTraces=[];state.execLast=null;els.execDownload.hidden=true;refreshAnimation();
+ });
+}));
 function ddnaCompanionCtx(companionName) {
   const files = state.ws.getFiles();
-  const containers = architectureContainers(files, (t, n) => A.parse(t, n));
+  const containers = architectureContainers(files, (t, n) => parseSource(t, n));
   const features = { profile: null, keel: [] };
   try {
-    const doc = A.parse(files[companionName], companionName);
+    const doc = parseSource(files[companionName], companionName);
     const walk = n => {
       const pr = n.props || {};
       if (pr.x_profile) features.profile = { id: n.id, ...pr.x_profile };
@@ -5316,17 +5491,18 @@ function ddnaCompanionCtx(companionName) {
     for (const d of doc.declarations || []) walk(d);
   } catch { /* companion parse errors are reported by the core path */ }
   /* Above-ceiling KEEL languages never evaluate (DDN-A005, OT-052). */
-  features.keel = features.keel.filter(k => KEEL0.tierAvailable(k.language));
+  if(DDE.classifyProfile(features.profile).engine!=='em2')features.keel = features.keel.filter(k => KEEL0.tierAvailable(k.language));
   const data = { objects: [], relations: [] };
   for (const base of servedBases(companionName, containers, files)) {
     let doc = null;
-    try { doc = A.parse(files[base], base); } catch { continue; }
-    const walk = n => {
-      if (n.type === 'object') data.objects.push(n);
+    try { doc = parseSource(files[base], base); } catch { continue; }
+    const walk = (n,mod,path) => {
+      const key=path?(path+'.'+n.id):n.id;
+      if (n.type === 'object') data.objects.push({...n,ddnaKey:mod+'::'+key});
       if (n.type === 'relation') data.relations.push(n);
-      for (const c of n.children || []) walk(c);
+      for (const c of n.children || []) walk(c,mod,key);
     };
-    for (const d of doc.declarations || []) if (d.type === 'data') walk(d);
+    for(const section of doc.sections||[{module:doc.module,declarations:doc.declarations}])for (const d of section.declarations || []) if (d.type === 'data') walk(d,section.module,'');
   }
   return { features, data };
 }
@@ -5334,11 +5510,12 @@ function ddnaActiveCompanion() {
   const files = state.ws ? state.ws.getFiles() : {};
   const companions = Object.keys(files).filter(n => isCompanionFile(n, files[n]));
   if (!companions.length) return null;
-  const containers = architectureContainers(files, (t, n) => A.parse(t, n));
+  const containers = architectureContainers(files, (t, n) => parseSource(t, n));
   /* Prefer the companion serving the current view's file. */
   return companions.find(c => servedBases(c, containers, files).includes(state.entry)) || companions[0];
 }
 function refreshExec() {
+  document.getElementById('ddn-create-rules').hidden=!state.config.design;
   const comp = state.ws ? ddnaActiveCompanion() : null;
   if (!comp) { els.exec.hidden = true; return; }
   const { features } = ddnaCompanionCtx(comp);
@@ -5369,7 +5546,7 @@ els.execRun.addEventListener('click', () => guard(() => {
   }
   const run = DDE.runEngine(engineId, { features, data, inputs, clock: DDE.makeClock() },
     { companion: comp, base: state.entry });
-  if (run.error) { els.execStatus.textContent = run.error + ' — no engine installed for this class'; return; }
+  if (run.error) { els.execStatus.textContent = run.error + ' — ' + (run.message||'no engine installed for this class'); return; }
   /* Shape-validate the generated trace with the shared Phase B validator —
    * generation and replay share one record model (OT-022). */
   const check = DDT.validateTraceDocument(JSON.stringify(run.doc), 'generated');
@@ -5390,7 +5567,7 @@ els.execRun.addEventListener('click', () => guard(() => {
 }));
 els.execDownload.addEventListener('click', () => guard(() => {
   if (!state.execLast) return;
-  A.io.download((state.execLast.companion || 'trace').replace(/\.ddn$/, '') + '.ddnatrace.json', JSON.stringify(state.execLast, null, 2), 'application/json');
+  A.io.download((state.execLast.companion || 'trace').replace(/\.ddna?(?:\.ddn)?$/, '') + '.ddnatrace.json', JSON.stringify(state.execLast, null, 2), 'application/json');
   status('downloaded the generated trace sidecar — drop it next to the companion to replay it from disk');
 }));
 /* OT-032/A007: a verified-mode trace is re-run against its engine at
@@ -5402,9 +5579,16 @@ function replayVerifiedCheck() {
   const comp = t.companion;
   const { features, data } = ddnaCompanionCtx(comp);
   const cls = features.profile ? DDE.classifyProfile(features.profile) : {};
+  document.getElementById('ddn-create-rules').hidden=!state.config.design;
   if (!cls.engine) { replay.note = 'verified replay: no engine for this class (DDN-A006) — replaying recorded events verbatim'; replayStatus(); return; }
-  const fresh = DDE.runEngine(cls.engine, { features, data, inputs: {}, clock: DDE.makeClock() }, { companion: comp, base: state.entry });
-  const verdict = DDE.verifyReplay(t.events, () => fresh.events);
+  let verdict;
+  if(cls.engine==='em2')verdict=DDE.verifyDeclarativeTrace(t.doc,{features,data,clock:DDE.makeClock()},{companion:comp,base:state.entry});
+  else {
+    const fresh = DDE.runEngine(cls.engine, { features, data, inputs: {}, clock: DDE.makeClock() }, { companion: comp, base: state.entry });
+    if(fresh.error||fresh.budget.exceeded){replay.note=(fresh.error||'DDN-A004')+': verified replay could not recompute a complete trace';replayStatus();return;}
+    verdict=DDE.verifyReplay(t.events,()=>fresh.events);
+  }
+  if(verdict.message){replay.note='DDN-A007: '+verdict.message;replayStatus();return;}
   if (verdict.diverged) {
     replay.note = 'DDN-A007: verified replay diverged at event seq ' + verdict.seq + ' — recorded ' + String(verdict.got).slice(0, 80);
     status('DDN-A007: verified replay diverged from recomputation at event ' + verdict.seq);
@@ -5433,7 +5617,7 @@ function catalogueClosure(file) {
     if (Object.prototype.hasOwnProperty.call(out, n)) return;
     if (!Object.prototype.hasOwnProperty.call(DATA.files, n)) throw new Error('Missing example dependency: ' + n);
     out[n] = DATA.files[n];
-    for (const imp of A.parse(out[n], n).imports) load(A.resolvePath(n, imp.path));
+    for (const imp of parseSource(out[n], n).imports) load(A.resolvePath(n, imp.path));
   };
   load(file);
   return out;
@@ -5450,6 +5634,24 @@ function updateHistory() {
   els.redo.disabled = !h || !h.canRedo;
 }
 
+function refreshDiffChoices(){
+ const views=[];
+ for(const [file,text] of Object.entries(state.ws?.getFiles()||{})){if(!file.endsWith('.ddn'))continue;const doc=parseSource(text,file);for(const section of doc.sections||[{module:doc.module,declarations:doc.declarations}])for(const v of section.declarations||[])if(v.type==='view'&&!v.props.diff)views.push({file,module:section.module,view:v.id,primary:section.module===doc.module});}
+ for(const name of ['before','after']){const select=document.getElementById('ddn-diff-'+name),old=select.value;select.replaceChildren(...views.map(v=>new Option(v.file+' / '+v.module+'::'+v.view,JSON.stringify(v))));if([...select.options].some(o=>o.value===old))select.value=old;else if(name==='after'&&select.options.length>1)select.selectedIndex=1;}
+}
+document.getElementById('ddn-diff-refresh').addEventListener('click',()=>guard(refreshDiffChoices));
+document.getElementById('ddn-diff-create').addEventListener('click',()=>guard(()=>{
+ if(!state.config.design)throw Error('Comparison authoring requires design mode');flush();
+ const before=JSON.parse(document.getElementById('ddn-diff-before').value),after=JSON.parse(document.getElementById('ddn-diff-after').value),file=document.getElementById('ddn-diff-file').value.trim();A.pathChecked(file);
+ if(!file.endsWith('.ddn')||Object.hasOwn(state.ws.getFiles(),file))throw Error('Choose a new .ddn workspace file');
+ if(before.file===after.file&&before.module===after.module&&before.view===after.view)throw Error('Choose two different views');
+ const modules=new Set();for(const [f,t]of Object.entries(state.ws.getFiles()))if(f.endsWith('.ddn'))for(const sec of parseSource(t,f).sections||[])modules.add(sec.module);
+ let mod='comparison',i=2;while(modules.has(mod))mod='comparison_'+i++;
+ const ref=(alias,v)=>alias+'.'+(v.primary?'':v.module+'.')+v.view;
+ const source='ddn "0.7";\nimport '+JSON.stringify(A.relative(file,before.file))+' as before;\nimport '+JSON.stringify(A.relative(file,after.file))+' as after;\nmodule '+JSON.stringify(mod)+';\nview comparison { diff: [@'+ref('before',before)+', @'+ref('after',after)+']; diff_scope: '+document.getElementById('ddn-diff-scope').value+'; publication {size:content;fit:none;} }\n';
+ const editor=state.ws.editor(),plan=editor.preview({entry:file,view:'comparison',operations:[{type:'files',changes:{[file]:source}}]});try{editor.previewLayout(plan);editor.apply(plan);}catch(e){editor.cancel(plan);throw e;}
+ state.entry=file;state.view='comparison';entriesUI('comparison');mount();showSource(file);updateHistory();status('Comparison view created — undo removes the file');
+}));
 function entriesUI(preferredView) {
   const list = viewListFrom(state.ws.entries());
   state.viewList = list;
@@ -5490,7 +5692,7 @@ els.projectionKind.addEventListener('change', () => guard(() =>
   guided(() => A.authoring.setViewProfile(state.ws, state.entry, state.view, { projection: { kind: els.projectionKind.value } }))));
 function syncViewControls() {
   let ir = null;
-  try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+  try { ir = toolIR(); } catch { ir = null; }
   els.viewKind.value = (ir && ir.view.kind) || '';
   const proj = (ir && ir.view.profiles.projection) || { kind: 'graph' };
   els.projectionKind.value = PROJECTION_KINDS.includes(proj.kind) ? proj.kind : 'graph';
@@ -5538,7 +5740,7 @@ function refOwnerFiles(viewText) {
 }
 function newViewFromCurrentData() {
   flush();
-  const ir = state.ws.resolve(state.entry, state.view);
+  const ir = toolIR();
   const vid = prompt('New view id (snake_case)', state.view + '_2');  if (!vid) return;
   if (!/^[a-z][a-z0-9_]*$/.test(vid)) throw new Error('View id must be snake_case (got ' + vid + ')');
   const proj = (prompt('Projection kind — ' + PROJECTION_KINDS.join(', '), 'graph') || 'graph').trim();
@@ -5582,7 +5784,7 @@ function newViewFromCurrentData() {
   if (Object.prototype.hasOwnProperty.call(files, destFile)) {
     const text = files[destFile];
     /* Duplicate view id in the destination file is a hard no. */
-    if (A.parse(text, destFile).declarations.some(d => d.type === 'view' && d.id === vid)) throw new Error('view ' + vid + ' already exists in ' + destFile);
+    if (parseSource(text, destFile).declarations.some(d => d.type === 'view' && d.id === vid)) throw new Error('view ' + vid + ' already exists in ' + destFile);
     state.ws.applyEdits([{ file: destFile, start: text.length, end: text.length, text: '\n' + decl }], { expectedRevision: state.ws.revision });
   } else {
     if (!/^[a-z0-9][a-z0-9-]*(\/[a-z0-9][a-z0-9-]*)*\.ddn$/.test(destFile)) throw new Error('Naming convention: kebab-case .ddn path (got ' + destFile + ')');
@@ -5617,7 +5819,7 @@ els.viewNew.addEventListener('click', () => guard(() => newViewFromCurrentData()
  * no views are labelled data files, not errors. */
 function fileRoleSummary(name) {
   try {
-    const doc = A.parse(state.ws.getFiles()[name], name);
+    const doc = parseSource(state.ws.getFiles()[name], name);
     const views = doc.declarations.filter(d => d.type === 'view');
     const elements = doc.declarations.filter(d => d.type === 'object' || d.type === 'relation').length;
     const datas = doc.declarations.filter(d => d.type === 'data').length;
@@ -5641,7 +5843,7 @@ function filesUI() {
   /* DDNA-OT-010: companions group under the base file(s) they serve (the
    * architecture containers that name them), labelled, with automation
    * facts in the role summary. Orphan companions list at the root. */
-  const containers = architectureContainers(fs, (t, n) => A.parse(t, n));
+  const containers = architectureContainers(fs, (t, n) => parseSource(t, n));
   const companions = new Set(Object.keys(fs).filter(n => isCompanionFile(n, fs[n])));
   const companionsOf = {};
   for (const c of companions) for (const b of servedBases(c, containers, fs)) (companionsOf[b] = companionsOf[b] || []).push(c);
@@ -5733,7 +5935,7 @@ function filesUI() {
     chip.className = 'ddn-tree-role';
     chip.dataset.role = 'companion';
     chip.textContent = 'ddna companion · automation';
-    const f = companionFacts(fs[name], (t, n) => A.parse(t, n));
+    const f = companionFacts(fs[name], (t, n) => parseSource(t, n));
     const rs = document.createElement('span');
     rs.className = 'ddn-tree-role';
     const parts = [];
@@ -5778,6 +5980,7 @@ function filesUI() {
 }
 
 function showSource(file, range) {
+  cancelSourceReview();
   flush();
   const fs = state.ws.getFiles();
   if (!Object.prototype.hasOwnProperty.call(fs, file)) return;
@@ -5794,6 +5997,28 @@ function showSource(file, range) {
   }
   filesUI();
 }
+// A preview is isolated from the live workspace. Raw Apply remains available
+// for retaining source text that is not yet syntactically valid.
+let sourceReview=null;
+function cancelSourceReview(){if(sourceReview)sourceReview.editor.cancel(sourceReview.plan);sourceReview=null;$('ddn-edit-preview').hidden=true;$('ddn-edit-picture').removeAttribute('srcdoc');}
+$('ddn-preview-edit').addEventListener('click',()=>guard(()=>{
+ clearTimeout(timer);cancelSourceReview();$('ddn-apply-preview').disabled=false;
+ const editor=state.ws.editor(),plan=editor.preview({entry:state.entry,view:state.view,label:'Apply source preview',operations:[{type:'files',changes:{[state.currentFile]:els.source.value}}]});
+ const picture=editor.previewLayout(plan);
+  $('ddn-edit-picture').hidden=!picture.svg;
+  if(picture.svg)$('ddn-edit-picture').srcdoc=picture.svg;
+  $('ddn-edit-summary').textContent=[plan.status==='incomplete'?'Incomplete diagram — draft only':'Validation passed',plan.changes.length+' file(s) changed; '+plan.views.length+' view(s) checked',...plan.changes.map(c=>c.file),...plan.diagnostics.map(d=>d.severity+' '+d.code+': '+d.message),...(!picture.svg?['No draft picture is available for this projection. Continue editing its source or structured sheet.']:[])].join('\n');
+  sourceReview={editor,plan,file:state.currentFile,text:els.source.value};$('ddn-edit-preview').hidden=false;$('ddn-edit-summary').scrollIntoView({block:'nearest'});
+}));
+$('ddn-cancel-preview').addEventListener('click',cancelSourceReview);
+$('ddn-apply-preview').addEventListener('click',()=>guard(()=>{
+ if(!sourceReview)return;
+ if(sourceReview.file!==state.currentFile||sourceReview.text!==els.source.value){cancelSourceReview();throw toolError('LIVE030','The editor buffer changed; preview again.');}
+ sourceReview.editor.apply(sourceReview.plan);state.bufferDirty=false;
+ els.dirty.textContent='In memory · download to save';$('ddn-edit-summary').textContent+='\nApplied — one undo restores the previous files.';
+ $('ddn-apply-preview').disabled=true;sourceReview=null;
+ updateHistory();refreshAfterSourceWrite();
+}));
 function flush() {
   clearTimeout(timer);
   if (state.ws && state.bufferDirty && state.currentFile) {
@@ -5803,6 +6028,7 @@ function flush() {
   }
 }
 els.source.addEventListener('input', () => {
+  cancelSourceReview();
   state.bufferDirty = true;
   els.dirty.textContent = 'Unapplied edits';
   clearTimeout(timer);
@@ -5885,23 +6111,23 @@ function collectDiagnostics() {
   const files = state.ws ? state.ws.getFiles() : {};
   const out = [];
   for (const [name, text] of Object.entries(files)) {
-    try { A.parse(text, name); }
+    try { parseSource(text, name); }
     catch (e) { out.push(stableDiagnostic({ code: e && e.code, message: e && e.message || String(e), file: name, offset: e && (e.offset !== undefined ? e.offset : e.start) }, files)); }
   }
   const result = state.diagram && state.diagram.result;
   for (const d of (result && result.diagnostics) || []) out.push(stableDiagnostic(d, files, state.view));
   /* DDNA-OT-013: companion association validity (DDN-A### family) is computed
    * at the tool layer and surfaced through the same diagnostics drawer. */
-  for (const d of ddnaDiagnostics(files, (t, n) => A.parse(t, n))) out.push(d);
+  for (const d of ddnaDiagnostics(files, (t, n) => parseSource(t, n))) out.push(d);
   /* Phase B (OT-020/021/022 + §13.6): trace shape (A002), identity coverage
    * (A003) against the served bases, display-limit truncation (A004). */
   if (state.ws) {
-    const containers = architectureContainers(files, (t, n) => A.parse(t, n));
+    const containers = architectureContainers(files, (t, n) => parseSource(t, n));
     const baseIdsFor = trace => {
       const ids = [];
       for (const base of servedBases(trace.companion, containers, files)) {
         let doc = null;
-        try { doc = A.parse(files[base], base); } catch { continue; }
+        try { doc = parseSource(files[base], base); } catch { continue; }
         const walk = (n, path) => {
           if (n.type === 'object' || n.type === 'relation') ids.push(path + '.' + n.id);
           for (const c of n.children || []) walk(c, path + '.' + n.id);
@@ -5910,10 +6136,10 @@ function collectDiagnostics() {
       }
       return ids;
     };
-    for (const d of DDT.traceDiagnostics(files, (t, n) => A.parse(t, n), state.traceFiles || {}, isCompanionFile, baseIdsFor)) out.push(d);
+    for (const d of DDT.traceDiagnostics(files, (t, n) => parseSource(t, n), state.traceFiles || {}, isCompanionFile, baseIdsFor)) out.push(d);
     /* Phase C (§13.4/§13.5): unavailable engine classes (A006) and
      * above-ceiling KEEL languages (A005) degrade at load, never crash. */
-    for (const d of DDE.engineDiagnostics(files, (t, n) => A.parse(t, n), isCompanionFile)) out.push(d);
+    for (const d of DDE.engineDiagnostics(files, (t, n) => parseSource(t, n), isCompanionFile)) out.push(d);
   }
   return out;
 }
@@ -5948,6 +6174,9 @@ function diagnosticsUI() {
 }
 
 function load(files, entry, view, options) {
+  documentLoad?.abort();
+  state.generatedTraces=[];state.execLast=null;els.execDownload.hidden=true;
+  cancelSourceReview();
   flush();
   if (state.diagram) state.diagram.destroy();
   if (unsubscribe) unsubscribe();
@@ -6121,7 +6350,7 @@ els.fileNewData.addEventListener('click', () => guard(() => {
   const m = 'user.' + path.replace(/\.ddn$/i, '').replace(/[^A-Za-z0-9]/g, '_');
   state.ws.updateFiles({ [path]: 'ddn "0.6";\nmodule "' + m + '";\n\ndata model {\n    // Add definitions here.\n}\n' });
   /* Parse-clean guarantee before the import offer. */
-  A.parse(state.ws.getFiles()[path], path);
+  parseSource(state.ws.getFiles()[path], path);
   const importer = state.currentFile, line = importLineFor(importer, path);
   if (line && importer !== path && confirm('Insert `' + line + '` into ' + importer + ' so views there can use these declarations?')) {
     const text = state.ws.getFiles()[importer];
@@ -6140,7 +6369,7 @@ els.fileNewData.addEventListener('click', () => guard(() => {
  * file renders immediately (preflighted — a failed skeleton is undone). */
 els.fileNewView.addEventListener('click', () => guard(() => {
   flush();
-  const ir = state.ws.resolve(state.entry, state.view);
+  const ir = toolIR();
   const existing = state.ws.getFiles();
   const path = prompt('New VIEW file (kebab-case .ddn)', 'views/' + state.view + '-views.ddn');
   if (!path) return;
@@ -6190,7 +6419,7 @@ els.fileDelete.addEventListener('click', () => guard(() => {
   /* DDNA-OT-012: deleting a companion names its served bases (the blast
    * radius of the association), per the WW-006 write-target rules. */
   if (isCompanionFile(state.currentFile, state.ws.getFiles()[state.currentFile])) {
-    const bases = servedBases(state.currentFile, architectureContainers(state.ws.getFiles(), (t, n) => A.parse(t, n)), state.ws.getFiles());
+    const bases = servedBases(state.currentFile, architectureContainers(state.ws.getFiles(), (t, n) => parseSource(t, n)), state.ws.getFiles());
     if (!confirm('Delete ddna companion ' + state.currentFile + '? It serves ' + (bases.length ? bases.join(', ') : 'no base files') + '.')) return;
   } else if (!confirm('Delete ' + state.currentFile + ' from this in-memory workspace?')) return;
   state.ws.removeFile(state.currentFile, { force: true });
@@ -6309,6 +6538,17 @@ function exportSvgString() {
   return '<?xml version="1.0" encoding="UTF-8"?>\n' +
     exportSvgWithOverrides(state.diagram.exportSVG(), overrideCss(state.presentation, null));
 }
+var tileSettingsWorkspace,tileSettingsRevision,tileSettingsView;
+function refreshTileSettings(){
+ if(!state.ws||tileSettingsWorkspace===state.ws&&tileSettingsRevision===state.ws.revision&&tileSettingsView===state.view)return;
+ let tiles;try{tiles=state.ws.resolve(state.entry,state.view).view.profiles.publication.tiles||{};}catch{return;}
+ for(const [key,fallback]of [['width',800],['height',600],['overlap',0]])document.getElementById('ddn-tile-'+key).value=tiles[key]??fallback;
+ tileSettingsWorkspace=state.ws;tileSettingsRevision=state.ws.revision;tileSettingsView=state.view;
+}
+function tileOptions(){return Object.fromEntries(['width','height','overlap'].map(key=>[key,Number(document.getElementById('ddn-tile-'+key).value)]));}
+function exportTiles(){const scene=state.diagram?.result?.scene;if(!scene)throw Error('Render a diagram before exporting pages');return host.DDNToolTiles.render(exportSvgString(),scene,tileOptions());}
+document.getElementById('ddn-tile-save').addEventListener('click',()=>guard(()=>{if(!state.config.design)throw Error('Saving page settings requires design mode');guided(()=>applyInspectorOperations([{type:'authoring',method:'setViewProfile',args:[{publication:{tiles:tileOptions()}}]}]));}));
+document.getElementById('ddn-export-tiles').addEventListener('click',()=>guard(()=>{const result=exportTiles();A.io.download('diagram-pages.zip',A.io.zipStore(result.files),'application/zip');status('Exported '+result.publication.pages.length+' SVG pages with continuation links');}));
 function download(name, href) {
   const a = document.createElement('a');
   a.href = href; a.download = name;
@@ -6401,7 +6641,7 @@ function restoreToolPresentation() {
   try {
     const files = state.ws && state.ws.getFiles();
     if (!files || !Object.prototype.hasOwnProperty.call(files, state.entry)) return;
-    const v = A.parse(files[state.entry], state.entry).declarations.find(n => n.type === 'view' && n.id === state.view);
+    const v = parseSource(files[state.entry], state.entry).declarations.find(n => n.type === 'view' && n.id === state.view);
     const rec = v && v.props && v.props.x_tool_presentation;
     if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return;
     for (const k of ['kindColours', 'verbColours', 'objectColours', 'typography', 'relationColours', 'lineStyles', 'kindOutlines', 'objectOutlines'])
@@ -6414,13 +6654,23 @@ function restoreToolPresentation() {
  * { revision, entry, view }. Failures reject with a coded error (LIVE010/011
  * for the map contract, DDN-T1xx for entry/view problems, the parser/builder
  * codes for broken source). Works in every mode, worker on or off. */
-function setSource(source, opts) {
+var documentLoader=null,documentLoad=null;
+function setDocumentLoader(callback){
+ if(callback!==null&&typeof callback!=='function')throw toolError('DDN-T108','Document loader must be a function or null');
+ documentLoad?.abort();documentLoader=callback;
+}
+async function setSource(source, opts) {
+ documentLoad?.abort();const controller=new AbortController();documentLoad=controller;
+ const beforeWorkspace=state.ws,beforeRevision=state.ws?.revision;
   let files, pick;
   try {
     if (typeof source === 'string') files = { 'main.ddn': source };
     else files = source;
     A.filesChecked(files);
-    pick = pickEntryView(files, opts, (t, n) => A.parse(t, n));
+    if(documentLoader){files=await host.DDNToolDocuments.resolveDocuments(files,{load:documentLoader,parse:parseSource,read:A.documentFormats.read,signal:controller.signal});
+      if(controller.signal.aborted||state.ws!==beforeWorkspace||state.ws?.revision!==beforeRevision)throw toolError('DDN-T109','Workspace changed while loading documents');
+      A.filesChecked(files);}
+    pick = pickEntryView(files, opts, (t, n) => parseSource(t, n));
   } catch (e) { return Promise.reject(coded(e)); }
   state.catalogueIndex = -1;
   try { load(files, pick.entry, pick.view); } catch (e) { return Promise.reject(coded(e)); }
@@ -6448,13 +6698,14 @@ function getSource(opts) {
     /* Verb-keyed routing expands to one route member per visible relation of
      * that kind (apply() semantics); unknown keys are dropped, never fatal. */
     let ir = null;
-    try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+    try { ir = toolIR(); } catch { ir = null; }
     const routes = {};
     if (ir) {
-      const byId = new Set(ir.relations.map(r => r.id));
+      const visibleRelations = ir.relations.filter(r => ir.view.relations.includes(r.id));
+      const byId = new Set(visibleRelations.map(r => r.id));
       for (const [key, hint] of Object.entries(writes.routes)) {
         if (byId.has(key)) { routes[key] = hint; continue; }
-        for (const r of ir.relations) if (r.kind === key) routes[r.id] = hint;
+        for (const r of visibleRelations) if (r.kind === key) routes[r.id] = hint;
       }
     }
     A.authoring.setViewProfile(state.ws, state.entry, state.view, writes.groups,
@@ -6480,9 +6731,10 @@ function loadFromSrc(src) {
   srcImportClosure(src, host.location.href,
     url => fetch(url),
     (text, name) => {
-        const ast = A.parse(text, name), out = ast.imports.map(imp => imp.path);
+        const ast = parseSource(text, name), out = ast.imports.map(imp => imp.path);
         /* B1-090: architecture bases and x_link files join the fetch closure. */
         const walk = n => {
+          if (n.group && n.type === 'document' && n.props.file) out.push(n.props.file);
           if (n.type === 'architecture') for (const f of (n.props && n.props.files) || []) out.push(f);
           if (n.props && n.props.x_link && n.props.x_link.file) out.push(n.props.x_link.file);
           for (const c of n.children || []) walk(c);
@@ -6521,9 +6773,10 @@ function boot() {
       srcImportClosure(entry, host.location.href,
         url => fetch(url),
         (text, name) => {
-        const ast = A.parse(text, name), out = ast.imports.map(imp => imp.path);
+        const ast = parseSource(text, name), out = ast.imports.map(imp => imp.path);
         /* B1-090: architecture bases and x_link files join the fetch closure. */
         const walk = n => {
+          if (n.group && n.type === 'document' && n.props.file) out.push(n.props.file);
           if (n.type === 'architecture') for (const f of (n.props && n.props.files) || []) out.push(f);
           if (n.props && n.props.x_link && n.props.x_link.file) out.push(n.props.x_link.file);
           for (const c of n.children || []) walk(c);
@@ -6557,12 +6810,12 @@ function boot() {
 /* Documented test/integration surface; mirrors host.DDNViewer (D7). */
 host.DDNTool = Object.assign({}, pure, {
   loadFiles: (files, entry, view) => load(files, entry, view),
-  setSource, getSource, onSourceChange, offSourceChange,
+  setSource, getSource, onSourceChange, offSourceChange, setDocumentLoader,
   /* DDNA Phase B: host/probe sidecar injection (folder/file open captures
    * them automatically; this is the programmatic channel). */
   addTraceFile: (path, text) => { state.traceFiles[String(path)] = String(text); if (state.diagram) refreshAnimation(); diagnosticsUI(); },
   SOURCE_NOTIFY_DEBOUNCE_MS,
-  loadExample, setFit, zoomStep, applyOverrideCss, exportSvgString, rasterize,
+  loadExample, setFit, zoomStep, applyOverrideCss, exportSvgString, exportTiles, rasterize,
   setDrawer, setToolbar, getDrawerConfig: () => JSON.parse(JSON.stringify(state.config)),
   setOption, resetAppearance,
   setKindTypography: (code, style) => { state.presentation.typography[code] = style; repopulateOverridePanels(); applyOverrideCss(); },

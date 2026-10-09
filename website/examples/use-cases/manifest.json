@@ -35,7 +35,7 @@
         "use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390"
       },
       "semanticHash": "e92ed2f7bf9645c1d07b87f1b1b2d17108a77cadcd8a27b55de9c307fade40db",
-      "svgHash": "26ba41fe076a5156763e59e7f56ba52a93a324181863bce91def48a7f963187d",
+      "svgHash": "1091273fe66be33a574ca043c182c8091116573308c7c43f6611f65d34c74aad",
       "diagnostics": []
     },
     {
@@ -53,7 +53,7 @@
         "use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390"
       },
       "semanticHash": "5f920c18a5c1e30f45e4237fcb14baca3ecb7c8cf771901f0c3c295fa184c5c8",
-      "svgHash": "4c5d19b58dba2df12fb32452be1cbc258ed34b9c72e818e1b40055b03697fc5a",
+      "svgHash": "8f37c1c444c3f3942b9b22f899c3081f8c059c767094027f597e5622f494c308",
       "diagnostics": []
     },
     {
@@ -89,7 +89,7 @@
         "use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390"
       },
       "semanticHash": "5f920c18a5c1e30f45e4237fcb14baca3ecb7c8cf771901f0c3c295fa184c5c8",
-      "svgHash": "0cd7427020f66c7db8ddbfd11320c3bc4cc5d20b1ad2d641b9f71baac3451a9c",
+      "svgHash": "b7f0ece23dfd376e459b119026dc65880f65241daafc776925f80524dffac9dd",
       "diagnostics": []
     },
     {
@@ -108,7 +108,7 @@
         "use-cases/data/sql.ddn": "6ecd1887c105af38666dc5bff3de044c4bf0e4be9fe626872f7b971e685bbd16"
       },
       "semanticHash": "505002fcd73ded90410369f6d3e44bae59ebd9405042f6ab46822e384d23f076",
-      "svgHash": "15286507d74b2e8adb3d4cd6becd9375cad1e512e523842486b5b8612472f643",
+      "svgHash": "2f4772d4eec19f6f712cdb4dcc739e9cab149b196a0cfdc59cee1ecfe4fbff9c",
       "diagnostics": []
     },
     {
@@ -126,7 +126,7 @@
         "use-cases/data/documents.ddn": "4c2d81c0a52b584c4dd605749b7fbf297150b2306ecd028ccc10b54543693d2c"
       },
       "semanticHash": "fd0488ee20129290db786a4783fc8bcb4d866ea846fef2c530458a8c4fcd80a5",
-      "svgHash": "af57f3d41185e1d3191e4a6276ea0e32f486b84e5fdb4309311ff35e6a2b58f4",
+      "svgHash": "6804bd9ccc3a8a147e11cb3d992b2f80e54dc09f5cc9acd2899226594b02bbb3",
       "diagnostics": []
     },
     {
@@ -144,7 +144,7 @@
         "use-cases/data/graph.ddn": "45687e22efdbed1933b113d55e8bce7793a95021d98fe31327842b0ea39ff19d"
       },
       "semanticHash": "d54ba2cdf8f1eb4f94ef8e96769489bb6549b817ae9dcbfab7322391dea73a60",
-      "svgHash": "9157c10293393f2971181f70ad7b1ecfaf934ae64cf974a98a4ce2ca4a443978",
+      "svgHash": "292fe8101fa8f6f396733d1a8c43ea49834a4991573807b9772302edd2f1ab56",
       "diagnostics": []
     },
     {
@@ -162,7 +162,7 @@
         "use-cases/data/keyed.ddn": "02bd72c39779e6bdf307ca24691ea93bc6854715a7c603c75021e1ee59b7245f"
       },
       "semanticHash": "ddeb5f5e3cea5f7ee1c38177c6477df0c1acaa787aae05601bb3a629b18e0533",
-      "svgHash": "febf6d837f60ce20f09b9653c00c47acedcda3632317c2797637774cd1707aa1",
+      "svgHash": "1724612f35d18b2818e515f63a02bab860c46594a5bd5fbe8f8352d748bcb125",
       "diagnostics": []
     },
     {
@@ -180,7 +180,7 @@
         "use-cases/data/keyed.ddn": "02bd72c39779e6bdf307ca24691ea93bc6854715a7c603c75021e1ee59b7245f"
       },
       "semanticHash": "c8d5918d69ee9c21f8c3a0dd0c8a6702f0c232527ed7e9cb56ba0301d0dd6b5d",
-      "svgHash": "8e9d9c489d7f24e4bf71ed82bf1a50d0e89cb9aab252ab1ce9a6af835eff3c88",
+      "svgHash": "d8a2324b96d81bfaa1a99ee936816b1c299856588d3f5c30857d9b11aefeacd8",
       "diagnostics": []
     },
     {
@@ -199,7 +199,7 @@
         "use-cases/data/domains.ddn": "68f4a95de6443faac809849297787a29114e15a96f010d0500afbdd75c27c078"
       },
       "semanticHash": "1c3a6ee5fb041278e4d0fb8812dcb8500d7eb232ee77c9434e9f706860955212",
-      "svgHash": "6decbbb7018254ddab3d2e85d1771642d3985c50c2d61cfcc98f19d8a502272a",
+      "svgHash": "a69027244b757ef6a17825f7cda6ee388409d6ce70c4456937e53dfce53c3a5e",
       "diagnostics": []
     },
     {
@@ -219,7 +219,7 @@
         "use-cases/data/namespace.ddn": "8867da8e37748c8b7488b2c38a08809e0da568dfcca9996fec3bf6efa2a1d651"
       },
       "semanticHash": "774f61e30493ad222175355209b12d384e465af61139c85494dca28dc19deaa8",
-      "svgHash": "182cd66a6d56c070158f3da63154fea2a63e01830688006b6ffb6b4bcd227b61",
+      "svgHash": "291c569bf35833eba9ac68366bcda532c0de487a01d5c16774dc50c53e7d37c1",
       "diagnostics": []
     },
     {
@@ -238,7 +238,7 @@
         "use-cases/data/deployment.ddn": "9d5f2d766a378fbd1727b8715cd4a4f33a9ad9fd0d83dbcfcc6da6167a640921"
       },
       "semanticHash": "048d418c8e285ee256cbd8b9c0f1b6d56ac2ead7c8c345b9e07c28f8871628dc",
-      "svgHash": "15349c11d782c7fd2c0ab089a5c9884d1aafbc5ba7f7eeee4f133bd8b678378a",
+      "svgHash": "b103895dd5a4333639a158b45ecb4f4eb90f290ff4fe739aee8189bad6358b9a",
       "diagnostics": []
     },
     {
@@ -257,7 +257,7 @@
         "use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390"
       },
       "semanticHash": "f478df2513cd7210adf253b72788089979b6af288161f1c99ee1d72e08340271",
-      "svgHash": "371afbc962eeff4b2ec71bbca1f7d1e278e4e09917f8db1b675c8e57e6243fde",
+      "svgHash": "5646b171a4c2cc761a8bff54f1e0269caffcabcd355069301435d6d13cbb821e",
       "diagnostics": []
     },
     {
@@ -276,7 +276,7 @@
         "use-cases/data/flow.ddn": "f4e2973b4dbee0f8a89a5911fc6ae446683bfbe53182e972bf7c766e9b40f773"
       },
       "semanticHash": "5f5943c23fd19201fcfb45ad5b2e7994bc635ff3575a7024cd6e4c605b03f7a0",
-      "svgHash": "52f15a2d5bdfd897ef8c97a0987e1d626105b39f36933d1cd399f8ddd42beca1",
+      "svgHash": "f87051b0e5eac73caf865e8fd11a7d284c7bfb533122eb3fb39c7a6a43ab5dcd",
       "diagnostics": []
     },
     {
@@ -295,7 +295,7 @@
         "use-cases/data/lineage.ddn": "0c8c6c58611bb4826418bf2d9a3583e38695d12bfbeef384d33d91286e6c09fd"
       },
       "semanticHash": "17e97489b237817e1995a322617884ca919a40b76ea377ba9598083787394772",
-      "svgHash": "66a2d9268b89d04680cecc9861898348d6250ad83c978798f9c8630930ed3cc4",
+      "svgHash": "ffcc3f19280fd7fd39a4958ac8e8ac5c76109ad06fc34bc36007dec869013b71",
       "diagnostics": []
     },
     {
@@ -313,7 +313,7 @@
         "use-cases/data/temporal.ddn": "eabe07229c643a1df884648ff7428393e58eed1de4eb9eae04c30e7f2b6543cc"
       },
       "semanticHash": "21477790e96442d806df014439394f5f1d953dbe8e5f732c12572bca6a8b88bf",
-      "svgHash": "471d4a535d7941b87c4e92c6c18729fe28c114ec8bfb1e0bc231475ec3000020",
+      "svgHash": "9a056979509379b69c7c7014df8220e8c56dbe6aefe3ee9c5d439ae546a46a70",
       "diagnostics": []
     },
     {
@@ -331,7 +331,7 @@
         "use-cases/data/warehouse.ddn": "20f686796f1662c4694cc83a0e811e9a5134bafc709feffc3f5d9e0afd7c353a"
       },
       "semanticHash": "49a208d95b2e9bda2242b12731c5448c3de574b353f9ee44b63f6c6bac410c2c",
-      "svgHash": "fa3cf71c8fbdf374f13898b3d60617316c5186f34b110c783c9c1a9534cbd030",
+      "svgHash": "0c10119f00adee4e44125b9a5989dae67370dfc17778adb0f8295b91e79377e0",
       "diagnostics": []
     },
     {
@@ -349,7 +349,7 @@
         "use-cases/data/vectors.ddn": "4396cb18e39df90f6309b1b278085d5255ce30a646fa7ab43811dc3f6f0abfd0"
       },
       "semanticHash": "20b1b62574b05e2bcc25d539504caa3191c81d34500af84e0f113c48ff719f18",
-      "svgHash": "e12bfbd0bf187e32fb6d2c97f28391e93357e27825af6b76befdd76f2acdba34",
+      "svgHash": "e02a47e0e73b52a6655cb9ec8e631a3f547c2617f03597b3aee7733ac3267519",
       "diagnostics": []
     },
     {
@@ -367,7 +367,7 @@
         "use-cases/data/governance.ddn": "2bed1543a70e1ea3d4e80797eb23e9b383c52d6f141c21f58529f220fb5e5d46"
       },
       "semanticHash": "af245376408a1d76750a6a07a4cfaaec1adf684af9e03b19a7ec0f6a66b6c645",
-      "svgHash": "8ccf82f57dd007266a8a80df6da9157fd7159e8742da7ae293a9531d708ba207",
+      "svgHash": "e11f51c67a35e6f8e16e68e15ee610d8605cc698e097ecef434661a3b02c6132",
       "diagnostics": []
     },
     {
@@ -385,7 +385,7 @@
         "use-cases/data/security.ddn": "7611a199987e29896123bf8397fc945ac77eeba099e22d93f49a73ca2c48d4e9"
       },
       "semanticHash": "768971e5adcd649baab4dc7707bf1aef724a00ba28197a10fe2e9afc660842eb",
-      "svgHash": "8de43df2e494c8a1a85e5330a19307686c732d909d5785ea9b43aa371886378a",
+      "svgHash": "57b1c563b100808c692f3ca7959c93ea7b7adb8a93bc86f5da8c0d792ebeb446",
       "diagnostics": []
     },
     {
@@ -403,7 +403,7 @@
         "use-cases/data/recovery.ddn": "38fcd8a8f8fef5c92ba63ef0280c4010de694496eaf2af584290515582b647c9"
       },
       "semanticHash": "0365c478381002d0c897c9bed4afa7fe54f34b14987a592bd783898b87c9d95b",
-      "svgHash": "6e5856dd3e051f9f772c4f87c2d8b3252e9d12c979bf9947ed25bcd8477ca30b",
+      "svgHash": "12527e493f6d474276b73f477b720084bc66b449efc8b2db8db2cdef8fa90b63",
       "diagnostics": []
     },
     {
@@ -421,7 +421,7 @@
         "use-cases/data/migration.ddn": "51829381b56494b2c6a143ff9d46f18643ff377c2dbe79d24f4d52a9e380a7a1"
       },
       "semanticHash": "8aab7dd0cf5eff335fda1140b96d62f80d93a1cfc1abf9832f03cf4632b0e714",
-      "svgHash": "6d9d641ae1b604c17d375225c8cf86ff61a450ca25276d49b7714915d72f8f3b",
+      "svgHash": "28c26eef11103ede8acd6e0d94eb48179637cc08d9ca9955b38c8dc66e90b456",
       "diagnostics": []
     },
     {
@@ -439,7 +439,7 @@
         "use-cases/data/quality.ddn": "17fc0366018f85089b9479e6bcaf0d4b8948912e8c35ccb3b080fcb4b0c96ede"
       },
       "semanticHash": "b6950e18001d82a69a4dfafc85a62c1a523421b73ea07eef9b25d27a67ab49e9",
-      "svgHash": "badf18d4a5edf318a6dcea0911f38d8eec433e0c6bc1d5d7bc8a225eb65a3722",
+      "svgHash": "914cce9398030757fd0c0461c670fb1ec8830d1725724e1eb070a815125171c2",
       "diagnostics": []
     },
     {
@@ -475,7 +475,7 @@
         "use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390"
       },
       "semanticHash": "5f920c18a5c1e30f45e4237fcb14baca3ecb7c8cf771901f0c3c295fa184c5c8",
-      "svgHash": "3f362a0564db814e9def3f58aae80119c316579a67265b826a2b5c12f056c094",
+      "svgHash": "b454de1721d337bc9ec4be1096a5cfbfd08d287c6c1e0dd2ced2731653940aee",
       "diagnostics": []
     },
     {
@@ -493,7 +493,7 @@
         "use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390"
       },
       "semanticHash": "e92ed2f7bf9645c1d07b87f1b1b2d17108a77cadcd8a27b55de9c307fade40db",
-      "svgHash": "d8484fd0f2b99e7762eea48bc9fe609b4a24c18cb9ec28f67dd31e66246830cc",
+      "svgHash": "cd55aa1f2a9687d3df9d9226b281bdf0a3da8045563b0f9c8adbbe9961bd6c39",
       "diagnostics": []
     }
   ]

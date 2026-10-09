@@ -1,0 +1,9 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later. View-local connector attachments. */
+'use strict';const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
+const source='ddn "0.7";module "m";data d {object a {kind:table;fields {f;}}object b {kind:table;}relation r @a -> @b {kind:assoc;}relation member @a.f -> @b {kind:assoc;}}view v {data:[@d];publication {size:content;}}';
+let passed=0,total=0;function test(n,f){total++;try{f();passed++;console.log('PASS',n);}catch(e){process.exitCode=1;console.error('FAIL',n,e.stack);}}
+const make=()=>A.createWorkspace({'m.ddn':source});
+test('attachment side and fraction survive save/read and undo',()=>{const w=make(),editor=w.editor(),p=editor.preview({entry:'m.ddn',view:'v',operations:[{type:'authoring',method:'setViewProfile',args:[{},{routes:{'m::d.r':{source_side:'north',target_side:'south',source_fraction:0.25,target_fraction:0.75}}}]}]});editor.previewLayout(p);editor.apply(p);assert.equal(w.resolve('m.ddn','v').view.routes['m::d.r'].source_fraction,0.25);w.undo();assert.equal(w.getFiles()['m.ddn'],source);w.destroy();});
+test('invalid sides, fractions and member overrides reject before writing',()=>{for(const [id,hint] of [['r',{source_side:'diagonal'}],['r',{source_fraction:1}],['r',{target_fraction:-1}],['member',{source_fraction:0.5}]]){const w=make();assert.throws(()=>A.authoring.setViewProfile(w,'m.ddn','v',{},{routes:{['m::d.'+id]:hint}}),e=>e.code==='DDN-I030');assert.equal(w.getFiles()['m.ddn'],source);w.destroy();}});
+test('unset optional hint values do not serialize undefined tokens',()=>{const w=make();A.authoring.setViewProfile(w,'m.ddn','v',{},{routes:{'m::d.r':{source_side:'west',target_fraction:undefined}}});assert.ok(!w.getFiles()['m.ddn'].includes('undefined'));assert.equal(w.resolve('m.ddn','v').view.routes['m::d.r'].source_side,'west');w.destroy();});
+console.log(`Attachment authoring: ${passed}/${total} passed`);

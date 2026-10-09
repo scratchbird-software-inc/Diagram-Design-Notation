@@ -1,5 +1,7 @@
 # DDN/DDNA 0.9 roadmap — candidate notation extensions
 
+Current work register: [WORK-STATUS.md](WORK-STATUS.md). Unchecked mixed items below have delivered portions but unresolved runtime or interaction work.
+
 Status: candidate list, owner-approved for tracking. Nothing here is committed
 for 0.9 scope until individually ratified. Items dispositioned "0.9" in the
 closure audit (kimi-specification-workarea/ddn-opensource-closure-2026-10-05/02)
@@ -140,20 +142,21 @@ rationale:
       arithmetic (DDN-PJ222); DST durations documented elapsed-time; locale
       date formats refused (nondeterministic); business-day calendars out of
       scope
-- [x] AUD-003 command set remainder (designer) — convertKind + moveField +
-      scope/membership editor + Add-existing shipped (2026-10-07);
-      multi-occurrence BLOCKED on AUD-004 (builder dedupes duplicate select
-      entries this revision — distinct occurrences need the occurrence-contract RFC)
-- [x] AUD-004 versioned occurrence contract (grammar RFC) — DRAFT RFC written
-      as spec ch. 03 amendment (occurrence model, occ qualifier, relation
-      visibility override, uid-at-migration path); deliberately NOT
-      implemented in the runtime
+- [x] AUD-003 graph multi-occurrence commands — Add another appearance,
+      explicit connector copies, independent pin/hide/presentation and shared
+      definition editing (2026-10-09); convertKind, moveField and membership
+      commands retain their existing limits.
+- [x] AUD-004 versioned graph occurrence contract — implemented as the chapter
+      03 dialect-0.6 amendment: qualified references, occurrence IR, routing,
+      source maps, atomic authoring and designer controls. Hidden-endpoint
+      boundary crosses, occurrence-level visual diffs and other projection
+      families remain follow-ups (WORK-STATUS DDN-T20).
 - [x] Canvas multi-select gestures (designer) — pointer tool: ctrl/shift-click toggle + rubber-band on empty canvas (phase 12; headless-verified)
 - [x] Profile-filtered specialized shelves (designer) — the Creator drawer's hamburger swaps palette families from the registry's allowed_in profile/pack tags (display-only, never touches view type); capability filtering on by default (phase 12; headless-verified)
-- [x] Attachment-policy editing + Reverse relation op (designer) — reverseRelation in authoring (endpoint swap + mark/cardinality/endlabel remap, one transaction; double-reverse identity); attachment-policy editing OMITTED: the relation contracts carry no attachment/attachment_policy keys (registry-verified)
-- [x] Sheet residue: matrix row/col selectors + duplicate policy; chart.quality
+- [ ] Attachment-policy editing + Reverse relation op (designer) — reverseRelation in authoring (endpoint swap + mark/cardinality/endlabel remap, one transaction; double-reverse identity); attachment-policy editing OMITTED: the relation contracts carry no attachment/attachment_policy keys (registry-verified)
+- [ ] Sheet residue: matrix row/col selectors + duplicate policy; chart.quality
       series/transform; decision input/output domain editing; timeline drag
-      — timeline start/end already edit per row (phase 6b), ticked as delivered;
+      — timeline start/end edit per row (phase 6b), but this does not establish timeline drag;
       decision outputs add is atomic with rule defaults (new
       authoring.setProjectionDomain, DDN-QD003 interlock)
 - [x] Descriptor fields: priority, batch applicability, destructive-change

@@ -54,7 +54,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 </div></header>
 <div class="gallery-intro">
 <h1>DDN example gallery</h1>
-<p>Full notation coverage for Diagram Design Notation 0.8.0: 150 installed profiles across 12 projection kinds, 93 variation renders, and the complete example corpus (141 example files) — 384 SVGs, each produced by the reference CLI render path. This page is also the examples index: every runnable <code>.ddn</code> source the project ships is rendered below with its explanation, source and deep links.</p>
+<p>Full notation coverage for Diagram Design Notation 0.8.0: 151 installed profiles across 12 projection kinds, 93 variation renders, and the complete example corpus (141 example files) — 385 SVGs, each produced by the reference CLI render path. This page is also the examples index: every runnable <code>.ddn</code> source the project ships is rendered below with its explanation, source and deep links.</p>
 <p>Static page: every diagram is a pre-rendered SVG; no runtime is inlined, so this page works from <code>file://</code>. Open <strong>Explanation, DDN source &amp; links</strong> under any figure for what the diagram shows, its browsable DDN source, a wiki page for the diagram type, and deep links that open the exact view in the unified tool (viewer or designer mode — multi-file examples open their verified combined single-file variant there). Flow animation is part of the live renders: open any flow view in the tool and use its animation drawer, for example the <a href="../tools/index.html?entry=../examples/live/adaptive-lab.ddn&amp;view=automatic&amp;mode=explore">adaptive flow lab</a>.</p>
 </div>
 <nav class="sections">
@@ -73,7 +73,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <a href="#coverage">Coverage table</a>
 </nav>
 <main class="gallery">
-<h2 id="profiles">Installed profiles (150)</h2>
+<h2 id="profiles">Installed profiles (151)</h2>
 <p>One render per installed profile from <code>standard/registry/profiles/catalogue.json</code>. Each entry reuses the nearest existing example under <code>website/examples/basics/</code> or <code>website/examples/projections/</code>; the coverage map is generated, not hand-written, and is enforced by <code>notation/tests/gallery-coverage.js</code>.</p>
 <section class="family" id="family-archimate">
 <h3>archimate</h3>
@@ -299,6 +299,10 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">Chen-notation ERD restricted to binary relationships.</p>
 <p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD-Notation">Wiki: ERD-Notation</a> · <a href="../tools/index.html?entry=../examples/quality/views.combined.ddn&amp;view=chen_extended&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/quality/views.combined.ddn&amp;view=chen_extended&amp;mode=design">Open in designer</a> <small>(single-file variant of the multi-file example)</small></p>
 <p class="detail-src">Source: <a href="#src-website-examples-quality-views-ddn"><code>website/examples/quality/views.ddn</code></a> (<a href="../examples/quality/views.ddn">raw .ddn</a>) · combined single-file variant: <a href="../examples/quality/views.combined.ddn"><code>views.combined.ddn</code></a></p></details></figcaption></figure>
+<figure id="profile-chen-nary-3"><a href="profiles/chen-nary-3.svg"><img src="profiles/chen-nary-3.svg" alt="chen.nary@3 — main" loading="lazy"></a><figcaption><code>chen.nary@3</code><br>main<br><small>website/examples/gallery/src/chen-nary.ddn · view <code>main</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">Chen ER with n-ary relationships view rendered by the chen.nary@3 profile.</p>
+<p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD-Notation">Wiki: ERD-Notation</a> · <a href="../tools/index.html?entry=../examples/gallery/src/chen-nary.ddn&amp;view=main&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/gallery/src/chen-nary.ddn&amp;view=main&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-gallery-src-chen-nary-ddn"><code>website/examples/gallery/src/chen-nary.ddn</code></a> (<a href="../examples/gallery/src/chen-nary.ddn">raw .ddn</a>)</p></details></figcaption></figure>
 </div>
 </section>
 <section class="family" id="family-cmmn">
@@ -1884,7 +1888,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <thead><tr><th>Projection kind</th><th>Profiles</th><th>Bound profiles</th></tr></thead>
 <tbody>
 <tr><td><code>chart</code></td><td>30</td><td><a href="#profile-chart-arc-1"><code>chart.arc@1</code></a> <a href="#profile-chart-basic-1"><code>chart.basic@1</code></a> <a href="#profile-chart-beeswarm-1"><code>chart.beeswarm@1</code></a> <a href="#profile-chart-boxplot-1"><code>chart.boxplot@1</code></a> <a href="#profile-chart-calendar-1"><code>chart.calendar@1</code></a> <a href="#profile-chart-candlestick-1"><code>chart.candlestick@1</code></a> <a href="#profile-chart-circlepack-1"><code>chart.circlepack@1</code></a> <a href="#profile-chart-density-1"><code>chart.density@1</code></a> <a href="#profile-chart-densityheatmap-1"><code>chart.densityheatmap@1</code></a> <a href="#profile-chart-dotplot-1"><code>chart.dotplot@1</code></a> <a href="#profile-chart-edgebundle-1"><code>chart.edgebundle@1</code></a> <a href="#profile-chart-force-1"><code>chart.force@1</code></a> <a href="#profile-chart-funnel-1"><code>chart.funnel@1</code></a> <a href="#profile-chart-gauge-1"><code>chart.gauge@1</code></a> <a href="#profile-chart-heatmap-1"><code>chart.heatmap@1</code></a> <a href="#profile-chart-histogram-1"><code>chart.histogram@1</code></a> <a href="#profile-chart-packedbubble-1"><code>chart.packedbubble@1</code></a> <a href="#profile-chart-parallelcoords-1"><code>chart.parallelcoords@1</code></a> <a href="#profile-chart-qq-1"><code>chart.qq@1</code></a> <a href="#profile-chart-quality-1"><code>chart.quality@1</code></a> <a href="#profile-chart-quantiledot-1"><code>chart.quantiledot@1</code></a> <a href="#profile-chart-radar-1"><code>chart.radar@1</code></a> <a href="#profile-chart-radialtree-1"><code>chart.radialtree@1</code></a> <a href="#profile-chart-sankey-1"><code>chart.sankey@1</code></a> <a href="#profile-chart-sunburst-1"><code>chart.sunburst@1</code></a> <a href="#profile-chart-tidytree-1"><code>chart.tidytree@1</code></a> <a href="#profile-chart-topk-1"><code>chart.topk@1</code></a> <a href="#profile-chart-treemap-1"><code>chart.treemap@1</code></a> <a href="#profile-chart-violin-1"><code>chart.violin@1</code></a> <a href="#profile-chart-wordcloud-1"><code>chart.wordcloud@1</code></a></td></tr>
-<tr><td><code>chen</code></td><td>2</td><td><a href="#profile-chen-basic-1"><code>chen.basic@1</code></a> <a href="#profile-chen-binary-2"><code>chen.binary@2</code></a></td></tr>
+<tr><td><code>chen</code></td><td>3</td><td><a href="#profile-chen-basic-1"><code>chen.basic@1</code></a> <a href="#profile-chen-binary-2"><code>chen.binary@2</code></a> <a href="#profile-chen-nary-3"><code>chen.nary@3</code></a></td></tr>
 <tr><td><code>decision</code></td><td>1</td><td><a href="#profile-decision-rules-1"><code>decision.rules@1</code></a></td></tr>
 <tr><td><code>fishbone</code></td><td>1</td><td><a href="#profile-fishbone-basic-1"><code>fishbone.basic@1</code></a></td></tr>
 <tr><td><code>geo</code></td><td>3</td><td><a href="#profile-geo-choropleth-1"><code>geo.choropleth@1</code></a> <a href="#profile-geo-outline-1"><code>geo.outline@1</code></a> <a href="#profile-geo-symbols-1"><code>geo.symbols@1</code></a></td></tr>
@@ -13916,6 +13920,28 @@ view process &quot;Order process&quot;: [@p] as &quot;sdl.process@1&quot; {
 </code></pre>
 
 </details>
+<details class="ddn-source" id="src-website-examples-gallery-src-chen-nary-ddn"><summary><code>website/examples/gallery/src/chen-nary.ddn</code></summary>
+<h4><code>website/examples/gallery/src/chen-nary.ddn</code></h4>
+<pre class="ddn-src"><code>ddn &quot;0.6&quot;;
+module &quot;gallery.chen_nary&quot;;
+data m {
+  object supplier &quot;Supplier&quot; { kind: entity; fields { supplier_id { key: primary; } } }
+  object part &quot;Part&quot; { kind: entity; fields { part_id { key: primary; } } }
+  object project &quot;Project&quot; { kind: entity; fields { project_id { key: primary; } } }
+  relation supplies &quot;supplies&quot; @supplier -&gt; @part {
+    kind: assoc;
+    x_nary: { ends: [{ element: @project, role: &quot;for&quot;, multiplicity: &quot;(1..N)&quot; }] };
+    x_chen: { from: { min: 0, max: &quot;many&quot; }, to: { min: 0, max: &quot;many&quot; } };
+  }
+}
+view main {
+  data: [@m];
+  projection { kind: chen; profile: &quot;chen.nary@3&quot;; }
+  publication { size: content; }
+}
+</code></pre>
+
+</details>
 <details class="ddn-source" id="src-website-examples-gallery-src-layouts-ddn"><summary><code>website/examples/gallery/src/layouts.ddn</code></summary>
 <h4><code>website/examples/gallery/src/layouts.ddn</code></h4>
 <pre class="ddn-src"><code>ddn &quot;0.5&quot;;
@@ -20885,6 +20911,7 @@ format shared {
 <tr><td><code>chart.wordcloud@1</code></td><td><a href="#profile-chart-wordcloud-1">Incident tags / word cloud</a></td><td><code>chart</code></td><td><code>website/examples/basics/64-grid-charts.ddn</code></td><td><a href="profiles/chart-wordcloud-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Charts">wiki</a></td></tr>
 <tr><td><code>chen.basic@1</code></td><td><a href="#profile-chen-basic-1">11 / Chen binary projection</a></td><td><code>chen</code></td><td><code>website/examples/projections/views.ddn</code></td><td><a href="profiles/chen-basic-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD-Notation">wiki</a></td></tr>
 <tr><td><code>chen.binary@2</code></td><td><a href="#profile-chen-binary-2">18 / Binary Chen details</a></td><td><code>chen</code></td><td><code>website/examples/quality/views.ddn</code></td><td><a href="profiles/chen-binary-2.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD-Notation">wiki</a></td></tr>
+<tr><td><code>chen.nary@3</code></td><td><a href="#profile-chen-nary-3">main</a></td><td><code>chen</code></td><td><code>website/examples/gallery/src/chen-nary.ddn</code></td><td><a href="profiles/chen-nary-3.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD-Notation">wiki</a></td></tr>
 <tr><td><code>cmmn.basic@1</code></td><td><a href="#profile-cmmn-basic-1">Claim handling</a></td><td><code>graph</code></td><td><code>website/examples/basics/49-cmmn.ddn</code></td><td><a href="profiles/cmmn-basic-1.svg">SVG</a></td><td></td></tr>
 <tr><td><code>cmmn.complete@1</code></td><td><a href="#profile-cmmn-complete-1">Case</a></td><td><code>graph</code></td><td><code>website/examples/basics/83-cmmn-complete.ddn</code></td><td><a href="profiles/cmmn-complete-1.svg">SVG</a></td><td></td></tr>
 <tr><td><code>concept.map@1</code></td><td><a href="#profile-concept-map-1">Synthetic order-to-cash concepts / concept map</a></td><td><code>graph</code></td><td><code>website/examples/basics/29-concept-map.ddn</code></td><td><a href="profiles/concept-map-1.svg">SVG</a></td><td></td></tr>

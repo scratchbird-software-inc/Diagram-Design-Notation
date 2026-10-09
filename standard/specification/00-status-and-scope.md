@@ -1,6 +1,6 @@
-# DDN 0.5 — status and conformance scope
+# DDN — status and conformance scope
 
-**Current release: 0.7.0 — proposed standard, pre-1.0.** “MUST”, “SHOULD” and “MAY” describe this proposal, not adoption or external certification. Executable capabilities are declared in `registry/capabilities.json` and tested in fixtures. The 0.3 semantic/routing/publication foundation and the 0.4 projection layer remain compatible; chapters 21–24 implement the four quality/lifecycle/reporting stages. The beta.1 stamp is a runtime/standard packaging release per `../governance/VERSIONING.md`: the language source versions stay `0.2`–`0.5` and the core registry stays `ddn-core@0.3`.
+**Current release: 0.7.0 — proposed standard, pre-1.0.** “MUST”, “SHOULD” and “MAY” describe this proposal, not adoption or external certification. Executable capabilities are declared in `registry/capabilities.json` and tested in fixtures. The 0.3 semantic/routing/publication foundation and the 0.4 projection layer remain compatible; chapters 21–24 implement the four quality/lifecycle/reporting stages. The beta.1 stamp is a runtime/standard packaging release per `../governance/VERSIONING.md`: the historical beta language source versions stayed `0.2`–`0.5` and the core registry stays `ddn-core@0.3`.
 
 ## Conformance layers
 
@@ -12,11 +12,11 @@
 
 ## Compatibility
 
-The parser's exported `SOURCE_VERSIONS` is the source of truth for the capability manifest. Current accepted inputs are 0.2 through 0.5; 0.2 uses its disclosed compatibility path. Legacy examples retain their accepted version rather than receiving arbitrary syntax rewrites. Quality examples use `ddn "0.5";`. The core notation registry remains `ddn-core@0.3`, while installed profiles have independent versioned names.
+The parser's exported `SOURCE_VERSIONS` is the source of truth for the capability manifest. The current working runtime accepts inputs 0.2 through 0.7; 0.2 uses its disclosed compatibility path. Legacy examples retain their accepted version rather than receiving arbitrary syntax rewrites. Quality examples use `ddn "0.5";`. The core notation registry remains `ddn-core@0.3`, while installed profiles have independent versioned names.
 
-> **0.8 draft amendment:** chapters 51–58 specify the 0.8 standard revision (draft; the reference runtime implements the 0.6 dialect of chapters 51–56). 0.8 adds source version `ddn "0.6";` to the accepted set, with the version/compatibility contract of chapter 51: 0.2–0.5 documents keep their 0.7 semantics, 0.8 constructs are gated on the 0.6 dialect, and `0.7` remains a packaging stamp, not a source version.
+> **0.8 draft amendment:** chapters 51–58 specify the 0.8 standard revision (draft; the reference runtime implements the 0.6 dialect of chapters 51–56). 0.8 adds source version `ddn "0.6";` to the accepted set, with the version/compatibility contract of chapter 51: 0.2–0.5 documents keep their 0.7 semantics, 0.8 constructs are gated on the 0.6 dialect, and package numbering remains independent. The unreleased chapter 59 amendment adds source dialect `0.7` for composable sections, exact text documents and DDNN companions; it does not designate a package release.
 
-Resolved output uses the highest current source-language version in the workspace, at least 0.3: `ddn-resolved@0.3`, `@0.4`, or `@0.5`. Stable semantic identities are preserved. New static checks can reject previously accepted invalid metadata; a renderer must not silently reinterpret it to create a picture.
+Resolved output uses the highest current source-language version in the workspace, at least 0.3: `ddn-resolved@0.3` through `@0.7`. Stable semantic identities are preserved. New static checks can reject previously accepted invalid metadata; a renderer must not silently reinterpret it to create a picture.
 
 ## Evidence policy
 

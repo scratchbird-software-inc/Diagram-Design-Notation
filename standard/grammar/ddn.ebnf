@@ -117,14 +117,18 @@ flowDeclaration = "flow", identifier, [ string ], block ;
 steps          = "steps", ":", reference, { "->", reference }, ";" ;
 group          = identifier, block ;
 endpoints      = reference, "->", reference ;
-reference      = "@", identifier, { ".", identifier } ;
+reference      = "@", identifier, { ".", identifier }, [ "#", positiveInteger ] ;
+(* The qualifier is dialect-0.6 view-only syntax: select/exclude/show/hide,
+   place/route targets, route from/to and frame members. Semantic references
+   reject it. positiveInteger is bounded by the safe-integer range. *)
+positiveInteger = number ; (* positive integral value <= 9007199254740991 *)
 value          = string | quantity | number | reference | atom | array | record ;
 array          = "[", [ value, { ",", value }, [ "," ] ], "]" ;
 record         = "{", [ entry, { ( "," | ";" ), entry }, [ "," | ";" ] ], "}" ;
 entry          = ( identifier | string ), ":", value ;
 atom           = identifier ;
 quantity       = number, unit ;
-unit           = "px" | "pt" | "mm" | "cm" | "in" | "ms" | "s" | "min" | "h" | "d" | "%" ;
+unit           = "px" | "pt" | "mm" | "cm" | "in" | "ms" | "s" | "min" | "h" | "d" | "%" | "ch" ;
 identifier     = ustart , { ucontinue | "-" } ;
 (* 0.8 amendment (Unicode identifiers, ch. 01): identifiers follow UAX #31 —
    ID_Start then ID_Continue — plus the ASCII separators "_" and "-", so
@@ -150,3 +154,7 @@ blockComment   = "/*", { characterExceptClosingComment }, "*/" ;
    B1-033: a view-level flow block (multi-hop motion sequence) declares its hop chain
    with the steps production above; steps must resolve to selected elements joined by
    existing visible relations in their declared direction. *)
+
+(* Dialect 0.7: document/composition use the existing property-group syntax.
+   Chapter 59 defines their closed keys, values and appearance inheritance;
+   DDNN companions are JSON under schemas/ddnn.schema.json, not DDN imports. *)

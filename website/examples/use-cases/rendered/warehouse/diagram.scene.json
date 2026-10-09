@@ -1,17 +1,17 @@
 {
   "smallestText": 11,
-  "width": 1564,
-  "height": 700,
+  "width": 1549,
+  "height": 738,
   "scale": 1,
   "origin": [
-    99,
+    84,
     100
   ],
   "nodes": [
     {
       "id": "ddn.usecases.warehouse::model.fact",
       "w": 270,
-      "h": 284,
+      "h": 322,
       "fields": [
         "ddn.usecases.warehouse::model.fact.order_id",
         "ddn.usecases.warehouse::model.fact.line_id",
@@ -29,7 +29,10 @@
       "scale": 1,
       "headerH": 64,
       "meaningLines": [],
-      "noteLines": [],
+      "noteLines": [
+        "Grain: one row per order line."
+      ],
+      "noteTop": 232,
       "x": 0,
       "y": 0,
       "fieldRows": [
@@ -195,7 +198,7 @@
       "meaningLines": [],
       "noteLines": [],
       "x": 0,
-      "y": 348,
+      "y": 386,
       "fieldRows": [
         {
           "id": "ddn.usecases.warehouse::model.date.date_key",
@@ -236,8 +239,9 @@
         "totals must not be repeated as",
         "additive line measures."
       ],
+      "noteTop": 64,
       "x": 390,
-      "y": 348,
+      "y": 386,
       "fieldRows": []
     }
   ],
@@ -323,24 +327,24 @@
         ],
         [
           314,
-          300
+          338
         ],
         [
           -44,
-          300
+          338
         ],
         [
           -44,
-          426
+          464
         ],
         [
           0,
-          426
+          464
         ]
       ],
       "label": {
-        "x": -59,
-        "y": 348,
+        "x": 299,
+        "y": 249,
         "w": 30,
         "h": 30
       },
@@ -375,7 +379,7 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 0,
-        "length": 1446,
+        "length": 1484,
         "bends": 10
       },
       {
@@ -383,14 +387,14 @@
         "trials": 0,
         "accepted": 0,
         "crossings": 0,
-        "length": 1446,
+        "length": 1484,
         "bends": 10
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
-        "length": 1446,
+        "length": 1484,
         "bends": 10,
         "trials": 0,
         "accepted": 0
@@ -399,13 +403,13 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 0,
-        "length": 1446,
+        "length": 1484,
         "bends": 10
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
-        "length": 1446,
+        "length": 1484,
         "bends": 10
       }
     ],
@@ -420,13 +424,13 @@
       "before": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 1446,
+        "length": 1484,
         "bends": 10
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 1446,
+        "length": 1484,
         "bends": 10
       },
       "exhausted": false
@@ -436,16 +440,16 @@
     "engine": "ddn-native@0.8.0"
   },
   "drawingBounds": {
-    "x": -59,
+    "x": -44,
     "y": 0,
-    "w": 1139,
-    "h": 530
+    "w": 1124,
+    "h": 568
   },
   "drawingArea": {
     "x": 30,
     "y": 90,
-    "w": 1139,
-    "h": 540
+    "w": 1124,
+    "h": 578
   },
   "layoutState": {
     "format": "ddn-layout-state@1",
@@ -465,11 +469,11 @@
       ],
       "ddn.usecases.warehouse::model.date": [
         0,
-        348
+        386
       ],
       "ddn.usecases.warehouse::model.grain": [
         390,
-        348
+        386
       ]
     }
   },

@@ -4,7 +4,8 @@
  "0.3",
  "0.4",
  "0.5",
- "0.6"
+ "0.6",
+ "0.7"
  ],
  "compatibility_read": [
  "0.2"
@@ -1530,7 +1531,7 @@
  "id": "dfd.gane_sarson@1",
  "projection": "graph",
  "diagramFamilies": [
- "Gane\u2013Sarson DFD"
+ "Gane–Sarson DFD"
  ],
  "scope": "Numbered three-compartment processes; open-ended stores and external entities.",
  "validation": [
@@ -1551,7 +1552,7 @@
  ],
  "scope": "Circular processes; parallel-line stores; rectangular external entities.",
  "validation": [
- "same structural checks as Gane\u2013Sarson"
+ "same structural checks as Gane–Sarson"
  ],
  "unsupported": [
  "complete SSADM lifecycle",
@@ -1970,16 +1971,17 @@
  "Timeline",
  "Calendar roadmap"
  ],
- "scope": "UTC date intervals mapped to a fixed axis; milestones and dependency overlays.",
+ "scope": "Supplied ISO date intervals mapped to a date axis, with explicit client-side calendars/timezones, milestones and dependency overlays.",
  "validation": [
- "valid ISO date-only",
+ "valid ISO date-only or explicitly zoned timestamps",
  "end>=start",
+ "explicit Gregorian/fiscal/business calendar settings",
+ "UTC, fixed offset or available named timezone",
  "acyclic dependencies",
  "no model-position pins"
  ],
  "unsupported": [
- "scheduling",
- "working calendars",
+ "automatic calendar-aware scheduling",
  "resource leveling",
  "critical-path computation",
  "UML timing"
@@ -2218,7 +2220,7 @@
  "diagramFamilies": [
  "Sankey/flow diagram"
  ],
- "scope": "Explicit source\u2192target flows; depth columns from pure sources; ribbon thickness encodes value; record provenance. Duplicate (source,target) pairs are allowed: ribbons stack in declaration order.",
+ "scope": "Explicit source→target flows; depth columns from pure sources; ribbon thickness encodes value; record provenance. Duplicate (source,target) pairs are allowed: ribbons stack in declaration order.",
  "validation": [
  "target is a property binding, not a numeric reference (DDN-PJ030)",
  "categorical x only (DDN-PJ030)",
@@ -2352,7 +2354,7 @@
  "participants limited to organization, team, role, analysis.role (DDN-PF007)",
  "reports_to links only (DDN-PF007)",
  "reporting hierarchy is acyclic (DDN-PF004)",
- "exactly one root \u2014 one node with no incoming reports_to edge (DDN-PJ102)",
+ "exactly one root — one node with no incoming reports_to edge (DDN-PJ102)",
  "no node has multiple managers (DDN201, layout stage)"
  ],
  "unsupported": [
@@ -2372,7 +2374,7 @@
  "participants limited to analysis.task (DDN-PF007)",
  "analysis.decomposes links only (DDN-PF007)",
  "decomposition is acyclic (DDN-PF004)",
- "exactly one root \u2014 one node with no incoming analysis.decomposes edge (DDN-PJ102)",
+ "exactly one root — one node with no incoming analysis.decomposes edge (DDN-PJ102)",
  "no node has multiple parents (DDN201, layout stage)"
  ],
  "unsupported": [
@@ -2393,7 +2395,7 @@
  "assoc links only (DDN-PF007)",
  "layout algorithm must be mindmap (DDN-PF007)",
  "branch hierarchy is acyclic (DDN-PF004)",
- "exactly one root \u2014 one node with no incoming assoc edge (DDN-PJ102)",
+ "exactly one root — one node with no incoming assoc edge (DDN-PJ102)",
  "no node has multiple parents; declared root must be a hierarchy root (DDN201, DDN202, layout stage)"
  ],
  "unsupported": [
@@ -2601,7 +2603,7 @@
  "diagramFamilies": [
  "UML sequence diagram"
  ],
- "scope": "uml.sequence@1 plus UML 2.5.1 interaction notation: combined fragments (nested, guards \u2014 x_fragment), gates, create/delete, synch/asynch/reply/lost/found message sorts, authorable activations, time/duration constraints, state invariants.",
+ "scope": "uml.sequence@1 plus UML 2.5.1 interaction notation: combined fragments (nested, guards — x_fragment), gates, create/delete, synch/asynch/reply/lost/found message sorts, authorable activations, time/duration constraints, state invariants.",
  "validation": [
  "message endpoints are selected participants (DDN-PJ110)",
  "empty lifelines warn (DDN-PJW03)",
@@ -2640,7 +2642,7 @@
  "diagramFamilies": [
  "UML communication diagram"
  ],
- "scope": "uml.communication@1 plus: x_fragment frames, {\u2026} time/duration constraints on messages.",
+ "scope": "uml.communication@1 plus: x_fragment frames, {…} time/duration constraints on messages.",
  "validation": [
  "message numbering (DDN-PJ111)",
  "fragment refs resolve (DDN-PJ172)"
@@ -2742,11 +2744,11 @@
  "diagramFamilies": [
  "UML activity diagram"
  ],
- "scope": "uml.activity@1 plus UML 2.5.1 activity notation: decision/merge distinction, pins with parameter sets and streaming (x_pin on ports), send/accept signal pentagons, time-event hourglass, flow final (\u2297), interruptible regions with lightning edges, exception handlers, structured/expansion regions.",
+ "scope": "uml.activity@1 plus UML 2.5.1 activity notation: decision/merge distinction, pins with parameter sets and streaming (x_pin on ports), send/accept signal pentagons, time-event hourglass, flow final (⊗), interruptible regions with lightning edges, exception handlers, structured/expansion regions.",
  "validation": [
  "node in an unknown partition rejected (DDN-PJ114)",
  "fork/join counts must balance (DDN-PJ115)",
- "merge fans in \u22652, out exactly 1 (DDN-PJ167)",
+ "merge fans in ≥2, out exactly 1 (DDN-PJ167)",
  "interrupt/exception edge rules (DDN-PJ168)",
  "pins on action kinds only (DDN-PJ169)"
  ],
@@ -2845,9 +2847,9 @@
  "diagramFamilies": [
  "UML profile diagram"
  ],
- "scope": "UML 2.5.1 profile diagrams: uml.metaclass/uml.stereotype, uml.extension (filled triangle), uml.application (\u00abapply\u00bb).",
+ "scope": "UML 2.5.1 profile diagrams: uml.metaclass/uml.stereotype, uml.extension (filled triangle), uml.application («apply»).",
  "validation": [
- "extension endpoints stereotype \u2192 metaclass (DDN102)"
+ "extension endpoints stereotype → metaclass (DDN102)"
  ],
  "unsupported": [
  "profile registry semantics",
@@ -2946,7 +2948,7 @@
  "diagramFamilies": [
  "SysML requirements diagram"
  ],
- "scope": "SysML 1.6 requirements diagram: requirements with id/text compartments, test cases, \u00abderiveReqt\u00bb/\u00absatisfy\u00bb/\u00abverify\u00bb/\u00abrefine\u00bb/\u00abtrace\u00bb/\u00abcopy\u00bb/\u00abmaster\u00bb dependencies, composition containment.",
+ "scope": "SysML 1.6 requirements diagram: requirements with id/text compartments, test cases, «deriveReqt»/«satisfy»/«verify»/«refine»/«trace»/«copy»/«master» dependencies, composition containment.",
  "validation": [
  "requirement codes unique + text nonempty (DDN-PF014)",
  "dependency endpoint rules (DDN-PJ185)"
@@ -2964,7 +2966,7 @@
  "diagramFamilies": [
  "SysML block definition diagram"
  ],
- "scope": "sysml.bdd@1 plus SysML 1.6 BDD notation: block compartments (values/parts/references/operations/constraints) via x_block, \u00abblock\u00bb keyword, composition and generalization between blocks, value types, interface blocks, flow specifications.",
+ "scope": "sysml.bdd@1 plus SysML 1.6 BDD notation: block compartments (values/parts/references/operations/constraints) via x_block, «block» keyword, composition and generalization between blocks, value types, interface blocks, flow specifications.",
  "validation": [
  "ports on block-family kinds (DDN-PJ121 @2 set)",
  "x_block compartment rules (DDN-PJ186)",
@@ -3054,7 +3056,7 @@
  "diagramFamilies": [
  "SysML activity diagram"
  ],
- "scope": "SysML 1.6 activity diagram: rebadge of the uml.activity@2 machinery plus SysML edge annotations \u2014 x_flow rate/probability/continuous on activity edges; streaming pins via x_pin.",
+ "scope": "SysML 1.6 activity diagram: rebadge of the uml.activity@2 machinery plus SysML edge annotations — x_flow rate/probability/continuous on activity edges; streaming pins via x_pin.",
  "validation": [
  "uml.activity@2 rules apply",
  "x_flow owner/shape rules (DDN-PJ191)"
@@ -3106,7 +3108,7 @@
  ],
  "scope": "Fixed nine-kind business/application/technology vocabulary; family-palette layer colours; viewpoints as named views; serving links upward only. Profile-level coverage, not ArchiMate conformance.",
  "validation": [
- "relation layer pair must be legal per the fixed 3\u00d73 table (DDN-PJ123)"
+ "relation layer pair must be legal per the fixed 3×3 table (DDN-PJ123)"
  ],
  "unsupported": [
  "ArchiMate exchange format",
@@ -3612,9 +3614,9 @@
  "diagramFamilies": [
  "SoaML service architecture / service contract"
  ],
- "scope": "Full SoaML 1.0.1 notation: participants and agents with \u00abService\u00bb/\u00abRequest\u00bb port decorations (conjugated interfaces), service interfaces and contracts (collaboration glyph with provider/consumer role rows), capabilities, message types, milestones, contract-typed assembly/delegation connectors with service\u2194request conformance, choreography binding to UML sequence or state machine views.",
+ "scope": "Full SoaML 1.0.1 notation: participants and agents with «Service»/«Request» port decorations (conjugated interfaces), service interfaces and contracts (collaboration glyph with provider/consumer role rows), capabilities, message types, milestones, contract-typed assembly/delegation connectors with service↔request conformance, choreography binding to UML sequence or state machine views.",
  "validation": [
- "\u00abService\u00bb/\u00abRequest\u00bb port pairing with interface-type match (DDN-PJ196), extended to the four ServiceChannel compatibility modes via x_compatibility (same/specialization/realization/operation-coverage)",
+ "«Service»/«Request» port pairing with interface-type match (DDN-PJ196), extended to the four ServiceChannel compatibility modes via x_compatibility (same/specialization/realization/operation-coverage)",
  "x_service/x_contract owner rules (DDN-PJ195)",
  "choreography binding (DDN-PJ197)",
  "registry endpoint contracts (DDN102)"
@@ -3663,7 +3665,7 @@
  "diagramFamilies": [
  "UAF Services domain view"
  ],
- "scope": "UAF Services domain: service specifications, service functions, service policies \u2014 over the SoaML machinery.",
+ "scope": "UAF Services domain: service specifications, service functions, service policies — over the SoaML machinery.",
  "validation": [
  "registry endpoint contracts for the domain vocabulary (DDN102)"
  ],
@@ -3825,7 +3827,7 @@
  ],
  "scope": "Full ISO 5807 (1985) flowchart symbol set: the flow.basic@1 vocabulary plus manual input, manual operation, preparation, display, delay, loop start/end, merge/extract, card, collate, sort and parallel mode. Closed flowchart structure rules as flow.basic@1 (start+end, flow.next links, named decision branches).",
  "validation": [
- "flowchart structure rules as flow.basic@1 (DDN-PF007\u2013PF010)",
+ "flowchart structure rules as flow.basic@1 (DDN-PF007–PF010)",
  "registry endpoint contracts (DDN102)"
  ],
  "unsupported": [
@@ -3840,7 +3842,7 @@
  "diagramFamilies": [
  "C4 deployment diagram"
  ],
- "scope": "C4 deployment view: rebadge of the uml.deployment@1 machinery \u2014 nodes/devices/execution environments as 3D boxes, artifacts, deploy/manifest dependencies, communication paths with multiplicity, node nesting via frames.",
+ "scope": "C4 deployment view: rebadge of the uml.deployment@1 machinery — nodes/devices/execution environments as 3D boxes, artifacts, deploy/manifest dependencies, communication paths with multiplicity, node nesting via frames.",
  "validation": [
  "uml.deployment@1 rules apply (nesting frames scope to node kinds, DDN-PJ164)",
  "registry endpoint contracts (DDN102)"
@@ -3857,7 +3859,7 @@
  "diagramFamilies": [
  "C4 dynamic diagram"
  ],
- "scope": "C4 dynamic view: rebadge of the uml.communication@2 machinery \u2014 numbered messages (x_message.seq ordering), combined fragments, time/duration constraints.",
+ "scope": "C4 dynamic view: rebadge of the uml.communication@2 machinery — numbered messages (x_message.seq ordering), combined fragments, time/duration constraints.",
  "validation": [
  "uml.communication@2 rules apply (message numbering, DDN-PJ111; fragments/constraints, DDN-PJ172)",
  "registry endpoint contracts (DDN102)"
@@ -3964,7 +3966,7 @@
  "diagramFamilies": [
  "Value stream map"
  ],
- "scope": "Value stream mapping (machinery): process boxes with data rows, the VA/NVA timeline ladder strip, inventory triangles, push/pull and material arrows, electronic/manual information arrows, supermarket, kaizen burst and operator glyphs \u2014 simple generic glyphs only; detailed industry icon artwork is a separate excluded task.",
+ "scope": "Value stream mapping (machinery): process boxes with data rows, the VA/NVA timeline ladder strip, inventory triangles, push/pull and material arrows, electronic/manual information arrows, supermarket, kaizen burst and operator glyphs — simple generic glyphs only; detailed industry icon artwork is a separate excluded task.",
  "validation": [
  "ladder values are nonnegative numbers on vsm.process (DDN-PJ205)",
  "registry endpoint contracts (DDN102)"
@@ -3999,7 +4001,7 @@
  "diagramFamilies": [
  "SDL process diagram"
  ],
- "scope": "SDL (ITU-T Z.100) process level: state-machine machinery with SDL process symbols \u2014 start, state, input (accept flag, priority/spontaneous/continuous/active markers via x_sdl), output (send flag), decision, task, save, create, timer declarations (sdl.timer) with set/reset nodes; procedure references as subprocess silhouettes.",
+ "scope": "SDL (ITU-T Z.100) process level: state-machine machinery with SDL process symbols — start, state, input (accept flag, priority/spontaneous/continuous/active markers via x_sdl), output (send flag), decision, task, save, create, timer declarations (sdl.timer) with set/reset nodes; procedure references as subprocess silhouettes.",
  "validation": [
  "exactly one start symbol (DDN-PJ208)",
  "input/output/task/save/create/set/reset symbols have at least one outgoing transition (DDN-PJ208)",
@@ -4253,7 +4255,7 @@
  "PEST/PESTLE and Porter five-forces canvas profiles (canvas.pest@1, canvas.pestle@1, canvas.porter5@1)",
  "empathy-map and balanced-scorecard canvas profiles (canvas.empathy@1, canvas.scorecard@1) with required-panel validation",
  "customer journey maps with emotion polylines via panels.journey@1 (phase grid, DDN-PJ084/PJ085)",
- "user story maps via matrix.storymap@1 (release rows \u00d7 backbone columns, analysis.task cells, DDN-PJ086/PJ093)",
+ "user story maps via matrix.storymap@1 (release rows × backbone columns, analysis.task cells, DDN-PJ086/PJ093)",
  "crow's-foot cardinality ERD profile erd.crowfoot@1 (obligatory one/zeroone/many/zeromany endpoint marks, DDN-PJ087)",
  "allowlisted SQL DDL export (export format sql: CREATE TABLE/PRIMARY KEY/FOREIGN KEY, DDN-PJ088/PJ092)",
  "pyramid/tier diagrams via panels.pyramid@1 (3..5 trapezoid bands, side annotations, DDN-PJ089)",
@@ -4275,28 +4277,28 @@
  "low-fidelity UI wireframes via wireframe.ui@1 (seven-control stencil, scoped-frame nesting, orphan-control warning)",
  "family tree / genealogy views via family.tree@1 (union join nodes, acyclic two-parent lineage)",
  "registry-driven element defaults on every kind (kinds[].defaults; public defaults.forKind; designer creation populates them, explicit properties win; renderer never applies them)",
- "ES module runtime sources with a Rollup-built distribution: five bundles \u00d7 IIFE/ESM/minified formats, explicit cross-bundle module registry, tree-shakeable .mjs entry points (B1-019)",
+ "ES module runtime sources with a Rollup-built distribution: five bundles × IIFE/ESM/minified formats, explicit cross-bundle module registry, tree-shakeable .mjs entry points (B1-019)",
  "deterministic CSS class hooks on every rendered SVG mark (ddn-svg/node/kind/rel/verb/field/label/panel/frame/mark scheme) plus optional dist/ddn.css and component theme attribute; page CSS < script-level overrides",
  "modular runtime bundles (dist/ddn-core.js parse/validate/export, ddn-graph.js, ddn-projections.js, ddn-quality.js with load-order guards and DDNEngine renderer registry; unregistered kinds throw DDN-E010 naming the providing bundle; ddn.global.js unchanged all-in-one)",
- "optional geographic module ddn-geo.js (B1-025): mercator/equirectangular/albers/equalEarth projection math, GeoJSON ingestion (Polygon/MultiPolygon/Point/MultiPoint), geo.choropleth@1/geo.symbols@1/geo.outline@1 renderers with record provenance; geography ships as the separate optional assets/geo/world-110m.json asset (~96 KB Natural Earth 110m) or inline @record GeoJSON; the geo kind registers optional:true so a missing module renders a visible inline placeholder (\"Map view requires ddn-geo.js\") plus a coded DDN-E010 diagnostic \u2014 never silent; new codes DDN-PJ143..DDN-PJ148, DDN-PJW05; never embedded in ddn.global.js",
- "data refresh API: ws.replaceData(name, records) rewrites only a named data block's record lines with the canonical authoring serializer; keyed transactional contract (B1-029): optional per-record key matches declaration ids (positional fallback is order-sensitive), transactional validation of every affected view before commit (DDN-E012 diagnostics name view/record/field on type-mismatch, removed-record-referenced, view/source-validation; nothing commits on failure), removal of view-referenced records rejected, selector-vs-explicit membership re-resolution with DDN-W015 addedRecordsNotVisible reporting, empty refresh allowed with declared empty states (empty chart plot with axes for bar/line/area/point, header-only table, empty graph canvas; filter-to-empty still fails DDN-PJ012); returns {committed, revision, added, removed, updated, diagnostics} \u2014 a strict superset of the old {revision, diagnostics}; DDN-E002 unknown/ambiguous block, DDN-E011 field-shape violations with source untouched; same-values refresh renders every view byte-identical, changed values move only data-driven marks; deterministic in (source, name, records)",
- "single-file end-user viewer (notation/viewer/ddn-viewer.html, deterministic build:viewer): open/drag-drop/paste a .ddn source, view picker from declared views, fit page/width/height/100% + step zoom with % display, font-family override, colour overrides per kind-class/relation-class/clicked object, SVG + 2\u00d7 PNG export; presentation-only (source never modified), file:// safe in Chrome and Firefox (no Chrome-only APIs)",
+ "optional geographic module ddn-geo.js (B1-025): mercator/equirectangular/albers/equalEarth projection math, GeoJSON ingestion (Polygon/MultiPolygon/Point/MultiPoint), geo.choropleth@1/geo.symbols@1/geo.outline@1 renderers with record provenance; geography ships as the separate optional assets/geo/world-110m.json asset (~96 KB Natural Earth 110m) or inline @record GeoJSON; the geo kind registers optional:true so a missing module renders a visible inline placeholder (\"Map view requires ddn-geo.js\") plus a coded DDN-E010 diagnostic — never silent; new codes DDN-PJ143..DDN-PJ148, DDN-PJW05; never embedded in ddn.global.js",
+ "data refresh API: ws.replaceData(name, records) rewrites only a named data block's record lines with the canonical authoring serializer; keyed transactional contract (B1-029): optional per-record key matches declaration ids (positional fallback is order-sensitive), transactional validation of every affected view before commit (DDN-E012 diagnostics name view/record/field on type-mismatch, removed-record-referenced, view/source-validation; nothing commits on failure), removal of view-referenced records rejected, selector-vs-explicit membership re-resolution with DDN-W015 addedRecordsNotVisible reporting, empty refresh allowed with declared empty states (empty chart plot with axes for bar/line/area/point, header-only table, empty graph canvas; filter-to-empty still fails DDN-PJ012); returns {committed, revision, added, removed, updated, diagnostics} — a strict superset of the old {revision, diagnostics}; DDN-E002 unknown/ambiguous block, DDN-E011 field-shape violations with source untouched; same-values refresh renders every view byte-identical, changed values move only data-driven marks; deterministic in (source, name, records)",
+ "single-file end-user viewer (notation/viewer/ddn-viewer.html, deterministic build:viewer): open/drag-drop/paste a .ddn source, view picker from declared views, fit page/width/height/100% + step zoom with % display, font-family override, colour overrides per kind-class/relation-class/clicked object, SVG + 2× PNG export; presentation-only (source never modified), file:// safe in Chrome and Firefox (no Chrome-only APIs)",
  "viewer typography + relation options (B1-011): global font family/size dropdowns through the reflow override channel, per-kind family/size dropdowns as CSS overlays on .ddn-kind-<code> text, master relation row (routing/curve tension/curve radius/crossings/endpoint ordering), per-verb routing rows, click-an-edge per-relation routing editor; render override keys relationRouting (verb-or-id keys, id wins, LIVE022/LIVE023) and curveTension/curveRadius (LIVE003) with LIVE021/LIVE020 guards; no junctions control by design (explicit junction semantics only, DDN046)",
- "spacing hints: optional additive `spacing` enum (tight/normal/loose/expanded, factors 0.75/1.0/1.4/2.0) on views and format bundles (view wins; absent = normal byte-identical to historical output; bad value rejected as DDN033); scales graph-family inter-node gaps, layer/band spacing and route-label reservation margins only \u2014 fixed-grid projections ignore it by design",
- "full-coverage example gallery (website/examples/gallery/, tools/build-gallery.js): one CLI-rendered SVG per installed profile (coverage map generated from basics/projections/quality examples; generator fails on an uncovered profile) plus variation sheets (12 chart marks, looks \u00d7 palettes, routing \u00d7 look, 11 layout algorithms, 4 spacing levels); static file://-safe index.html with no inlined runtime; permanent gate notation/tests/gallery-coverage.js",
+ "spacing hints: optional additive `spacing` enum (tight/normal/loose/expanded, factors 0.75/1.0/1.4/2.0) on views and format bundles (view wins; absent = normal byte-identical to historical output; bad value rejected as DDN033); scales graph-family inter-node gaps, layer/band spacing and route-label reservation margins only — fixed-grid projections ignore it by design",
+ "full-coverage example gallery (website/examples/gallery/, tools/build-gallery.js): one CLI-rendered SVG per installed profile (coverage map generated from basics/projections/quality examples; generator fails on an uncovered profile) plus variation sheets (12 chart marks, looks × palettes, routing × look, 11 layout algorithms, 4 spacing levels); static file://-safe index.html with no inlined runtime; permanent gate notation/tests/gallery-coverage.js",
  "designer prototype chrome (B1-012): --ui-* density system with persisted Compact/Comfortable toggle (Compact default), draggable persisted splitters with clamps and double-click reset, detach/re-attach floating shelf+inspector panels with canvas reflow (session-only), bottom-sheet collapse toggles, notation-plate palette glyphs via additive runtime accessor DDNLive.glyphs.forKind, descriptive tooltips on every control, and SVG/PNG(2x)/WebP(2x) export (WebP feature-detected, renderFailure-guarded, designer-prototype.{svg,png,webp})",
- "self-contained multi-module files: a .ddn file may hold several module \"\u2026\"; sections (model/data/views/formats in one file); file-level imports precede the first module header (legacy after-first-header position kept, DDN015 elsewhere); sibling sections resolve by module-qualified id without imports; identity guards DDN013/DDN014/DDN023/DDN024 unchanged; DDNLive.io.bundle(files, entry) and CLI bundle merge a workspace into one sectioned file \u2014 original bodies minus headers, comments preserved, inter-bundle alias references canonicalized to module ids, external imports kept with DDN-W013 \u2014 deterministic and render byte-identical (proof: notation/tests/bundle.js, 75 views across basics/projections/quality)",
+ "self-contained multi-module files: a .ddn file may hold several module \"…\"; sections (model/data/views/formats in one file); file-level imports precede the first module header (legacy after-first-header position kept, DDN015 elsewhere); sibling sections resolve by module-qualified id without imports; identity guards DDN013/DDN014/DDN023/DDN024 unchanged; DDNLive.io.bundle(files, entry) and CLI bundle merge a workspace into one sectioned file — original bodies minus headers, comments preserved, inter-bundle alias references canonicalized to module ids, external imports kept with DDN-W013 — deterministic and render byte-identical (proof: notation/tests/bundle.js, 75 views across basics/projections/quality)",
  "designer display + panels (B1-014): presentation-only Display shelf tab (global/per-kind typography, kind/verb/object colours via CSS overlay persisted per view, relation options via the per-view override channel; never written to source); Download modal regrouped into Text (current file .ddn, single self-contained sectioned .ddn of the whole workspace via DDNLive.io.bundle, ZIP of all sources) and Image (SVG/PNG/WebP unchanged); floating panels resizable (resize:both, 220x160 min, grip, session-only); shelf/inspector pop out into a separate OS window via window.open+adoptNode with copied stylesheets (panelRoot live element references keep every panel path working across documents) and re-dock on child close (proof: designer/tests/b1-014-display-and-popout.js)",
  "deployable static website (B1-017): website/ is a self-contained static root (no ../ escapes; works from file:// and any static host) holding the moved examples/ and docs/ corpora, a redesigned homepage with inlined-runtime live render, and generated mirrors of the viewer/designer/studio standalone tools, the 130-SVG gallery, the notation plates, and the dist bundles; zero-dependency generator website/build-site.mjs renders all Markdown docs/standard/governance chapters to shell-wrapped HTML deterministically; permanent gates tests/website-links.js (link integrity, no escapes, no absolute local paths) and the committed-output freshness byte-compare, both in the root npm test chain",
- "optional ddn-iso module (B1-034): axonometric 30\u00b0 isometric depth \u2014 iso:true/depth on graph and chart views, chart extrusions (bar/pie/donut/area/treemap), iso graph prisms with flat-computed routes projected onto the ground plane, per-element depth and depth:@data.record.field binding, refresh-driven SMIL depth transitions, visible placeholder + DDN-E010 when the bundle is absent",
- "iso on multi-series quality charts (B1-036): series:/arrangement: bar/area views (chart.quality@1) extrude through the quality renderer \u2014 one column per series point / one ribbon per series, each series on its own depth plane (no z-fighting), total painter's order via DDNIso.paintOrder; unsupported layer marks and quality transforms (histogram/pareto/waterfall/boxplot) warn DDN-ISOW01 and render flat, never silent"
+ "optional ddn-iso module (B1-034): axonometric 30° isometric depth — iso:true/depth on graph and chart views, chart extrusions (bar/pie/donut/area/treemap), iso graph prisms with flat-computed routes projected onto the ground plane, per-element depth and depth:@data.record.field binding, refresh-driven SMIL depth transitions, visible placeholder + DDN-E010 when the bundle is absent",
+ "iso on multi-series quality charts (B1-036): series:/arrangement: bar/area views (chart.quality@1) extrude through the quality renderer — one column per series point / one ribbon per series, each series on its own depth plane (no z-fighting), total painter's order via DDNIso.paintOrder; unsupported layer marks and quality transforms (histogram/pareto/waterfall/boxplot) warn DDN-ISOW01 and render flat, never silent"
  ],
  "unsupported": [
  "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",
  "arbitrary runtime profile code installation",
  "unrestricted nested dashboard/widget composition (one child-view level is implemented)",
  "complete UML/SysML/BPMN/DMN metamodels or external interchange",
- "arbitrary host-language rule execution and general-purpose engineering solvers. Bounded decision-table/rule evaluation IS supported within the declared FEEL-equivalent capability tier. The full DMN-FEEL surface \u2014 including externally-defined functions (DMN \u00a710.3.2.13.3), which are carried as opaque references \u2014 is available only through a host-supplied FEEL reference engine identified in the file; engineering solvers (e.g. SysML constraint causality selection) remain host responsibilities behind the same solver contract",
+ "arbitrary host-language rule execution and general-purpose engineering solvers. Bounded decision-table/rule evaluation IS supported within the declared FEEL-equivalent capability tier. The full DMN-FEEL surface — including externally-defined functions (DMN §10.3.2.13.3), which are carried as opaque references — is available only through a host-supplied FEEL reference engine identified in the file; engineering solvers (e.g. SysML constraint causality selection) remain host responsibilities behind the same solver contract",
  "third-party Vega runtime execution unverified in build environment",
  "curved routes in the fixed-lane experimental interaction profile (DDN-I031)",
  "automatic cross-page tiling or pagination",

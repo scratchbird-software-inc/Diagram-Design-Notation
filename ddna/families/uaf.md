@@ -1,5 +1,8 @@
 # Family chapter — UAF 1.2 (EM-5, delegated; grouped here with EM-6 per batch plan)
 
+> Host-contract status (2026-10-09): [chapter 15](../15-delegated-evaluation-contracts.md) separates constraint solving from graph reachability and supplies boundary validation only. No EM-5 engine is installed.
+
+
 **Status:** full draft, 2026-09-29. Class assignment per chapter 2 §2.3 —
 **UAF is EM-5 (spec-delegated)**, not EM-6; the batch plan grouped it
 with EM-6 for authoring convenience, and this chapter records the class

@@ -51,3 +51,40 @@ Download `.ddn` saves the current raw file, including a deliberately invalid wor
 A round-trip test MUST compare raw decoded source text for every file, import resolution, selected view, semantic identity and relevant saved options. A screenshot comparison alone is insufficient. Error tests MUST cover missing imports, duplicate paths, traversal, malformed UTF-8, corrupt ZIPs, invalid DDN, refused graph edits, undo, cancelled dialogs and stale SVG export.
 
 The supplied editor does not store credentials, connect to modeled systems, run SQL, or execute extension text. Saving downloads files; it does not overwrite a local project without an explicit browser-mediated operation.
+
+### Capturing a compound guided edit
+
+`workspace.editor().capture({entry, view, mode?, label?, expectedRevision?}, edit)`
+prepares a synchronous callback on an isolated draft workspace. The callback may
+use the existing authoring helpers and read its intermediate state. The live
+workspace remains unchanged until `apply(plan)`. A thrown error discards the
+whole draft. Promise-returning callbacks are rejected. All file changes,
+including deletions, appear in the plan and pass `canWrite` authorization.
+
+The active tool uses this path for inspector, type-sheet and guided actions.
+Non-graph drafts also run their projection planner before a plan can be applied;
+invalid calendar, matrix or decision bindings cannot pass solely because their
+source parses. Raw source drafts continue to have their separate explicit
+preview/apply workflow. The callback runs locally in the browser and provides
+no database or service execution.
+
+### Definition destinations and identifiers
+
+`authoring.creationDestinations(workspace)` lists existing data blocks with
+`{file,module,block}`. `addElement` accepts one as `destination`; omitting it
+retains the view-local data behavior. Destination creation updates the definition,
+required direct import/data binding and selected appearance together. Unrelated
+objects in a newly bound data block are not automatically revealed. Imported
+secondary modules can be addressed as `@alias.module.path`; an existing exact
+path in the primary imported module retains precedence over this qualification.
+
+`authoring.renameDefinition` renames an element, field or relation declaration
+and references resolved to that declaration, including member references,
+occurrence-qualified selectors and placement/route targets across workspace
+files. It does not replace arbitrary matching text. Associated bounded DDNA
+profile target strings are rewritten using their declared base association;
+ambiguous unqualified targets must be qualified first. Labels, source-code
+notes, opaque metadata strings and recorded historical trace payloads are not
+rewritten. Explicit stable `uid` properties remain unchanged. Collision or
+validation failure writes nothing. The Meaning tab exposes this as Rename
+identifier, distinct from changing the displayed label.

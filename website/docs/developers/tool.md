@@ -99,9 +99,8 @@ view's legend is `mode: numbers` (the authoring layer keeps the DDN061
 invariant). Relation menus also carry **Reverse relation**
 (`authoring.reverseRelation`): endpoints swap and the direction-prefixed
 properties (endpoint marks, cardinality bounds, `x_endlabels` roles)
-remap in one undoable transaction; double-reverse is the identity. (There
-is intentionally no attachment-policy editing — the relation contracts
-carry no attachment-policy keys.)
+remap in one undoable transaction; double-reverse is the identity. Endpoint attachment sides and optional fractions are edited in the
+Appearance tab and saved as view-local route hints; member identities are preserved.
 
 While the **inspector** or **properties** drawer is open, hovering the
 canvas highlights whatever a click would select — a soft glow on elements,
@@ -440,7 +439,11 @@ this path names the same remedy (larger page / bigger base font / relaxed
 
 ## Host I/O contract
 
-For hosts embedding the tool, three additive methods formalize DDN in/out —
+The viewer/designer runs entirely in the browser. It requires no application
+server, hosted storage, or database service. Hosts may supply document text through
+the callback below; the callback is an integration interface, not a service.
+
+For hosts embedding the tool, these methods formalize DDN in/out —
 the same in every mode and with the render worker on or off:
 
 - **`DDNTool.setSource(source, opts)`** — IN. A single-file source string or a
@@ -450,6 +453,18 @@ the same in every mode and with the render worker on or off:
   (`LIVE010/011` for the map contract, `DDN-T1xx` for entry/view problems,
   the parser/builder codes for broken source). `opts.entry` / `opts.view`
   pick the initial view.
+- **`DDNTool.setDocumentLoader(callback)`** — optional DDNN input. The callback
+  receives `{ path, references: [{ owner, id }], signal }` and returns DDNN text
+  or a Promise for it. Paths are workspace-relative; the tool implements no
+  transport for this interface. Set `null` to remove the callback. During
+  `setSource`, missing referenced sidecars are requested once per path; supplied
+  sidecars are reused. Loaded text joins the workspace and is included in
+  `getSource`. This resolves dependencies during workspace loading, not on
+  viewport entry. A superseding load, loader replacement or intervening edit
+  cancels installation (`DDN-T109`), even when the host ignores the signal.
+  Invalid callback data rejects before replacing the current workspace.
+  Resolution accepts at most 64 missing files, each at most 8 MiB, subject to
+  the workspace's existing aggregate size limits.
 - **`DDNTool.getSource(opts)`** — OUT. Default: `{ files, entry, view,
   revision }`, the current source of truth. `opts.single: true` flattens a
   single-file workspace to a string (coded `DDN-T107` on multi-file).

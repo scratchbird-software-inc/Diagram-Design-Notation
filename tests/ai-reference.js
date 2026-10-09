@@ -90,6 +90,9 @@ async function driftGuard(file) {
     return 1;
   }
   let failed = 0;
+  if (!fresh.includes('| DDN-PF010 | error/incomplete |') || !fresh.includes('Closed flowchart needs a start and an end')) {
+    console.error('FAIL draft obligations disappeared from the diagnostic reference'); failed++;
+  }
   for (const [name, body] of expected) {
     if (!onDisk.has(name)) { console.error('FAIL drift guard: region "' + name + '" missing from ' + file); failed++; continue; }
     if (onDisk.get(name) !== body) {

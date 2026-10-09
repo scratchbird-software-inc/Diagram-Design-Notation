@@ -11,7 +11,7 @@
     {
       "id": "ddn.usecases.keyed::kv.key",
       "w": 270,
-      "h": 100,
+      "h": 116,
       "fields": [],
       "titleLines": [
         "Session key"
@@ -20,7 +20,10 @@
       "scale": 1,
       "headerH": 64,
       "meaningLines": [],
-      "noteLines": [],
+      "noteLines": [
+        "Scope: one active login session."
+      ],
+      "noteTop": 64,
       "x": 0,
       "y": 0,
       "fieldRows": []
@@ -101,6 +104,14 @@
       "points": [
         [
           270,
+          58
+        ],
+        [
+          314,
+          58
+        ],
+        [
+          314,
           50
         ],
         [
@@ -109,7 +120,7 @@
         ]
       ],
       "label": {
-        "x": 315,
+        "x": 337,
         "y": 35,
         "w": 30,
         "h": 30
@@ -175,23 +186,23 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 0,
-        "length": 271,
-        "bends": 2
+        "length": 279,
+        "bends": 4
       },
       {
         "stage": "connection-points",
         "trials": 0,
         "accepted": 0,
         "crossings": 0,
-        "length": 271,
-        "bends": 2
+        "length": 279,
+        "bends": 4
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
-        "length": 271,
-        "bends": 2,
+        "length": 279,
+        "bends": 4,
         "trials": 0,
         "accepted": 0
       },
@@ -199,14 +210,14 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 0,
-        "length": 271,
-        "bends": 2
+        "length": 279,
+        "bends": 4
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
-        "length": 271,
-        "bends": 2
+        "length": 279,
+        "bends": 4
       }
     ],
     "portTrials": 0,
@@ -220,14 +231,14 @@
       "before": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 271,
-        "bends": 2
+        "length": 279,
+        "bends": 4
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 271,
-        "bends": 2
+        "length": 279,
+        "bends": 4
       },
       "exhausted": false
     },

@@ -1,7 +1,7 @@
 {
   "smallestText": 11,
   "width": 1505,
-  "height": 360,
+  "height": 370,
   "scale": 1,
   "origin": [
     40,
@@ -11,7 +11,7 @@
     {
       "id": "ddn.usecases.recovery::model.backup",
       "w": 270,
-      "h": 100,
+      "h": 170,
       "fields": [],
       "titleLines": [
         "Full backup",
@@ -21,7 +21,12 @@
       "scale": 1,
       "headerH": 82,
       "meaningLines": [],
-      "noteLines": [],
+      "noteLines": [
+        "A synthetic backup-artifact",
+        "definition; test evidence would be",
+        "a separate assertion."
+      ],
+      "noteTop": 82,
       "x": 0,
       "y": 0,
       "fieldRows": []
@@ -68,6 +73,14 @@
       "points": [
         [
           270,
+          85
+        ],
+        [
+          314,
+          85
+        ],
+        [
+          314,
           50
         ],
         [
@@ -76,7 +89,7 @@
         ]
       ],
       "label": {
-        "x": 315,
+        "x": 337,
         "y": 35,
         "w": 30,
         "h": 30
@@ -134,23 +147,23 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 275,
+        "bends": 2
       },
       {
         "stage": "connection-points",
         "trials": 0,
         "accepted": 0,
         "crossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 275,
+        "bends": 2
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
-        "length": 240,
-        "bends": 0,
+        "length": 275,
+        "bends": 2,
         "trials": 0,
         "accepted": 0
       },
@@ -158,14 +171,14 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 275,
+        "bends": 2
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 275,
+        "bends": 2
       }
     ],
     "portTrials": 0,
@@ -179,14 +192,14 @@
       "before": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 275,
+        "bends": 2
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 275,
+        "bends": 2
       },
       "exhausted": false
     },
@@ -198,13 +211,13 @@
     "x": 0,
     "y": 0,
     "w": 1080,
-    "h": 130
+    "h": 200
   },
   "drawingArea": {
     "x": 30,
     "y": 90,
     "w": 1080,
-    "h": 200
+    "h": 210
   },
   "layoutState": {
     "format": "ddn-layout-state@1",

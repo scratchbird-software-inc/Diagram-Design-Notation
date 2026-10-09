@@ -1,3 +1,5 @@
+import {draftWorkspaces} from './draft-context.js';
+import {createEditor} from './editor.js';
 /* SPDX-License-Identifier: GPL-2.0-or-later. Public SDK on the consolidated DDN 0.3 core. */
 import {optionalNamespace} from '../../runtime/ddn-module-registry.js';
 import Capabilities from '../../runtime/ddn-capabilities.js';
@@ -68,14 +70,14 @@ function pathChecked(k){
  if(typeof k!=='string'||!k||k.length>1024||k!==k.normalize('NFC')||k.startsWith('/')
   ||/[\\\x00-\x1f\x7f]/.test(k)||/^[a-z]+:/i.test(k)
   ||k.split('/').some(x=>!x||x==='.'||x==='..'||['__proto__','constructor','prototype'].includes(x))
-  ||!k.toLowerCase().endsWith('.ddn'))
+  ||!/\.ddn(?:a|n)?$/i.test(k))
   fail('LIVE010','Invalid workspace DDN path: '+k);
  return k;
 }
 function filesChecked(input){
  if(!input||typeof input!=='object'||Array.isArray(input))fail('LIVE010','Workspace must be a filename-to-DDN-source map.');
  const files=Object.create(null);let total=0;
- for(const [path,text]of Object.entries(input)){pathChecked(path);if(typeof text!=='string'||text.length>2000000)fail('LIVE010','DDN source must be text, at most 2,000,000 characters per file.');total+=text.length;files[path]=text;}
+ for(const [path,text]of Object.entries(input)){pathChecked(path);if(typeof text!=='string'||text.length>2000000)fail('LIVE010','DDN source must be text, at most 2,000,000 characters per file.');if(/\.ddnn$/i.test(path))D.documents.read(text);total+=text.length;files[path]=text;}
  if(total>12000000||Object.keys(files).length>1500)fail('LIVE011','Workspace limit: 1,500 files and 12,000,000 source characters.');return files;
 }
 // B1-012: public glyph access for chrome that renders the notation's own
@@ -152,7 +154,7 @@ function apply(base,overrides){
   // per-relation hint channel the parser populates from `route` blocks
   // (ir.view.routes), which layout honours over the view-level routing.
   // Verb keys apply first, relation-id keys second so ids always win.
-  const visible=new Set(ir.view.relations),byId=new Map(ir.relations.filter(r=>visible.has(r.id)).map(r=>[r.id,r]));
+  const visual=D.expandOccurrences(ir),visible=new Set(visual.view.relations),byId=new Map(visual.relations.filter(r=>visible.has(r.id)).map(r=>[r.id,r]));
   const verbs=new Set([...visible].map(id=>byId.get(id)?.kind).filter(v=>v!=null));
   const entries=Object.entries(o.relationRouting);
   for(const [key]of entries)if(!byId.has(key)&&!verbs.has(key))fail('LIVE022','relationRouting key is not a verb or relation in this view: '+key);
@@ -234,28 +236,49 @@ function createWorkspace(input){
   }
   files=next;notify(patch.map(p=>p.file));return revision;
  }
- function compiled(entry,view){if(!Object.hasOwn(files,entry))fail('LIVE012','Missing entry: '+entry);const key=entry+'#'+(view||'');if(cache.has(key))return cache.get(key);const built=D.build(files,entry,view,assets.registry),ir=built.ir;
-  if(ir.view.selected.length>128||ir.view.relations.length>384)fail('LIVE013','Live view limit: 128 elements and 384 relationships. Split the model into linked views.');
-  freeze(ir.elements);freeze(ir.relations);const result={ir,dependencies:[...built.workspace.docs.keys()]};cache.set(key,result);while(cache.size>4)cache.delete(cache.keys().next().value);return result;}
+ function validateEdit(next,entry,view){
+  if(!draftWorkspaces.has(ws))return D.build(next,entry,view,assets.registry);
+  const result=D.buildDraft(next,entry,view,assets.registry);
+  if(!result.ir){const d=result.diagnostics.find(x=>x.severity==='error');throw new D.DDNError(d.code,d.message,d.source,d.offset);}return result;
+ }
+ function compiled(entry,view){if(!Object.hasOwn(files,entry))fail('LIVE012','Missing entry: '+entry);const key=entry+'#'+(view||'');if(cache.has(key))return cache.get(key);const built=validateEdit(files,entry,view),ir=built.ir;
+  if((ir.view.occurrences?.elements.length??ir.view.selected.length)>128||(ir.view.occurrences?.relations.length??ir.view.relations.length)>384)fail('LIVE013','Live view limit: 128 elements and 384 relationships. Split the model into linked views.');
+  freeze(ir.elements);freeze(ir.relations);const result={ir,dependencies:[...built.workspace.docs.keys(),...built.workspace.documentFiles]};cache.set(key,result);while(cache.size>4)cache.delete(cache.keys().next().value);return result;}
  const ws={
   get revision(){return revision;},getFiles(){return {...files};},
   entries(){return Object.keys(files).sort().flatMap(file=>{try{const d=D.parse(files[file],file),v=d.declarations.filter(n=>n.type==='view');return v.length?[{file,views:v.map(n=>({id:n.id,name:n.label||n.id}))}]:[];}catch{return[];}});},
   views(entry){return D.parse(files[entry],entry).declarations.filter(n=>n.type==='view').map(n=>({id:n.id,name:n.label||n.id}));},
-  analyze(file){if(!Object.hasOwn(files,file))fail('LIVE012','Missing source file: '+file);return D.parse(files[file],file);},
+  analyze(file){if(!Object.hasOwn(files,file))fail('LIVE012','Missing source file: '+file);return /\.ddnn$/i.test(file)?D.documents.read(files[file]):D.parse(files[file],file);},
   resolve(entry,view){return clone(compiled(entry,view).ir);},
+  editor(options={}){return createEditor(api,this,commit,()=>{if(destroyed)fail('LIVE016','Workspace destroyed.');},options);},
+  validateDraft(entry,view){const result=D.buildDraft(files,entry,view,assets.registry);
+   return {status:result.status,ir:result.ir,diagnostics:result.diagnostics};},
+  previewDraft(entry,view){
+   const result=this.validateDraft(entry,view);
+   if(!result.ir||(result.ir.view.profiles.projection.kind!=='graph'||result.ir.view.profiles.projection.iso===true))return {...result,svg:null,scene:null};
+   if((result.ir.view.occurrences?.elements.length??result.ir.view.selected.length)>128||(result.ir.view.occurrences?.relations.length??result.ir.view.relations.length)>384)fail('LIVE013','Live view limit: 128 elements and 384 relationships. Split the model into linked views.');
+   const rendered=backend.Engine.render(result.ir,assets.registry,assets.glyphs,{draftPreview:true});
+   return {...result,svg:rendered.svg,scene:rendered.scene};
+  },
+  documents(entry,view){return compiled(entry,view).ir.elements.filter(n=>n.properties.document).map(n=>({elementId:n.id,...clone(n.properties.document)}));},
+  commitFiles(changes,{expectedRevision=revision,entry,view}={}){if(expectedRevision!==revision)fail('LIVE030','Source changed since this edit was prepared.');if(!entry)fail('LIVE012','Validated file transaction requires entry/view');const next=filesChecked({...files,...changes});validateEdit(next,entry,view);
+   const changed=new Set(Object.keys(changes));for(const item of this.entries())for(const target of item.views){if(item.file===entry&&target.id===view)continue;let before;try{before=D.build(files,item.file,target.id,assets.registry);}catch{continue;}const deps=[...before.workspace.docs.keys(),...before.workspace.documentFiles];if(deps.some(f=>changed.has(f)))D.build(next,item.file,target.id,assets.registry);}
+   return commit(next,'Edit element content');},
   inspect(entry,view){const b=compiled(entry,view),ir=b.ir;return{capabilities:capabilities(ir),profiles:clone(ir.view.profiles),fingerprint:fingerprint(JSON.stringify(D.semanticJSON(ir))),dependencies:b.dependencies.slice(),source:clone(ir.view.source)};},
   updateFiles(changes){if(!changes||typeof changes!=='object'||Array.isArray(changes))fail('LIVE010','Expected a source changes map.');return commit({...files,...changes});},
   replaceFiles(next){return commit(next,'Replace workspace');},
   removeFile(file,{force=false}={}){if(!Object.hasOwn(files,file))fail('LIVE012','Missing source file.');const deps=this.dependents(file);if(deps.length&&!force)fail('LIVE033','File is imported by: '+deps.join(', '));const next={...files};delete next[file];return commit(next,'Remove '+file);},
-  dependents(file){const out=[];for(const [name,text]of Object.entries(files))try{if(D.parse(text,name).imports.some(i=>resolvePath(name,i.path)===file))out.push(name);}catch{}return out;},
+  dependents(file){const out=[];for(const [name,text]of Object.entries(files))try{if(/\.ddnn$/i.test(name))continue;const d=D.parse(text,name);let hit=d.imports.some(i=>resolvePath(name,i.path)===file);const visit=n=>{if(n.group&&n.type==='document'&&n.props.file&&resolvePath(name,n.props.file)===file)hit=true;for(const c of n.children||[])visit(c);};d.declarations.forEach(visit);if(hit)out.push(name);}catch{}return out;},
   renameFile(oldName,newName){pathChecked(newName);if(!Object.hasOwn(files,oldName))fail('LIVE012','File not found.');if(Object.hasOwn(files,newName))fail('LIVE034','Destination already exists.');const next={...files};delete next[oldName];
    for(const [name,text]of Object.entries(files)){
+    if(/\.ddnn$/i.test(name)){next[name===oldName?newName:name]=text;continue;}
     const doc=D.parse(text,name),bound=doc.declarations[0]?.start??text.length,
      tokens=D.lex(text,name).filter(t=>t.start<bound),edits=[],newFile=name===oldName?newName:name;
     for(let i=0;i<tokens.length-1;i++)if(tokens[i].type==='id'&&tokens[i].value==='import'&&tokens[i+1].type==='string'){
      const tok=tokens[i+1],target=resolvePath(name,tok.value),newTarget=target===oldName?newName:target;
      if(name===oldName||target===oldName)edits.push({start:tok.start,end:tok.end,text:JSON.stringify(relative(newFile,newTarget))});
     }
+    const visit=n=>{if(n.group&&n.type==='document'&&n.props.file){const target=resolvePath(name,n.props.file),newTarget=target===oldName?newName:target;if(name===oldName||target===oldName){const ts=D.lex(text,name).filter(t=>t.start>=n.start&&t.end<=n.end);for(let i=0;i<ts.length-2;i++)if(ts[i].type==='id'&&ts[i].value==='file'&&ts[i+1].type===':'&&ts[i+2].type==='string')edits.push({start:ts[i+2].start,end:ts[i+2].end,text:JSON.stringify(relative(newFile,newTarget))});}}for(const c of n.children||[])visit(c);};doc.declarations.forEach(visit);
     next[newFile]=replaceSpans(text,edits);
    }
    return commit(next,'Rename '+oldName+' to '+newName);},
@@ -268,7 +291,7 @@ function createWorkspace(input){
     groups.get(e.file).push(e);
    }
    for(const [f,list]of groups)next[f]=replaceSpans(next[f],list);
-   if(entry)D.build(next,entry,view,assets.registry);else for(const f of groups.keys())D.parse(next[f],f);
+   if(entry)validateEdit(next,entry,view);else for(const f of groups.keys())if(/\.ddnn$/i.test(f))D.documents.read(next[f]);else D.parse(next[f],f);
    return commit(next,'Structured edit');
   },
   replaceData(name,records){return api.authoring.replaceData(this,name,records);},
@@ -304,7 +327,7 @@ function createWorkspace(input){
    const redacted=p.export.mode==='redacted',publicIR=result._ir||backend.Export.project(v.ir);
    const sourceNodes=[];function addSources(x){sourceNodes.push(...x.elements,...x.relations,...x.elements.flatMap(n=>n.fields||[]));for(const ch of x.view.children||[])addSources(ch.ir);}addSources(v.ir);
    const sourceMap=redacted?{}:Object.fromEntries(sourceNodes.filter(n=>n.source).map(n=>[n.id,{name:n.name,...n.source}]));
-   for(const m of result.scene.projection?.mapping||[])if(sourceMap[m.source])sourceMap[m.occurrence]={...sourceMap[m.source],sourceId:m.source};
+   for(const m of [...(result.scene.projection?.mapping||[]),...(result.scene.occurrences||[])])if(sourceMap[m.source])sourceMap[m.occurrence]={...sourceMap[m.source],sourceId:m.source};
    const keys=clone((redacted?publicIR:v.ir).view.keys);
    const out={svg:result.svg,scene:result.scene,layoutState:result.scene.layoutState||null,
     diagnostics:result.diagnostics||[],entry,view,
@@ -386,9 +409,10 @@ const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,
  iconLibraries:D.iconLibraries,
  engineAssets:{registry:assets.registry,glyphs:assets.glyphs},
  defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},
- choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,bundle:D.bundle,
- resolvePath,replaceSpans,
- kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code,group:Capabilities.paletteGroup(k.keyword),allowed_in:allowedMaps.kinds[k.keyword]||['graph']})),
+ occurrenceId:D.occurrenceId,expandOccurrences:D.expandOccurrences,
+ choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,documentFormats:D.documents,lex:D.lex,bundle:D.bundle,
+ resolvePath,relative,replaceSpans,
+ kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code,composition:D.documents.defaults(k),group:Capabilities.paletteGroup(k.keyword),allowed_in:allowedMaps.kinds[k.keyword]||['graph']})),
  relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code,allowed_in:allowedMaps.relations[k.keyword]||['graph']})),
  /* Designer phase 2: capability filtering helpers — the palette's allowed_in
   * tags and the Connect popup's endpoint-pair legality (same endpoint_contract

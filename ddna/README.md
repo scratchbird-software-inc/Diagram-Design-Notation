@@ -64,6 +64,8 @@ editing and collaboration — not capabilities withheld from the open tool.
 | `11-alien-format-import.md` | Alien-format import policy | full draft |
 | `12-what-remains.md` | What remains | full draft |
 | `13-open-tool-integration.md` | Open-tool integration (companions, trace replay, execution, KEEL host, open-tool limits) | full draft |
+| `14-bounded-declarative-evaluation.md` | Bounded KEEL L0 graph and decision-table profiles | implemented reference-tool profile |
+| `15-delegated-evaluation-contracts.md` | Separate constraint/query host contracts | boundary validator; engines not installed |
 | `appendix-known-errata.md` | Known errata in upstream standards | appendix |
 | `families/uml-state-machines.md` | Family chapter: UML state machines (EM-1, state) | full draft |
 | `families/uml-activities.md` | Family chapter: UML activities (EM-1, token) | full draft |

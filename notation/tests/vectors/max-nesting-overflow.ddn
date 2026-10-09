@@ -1,0 +1,15 @@
+ddn "0.6";
+module "ddn.vectors.nesting";
+// Four frame levels, including the outermost boundary.
+data m {
+  object a "A" {kind: table;}
+  object b "B" {kind: table;}
+}
+view main {
+  data: [@m];
+  frame f1 "L1" {  }
+  frame f2 "L2" { within: @f1; }
+  frame f3 "L3" { within: @f2; }
+  frame f5 "L5" { within: @f4; }
+  frame f4 "L4" { within: @f3; members: [@m.a, @m.b]; }
+}

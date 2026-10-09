@@ -7,6 +7,8 @@ import {sanitizedLibraries} from './ddn-icon-sanitize.js';
 import Sketch from './ddn-sketch.js';
 import Layout from './ddn-layout.js';
 import Text from './ddn-text.js';
+import Fields from './ddn-field-layout.js';
+import Content from './ddn-content.js';
 import Placement from './ddn-placement.js';
 import Palette from './ddn-palette.js';
 import Shapes from './ddn-shapes.js';
@@ -73,8 +75,20 @@ function measureNode(n,registry,profiles,placement={},context={},fit=null){
  /* 0.8 (chapter 54): fit may force the box width (wrap/grow bound) or the base
   * font size (shrink step); both re-run the identical measurement path. */
  const k=DDN.kindEntry(registry,n.kind),s=q(fit?.fontSize??profiles.style.font_size,16)/16,font=profiles.style.font;
+ if(n.properties.composition&&!context.composing){const sections=n.properties.composition.sections;const source={...n,properties:{...n.properties,composition:undefined,description:undefined}};const base=measureNode(source,registry,{...profiles,display:{...profiles.display,fields:sections.includes('table')?'names':'none'}},placement,{...context,composing:true},fit);return Content.measure(n,k,base,profiles);}
  const visible=profiles.display.fields==='none'?[]:n.fields.filter(f=>(f.depth||0)<profiles.display.depth);
  let w=fit?.width??Math.max(placement.size?q(placement.size[0]):270*s,160*s);
+ // A schema's fixed columns contribute a natural width before title wrapping.
+ // Authored/placement widths remain hard constraints and are never expanded.
+ if(n.properties.columns&&!Array.isArray(n.properties.columns)&&fit?.width===undefined&&!placement.size){
+  const cs=n.properties.columns,ts=profiles.style?.text;
+  const alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const advance=Text.measure(alphabet,13.5*s,font,ts?.weight??400,ts).width/alphabet.length;
+  const schema=cs.entries.length?cs.entries:(k.column_schema||[]);
+  const needed=schema.filter(e=>(cs.partials[e.id]??e.visibility??'shown')==='shown').reduce((sum,e)=>sum+advance*Math.min(e.max_chars??Infinity,Math.max(e.min_chars??0,e.width.kind==='chars'?e.width.n:8)),30*s);
+  const bound=q(n.properties.max_width??profiles.style.max_width,Infinity);
+  w=Math.min(Math.max(w,needed),bound);
+ }
  /* 0.8 (chapter 04 §6A): the element label measures with its resolved text
   * properties (view style.text < element text { }); wraps recompute at the
   * effective width, so a bolder or small-caps label can grow the box. */
@@ -85,19 +99,53 @@ function measureNode(n,registry,profiles,placement={},context={},fit=null){
  let numeralRow=null;
  if(n.properties?.numeral!==undefined&&!k.profileKind)numeralRow={value:n.properties.numeral,top:headerH,h:26*s};
  let y=headerH+(numeralRow?numeralRow.h:0),rows=[];
- for(const f of visible){const depth=f.depth||0;let label=f.name;if(f.properties.x_part){const xp=f.properties.x_part;label+=(xp.classifier?': '+xp.classifier:'')+(xp.multiplicity?' ['+xp.multiplicity+']':'');}if(f.properties.x_unit)label+=': '+f.properties.x_unit.unit;if(f.properties.shape==='array')label+=' []';else if(f.properties.shape==='object')label+=' {}';else if(f.properties.shape==='variant')label+=' <variant>';else if(f.properties.shape==='map')label+=' <map>';else if(f.properties.shape==='set')label+=' <set>';
+ /* 0.8 (chapter 54 §54.7): field text no-wrap default with visible ellipsis
+  * clip (field > element > off via text_wrap); wrap: on keeps the legacy
+  * multi-line row. 0.8 (chapter 04 §6D): a declared columns { } group
+  * switches the element to structured column mode instead. */
+ const fieldSpec=profiles.style?.text;
+ const clipTo=(str,avail,size2,weight)=>Fields.clip(str,avail,size2,font,weight,fieldSpec);
+ let columnLayout=null;
+ if(n.properties.columns&&!Array.isArray(n.properties.columns)){
+  const kindSchema=Array.isArray(k.column_schema)?k.column_schema:[];
+  const partials=n.properties.columns.partials||{};
+  const schema=(n.properties.columns.entries.length?n.properties.columns.entries:kindSchema);
+  const cols=schema.filter(e=>(partials[e.id]??e.visibility??'shown')==='shown');
+  const fail=(code,message)=>{throw new DDN.DDNError(code,message,n.source?.file,n.source?.start);};
+  if(k.keyword==='table'&&schema.some(e=>(e.path||e.id)==='key')&&!cols.some(e=>(e.path||e.id)==='key')&&n.fields.some(f=>f.properties.key&&context.relationMembers?.has(f.id)))fail('DDN-CL03','Cannot hide the key column of a table with relation-keyed fields');
+  const alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const advance=Text.measure(alphabet,13.5*s,font,fieldSpec?.weight??400,fieldSpec).width/Array.from(alphabet).length;
+  const resolved=Fields.columns(cols,Math.max(0,w-30*s),advance,fail);
+  for(const e of resolved)e.header=clipTo(e.label??e.id,e._px-8*s,10.5*s,650);
+  columnLayout={cols:resolved,headerH:20*s,top:y};
+ }
+ if(columnLayout){
+  const cellValue=(e,f)=>{const path=e.path||e.id;if(path==='name')return f.name;let v=f.properties;for(const seg of path.split('.')){if(v===null||typeof v!=='object'||!Object.hasOwn(v,seg))return '';v=v[seg];}
+   if(v===undefined||v===null)return '';
+   if(path==='domain'&&v&&v.$ref){const d=context.byId?.get(v.$ref);return d?.name||pretty(v);}
+   return typeof v==='object'?pretty(v):String(v);};
+  y+=columnLayout.headerH;
+  for(const f of visible){const depth=f.depth||0;
+   const fullCells=columnLayout.cols.map(e=>cellValue(e,f));
+   const cells=columnLayout.cols.map((e,ci)=>clipTo(fullCells[ci],e._px-(ci===0?depth*16*s:0)-8*s,13.5*s,400));
+   const h=Math.max(28*s,(context.degrees?.[f.id]||1)>2?context.degrees[f.id]*40+10:0);rows.push({id:f.id,field:f,top:y,h,labelLines:[],detailLines:[],depth,cells,fullCells});y+=h;
+  }
+ }else for(const f of visible){const depth=f.depth||0;let label=f.name;if(f.properties.x_part){const xp=f.properties.x_part;label+=(xp.classifier?': '+xp.classifier:'')+(xp.multiplicity?' ['+xp.multiplicity+']':'');}if(f.properties.x_unit)label+=': '+f.properties.x_unit.unit;if(f.properties.shape==='array')label+=' []';else if(f.properties.shape==='object')label+=' {}';else if(f.properties.shape==='variant')label+=' <variant>';else if(f.properties.shape==='map')label+=' <map>';else if(f.properties.shape==='set')label+=' <set>';
   const prefix=(f.properties.presence==='optional'?'? ':'')+(f.properties.nullable===true?'nullable · ':'');
-  const labelLines=Text.wrap(prefix+label,w-(40+depth*16)*s,13.5*s,font,400),details=[];
+  const wrapMode=f.properties.text_wrap??n.properties.text_wrap??'off';
+  const full=prefix+label;
+  const labelLines=wrapMode==='on'?Text.wrap(full,w-(40+depth*16)*s,13.5*s,font,fieldSpec?.weight??400,fieldSpec):[clipTo(full,w-(40+depth*16)*s,13.5*s,400)];
+  const details=[];
   if(profiles.display.domains==='show'&&f.properties.domain){const d=context.byId?.get(f.properties.domain.$ref);details.push('domain: '+(d?.name||pretty(f.properties.domain)));}
   const dt=f.properties.datatype||f.properties.x_erp?.sql_type;if(profiles.display.datatypes==='show'&&dt)details.push('type: '+pretty(dt));
-  const detailLines=details.flatMap(x=>Text.wrap(x,w-(40+depth*16)*s,11.5*s,font,400));
+  const detailLines=details.flatMap(x=>wrapMode==='on'?Text.wrap(x,w-(40+depth*16)*s,11.5*s,font,fieldSpec?.weight??400,fieldSpec):[clipTo(x,w-(40+depth*16)*s,11.5*s,400)]);
   let h=(labelLines.length*18+detailLines.length*16+10)*s;h=Math.max(h,(context.degrees?.[f.id]||1)*18+10,(context.degrees?.[f.id]||1)>2?(context.degrees[f.id]*40+10):0);
-  rows.push({id:f.id,field:f,top:y,h,labelLines,detailLines,depth});y+=h;
+  rows.push({id:f.id,field:f,top:y,h,labelLines,detailLines,depth,...(details.some((v,i)=>detailLines[i]!==v)&&wrapMode!=='on'?{fullDetails:details.join(' · ')}:{}),...(labelLines[0]!==full&&wrapMode!=='on'?{fullLabel:full}:{})});y+=h;
  }
  /* B1-061 : packaged-element visibility prefix. */
  if(n.properties.x_pack?.visibility)titleLines[0]=(n.properties.x_pack.visibility==='private'?'− ':'+ ')+titleLines[0];
  let meaningLines=[];if(n.type==='domain'||k.code==='DOM'){meaningLines=Text.wrap(n.properties.meaning||'Shared semantic meaning',w-30*s,12.5*s,font,400);y=Math.max(y,headerH)+meaningLines.length*18*s+20*s;}
- let noteLines=[];if((k.shape==='note'||k.shape==='note.sticky')&&n.properties.description){noteLines=Text.wrap(n.properties.description,w-30*s,12.5*s,font,400);y+=noteLines.length*18*s+20*s;}
+ let noteLines=[],noteTop=y;if(n.properties.description&&(profiles.display.fields!=='none'||k.shape==='note'||k.shape==='note.sticky')&&profiles.projection?.profile!=='mindmap.basic@1'){noteLines=Text.wrap(n.properties.description,w-30*s,12.5*s,font,profiles.style.text?.weight??400,profiles.style.text);y+=noteLines.length*18*s+20*s;}
  /* B1-101: a sticky note has no header — its box is exactly the wrapped body
   * text plus padding (line 65 added the lines onto a header it does not use). */
  if(k.shape==='note.sticky')y=Math.max(noteLines.length*18*s+30*s,60*s);
@@ -137,7 +185,7 @@ function measureNode(n,registry,profiles,placement={},context={},fit=null){
  const footer=[];if(profiles.display.badges!=='none')for(const key of ['workload','role','temporal','distribution','location'])if(n.properties[key]!==undefined)footer.push(pretty(n.properties[key]));
  if(footer.length)y+=38*s;
  let h=Math.max(y+14*s,100*s,placement.size?q(placement.size[1]):0,(context.degrees?.[n.id]||1)>4?(context.degrees[n.id]*44+40):((context.degrees?.[n.id]||1)*20+40));
- const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample,...(numeralRow?{numeralRow}:{}),...(_art?{_art}:{}),...(mindRows?{mindRows}:{})}; return k.profileKind?Shapes.measure(g,profiles):g;
+ const g={id:n.id,n,k,w,h,...(fit?.width?{fitWidth:fit.width}:{}),fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,...(noteLines.length?{noteTop}:{}),sample,...(numeralRow?{numeralRow}:{}),...(_art?{_art}:{}),...(mindRows?{mindRows}:{}),...(columnLayout?{columnLayout}:{})}; return k.profileKind?Shapes.measure(g,profiles):g;
 }
 /* 0.8 (chapter 54): text fit. Mode resolution follows §54.1 precedence —
  * element > style-profile/bundle default > mode inferred from a width
@@ -262,7 +310,9 @@ function emitArt(g,found,p){
  return`<g class="ddn-art" data-art="${esc(xa.library+'/'+xa.item)}">`+inner+'</g>';
 }
 function renderNode(g,p,theme,registry){
+ if(g.composition)return Content.paint(g,p,theme);
  if(g.k.profileKind){let shaped=Shapes.render(p.theme08==='colorblind_safe'?{...g,k:{...g.k,colour:cbRemap(g.k.colour)}}:g,p,theme);
+  if(g.noteLines.length&&p.detail!=='shapes')shaped=shaped.slice(0,-4)+multilines(g.x+15*g.scale,g.y+g.noteTop+18*g.scale,g.noteLines,12.5*g.scale,p.theme08==='mono_print'?'#000000':theme.lowLight?theme.ink:undefined,18*g.scale)+'</g>';
   /* B1-082: icon binding — draw the referenced (pre-sanitized) library icon
    * inside the node's top area; ids namespaced per node. Host-registered
    * packs (B1-088) append after the shipped registry. */
@@ -385,16 +435,19 @@ function renderNode(g,p,theme,registry){
   out+=styleLine(x,ny-4*s,x+w,ny-4*s,ink,1,'',p,n.id+':numeral-top');
   out+=`<g class="ddn-numeral" data-numeral="${esc(nr.value)}"><rect x="${fmt(x+12*s)}" y="${fmt(ny+3*s)}" width="${fmt(bw)}" height="${fmt(nr.h-8*s)}" rx="${fmt(2*s)}" fill="${esc(fill)}" stroke="${esc(ink)}" stroke-width="1.2"/>`+text(x+12*s+bw/2,ny+nr.h-9*s,String(nr.value),12*s,ink,650,'text-anchor="middle"')+'</g>';
   out+=styleLine(x,ny+nr.h-1,x+w,ny+nr.h-1,ink,.6,'',p,n.id+':numeral');}
- if(g.fieldRows.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':fields');
+ if(g.columnLayout){
+  out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':fields');
+  out+=Fields.paint(g,(xx,yy,value,size,weight)=>text(xx,yy,value,size,bodyInk,weight),(x1,y1,x2,y2)=>styleLine(x1,y1,x2,y2,ink,.6,'',p,n.id+':columns-head'));
+ }else if(g.fieldRows.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':fields');
   for(const row of g.fieldRows){const xx=x+(16+row.depth*16)*s,yy=y+row.top+18*s;
-   out+=`<g class="ddn-field" data-member="${esc(row.id)}">`+multilines(xx,yy,row.labelLines,13.5*s,bodyInk,18*s);
+   out+=`<g class="ddn-field" data-member="${esc(row.id)}">${row.fullLabel||row.fullDetails?`<title>${esc([row.fullLabel||row.field.name,row.fullDetails].filter(Boolean).join(' · '))}</title>`:''}`+multilines(xx,yy,row.labelLines,13.5*s,bodyInk,18*s);
    if(row.field.properties.key)out+=glyph('key',x+w-27*s,yy-14*s,16*s,ink);
    if(row.detailLines.length)out+=multilines(xx,yy+row.labelLines.length*18*s,row.detailLines,11.5*s,ink,16*s);
    out+='</g>';
   }
  }
  if(g.meaningLines.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':meaning');out+=multilines(x+15*s,y+g.headerH+18*s,g.meaningLines,12.5*s,bodyInk,18*s);}
- if(g.noteLines.length)out+=multilines(x+15*s,y+g.headerH+18*s,g.noteLines,12.5*s,bodyInk,18*s);
+ if(g.noteLines.length)out+=multilines(x+15*s,y+g.noteTop+18*s,g.noteLines,12.5*s,bodyInk,18*s);
  if(g.mindRows){const mr=g.mindRows,top=y+g.headerH+8*s,winH=Math.min(mr.cap,mr.total)*mr.rowH,clipId='mindclip-'+hash(n.id);
   /* B1-100: mind-map body rows. ALL rows render inside a clip window sized to
    * the line cap; the tool pans the rows group and the thumb for scroll (no
@@ -491,16 +544,18 @@ function visibleRoutePieces(points,holes,radius=7){
  flush();return pieces;
 }
 let activeFont='sans',activeText=null;
-function render(ir,registry,glyphDefs='',options={}){const before=activeFont,beforeText=activeText;activeFont=ir.view.profiles.style.font;activeText=ir.view.profiles.style.text||null;
+function render(ir,registry,glyphDefs='',options={}){if(ir.validation?.mode==='draft'&&!options.draftPreview)throw new DDN.DDNError('DDN-DR01','Draft IR requires explicit draft preview; rebuild strictly for publication.');const before=activeFont,beforeText=activeText;activeFont=ir.view.profiles.style.font;activeText=ir.view.profiles.style.text||null;
  /* 0.8 (chapter 54 §54.4): an active font pin replaces the measurement cache
   * for this render only (engine match was checked against Text.engine). */
  const pin=ir.view.fontPin&&ir.view.fontPin.engine===Text.engine?ir.view.fontPin:null;
  const prevMetrics=pin?Text.getMetrics():null;
  if(pin)Text.setMetrics(pin.measurements);
- try{return renderInner(ir,registry,glyphDefs,options);}finally{if(pin)Text.setMetrics(prevMetrics);activeFont=before;activeText=beforeText;}}
+ try{const result=renderInner(ir,registry,glyphDefs,options);if(ir.validation?.mode==='draft')result.svg=result.svg.replace('</svg>','<g class="ddn-draft-badge" aria-label="Draft preview"><rect x="0" y="0" width="160" height="28" fill="#fff0b3"/><text x="8" y="19" font-family="sans-serif" font-size="14" fill="#513a00">DRAFT PREVIEW</text></g></svg>');return result;}finally{if(pin)Text.setMetrics(prevMetrics);activeFont=before;activeText=beforeText;}}
 function renderInner(ir,registry,glyphDefs='',options={}){
  if(!Layout||!Text||!Export)throw new DDN.DDNError('DDN099','Load layout/text/export modules before rendering');
  ir=Export.project(ir);
+ const occurrenceIR=ir.view.occurrences?ir:null;
+ ir=DDN.expandOccurrences(ir);
  const textBefore=Text.stats();
  /* 0.8 (chapter 55 §S4): ref: anchors resolve to the target element's numeral
   * (else its display label) at render time, before measurement, so renumbering
@@ -581,7 +636,7 @@ function diffNodeOverlay(g,paint,s){
  const headBlock=(titleOn?110:20)+headerBand;
  const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
  const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
- const context={byId:new Map(ir.elements.map(n=>[n.id,n])),members:new Map(ir.elements.flatMap(n=>[...n.fields,...n.ports].map(f=>[f.id,f]))),degrees:{}};
+ const context={relationMembers:new Set(ir.relations.flatMap(r=>[r.from.member,r.to.member].filter(Boolean))),byId:new Map(ir.elements.map(n=>[n.id,n])),members:new Map(ir.elements.flatMap(n=>[...n.fields,...n.ports].map(f=>[f.id,f]))),degrees:{}};
  const portIds=new Set(ir.elements.flatMap(n=>n.ports.map(pt=>pt.id)));
  for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
  let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
@@ -626,11 +681,31 @@ function diffNodeOverlay(g,paint,s){
     if(host){g.x=host.x+host.w/2-g.w/2;g.y=host.y+host.h-g.h*0.30;g.x_boundaryOf=host.id;}}}}
  let maxW=geoms.reduce((m,g)=>Math.max(m,g.w),270),maxH=geoms.reduce((m,g)=>Math.max(m,g.h),130);
  const byId=new Map(geoms.map(g=>[g.id,g]));
- let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0),w=f.size?q(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h=f.size?q(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170);
+ const frameChildren=new Map(),frameGeometry=new Map();
+ for(const f of ir.view.frames)if(f.within){if(!frameChildren.has(f.within))frameChildren.set(f.within,[]);frameChildren.get(f.within).push(f);}
+ function measureFrame(f){
+ if(frameGeometry.has(f.id))return frameGeometry.get(f.id);
+ const children=(frameChildren.get(f.id)||[]).map(measureFrame);
+ const m=[...f.members.map(id=>byId.get(id)).filter(Boolean),...children];let x=f.at?q(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0),w=f.size?q(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h=f.size?q(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170);
  // frame_overflow : expand grows a declared rect to enclose members
  // at the standard padding; when members already fit this is a no-op.
  if(m.length&&p.layout.frame_overflow!=='confine'&&(f.at||f.size)){w=Math.max(w,m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20);h=Math.max(h,m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22);}
- return{...f,x,y,w,h};});
+ // Explicit nested boundaries expand on every side; ordinary frames retain
+ // their historical anchored-origin behavior.
+ if(children.length&&p.layout.frame_overflow!=='confine'){
+  const left=Math.min(x,...m.map(g=>g.x-20)),top=Math.min(y,...m.map(g=>g.y-54));
+  w=Math.max(x+w,...m.map(g=>g.x+g.w+20))-left;
+  h=Math.max(y+h,...m.map(g=>g.y+g.h+22))-top;x=left;y=top;
+ }
+ if(children.length&&p.layout.frame_overflow==='confine'&&f.size){
+  for(const g of m)if(g.x<x+20-.001||g.y<y+54-.001||g.x+g.w>x+w-20+.001||g.y+g.h>y+h-22+.001)
+   throw new DDN.DDNError('DDN-FR04','Nested frame content does not fit confined boundary '+f.id);
+ }
+ const result={...f,x,y,w,h};frameGeometry.set(f.id,result);return result;}
+ for(const f of ir.view.frames)measureFrame(f);
+ // Paint each parent before children even with forward source references.
+ const frames=[];function paintFrame(f){frames.push(frameGeometry.get(f.id));for(const c of frameChildren.get(f.id)||[])paintFrame(c);}
+ for(const f of ir.view.frames)if(!f.within)paintFrame(f);
  /* B1-085: IEC 61131-3 power rails flank the rung area under the ladder profile. */
  let ladderRails=null;
  if(p.projection.profile==='ladder.basic@1'&&geoms.length){
@@ -941,7 +1016,7 @@ function diffNodeOverlay(g,paint,s){
   /* 0.8 (chapter 55 §55.6): diff state overlay rides after the node paint. */
   if(g.n.diffState&&g.n.diffState!=='unchanged'){const dp=diffPaint(g.n.diffState,p.theme08==='mono_print'?'mono_print':p.style.theme==='neutral'?'neutral':null);if(dp)diagram+=diffNodeOverlay(g,dp,g.scale);}});
  for(const d of subs){
-  if(d.mode==='inline'&&d.child){const child=render(d.child,registry,glyphDefs),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc(d.target)}">`+inner+'</g>';}
+  if(d.mode==='inline'&&d.child){const child=render(d.child,registry,glyphDefs,options.draftPreview?{draftPreview:true}:{}),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc(d.target)}">`+inner+'</g>';}
   else{if(!/^[A-Za-z0-9_.\/-]+$/.test(d.targetLocal)||d.targetLocal.startsWith('/')||d.targetLocal.includes('..'))throw new DDN.DDNError('DDN078','Subdiagram reference target must be a safe relative identifier: '+d.targetLocal);diagram+=`<g class="ddn-subdiagram" data-view="${esc(d.target)}"><a href="${esc(d.targetLocal)}.svg">`+rect(d.x,d.y,d.w,d.h,t.accent,t.surface,p.style.look,d.id,0,p.style)+glyph('frame',d.x+14,d.y+18,25,t.accent)+text(d.x+48,d.y+33,d.name,15,t.ink,600)+text(d.x+14,d.y+64,'↗ '+d.targetLocal+' · diagram reference',11,t.muted)+'</a></g>';}
  }
  for(const a of routes){
@@ -985,7 +1060,7 @@ function diffNodeOverlay(g,paint,s){
   labels.push(text(maxX+8*ls,bot+16*ls,'Σ '+totNVA,11*ls,t.muted,650,''));
   diagram+=`<g class="ddn-vsm-ladder"><path d="${path}" fill="none" stroke="${esc(t.ink)}" stroke-width="2"/>`+labels.join('')+text(lx,bot+34*ls,'VA / NVA timeline',10.5*ls,t.muted,500,'')+'</g>';
  }
- const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:Layout.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN.VERSION,...(tf.scene?{textFit:tf.scene}:{})},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:headBlock-20+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
+ const scene={...(ir.occurrenceMapping?{occurrences:ir.occurrenceMapping}:{}),smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:Layout.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN.VERSION,...(tf.scene?{textFit:tf.scene}:{})},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:headBlock-20+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
  const font=FONT_STACKS[p.style.font]||'DejaVu Sans, Arial, sans-serif';
  const fontClass='ddn-font-'+hash(font);
  const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);
@@ -1067,7 +1142,7 @@ function diffNodeOverlay(g,paint,s){
   diags.push({code:'DDN-TW01',severity:'warning',message:'Some text runs used estimated metrics; this is not a typography-certified publication.'});}
  scene.layoutState={format:'ddn-layout-state@1',view:options.viewKey||ir.view.id,positions:Object.fromEntries(geoms.map(g=>[g.id,[g.x,g.y]]))};
  scene.textMeasurement={mode:estimated?'estimated':'measured',requestedFont:p.style.font,provider:textAfter.canvas>textBefore.canvas?'browser-canvas':'pinned-cache',...(ir.view.fontPin&&ir.view.fontPin.engine===Text.engine?{pin:ir.view.fontPin.path}:{})};
- return{svg:out,scene,diagnostics:diags,_drawing:diagram,_defs:glyphDefs,_ir:ir};
+ return{svg:out,scene,diagnostics:diags,_drawing:diagram,_defs:glyphDefs,_ir:occurrenceIR||ir};
 }
 /* 0.8 (chapter 53 §53.4): render a multi-view publication set — one SVG per
  * figure named <entry>--<view_id>.svg, plus a manifest JSON in declaration

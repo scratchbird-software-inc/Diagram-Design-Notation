@@ -26,10 +26,12 @@
     "x_evidence",
     "x_fragment",
     "x_instance",
+    "x_interfaces",
     "x_invariant",
     "x_jump",
     "x_member",
     "x_nary",
+    "x_pack",
     "x_protocol",
     "x_protocol_role",
     "x_reconciliation",
@@ -3085,39 +3087,6 @@
       "removable": true,
       "validation": {},
       "help": "Extension contract x_objectified (ddn-profiles.js).",
-      "provenance": {
-        "source": "notation/runtime/ddn-profiles.js",
-        "version": "0.3.0-draft.1"
-      }
-    },
-    {
-      "id": "ddn.ext.x_pack",
-      "key": "x_pack",
-      "label": "x_pack",
-      "targets": [
-        "element"
-      ],
-      "scope": "model",
-      "widget": "record",
-      "fields": [
-        {
-          "key": "visibility",
-          "label": "Visibility",
-          "widget": "select",
-          "choices": [
-            "public",
-            "private"
-          ]
-        }
-      ],
-      "states": [
-        "unset",
-        "value"
-      ],
-      "group": "Extensions",
-      "removable": true,
-      "validation": {},
-      "help": "Extension contract x_pack (ddn-profiles.js).",
       "provenance": {
         "source": "notation/runtime/ddn-profiles.js",
         "version": "0.3.0-draft.1"

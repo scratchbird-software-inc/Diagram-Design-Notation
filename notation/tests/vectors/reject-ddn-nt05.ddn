@@ -1,0 +1,4 @@
+ddn "0.7";
+module "composed";
+data m { procedure p "Calculate total" { fields { amount {datatype:decimal;parameter_mode:in;} total {datatype:decimal;parameter_mode:out;} } document {format:markdown_text;text:"![image](x)";}  } }
+view main {data:[@m];publication {size:content;} select:[@m.p,@m.p#2];place @m.p#2 {composition {sections:[name,type,notes];order:[notes,table];}} }

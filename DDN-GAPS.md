@@ -60,9 +60,7 @@ named hook:
   the diff view's own profiles. Coded family DDN-DF01–DF04; conformance
   vectors `diff-basic` + `reject-ddn-df03`; suite
   `notation/tests/diff-views.js`.
-- **Assertion evaluation** (ch. 55 §55.2) — 0.8 assertions are parsed,
-  shape-validated, carried and exported but never evaluated; chapter 58
-  reserves the conformance hook. Revisiting: 0.9 evaluation semantics.
+- **Assertion evaluation** (ch. 55 §55.2) — **CLOSED for the conservative 0.8 amendment:** structured assertion elements perform read-only property lookup and equality (DDN-AS01–03; `notation/tests/assertion-eval.js`). String assertions remain inert. This does not provide arbitrary expression execution.
 - **Mermaid import** (ch. 57 §57.4) — ~~the 0.8 surface only fixes where it
   will live (a designer "Import…" command producing ordinary 0.6 source).~~
   **CLOSED 0.9:** the designer's Files-drawer **Import…** command converts

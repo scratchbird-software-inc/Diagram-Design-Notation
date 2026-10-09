@@ -1,0 +1,13 @@
+ddn "0.7";
+module "declarative.order";
+architecture project { files: ["decision-discount.ddna"]; }
+data totals {
+  object gross "Gross total" { kind: object; }
+  object net "Discounted total" { kind: object; }
+  relation dependency @gross -> @net { kind: assoc; }
+}
+view main "Declarative order calculation" {
+  data: [@totals];
+  layout { algorithm: grid; }
+  publication { size: content; fit: none; }
+}

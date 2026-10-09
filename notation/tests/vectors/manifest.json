@@ -109,11 +109,14 @@
       "id": "max-nesting",
       "source": "max-nesting.ddn",
       "view": "main",
-      "status": "deferred",
-      "reason": "0.8 core-language work: frame nesting (within:) and the coded depth error are not in the 0.7.0 parser",
       "expect": {
-        "diagnostics": [],
-        "geometry_sha256": ""
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "e5404a97391b0e56e93bafb3c1e3b04bf084b2d35ffde8daf6687d96e8a7ac31"
       }
     },
     {
@@ -188,6 +191,190 @@
             "severity": "error",
             "file": "reject-ddn-df03.ddn",
             "line": 9
+          }
+        ]
+      }
+    },
+    {
+      "id": "field-columns",
+      "source": "field-columns.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "32ab46f931e56c56809d07dbe87ee09cd83ac680d99fdf2f6f693e9026ce32f6"
+      }
+    },
+    {
+      "id": "field-clip",
+      "source": "field-clip.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "3a8225a6b918b8c3c3c64cf3872abdd05a11e76c32c8d5017a53aa179992a503"
+      }
+    },
+    {
+      "id": "reject-ddn-fl01",
+      "source": "reject-ddn-fl01.ddn",
+      "view": "main",
+      "expect": {
+        "reject": "DDN-FL01",
+        "diagnostics": [
+          {
+            "code": "DDN-FL01",
+            "severity": "error",
+            "file": "reject-ddn-fl01.ddn",
+            "line": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "reject-ddn-cl02",
+      "source": "reject-ddn-cl02.ddn",
+      "view": "main",
+      "expect": {
+        "reject": "DDN-CL02",
+        "diagnostics": [
+          {
+            "code": "DDN-CL02",
+            "severity": "error",
+            "file": "reject-ddn-cl02.ddn",
+            "line": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "occurrences",
+      "source": "occurrences.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "bda2c5974b05ec385853a8499b411a48966510aafeabc08af129c2a19e167f61"
+      }
+    },
+    {
+      "id": "reject-ddn-oc01",
+      "source": "reject-ddn-oc01.ddn",
+      "view": "main",
+      "expect": {
+        "reject": "DDN-OC01",
+        "diagnostics": [
+          {
+            "code": "DDN-OC01",
+            "severity": "error",
+            "file": "reject-ddn-oc01.ddn",
+            "line": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "reject-ddn-oc03",
+      "source": "reject-ddn-oc03.ddn",
+      "view": "main",
+      "expect": {
+        "reject": "DDN-OC03",
+        "diagnostics": [
+          {
+            "code": "DDN-OC03",
+            "severity": "error",
+            "file": "reject-ddn-oc03.ddn",
+            "line": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "composition",
+      "source": "composition.ddn",
+      "view": "main",
+      "expect": {
+        "diagnostics": [
+          {
+            "code": "DDN-TW01",
+            "severity": "warning"
+          }
+        ],
+        "geometry_sha256": "aaeccc57ec156731b0073e78d16411693870b040d99122e5beef2a3b3c794a9c"
+      }
+    },
+    {
+      "id": "reject-ddn-ce01",
+      "source": "reject-ddn-ce01.ddn",
+      "view": "main",
+      "expect": {
+        "reject": "DDN-CE01",
+        "diagnostics": [
+          {
+            "code": "DDN-CE01",
+            "severity": "error",
+            "file": "reject-ddn-ce01.ddn",
+            "line": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "reject-ddn-nt05",
+      "source": "reject-ddn-nt05.ddn",
+      "view": "main",
+      "expect": {
+        "reject": "DDN-NT05",
+        "diagnostics": [
+          {
+            "code": "DDN-NT05",
+            "severity": "error",
+            "file": "reject-ddn-nt05.ddn",
+            "line": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "reject-ddn-nt04",
+      "source": "reject-ddn-nt04.ddn",
+      "view": "main",
+      "expect": {
+        "reject": "DDN-NT04",
+        "diagnostics": [
+          {
+            "code": "DDN-NT04",
+            "severity": "error",
+            "file": "reject-ddn-nt04.ddn",
+            "line": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "max-nesting-overflow",
+      "source": "max-nesting-overflow.ddn",
+      "view": "main",
+      "expect": {
+        "reject": "DDN-FR03",
+        "diagnostics": [
+          {
+            "code": "DDN-FR03",
+            "severity": "error",
+            "file": "max-nesting-overflow.ddn",
+            "line": 13
           }
         ]
       }

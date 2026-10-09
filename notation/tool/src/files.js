@@ -50,7 +50,7 @@ function viewListFrom(entries) {
 
 function isPlausibleSourceFile(f) {
   if (!f || typeof f.name !== 'string') return false;
-  return /\.ddn($|\.)/i.test(f.name) || /\.(zip|json)$/i.test(f.name) || (typeof f.type === 'string' && f.type.startsWith('text/'));
+  return /\.ddn(?:a|n)?($|\.)/i.test(f.name) || /\.(zip|json)$/i.test(f.name) || (typeof f.type === 'string' && f.type.startsWith('text/'));
 }
 
 /* B1-051 (D2): pick a fresh local identifier for a design-mode creation.
@@ -181,7 +181,7 @@ function stableDiagnostic(d, files, view) {
  * family, surfaced through the tool's diagnostics drawer.
  * ------------------------------------------------------------------ */
 function isCompanionFile(name, text) {
-  if (/\.ddna\.ddn$/.test(name)) return true;
+  if (/\.ddna(?:\.ddn)?$/.test(name)) return true;
   return /x_(profile|keel|trace)\s*:/.test(String(text || ''));
 }
 function normalizeWsPath(fromFile, p) {

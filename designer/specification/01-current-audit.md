@@ -1,5 +1,10 @@
 # Current DDN audit and implementation gaps
 
+> Current implementation (2026-10-09): [chapter 21](21-preview-apply.md)
+> defines the shipped preview/apply adapter and bounded core draft validation.
+> Earlier proposed method names and prototype status statements below are
+> historical; they do not override that implemented contract.
+
 **DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## What was inspected
@@ -18,9 +23,9 @@ The public API supplies workspaces, revision checks, source-span edits, undo/red
 
 **AUD-002 — Generic creation has a fixed write target.** `addElement` and `addRelation` use a local `editor_data` block. The audit confirms a newly created object is not automatically shared with the second view. The new editor needs an explicit creation destination and an atomic create-plus-occurrence transaction.
 
-**AUD-003 — Public commands are incomplete.** There are no dedicated public operations for reconnecting a relation, safe kind conversion, deep field reorder/reparent, multiple occurrences of one object in one view, or arbitrary typed scope membership changes. A generic property setter is not sufficient for their multi-file effects. **Status (ED-008, 2026-09-20):** relation reconnection now has a prototype command (`reconnectRelation` in `prototype/commands.js`, with drag + inspector paths and the five-part impact preview; covers VE-AC-023). The remaining AUD-003 operations — kind conversion, deep field reorder/reparent, multi-occurrence and scope membership — stay open; ED-009 covers multi-occurrence addressing. **Update (0.9 designer batch, 2026-10-07):** kind conversion ships as an explicit operation (`authoring.convertKind` — capability-family-filtered targets, listed extension-loss confirm, content-bearing extensions refuse, one validated transaction; Inspector Meaning tab + element context menu); deep field reorder/reparent ships (`authoring.moveField`, DDN042 re-validated); typed scope membership ships in the Inspector's Scope & membership block (namespace read-only + source jump, placement via select membership, layout-group via frame membership, ownership via the `owner` property). Multi-occurrence stays blocked on AUD-004 (occurrence contract DRAFT): the builder dedupes duplicate select entries this revision — the UI's "Add existing…" adds an unshown definition once; distinct occurrences wait for the RFC.
+**AUD-003 — Public commands are incomplete.** There are no dedicated public operations for reconnecting a relation, safe kind conversion, deep field reorder/reparent, multiple occurrences of one object in one view, or arbitrary typed scope membership changes. A generic property setter is not sufficient for their multi-file effects. **Status (ED-008, 2026-09-20):** relation reconnection now has a prototype command (`reconnectRelation` in `prototype/commands.js`, with drag + inspector paths and the five-part impact preview; covers VE-AC-023). The remaining AUD-003 operations — kind conversion, deep field reorder/reparent, multi-occurrence and scope membership — stay open; ED-009 covers multi-occurrence addressing. **Update (0.9 designer batch, 2026-10-07):** kind conversion ships as an explicit operation (`authoring.convertKind` — capability-family-filtered targets, listed extension-loss confirm, content-bearing extensions refuse, one validated transaction; Inspector Meaning tab + element context menu); deep field reorder/reparent ships (`authoring.moveField`, DDN042 re-validated); typed scope membership ships in the Inspector's Scope & membership block (namespace read-only + source jump, placement via select membership, layout-group via frame membership, ownership via the `owner` property). **Update (2026-10-09):** flat graph multi-occurrence is implemented: Add another appearance and connector-copy controls, qualified source references, independent placement/presentation/hide, and source-mapped shared-definition edits. Repeating an unqualified select entry remains idempotent; explicit ordinals create copies. See chapter 03 and the occurrence regression suites.
 
-**AUD-004 — No independent occurrence address.** Ordinary graph placements are keyed by model ID. Before supporting two appearances in one view, add an explicit occurrence layer; do not create duplicate model records as a workaround. **Status (ED-009, 2026-09-20):** an editor-level occurrence addressing layer landed in the prototype (`Commands.occurrences` in `prototype/commands.js`): deterministic `occ:<viewId>:<definitionId>` ids under a one-appearance-per-view restriction, add-existing/remove/move/override commands with explicit restriction responses, and inspector/Model-shelf surfacing (covers VE-AC-036). The core/grammar occurrence contract — versioned occurrence records and duplicate appearances within one view — remains RFC work; AUD-004 stays open.
+**AUD-004 — No independent occurrence address.** Ordinary graph placements are keyed by model ID. Before supporting two appearances in one view, add an explicit occurrence layer; do not create duplicate model records as a workaround. **Status (ED-009, 2026-09-20):** an editor-level occurrence addressing layer landed in the prototype (`Commands.occurrences` in `prototype/commands.js`): deterministic `occ:<viewId>:<definitionId>` ids under a one-appearance-per-view restriction, add-existing/remove/move/override commands with explicit restriction responses, and inspector/Model-shelf surfacing (covers VE-AC-036). **Update (2026-10-09):** the core/grammar graph occurrence contract now ships as `view.occurrences` version 1 with `@element#N` source references, explicit endpoint targeting, compatible legacy identities and atomic active-tool authoring. This closes graph occurrence addressing. The RFC's hidden-endpoint boundary crosses, visual occurrence diffs and other projection families remain separate follow-ups (DDN-T20).
 
 **AUD-005 — Descriptor catalogue drift.** Five used silhouettes (`initial`, `final`, `offpage`, `bracket`, `cylinder`) are absent from the profile catalogue's top-level `shapes` list. The renderer does support those shapes. Generate that list from recipe registration before using it as the palette's authority.
 
@@ -36,3 +41,14 @@ The public API supplies workspaces, revision checks, source-span edits, undo/red
 
 ## Audit disposition
 These are design blockers or integration gaps, not all new renderer defects. Existing Studio is not modified. The specification distinguishes reuse, wrapper work, new core APIs, new grammar/IR work and external assurance. The routing witness, current file hashes and previous review caveats are preserved.
+
+
+## Runtime update (2026-10-09)
+
+[Chapter 21](21-preview-apply.md) specifies the implemented public preview/apply
+adapter and core draft resolver. It qualifies the start-only flow construction
+case (AUD-001) and authoritative all-view validation for adapter actions
+(AUD-008). Classification is per validator site, with only the listed flow and
+activity obligations softened. Historical prototype prefix classification is
+not the runtime contract. Existing visual controls and other profile families
+must not be assumed to use this adapter automatically.

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ddn:ddnn:1",
+  "title": "DDNN text document storage version 1",
+  "type": "object",
+  "required": [
+    "format",
+    "documents"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "ddnn@1"
+    },
+    "documents": {
+      "type": "object",
+      "maxProperties": 10000,
+      "propertyNames": {
+        "minLength": 1,
+        "maxLength": 256,
+        "not": {
+          "enum": [
+            "__proto__",
+            "constructor",
+            "prototype"
+          ]
+        }
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "format": {
+            "enum": [
+              "plain",
+              "markdown_text",
+              "code"
+            ]
+          },
+          "role": {
+            "enum": [
+              "note",
+              "procedure_source",
+              "function_source",
+              "source"
+            ]
+          },
+          "language": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 1000000
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

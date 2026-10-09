@@ -1,5 +1,8 @@
 # Family chapter — SysML 1.6 parametrics (EM-5, delegated/constraint)
 
+> Host-contract status (2026-10-09): [chapter 15](../15-delegated-evaluation-contracts.md) separates constraint solving from graph reachability and supplies boundary validation only. No EM-5 engine is installed.
+
+
 **Status:** full draft, 2026-09-29. Class assignment per chapter 2 §2.3
 (EM-5 partial — the parametrics fragment; activities inherit the UML
 activity family chapter). Analysis source: sysml.md. Known upstream

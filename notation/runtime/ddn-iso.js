@@ -164,6 +164,7 @@ function chartSpec(ir,mark){
  * Routing is never computed in 3D. Endpoints attach at prism top-face
  * centres/edges: route ends are re-anchored to the projected top-centre. */
 function renderGraph(ir,reg,glyphs='',options={}){
+ ir=D.expandOccurrences(ir);
  const pr=ir.view.profiles.projection,p=ir.view.profiles,t=Palette.themes[p.style.theme];
  const vd=resolveViewDepth(ir),viewDepth=pr.depth!==undefined?vd.depth:18;
  const byId=new Map(ir.elements.map(n=>[n.id,n]));
@@ -244,7 +245,7 @@ function renderGraph(ir,reg,glyphs='',options={}){
  if(footerOn)out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme+' · iso',11)+text(pageW-margin,pageH-margin,'iso',11,600,'end');
  out+='</svg>';
  const after=Text.stats();if(after.estimated>stats.estimated&&!diagnostics.some(d2=>d2.code==='DDN-TW01'))diagnostics.push({code:'DDN-TW01',severity:'warning',message:'Some projection text used estimated metrics. Browser-specific shaping is not certified.'});
- const scene={width:pageW,height:pageH,smallestText:smallest,scale:pscale,origin:[tx,ty],nodes:nodes.map(g=>({id:g.id,depth:depthOf(byId.get(g.id))})),routes:fs.routes.map(r=>({id:r.id,points:r.points.map(pt2=>P(pt2[0],pt2[1],0))})),crossings:[],frames:[],subdiagrams:[],marks,projection:{kind:'graph',profile:pr.profile,iso:true,depth:viewDepth,sourceIds:[...shown],quantitative:false},drawingBounds:{x:0,y:0,w:W,h:H},drawingArea:{x:margin,y:margin+header,w:aw,h:ah},textMeasurement:{mode:after.estimated>stats.estimated?'estimated':'measured',requestedFont:p.style.font}};
+ const scene={...(ir.occurrenceMapping?{occurrences:ir.occurrenceMapping}:{}),width:pageW,height:pageH,smallestText:smallest,scale:pscale,origin:[tx,ty],nodes:nodes.map(g=>({id:g.id,depth:depthOf(byId.get(g.id))})),routes:fs.routes.map(r=>({id:r.id,points:r.points.map(pt2=>P(pt2[0],pt2[1],0))})),crossings:[],frames:[],subdiagrams:[],marks,projection:{kind:'graph',profile:pr.profile,iso:true,depth:viewDepth,sourceIds:[...shown],quantitative:false},drawingBounds:{x:0,y:0,w:W,h:H},drawingArea:{x:margin,y:margin+header,w:aw,h:ah},textMeasurement:{mode:after.estimated>stats.estimated?'estimated':'measured',requestedFont:p.style.font}};
  return{svg:out,scene,diagnostics,_ir:ir};
 }
 

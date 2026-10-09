@@ -1,5 +1,10 @@
 # Review, diagnostics, shared impact and trust
 
+> Current implementation (2026-10-09): [chapter 21](21-preview-apply.md)
+> defines the shipped preview/apply adapter and bounded core draft validation.
+> Earlier proposed method names and prototype status statements below are
+> historical; they do not override that implemented contract.
+
 **DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Validation is a user-visible model
@@ -74,3 +79,14 @@ this chapter (covers VE-AC-006/007):
   reject before staging (VE-007; AUD-001's guard honored).
 
 Review dispositions and evidence attachments remain proposed.
+
+
+## Runtime update (2026-10-09)
+
+[Chapter 21](21-preview-apply.md) specifies the implemented public preview/apply
+adapter and core draft resolver. It qualifies the start-only flow construction
+case (AUD-001) and authoritative all-view validation for adapter actions
+(AUD-008). Classification is per validator site, with only the listed flow and
+activity obligations softened. Historical prototype prefix classification is
+not the runtime contract. Existing visual controls and other profile families
+must not be assumed to use this adapter automatically.

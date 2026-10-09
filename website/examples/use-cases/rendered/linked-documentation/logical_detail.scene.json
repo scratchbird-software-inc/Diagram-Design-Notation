@@ -1,7 +1,7 @@
 {
   "smallestText": 11,
   "width": 1115,
-  "height": 400,
+  "height": 474,
   "scale": 1,
   "origin": [
     40,
@@ -65,7 +65,7 @@
     {
       "id": "ddn.usecases.commerce::tables.customer",
       "w": 270,
-      "h": 200,
+      "h": 274,
       "fields": [
         "ddn.usecases.commerce::tables.customer.customer_id",
         "ddn.usecases.commerce::tables.customer.display_name",
@@ -81,7 +81,12 @@
       "scale": 1,
       "headerH": 64,
       "meaningLines": [],
-      "noteLines": [],
+      "noteLines": [
+        "Authority for the customer",
+        "registry, not for every customer",
+        "attribute in all systems."
+      ],
+      "noteTop": 148,
       "x": 390,
       "y": 0,
       "fieldRows": [
@@ -240,13 +245,13 @@
     "x": 0,
     "y": 0,
     "w": 690,
-    "h": 230
+    "h": 304
   },
   "drawingArea": {
     "x": 30,
     "y": 90,
     "w": 690,
-    "h": 240
+    "h": 314
   },
   "layoutState": {
     "format": "ddn-layout-state@1",

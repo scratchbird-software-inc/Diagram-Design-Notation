@@ -64,7 +64,8 @@ render without an uncaught error:
 | `single-node` | one element, no relations | single centered node |
 | `stress-500` | 500 nodes, 600 relations, layered layout | completes; `DDN-LW06`-class budget notes allowed; exceeds the 128-element **live-view** cap only in the batch/CLI path, which must still complete |
 | `unicode-labels` | labels in CJK, RTL Arabic, combining marks, emoji, ZWJ sequences | measured via pinned metrics or `DDN-TW01` estimates; no mojibake, no crash |
-| `max-nesting` | frames nested to the registry depth limit | renders; one level beyond is the coded depth error |
+| `max-nesting` | four nested frame levels, the registry limit | renders with enclosing boundaries |
+| `max-nesting-overflow` | five nested frame levels | rejects with `DDN-FR03` |
 | `empty-chrome` | header/footer runs with empty `$title` (no title, no label, bare view id) | falls back to view id; no `DDN-PB` error |
 | `overflow-floor` | `shrink` element whose text cannot fit even at the absolute 8 px floor | `DDN-LW08`, render completes with ellipsis marker |
 | `ref-cycle-label` | two notes whose texts anchor each other via `ref:` | renders (anchors resolve to numerals, not text — no infinite regress); a literal self-anchor is `DDN-MK06` |

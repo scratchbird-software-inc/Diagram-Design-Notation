@@ -1,6 +1,6 @@
 # DDN (Diagram Design Notation) — AI Authoring Reference
 
-Single self-contained authoring specification. An AI given ONLY this file plus a natural-language diagram request must be able to produce correct, current-dialect `.ddn` source for any diagram the runtime supports. Derived entirely from the authoritative repository sources of DDN runtime **{{RUNTIME_VERSION}}** (`notation/runtime/*`, `notation/cli/cli.js`) and standard 0.3/0.5/0.8 (`standard/grammar/ddn.ebnf`, `standard/registry/*`, `standard/specification/51–58` for the 0.8 dialect, §14); vocabulary and property tables are machine-extracted, not paraphrased. (DDN = the open-source language and project: reference runtime, CLI, free ddn-viewer and ddn-designer. ScratchWeaver sponsors the project; ScratchRobin owns backend evaluation (KEEL) — never in scope here.)
+Self-contained authoring reference for DDN runtime **{{RUNTIME_VERSION}}**, derived from `notation/runtime/`, the CLI, grammar, registry and standard. Property and vocabulary tables are generated. DDN is the open notation, runtime, viewer and designer; the open tool also hosts DDNA replay, generation and bounded KEEL evaluation.
 
 <!-- @gen:counts -->
 
@@ -8,25 +8,20 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 
 DDN is a text notation: one or more `module` sections per file; `data` blocks hold the model (objects, fields, relations); `format` blocks hold reusable presentation profiles; `view` blocks compose data + presentation into a renderable diagram. Everything is validated by a reference implementation.
 
-**Workflow:**
-1. Decide the diagram family with the decision guide (§6); write the `.ddn` file(s) per §2–§5.
-2. Validate: `node notation/cli/cli.js check <file.ddn> --workspace <dir>` — success prints `{"status":"pass-core",...}`; failure prints one JSON diagnostic `{"code":"DDN###","message":"...","source":"...","offset":N}`.
-3. Look the code up in §9 (FIX column), fix, re-run. Iterate until clean. `render` additionally runs layout/routing/publication checks (DDN200–224, DDN-PJ060+), so **run `render` too** for graph views when feasible.
+**Workflow:** choose a family (§6), write source (§2–§5), then run `node notation/cli/cli.js check <file.ddn> --workspace <dir>`. Success is `pass-core`; failures carry a diagnostic code, message and source offset. Use §9's FIX column and repeat. Also run `render`: it checks layout/routing/publication beyond core validation.
 
-### 1.1 AI authoring rules (normative DO / DON'T — known AI failure modes)
+### 1.1 AI authoring rules (normative DO / DON'T)
 
-- DO use ONLY kind keywords, verb keywords, profile ids, property keys and enum values enumerated in §3–§5 tables. DON'T invent kinds, verbs, properties, or profiles — unknown ones fail (DDN056, DDN033, DDN046, DDN-PF001).
-- DO quote dotted profile kinds/profile ids (`kind: "c4.system";`, `profile: "chart.basic@1";`). DON'T quote core keywords (`kind: table;`).
-- DO omit properties whose default you want — omitted ≠ asserted: the runtime resolves defaults (§3.5); a property you did not write is never written into the model. DON'T restate defaults "for clarity"; it bloats source and can override a referenced bundle.
-- DO treat the §3.5 defaults table as the effective configuration of every view, and the §3.4 whitelist as the ONLY legal property keys per declaration type.
-- DO give every `view` a `data: [@…];` array (DDN041) and run both `check` and `render` before declaring done.
-- DO model chart/table/geo/timeline data as `object … { kind: record; x_record: {…} }` elements (or a `records` block), bound explicitly via `records: [@…]`.
-- DON'T write `place`/`route`/`frame`/`subdiagram` geometry in any non-graph/chen projection (DDN-PJ002) — those are data-bound.
-- DON'T guess endpoint marks: structural marks (`one`, `zeromany`, …) only on structural-family relations, and `erd.crowfoot@1` requires BOTH marks on every relation (DDN-PJ087).
-- DON'T put `import` anywhere except before the FIRST `module` header (or immediately after it, before that section's first declaration) — DDN015.
-- DON'T write prose annotations as properties; use `description:` on a view or comments (`//`) outside declarations.
-- DON'T assume a relation exists because shapes are near each other — every edge is an explicit `relation` declaration.
-- DO check profile rules in §10 BEFORE choosing participant kinds/verbs; most first-attempt failures are DDN-PF/DDN-PJ/DDN-PX.
+- Use only listed kinds, verbs, profiles, properties and enums (§3–§5); unknown values fail DDN056/033/046/PF001.
+- Quote dotted kinds/profile ids (`kind: "c4.system";`); core keywords use `kind: table;`.
+- Omit unwanted defaults: omitted ≠ asserted. Restating defaults can override a referenced bundle. §3.5 lists defaults; §3.4 lists legal keys.
+- Every ordinary view needs `data: [@…];` (DDN041). Check and render before declaring done.
+- Chart/table/geo/timeline records use `kind: record; x_record: {…}` or a `records` block, with explicit bindings.
+- Geometry (`place`/`route`/`frame`/`subdiagram`) belongs to graph/chen; other projections have data-bound coordinates (DDN-PJ002).
+- Structural endpoint marks require structural-family relations; `erd.crowfoot@1` requires BOTH marks (DDN-PJ087).
+- Imports precede declarations in the first module section (DDN015).
+- Prose goes in `description:` or comments. Edges require explicit relations, not nearby shapes.
+- Check profile participant and verb rules in §10 first.
 
 ## 2. File anatomy
 
@@ -41,7 +36,7 @@ module "shop.views";                // further sections (multi-module)
 <top-level declarations>
 ```
 
-- **Version header**: `ddn "<version>";` — accepted versions are exactly `"0.2"`, `"0.3"`, `"0.4"`, `"0.5"`, `"0.6"` (DDN012 otherwise; `"0.6"` is the DDN 0.8 dialect, see §14). Write `"0.6"` for new files that use any 0.8 feature, `"0.5"` otherwise — an 0.8 construct in a ≤0.5 file is a DDN-V04 error, and 0.6 removes nothing. `0.2` sources are accepted through a compatibility reader and add warning DDN-W012. All files are UTF-8 (reader accepts BOM and CRLF; formatter convention is LF, no BOM). A source file may be at most 2,000,000 characters (DDN001).
+- **Version header**: `ddn "<version>";` — accepted versions are exactly `"0.2"`, `"0.3"`, `"0.4"`, `"0.5"`, `"0.6"`, `"0.7"` (DDN012 otherwise; `"0.6"` is the DDN 0.8 dialect, see §14). Write `"0.6"` for new files that use any 0.8 feature, `"0.5"` otherwise — an 0.8 construct in a ≤0.5 file is a DDN-V04 error, and 0.6 removes nothing. `0.2` sources are accepted through a compatibility reader and add warning DDN-W012. All files are UTF-8 (reader accepts BOM and CRLF; formatter convention is LF, no BOM). A source file may be at most 2,000,000 characters (DDN001).
 - **Module**: `module "<id>";` — the module is a stable namespace, not a file path. Id syntax: `/^[A-Za-z0-9][A-Za-z0-9._:/-]*$/` (DDN013). Module identity must be unique across the whole workspace (DDN023). Declaration identities must be unique across sections (symbol keys are `module::path`; DDN024).
 - **Imports**: `import "<path>" as <alias>;` — file-level only. Canonical position: before the FIRST module header. Legacy position: immediately after the FIRST module header, before that section's first declaration. Both sets merge into one file-level import list; alias uniqueness applies across the merged list (DDN014). An import anywhere else is DDN015. Older runtimes reject multi-section files cleanly with DDN010. Import paths must be workspace-relative POSIX paths: no scheme (`http:`), no leading `/` or `\`, no `\`, and `..` may not escape the workspace root (DDN020).
 - **Sibling visibility**: sections of the SAME file see each other through module-qualified references (`@shop.model.model`) with no import. Importing a multi-module file imports ALL its modules; `@alias.path` resolves against each section in order; module ids may be dotted, so the resolver matches the LONGEST module-id prefix first.
@@ -112,6 +107,9 @@ format styles {
 ### 3.3 `view <id> ["label"] { … }` — the composition point
 
 A view references one or more data blocks and a presentation, adds selection and local geometry:
+
+Dialect 0.6 flat graphs support `select: [@a, @a#2, @b]`: two appearances, one model definition. Ordinals are positive safe integers; bare references mean #1. `place @a#2 {at:[400px,200px];}` moves only that copy; text/stroke/fill/opacity/marks and sizing may override its presentation. `show:[@r#2]` adds a connector run; `route @r#2 {from:@a#2;to:@b;}` targets existing endpoint appearances. No automatic edge multiplication: default runs use the lowest visible ordinal. `exclude:[@a#2]` or `hide:[@r#2]` hides one; bare targets hide all copies. Both endpoints must be visible. Qualifiers are view-only; data-driven/iso/fixed-lane/n-ary addressing rejects DDN-OC04. Other occurrence errors: DDN-OC01–03. Model fingerprints stay unchanged.
+
 
 ```text
 view overview "Title" {
@@ -1385,7 +1383,7 @@ view fig1 "Sensor monitor" {
 }
 ```
 
-`kind: patent-figure` attaches the `mono_print` theme and the `patent.legal@1` chrome defaults (title block with `$title`/`$date`, `FIG. $figure` + `Page $page` footer, single border) as layer-2 defaults — any authored header/footer/border wins. The `embedding_scale` above is the DDN071 remedy idiom in action: a small drawing on a physical page must scale UP so the smallest text role clears `minimum_text` at 1:1 print scale.
+`kind: patent-figure` supplies `mono_print` and `patent.legal@1` chrome defaults; authored chrome wins. Increase `embedding_scale` when needed to clear `minimum_text` at 1:1 print scale (DDN071).
 
 ### 14.5 Publication sets (ch. 53 §53.4) and print-size lint (§53.5)
 
@@ -1423,6 +1421,8 @@ Print-size lint runs under `check` for physical paper sizes (never for `size: co
 
 `text_fit` on an element (or as a profile/bundle default) controls how boxes adapt to text. Bounds: `max_width`/`max_height` 40–4000px (**DDN-TF02**), `min_font` 6–64px and ≤ the effective base font (**DDN-TF03**), unknown mode **DDN-TF01**.
 
+Fields clip by default; `text_wrap: on` wraps (field > element > off; DDN-FL01). `columns { name {} datatype { width: 12ch; } }` enables cells (`Nch`/`N%`/`equal`; `visibility: shown|hidden|on_demand`). Empty group uses the kind schema. Requires 0.6; errors DDN-CL01–03. Full text stays accessible; see ch.04 §6D.
+
 | Mode | Behavior |
 |---|---|
 | `wrap` | Width fixed; text wraps; the box grows downward. Default when a width constraint exists. |
@@ -1459,7 +1459,7 @@ format shared {
 }
 ```
 
-Tooling note (verified behavior): the CLI side-loads `font_pin` metrics files exactly like background images/patterns — the asset walker resolves the workspace-relative path under the same containment rules (no absolute paths, no URLs, no escapes) and supplies it as UTF-8 text, so `cli.js check/render` works on `font_pin` sources directly. Pins are equally usable through the embedder API (supply the pin file in the `createWorkspace`/`build` files map, as the conformance vectors do).
+The CLI loads workspace-relative `font_pin` assets (no absolute paths, URLs or escapes). Embedders supply metrics files through the `createWorkspace`/`build` files map.
 
 ### 14.6A Portable text properties (ch. 04 §6A, ch. 53 §53.1)
 
@@ -1569,7 +1569,7 @@ Runtime modules (`notation/runtime/`, dependency-free ES modules sharing namespa
 | ddn-export.js | DDNExport | allowlist export: `project(ir)`, `serialize(ir)` (JSON or SQL DDL) |
 | ddn-defaults.js | DDNDefaults | read-only per-kind defaults: `forKind(idOrKeyword)` → deep copy |
 
-Distribution bundles (`notation/dist/`): `ddn-core` (parse/build/validate/export, no rendering); `ddn-graph` (+ graph renderer); `ddn-quality` (+ fishbone/decision); `ddn-projections` (+ chart/matrix/panels/timeline/table/sequence/timing/chen); `ddn-geo`/`ddn-iso` (optional, never in `ddn.global.js`); `ddn.global.js` = everything else. Each ships IIFE `.js`, minified `.min.js` + map, ESM, and TypeScript declarations. `DDNEngine` throws DDN-E010 naming a missing bundle — except geo/iso, which render coded placeholders (§5, §7.7). Geography data ships separately as `assets/geo/world-110m.json` (~96 KB, Natural Earth): name it via `geography: "assets/geo/world-110m.json"` (register first with `DDNGeo.registerGeography(name, geojson)`; the CLI pre-registers it) or bind inline GeoJSON via `geography: @data.record`.
+Bundles in `notation/dist/`: `ddn-core` parses/validates/exports; `ddn-graph` renders graphs; `ddn-quality` adds fishbone/decision; `ddn-projections` adds chart/matrix/panels/timeline/table/sequence/timing/chen. `ddn.global.js` combines these. Optional `ddn-geo`/`ddn-iso` load separately. Formats: IIFE, minified IIFE + map, ESM, TypeScript. Missing bundles: DDN-E010 (geo/iso show placeholders). Geography is separate: register GeoJSON with `DDNGeo.registerGeography(name, geojson)`, then name it with `geography:`; the CLI pre-registers `assets/geo/world-110m.json`. Inline GeoJSON binds via `geography: @data.record`.
 
 Core API essentials: `DDN.parse(text, name)` → parsed doc (throws `DDNError`); `DDN.build(files, entry, viewName, registry)` → `{ir, workspace}` (`files` = `{path: sourceText}`; runs all validators); `DDN.bundle` → `{text, diagnostics}`; `DDNExport.serialize(ir)` → JSON or SQL DDL; `DDN.semanticJSON(ir)` → canonical payload (basis of `modelFingerprint`).
 
@@ -1589,3 +1589,7 @@ host.innerHTML = out.svg;
 CSS hooks on rendered SVG: root `ddn-svg ddn-view-<kind> ddn-profile-<slug>`; nodes `ddn-node ddn-kind-<code>` + `data-ddn-id`; relations `ddn-rel ddn-verb-<slug>`; `ddn-field`, `ddn-label`, `ddn-panel`, `ddn-frame`, `ddn-mark ddn-mark-<type>`. Slugs lowercase with non-alphanumeric runs collapsed to dashes.
 
 <!-- @gen:grammar -->
+
+### Composable detail (source dialect 0.7; chapter 59)
+
+Opt in with `composition {sections:[name,type,table,notes];order:[table,notes];note_height:180px;note_wrap:auto;}`. Type defaults < element < appearance; hidden content remains semantic. `document {format:code;role:procedure_source;language:"sql";text:"BEGIN END;";}` stores exact source; plain and markdown_text are also supported. Markdown is text-only (no images/HTML/tables). `document {file:"project.ddnn";id:"body";}` references ddnn@1 JSON documents. Missing records/digest mismatches fail. DDNA stays automation; `.ddna` is accepted. Notes scroll per appearance; `publication {note_mode:full;}` expands static output. Database execution is outside scope.

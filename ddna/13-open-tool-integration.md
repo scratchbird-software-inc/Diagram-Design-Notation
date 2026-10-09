@@ -11,7 +11,7 @@ format semantics — the trace format (chapter 4), the KEEL seam (chapter 5),
 the runtime models (chapter 7) and the per-family behavior (chapters 6, 8,
 `families/`) are normative where written, and are referenced, not repeated.
 
-> **Implementation status (2026-10-08, Phases A and B landed):** §13.2 is shipped in
+> **Implementation status (2026-10-08, Phases A, B and C landed):** §13.2 is shipped in
 > the live unified tool, tool-layer only (OT-003: `notation/dist` is
 > byte-identical — the checks live in `notation/tool/src/files.js`:
 > `isCompanionFile` / `companionFacts` / `architectureContainers` /
@@ -48,7 +48,7 @@ the runtime models (chapter 7) and the per-family behavior (chapters 6, 8,
 > overlays). Replay is read-only — it never writes to source. Verified-mode
 > divergence recomputation (DDN-A007) needs the Phase C engines; Phase B
 > enforces the envelope checks at load (A002) and displays the declared mode.
-> Phase C remains proposed.
+> Phase C is implemented as recorded immediately below.
 >
 > **Phase C (§13.4–§13.5) shipped 2026-10-08:** `notation/tool/src/ddna-keel.js`
 > is the open KEEL host — the nine seam functions (Wf1–4, Tc1–3, EqVar, Tc4,
@@ -62,7 +62,7 @@ the runtime models (chapter 7) and the per-family behavior (chapters 6, 8,
 > EM-4 trace-set/verdict engines, deterministic under the declared profile
 > (OT-041 — the Phase B player replays generated traces step-identically),
 > under §13.6 budgets (10,000 steps / 64 instances → DDN-A004, partial trace
-> marked complete:false); EM-2/EM-5/EM-6 report DDN-A006, never a silent
+> marked complete:false); generic EM-2 and EM-5/EM-6 report DDN-A006, never a silent
 > stub. Verified replay now recomputes through the engine and names the first
 > divergent event (DDN-A007). The animation drawer's Execution section runs
 > an engine into the replay picker and downloads the generated sidecar.
@@ -199,6 +199,13 @@ mapping.
 
 ## 13.4 Phase C — execution engines
 
+**2026-10-09 addition:** the exact `ddna.em2.dag-l0@1` profile now supports
+bounded dependency-graph evaluation with recorded inputs and full-event
+verified recomputation. [Chapter 14](14-bounded-declarative-evaluation.md)
+defines its limits and DDN-A009 validation diagnostic. The additional exact
+`ddna.em2.tables-l0@1` profile supports unique, first and collect tables. This does not implement
+full DMN/FEEL, EM-5 solving or EM-6 protocols.
+
 The open tool hosts execution engines per execution-model class (chapter 2),
 starting with the classes the PoC proves. Engines consume the companion's
 declared profiles and KEEL references; they never evaluate expressions
@@ -209,7 +216,7 @@ themselves (chapter 1's standing KEEL warning).
   no-standard-family declarative-constraint semantics (ratified D3). EM-2,
   EM-5 and EM-6 follow as family work items; an unavailable class is
   `DDN-A006`, never a silent stub.
-  *DDNA-OT-AC-040:* an EM-2 companion in the open tool reports DDN-A006
+  *DDNA-OT-AC-040:* an unsupported EM-2 profile in the open tool reports DDN-A006
   naming the class until its engine lands.
 - **DDNA-OT-041.** Engines produce traces conforming to §13.3.1 (trace
   *generation* writes the sidecar). Generation is deterministic under the
@@ -287,6 +294,7 @@ family is a different surface and is untouched):
 | `DDN-A006` | warning | No engine for the companion's execution-model class is installed in the open tool. |
 | `DDN-A007` | error | Verified replay diverged from recomputation; first divergent event named. |
 | `DDN-A008` | error | Companion's recorded DDN/DDNA version targets are incompatible with the served base. |
+| `DDN-A009` | error | Invalid bounded declarative graph, input or result (chapter 14). |
 
 - **DDNA-OT-070.** DDNA diagnostics use this family only; DDN core codes are
   unchanged, and a DDN-only third-party tool sees companions exactly as
@@ -302,3 +310,7 @@ first, per the PoC's own discipline). Phase C (§13.4–13.5) follows per
 engine class. The disposable PoC (`kimi-DDN-workarea/ddna-poc`) is the
 reference harness for every AC above until the conformance fixtures move
 into the repo — the PoC itself is then deleted as its README directs.
+
+## Composable DDN content
+
+DDN source dialect 0.7 adds independently visible element sections and inline or DDNN text documents; see [DDN chapter 59](../standard/specification/59-composable-elements.md). Notes can contain authoritative procedure/function source, but remain inert for DDNA replay. Replay addresses semantic element identities and applies overlays to every visible appearance. Appearance section choices and scroll positions do not create runtime instances. A `.ddna` companion is accepted alongside `.ddna.ddn`; existing version coupling still applies. This amendment supplies no database execution or migration engine.

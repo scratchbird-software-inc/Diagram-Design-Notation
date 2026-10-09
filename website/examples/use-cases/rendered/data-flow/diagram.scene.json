@@ -28,7 +28,7 @@
     {
       "id": "ddn.usecases.flow::dfd.validate",
       "w": 270,
-      "h": 100,
+      "h": 134,
       "fields": [],
       "titleLines": [
         "Validate orders"
@@ -37,7 +37,11 @@
       "scale": 1,
       "headerH": 64,
       "meaningLines": [],
-      "noteLines": [],
+      "noteLines": [
+        "Transform and validate; no implied",
+        "transaction boundary."
+      ],
+      "noteTop": 64,
       "x": 390,
       "y": 0,
       "fieldRows": []
@@ -69,13 +73,21 @@
           50
         ],
         [
-          390,
+          314,
           50
+        ],
+        [
+          314,
+          67
+        ],
+        [
+          390,
+          67
         ]
       ],
       "label": {
-        "x": 315,
-        "y": 35,
+        "x": 337,
+        "y": 52,
         "w": 30,
         "h": 30
       },
@@ -88,6 +100,14 @@
       "points": [
         [
           660,
+          67
+        ],
+        [
+          704,
+          67
+        ],
+        [
+          704,
           50
         ],
         [
@@ -96,7 +116,7 @@
         ]
       ],
       "label": {
-        "x": 705,
+        "x": 727,
         "y": 35,
         "w": 30,
         "h": 30
@@ -132,23 +152,23 @@
       {
         "stage": "initial-clear-routing",
         "crossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 274,
+        "bends": 4
       },
       {
         "stage": "connection-points",
         "trials": 0,
         "accepted": 0,
         "crossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 274,
+        "bends": 4
       },
       {
         "stage": "local-endpoint-ordering",
         "crossings": 0,
         "localCrossings": 0,
-        "length": 240,
-        "bends": 0,
+        "length": 274,
+        "bends": 4,
         "trials": 0,
         "accepted": 0
       },
@@ -156,14 +176,14 @@
         "stage": "unpinned-elements",
         "accepted": 0,
         "crossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 274,
+        "bends": 4
       },
       {
         "stage": "residual-short-routes-and-crossing-marks",
         "crossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 274,
+        "bends": 4
       }
     ],
     "portTrials": 0,
@@ -177,14 +197,14 @@
       "before": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 274,
+        "bends": 4
       },
       "after": {
         "crossings": 0,
         "localCrossings": 0,
-        "length": 240,
-        "bends": 0
+        "length": 274,
+        "bends": 4
       },
       "exhausted": false
     },
@@ -196,7 +216,7 @@
     "x": 0,
     "y": 0,
     "w": 1080,
-    "h": 130
+    "h": 164
   },
   "drawingArea": {
     "x": 30,

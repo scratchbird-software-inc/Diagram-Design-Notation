@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>59 Composable element sections and text documents — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../icons/index.html">Icons</a>
+      <a href="../../guide/index.html">Guide</a>
+      <a href="../../reference/index.html">Reference</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>59 Composable element sections and text documents</h1>
+<p>Status: implementation contract, source dialect <code>ddn &quot;0.7&quot;;</code>. This is an additive contract; package/release numbering is separate. Sources through dialect 0.6 retain their existing rendering. No database execution or migration engine is introduced by this chapter.</p>
+<h2>59.1 Sections and defaults</h2>
+<p>An element can expose <code>name</code>, <code>type</code>, <code>table</code> and <code>notes</code>. <code>table</code> means its structured field/parameter grid, not a Markdown table or a database table kind. <code>notes</code> means a text document, including authoritative source code. A procedure remains a procedure when its grid is shown or hidden.</p>
+<p>Registry <code>composition_defaults</code> declares the initial section list, body order, note height and wrapping policy for a kind. The default is all four sections, table before notes, a 180px note viewport and automatic wrapping. Table defaults show name/type/table; note silhouettes default to name/type/notes. Profile kinds without an explicit record use the common default. Empty sections reserve no body space.</p>
+<p>The precedence is <strong>type defaults &lt; element composition &lt; appearance composition</strong>. Arrays replace the inherited array; other keys replace individually. A default is not permission to discard hidden content. Removing a composition override restores inheritance.</p>
+<p>A <code>composition {}</code> group or <code>document {}</code> group opts an element into composed-detail rendering. Declarations with neither group keep their established geometry, including in a 0.7 source. This makes upgrades explicit and preserves the specialized profile renderers. Composed detail uses a card enclosure and the registered type glyph/full type name when the type section is enabled; it is a detail representation, not a replacement for a profile's canonical silhouette. Whole-view charts, timelines, matrices and other generated projections retain their own presentation contracts.</p>
+<pre><code>object calculate_total &quot;Calculate total&quot; {
+    kind: procedure;
+    fields {
+        amount { datatype: decimal; parameter_mode: in; }
+        total { datatype: decimal; parameter_mode: out; }
+    }
+    columns {
+        mode { path: &quot;parameter_mode&quot;; }
+        name { path: &quot;name&quot;; }
+        type { path: &quot;datatype&quot;; }
+    }
+    document {
+        format: code;
+        role: procedure_source;
+        language: &quot;sql&quot;;
+        text: &quot;BEGIN\n    total := amount;\nEND;\n&quot;;
+    }
+    composition {
+        sections: [name, type, table, notes];
+        order: [table, notes];
+        note_height: 180px;
+        note_wrap: off;
+    }
+}</code></pre>
+<p><code>sections</code> is a nonempty list of unique section names. Any subset is legal, including name/type only, table only and notes only. <code>order</code> contains table and notes exactly once, in the desired vertical order; hidden sections are skipped. <code>note_height</code> is a finite 48–2000px viewport height. <code>note_wrap</code> is <code>auto</code>, <code>on</code> or <code>off</code>; auto wraps prose and preserves unwrapped literal-code lines. Parameter mode is <code>in</code>, <code>out</code>, <code>inout</code> or <code>return</code>, restricted to fields of procedure/function definitions. This is a portable declaration vocabulary, not validation against a particular SQL engine.</p>
+<p>For a graph appearance, the same composition group is legal inside <code>place</code>. It changes only that appearance and follows chapter 03 occurrence addressing. Explicit multiple-appearance limits of chapter 03 continue to apply.</p>
+<pre><code>place @model.calculate_total#2 {
+    composition { sections: [name, type, notes, table]; order: [notes, table]; }
+}</code></pre>
+<p>Field IDs do not change when a table moves. Field endpoint coordinates are recomputed from the relocated rows before routing. Body ordering is not parameter ordering. Name/type visibility is independent of the shared semantic label and kind.</p>
+<h2>59.2 Text documents</h2>
+<p>An element has at most one <code>document {}</code> group. The content is shared by all appearances. The document accepts <code>format</code> (<code>plain</code>, <code>markdown_text</code>, <code>code</code>), <code>role</code> (<code>note</code>, <code>procedure_source</code>, <code>function_source</code>, <code>source</code>), optional <code>language</code>, required <code>text</code> and optional <code>digest</code>. Format and role default to plain/note. Language is bounded descriptive text and never selects an execution engine.</p>
+<p>Text is a JSON-style DDN string. Escaped line endings, tabs, trailing whitespace and quotes are retained in model content, copy/source editing, snapshots and bundles. A readable multiline literal is not introduced. SHA-256 is computed over the exact UTF-8 text, without newline normalization; a supplied digest must match. The resolved record always carries its digest. Role/format/language remain separate semantic properties and are not covered by the text-only digest.</p>
+<p>A procedure body is authoritative content even though it is displayed in the notes section. No display choice may remove it from a complete private model. The reference runtime does not execute source code, validate SQL grammar, derive parameter declarations from text, connect to databases, or claim cross-database SQL portability.</p>
+<p>When composed detail has no explicit document, an existing description can supply a plain-text note. This does not reinterpret legacy description strings as Markdown. Description remains a legacy property, not an external document reference.</p>
+<h2>59.3 DDNN storage</h2>
+<p>Large documents may be stored in UTF-8 JSON companions with extension <code>.ddnn</code>. The format is <code>ddnn@1</code>:</p>
+<pre><code>{
+  &quot;format&quot;: &quot;ddnn@1&quot;,
+  &quot;documents&quot;: {
+    &quot;calculate-total-body&quot;: {
+      &quot;format&quot;: &quot;code&quot;,
+      &quot;role&quot;: &quot;procedure_source&quot;,
+      &quot;language&quot;: &quot;sql&quot;,
+      &quot;text&quot;: &quot;BEGIN\n    total := amount;\nEND;\n&quot;
+    }
+  }
+}</code></pre>
+<p>The owning element uses an explicit reference:</p>
+<pre><code>document { file: &quot;my_project.ddnn&quot;; id: &quot;calculate-total-body&quot;; }</code></pre>
+<p>An external reference permits only file, id and optional expected digest. Inline properties and external properties cannot be mixed. Paths are relative to the owning DDN source, must remain inside the workspace, and are never remote URLs. Document IDs are stable record keys, independent of display labels. Matching basenames are a convenience, not a discovery rule. Multiple DDNN files and multiple references to a shared record are permitted.</p>
+<p>Missing files/records and digest mismatches are coded errors, including when notes are hidden. This implementation takes the conservative complete-model path rather than silently accepting missing explanatory text. A downstream recreation/alteration reader must consume complete content and refuse incomplete authoritative dependencies. Source dialect, semantic type and declared code language remain explicit inputs to that reader.</p>
+<p>SDK workspaces, snapshots, directory/file import and ZIP transfer preserve DDNN sources. A self-contained DDN bundle hydrates external records into inline document groups. Hydration changes storage location but not text, digest or model meaning. Renaming a DDNN file updates explicit references. Removing a referenced file requires the normal dependency guard. A document edit and its reference are one validated workspace/history transaction. Removing a reference does not delete the shared external record.</p>
+<p><code>.ddna</code> is accepted as an automation-companion filename alongside the existing <code>.ddna.ddn</code> convention; its content remains DDN syntax and existing DDNA metadata. <code>.ddnn</code> is JSON content, not a DDN module and not an importable semantic namespace. DDN owns structure/identities, DDNA owns automation bindings, and DDNN stores inert text.</p>
+<h2>59.4 Text Markdown profile</h2>
+<p><code>markdown_text</code> uses the explicit <code>ddn-markdown-text@1</code> subset. It supports line-oriented paragraphs, ATX headings, strong/emphasis spans, inline code, fenced/indented code, ordered/unordered list markers and block quotes. Its grammar is deliberately smaller than full CommonMark; unsupported extensions are not activated by library defaults. Soft source line breaks remain display breaks in this profile.</p>
+<p>Markdown images and raw HTML outside literal code/escaped text are rejected. Pipe/table-looking text remains literal text and never becomes a grid. Links, math, diagrams, footnotes, task widgets and other extensions remain text; no resource is fetched and no navigation or code execution is implied. A fence tagged <code>mermaid</code> remains literal code. Literal-code contexts may contain HTML, Markdown syntax, SQL operators and arbitrary text.</p>
+<p>Fences must close. Inline style nesting and list/quote nesting are bounded to eight. The reference limits are 1,000,000 UTF-16 units per document, 20,000 logical lines and 50,000 parsed runs. These bound reference-tool work; they do not turn a diagram appearance into an execution context. DDN source/workspace size limits continue to apply. Typography uses the shared measured-text service with its font provenance and fallback rules.</p>
+<h2>59.5 Interactive viewport and publication</h2>
+<p>Notes occupy a bounded viewport. When content exceeds its dimensions, the interactive component supplies horizontal and/or vertical scrollbars. Wheel, Shift-wheel, scrollbar dragging and keyboard scrolling are supported. Offsets belong to the viewer session and each appearance; they do not alter content, model fingerprints or DDNA instance identity.</p>
+<p>The runtime lays out text but emits only visible lines into the viewport SVG. Scrolling replaces the visible text window and moves accessible scrollbar thumbs without rebuilding or rerouting the model. The full content stays in the resolved document; the scene stores layout data needed to change windows. A scrollbar is not permission to truncate stored text.</p>
+<p><code>publication { note_mode: viewport; }</code> is the default composed-detail publication. A clipped note identifies itself as a scrollable excerpt and retains visible scrollbar indicators. Static SVG cannot scroll without an interactive host. <code>publication { note_mode: full; }</code> wraps and expands all note text for complete static output; ordinary artboard and minimum-font checks still apply. Neither mode changes the content returned to model readers. Oversized full output requires a suitable publication size/detail view.</p>
+<p>Public/redacted export continues to remove document text and legacy descriptions under the existing structural allowlist. It does not grant source-code publication merely because the owning element is allowlisted. Scene text, source maps and viewport contents must be generated from the projected model. Full private exports preserve complete documents.</p>
+<h2>59.6 API and DDNA</h2>
+<p>The SDK provides <code>authoring.setComposition</code> (element or appearance scope), <code>authoring.setDocument</code>, <code>workspace.documents(entry, view)</code> and validated atomic <code>workspace.commitFiles</code>. <code>documents</code> returns complete resolved document content for the view's data scope, regardless of displayed sections. It is a private model-reader API, not a redacted publication API. The existing <code>resolve</code> API also contains complete content.</p>
+<p>The designer Meaning tab edits shared defaults and text content; This view overrides visible sections, order, note height and wrapping for the selected appearance. Saving a new content construct upgrades the edited DDN file's source header to 0.7. Other elements retain their legacy path unless they opt in. Consumers must update companion version declarations as required by the existing DDNA coupling contract; no execution engine is inferred or upgraded.</p>
+<p>DDNA replay maps a semantic target to all visible appearances. Appearance ordinals are not runtime instance discriminators. Replay remains read-only and does not reveal hidden note content. Display overlays continue to obey their existing count limits. This chapter adds no SQL execution engine and does not close the unimplemented DDNA execution-model classes.</p>
+<h2>59.7 Diagnostics and compatibility</h2>
+<p>DDN-CE01: invalid composition; DDN-CE02: invalid parameter mode/context; DDN-NT01: invalid document/sidecar schema; DDN-NT02: document work limit; DDN-NT03: content digest mismatch; DDN-NT04: missing content dependency; DDN-NT05: prohibited Markdown image/HTML; DDN-NT06: unclosed code fence. DDN-V04 rejects new source constructs in older dialects.</p>
+<p>Resolved output uses <code>ddn-resolved@0.7</code> when a 0.7 source is present. Composition is presentation and is excluded from model canonicalization; external storage paths are excluded from document meaning. Text, format, role and language remain semantic content. Existing semantic canonicalization is unchanged for legacy models. Descriptor defaults and source changes must preserve source-map identities, atomic undo and exact text round trips.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.8.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

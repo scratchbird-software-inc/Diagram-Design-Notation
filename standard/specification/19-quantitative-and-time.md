@@ -51,3 +51,49 @@ Primary background references, checked 2026-09-08:
 ## Numerical range safeguards
 
 Finite inputs are not sufficient when aggregation or an axis span overflows. Such plans are rejected before drawing. Axis interpolation uses normalized fractions before multiplication; extreme and very small tick values use scientific notation. This is finite binary floating-point visualization, not arbitrary-precision financial calculation.
+
+### Explicit timeline calendars and timezones
+
+A timeline projection may declare `timezone` and `calendar` explicitly:
+
+```ddn
+projection {
+    kind: timeline;
+    timezone: "America/Toronto";
+    calendar: {kind: business, fiscal_start_month: 7,
+               weekdays: [1,2,3,4,5], holidays: ["2026-10-12"]};
+}
+```
+
+These opt-in settings extend the conservative UTC behavior above. Input remains
+real ISO dates or ISO timestamps with `Z` or an explicit offset. A timezone does
+not authorize naive datetime or locale-dependent parsing. Date-only values stay
+on their supplied calendar date; timestamp instants are converted to the explicit
+zone before deriving the displayed date. The default timezone is UTC, never the
+machine setting. Conversions outside years 0000–9999 reject instead of emitting
+malformed dates. UTC and `±HH:MM` fixed offsets need no timezone database. Named
+zones use the browser's installed timezone rules through ECMA-402
+[`Intl.DateTimeFormat`](https://tc39.es/ecma402/2025/#sec-intl-datetimeformat-constructor).
+Consequently, historical named-zone results require compatible timezone data
+across hosts; a DDN document does not embed a timezone database or fetch one.
+Unavailable zones reject with `DDN-PJ224`.
+
+Calendar kinds are `gregorian`, `fiscal`, and `business`. Fiscal years are labelled
+by their starting year; `fiscal_start_month` is 1–12 (default 1), and quarters are
+three calendar months from that month. Business weekdays use ISO numbers 1–7
+(Monday–Sunday), defaulting to 1–5. Holidays are explicit distinct ISO dates;
+no regional holiday service is consulted. Business counts use end-exclusive
+intervals and count a supplied holiday only when it falls on a working weekday.
+Malformed settings reject with `DDN-PJ223`. Holiday lists are bounded to 10,000
+entries and calculated intervals to 366,000 days. Week counting is arithmetic. Working-day holidays are validated and sorted once
+per plan; each interval counts them with two binary searches. Planning does not
+iterate every elapsed day or reparse the holiday list for each task.
+
+The timeline remains a date-scaled supplied schedule. Its plan and mark tooltip
+expose calendar days, business days and fiscal period. When both endpoints are
+zoned timestamps, they also expose elapsed hours between instants and wall-clock
+hours between the local clock readings. These differ across DST transitions;
+explicit input offsets distinguish repeated clock times. No schedule dates are
+moved automatically. The older `fiscal_year_start` annotation remains independent
+and does not silently become an arithmetic setting. Chart date axes retain their
+existing UTC contract.

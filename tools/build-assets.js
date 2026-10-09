@@ -6,6 +6,8 @@
 'use strict';
 const fs = require('node:fs'), path = require('node:path');
 const root = path.resolve(__dirname, '..');
+// Refuse stale silhouette metadata before producing any runtime assets.
+require('node:child_process').execFileSync(process.execPath,[path.join(root,'tools/build-shape-catalogue.mjs'),'--check'],{stdio:'pipe'});
 const read = n => fs.readFileSync(path.join(root, n), 'utf8');
 const json = v => JSON.stringify(v).replace(/</g, '\\u003c');
 const outDir = process.env.DDN_ASSETS_OUT || path.join(root, 'notation/runtime/assets');

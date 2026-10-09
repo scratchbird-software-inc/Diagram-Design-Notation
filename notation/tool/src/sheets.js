@@ -493,7 +493,22 @@ function chartRecordValueCommit(old, raw) {
 /* Timeline: ISO date grammar identical to the runtime date() helper — real
  * calendar dates only; end >= start (equal is a legal zero-length milestone). */
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-function timelineDateOK(s) { if (typeof s !== 'string' || !DATE_RE.test(s)) return false; const t = Date.parse(s + 'T00:00:00Z'); return Number.isFinite(t) && new Date(t).toISOString().slice(0, 10) === s; }
+function timelineDateOK(s) {
+ if(typeof s!=='string')return false;
+ if(DATE_RE.test(s)){const t=Date.parse(s+'T00:00:00Z');return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===s;}
+ const m=s.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})$/);
+ return !!m&&timelineDateOK(m[1])&&Number(m[2])<24&&Number(m[3])<60&&Number(m[4]||0)<60&&(m[5]==='Z'||Number(m[5].slice(1,3))<24&&Number(m[5].slice(4))<60)&&Number.isFinite(Date.parse(s));
+}
+function timelineShift(current,days){
+ if(!Number.isInteger(days)||Math.abs(days)>366000)throw Error('Timeline shift must be a bounded whole day count');
+ const out={};for(const key of ['start','end']){const v=current[key];if(!timelineDateOK(v))throw Error('Timeline shift requires ISO endpoints');const shifted=new Date(Date.parse(v)+days*86400000).toISOString();out[key]=DATE_RE.test(v)?shifted.slice(0,10):shifted;}return out;
+}
+function timelineValues(node,p){const get=path=>String(path).split('.').reduce((value,key)=>value?.[key],node.properties);return {start:get(p.start),end:get(p.end)};}
+function timelinePatch(node,p,values){
+ const props=JSON.parse(JSON.stringify(node.properties)),out={};
+ for(const key of ['start','end']){const parts=String(p[key]).split('.');if(parts.some(x=>!x||['__proto__','prototype','constructor'].includes(x)))throw Error('Invalid timeline binding');let at=props;for(const bit of parts.slice(0,-1)){if(!at[bit]||typeof at[bit]!=='object'||Array.isArray(at[bit]))at[bit]={};at=at[bit];}at[parts.at(-1)]=values[key];out[parts[0]]=props[parts[0]];}
+ return out;
+}
 /* timelineDatesCommit(current, draft): current {start, end} (the record's
  * current x_record dates), draft {start?, end?}. A one-sided draft merges over
  * current so a start edit cannot pass through an intermediate end < start. */
@@ -501,8 +516,8 @@ function timelineDatesCommit(current, draft) {
   const c = current || {}, d = draft || {};
   const start = d.start !== undefined ? String(d.start) : c.start;
   const end = d.end !== undefined ? String(d.end) : c.end;
-  for (const [k, v] of [['start', start], ['end', end]]) if (!timelineDateOK(v)) return { action: 'error', code: 'DDN-UI18', message: 'Timeline dates need a real ISO YYYY-MM-DD value; got ' + JSON.stringify(v) + ' for ' + k + '. Nothing was changed.' };
-  if (end < start) return { action: 'error', code: 'DDN-UI18', message: 'Timeline end must be on or after start (equal dates are a legal zero-length milestone). Nothing was changed.' };
+  for (const [k, v] of [['start', start], ['end', end]]) if (!timelineDateOK(v)) return { action: 'error', code: 'DDN-UI18', message: 'Timeline dates need a real ISO date or explicitly zoned timestamp; got ' + JSON.stringify(v) + ' for ' + k + '. Nothing was changed.' };
+  if (Date.parse(end) < Date.parse(start)) return { action: 'error', code: 'DDN-UI18', message: 'Timeline end must be on or after start (equal dates are a legal zero-length milestone). Nothing was changed.' };
   if (start === c.start && end === c.end) return { action: 'none' };
   return { action: 'set', start, end };
 }
@@ -617,7 +632,7 @@ const pure = {
   /* Phase 6b */
   MATRIX_KEYS, matrixStageChange,
   chartRecordKeys, chartNumericKeys, chartUnitChoices, chartRecordValueCommit,
-  DATE_RE, timelineDateOK, timelineDatesCommit,
+  DATE_RE, timelineDateOK, timelineDatesCommit, timelineShift, timelineValues, timelinePatch,
   DECISION_OPS, decisionOpsFor, decisionScalar, decisionPredicateFromDraft, decisionInDomain, checkDecisionRule,
   CANVAS_REQUIRED, PANEL_KEYS, panelGridCheck, fishboneOccurrences
 };
@@ -1703,6 +1718,11 @@ function renderMatrixSheet(target, hooks) {
       });
       row.append(rm);
       editorEl.append(row);
+      for(const [index,uid] of list.entries()){
+        const ordering=el('div','ddn-row');ordering.append(el('span','ddn-dim',uid.split('.').pop()));
+        for(const [delta,label] of [[-1,'Up'],[1,'Down']]){const b=mini(label,'Move '+label.toLowerCase()+' in '+listKey,()=>commit(()=>{const next=[...list];[next[index],next[index+delta]]=[next[index+delta],next[index]];hooks.setProjection(listKey,hooks.sourceRefs(next));}));b.disabled=index+delta<0||index+delta>=list.length;ordering.append(b);}editorEl.append(ordering);
+      }
+
     }
     const dupPolicy = selectOf([['', 'default (error)'], ['error', 'error — one assignment per cell'], ['join', 'join — merge duplicates into one cell']], p.duplicates || '', 'duplicate policy');
     dupPolicy.addEventListener('change', () => commit(() => hooks.setProjection('duplicates', dupPolicy.value || undefined)));
@@ -1857,11 +1877,19 @@ function renderTimelineSheet(target, hooks) {
     }
     if (sel && !plan.items.some(i => i.id === sel)) sel = null;
     const keys = { start: String(p.start || 'x_record.start').split('.').at(-1), end: String(p.end || 'x_record.end').split('.').at(-1) };
+    const calendarBox=el('div','ddn-sheet-calendar'),calendar=p.calendar||{};
+    const timezone=textInput(p.timezone||'UTC','UTC, +05:30 or America/Toronto','Timeline timezone');
+    const kind=selectOf(['gregorian','fiscal','business'].map(x=>[x,x]),calendar.kind||'gregorian','Timeline calendar');
+    const month=textInput(String(calendar.fiscal_start_month||1),'1..12','Fiscal start month');
+    const weekdays=textInput((calendar.weekdays||[1,2,3,4,5]).join(','),'1,2,3,4,5','Business ISO weekdays');
+    const holidays=textInput((calendar.holidays||[]).join(','),'YYYY-MM-DD, ...','Calendar holidays');
+    calendarBox.append(fieldRow('Timezone ',timezone),fieldRow('Calendar ',kind),fieldRow('Fiscal start month ',month),fieldRow('Business weekdays ',weekdays),fieldRow('Holidays ',holidays),mini('Apply calendar','Save explicit calendar and timezone settings for this view',()=>commit(()=>hooks.setCalendar({timezone:timezone.value.trim(),calendar:{kind:kind.value,fiscal_start_month:Number(month.value),weekdays:weekdays.value.split(',').map(x=>Number(x.trim())),holidays:holidays.value.split(',').map(x=>x.trim()).filter(Boolean)}}))));
+
     outlineEl.replaceChildren();
     outlineEl.append(el('h4', '', 'Timeline tasks — dates edit the shared model (' + String(p.start) + ' / ' + String(p.end) + ')'), err);
     const table = el('table', 'ddn-sheet-table');
     const head = document.createElement('tr');
-    for (const h of ['task', 'start (UTC)', 'end (exclusive, UTC)', '']) head.append(el('th', '', h));
+    for (const h of ['task', 'start (ISO)', 'end (exclusive, ISO)', 'Drag schedule', '']) head.append(el('th', '', h));
     table.append(head);
     for (const it of plan.items) {
       const tr = document.createElement('tr');
@@ -1869,24 +1897,33 @@ function renderTimelineSheet(target, hooks) {
       const th = el('th', '', it.label + (it.a === it.b ? ' ◆ milestone' : ''));
       tr.append(th);
       const node = ir.elements.find(n => n.id === it.id);
-      const xr = (node && node.properties.x_record) || {};
+      const current=timelineValues(node,p);
       for (const key of ['start', 'end']) {
         const td = document.createElement('td');
         const i = document.createElement('input');
-        i.type = 'date'; i.value = it[key]; i.setAttribute('aria-label', it.label + ' ' + key);
+        i.type = 'text'; i.value = current[key]; i.setAttribute('aria-label', it.label + ' ' + key);
         i.addEventListener('change', () => commit(() => {
-          const out = timelineDatesCommit({ start: xr[keys.start], end: xr[keys.end] }, { [key]: i.value });
+          const out = timelineDatesCommit(current, { [key]: i.value });
           if (out.action === 'error') throw Object.assign(new Error(out.message), { code: out.code });
-          if (out.action === 'set') hooks.setProperty(it.id, 'x_record', { ...xr, [keys.start]: out.start, [keys.end]: out.end });
+          if (out.action === 'set') hooks.setTimelineValues(it.id,timelinePatch(node,p,out));
         }));
         td.append(i); tr.append(td);
       }
       const td = document.createElement('td');
+      const dragCell=document.createElement('td'),track=document.createElement('div');track.className='ddn-timeline-track';track.style.cssText='position:relative;width:220px;height:28px;background:#e4e8ef;touch-action:none';
+      const lo=Math.min(...plan.items.map(n=>n.a)),hi=Math.max(...plan.items.map(n=>n.b),lo+86400000),span=(hi-lo)/86400000;
+      const bar=document.createElement('button');bar.type='button';bar.setAttribute('aria-label','Move '+it.label+' schedule');bar.title='Drag to shift both endpoints by whole elapsed days; arrow keys shift one day';bar.style.cssText='position:absolute;top:4px;height:20px;min-width:8px;background:#426ba9;color:white;padding:0;cursor:ew-resize';
+      const draw=days=>{bar.style.left=((it.a-lo)/86400000+days)/span*100+'%';bar.style.width=Math.max(2,(it.b-it.a)/(hi-lo)*100)+'%';};draw(0);track.append(bar);dragCell.append(track);tr.append(dragCell);
+      const move=days=>{if(days)commit(()=>hooks.setTimelineValues(it.id,timelinePatch(node,p,timelineShift(current,days))));draw(0);};let drag=null;
+      bar.addEventListener('pointerdown',event=>{if(event.button!==0)return;event.preventDefault();event.stopPropagation();drag={x:event.clientX,days:0};try{bar.setPointerCapture(event.pointerId);}catch{}});
+      bar.addEventListener('pointermove',event=>{if(!drag)return;drag.days=Math.round((event.clientX-drag.x)/Math.max(1,track.getBoundingClientRect().width)*span);draw(drag.days);bar.title='Shift '+drag.days+' days';});
+      bar.addEventListener('pointerup',event=>{if(!drag)return;const days=drag.days;drag=null;try{bar.releasePointerCapture(event.pointerId);}catch{}move(days);});
+      const cancel=()=>{drag=null;draw(0);};bar.addEventListener('pointercancel',cancel);bar.addEventListener('lostpointercapture',cancel);bar.addEventListener('keydown',event=>{if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();move(event.key==='ArrowLeft'?-1:1);}else if(event.key==='Escape')cancel();});
       td.append(mini('deps', 'Edit the dependencies touching this task', () => { sel = it.id; hooks.select(it.id); paint(); }));
       tr.append(td);
       table.append(tr);
     }
-    outlineEl.append(table);
+    outlineEl.append(table,calendarBox);
     const bar = el('div', 'ddn-sheet-toolbar');
     const idI = textInput('', 'task_id', 'New task identifier');
     const labelI = textInput('', 'Label', 'New task label');
@@ -2115,6 +2152,16 @@ function renderDecisionSheet(target, hooks) {
     for (const d of inputs) {
       const row = el('div', 'ddn-row');
       row.append(el('span', '', d.key + ' (' + d.type + (d.values ? ': ' + d.values.join('|') : d.min !== undefined || d.max !== undefined ? ': ' + (d.min ?? '') + '…' + (d.max ?? '') : '') + (d.optional ? ', optional' : '') + ')'));
+      const dtype=selectOf(['enum','number','boolean'].map(x=>[x,x]),d.type,'Domain '+d.key+' type');
+      const values=textInput(d.type==='number'?[d.min,d.max].join(','):(d.values||[]).join(','),'values or min,max','Domain '+d.key+' bounds');
+      const optional=document.createElement('input');optional.type='checkbox';optional.checked=!!d.optional;optional.setAttribute('aria-label','Domain '+d.key+' optional');
+      const nullable=document.createElement('input');nullable.type='checkbox';nullable.checked=!!d.nullable;nullable.setAttribute('aria-label','Domain '+d.key+' nullable');
+      row.append(dtype,values,fieldRow('Optional ',optional),fieldRow('Nullable ',nullable),mini('Save domain','Validate updated domain against every existing rule',()=>commit(()=>{
+        const next={key:d.key,type:dtype.value,optional:optional.checked,nullable:nullable.checked};
+        if(next.type==='number'){const bounds=values.value.split(',').map(x=>x.trim());if(bounds.length!==2||bounds.some(x=>!x||!Number.isFinite(Number(x))))throw Error('A numeric domain needs finite min,max bounds');[next.min,next.max]=bounds.map(Number);}
+        else if(next.type==='enum')next.values=values.value.split(',').map(x=>x.trim()).filter(Boolean);
+        hooks.setProjection('inputs',inputs.map(x=>x.key===d.key?next:x));
+      })));
       row.append(mini('Remove', 'Remove this input domain — rules referencing it fail validation at commit (coded error surfaces)', () => commit(() => {
         hooks.setProjection('inputs', inputs.filter(x => x.key !== d.key));
       })));

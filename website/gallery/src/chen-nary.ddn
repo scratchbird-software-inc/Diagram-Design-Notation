@@ -1,0 +1,17 @@
+ddn "0.6";
+module "gallery.chen_nary";
+data m {
+  object supplier "Supplier" { kind: entity; fields { supplier_id { key: primary; } } }
+  object part "Part" { kind: entity; fields { part_id { key: primary; } } }
+  object project "Project" { kind: entity; fields { project_id { key: primary; } } }
+  relation supplies "supplies" @supplier -> @part {
+    kind: assoc;
+    x_nary: { ends: [{ element: @project, role: "for", multiplicity: "(1..N)" }] };
+    x_chen: { from: { min: 0, max: "many" }, to: { min: 0, max: "many" } };
+  }
+}
+view main {
+  data: [@m];
+  projection { kind: chen; profile: "chen.nary@3"; }
+  publication { size: content; }
+}

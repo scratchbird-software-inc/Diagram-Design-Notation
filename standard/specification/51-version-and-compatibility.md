@@ -19,7 +19,7 @@ ddn "0.6";
 ```
 
 An 0.8 processor MUST accept exactly the source versions `"0.2"`, `"0.3"`,
-`"0.4"`, `"0.5"`, and `"0.6"`. Any other value — including `"0.7"`, `"0.8"`,
+`"0.4"`, `"0.5"`, `"0.6"`, and (chapter 59 amendment) `"0.7"`. Any other value — including `"0.8"`,
 `"1.0"`, an unquoted token, or a missing declaration — is a coded parse error
 (`DDN012`, existing). The version string is a scalar claim about the file's
 source dialect, not a negotiation: a processor never rewrites the header, and
@@ -29,10 +29,10 @@ The layers stay distinct, per `governance/VERSIONING.md`:
 
 | Layer | 0.8 value |
 |---|---|
-| Language source version (`ddn "x";`) | accepted set 0.2–0.6; **0.6 is new in the 0.8 standard** |
+| Language source version (`ddn "x";`) | accepted set 0.2–0.7; 0.7 adds chapter 59 composable content |
 | Runtime / notation package semver | 0.8.x (packaging release; 0.6.0-beta.1 and 0.7.0 introduced **no** source version) |
 | Core registry identity | `ddn-core@0.3` (unchanged) |
-| Standard document set | chapters 00–58, stamped 0.8 |
+| Standard document set | chapters 00–59; chapter 59 is an unreleased amendment |
 
 A document written `ddn "0.5";` remains a 0.5 document forever; it is never
 silently upgraded. A processor MUST NOT infer a newer dialect from file
@@ -111,3 +111,5 @@ outputs that embed wall-clock data such as the `$date` publication variable
 | `DDN-V04` | error | 0.8 (0.6-dialect) keyword or property used in a file declaring source version ≤ 0.5; message names the construct and the minimum version. |
 | `DDN-V05` | info | Deprecated construct used; message names the replacement spelling. |
 | `DDN-V06` | info | File declares a source version older than the workspace's newest; informational only, never a failure. |
+
+Chapter 59 gates document/composition groups and parameter modes on source dialect 0.7. Source 0.7 retains older syntax and rendering unless an element opts into composition. Package/release numbering remains independent.

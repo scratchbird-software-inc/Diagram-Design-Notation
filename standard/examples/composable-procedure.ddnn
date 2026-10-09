@@ -1,0 +1,11 @@
+{
+  "format": "ddnn@1",
+  "documents": {
+    "calculate-total": {
+      "format": "code",
+      "role": "procedure_source",
+      "language": "sql",
+      "text": "BEGIN\n    total := amount;\nEND;\n"
+    }
+  }
+}

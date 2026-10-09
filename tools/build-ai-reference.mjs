@@ -25,6 +25,8 @@
  * growing the machine-extracted vocabulary; the file is generated, so the
  * growth is registry content, not prose bloat, and the alternative is
  * dropping coverage the completeness gates forbid).
+ * Chapter 59 adds ~3 KiB of document/composition syntax and extracted
+ * diagnostics; its reference budget is 462 KiB.
  * the UML completeness profiles and BPMN registry growth added ~15 profile rows and ~30
  * kind/relation rows to the machine-extracted tables; the hand-written
  * sections were trimmed to their teaching minimum first (B1-057…B1-061).)
@@ -104,7 +106,7 @@ function extractDiagnostics() {
   const patterns = [
     new RegExp("DDNError\\(\\s*'(" + CODE + ")'\\s*,", 'g'),
     new RegExp("code:\\s*'(" + CODE + ")'", 'g'),
-    new RegExp("fail\\(\\s*'(" + CODE + ")'\\s*,", 'g'),
+    new RegExp("(?:fail|obligation)\\(\\s*'(" + CODE + ")'\\s*,", 'g'),
   ];
   const literalsIn = expr => {
     const out = [];
@@ -132,6 +134,7 @@ function extractDiagnostics() {
         let severity = 'error';
         if (/severity:'warning'/.test(near) || /-W\d|PJW|LW\d|TW\d|CW\d|^DDN-W/.test(code)) severity = 'warning/info';
         else if (/severity:'info'/.test(near)) severity = 'info';
+        if (m[0].startsWith('obligation(')) severity = 'error/incomplete';
         if (!codes.has(code)) codes.set(code, { severity: new Set(), files: new Set(), messages: new Set() });
         const c = codes.get(code);
         c.severity.add(severity);
@@ -182,7 +185,7 @@ function genCounts(S, diagnostics) {
 function genProperties(S) {
   return wrap('properties',
     '### 3.4 Full property key whitelist per declaration type (from `DDN.PROPERTIES` in `notation/runtime/ddn-core.js`; unknown keys → DDN033; `x_*` always allowed)\n\n' +
-    jsonBlock(S.PROPERTIES));
+    jsonBlock(S.PROPERTIES) + '\nFrames in 0.6/0.7 accept `within: @parent` in the same view. The outermost frame counts as level 1; the registry limit is 4. Cycles and deeper nesting are errors. Graph boundaries enclose child frames; `confine` rejects children that cannot fit. See standard chapter 03.\n');
 }
 
 function genDefaults(S) {
@@ -343,7 +346,7 @@ export function completenessReport(text, S, diagnostics, validation) {
     { ok: S.diagnosticFixes.requiredCoverage.every(c => S.diagnosticFixes.fixes[c]) && fixedCount >= S.diagnosticFixes.requiredCoverage.length, label: 'D2.9 error-recovery FIX column for ' + S.diagnosticFixes.requiredCoverage.length + ' common codes (' + fixedCount + ' of ' + diagnostics.length + ' codes carry fixes)' },
     { ok: validation && validation.blocks >= 20, label: 'D2.10 worked recipes: ' + (validation ? validation.blocks : 0) + ' ```ddn blocks (>=20 required), ' + (validation ? validation.checked : 0) + ' check+render runs, all pass' },
     has(/## 12\. Multi-file authoring[\s\S]*single-file self-contained is preferred/i, 'D2.11 multi-file pattern + single-file preference note'),
-    { ok: Buffer.byteLength(text, 'utf8') <= 458 * 1024, label: 'D4 size ' + (Buffer.byteLength(text, 'utf8') / 1024).toFixed(1) + ' KiB <= 458 KiB (raised 420→458 for the DDN 0.8 §14 sections + closure amendments)' },
+    { ok: Buffer.byteLength(text, 'utf8') <= 466 * 1024, label: 'D4 size ' + (Buffer.byteLength(text, 'utf8') / 1024).toFixed(1) + ' KiB <= 466 KiB (explicit calendars, pagination and editor contracts)' },
   ];
   return checks;
 }

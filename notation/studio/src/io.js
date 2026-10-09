@@ -45,7 +45,7 @@ async function unzip(bytes){
   if(d.getUint32(loc,true)!==0x04034b50)fail('DDN-IO05','Invalid local ZIP header.');const ln=d.getUint16(loc+26,true),le=d.getUint16(loc+28,true),from=loc+30+ln+le;
   if(from+compressed>start||dec.decode(bytes.slice(loc+30,loc+30+ln))!==name||d.getUint16(loc+8,true)!==method)fail('DDN-IO05','ZIP local header mismatch.');
   if(name.endsWith('/'))continue;
-  if(!name.toLowerCase().endsWith('.ddn')&&!name.endsWith('ddn-workspace.json')){ignored.push(name);continue;}
+  if(!/\.ddn(?:a|n)?$/i.test(name)&&!name.endsWith('ddn-workspace.json')){ignored.push(name);continue;}
   const payload=bytes.slice(from,from+compressed),data=method===0?payload:await inflate(payload,size);
   if(data.length!==size||crc32(data)!==crc)fail('DDN-IO05','ZIP CRC or size check failed: '+name);
   files[name]=dec.decode(data);
@@ -64,7 +64,7 @@ async function open(input,{directory=false}={}){
  if(list.length===1&&list[0].name.toLowerCase().endsWith('.zip')){
   if(list[0].size>MAX)fail('DDN-IO04','Archive exceeds 16 MB.');const unpacked=await unzip(new Uint8Array(await list[0].arrayBuffer()));files=unpacked.files;ignored=unpacked.ignored;
  }else{
-  let total=0;for(const file of list){let name=directory?(file.webkitRelativePath||file.name):file.name;if(directory&&name.includes('/'))name=name.split('/').slice(1).join('/');if(!name.toLowerCase().endsWith('.ddn')){ignored.push(name);continue;}api.pathChecked(name);if(Object.hasOwn(files,name))fail('DDN-IO03','Two selected files have the same path: '+name);if(file.size>2_000_000||(total+=file.size)>MAX_TEXT)fail('DDN-IO04','Source size limit exceeded.');try{files[name]=dec.decode(await file.arrayBuffer());}catch{fail('DDN-IO05','Source is not valid UTF-8: '+name);}}
+  let total=0;for(const file of list){let name=directory?(file.webkitRelativePath||file.name):file.name;if(directory&&name.includes('/'))name=name.split('/').slice(1).join('/');if(!/\.ddn(?:a|n)?$/i.test(name)){ignored.push(name);continue;}api.pathChecked(name);if(Object.hasOwn(files,name))fail('DDN-IO03','Two selected files have the same path: '+name);if(file.size>2_000_000||(total+=file.size)>MAX_TEXT)fail('DDN-IO04','Source size limit exceeded.');try{files[name]=dec.decode(await file.arrayBuffer());}catch{fail('DDN-IO05','Source is not valid UTF-8: '+name);}}
  }
  const manifests=Object.keys(files).filter(n=>n.endsWith('ddn-workspace.json'));
  if(manifests.length>1)fail('DDN-IO05','Multiple workspace manifests.');
