@@ -2694,13 +2694,13 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | LIVE013 | error | Live view limit: 128 elements and 384 relationships. Split the model into linked views. | - |
 | LIVE014 | error | Workspace name is required. | - |
 | LIVE015 | error | Unknown saved workspace format. | - |
-| LIVE016 | error | Workspace destroyed.<br>Workspace destroyed.graph | - |
+| LIVE016 | error | Workspace destroyed.<br>Workspace destroyed.LIVE030Source changed since recovery was requested.LIVE030Recovery checkpoint belongs to a different workspace.<br>Workspace destroyed.graph | - |
 | LIVE020 | error | Interaction projection does not support<br>Interaction projection retains its fixed lanes and typography. | - |
 | LIVE021 | error | Data-bound coordinates cannot be replaced with automatic graph placement<br>Numbered relationships require a legend<br>Requested mark is not supported by this projection/transform<br>This projection does not allow graph setting | - |
 | LIVE022 | error | relationRouting key is not a verb or relation in this view:<br>relationRouting must be a record keyed by verb or relation id. | - |
 | LIVE023 | error | Unsupported relationRouting value for ${key}: ${value} | - |
 | LIVE024 | error | mindNodes keys must be element ids.<br>mindNodes must be a record keyed by element id.<br>mindNodes. must be a record.<br>mindNodes..lines must be an integer between 1 and 50. | - |
-| LIVE030 | error | Source changed since this edit was prepared. | - |
+| LIVE030 | error | Recovery checkpoint belongs to a different workspace.<br>Source changed since recovery was requested.<br>Source changed since this edit was prepared. | - |
 | LIVE031 | error | Overlapping or invalid text edits. | - |
 | LIVE033 | error | File is imported by: | - |
 | LIVE034 | error | Destination already exists. | - |

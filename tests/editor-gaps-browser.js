@@ -7,7 +7,7 @@ const side='';
 const driver=`<script>(async()=>{
  const lines=[],errors=[],get=id=>document.getElementById(id),sleep=ms=>new Promise(r=>setTimeout(r,ms));window.addEventListener('error',e=>errors.push(e.message));window.confirm=()=>true;
  const stage=()=>{const h=get('ddn-diagram');return (h?.shadowRoot||h?.firstElementChild?.shadowRoot)?.querySelector('.stage');};
- const wait=async(f,n)=>{for(let i=0;i<240;i++){if(f())return;await sleep(100);}throw Error('Timeout '+n);};
+ const wait=async(f,n)=>{for(let i=0;i<240;i++){if(f())return;await sleep(100);}throw Error('Timeout '+n+' / '+get('ddn-action-error')?.textContent+' / '+get('ddn-tool-status')?.textContent);};
  const check=(v,n)=>{if(!v)throw Error(n);lines.push('PASS '+n);};
  try{
  await wait(()=>window.DDNTool&&stage(),'boot');

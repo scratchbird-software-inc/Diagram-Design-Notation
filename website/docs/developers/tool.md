@@ -504,3 +504,59 @@ miniatures with the diagram's contour renderer. Profile-specific silhouettes
 follow the selected family/subset; previews are cached and do not run diagram
 layout. The registered semantic glyph remains available through `forKind`.
 Core-only hosts use that glyph until the graph renderer is loaded.
+
+### Failed editor actions
+
+Guided edits and drag-to-pin moves are checked against the current presentation
+and retained placement before they change the live source. Rejected actions show
+an error dialog with an **OK** button. If a later render fails, the designer
+restores the last successfully rendered source, presentation, and undo/redo
+history, then renders that working state again. A rejected action is not added
+to redo. Recovery is bounded to one attempt; an initial load with no working
+state, or a persistent renderer failure, still reports the error without
+claiming a usable export. All recovery stays in the client.
+
+Embedding code can keep an opaque `workspace.checkpoint()` token and restore it
+with `workspace.restoreCheckpoint(token, {expectedRevision})`. Tokens belong to
+the workspace that created them and preserve its files and both history stacks.
+Restoration emits a normal source-change notification if files changed; it does
+not rewind the monotonically increasing workspace revision.
+
+### Creator palette tabs
+
+UML subtype tabs use creation presets rather than the broad semantic
+compatibility lists. Activity and interaction-overview tabs expose flow
+elements; State Machine exposes state elements; Use Case, Deployment,
+Structure and Profile each expose their corresponding vocabulary. All is the
+combined library, while Existing lists workspace definitions. Palette changes
+do not change the current view type or model validation.
+
+Tab widths stay constant when selected. Left/Right navigate in order; Up/Down
+move to the closest tab in the adjacent visual row; Home/End select the first
+or last tab. Focus follows selection when the palette rebuilds. Clearing a
+family search restores its selected tab.
+
+### Creator editing toolbar
+
+The arrow button opens a Select/Pin menu. Select uses the existing selection
+and group-selection gestures. Pin uses the inverse button colours and moves
+only the dragged element: retained positions stay fixed while connectors are
+rerouted. The existing Drag pins checkbox reflects the same mode. Overlapping
+moves still use normal validation and error recovery. Tidy deliberately runs
+automatic placement again while preserving authored pins.
+
+The toolbar also provides New, Save, Save As, Cut, Copy, Paste, Delete, Bold,
+Italic, Strikethrough and Underline. New opens the template chooser. Delete and
+Cut share the reference-aware deletion path; a view's own selection reference
+is removed atomically. Copies retain nested fields, ports and text groups.
+Typography toggles retain the existing selected-kind scope; underline and
+strikethrough can be combined.
+
+Save writes a complete `.ddn-workspace.zip`, preserving source files (including
+DDNA and DDNN companions), render overrides, retained positions and a
+`toolPresentation` metadata record. Opening that ZIP restores its presentation.
+Supported browsers reuse a file handle for subsequent Save operations; Save As
+chooses a new destination. Other browsers download a named ZIP. Ctrl/Cmd+S and
+Ctrl/Cmd+Shift+S invoke Save and Save As. Cancelling the picker makes no change;
+failed writes abort and retain the previous save destination. All file work
+is local to the browser.

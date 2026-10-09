@@ -43,6 +43,7 @@ export interface Workspace {
  previewDraft(entry:string,view:string):DraftPreview;
  documents(entry:string,view:string):ResolvedDocument[];
  commitFiles(changes:Record<string,string>,options:{expectedRevision?:number;entry:string;view:string}):number;
+ checkpoint():object;restoreCheckpoint(token:object,options?:{expectedRevision?:number}):number;
  readonly revision:number;getFiles():SourceFiles;entries():Array<{file:string;views:Array<{id:string;name:string}>}>;views(entry:string):Array<{id:string;name:string}>;
  analyze(file:string):Record<string,unknown>;resolve(entry:string,view:string):Record<string,unknown>;inspect(entry:string,view:string):Record<string,unknown>;
  updateFiles(changes:SourceFiles):number;replaceFiles(files:SourceFiles):number;removeFile(file:string,options?:{force?:boolean}):number;dependents(file:string):string[];renameFile(oldName:string,newName:string):number;

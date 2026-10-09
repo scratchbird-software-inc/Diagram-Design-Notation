@@ -49,4 +49,16 @@ test('capture batches legacy authoring calls without changing live files',()=>{c
 test('capture failure discards every intermediate edit',()=>{const w=workspace(source(complete)),e=w.editor(),before=w.getFiles();assert.throws(()=>e.capture({entry:'m.ddn',view:'v'},draft=>{draft.updateFiles({'extra.ddn':'ddn "0.7";module "extra";'});throw Error('late failure');}),/late failure/);assert.deepEqual(w.getFiles(),before);assert.equal(w.revision,0);w.destroy();});
 test('capture deletion is included in write authorization and undo',()=>{const w=workspace(source(complete));w.updateFiles({'extra.ddn':'ddn "0.7";module "extra";'});const blocked=w.editor({canWrite:f=>f!=='extra.ddn'});rejects(()=>blocked.capture({entry:'m.ddn',view:'v'},d=>d.removeFile('extra.ddn')),'LIVE051');const e=w.editor(),p=e.capture({entry:'m.ddn',view:'v'},d=>d.removeFile('extra.ddn'));assert.equal(p.changes[0].after,null);assert.equal(p.changes[0].afterHash,null);e.apply(p);assert.equal(w.getFiles()['extra.ddn'],undefined);w.undo();assert.ok(w.getFiles()['extra.ddn']);w.destroy();});
 test('invalid non-graph calendar is rejected during preview, not after apply',()=>{const text='ddn "0.7";module "p";data m {object a {x_record:{start:"2026-01-01",end:"2026-01-02"};}}view v {data:[@m];projection {kind:timeline;profile:"timeline.basic@1";records:[@m.a];start:"x_record.start";end:"x_record.end";}}',w=workspace(text),e=w.editor();rejects(()=>e.preview(request([call('setViewProfile',{projection:{timezone:'Invalid/Zone'}})])),'DDN-PJ224');assert.equal(w.getFiles()['m.ddn'],text);w.destroy();});
+test('recovery restores files and both history stacks without retaining rejected changes',()=>{
+ const w=workspace(source(complete));w.updateFiles({'extra.ddn':'one'});w.updateFiles({'extra.ddn':'two'});w.undo();
+ const before=w.getFiles(),history=w.history(),checkpoint=w.checkpoint();
+ w.updateFiles({'m.ddn':'bad source','extra.ddn':'bad'});w.removeFile('extra.ddn');
+ w.restoreCheckpoint(checkpoint);assert.deepEqual(w.getFiles(),before);assert.deepEqual(w.history(),history);
+ w.redo();assert.equal(w.getFiles()['extra.ddn'],'two');w.undo();w.undo();assert.equal(w.getFiles()['extra.ddn'],undefined);w.destroy();
+});
+test('recovery rejects foreign checkpoints and stale revisions',()=>{
+ const w=workspace(source(complete)),other=workspace(source(complete)),c=w.checkpoint();
+ rejects(()=>other.restoreCheckpoint(c),'LIVE030');w.updateFiles({'m.ddn':source(complete)+'\n'});
+ rejects(()=>w.restoreCheckpoint(c,{expectedRevision:0}),'LIVE030');w.destroy();other.destroy();
+});
 console.log(`editor-preview ${passed}/${total}`);

@@ -141,9 +141,20 @@
         <label class="ddn-field"><span>Create in</span><select id="ddn-create-destination" aria-label="Create in"></select></label>
         <div class="ddn-creator-left">
         <div class="ddn-creator-fixed" role="toolbar" aria-label="Editing tools">
-          <button id="ddn-pointer-toggle" type="button" aria-pressed="false" title="Pointer select — click selects, ctrl/shift-click toggles items, drag on empty canvas rubber-bands a multi-selection">
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.5v10l2.6-2.6 1.4 3.4 1.7-.8-1.4-3.3 3.7-.7z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <span class="ddn-pointer-menu-wrap">
+          <button id="ddn-pointer-toggle" type="button" aria-label="Select or Pin arrow" aria-haspopup="menu" aria-expanded="false" title="Select / Pin arrow">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.5v10l2.6-2.6 1.4 3.4 1.7-.8-1.4-3.3 3.7-.7z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><span aria-hidden="true">▾</span>
           </button>
+          <span id="ddn-pointer-menu" role="menu" aria-label="Arrow mode" hidden>
+            <button id="ddn-select-arrow" type="button" role="menuitemradio" aria-checked="false" title="Select elements; drag empty space to select a group">➤ Select arrow</button>
+            <button id="ddn-pin-arrow" type="button" role="menuitemradio" aria-checked="true" title="Move only the dragged element; keep other positions and reroute relations">➤ Pin arrow</button>
+          </span></span>
+          <button id="ddn-tidy" type="button" title="Tidy — re-run placement and routing on this view; authored pins keep their positions exactly">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4.5h11M4.5 8h7M6.5 11.5h3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </button>
+          <button id="ddn-creator-new" type="button" aria-label="New" title="New workspace">＋</button>
+          <button id="ddn-creator-save" type="button" aria-label="Save" title="Save workspace"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2h10l2 2v10H2zM5 2v5h6V2M5 14V9h6v5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></button>
+          <button id="ddn-creator-saveas" type="button" aria-label="Save As" title="Save workspace as…"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2h10l2 2v4M2 2v12h5M5 2v5h6V2M8 12l5-5 2 2-5 5-3 1z" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></button>
           <span class="ddn-creator-sep"></span>
           <button id="ddn-cut" type="button" title="Cut — copy the selected element and delete its definition (references block the delete)">
             <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="4.5" cy="4.5" r="2" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="4.5" cy="11.5" r="2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M6 6l7 7M6 10L13 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -155,6 +166,7 @@
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5h6v2H5z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><rect x="3.5" y="4.5" width="9" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
           </button>
           <span class="ddn-creator-sep"></span>
+          <button id="ddn-creator-delete" type="button" aria-label="Delete" title="Delete selection"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M6 4V2h4v2M4 4l1 10h6l1-10M7 6v6M9 6v6" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></button>
           <button id="ddn-bold-toggle" type="button" aria-pressed="false" title="Bold — session-preview typography on the selected element's kind (Fonts editor channel)">
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5h4a2.6 2.6 0 0 1 0 5.2H5zM5 7.7h5a2.9 2.9 0 0 1 0 5.8H5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
           </button>
@@ -162,9 +174,9 @@
             <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7 3h5M4 13h5M9.5 3l-3 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
           </button>
           <span class="ddn-creator-sep"></span>
-          <button id="ddn-tidy" type="button" title="Tidy — re-run placement and routing on this view; authored pins keep their positions exactly">
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4.5h11M4.5 8h7M6.5 11.5h3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-          </button>
+          <button id="ddn-strike-toggle" type="button" aria-label="Strikethrough" aria-pressed="false" title="Strikethrough — selected kind typography"><span style="text-decoration:line-through">S</span></button>
+          <button id="ddn-underline-toggle" type="button" aria-label="Underline" aria-pressed="false" title="Underline — selected kind typography"><span style="text-decoration:underline">U</span></button>
+
         </div>
         <div class="ddn-creator-side">
           <div class="ddn-creator-row">

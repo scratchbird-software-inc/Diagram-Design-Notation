@@ -198,7 +198,7 @@ function emptyPresentation() {
 }
 const state = {
   ws: null, diagram: null, entry: '', view: '', viewList: [],
-  currentFile: '', bufferDirty: false, saved: {}, mergeNext: false, search: '',
+  currentFile: '', bufferDirty: false, saved: {}, savedPresentation:null, mergeNext: false, search: '',
   presentation: emptyPresentation(), selected: null, selectedRelation: null, selectedIds: [],
   fit: 'page', config: resolveDrawerConfig(DEFAULT_MODE, null, null),
   catalogueIndex: -1, overrideStyle: null, panning: false,
@@ -268,8 +268,37 @@ function status(msg) {
   els.status.textContent = base + (msg ? ' — ' + msg : '');
 }
 function fail(msg) { els.status.textContent = 'Error: ' + msg; }
-function guard(fn) { try { const r = fn(); if (r && r.catch) r.catch(e => error(e)); return r; } catch (e) { error(e); } }
+function guard(fn) {
+ const workspace=state.ws,checkpoint=workspace?.checkpoint(),revision=workspace?.revision;
+ try { const r=fn();if(r&&r.catch)r.catch(e=>error(e));return r; }
+ catch(e){
+  // Synchronous actions can make several writes before throwing. Restore the
+  // action boundary, including history, without manufacturing a redo entry.
+  if(workspace&&state.ws===workspace&&workspace.revision!==revision){
+   workspace.restoreCheckpoint(checkpoint);state.bufferDirty=false;
+   entriesUI(state.view);showSource(Object.hasOwn(state.ws.getFiles(),state.currentFile)?state.currentFile:state.entry);updateHistory();
+  }
+  error(e);
+ }
+}
+function showErrorDialog(e, recovered=false) {
+ let dialog=document.getElementById('ddn-action-error');
+ if(!dialog){
+  dialog=document.createElement('dialog');dialog.id='ddn-action-error';
+  dialog.setAttribute('aria-labelledby','ddn-action-error-title');
+  dialog.setAttribute('aria-describedby','ddn-action-error-message');
+  dialog.style.cssText='max-width: min(640px,90vw);border:1px solid #aab7ca;border-radius:10px;padding:24px;';
+  dialog.innerHTML='<h2 id="ddn-action-error-title">Unable to complete action</h2><p id="ddn-action-error-message" style="white-space:pre-wrap;overflow-wrap:anywhere"></p><form method="dialog"><button autofocus>OK</button></form>';
+  document.body.append(dialog);
+ }
+ const code=e&&e.code, reason=(e&&e.message)||String(e);
+ dialog.querySelector('p').textContent=(code?code+': ':'')+reason+
+  (code==='DDN204'?'\n\nThe requested position overlaps a pinned or retained element. Choose a free position.':'')+
+  (recovered?'\n\nThe failed changes were rolled back. The previous working diagram is being restored.':'');
+ if(!dialog.open)dialog.showModal();
+}
 function error(e) {
+ showErrorDialog(e);
   fail((e && e.code ? e.code + ': ' : '') + (e && e.message || e));
   els.sourceError.textContent = (e && e.source ? e.source + ': ' : '') + ((e && e.code) || 'ERROR') + ' ' + (e && e.message || e);
 }
@@ -520,11 +549,11 @@ function attachHover() {
   /* A render replaces the SVG; the stale targets die with it. */
   stage.addEventListener('pointercancel', clear, true);
 }
-function mount() {
+function mount(layoutState=null) {
   if (state.diagram) state.diagram.destroy();
   state.diagram = null;
   if (!state.entry || !state.view) { els.hint.style.display = ''; return; }
-  const diagram = A.mount(els.diagramHost, { workspace: state.ws, entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), title: state.view });
+  const diagram = A.mount(els.diagramHost, { workspace: state.ws, entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), layoutState, title: state.view });
   state.diagram = diagram;
   diagram.setAttribute('source-hidden', '');
   const bare = document.createElement('style');
@@ -547,6 +576,7 @@ function mount() {
   /* Auto-translate hardening (owner screencast): the overlay container gets
    * the class opt-out too — belt and braces under <html translate="no">. */
   { const st = diagram.shadowRoot.querySelector('.stage'); if (st) st.classList.add('notranslate'); }
+  let working=null;
   diagram.addEventListener('ddn-render-start', () => {
     /* D7: non-blocking busy affordance — the previous picture dims (the
      * component's stale idiom) and the stage spinner shows until the
@@ -561,6 +591,10 @@ function mount() {
     }, 250);
   });
   diagram.addEventListener('ddn-render', e => {
+    working={workspace:state.ws,checkpoint:state.ws.checkpoint(),entry:state.entry,view:state.view,
+      presentation:structuredClone(state.presentation),options:structuredClone(diagram.options),layoutState:diagram._layoutState,
+      selected:state.selected,selectedRelation:state.selectedRelation,selectedIds:[...state.selectedIds]};
+
     clearTimeout(state._busyTimer);
     els.diagramHost.classList.remove('ddn-rendering');
     if (els.busy) els.busy.hidden = true;
@@ -608,7 +642,16 @@ function mount() {
     if (els.busy) els.busy.hidden = true;
     els.diagramHost.removeAttribute('data-ddn-rendered');
     els.sourceError.textContent = e.detail.code + ': ' + e.detail.message;
-    diagnosticsUI();
+    const saved=working;working=null;
+    if(saved&&saved.workspace===state.ws){
+      state.entry=saved.entry;state.view=saved.view;state.presentation=saved.presentation;
+      state.selected=saved.selected;state.selectedRelation=saved.selectedRelation;state.selectedIds=saved.selectedIds;
+      diagram.entry=saved.entry;diagram.view=saved.view;diagram.options=saved.options;diagram._layoutState=saved.layoutState;
+      state.ws.restoreCheckpoint(saved.checkpoint);
+      state.bufferDirty=false;entriesUI(state.view);showSource(Object.hasOwn(state.ws.getFiles(),state.currentFile)?state.currentFile:state.entry);updateHistory();
+      diagram.syncUI();diagram.ready=diagram.redraw();diagram.ready.catch(()=>{});
+    }
+    showErrorDialog(e.detail,!!saved&&saved.workspace===state.ws);
     fail(e.detail.code + ': ' + e.detail.message);
   });
   diagram.addEventListener('ddn-select', e => guard(() => onSelect(e.detail)));
@@ -1001,7 +1044,7 @@ function buildFontEditor() {
     field(body, 'Family', fam);
     field(body, 'Size', siz);
     const specialsRow = document.createElement('div'); specialsRow.className = 'ddn-row';
-    for (const [key, label] of [['bold', 'Bold'], ['italic', 'Italic'], ['strike', 'Strike-through'], ['smallCaps', 'Small-caps']]) {
+    for (const [key, label] of [['bold', 'Bold'], ['italic', 'Italic'], ['strike', 'Strike-through'], ['underline', 'Underline'], ['smallCaps', 'Small-caps']]) {
       const l = document.createElement('label'); l.className = 'ddn-check';
       const c = document.createElement('input'); c.type = 'checkbox'; c.checked = !!cur[key]; c.setAttribute('aria-label', label + ' for ' + code);
       c.addEventListener('change', () => update({ [key]: c.checked }));
@@ -2192,6 +2235,9 @@ function deleteSelection() {
   const label = targets.length === 1 ? targets[0] : targets.length + ' selected definitions';
   const blast = targets.length === 1 ? ' It is used in ' + usageBlast(targets[0]) + '.' : '';
   if (!confirm('Delete ' + label + '?' + blast)) return;
+  removeDefinitions(targets);
+}
+function removeDefinitions(targets){
   guided(() => {
     /* The current view's select list is a reference too (DDN-E004) — drop
      * the deleted ids from it first, same pattern as the type sheet. */
@@ -2258,6 +2304,7 @@ function textWritePreflight(action) {
     try { renderGuidedPreflight({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true }); }
     catch (e) { state.ws.undo(); failed = e; }
   }));
+  if(failed)showErrorDialog(failed);
   return failed;
 }
 function inspectorNote(msg) { els.inspectorError.textContent = msg || ''; }
@@ -2319,10 +2366,16 @@ function openCompanionInspector(file) {
 let guidedCaptureActive=false;
 function captureGuidedEdit(action){
  if(guidedCaptureActive)return action();
- const live=state.ws,editor=live.editor(),before={selected:state.selected,selectedRelation:state.selectedRelation,selectedIds:[...state.selectedIds]},request={entry:state.entry,view:state.view};let plan;
+ const live=state.ws,editor=live.editor(),before={selected:state.selected,selectedRelation:state.selectedRelation,selectedIds:[...state.selectedIds],presentation:structuredClone(state.presentation)},request={entry:state.entry,view:state.view};let plan;
  try{
   plan=editor.capture(request,scratch=>{guidedCaptureActive=true;state.ws=scratch;try{action();}finally{state.ws=live;guidedCaptureActive=false;}});
-  editor.previewLayout(plan);editor.apply(plan);
+  if(plan.status==='valid'){
+   const files=live.getFiles();for(const change of plan.changes){if(change.after===null)delete files[change.file];else files[change.file]=change.after;}
+   const candidate=A.createWorkspace(files);
+   try{candidate.renderSync({entry:state.entry,view:state.view,overrides:toolOverrides(state.presentation),layoutState:state.diagram?._layoutState?.view===state.entry+'#'+state.view?state.diagram._layoutState:null,noMotion:true});}
+   finally{candidate.destroy();}
+  }else editor.previewLayout(plan);
+  editor.apply(plan);
  }catch(e){state.ws=live;guidedCaptureActive=false;Object.assign(state,before);if(plan)editor.cancel(plan);throw e;}
 }
 function guidedInspector(action) {
@@ -2337,6 +2390,7 @@ function guidedInspector(action) {
     refreshInspector();
   } catch (e) {
     inspectorNote((e && e.code ? e.code + ': ' : '') + (e && e.message || e));
+    showErrorDialog(e);
   }
 }
 function refreshInspector() {
@@ -2369,6 +2423,7 @@ function sheetGuided(action, onError) {
     const msg = (e && e.code ? e.code + ': ' : '') + (e && e.message || e);
     if (onError) onError(msg);
     else fail(msg);
+    showErrorDialog(e);
   }
 }
 function selectFromSheet(uid) {
@@ -2911,7 +2966,7 @@ function buildMeaningTab(panel, id, ir, ctx) {
       /* The preflight's re-render clears the status line — deliver after it settles. */
       const settled = state.diagram && state.diagram.ready;
       const msg = () => status('that text does not fit the page (' + (failed.code || 'render rejected') + ') — the previous label was kept');
-      if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+      if (settled && typeof settled.then === 'function') settled.then(msg, () => {});
       else msg();
     }
   });
@@ -2953,7 +3008,7 @@ function buildMeaningTab(panel, id, ir, ctx) {
       desc.value = old;
       const settled = state.diagram && state.diagram.ready;
       const msg = () => status('that text does not fit the page (' + (failed.code || 'render rejected') + ') — the previous description was kept');
-      if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+      if (settled && typeof settled.then === 'function') settled.then(msg, () => {});
       else msg();
     }
   });
@@ -3641,6 +3696,7 @@ function attachDrag() {
      * which is why every headless harness passed). Track a candidate only;
      * the drag begins — and captures — once movement crosses 4px. Below
      * threshold the gesture is a plain click and selection proceeds. */
+    state.presentation.options.autoPlace=false;diagram.options.autoPlace=false;
     candidate = { el, g, id: g.id, sx: e.clientX, sy: e.clientY, start: new DOMPoint(e.clientX, e.clientY).matrixTransform(inv) };
   });
   canvas.addEventListener('pointermove', e => {
@@ -3676,7 +3732,9 @@ function attachDrag() {
        * of pushing geometry outside the page (owner decision). pinClamped
        * preflights the render — pin-centring can overflow a fixed page even
        * when the box itself is inside. */
-      const pinned = pinClamped(d.id, d.g.x + d.dx, d.g.y + d.dy, d.g.w, d.g.h);
+      let pinned;
+      captureGuidedEdit(()=>{pinned = pinClamped(d.id, d.g.x + d.dx, d.g.y + d.dy, d.g.w, d.g.h);});
+      updateHistory();
       if (!pinned) { status('the fixed page has no room there — the move was cancelled; the element keeps its previous position'); return; }
       showSource(state.currentFile);
       state.selected = d.id;
@@ -3686,12 +3744,13 @@ function attachDrag() {
         ? 'pinned at the page edge — the live area of a fixed page cannot be exceeded'
         : 'pinned occurrence in source — undo restores the previous source');
       const settled = state.diagram && state.diagram.ready;
-      if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+      if (settled && typeof settled.then === 'function') settled.then(msg, () => {});
       else msg();
     });
   };
   canvas.addEventListener('pointerup', e => finish(e));
   canvas.addEventListener('pointercancel', e => finish(e, true));
+  canvas.addEventListener('lostpointercapture', e => finish(e, true));
 }
 /* Mind-map entity interactions (B1-100): wheel over a note-heavy entity pans
  * its body rows inside the clip window (DOM pan, no re-render); dragging the
@@ -3796,19 +3855,36 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && design.pla
  * empty canvas rubber-bands, and the bottom Properties drawer shows the
  * selection's properties; deactivating closes the drawer and returns to
  * normal. */
-els.pointerToggle.addEventListener('click', () => {
-  design.pointer = !design.pointer;
-  els.pointerToggle.setAttribute('aria-pressed', String(design.pointer));
-  if (design.pointer) {
-    status('pointer select armed — click selects, ctrl/shift-click toggles, drag on empty canvas rubber-bands');
-    if (state.selected || state.selectedRelation) { setDrawer('properties', 'open', true); renderPropertiesPanel(); }
-    else renderPropertiesPanel();
-  } else {
-    status();
-    if (state.config.drawers.properties === 'open') setDrawer('properties', 'closed', true);
-    clearMultiSelect();
-  }
+function syncPointerMode(){
+ const pin=els.dragMode.checked;design.pointer=!pin;
+ els.pointerToggle.dataset.mode=pin?'pin':'select';
+ els.pointerToggle.setAttribute('aria-label',(pin?'Pin':'Select')+' arrow — choose arrow mode');
+ els.pointerToggle.title=pin?'Pin arrow — move one element, keep other positions':'Select arrow — select elements';
+ $('ddn-pin-arrow').setAttribute('aria-checked',String(pin));$('ddn-select-arrow').setAttribute('aria-checked',String(!pin));
+}
+function closePointerMenu(){ $('ddn-pointer-menu').hidden=true;els.pointerToggle.setAttribute('aria-expanded','false'); }
+function choosePointerMode(pin){
+ cancelDesignGesture();els.dragMode.checked=pin;syncPointerMode();closePointerMenu();els.pointerToggle.focus();
+ if(pin&&graphEditable()){
+  state.presentation.options.autoPlace=false;
+  guard(()=>state.diagram.setOptions({autoPlace:false}));
+ }
+ status(pin?'Pin arrow — moving one element keeps all other positions':'Select arrow — click selects; drag empty space to select a group');
+}
+els.pointerToggle.addEventListener('click',()=>{
+ const menu=$('ddn-pointer-menu');menu.hidden=!menu.hidden;els.pointerToggle.setAttribute('aria-expanded',String(!menu.hidden));
+ if(!menu.hidden)$(els.dragMode.checked?'ddn-pin-arrow':'ddn-select-arrow').focus();
 });
+$('ddn-select-arrow').addEventListener('click',()=>choosePointerMode(false));
+$('ddn-pin-arrow').addEventListener('click',()=>choosePointerMode(true));
+$('ddn-pointer-menu').addEventListener('keydown',e=>{
+ if(e.key==='Escape'){e.preventDefault();closePointerMenu();els.pointerToggle.focus();}
+ if(['ArrowDown','ArrowUp','Home','End'].includes(e.key)){e.preventDefault();const select=$('ddn-select-arrow');$(e.key==='Home'||e.key!=='End'&&document.activeElement!==select?'ddn-select-arrow':'ddn-pin-arrow').focus();}
+});
+document.addEventListener('click',e=>{if(!e.target.closest('.ddn-pointer-menu-wrap'))closePointerMenu();});
+els.dragMode.addEventListener('change',syncPointerMode);
+$('ddn-creator-new').addEventListener('click',()=>{setDrawer('files','open',true);els.newProject.click();});
+$('ddn-creator-delete').addEventListener('click',()=>guard(deleteSelection));
 
 /* Palette: capability-filtered (designer phase 2). The active view's resolved
  * projection decides: data-bound projections show no element palette (a hint
@@ -3845,6 +3921,23 @@ const creator = { family: 'ddn', tab: null };
  * of one sub-set (uml.activity@1/@2) merge into a single tab whose kind set is
  * the union. Bare tags (chen, sequence, timing, …) are a sub-set of their own
  * family. Everything is derived from the registry data — no hardcoded list. */
+// Creation presets are narrower than semantic compatibility: a UML classifier
+// may participate in many diagram types, but is not every type's palette.
+// These are UI presets only; they do not change model validation or view type.
+const UML_PALETTES = {
+ structure: ['uml.class','uml.interface','uml.enumeration','uml.package'],
+ deployment: ['uml.node','uml.device','uml.executionenv','uml.artifact','uml.component'],
+ composite: ['uml.class','uml.component','uml.interface','uml.collaboration'],
+ usecase: ['uml.actor','uml.usecase','uml.subject'],
+ object: ['object','uml.class'],
+ profile: ['uml.metaclass','uml.stereotype','uml.package'],
+ sequence: ['uml.actor','object','uml.class','uml.component'],
+ communication: ['object','uml.actor','uml.class','uml.component'],
+ timing: ['object','uml.actor','uml.class'],
+ activity: ['flow.start','flow.end','flow.process','flow.decision','flow.merge','flow.forkjoin','flow.objectnode','flow.subprocess','flow.sendsignal','flow.acceptsignal','flow.timeevent','flow.flowfinal','flow.annotation'],
+ interaction_overview: ['flow.start','flow.end','flow.process','flow.decision','flow.merge','flow.forkjoin','flow.subprocess','flow.annotation'],
+ statemachine: A.kinds.filter(k=>k.id.startsWith('state.')).map(k=>k.id)
+};
 let paletteSubsetCache = null;
 function paletteSubsets() {
   if (paletteSubsetCache) return paletteSubsetCache;
@@ -3870,6 +3963,7 @@ function paletteKindsFor(family) {
   if (family === 'ddn') return paletteFilter(A.kinds, viewProjection(), els.paletteAll.checked);
   const subs = paletteSubsets().get(family);
   if (!subs) return [];
+  if(family==='uml'){const ids=new Set(Object.values(UML_PALETTES).flat());return A.kinds.filter(k=>ids.has(k.id));}
   const tags = new Set([].concat(...[...subs.values()]));
   return A.kinds.filter(k => (k.allowed_in || []).some(t => tags.has(t)));
 }
@@ -3920,7 +4014,7 @@ function existingClick(n) {
       guided(() => A.authoring.selectInView(state.ws, state.entry, state.view, n.id));
       const settled = state.diagram && state.diagram.ready;
       const msg = () => status('added ' + n.id + ' to this view — it was already defined, no copy was made');
-      if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+      if (settled && typeof settled.then === 'function') settled.then(msg, () => {});
       else msg();
     } else {
       state.selected = n.id; state.selectedRelation = null; state.selectedIds = [n.id];
@@ -4018,7 +4112,7 @@ function dropDuplicate(def, x, y) {
     }
     const settled = state.diagram && state.diagram.ready;
     const msg = () => status('duplicated ' + def.id + ' as a fresh element (' + (nudged ? 'nudged off the drop point' : 'at ' + Math.round(x) + ',' + Math.round(y)) + ') — customize it freely; the original is untouched');
-    if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+    if (settled && typeof settled.then === 'function') settled.then(msg, () => {});
     else msg();
   });
 }
@@ -4066,11 +4160,12 @@ function buildCreator() {
     names = subNames.length > 1 ? ['All', ...subNames] : subNames;
     tabKinds = name => {
       if (name === 'All') return base;
+      if(creator.family==='uml'&&UML_PALETTES[name]){const ids=new Set(UML_PALETTES[name]);return base.filter(k=>ids.has(k.id));}
       const tags = new Set(subs.get(name) || []);
       return base.filter(k => (k.allowed_in || []).some(t => tags.has(t)));
     };
   }
-  if (q || (!names.includes(creator.tab) && creator.tab !== 'Existing')) creator.tab = q ? null : names[0];
+  if (!names.includes(creator.tab) && creator.tab !== 'Existing') creator.tab = names[0];
   const profiles=A.profileCatalogue.profiles.filter(p=>p.id.startsWith(creator.family+'.')&&(creator.tab==='All'||creator.tab==='Existing'||!creator.tab||creator.tab===creator.family||p.id.startsWith(creator.family+'.'+creator.tab+'@')));
   const activeProfile=viewProjection().profile;
   creator.iconProfile=creator.family==='ddn'||profiles.some(p=>p.id===activeProfile)?activeProfile:profiles.at(-1)?.id||'ddn@1';
@@ -4078,8 +4173,10 @@ function buildCreator() {
   els.creatorTabs.replaceChildren(...tabNames.map(name => {
     const b = document.createElement('button');
     b.type = 'button'; b.role = 'tab'; b.textContent = name;
+    b.id='ddn-palette-tab-'+encodeURIComponent(name);b.setAttribute('aria-controls','ddn-creator-icons');
+    b.tabIndex=name===creator.tab?0:-1;
     b.setAttribute('aria-selected', String(name === creator.tab));
-    b.addEventListener('click', () => { creator.tab = name; buildCreator(); });
+    b.addEventListener('click', () => selectCreatorTab(name));
     return b;
   }));
   let shown;
@@ -4094,9 +4191,34 @@ function buildCreator() {
     shown = tabKinds(creator.tab).map(creatorIcon);
   }
   els.creatorIcons.replaceChildren(...shown);
+  els.creatorIcons.scrollTop=0;
+  if(q)els.creatorIcons.removeAttribute('aria-labelledby');else els.creatorIcons.setAttribute('aria-labelledby','ddn-palette-tab-'+encodeURIComponent(creator.tab));
   if (!shown.length) els.creatorIcons.append(dim(q ? 'no kind or definition matches “' + els.paletteSearch.value + '”' : 'nothing here yet'));
 }
+function selectCreatorTab(name){
+ // Changing tabs replaces their DOM nodes. Transfer focus to the replacement
+ // so repeated keyboard navigation and wrapped rows do not lose their target.
+ cancelDesignGesture();creator.tab=name;buildCreator();status('palette: '+creator.family+' / '+name);
+ [...els.creatorTabs.children].find(b=>b.textContent===name)?.focus({preventScroll:true});
+}
+els.creatorTabs.addEventListener('keydown',e=>{
+ const tabs=[...els.creatorTabs.querySelectorAll('[role="tab"]')],current=tabs.indexOf(e.target);
+ if(current<0)return;
+ let next;
+ if(e.key==='Home')next=0;
+ else if(e.key==='End')next=tabs.length-1;
+ else if(e.key==='ArrowRight')next=(current+1)%tabs.length;
+ else if(e.key==='ArrowLeft')next=(current+tabs.length-1)%tabs.length;
+ else if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+  const rows=[];for(const tab of tabs){const box=tab.getBoundingClientRect();let row=rows.find(r=>Math.abs(r.top-box.top)<2);if(!row){row={top:box.top,tabs:[]};rows.push(row);}row.tabs.push({tab,x:box.left+box.width/2});}
+  const row=rows.findIndex(r=>r.tabs.some(t=>t.tab===e.target)),step=e.key==='ArrowDown'?1:-1;
+  const target=rows[(row+step+rows.length)%rows.length],box=e.target.getBoundingClientRect(),x=box.left+box.width/2;
+  next=tabs.indexOf(target.tabs.reduce((a,b)=>Math.abs(a.x-x)<=Math.abs(b.x-x)?a:b).tab);
+ }else return;
+ e.preventDefault();selectCreatorTab(tabs[next].textContent);
+});
 function setPaletteFamily(id, label) {
+  cancelDesignGesture();
   creator.family = id;
   creator.tab = null;
   els.paletteFamilyMenu.hidden = true;
@@ -4393,7 +4515,7 @@ function placeElement(kind, x, y) {
     const msg = () => status(nudged
       ? 'placed ' + uid + ' beside the existing element (nudged off the drop point to avoid overlap) — rename it in the inspector'
       : 'placed ' + uid + (Number.isFinite(x) ? ' at ' + Math.round(x) + ',' + Math.round(y) : '') + ' — rename it in the inspector');
-    if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+    if (settled && typeof settled.then === 'function') settled.then(msg, () => {});
     const revAfter = state.ws.revision;
     const ready = state.diagram && state.diagram.ready;
     if (wasRendered && ready && typeof ready.catch === 'function') ready.catch(e => {
@@ -4636,7 +4758,7 @@ function startResizeDrag(e, dir, target) {
       /* The commit's re-render clears the status line — deliver after it settles. */
       const settled = state.diagram && state.diagram.ready;
       const msg = () => status(note2);
-      if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+      if (settled && typeof settled.then === 'function') settled.then(msg, () => {});
       else msg();
     }
     /* Trailing-edge handle re-sync (screencast repro: after a resize commit
@@ -4702,10 +4824,14 @@ function copySelectedElement(cut) {
   guard(() => {
     const src = A.authoring.sourceOf(state.ws, state.entry, state.view, id);
     if (src.type !== 'object') { status('clipboard holds elements, not ' + src.type + 's'); return; }
-    elementClipboard.data = { kind: src.properties.kind || 'object', name: src.name, properties: JSON.parse(JSON.stringify(src.properties)) };
+    const source=state.ws.getFiles()[src.file];
+    const findNode=nodes=>{for(const n of nodes||[]){if(n.start===src.start)return n;const found=findNode(n.children);if(found)return found;}return null;};
+    const declaration=findNode(parseSource(source,src.file).declarations);
+    elementClipboard.data = { kind: src.properties.kind || 'object', name: src.name, properties: JSON.parse(JSON.stringify(src.properties)),
+      children:(declaration?.children||[]).map(n=>source.slice(n.start,n.end)).join('\n') };
     els.pasteBtn.disabled = false;
     if (cut) {
-      guided(() => A.authoring.deleteDefinition(state.ws, state.entry, state.view, id));
+      removeDefinitions([id]);
       status('cut ' + id + ' — clipboard holds the definition; undo restores it');
     } else status('copied ' + id + ' (' + (elementClipboard.data.kind || 'object') + ')');
   });
@@ -4722,8 +4848,12 @@ function pasteElement() {
       const after = toolIR();
       const uid = after.elements.map(n => n.id).find(u => u === id || u.endsWith('.' + id)) || id;
       const props = { ...data.properties };
-      delete props.kind;
+      delete props.kind;delete props.numeral; // Copies receive a fresh identity, including patent numbering.
       if (Object.keys(props).length) A.authoring.setElementProperties(state.ws, state.entry, state.view, uid, props);
+      if(data.children){
+        const target=A.authoring.sourceOf(state.ws,state.entry,state.view,uid);
+        state.ws.applyEdits([{file:target.file,start:target.end-1,end:target.end-1,text:'\n'+data.children+'\n'}],{entry:state.entry,view:state.view});
+      }
       state.selected = uid;
       state.selectedRelation = null;
       state.selectedIds = [uid];
@@ -4749,7 +4879,7 @@ function typographyQuickToggle(prop) {
   for (const k of Object.keys(next)) if (next[k] === 'source' || next[k] === false || next[k] == null) delete next[k];
   if (Object.keys(next).length) state.presentation.typography[code] = next;
   else delete state.presentation.typography[code];
-  applyOverrideCss();
+  applyOverrideCss();syncQuickToggles();
   status(prop + ' ' + (next[prop] ? 'on' : 'off') + ' for kind ' + code + ' (session preview — see the Fonts group)');
 }
 function syncQuickToggles() {
@@ -4759,9 +4889,13 @@ function syncQuickToggles() {
   const cur = (code && state.presentation.typography[code]) || {};
   els.boldToggle.setAttribute('aria-pressed', String(!!cur.bold));
   els.italicToggle.setAttribute('aria-pressed', String(!!cur.italic));
+  $('ddn-strike-toggle').setAttribute('aria-pressed',String(!!cur.strike));
+  $('ddn-underline-toggle').setAttribute('aria-pressed',String(!!cur.underline));
 }
 els.boldToggle.addEventListener('click', () => typographyQuickToggle('bold'));
 els.italicToggle.addEventListener('click', () => typographyQuickToggle('italic'));
+$('ddn-strike-toggle').addEventListener('click',()=>typographyQuickToggle('strike'));
+$('ddn-underline-toggle').addEventListener('click',()=>typographyQuickToggle('underline'));
 
 /* Phase 12: pointer-tool multi-selection. With the pointer armed, clicks are
  * owned by the tool (the component's single-select is suppressed): plain click
@@ -4958,7 +5092,7 @@ function openInlineEditor(target) {
       if (failed) status('that text does not fit the page (' + (failed.code || 'render rejected') + ') — the previous label was kept');
       else if (wrote) status(target.what + ' updated — undo restores the previous label');
     };
-    if (settled && typeof settled.then === 'function') settled.then(msg, msg);
+    if (settled && typeof settled.then === 'function') settled.then(msg, () => {});
     else msg();
   };
   input.addEventListener('keydown', ev => {
@@ -5172,6 +5306,7 @@ function tidy() {
   /* Same semantics as the component's "Auto-layout now": drop retained layout
    * state, re-enable automatic placement — authored pins are honoured by the
    * runtime's normal render. */
+  state.presentation.options.autoPlace=true;
   d.action('relayout');
   return d.ready.then(() => {
     const scene = d.result && d.result.scene;
@@ -5630,6 +5765,7 @@ function catalogueClosure(file) {
 
 function dirty() {
   return state.bufferDirty
+    || state.savedPresentation!==null&&JSON.stringify(state.presentation)!==state.savedPresentation
     || Object.entries((state.ws && state.ws.getFiles()) || {}).some(([p, t]) => state.saved[p] !== t)
     || Object.keys(state.saved).some(p => !state.ws || !Object.prototype.hasOwnProperty.call(state.ws.getFiles(), p));
 }
@@ -6041,7 +6177,7 @@ els.source.addEventListener('input', () => {
 });
 els.source.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); els.apply.click(); }
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); guard(downloadCurrentFile); }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); guard(()=>saveProject(e.shiftKey)); }
   if (e.key === 'Tab') {
     e.preventDefault();
     const t = e.target, start = t.selectionStart;
@@ -6179,6 +6315,11 @@ function diagnosticsUI() {
 }
 
 function load(files, entry, view, options) {
+  let savedPresentation=null;
+  if(options?.presentation){
+    savedPresentation=emptyPresentation();for(const key of Object.keys(savedPresentation))if(options.presentation[key]&&typeof options.presentation[key]==='object')savedPresentation[key]=structuredClone(options.presentation[key]);
+    overrideCss(savedPresentation); // Reject invalid saved styling before replacing the live workspace.
+  }
   documentLoad?.abort();
   state.generatedTraces=[];state.execLast=null;els.execDownload.hidden=true;
   cancelSourceReview();
@@ -6199,8 +6340,11 @@ function load(files, entry, view, options) {
   showSource(Object.prototype.hasOwnProperty.call(files, state.entry) ? state.entry : Object.keys(files)[0]);
   els.inspectorControls.hidden = true;
   els.selectionSummary.textContent = 'Click an object or relation in the diagram.';
+  if(savedPresentation)state.presentation=savedPresentation;
+  if(options?.overrides)state.presentation.options={...options.overrides};
   restoreToolPresentation();
-  mount();
+  state.savedPresentation=JSON.stringify(state.presentation);
+  mount(options?.layoutState||null);
   updateHistory();
   /* A workspace whose render fails at mount (e.g. a broken DDNA association,
    * DDN-PJ216) still refreshes the diagnostics drawer here — the DDN-A001
@@ -6282,7 +6426,7 @@ async function openFiles(input, directory) {
   } else {
     if (dirty() && !confirm('Replace current workspace? Download unsaved changes first.')) return;
     state.catalogueIndex = -1;
-    load(result.files, result.snapshot.entry, result.snapshot.view);
+    load(result.files, result.snapshot.entry, result.snapshot.view,{presentation:result.snapshot.toolPresentation,overrides:result.snapshot.overrides,layoutState:result.snapshot.layoutState});
     if (result.ignored.length) status('opened workspace; ' + result.ignored.length + ' non-source files ignored');
   }
   state.mergeNext = false;
@@ -6434,6 +6578,39 @@ els.fileDelete.addEventListener('click', () => guard(() => {
   mount();
 }));
 
+// A complete, local workspace save includes all source/notes files and the
+// presentation. Reuse a browser file handle only for its original workspace.
+let projectSave=null,projectSaving=false;
+async function saveProject(saveAs=false){
+ if(projectSaving)return;
+ const workspace=state.ws;if(!workspace)throw new Error('No workspace to save');
+ projectSaving=true;$('ddn-creator-save').disabled=true;$('ddn-creator-saveas').disabled=true;
+ try{
+  const previous=projectSave?.workspace===workspace?projectSave:null;
+  let handle=!saveAs&&previous?.handle,name=previous?.name||(state.entry||'design').split('/').at(-1).replace(/\.ddn$/i,'')+'.ddn-workspace.zip';
+  if(!handle&&typeof host.showSaveFilePicker==='function'){
+   handle=await host.showSaveFilePicker({suggestedName:name,types:[{description:'DDN workspace',accept:{'application/zip':['.zip']}}]});name=handle.name;
+  }else if(!handle&&(saveAs||!previous)){
+   const chosen=prompt('Save complete workspace as',name);if(chosen===null)return;
+   name=chosen.trim();if(!name)throw new Error('A filename is required');if(!name.toLowerCase().endsWith('.zip'))name+='.ddn-workspace.zip';
+  }
+  if(state.ws!==workspace)throw new Error('The workspace changed while choosing a save destination. Save again.');
+  flush();await state.diagram?.ready;
+  if(state.ws!==workspace)throw new Error('The workspace changed before saving. Save again.');
+  const saved=snapshot();saved.toolPresentation=structuredClone(state.presentation);
+  const bytes=A.io.toZIP(saved);
+  if(handle){const writer=await handle.createWritable();try{await writer.write(bytes);await writer.close();}catch(e){try{await writer.abort();}catch{}throw e;}}
+  else A.io.download(name,bytes,'application/zip');
+  if(state.ws===workspace){projectSave={workspace,handle,name};state.saved={...saved.files};state.savedPresentation=JSON.stringify(saved.toolPresentation);status((handle?'saved ':'downloaded ')+name+' — complete workspace');}
+ }catch(e){if(e?.name!=='AbortError')throw e;}
+ finally{projectSaving=false;$('ddn-creator-save').disabled=false;$('ddn-creator-saveas').disabled=false;}
+}
+$('ddn-creator-save').addEventListener('click',()=>guard(()=>saveProject(false)));
+$('ddn-creator-saveas').addEventListener('click',()=>guard(()=>saveProject(true)));
+document.addEventListener('keydown',e=>{
+ if(e.defaultPrevented||!(e.ctrlKey||e.metaKey)||e.altKey||e.key.toLowerCase()!=='s')return;
+ e.preventDefault();guard(()=>saveProject(e.shiftKey));
+});
 function downloadCurrentFile() {
   flush();
   A.io.download(state.currentFile.split('/').at(-1), state.ws.getFiles()[state.currentFile]);
@@ -6762,6 +6939,7 @@ function boot() {
   applyDrawerConfig();
   // B1-051 (D1): design mode arms drag-to-pin by default (still toggleable).
   els.dragMode.checked = state.config.design === true;
+  syncPointerMode();
   catalogueUI();
   let booted = false;
   try {

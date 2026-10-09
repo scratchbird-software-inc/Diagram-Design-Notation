@@ -52,7 +52,8 @@ function typographyRuleFor(code, style) {
   }
   if (style && style.bold) decls.push('font-weight: 700');
   if (style && style.italic) decls.push('font-style: italic');
-  if (style && style.strike) decls.push('text-decoration: line-through');
+  const decorations=[style?.underline?'underline':'',style?.strike?'line-through':''].filter(Boolean);
+  if(decorations.length)decls.push('text-decoration: '+decorations.join(' '));
   if (style && style.smallCaps) decls.push('font-variant-caps: small-caps');
   if (style && style.colour != null && style.colour !== '') {
     if (!/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(String(style.colour))) throw new Error('colour must be #rgb or #rrggbb');

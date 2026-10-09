@@ -9268,7 +9268,16 @@
    function compiled(entry,view){if(!Object.hasOwn(files,entry))fail('LIVE012','Missing entry: '+entry);const key=entry+'#'+(view||'');if(cache.has(key))return cache.get(key);const built=validateEdit(files,entry,view),ir=built.ir;
     if((ir.view.occurrences?.elements.length??ir.view.selected.length)>128||(ir.view.occurrences?.relations.length??ir.view.relations.length)>384)fail('LIVE013','Live view limit: 128 elements and 384 relationships. Split the model into linked views.');
     freeze(ir.elements);freeze(ir.relations);const result={ir,dependencies:[...built.workspace.docs.keys(),...built.workspace.documentFiles]};cache.set(key,result);while(cache.size>4)cache.delete(cache.keys().next().value);return result;}
+   const checkpoints=new WeakMap();
    const ws={
+    checkpoint(){const token=Object.freeze({});checkpoints.set(token,{files,undo:undo.slice(),redo:redo.slice(),historyBytes});return token;},
+    restoreCheckpoint(token,{expectedRevision=revision}={}){
+     if(destroyed)fail('LIVE016','Workspace destroyed.');
+     if(expectedRevision!==revision)fail('LIVE030','Source changed since recovery was requested.');
+     const saved=checkpoints.get(token);if(!saved)fail('LIVE030','Recovery checkpoint belongs to a different workspace.');
+     undo.splice(0,undo.length,...saved.undo);redo.splice(0,redo.length,...saved.redo);historyBytes=saved.historyBytes;
+     return commit(saved.files,'Restore working state',false);
+    },
     get revision(){return revision;},getFiles(){return {...files};},
     entries(){return Object.keys(files).sort().flatMap(file=>{try{const d=D.parse(files[file],file),v=d.declarations.filter(n=>n.type==='view');return v.length?[{file,views:v.map(n=>({id:n.id,name:n.label||n.id}))}]:[];}catch{return [];}});},
     views(entry){return D.parse(files[entry],entry).declarations.filter(n=>n.type==='view').map(n=>({id:n.id,name:n.label||n.id}));},

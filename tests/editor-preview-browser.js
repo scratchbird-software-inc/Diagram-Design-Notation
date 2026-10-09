@@ -24,12 +24,12 @@ const driver=`<script>(async()=>{
   get('ddn-cancel-preview').click();check(get('ddn-edit-preview').hidden,'cancel closes preview');
   await sleep(250);check(changes===0,'cancel leaves source untouched');
   get('ddn-preview-edit').click();get('ddn-apply-preview').click();
-  await wait(()=>changes===1,'one applied change');
-  check(DDNTool.getSource().files['m.ddn']===${JSON.stringify(incomplete)},'apply stores requested draft source');
-  check(get('ddn-edit-summary').textContent.includes('Applied'),'apply completion is visible');
-  await wait(()=>get('ddn-source-error').textContent.includes('DDN-PF008'),'strict main canvas rejects incomplete source');
-  get('ddn-undo').click();await wait(()=>get('ddn-diagram').hasAttribute('data-ddn-rendered'),'undo restores main canvas');
-  check(DDNTool.getSource().files['m.ddn']===${JSON.stringify(fixture)},'one undo restores full previous source');
+  await wait(()=>get('ddn-action-error')?.open,'error dialog');
+  check(get('ddn-action-error').textContent.includes('DDN-PF008'),'dialog describes incomplete source failure');
+  await wait(()=>get('ddn-diagram').hasAttribute('data-ddn-rendered'),'automatic recovery');
+  check(DDNTool.getSource().files['m.ddn']===${JSON.stringify(fixture)},'failed apply restores full previous source automatically');
+  check(get('ddn-redo').disabled,'failed action cannot be redone');
+  get('ddn-action-error').querySelector('button').click();check(!get('ddn-action-error').open,'OK closes error dialog');
   input(${JSON.stringify(incomplete)});get('ddn-preview-edit').click();input(${JSON.stringify(fixture)});
   check(get('ddn-edit-preview').hidden,'typing invalidates the preview');
   check(errors.length===0,'no browser errors: '+errors.join('; '));
