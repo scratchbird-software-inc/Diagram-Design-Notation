@@ -3875,7 +3875,9 @@ function paletteKindsFor(family) {
 }
 function paletteGlyph(k) {
   const icon = document.createElement('span'); icon.className = 'ddn-palette-glyph'; icon.setAttribute('aria-hidden', 'true');
-  const g = A.glyphs && A.glyphs.forKind(k.id);
+  // The generic entity is also offered in Chen, where it projects as a rectangle.
+  const glyphKind = creator.family === 'chen' && k.id === 'entity' ? 'chen.entity' : k.id;
+  const g = A.glyphs && A.glyphs.previewForKind(glyphKind, creator.iconProfile);
   if (g) { icon.innerHTML = '<svg viewBox="' + g.viewBox + '">' + g.svg + '</svg>'; } else icon.textContent = k.code;
   return icon;
 }
@@ -4069,6 +4071,9 @@ function buildCreator() {
     };
   }
   if (q || (!names.includes(creator.tab) && creator.tab !== 'Existing')) creator.tab = q ? null : names[0];
+  const profiles=A.profileCatalogue.profiles.filter(p=>p.id.startsWith(creator.family+'.')&&(creator.tab==='All'||creator.tab==='Existing'||!creator.tab||creator.tab===creator.family||p.id.startsWith(creator.family+'.'+creator.tab+'@')));
+  const activeProfile=viewProjection().profile;
+  creator.iconProfile=creator.family==='ddn'||profiles.some(p=>p.id===activeProfile)?activeProfile:profiles.at(-1)?.id||'ddn@1';
   const tabNames = q ? [] : [...names, 'Existing'];
   els.creatorTabs.replaceChildren(...tabNames.map(name => {
     const b = document.createElement('button');

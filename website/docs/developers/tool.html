@@ -137,6 +137,7 @@
 <p>Runnable example: <a href="../../examples/embed/tool-host-roundtrip.html">examples/embed/tool-host-roundtrip.html</a>; headless coverage in <code>tests/tool-host-io-http.js</code> (worker and <code>?worker=off</code>).</p>
 <h2>Test hooks</h2>
 <p><code>window.DDNTool</code> mirrors the old <code>DDNViewer</code> surface (pure functions plus <code>loadFiles</code>, <code>setSource</code>, <code>getSource</code>, <code>onSourceChange</code>/<code>offSourceChange</code>, <code>setFit</code>, <code>exportSvgString</code>, <code>setDrawer</code>, <code>setToolbar</code>, <code>getDrawerConfig</code>, <code>state</code>, …) for tests and integrations; <code>setDrawer</code> opens <code>api</code> drawers but throws a clear error when asked to open a <code>none</code> drawer. <code>window.DDNRedirect.mapLegacyParams</code> is the old-URL parameter mapper used by the redirect stubs.</p>
+<p>Profile palette icons use <code>DDNLive.glyphs.previewForKind(kind, profile)</code> to paint miniatures with the diagram's contour renderer. Profile-specific silhouettes follow the selected family/subset; previews are cached and do not run diagram layout. The registered semantic glyph remains available through <code>forKind</code>. Core-only hosts use that glyph until the graph renderer is loaded.</p>
 </article>
 <p><small>Rendered from <a href="tool.md">tool.md</a> by <code>website/build-site.mjs</code>.</small></p>
 </main>

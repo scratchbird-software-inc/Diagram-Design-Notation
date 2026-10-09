@@ -124,6 +124,8 @@ export interface Defaults extends Record<string,unknown> {
 }
 export const defaults:Defaults;
 export interface Glyphs {
+ /** Miniature profile contour from the diagram renderer; falls back to the registered glyph without the graph module. */
+ previewForKind(kind:string,profile?:string):{kind:string;glyph:string;viewBox:string;svg:string;meaning:string}|null;
  /** Registered plate glyph for a kind keyword (or registry id): symbol body + viewBox; null when absent (B1-012). */
  forKind(kind:string):{kind:string;glyph:string;viewBox:string;svg:string;meaning:string}|null;
 }

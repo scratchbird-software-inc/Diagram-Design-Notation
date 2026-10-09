@@ -94,6 +94,31 @@ function glyphForKind(kindId){
  if(!symbol)return null;
  return{kind:kind.keyword,glyph:kind.glyph,viewBox:symbol.viewBox,svg:symbol.svg,meaning:kind.meaning||kind.name||kind.keyword};
 }
+// Palette previews use the same contour renderer as diagram elements. Keep the
+// registered plate-glyph accessor unchanged for hosts that use semantic icons.
+const shapePreviews=new Map();
+function previewForKind(kindId,profile='ddn@1'){
+ const kind=assets.registry.kinds.find(k=>k.keyword===kindId||k.id===kindId);
+ if(!kind)return null;
+ const Shapes=optionalNamespace('DDNShapes'),Palette=optionalNamespace('DDNPalette');
+ if(!kind.profileKind||!Shapes||!Palette)return glyphForKind(kindId);
+ const key=JSON.stringify([kind.keyword,profile]);if(shapePreviews.has(key))return {...shapePreviews.get(key)};
+ const p=clone(D.DEFAULTS);p.projection.profile=profile;p.style.theme='neutral';p.style.look='classic';
+ const n={id:'palette-'+kind.keyword,kind:kind.keyword,name:'',fields:[],ports:[],properties:clone(kind.defaults||{})};
+ if(kind.keyword==='req.requirement')n.properties.x_diagram={code:''};
+ const g={x:0,y:0,w:160,h:100,scale:1,n,k:kind,titleLines:[],fieldRows:[],ports:[],noteLines:[],noteTop:70,headerH:40};
+ Shapes.measure(g,p);
+ let svg=Shapes.render(g,p,Palette.themes.neutral).replace(/ tabindex="[^"]*"| role="[^"]*"/g,'').replace(/#333333|#222222|#26364D/gi,'currentColor');
+ // Fit to the actual contour, including small state markers and actors.
+ const points=Shapes.polygon(g),xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
+ let x=Math.min(...xs),y=Math.min(...ys),w=Math.max(...xs)-x,h=Math.max(...ys)-y;
+ if(g.silhouette==='forkbar'){x=g.w/2-32;y=(g.markerHeight??g.h)/2-12;w=64;h=8;}
+ const pad=Math.max(w,h)*.06+2;
+ // Large contours need screen-space strokes to remain legible at palette size.
+ if(Math.max(w,h)>80)svg=svg.replace(/ stroke-width="[^"]*"/g,' stroke-width="1.2" vector-effect="non-scaling-stroke"');
+ const result={kind:kind.keyword,glyph:'shape:'+g.silhouette,viewBox:[x-pad,y-pad,w+pad*2,h+pad*2].join(' '),svg,meaning:kind.meaning||kind.name||kind.keyword};
+ shapePreviews.set(key,result);if(shapePreviews.size>512)shapePreviews.delete(shapePreviews.keys().next().value);return {...result};
+}
 const fingerprint=s=>{let a=2166136261,b=5381;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);a=Math.imul(a^c,16777619);b=Math.imul(b,33)^c;}return(a>>>0).toString(16).padStart(8,'0')+(b>>>0).toString(16).padStart(8,'0');};
 function freeze(v){if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.freeze(v);Object.values(v).forEach(freeze);}return v;}
 function capabilities(ir){
@@ -424,6 +449,6 @@ const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,
   * (chapter 57 §D2). Read-only; null in a bundle without ddn-view-profiles. */
  viewProfiles:optionalNamespace('DDNViewProfiles'),
  setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider,
- glyphs:{forKind:glyphForKind}};
+ glyphs:{forKind:glyphForKind,previewForKind}};
 return api;
 }

@@ -17435,6 +17435,18 @@
     ]
   ],
   "glyphs": {
+    "chen-entity": {
+      "base": "chen-entity",
+      "viewBox": "0 0 24 24"
+    },
+    "chen-attribute": {
+      "base": "chen-attribute",
+      "viewBox": "0 0 24 24"
+    },
+    "chen-association": {
+      "base": "chen-association",
+      "viewBox": "0 0 24 24"
+    },
     "account": {
       "base": "account",
       "viewBox": "0 0 24 24"

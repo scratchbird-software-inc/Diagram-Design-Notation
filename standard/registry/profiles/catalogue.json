@@ -361,7 +361,7 @@
    "fallback": "entity",
    "family": "concept",
    "code": "ENTITY",
-   "glyph": "object",
+   "glyph": "chen-entity",
    "aliases": [],
    "defaults": {}
   },
@@ -373,7 +373,7 @@
    "fallback": "entity",
    "family": "concept",
    "code": "ATTRIBUTE",
-   "glyph": "object",
+   "glyph": "chen-attribute",
    "aliases": [],
    "defaults": {}
   },
@@ -385,7 +385,7 @@
    "fallback": "entity",
    "family": "concept",
    "code": "ASSOCIATION",
-   "glyph": "object",
+   "glyph": "chen-association",
    "aliases": [],
    "defaults": {}
   },

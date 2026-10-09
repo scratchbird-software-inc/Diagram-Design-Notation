@@ -498,3 +498,9 @@ headless coverage in `tests/tool-host-io-http.js` (worker and `?worker=off`).
 `api` drawers but throws a clear error when asked to open a `none` drawer.
 `window.DDNRedirect.mapLegacyParams` is the old-URL parameter mapper used by
 the redirect stubs.
+
+Profile palette icons use `DDNLive.glyphs.previewForKind(kind, profile)` to paint
+miniatures with the diagram's contour renderer. Profile-specific silhouettes
+follow the selected family/subset; previews are cached and do not run diagram
+layout. The registered semantic glyph remains available through `forKind`.
+Core-only hosts use that glyph until the graph renderer is loaded.
