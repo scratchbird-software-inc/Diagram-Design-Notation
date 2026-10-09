@@ -19,10 +19,13 @@ const driver=`<script>(async()=>{
   DDNTool.setDrawer('creator','open');
   for(const id of ['pointer-toggle','tidy','creator-new','creator-save','creator-saveas','cut','copy','clipboard-paste','creator-delete','bold-toggle','italic-toggle','strike-toggle','underline-toggle'])check(!!get('ddn-'+id),'toolbar provides '+id);
   choose(false);check(get('ddn-pointer-toggle').dataset.mode==='select'&&!get('ddn-drag-mode').checked,'Select arrow has distinct mode');
-  const before=JSON.stringify(DDNTool.getSource().files);drag('toolbar::m.a',400,300);check(JSON.stringify(DDNTool.getSource().files)===before,'Select arrow does not move elements');
+  const initial=diagram().result.scene.nodes.map(n=>({id:n.id,x:n.x,y:n.y}));
+  drag('toolbar::m.a',400,300);await wait(()=>DDNTool.getSource().files['m.ddn'].includes('place @m.a'),'Select move');await diagram().ready;
+  check(diagram().result.scene.nodes.find(n=>n.id==='toolbar::m.a').x===initial[0].x+400,'Select arrow moves the dragged element');
+  check(initial.some(old=>old.id!=='toolbar::m.a'&&diagram().result.scene.nodes.some(n=>n.id===old.id&&(n.x!==old.x||n.y!==old.y))),'Select arrow realigns other elements');
   choose(true);await sleep(250);await diagram().ready;
   const positions=diagram().result.scene.nodes.map(n=>({id:n.id,x:n.x,y:n.y})),routes=JSON.stringify(diagram().result.scene.routes);
-  drag('toolbar::m.a',700,300);await wait(()=>DDNTool.getSource().files['m.ddn'].includes('place @m.a'),'pin source');await diagram().ready;
+  drag('toolbar::m.a',700,300);await wait(()=>diagram().result?.scene.nodes.find(n=>n.id==='toolbar::m.a')?.x===positions.find(n=>n.id==='toolbar::m.a').x+700,'pin move');await diagram().ready;
   for(const old of positions.filter(n=>n.id!=='toolbar::m.a')){const next=diagram().result.scene.nodes.find(n=>n.id===old.id);check(next.x===old.x&&next.y===old.y,'Pin arrow keeps '+old.id+' fixed');}
   check(JSON.stringify(diagram().result.scene.routes)!==routes,'Pin arrow recomputes relation paths');
   click('toolbar::m.c');for(const id of ['bold','italic','strike','underline']){get('ddn-'+id+'-toggle').click();check(get('ddn-'+id+'-toggle').getAttribute('aria-pressed')==='true',id+' toggles on');}
@@ -41,6 +44,17 @@ const driver=`<script>(async()=>{
   click('toolbar::m.c');get('ddn-copy').click();get('ddn-clipboard-paste').click();await wait(()=>diagram().result?.scene.nodes.length===4,'paste');check(true,'Copy/Paste creates a new element');check((DDNTool.getSource().files['m.ddn'].match(/datatype:/g)||[]).length===2,'Copy/Paste preserves nested fields');
   get('ddn-creator-delete').click();await wait(()=>diagram().result?.scene.nodes.length===3,'delete');check(true,'Delete removes the selected copy');
   click('toolbar::m.c');get('ddn-cut').click();await wait(()=>diagram().result?.scene.nodes.length===2,'cut');check(true,'Cut removes an unreferenced selection');get('ddn-undo').click();await wait(()=>diagram().result?.scene.nodes.length===3,'undo cut');
+  const anchored=diagram().result.scene.nodes.find(n=>n.id==='toolbar::m.a');
+  choose(false);check(diagram().result.scene.nodes.find(n=>n.id===anchored.id).x===anchored.x,'switching arrow modes alone does not rearrange the diagram');
+  drag('toolbar::m.c',500,300);await wait(()=>DDNTool.getSource().files['m.ddn'].includes('place @m.c'),'Select after Pin');await diagram().ready;
+  check(!DDNTool.getSource().files['m.ddn'].includes('place @m.a'),'Select releases the previous move anchor');
+  check(diagram().result.scene.nodes.some(n=>n.id===anchored.id&&(n.x!==anchored.x||n.y!==anchored.y)),'previously pinned element adapts in Select mode');
+  for(const pin of [false,true]){
+   choose(pin);click('toolbar::m.c');node('toolbar::m.b').dispatchEvent(new MouseEvent('click',{bubbles:true,composed:true,ctrlKey:true}));
+   check(diagram().shadowRoot.querySelectorAll('.ddn-node.ddn-multisel').length===2,(pin?'Pin':'Select')+' supports the same multi-selection');
+   const relation=diagram().shadowRoot.querySelector('.ddn-rel[data-id]');relation.dispatchEvent(new MouseEvent('click',{bubbles:true,composed:true}));
+   check(DDNTool.state.selectedRelation===relation.dataset.id,(pin?'Pin':'Select')+' supports relation selection');
+  }
   let downloaded='';const anchorClick=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=function(){downloaded=this.download;};window.showSaveFilePicker=undefined;window.prompt=()=> 'fallback-project';get('ddn-creator-saveas').click();await wait(()=>downloaded,'download fallback');HTMLAnchorElement.prototype.click=anchorClick;check(downloaded==='fallback-project.ddn-workspace.zip','Save As falls back to a named client-side download');
   window.confirm=()=>false;get('ddn-tidy').click();await sleep(400);await diagram().ready;check(!!diagram().result&&!get('ddn-action-error')?.open,'Tidy completes');
   get('ddn-creator-new').click();check(!get('ddn-template-popup').hidden,'New opens template choices');

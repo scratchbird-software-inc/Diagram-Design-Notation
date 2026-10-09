@@ -538,10 +538,13 @@ family search restores its selected tab.
 
 ### Creator editing toolbar
 
-The arrow button opens a Select/Pin menu. Select uses the existing selection
-and group-selection gestures. Pin uses the inverse button colours and moves
-only the dragged element: retained positions stay fixed while connectors are
-rerouted. The existing Drag pins checkbox reflects the same mode. Overlapping
+The arrow button opens a Select/Pin menu. Both modes have identical selection,
+group-selection, relation-selection and dragging gestures. Select moves the
+dragged element and automatically rearranges the other elements and relations,
+releasing previous placement anchors in the view. Pin uses inverse button
+colours and moves only the dragged element: other positions stay fixed while
+connectors are rerouted. The Keep positions checkbox reflects the same mode.
+Switching modes alone does not rearrange the diagram. Overlapping
 moves still use normal validation and error recovery. Tidy deliberately runs
 automatic placement again while preserving authored pins.
 

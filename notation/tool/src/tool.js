@@ -718,7 +718,7 @@ function attachPan() {
     if (e.button !== 0) return;
     if (design.placing) return; // an armed placement gesture owns the stage
     if (e.target.closest && e.target.closest('.ddn-mind-resize')) return; // mind-map resize owns this drag (B1-100)
-    if (els.dragMode.checked && e.target.closest && e.target.closest('.ddn-node[data-id]')) return; // drag-to-pin owns node drags
+    if (e.target.closest && e.target.closest('.ddn-node[data-id]')) return; // drag-to-pin owns node drags
     pan = { x: e.clientX, y: e.clientY, left: stage.scrollLeft, top: stage.scrollTop, moved: 0 };
   });
   stage.addEventListener('pointermove', e => {
@@ -3681,7 +3681,7 @@ function attachDrag() {
   canvas.dataset.toolDrag = 'true';
   let drag = null, candidate = null;
   canvas.addEventListener('pointerdown', e => {
-    if (!els.dragMode.checked || e.button !== 0) return;
+    if (e.button !== 0) return;
     if (design.placing) return; // an armed placement gesture owns the stage
     const el = e.target.closest('.ddn-node[data-id]');
     const g = diagram.result && diagram.result.scene.nodes && diagram.result.scene.nodes.find(n => n.id === (el && el.dataset.id));
@@ -3696,7 +3696,7 @@ function attachDrag() {
      * which is why every headless harness passed). Track a candidate only;
      * the drag begins — and captures — once movement crosses 4px. Below
      * threshold the gesture is a plain click and selection proceeds. */
-    state.presentation.options.autoPlace=false;diagram.options.autoPlace=false;
+    state.presentation.options.autoPlace=!els.dragMode.checked;diagram.options.autoPlace=!els.dragMode.checked;
     candidate = { el, g, id: g.id, sx: e.clientX, sy: e.clientY, start: new DOMPoint(e.clientX, e.clientY).matrixTransform(inv) };
   });
   canvas.addEventListener('pointermove', e => {
@@ -3733,7 +3733,13 @@ function attachDrag() {
        * preflights the render — pin-centring can overflow a fixed page even
        * when the box itself is inside. */
       let pinned;
-      captureGuidedEdit(()=>{pinned = pinClamped(d.id, d.g.x + d.dx, d.g.y + d.dy, d.g.w, d.g.h);});
+      captureGuidedEdit(()=>{
+        // Select treats the moved element as the new layout anchor. Previous
+        // drag anchors must be freed too, so the other elements can adapt.
+        if(!els.dragMode.checked)for(const id of diagram.result?.scene.layout?.pinned||[])if(id!==d.id)A.authoring.unpin(state.ws,state.entry,state.view,id);
+        pinned = pinClamped(d.id, d.g.x + d.dx, d.g.y + d.dy, d.g.w, d.g.h);
+        if(!pinned)throw new Error('The fixed page has no room there. The move was cancelled.');
+      });
       updateHistory();
       if (!pinned) { status('the fixed page has no room there — the move was cancelled; the element keeps its previous position'); return; }
       showSource(state.currentFile);
@@ -3856,20 +3862,16 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && design.pla
  * selection's properties; deactivating closes the drawer and returns to
  * normal. */
 function syncPointerMode(){
- const pin=els.dragMode.checked;design.pointer=!pin;
+ const pin=els.dragMode.checked;design.pointer=true;
  els.pointerToggle.dataset.mode=pin?'pin':'select';
  els.pointerToggle.setAttribute('aria-label',(pin?'Pin':'Select')+' arrow — choose arrow mode');
- els.pointerToggle.title=pin?'Pin arrow — move one element, keep other positions':'Select arrow — select elements';
+ els.pointerToggle.title=pin?'Pin arrow — move one element, keep other positions':'Select arrow — move elements and adapt the whole diagram';
  $('ddn-pin-arrow').setAttribute('aria-checked',String(pin));$('ddn-select-arrow').setAttribute('aria-checked',String(!pin));
 }
 function closePointerMenu(){ $('ddn-pointer-menu').hidden=true;els.pointerToggle.setAttribute('aria-expanded','false'); }
 function choosePointerMode(pin){
  cancelDesignGesture();els.dragMode.checked=pin;syncPointerMode();closePointerMenu();els.pointerToggle.focus();
- if(pin&&graphEditable()){
-  state.presentation.options.autoPlace=false;
-  guard(()=>state.diagram.setOptions({autoPlace:false}));
- }
- status(pin?'Pin arrow — moving one element keeps all other positions':'Select arrow — click selects; drag empty space to select a group');
+ status(pin?'Pin arrow — moving one element keeps all other positions':'Select arrow — moving an element realigns the other elements and relations');
 }
 els.pointerToggle.addEventListener('click',()=>{
  const menu=$('ddn-pointer-menu');menu.hidden=!menu.hidden;els.pointerToggle.setAttribute('aria-expanded',String(!menu.hidden));
@@ -4941,7 +4943,8 @@ function attachPointerSelect() {
    * FINAL selection state once the click settles. */
   stage.addEventListener('click', () => { setTimeout(() => syncResizeHandles(), 0); });
   stage.addEventListener('click', e => {
-    if (!design.pointer || design.placing) return;
+    if (!design.pointer || design.placing || state.dragMovedRecently) return;
+    if(e.target.closest?.('.ddn-rel[data-id], .ddn-label[data-id]'))return;
     const el = e.target && e.target.closest && e.target.closest('.ddn-node[data-id]');
     e.stopPropagation(); e.preventDefault();
     if (el) {
