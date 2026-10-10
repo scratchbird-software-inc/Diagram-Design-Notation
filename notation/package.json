@@ -169,7 +169,7 @@
     "test:umlclass": "node tests/uml-class-compliance.js",
     "test:umlremainder": "node tests/uml-remainder-compliance.js",
     "test:umlshowcase": "node tests/uml-showcase.js",
-    "test:routing-efficiency": "node tests/routing-efficiency.js",
+    "test:routing-efficiency": "node tests/routing-efficiency.js && node tests/endpoint-clearance.js",
     "test:sdk": "node tests/sdk-consolidated.js",
     "test:endpoint-ordering": "node tests/endpoint-ordering.js",
     "test:crossing-reduction": "node tests/crossing-reduction.js",

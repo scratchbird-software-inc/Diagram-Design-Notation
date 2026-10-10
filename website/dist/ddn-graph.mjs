@@ -1257,13 +1257,57 @@ function portAssignments(nodes,rels,profiles,hints={}){
  }
  return result;
 }
+// Repair obstructed automatic body exits without moving pinned nodes or
+// changing authored sides, fractions, members, art anchors or waypoints.
+function endpointEscape(pt,dir,own,clear,port){
+ let distance=clear+port;
+ if(dir[0]>0)distance=Math.max(distance,own.x+own.w-pt[0]+clear+port);
+ if(dir[0]<0)distance=Math.max(distance,pt[0]-own.x+clear+port);
+ if(dir[1]>0)distance=Math.max(distance,own.y+own.h-pt[1]+clear+port);
+ if(dir[1]<0)distance=Math.max(distance,pt[1]-own.y+clear+port);
+ return [round(pt[0]+dir[0]*distance),round(pt[1]+dir[1]*distance)];
+}
+function clearPortAssignments(nodes,rels,profiles,hints,clear,port){
+ const byId=new Map(nodes.map(n=>[n.id,n])),local={...hints};
+ const blocked=assignments=>{
+  const out=[];
+  for(const r of rels)for(const which of ['source','target']){
+   const ep=assignments.get(r.id),end=r[which==='source'?'from':'to'],own=byId.get(end.element);
+   const stub={a:ep[which],b:endpointEscape(ep[which],ep[which+'_direction'],own,clear,port)};
+   if(nodes.some(n=>n.id!==own.id&&!(n.x_boundaryOf===own.id||own.x_boundaryOf===n.id)&&segmentBox(stub,box(n,clear))))out.push({r,which,end,own});
+  }
+  return out;
+ };
+ let assignments=portAssignments(nodes,rels,profiles,local),bad=blocked(assignments),probes=0;
+ // Recompute every slot on a side after a change. Strictly decreasing blocked
+ // counts, eight passes and 48 probes bound the fallback; normal renders never retry.
+ for(let pass=0;bad.length&&pass<8&&probes<48;pass++){
+  let improved=false;
+  for(const {r,which,end,own} of bad){
+   const hint=hints[r.id]||{},key=which+'_side';
+   if(['straight','string'].includes(hint.routing||profiles.layout.routing)||end.member||own._art||profiles.layout.algorithm==='mindmap'||hint[key]!==undefined||hint[which+'_fraction']!==undefined||hint['x_'+which+'_fraction']!==undefined||hint.via!==undefined)continue;
+   const previous=local[r.id];
+   for(const side of ['east','west','south','north']){
+    if(side===assignments.get(r.id)[key])continue;
+    if(probes++>=48)break;
+    local[r.id]={...previous,[key]:side};
+    const candidate=portAssignments(nodes,rels,profiles,local),remaining=blocked(candidate);
+    if(remaining.length<bad.length){assignments=candidate;bad=remaining;improved=true;break;}
+   }
+   if(improved)break;
+   if(previous===undefined)delete local[r.id];else local[r.id]=previous;
+  }
+  if(!improved)break;
+ }
+ return assignments;
+}
 class Heap{constructor(){this.a=[];}push(value){const a=this.a;let i=a.length;a.push(value);while(i){let p=(i-1)>>1;if(a[p].score<=value.score)break;a[i]=a[p];i=p;}a[i]=value;}pop(){const a=this.a;if(!a.length)return;const first=a[0],last=a.pop();if(a.length){let i=0;while(i*2+1<a.length){let j=i*2+1;if(j+1<a.length&&a[j+1].score<a[j].score)j++;if(a[j].score>=last.score)break;a[i]=a[j];i=j;}a[i]=last;}return first;}get length(){return this.a.length;}}
 function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Error,extraObstacles=[]){
  const p=profiles.layout,clear=q$3(p.object_clearance,16),lane=q$3(p.edge_clearance,12),port=Math.max(24,q$3(p.port_clearance,28)),byId=new Map(nodes.map(n=>[n.id,n]));
  // Route-label reservation margins widen/narrow with the spacing hint (D2), so
  // placed labels reserve broader bands before later relations are routed.
  const labelMargin=round(8*spacingScale(p)),labelRouteMargin=round(10*spacingScale(p));
- const assignments=portAssignments(nodes,rels,profiles,hints),routes=[],labels=[],diagnostics=[];
+ const assignments=clearPortAssignments(nodes,rels,profiles,hints,clear,port),routes=[],labels=[],diagnostics=[];
  const bounds={minX:minOf(nodes,n=>n.x,0),minY:minOf(nodes,n=>n.y,0),maxX:maxOf(nodes,n=>n.x+n.w,100),maxY:maxOf(nodes,n=>n.y+n.h,100)};
  const inflated=nodes.map(n=>box(n,clear));
  const reservations=[];for(const r of rels){const ep=assignments.get(r.id);for(const which of ['source','target']){const pt=ep[which],dir=ep[which+'_direction'],out=[round(pt[0]+dir[0]*(clear+port)),round(pt[1]+dir[1]*(clear+port))];reservations.push({id:r.id+':reserved:'+which,owner:r.id,points:[pt,out]});}}
@@ -1346,12 +1390,7 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
  }
  for(let index=0;index<rels.length;index++){
   const r=rels[index],hint=hints[r.id]||{},ep=assignments.get(r.id),start=ep.source,end=ep.target,ownA=byId.get(r.from.element),ownB=byId.get(r.to.element),obstacles=[...inflated,...extraObstacles.map(n=>box(n,clear)),...labels.map(l=>box(l,labelMargin))];
-  const normal=(point,dir,d)=>[round(point[0]+dir[0]*d),round(point[1]+dir[1]*d)];
-  // Contour attachments (actors, initial/final markers, diamonds) may lie
-  // inside their conservative rectangle. Escape all the way beyond that
-  // envelope; a fixed-length stub can otherwise stop inside its own obstacle.
-  const escape=(pt,dir,own)=>{let distance=clear+port;if(dir[0]>0)distance=Math.max(distance,own.x+own.w-pt[0]+clear+port);if(dir[0]<0)distance=Math.max(distance,pt[0]-own.x+clear+port);if(dir[1]>0)distance=Math.max(distance,own.y+own.h-pt[1]+clear+port);if(dir[1]<0)distance=Math.max(distance,pt[1]-own.y+clear+port);return normal(pt,dir,distance);};
-  const a=escape(start,ep.source_direction,ownA),b=escape(end,ep.target_direction,ownB);
+  const a=endpointEscape(start,ep.source_direction,ownA,clear,port),b=endpointEscape(end,ep.target_direction,ownB,clear,port);
   const stubs=[{a:start,b:a},{a:b,b:end}];
   for(const [j,s]of stubs.entries()){const own=j?ownB:ownA;/* B1-063/064: boundary-attached nodes sit on their host's corridor by design. */if(nodes.some(n=>n.id!==own.id&&!(n.x_boundaryOf===own.id||own.x_boundaryOf===n.id)&&segmentBox(s,box(n,clear))))throw new ErrorClass('DDN212','Endpoint clearance conflicts with another object: '+r.id);}
   const prior=[...routes,...reservations.filter(rt=>rt.owner!==r.id&&!routes.some(old=>old.id===rt.owner))];
