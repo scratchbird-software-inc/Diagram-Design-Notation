@@ -15,18 +15,18 @@ function pickEntryView(files, opts, parseFn) {
   if (typeof parseFn !== 'function') throw toolError('DDN-T100', 'parse function required');
   const names = Object.keys(files || {}).sort();
   if (!names.length) throw toolError('DDN-T101', 'setSource needs at least one source file');
-  const viewsOf = name => parseFn(files[name], name).declarations.filter(n => n.type === 'view');
+  const viewsOf = name => {if(name.endsWith('.ddnn'))return [];const doc=parseFn(files[name],name),views=(doc.sections||[doc]).flatMap(s=>(s.declarations||[]).filter(n=>n.type==='view').map(n=>({...n,qualified:n.props?.uid||s.module+'::'+n.id})));return views.map(v=>({...v,id:views.filter(x=>x.id===v.id).length>1?v.qualified:v.id}));};
   if (opts.entry != null) {
     if (!Object.prototype.hasOwnProperty.call(files, opts.entry))
       throw toolError('DDN-T102', 'setSource: opts.entry "' + opts.entry + '" is not in the source map (' + names.join(', ') + ')');
     const views = viewsOf(opts.entry);
     if (!views.length) throw toolError('DDN-T103', 'setSource: entry "' + opts.entry + '" declares no view');
-    if (opts.view != null && !views.some(v => v.id === opts.view))
+    if (opts.view != null && !views.some(v => (v.id === opts.view || v.qualified === opts.view)))
       throw toolError('DDN-T104', 'setSource: entry "' + opts.entry + '" has no view "' + opts.view + '" (has: ' + views.map(v => v.id).join(', ') + ')');
     return { entry: opts.entry, view: opts.view != null ? opts.view : views[0].id };
   }
   if (opts.view != null) {
-    for (const name of names) if (viewsOf(name).some(v => v.id === opts.view)) return { entry: name, view: opts.view };
+    for (const name of names) if (viewsOf(name).some(v => (v.id === opts.view || v.qualified === opts.view))) return { entry: name, view: opts.view };
     throw toolError('DDN-T104', 'setSource: no file declares a view "' + opts.view + '"');
   }
   for (const name of names) {

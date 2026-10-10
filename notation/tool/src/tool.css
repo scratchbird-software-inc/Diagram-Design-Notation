@@ -392,3 +392,31 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 #ddn-pointer-menu { position: absolute; top: 100%; left: 0; z-index: 30; min-width: 170px; background: white; padding: 5px; border: 1px solid #aabbd2; border-radius: 6px; box-shadow: 0 3px 12px #243b5933; }
 #ddn-pointer-menu[hidden] { display: none; }
 #ddn-pointer-menu button { display: block; width: 100%; text-align: left; margin: 2px 0; }
+
+/* Workspace navigation, stable editor tabs and section editors. */
+#ddn-workspace-bar { display:flex; align-items:center; flex-wrap:wrap; gap:6px; padding:5px 12px; background:#f8faff; border-bottom:1px solid #dbe3ed; }
+#ddn-workspace-bar[hidden], #ddn-workspace-editor[hidden], #ddn-workspace-tabs[hidden], #ddn-edit-scope[hidden], .ddn-workspace-footer[hidden], #ddn-stage[hidden] { display:none!important; }
+#ddn-workspace-name { margin-right:12px; }
+#ddn-workspace-nav input { width:100%; padding:6px; }
+#ddn-workspace-tree { margin-top:10px; }
+#ddn-workspace-tree details { margin:6px 0; }
+#ddn-workspace-tree summary { cursor:pointer; font-weight:600; }
+#ddn-workspace-tree button { display:block; width:100%; text-align:left; overflow-wrap:anywhere; margin:3px 0; }
+#ddn-workspace-file-actions { margin-top:16px; border-top:1px solid #dbe3ed; padding-top:8px; }
+#ddn-workspace-tabs { display:flex; flex:none; gap:4px; overflow-x:auto; padding:5px 8px 0; background:#f8faff; border-bottom:1px solid #cbd5e3; }
+.ddn-workspace-tab { display:inline-flex; white-space:nowrap; }
+.ddn-workspace-tab [role=tab][aria-selected=true] { background:#245ac8;color:white; }
+#ddn-edit-scope { display:flex; flex-wrap:wrap; gap:5px 18px; padding:5px 10px; font-size:11px; background:#f8faff; border-bottom:1px solid #dbe3ed; }
+#ddn-workspace-editor { flex:1; min-height:0; overflow:auto; background:white; padding:16px 22px; }
+#ddn-workspace-editor>.ddn-field { max-width:900px; }
+#ddn-workspace-editor .ddn-field input,#ddn-workspace-editor .ddn-field select,#ddn-workspace-editor .ddn-field textarea { min-width:0;width:100%; }
+#ddn-workspace-editor input[type=checkbox] { width:auto;justify-self:start; }
+#ddn-workspace-editor fieldset { margin:14px 0;padding:12px;border:1px solid #dbe3ed;border-radius:8px; }
+#ddn-workspace-editor button { margin:4px; }
+#ddn-workspace-editor pre { white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow:auto;background:#f8faff;padding:10px; }
+#ddn-workspace-editor .ddn-document-text { height:42vh;min-height:180px;overflow:auto;white-space:pre;font:13px/1.5 ui-monospace,monospace; }
+.ddn-workspace-heading { display:flex;align-items:center;justify-content:space-between;gap:12px; }
+.ddn-workspace-heading h2 { margin:0 0 8px;font-size:19px; }
+.ddn-workspace-footer { display:flex;flex:none;flex-wrap:wrap;gap:4px;padding:4px 8px;background:#f8faff;border-top:1px solid #dbe3ed; }
+.ddn-workspace-footer button { font-size:12px;padding:3px 8px; }
+@media (max-width:800px) { #ddn-workspace-editor { padding:10px; } #ddn-edit-scope { max-height:64px;overflow:auto; } }

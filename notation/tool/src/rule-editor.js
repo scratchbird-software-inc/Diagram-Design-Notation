@@ -10,12 +10,13 @@ function rewrite(text,features,parse,lex,value){
  if(expressions.size){let id='rule_expressions',i=2;while(doc.declarations.some(n=>n.id===id))id='rule_expressions_'+i++;text+='\ndata '+id+' {\n'+[...expressions.values()].map((k,j)=>' object expression_'+j+' { x_keel: '+value(k)+'; }').join('\n')+'\n}\n';}
  parse(text,'rules.ddna');return text;
 }
-function render(root,features,save){
+function render(root,features,save,onDraft=()=>{}){
+ let initialized=false;const changed=()=>onDraft(JSON.parse(JSON.stringify(draft)));
  const draft=JSON.parse(JSON.stringify(features));root.replaceChildren();
  const fresh=(rows,prefix)=>{const used=new Set(rows.map(x=>x.id));let n=1;while(used.has(prefix+n))n++;return prefix+n;};
- const input=(parent,label,value,change,multi=false)=>{const wrap=document.createElement('label');wrap.className='ddn-field';const title=document.createElement('span');title.textContent=label;const el=document.createElement(multi?'textarea':'input');el.value=value;el.setAttribute('aria-label',label);el.addEventListener('change',()=>change(el.value));wrap.append(title,el);parent.append(wrap);return el;};
+ const input=(parent,label,value,change,multi=false)=>{const wrap=document.createElement('label');wrap.className='ddn-field';const title=document.createElement('span');title.textContent=label;const el=document.createElement(multi?'textarea':'input');el.value=value;el.setAttribute('aria-label',label);const update=()=>{change(el.value);changed();};el.addEventListener('input',update);el.addEventListener('change',update);wrap.append(title,el);parent.append(wrap);return el;};
  const button=(parent,label,fn)=>{const b=document.createElement('button');b.type='button';b.className='ddn-mini';b.textContent=label;b.addEventListener('click',fn);parent.append(b);};
- const select=(parent,label,values,current,change)=>{const el=document.createElement('select');el.setAttribute('aria-label',label);el.append(...values.map(v=>new Option(v,v)));el.value=current;el.addEventListener('change',()=>change(el.value));parent.append(el);};
+ const select=(parent,label,values,current,change)=>{const el=document.createElement('select');el.setAttribute('aria-label',label);el.append(...values.map(v=>new Option(v,v)));el.value=current;el.addEventListener('change',()=>{change(el.value);changed();});parent.append(el);};
  const refresh=()=>{
  root.replaceChildren();input(root,'Rule inputs',draft.profile.inputs.join(', '),v=>draft.profile.inputs=v.split(',').map(x=>x.trim()).filter(Boolean));
  select(root,'Rule replay mode',['verified','faithful'],draft.profile.replay,v=>draft.profile.replay=v);
@@ -30,7 +31,7 @@ function render(root,features,save){
  button(root,'Add decision',()=>{draft.profile.nodes.push({id:fresh(draft.profile.nodes,'decision'),target:'',expr:''});refresh();});
  for(const [i,k]of draft.keel.entries()){const box=document.createElement('fieldset');root.append(box);input(box,'Expression '+(i+1)+' ID',k.id,v=>k.id=v);input(box,'Expression '+(i+1)+' body',k.body,v=>k.body=v,true);button(box,'Delete expression',()=>{draft.keel.splice(i,1);refresh();});}
  button(root,'Add expression',()=>{draft.keel.push({id:fresh(draft.keel,'expression'),language:'keel-l0@1',body:'0'});refresh();});
- const message=document.createElement('p');message.setAttribute('role','status');button(root,'Save rules',()=>{try{save(draft);message.textContent='Rules saved; undo restores the previous companion.';}catch(e){message.textContent=(e.code?e.code+': ':'')+e.message;}});root.append(message);
+ const message=document.createElement('p');message.setAttribute('role','status');button(root,'Save rules',()=>{try{save(draft);message.textContent='Rules saved; undo restores the previous companion.';}catch(e){message.textContent=(e.code?e.code+': ':'')+e.message;}});root.append(message);if(initialized)changed();initialized=true;
  };refresh();
 }
 const api={rewrite,render};if(typeof module==='object'&&module.exports)module.exports=api;host.DDNToolRules=api;

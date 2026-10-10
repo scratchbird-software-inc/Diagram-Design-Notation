@@ -15,6 +15,66 @@ The file is committed and regenerated deterministically from
 `node tools/build-tool.js` (run after `build:sdk`). Do not edit the built
 file.
 
+## Workspace navigation and section editing
+
+In design mode, the **Workspace** drawer provides Logical and Files views,
+search, and entry points for Models, Views, Shared settings, Text documents,
+and Automation. The workspace bar provides New, Open, Save, Save As, Undo,
+and Redo. Existing file import, rename, and download controls are under
+**Open, import, files and downloads**.
+
+Editors open in a horizontally scrolling tab strip. View identities include
+the source file and module, so equal view names in separate modules remain
+independent. Each view remembers its fit/zoom, scroll, selection, presentation,
+and retained layout. The scope strip identifies the current view and the
+owning source of a selected shared definition.
+
+- **Models:** create data sections and definitions, edit shared properties,
+  add fields and relationships, inspect references, and add existing definitions
+  to the active view. Referenced declarations cannot be deleted. Identifier
+  changes rewrite parsed references and supported DDNA decision targets.
+- **Views:** create, rename, duplicate over shared data, and delete views.
+  View contents manages data bindings, visibility and repeated appearances.
+  Removing an appearance leaves its shared definition intact. The designer
+  retains at least one view; source-only workspaces are not a dedicated mode.
+- **Shared settings:** create format sections and reusable profiles. View
+  contents binds profiles, shows effective values and their local/inherited
+  status, and resets local overrides. Structured or uncommon properties use
+  JSON values in the advanced property editor; Source remains available.
+- **Text documents:** edit complete plain text, restricted Markdown, or code
+  with both scroll directions. References show which definitions share each
+  DDNN record. Definitions can attach existing records, store text inline,
+  detach text, or move their text to a workspace-relative `.ddnn` file.
+  Editing a shared record updates all its consumers and expected digests.
+  Stored code remains inert text.
+- **Automation:** inspect companions and their identity bases, edit supported
+  bounded rules, and open the existing local evaluation/replay controls.
+  Unsupported rule profiles retain declaration and source editing.
+- **Problems, Changes, Source and Publish:** common access to diagnostics,
+  saved/current source comparisons, raw drafts, page settings and export.
+
+Section edits validate all parsed views, including module-qualified views,
+before applying one source-history transaction. Failed edits retain their
+draft and accepted workspace. Switching editors retains unapplied drafts;
+an intervening workspace revision requires reopening/discarding a stale
+draft before applying. Save requires applying or discarding drafts first.
+Undo/redo restores complete transactions and remounts if the active view
+was created or removed.
+
+Workspace ZIPs preserve DDN, DDNA and DDNN source text. Optional manifest
+extensions `workbench` (version 1) and `traceFiles` preserve open view tabs,
+per-view session state, and locally loaded traces. Editor drafts and undo
+history are session-only. None of these controls connects to a database or
+requires a hosted service.
+
+`workspace-model.js` indexes declarations and performs source-span edits;
+`workspace-ui.js` owns navigation and section forms. `npm run test:workspace`
+runs model checks and native Chromium pointer/keyboard acceptance with the
+render worker disabled and enabled, plus a Firefox DOM integration smoke
+when Firefox is installed (`DDN_FIREFOX` can select its executable). Section acceptance currently validates
+every view synchronously before commit; very large workspaces may pause
+during validation even when normal rendering uses the worker.
+
 ## Rendering: worker by default
 
 Rendering runs in a **persistent Web Worker** by default. The main thread

@@ -181,7 +181,7 @@ const els = {
 };
 const drawerEls = { files: $('ddn-drawer-files'), style: $('ddn-drawer-style'), document: $('ddn-drawer-document'), inspector: $('ddn-drawer-inspector'), source: $('ddn-drawer-source'), typesheet: $('ddn-drawer-typesheet'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation'), creator: $('ddn-drawer-creator'), properties: $('ddn-drawer-properties') };
 const iconEls = { files: $('ddn-icon-files'), style: $('ddn-icon-style'), document: $('ddn-icon-document'), inspector: $('ddn-icon-inspector'), source: $('ddn-icon-source'), typesheet: $('ddn-icon-typesheet'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation'), creator: $('ddn-icon-creator'), properties: $('ddn-icon-properties') };
-const DRAWER_LABELS = { files: 'Files', style: 'Style & Layout', document: 'Document', inspector: 'Inspector', source: 'Source', typesheet: 'Type sheet', export: 'Export', animation: 'Animation', creator: 'Creator', properties: 'Properties' };
+const DRAWER_LABELS = { files: 'Workspace', style: 'Style & Layout', document: 'View settings', inspector: 'Inspector', source: 'Source', typesheet: 'Type sheet', export: 'Export', animation: 'Animation', creator: 'Creator', properties: 'Properties' };
 /* Right-side working drawers are exclusive (Document / Style & Layout /
  * Inspector): opening one closes the others. Selection opens the Inspector;
  * deselection returns to Document (phase 3 — the inspector moved out of the
@@ -213,7 +213,8 @@ const state = {
 function toolIR() { return A.expandOccurrences(state.ws.resolve(state.entry, state.view)); }
 function appearanceLabel(id) { const source=sourceIdentity(id);if(source===id)return id;const layer=state.ws.resolve(state.entry,state.view).view.occurrences;const o=layer&&[...layer.elements,...layer.relations].find(o=>o.id===id);return o?source+' #'+o.number:source; }
 function sourceIdentity(id) { const mapped=state.diagram?.result?.sourceMap[id]?.sourceId;if(mapped)return mapped;const ir=state.ws.resolve(state.entry,state.view);return (ir.view.occurrences&&[...ir.view.occurrences.elements,...ir.view.occurrences.relations].find(o=>o.id===id)?.source)||id; }
-let timer = null, unsubscribe = null;
+let timer = null, unsubscribe = null, workbench = null;
+const sourceDrafts = new Map(),sourceDraftBases=new Map();
 
 /* ------------------------------------------------ render worker (B1-043, D1/D2)
  * One persistent Blob-URL worker per page, created from the source string the
@@ -269,14 +270,14 @@ function status(msg) {
 }
 function fail(msg) { els.status.textContent = 'Error: ' + msg; }
 function guard(fn) {
- const workspace=state.ws,checkpoint=workspace?.checkpoint(),revision=workspace?.revision;
+ const workspace=state.ws,checkpoint=workspace?.checkpoint(),revision=workspace?.revision,identity={entry:state.entry,view:state.view};
  try { const r=fn();if(r&&r.catch)r.catch(e=>error(e));return r; }
  catch(e){
   // Synchronous actions can make several writes before throwing. Restore the
   // action boundary, including history, without manufacturing a redo entry.
   if(workspace&&state.ws===workspace&&workspace.revision!==revision){
-   workspace.restoreCheckpoint(checkpoint);state.bufferDirty=false;
-   entriesUI(state.view);showSource(Object.hasOwn(state.ws.getFiles(),state.currentFile)?state.currentFile:state.entry);updateHistory();
+   workspace.restoreCheckpoint(checkpoint);state.bufferDirty=false;state.entry=identity.entry;state.view=identity.view;
+   entriesUI(state.view);showSource(Object.hasOwn(state.ws.getFiles(),state.currentFile)?state.currentFile:state.entry);updateHistory();mount();
   }
   error(e);
  }
@@ -332,6 +333,7 @@ function applyDrawerConfig() {
   // Drawer open/close resizes the stage; re-fit once the transition settles.
   clearTimeout(state._fitTimer);
   state._fitTimer = setTimeout(() => applyFit(), 220);
+  workbench?.refresh();
 }
 function setDrawer(name, st, persist) {
   if (!DRAWERS.includes(name) || !DRAWER_STATES.includes(st)) throw new Error('unknown drawer or state: ' + name + ':' + st);
@@ -550,6 +552,8 @@ function attachHover() {
   stage.addEventListener('pointercancel', clear, true);
 }
 function mount(layoutState=null) {
+  const rememberedLayout=workbench?.beforeMount();
+  layoutState=layoutState||rememberedLayout||null;
   if (state.diagram) state.diagram.destroy();
   state.diagram = null;
   if (!state.entry || !state.view) { els.hint.style.display = ''; return; }
@@ -634,6 +638,7 @@ function mount(layoutState=null) {
     refreshTypeSheet();
     refreshAnimation();
     diagnosticsUI();
+    workbench?.rendered();workbench?.refresh();
     status();
   });
   diagram.addEventListener('ddn-error', e => {
@@ -1636,7 +1641,7 @@ function viewSourceNode() {
     const files = state.ws && state.ws.getFiles();
     if (!files || !state.entry || !Object.prototype.hasOwnProperty.call(files, state.entry)) return null;
     const ast = parseSource(files[state.entry], state.entry);
-    return (ast.declarations || []).find(n => n.type === 'view' && n.id === state.view) || null;
+    for(const sec of ast.sections||[ast]){const n=sec.declarations.find(n=>n.type==='view'&&(n.id===state.view||n.props.uid===state.view||sec.module+'::'+n.id===state.view));if(n)return n;}return null;
   } catch { return null; }
 }
 
@@ -2160,6 +2165,7 @@ function resetAppearance() {
  * coded errors surfaced adjacent to the controls. */
 
 function onSelect(detail) {
+  queueMicrotask(()=>workbench?.selection());
   if (state.panning) return;
   const ids = detail.sourceIds && detail.sourceIds.length ? detail.sourceIds : [detail.occurrenceId || detail.sourceId || detail.id];
   state.selectedIds = ids.filter(Boolean);
@@ -4911,12 +4917,14 @@ $('ddn-underline-toggle').addEventListener('click',()=>typographyQuickToggle('un
  * (scene bounds — the same world math as drag-to-pin). The selection feeds the
  * inspector's multi-selection helpers and the Properties drawer. */
 function applyMultiSelect() {
+  queueMicrotask(()=>workbench?.selection());
   const ids = state.selectedIds;
   state.selected = ids.length === 1 ? ids[0] : null;
   state.selectedRelation = null;
   /* Handles first: a downstream drawer/inspector failure must not leave the
    * selection without its resize handles (the click-path regression). */
   syncResizeHandles();
+  refreshEditors();syncQuickToggles();applyOverrideCss();
   let ir = null;
   try { ir = toolIR(); } catch { ir = null; }
   inspector(state.selected || ids[0], ir, null);
@@ -5655,6 +5663,7 @@ function ddnaCompanionCtx(companionName) {
   return { features, data };
 }
 function ddnaActiveCompanion() {
+  if(state.activeCompanion&&Object.hasOwn(state.ws.getFiles(),state.activeCompanion))return state.activeCompanion;
   const files = state.ws ? state.ws.getFiles() : {};
   const companions = Object.keys(files).filter(n => isCompanionFile(n, files[n]));
   if (!companions.length) return null;
@@ -5772,8 +5781,9 @@ function catalogueClosure(file) {
 }
 
 function dirty() {
-  return state.bufferDirty
-    || state.savedPresentation!==null&&JSON.stringify(state.presentation)!==state.savedPresentation
+  return workbench?.hasDrafts()||sourceDrafts.size>0||state.bufferDirty
+    || (state.savedTraces!==undefined&&JSON.stringify(state.traceFiles)!==state.savedTraces)
+    || (state.savedWorkbenchPresentation!==undefined?workbench?.appearanceSignature()!==state.savedWorkbenchPresentation:state.savedPresentation!==null&&JSON.stringify(state.presentation)!==state.savedPresentation)
     || Object.entries((state.ws && state.ws.getFiles()) || {}).some(([p, t]) => state.saved[p] !== t)
     || Object.keys(state.saved).some(p => !state.ws || !Object.prototype.hasOwnProperty.call(state.ws.getFiles(), p));
 }
@@ -5802,7 +5812,7 @@ document.getElementById('ddn-diff-create').addEventListener('click',()=>guard(()
  state.entry=file;state.view='comparison';entriesUI('comparison');mount();showSource(file);updateHistory();status('Comparison view created — undo removes the file');
 }));
 function entriesUI(preferredView) {
-  const list = viewListFrom(state.ws.entries());
+  const list = workbench ? workbench.index().views.map(v=>({entry:v.file,view:v.view,label:v.file+' · '+v.module+' · '+v.label})) : viewListFrom(state.ws.entries());
   state.viewList = list;
   els.picker.replaceChildren(...list.map((v, i) => new Option(v.label, String(i))));
   let idx = list.findIndex(v => v.entry === state.entry && (preferredView ? v.view === preferredView : v.view === state.view));
@@ -5960,7 +5970,7 @@ function newViewFromCurrentData() {
   mount();
   status('created view ' + vid + ' in ' + destFile + ' over the same data — undo removes it');
 }
-els.viewNew.addEventListener('click', () => guard(() => newViewFromCurrentData()));
+els.viewNew.addEventListener('click', () => guard(() => workbench.viewForm()));
 
 /* WW-001 — the Files drawer presents the workspace as an import tree: entry
  * file at the root, imported files nested beneath their importer, each file
@@ -5981,163 +5991,33 @@ function fileRoleSummary(name) {
 }
 function importChildrenOf(name, edges) { return (edges[name] || []).filter(p => Object.prototype.hasOwnProperty.call(state.ws.getFiles(), p)); }
 function filesUI() {
-  const fs = state.ws.getFiles();
-  els.fileCount.textContent = '(' + Object.keys(fs).length + ')';
-  const edges = {};
-  for (const [name, text] of Object.entries(fs)) {
-    edges[name] = [];
-    for (const m of text.matchAll(/import\s+"([^"]+)"\s+as\s+[A-Za-z0-9_]+\s*;/g)) edges[name].push(m[1]);
+  if(!state.ws)return;
+  const files=state.ws.getFiles(),idx=host.DDNWorkbenchModel.index(files,A);
+  els.fileCount.textContent='('+Object.keys(files).length+')';els.fileList.replaceChildren();
+  for(const file of Object.keys(files).sort()){
+    const li=document.createElement('li'),b=document.createElement('button');b.textContent=file;
+    b.addEventListener('click',()=>guard(()=>{setDrawer('source','open',true);showSource(file);}));li.append(b);
+    if(isCompanionFile(file,files[file])){li.className='ddn-tree-companion';li.dataset.companion=file;const label=document.createElement('span');label.textContent='ddna companion · automation';li.append(label);}
+    for(const v of idx.views.filter(v=>v.file===file)){const vb=document.createElement('button');vb.textContent='view: '+v.module+'::'+v.node.id;vb.addEventListener('click',()=>guard(()=>workbench.openView(v)));li.append(vb);}
+    els.fileList.append(li);
   }
-  els.fileList.className = 'ddn-tree';
-  /* DDNA-OT-010: companions group under the base file(s) they serve (the
-   * architecture containers that name them), labelled, with automation
-   * facts in the role summary. Orphan companions list at the root. */
-  const containers = architectureContainers(fs, (t, n) => parseSource(t, n));
-  const companions = new Set(Object.keys(fs).filter(n => isCompanionFile(n, fs[n])));
-  const companionsOf = {};
-  for (const c of companions) for (const b of servedBases(c, containers, fs)) (companionsOf[b] = companionsOf[b] || []).push(c);
-  /* Default-expanded; the set tracks COLLAPSED files so newly created files
-   * arrive open (the outline is the workspace's table of contents). */
-  const collapsed = state.outlineCollapsed || (state.outlineCollapsed = new Set());
-  const expanded = { has: name => !collapsed.has(name) };
-  const openView = (file, vid) => guard(() => {
-    flush();
-    state.entry = file; state.view = vid;
-    entriesUI(vid);
-    mount();
-  });
-  const fileNode = (name, depth) => {
-    const li = document.createElement('li');
-    li.className = 'ddn-tree-file';
-    const role = fileRoleSummary(name);
-    const row = document.createElement('div');
-    const kids = importChildrenOf(name, edges);
-    const tog = document.createElement('button');
-    tog.type = 'button'; tog.className = 'ddn-tree-toggle';
-    const collapsible = kids.length || role.views.length;
-    tog.textContent = collapsible ? (expanded.has(name) ? '▾' : '▸') : '·';
-    tog.title = collapsible ? 'expand/collapse' : '';
-    tog.addEventListener('click', () => { if (!collapsible) return; if (collapsed.has(name)) collapsed.delete(name); else collapsed.add(name); filesUI(); });
-    const b = document.createElement('button');
-    b.textContent = name; b.title = name + ' — show in the Source drawer';
-    b.className = name === state.currentFile ? 'selected' : '';
-    b.addEventListener('click', () => guard(() => { setDrawer('source', 'open', true); showSource(name); }));
-    const rs = document.createElement('span');
-    rs.className = 'ddn-tree-role';
-    rs.textContent = role.summary;
-    if (!role.views.length) rs.dataset.role = 'data';
-    row.append(tog, b, rs);
-    li.append(row);
-    if (collapsible && expanded.has(name)) {
-      const sub = document.createElement('ul');
-      if (role.views.length) {
-        const vli = document.createElement('li');
-        vli.className = 'ddn-tree-views';
-        for (const vid of role.views) {
-          const vb = document.createElement('button');
-          vb.type = 'button'; vb.textContent = 'view: ' + vid;
-          vb.className = (name === state.entry && vid === state.view) ? 'selected' : '';
-          vb.addEventListener('click', () => openView(name, vid));
-          vli.append(vb);
-        }
-        sub.append(vli);
-      }
-      for (const k of kids) sub.append(fileNode(k, depth + 1));
-      li.append(sub);
-    }
-    return li;
-  };
-  const seen = new Set();
-  /* Depth-first from the entry so the tree order follows the import closure;
-   * files outside the closure append at the root (still listed, never lost). */
-  const ordered = [];
-  const visit = name => {
-    if (seen.has(name)) return;
-    seen.add(name);
-    ordered.push(name);
-    for (const k of importChildrenOf(name, edges)) visit(k);
-  };
-  if (Object.prototype.hasOwnProperty.call(fs, state.entry)) visit(state.entry);
-  for (const n of Object.keys(fs).sort()) visit(n);
-  /* Nest: each file appears under its first importer in the visit order. */
-  const parentOf = {};
-  for (const [importer, kids] of Object.entries(edges)) for (const k of kids) if (!(k in parentOf)) parentOf[k] = importer;
-  const items = [];
-  const emit = (name, depth, guardSet) => {
-    if (guardSet.has(name)) return;
-    guardSet.add(name);
-    items.push({ name, depth });
-    for (const k of importChildrenOf(name, edges)) if (parentOf[k] === name) emit(k, depth + 1, guardSet);
-  };
-  const emitted = new Set();
-  for (const n of ordered) if (!parentOf[n] || !Object.prototype.hasOwnProperty.call(fs, parentOf[n])) emit(n, 0, emitted);
-  for (const n of ordered) if (!emitted.has(n)) emit(n, 0, emitted);
-  const companionNode = (name, depth) => {
-    const li = document.createElement('li');
-    li.className = 'ddn-tree-file ddn-tree-companion';
-    li.dataset.companion = name;
-    const row = document.createElement('div');
-    const b = document.createElement('button');
-    b.textContent = name;
-    b.title = name + ' — ddna companion (automation); opens a read-only summary in the Inspector';
-    const chip = document.createElement('span');
-    chip.className = 'ddn-tree-role';
-    chip.dataset.role = 'companion';
-    chip.textContent = 'ddna companion · automation';
-    const f = companionFacts(fs[name], (t, n) => parseSource(t, n));
-    const rs = document.createElement('span');
-    rs.className = 'ddn-tree-role';
-    const parts = [];
-    if (f.profiles) parts.push(f.profiles + ' profile' + (f.profiles === 1 ? '' : 's'));
-    if (f.traces) parts.push(f.traces + ' trace' + (f.traces === 1 ? '' : 's'));
-    if (f.keels) parts.push(f.keels + ' keel refs');
-    parts.push('data only');
-    rs.textContent = parts.join(' · ');
-    b.addEventListener('click', () => openCompanionInspector(name));
-    row.append(b, chip, rs);
-    li.append(row);
-    li.style.paddingLeft = (depth * 14) + 'px';
-    return li;
-  };
-  els.fileList.replaceChildren(...items.flatMap(it => {
-    if (companions.has(it.name)) return [];
-    const li = fileNode(it.name, it.depth);
-    li.style.paddingLeft = (it.depth * 14) + 'px';
-    const out = [li];
-    for (const c of (companionsOf[it.name] || [])) out.push(companionNode(c, it.depth + 1));
-    return out;
-  }));
-  /* Orphan companions (no serving base) still list — the A001 diagnostic
-   * names the broken association; hiding the file would hide the problem. */
-  for (const c of [...companions].sort()) {
-    if (Object.values(companionsOf).flat().includes(c)) continue;
-    els.fileList.append(companionNode(c, 0));
-  }
-  els.sourceFile.replaceChildren(...Object.keys(fs).sort().map(n => new Option(n, n)));
-  if (Object.prototype.hasOwnProperty.call(fs, state.currentFile)) els.sourceFile.value = state.currentFile;
-  /* DDN 0.8 (ch. 57 §D3): multi-pane editing — one editor tab per workspace
-   * file; the tab set mirrors the entry's import closure plus added files. */
-  els.sourceTabs.replaceChildren(...Object.keys(fs).sort().map(n => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.role = 'tab';
-    b.textContent = n; b.title = n;
-    b.className = n === state.currentFile ? 'selected' : '';
-    b.setAttribute('aria-selected', String(n === state.currentFile));
-    b.addEventListener('click', () => guard(() => showSource(n)));
-    return b;
-  }));
+  els.sourceFile.replaceChildren(...Object.keys(files).sort().map(n=>new Option(n,n)));
+  if(Object.hasOwn(files,state.currentFile))els.sourceFile.value=state.currentFile;
+  els.sourceTabs.replaceChildren(...Object.keys(files).sort().map(n=>{const b=document.createElement('button');b.type='button';b.role='tab';b.textContent=n+(sourceDrafts.has(n)?' •':'');b.setAttribute('aria-selected',String(n===state.currentFile));b.addEventListener('click',()=>guard(()=>showSource(n)));return b;}));
+  workbench?.refresh();
 }
 
 function showSource(file, range) {
   cancelSourceReview();
-  flush();
+  if(state.bufferDirty&&state.currentFile)sourceDrafts.set(state.currentFile,els.source.value);
+  clearTimeout(timer);
   const fs = state.ws.getFiles();
   if (!Object.prototype.hasOwnProperty.call(fs, file)) return;
   state.currentFile = file;
   els.sourceFile.value = file;
-  els.source.value = fs[file];
-  state.bufferDirty = false;
-  els.dirty.textContent = '';
+  els.source.value = sourceDrafts.get(file)??fs[file];
+  state.bufferDirty = sourceDrafts.has(file);
+  els.dirty.textContent = state.bufferDirty?'Unapplied draft (accepted model unchanged)':'';
   if (range) {
     els.source.focus();
     els.source.setSelectionRange(range.start, range.end);
@@ -6146,12 +6026,12 @@ function showSource(file, range) {
   }
   filesUI();
 }
-// A preview is isolated from the live workspace. Raw Apply remains available
-// for retaining source text that is not yet syntactically valid.
+// Preview and Apply validate an isolated workspace. Invalid source remains
+// an unapplied draft; raw file download can preserve that draft separately.
 let sourceReview=null;
 function cancelSourceReview(){if(sourceReview)sourceReview.editor.cancel(sourceReview.plan);sourceReview=null;$('ddn-edit-preview').hidden=true;$('ddn-edit-picture').removeAttribute('srcdoc');}
 $('ddn-preview-edit').addEventListener('click',()=>guard(()=>{
- clearTimeout(timer);cancelSourceReview();$('ddn-apply-preview').disabled=false;
+ clearTimeout(timer);cancelSourceReview();validateSourceDraft();$('ddn-apply-preview').disabled=false;
  const editor=state.ws.editor(),plan=editor.preview({entry:state.entry,view:state.view,label:'Apply source preview',operations:[{type:'files',changes:{[state.currentFile]:els.source.value}}]});
  const picture=editor.previewLayout(plan);
   $('ddn-edit-picture').hidden=!picture.svg;
@@ -6163,20 +6043,23 @@ $('ddn-cancel-preview').addEventListener('click',cancelSourceReview);
 $('ddn-apply-preview').addEventListener('click',()=>guard(()=>{
  if(!sourceReview)return;
  if(sourceReview.file!==state.currentFile||sourceReview.text!==els.source.value){cancelSourceReview();throw toolError('LIVE030','The editor buffer changed; preview again.');}
- sourceReview.editor.apply(sourceReview.plan);state.bufferDirty=false;
+ sourceReview.editor.apply(sourceReview.plan);state.bufferDirty=false;sourceDrafts.delete(state.currentFile);sourceDraftBases.delete(state.currentFile);
  els.dirty.textContent='In memory · download to save';$('ddn-edit-summary').textContent+='\nApplied — one undo restores the previous files.';
  $('ddn-apply-preview').disabled=true;sourceReview=null;
  updateHistory();refreshAfterSourceWrite();
 }));
+function validateSourceDraft(){if(sourceDraftBases.has(state.currentFile)&&sourceDraftBases.get(state.currentFile)!==state.ws.getFiles()[state.currentFile])throw Error('This source file changed while its draft was open. The draft is retained. Download it if needed, then discard and merge with the current source.');}
 function flush() {
   clearTimeout(timer);
-  if (state.ws && state.bufferDirty && state.currentFile) {
-    state.bufferDirty = false;
-    state.ws.updateFiles({ [state.currentFile]: els.source.value });
-    els.dirty.textContent = 'In memory · download to save';
+  if(state.ws&&state.bufferDirty&&state.currentFile){
+    sourceDrafts.set(state.currentFile,els.source.value);
+    validateSourceDraft();
+    commitWorkbenchFiles({...state.ws.getFiles(),[state.currentFile]:els.source.value},'Apply source draft',null,true);
+    sourceDrafts.delete(state.currentFile);sourceDraftBases.delete(state.currentFile);state.bufferDirty=false;els.dirty.textContent='Applied in memory · Save workspace to store';
   }
 }
 els.source.addEventListener('input', () => {
+  if(!sourceDraftBases.has(state.currentFile))sourceDraftBases.set(state.currentFile,state.ws.getFiles()[state.currentFile]);
   cancelSourceReview();
   state.bufferDirty = true;
   els.dirty.textContent = 'Unapplied edits';
@@ -6203,13 +6086,14 @@ els.apply.addEventListener('click', () => guard(() => {
   updateHistory();
   diagnosticsUI();
 }));
-els.discard.addEventListener('click', () => guard(() => showSource(state.currentFile)));
+els.discard.addEventListener('click', () => guard(() => {sourceDrafts.delete(state.currentFile);sourceDraftBases.delete(state.currentFile);state.bufferDirty=false;showSource(state.currentFile);}));
 /* Undo/redo must RE-RENDER (owner report "unrecoverable after an erroring
  * commit"): reverting source without redrawing left the canvas in the error
  * banner state forever. refreshAfterSourceWrite drives the recovery render;
  * the toolbar buttons are the discoverable affordance (ctrl+Z/ctrl+Y too). */
-els.undo.addEventListener('click', () => guard(() => { flush(); state.ws.undo(); entriesUI(state.view); showSource(Object.prototype.hasOwnProperty.call(state.ws.getFiles(), state.currentFile) ? state.currentFile : Object.keys(state.ws.getFiles())[0]); updateHistory(); refreshAfterSourceWrite(); }));
-els.redo.addEventListener('click', () => guard(() => { flush(); state.ws.redo(); entriesUI(state.view); showSource(Object.prototype.hasOwnProperty.call(state.ws.getFiles(), state.currentFile) ? state.currentFile : Object.keys(state.ws.getFiles())[0]); updateHistory(); refreshAfterSourceWrite(); }));
+function workspaceHistory(method){flush();const before=state.entry+'#'+state.view;state.ws[method]();entriesUI(state.view);showSource(Object.hasOwn(state.ws.getFiles(),state.currentFile)?state.currentFile:Object.keys(state.ws.getFiles())[0]);updateHistory();if(before!==state.entry+'#'+state.view)mount();else refreshAfterSourceWrite();}
+els.undo.addEventListener('click',()=>guard(()=>workspaceHistory('undo')));
+els.redo.addEventListener('click',()=>guard(()=>workspaceHistory('redo')));
 els.find.addEventListener('click', () => {
   const q = prompt('Find text', state.search);
   if (q === null || !q) return;
@@ -6330,6 +6214,8 @@ function load(files, entry, view, options) {
   }
   documentLoad?.abort();
   state.generatedTraces=[];state.execLast=null;els.execDownload.hidden=true;
+  workbench?.reset();sourceDrafts.clear();sourceDraftBases.clear();state.bufferDirty=false;
+  state.traceFiles={...options?.traceFiles};state.activeCompanion=null;
   cancelSourceReview();
   flush();
   if (state.diagram) state.diagram.destroy();
@@ -6351,7 +6237,9 @@ function load(files, entry, view, options) {
   if(savedPresentation)state.presentation=savedPresentation;
   if(options?.overrides)state.presentation.options={...options.overrides};
   restoreToolPresentation();
+  workbench?.restore(options?.workbench);
   state.savedPresentation=JSON.stringify(state.presentation);
+  state.savedTraces=JSON.stringify(state.traceFiles);state.savedWorkbenchPresentation=workbench?.appearanceSignature();
   mount(options?.layoutState||null);
   updateHistory();
   /* A workspace whose render fails at mount (e.g. a broken DDNA association,
@@ -6414,19 +6302,20 @@ function syncUrl() {
 async function openFiles(input, directory) {
   /* DDNA Phase B: io.open ignores non-source files; capture the trace
    * sidecars it skips (names only there) into the tool-level store. */
-  state.traceFiles = {};
+  const openedTraces = {};
   for (const f of Array.from(input || [])) {
     let name = directory ? (f.webkitRelativePath || f.name) : f.name;
     if (directory && name.includes('/')) name = name.split('/').slice(1).join('/');
     if (!name.endsWith('.ddnatrace.json')) continue;
-    try { state.traceFiles[name] = await f.text(); } catch { /* unreadable sidecar reported at validation time */ }
+    try { openedTraces[name] = await f.text(); } catch { /* unreadable sidecar reported at validation time */ }
   }
   const result = await A.io.open(input, { directory });
   if (state.mergeNext) {
     flush();
     const old = state.ws.getFiles(), collisions = Object.keys(result.files).filter(f => Object.prototype.hasOwnProperty.call(old, f));
     if (collisions.length && !confirm('Replace these existing source files?\n' + collisions.join('\n'))) return;
-    state.ws.updateFiles(result.files);
+    commitWorkbenchFiles({...old,...result.files},'Import source files',null,true);
+    Object.assign(state.traceFiles,openedTraces);
     entriesUI(state.view);
     showSource(Object.keys(result.files)[0]);
     updateHistory();
@@ -6434,7 +6323,7 @@ async function openFiles(input, directory) {
   } else {
     if (dirty() && !confirm('Replace current workspace? Download unsaved changes first.')) return;
     state.catalogueIndex = -1;
-    load(result.files, result.snapshot.entry, result.snapshot.view,{presentation:result.snapshot.toolPresentation,overrides:result.snapshot.overrides,layoutState:result.snapshot.layoutState});
+    load(result.files, result.snapshot.entry, result.snapshot.view,{presentation:result.snapshot.toolPresentation,overrides:result.snapshot.overrides,layoutState:result.snapshot.layoutState,traceFiles:{...result.snapshot.traceFiles,...openedTraces},workbench:result.snapshot.workbench});
     if (result.ignored.length) status('opened workspace; ' + result.ignored.length + ' non-source files ignored');
   }
   state.mergeNext = false;
@@ -6592,6 +6481,7 @@ let projectSave=null,projectSaving=false;
 async function saveProject(saveAs=false){
  if(projectSaving)return;
  const workspace=state.ws;if(!workspace)throw new Error('No workspace to save');
+ if(workbench?.hasDrafts())throw Error('Apply or discard section editor drafts before saving the workspace.');
  projectSaving=true;$('ddn-creator-save').disabled=true;$('ddn-creator-saveas').disabled=true;
  try{
   const previous=projectSave?.workspace===workspace?projectSave:null;
@@ -6605,13 +6495,14 @@ async function saveProject(saveAs=false){
   if(state.ws!==workspace)throw new Error('The workspace changed while choosing a save destination. Save again.');
   flush();await state.diagram?.ready;
   if(state.ws!==workspace)throw new Error('The workspace changed before saving. Save again.');
+  if(sourceDrafts.size)throw Error('Apply or discard source drafts before saving the accepted workspace.');
   const saved=snapshot();saved.toolPresentation=structuredClone(state.presentation);
   const bytes=A.io.toZIP(saved);
   if(handle){const writer=await handle.createWritable();try{await writer.write(bytes);await writer.close();}catch(e){try{await writer.abort();}catch{}throw e;}}
   else A.io.download(name,bytes,'application/zip');
-  if(state.ws===workspace){projectSave={workspace,handle,name};state.saved={...saved.files};state.savedPresentation=JSON.stringify(saved.toolPresentation);status((handle?'saved ':'downloaded ')+name+' — complete workspace');}
+  if(state.ws===workspace){projectSave={workspace,handle,name};state.saved={...saved.files};state.savedPresentation=JSON.stringify(saved.toolPresentation);state.savedTraces=JSON.stringify(saved.traceFiles);state.savedWorkbenchPresentation=workbench?.appearanceSignature();status((handle?'saved ':'downloaded ')+name+' — complete workspace');}
  }catch(e){if(e?.name!=='AbortError')throw e;}
- finally{projectSaving=false;$('ddn-creator-save').disabled=false;$('ddn-creator-saveas').disabled=false;}
+ finally{projectSaving=false;$('ddn-creator-save').disabled=false;$('ddn-creator-saveas').disabled=false;workbench?.refresh();}
 }
 $('ddn-creator-save').addEventListener('click',()=>guard(()=>saveProject(false)));
 $('ddn-creator-saveas').addEventListener('click',()=>guard(()=>saveProject(true)));
@@ -6620,16 +6511,19 @@ document.addEventListener('keydown',e=>{
  e.preventDefault();guard(()=>saveProject(e.shiftKey));
 });
 function downloadCurrentFile() {
-  flush();
-  A.io.download(state.currentFile.split('/').at(-1), state.ws.getFiles()[state.currentFile]);
-  state.saved[state.currentFile] = state.ws.getFiles()[state.currentFile];
+  const text=state.bufferDirty?els.source.value:(sourceDrafts.get(state.currentFile)??state.ws.getFiles()[state.currentFile]);
+  A.io.download(state.currentFile.split('/').at(-1),text);
+  if(!state.bufferDirty&&!sourceDrafts.has(state.currentFile))state.saved[state.currentFile]=text;
   status('downloaded ' + state.currentFile + ' — imports remain separate; use the workspace ZIP for the complete design');
 }
 els.downloadFile.addEventListener('click', () => guard(downloadCurrentFile));
 function snapshot() {
+  if(workbench?.hasDrafts())throw Error('Apply or discard section editor drafts before saving the workspace.');
   flush();
-  return state.ws.snapshot(state.entry, state.view, (state.diagram && state.diagram.getState().overrides) || {},
+  if(sourceDrafts.size)throw Error('Apply or discard source drafts before saving the workspace.');
+  const snap=state.ws.snapshot(state.entry, state.view, (state.diagram && state.diagram.getState().overrides) || {},
     state.diagram && state.diagram.result && state.diagram.result.scene.layout && state.diagram.result.scene.layout.autoPlace === false ? state.diagram._layoutState : null);
+  snap.traceFiles={...state.traceFiles};snap.workbench=workbench?.snapshot();return snap;
 }
 els.downloadZip.addEventListener('click', () => guard(() => {
   A.io.download('design.ddn-workspace.zip', A.io.toZIP(snapshot()), 'application/zip');
@@ -6863,7 +6757,7 @@ async function setSource(source, opts) {
     pick = pickEntryView(files, opts, (t, n) => parseSource(t, n));
   } catch (e) { return Promise.reject(coded(e)); }
   state.catalogueIndex = -1;
-  try { load(files, pick.entry, pick.view); } catch (e) { return Promise.reject(coded(e)); }
+  try { load(files, pick.entry, pick.view,{traceFiles:state.traceFiles}); } catch (e) { return Promise.reject(coded(e)); }
   const d = state.diagram;
   if (!d) return Promise.reject(toolError('DDN-T105', 'setSource: source loaded but no view is mounted'));
   return d.ready.then(
@@ -6998,8 +6892,44 @@ function boot() {
   catalogueUI();
 }
 
+function commitWorkbenchFiles(next,label,target,fromSource=false){
+ if(!state.config.design&&!fromSource)throw Error('Editing requires design mode');
+ if(!fromSource&&state.bufferDirty)throw Error('Apply or discard the Source draft before another workspace edit.');
+ const idx=host.DDNWorkbenchModel.index(next,A);if(idx.errors.length)throw idx.errors[0].error;
+ const chosen=target||idx.views.find(v=>v.file===state.entry&&(v.view===state.view||v.uid===state.view))||idx.views[0];
+ if(!chosen)throw Error('Keep at least one view in the workspace.');
+ const editor=state.ws.editor(),changes={};for(const f of new Set([...Object.keys(next),...Object.keys(state.ws.getFiles())]))if(next[f]!==state.ws.getFiles()[f])changes[f]=next[f]??null;
+ if(!Object.keys(changes).length)return;
+ let plan;const candidate=A.createWorkspace(next);
+ try{
+   // Qualified IDs are essential: two modules may each declare view overview.
+   for(const v of idx.views)candidate.renderSync({entry:v.file,view:v.uid,noMotion:true});
+   const diagnostics=ddnaDiagnostics(next,(t,n)=>parseSource(t,n));const bad=diagnostics.find(d=>d.severity==='error');if(bad)throw Object.assign(new Error(bad.message),{code:bad.code});
+   plan=editor.preview({entry:chosen.file,view:chosen.uid||chosen.view,label,expectedRevision:state.ws.revision,mode:'review',operations:[{type:'files',changes}]});
+   editor.apply(plan);
+ }catch(e){if(plan)editor.cancel(plan);throw e;}finally{candidate.destroy();}
+ const old=state.entry+'#'+state.view;state.entry=chosen.file;state.view=chosen.view;entriesUI(state.view);
+ if(fromSource){state.bufferDirty=false;sourceDrafts.delete(state.currentFile);sourceDraftBases.delete(state.currentFile);}
+ showSource(Object.hasOwn(next,state.currentFile)?state.currentFile:chosen.file);updateHistory();
+ if(old!==state.entry+'#'+state.view||!state.diagram)mount();else refreshAfterSourceWrite();
+ diagnosticsUI();status(label+' — one Undo restores all changed files');
+}
+workbench=host.DDNWorkspaceUI.create({A,state,guard,dirty,emptyPresentation,
+ checkPresentation:p=>{const out=emptyPresentation();for(const k of Object.keys(out))if(p?.[k]&&typeof p[k]==='object')out[k]=structuredClone(p[k]);overrideCss(out);return out;},
+ visibility:ids=>{guided(()=>{const model=host.DDNWorkbenchModel.index(state.ws.getFiles(),A);const occurrences=A.authoring.occurrences(state.ws,state.entry,state.view).elements.filter(o=>model.items.some(x=>x.type==='object'&&x.uid===o.source));for(const o of occurrences)if(!ids.has(o.source))A.authoring.hide(state.ws,state.entry,state.view,o.id);const idx=host.DDNWorkbenchModel.index(state.ws.getFiles(),A),v=idx.views.find(v=>v.file===state.entry&&(v.view===state.view||v.uid===state.view));const exclusions=(v.node.props.exclude||[]).filter(r=>!ids.has(host.DDNWorkbenchModel.resolveRef(idx,v,r)?.uid));const selection=occurrences.filter(o=>ids.has(o.source)).map(o=>o.id);for(const id of ids)if(!occurrences.some(o=>o.source===id))selection.push(id);const next=host.DDNWorkbenchModel.props(state.ws.getFiles(),v,{exclude:exclusions},A);state.ws.updateFiles(next);A.authoring.setViewList(state.ws,state.entry,state.view,'select',selection);});},
+ sourceIdentity,flush,entries:entriesUI,mount,stage:stageEl,
+ drawer:name=>setDrawer(name,'open',true),openSource:(file,range)=>{setDrawer('source','open',true);showSource(file,range);},
+ select:id=>onSelect({id,sourceId:id}),commit:commitWorkbenchFiles,diagnostics:collectDiagnostics,
+ save:saveProject,isCompanion:isCompanionFile,
+ served:file=>servedBases(file,architectureContainers(state.ws.getFiles(),(t,n)=>parseSource(t,n)),state.ws.getFiles()),
+ createRules:()=>document.getElementById('ddn-create-rules').click(),
+ author:(method,args)=>{guided(()=>A.authoring[method](state.ws,state.entry,state.view,...args));workbench.refresh();},
+ editRules:(file,root,draft,onDraft,apply)=>{state.activeCompanion=file;const ctx=ddnaCompanionCtx(file);if(!host.DDNToolDeclarative.supports(ctx.features.profile?.name))throw Error('Structured editing is available for bounded L0 graph/table profiles. Use the declaration editor for other profiles.');
+ const revision=state.ws.revision;host.DDNToolRules.render(root,draft||ctx.features,features=>{if(state.ws.revision!==revision)throw Error('Workspace changed; reopen the rule editor');const inputs=Object.fromEntries(features.profile.inputs.map(k=>[k,null]));host.DDNToolDeclarative.compile(features,ctx.data,inputs);const text=host.DDNToolRules.rewrite(state.ws.getFiles()[file],features,parseSource,A.lex,A.authoring.value);apply({...state.ws.getFiles(),[file]:text});},onDraft);}
+});
 /* Documented test/integration surface; mirrors host.DDNViewer (D7). */
 host.DDNTool = Object.assign({}, pure, {
+  workbench,
   loadFiles: (files, entry, view) => load(files, entry, view),
   setSource, getSource, onSourceChange, offSourceChange, setDocumentLoader,
   /* DDNA Phase B: host/probe sidecar injection (folder/file open captures
