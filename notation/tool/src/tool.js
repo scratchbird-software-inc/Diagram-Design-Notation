@@ -709,13 +709,18 @@ host.addEventListener('resize', () => { if (state.diagram) applyFit(); });
 
 /* Pan (D2 — new): pointer-drag anywhere on the stage scrolls the viewport.
  * A drag above 3px suppresses the trailing click so it does not select. */
+// Controls rendered over the canvas own their events. Canvas gestures must
+// not capture a menu click, an inline edit or a resize handle as blank space.
+function stageControlTarget(e){
+ return e.target?.closest?.('.ddn-ctx, .ddn-inline-edit, .ddn-resize-handle, .ddn-mind-resize, button, input, textarea, select, [contenteditable]');
+}
 function attachPan() {
   const stage = stageEl();
   if (!stage || stage.dataset.toolPan) return;
   stage.dataset.toolPan = 'true';
   let pan = null;
   stage.addEventListener('pointerdown', e => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || stageControlTarget(e)) return;
     if (design.placing) return; // an armed placement gesture owns the stage
     if (e.target.closest && e.target.closest('.ddn-mind-resize')) return; // mind-map resize owns this drag (B1-100)
     if (e.target.closest && e.target.closest('.ddn-node[data-id]')) return; // drag-to-pin owns node drags
@@ -733,7 +738,7 @@ function attachPan() {
   const done = () => { pan = null; setTimeout(() => { state.panning = false; }, 0); };
   stage.addEventListener('pointerup', done);
   stage.addEventListener('pointercancel', done);
-  stage.addEventListener('click', e => { if (state.panning) { e.stopPropagation(); e.preventDefault(); } }, true);
+  stage.addEventListener('click', e => { if (state.panning && !stageControlTarget(e)) { e.stopPropagation(); e.preventDefault(); } }, true);
 }
 
 /* ------------------------------------------------ style & layout drawer (right)
@@ -2205,7 +2210,7 @@ function attachDeselect() {
   if (!stage || stage.dataset.toolDeselect) return;
   stage.dataset.toolDeselect = 'true';
   stage.addEventListener('click', e => {
-    if (state.panning || design.placing) return;
+    if (state.panning || design.placing || stageControlTarget(e)) return;
     /* After a drag-pins move the browser retargets the trailing click to the
      * capture element (the canvas) — it reads as an empty-canvas click but
      * is the end of the drag, and moving an element must KEEP it selected.
@@ -4790,7 +4795,7 @@ function attachDesign() {
   if (!stage || stage.dataset.toolDesign) return;
   stage.dataset.toolDesign = 'true';
   stage.addEventListener('click', e => {
-    if (!design.placing) return;
+    if (!design.placing || stageControlTarget(e)) return;
     e.stopPropagation(); e.preventDefault();
     const p = stageWorldPoint(e);
     const kind = design.placing;
@@ -4799,7 +4804,7 @@ function attachDesign() {
     placeElement(kind, p.x, p.y);
   }, true);
   /* An armed gesture also owns pointer drags: suppress pan and drag-to-pin. */
-  stage.addEventListener('pointerdown', e => { if (design.placing) e.stopPropagation(); }, true);
+  stage.addEventListener('pointerdown', e => { if (design.placing && !stageControlTarget(e)) e.stopPropagation(); }, true);
 }
 
 /* Per-render gating: placement needs a graph projection (the same rule as
@@ -4943,7 +4948,7 @@ function attachPointerSelect() {
    * FINAL selection state once the click settles. */
   stage.addEventListener('click', () => { setTimeout(() => syncResizeHandles(), 0); });
   stage.addEventListener('click', e => {
-    if (!design.pointer || design.placing || state.dragMovedRecently) return;
+    if (!design.pointer || design.placing || state.dragMovedRecently || stageControlTarget(e)) return;
     if(e.target.closest?.('.ddn-rel[data-id], .ddn-label[data-id]'))return;
     const el = e.target && e.target.closest && e.target.closest('.ddn-node[data-id]');
     e.stopPropagation(); e.preventDefault();
@@ -4958,7 +4963,7 @@ function attachPointerSelect() {
   /* Rubber band on empty canvas (suppresses pan only when armed + empty). */
   let band = null;
   stage.addEventListener('pointerdown', e => {
-    if (!design.pointer || design.placing || e.button !== 0) return;
+    if (!design.pointer || design.placing || e.button !== 0 || stageControlTarget(e)) return;
     if (e.target.closest && e.target.closest('.ddn-node[data-id], .ddn-rel[data-id], .ddn-label[data-id]')) return;
     e.stopPropagation(); e.preventDefault();
     const r = stage.getBoundingClientRect();
@@ -5185,7 +5190,7 @@ function attachContextMenu() {
    * through authoring.setLabel so source stays canonical. Enter/blur commits,
    * Escape cancels. */
   stage.addEventListener('dblclick', e => {
-    if (design.placing || state.panning) return;
+    if (design.placing || state.panning || stageControlTarget(e)) return;
     const nodeEl = e.target && e.target.closest && e.target.closest('.ddn-node[data-id]');
     const fieldEl = e.target && e.target.closest && e.target.closest('.ddn-field[data-member]');
     const relEl = e.target && e.target.closest && (e.target.closest('.ddn-rel[data-id]') || e.target.closest('.ddn-label[data-id]'));
