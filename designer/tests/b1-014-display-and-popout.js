@@ -120,11 +120,7 @@ test('build-standalone.mjs regenerates byte-identical output twice', () => {
 //    prototype (B1-051: committed standalone.html is a redirect stub).
 //    The downloaded single-file bundle is re-checked with the CLI in node.
 test('headless driver: display tab, downloads, resized float, window pop-out with child edit', () => {
-  const shellDir = path.join(os.homedir(), '.cache', 'ms-playwright');
-  const shell = fs.readdirSync(shellDir).filter(d => d.startsWith('chromium_headless_shell-')).sort().pop();
-  assert.ok(shell, 'no chromium headless shell under ' + shellDir);
-  const bin = path.join(shellDir, shell, 'chrome-headless-shell-linux64', 'chrome-headless-shell');
-  assert.ok(fs.existsSync(bin), 'missing ' + bin);
+  const bin = require('../../tests/browser.js').findBrowser();
   const build = fs.mkdtempSync(path.join(os.tmpdir(), 'b1014-build-'));
   cp.execFileSync('node', [path.join(PROTO, 'build-standalone.mjs'), '--out', build], { stdio: 'pipe' });
   const standalone = fs.readFileSync(path.join(build, 'standalone.html'), 'utf8');

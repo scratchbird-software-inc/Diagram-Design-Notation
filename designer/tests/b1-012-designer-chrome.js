@@ -108,11 +108,7 @@ test('build-standalone.mjs regenerates byte-identical output twice', () => {
 //    standalone.html is now a redirect stub) plus the committed driver
 //    scenario, so the exercised chrome can never drift from the sources.
 test('headless driver: density, splitters, detach/float/reattach, tooltips, raster, matrix interop', () => {
-  const shellDir = path.join(os.homedir(), '.cache', 'ms-playwright');
-  const shell = fs.readdirSync(shellDir).filter(d => d.startsWith('chromium_headless_shell-')).sort().pop();
-  assert.ok(shell, 'no chromium headless shell under ' + shellDir);
-  const bin = path.join(shellDir, shell, 'chrome-headless-shell-linux64', 'chrome-headless-shell');
-  assert.ok(fs.existsSync(bin), 'missing ' + bin);
+  const bin = require('../../tests/browser.js').findBrowser();
   const build = fs.mkdtempSync(path.join(os.tmpdir(), 'b1012-build-'));
   cp.execFileSync('node', [path.join(PROTO, 'build-standalone.mjs'), '--out', build], { stdio: 'pipe' });
   const standalone = fs.readFileSync(path.join(build, 'standalone.html'), 'utf8');
