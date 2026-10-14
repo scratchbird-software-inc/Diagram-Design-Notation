@@ -42,6 +42,10 @@ Project* wing mark; the full ScratchWeaver bird remains the commercial sponsor
 mark. Blue/white-swapped `-dark.svg` variants are used on dark surfaces. The
 committed `assets/brand/` and `website/assets/brand/` files are generated assets,
 not independent artwork sources.
+Each mark also has normal and dark `.ico` files containing transparent 16, 24,
+32, 48, 64, 128 and 256 px frames. `favicon.ico` aliases the DDN mark.
+`tools/build-brand.mjs` regenerates the SVGs, raster assets and ICOs together;
+`tools/build-ico.py` can rebuild ICOs from existing SVG exports.
 
 ## Status
 

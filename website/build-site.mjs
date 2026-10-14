@@ -170,7 +170,8 @@ const NAV = [
 ];
 
 function favicons(base) {
-  return '<link rel="icon" type="image/svg+xml" href="' + base + 'assets/brand/favicon.svg">\n' +
+  return '<link rel="icon" type="image/x-icon" href="' + base + 'assets/brand/favicon.ico">\n' +
+    '<link rel="icon" type="image/svg+xml" href="' + base + 'assets/brand/favicon.svg">\n' +
     '<link rel="icon" type="image/png" sizes="32x32" href="' + base + 'assets/brand/favicon-32.png">\n' +
     '<link rel="icon" type="image/png" sizes="64x64" href="' + base + 'assets/brand/favicon-64.png">\n';
 }

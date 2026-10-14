@@ -90,7 +90,10 @@ def main():
                         f'--export-width={size}', f'--export-height={size}',
                         f'--export-filename={OUT / name}'], check=True,
                        capture_output=True)
-    print(f'build-brand: {len(MARKS) * 2 + 5} family assets → {OUT}')
+    subprocess.run([os.environ.get('PYTHON', 'python3'),
+                    str(ROOT / 'tools/build-ico.py'),
+                    '--source-dir', str(OUT), '--out-dir', str(OUT)], check=True)
+    print(f'build-brand: {len(MARKS) * 2 + 16} family assets → {OUT}')
 
 
 if __name__ == '__main__':

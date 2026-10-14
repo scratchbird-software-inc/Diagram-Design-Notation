@@ -22,6 +22,9 @@ const BRAND_FILES = [
   'scratchrobin.svg', 'scratchrobin-dark.svg',
   'opensource.svg', 'opensource-dark.svg',
   'favicon.svg', 'favicon-32.png', 'favicon-64.png',
+  ...['ddn', 'scratchweaver', 'scratchbird', 'scratchrobin', 'opensource']
+    .flatMap(name => [name + '.ico', name + '-dark.ico']),
+  'favicon.ico',
 ];
 
 test('assets/brand/ contains the family marks and dark variants', () => {
@@ -38,6 +41,30 @@ test('ddn.svg is self-contained with a synthesized viewBox and no editor cruft',
   assert.ok(inverse.includes('#ffffff'), 'blue-to-white inverse missing');
   assert.ok(fs.readFileSync(path.join(root, 'assets/brand/scratchrobin-dark.svg'), 'utf8').includes('#0c75bd'),
     'white-to-blue inverse missing');
+});
+
+test('every ICO embeds transparent PNG frames at all standard sizes', () => {
+  const expected = [16, 24, 32, 48, 64, 128, 256];
+  for (const filename of BRAND_FILES.filter(f => f.endsWith('.ico'))) {
+    const bytes = fs.readFileSync(path.join(root, 'assets/brand', filename));
+    assert.equal(bytes.readUInt16LE(0), 0, filename);
+    assert.equal(bytes.readUInt16LE(2), 1, filename);
+    assert.equal(bytes.readUInt16LE(4), expected.length, filename);
+    for (const [index, size] of expected.entries()) {
+      const entry = 6 + index * 16;
+      const actual = bytes[entry] || 256;
+      const length = bytes.readUInt32LE(entry + 8);
+      const offset = bytes.readUInt32LE(entry + 12);
+      assert.equal(actual, size, filename);
+      assert.equal(bytes[entry + 1] || 256, size, filename);
+      assert.equal(bytes.subarray(offset, offset + 8).toString('hex'), '89504e470d0a1a0a', filename);
+      assert.equal(bytes.readUInt32BE(offset + 16), size, filename);
+      assert.equal(bytes.readUInt32BE(offset + 20), size, filename);
+      assert.ok(offset + length <= bytes.length, filename);
+    }
+  }
+  assert.ok(fs.readFileSync(path.join(root, 'assets/brand/favicon.ico'))
+    .equals(fs.readFileSync(path.join(root, 'assets/brand/ddn.ico'))));
 });
 
 test('build:brand is fresh when owner artwork is available', () => {
@@ -63,6 +90,7 @@ test('website shell pages carry the logo, favicons, wordmark, and ScratchBird fo
   const home = fs.readFileSync(path.join(root, 'website/index.html'), 'utf8');
   assert.ok(home.includes('assets/brand/ddn-dark.svg'), 'inverse logo missing from home header');
   assert.ok(home.includes('assets/brand/favicon.svg') && home.includes('assets/brand/favicon-32.png'), 'favicons missing');
+  assert.ok(home.includes('assets/brand/favicon.ico'), 'multi-resolution favicon missing');
   assert.ok(home.includes('>ddn<small>Diagram Design Notation</small>'), 'wordmark missing');
   assert.ok(home.includes('assets/brand/scratchweaver-dark.svg'), 'inverse sponsor mark missing from footer');
   assert.ok(home.includes('ScratchWeaver-sponsored') || home.includes('ScratchWeaver project'), 'ScratchWeaver sponsor framing missing');
