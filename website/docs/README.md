@@ -5,6 +5,7 @@ static site (`website/`); every Markdown page here is rendered to HTML by
 `website/build-site.mjs` (`npm run build:site`) and browsable from the site's
 Docs section.
 
+- [Workspace guide](developers/workspace-guide.md) — models, views, shared settings, automation, text documents, safe editing and save/reopen.
 - `developers/` — developer documentation: orientation/doc map,
   getting started, runtime modules and bundle sizes, the workspace API
   reference, embedding, the end-user viewer, CSS styling hooks, live data

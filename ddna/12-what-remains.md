@@ -4,6 +4,17 @@
 open questions, document acquisition, version-drift items, and the roadmap
 to 1.0.
 
+## Implementation update — October 14, 2026
+
+Companion loading, supported-rule editing, trace replay/generation, bounded DAG
+and bounded unique/first/collect tables are implemented in the client-side tool.
+EM-5 request/response boundary validation is implemented separately; actual
+solver/query engines and EM-6 interpretation remain outstanding. The unified
+workspace adds section management and save/reopen, not additional execution
+profiles. This implementation update does not close the standards acquisition,
+licensing, conformance or governance questions below. See chapters 13–15 and the
+[current project register](../WORK-STATUS.md).
+
 ## 12.1 Tier-3 gated families (awaiting documents)
 
 The reading list's acquisition queue, with license status per the standing

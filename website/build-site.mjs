@@ -462,6 +462,7 @@ writeOut('index.html', shell({
     '    <a class="cta secondary" href="standard/index.html">Read the standard</a>\n' +
     '  </div>\n</div></section>\n' +
     '<main class="site-main">\n' +
+    '<section><h2>One workspace for DDN, DDNA and DDNN</h2><p>Manage shared models, multiple views, reusable settings, automation companions and text documents together. Save and reopen the accepted project as a workspace ZIP. The 0.8.0 alpha tools run client-side; database execution remains outside the designer.</p><p><a href="docs/developers/workspace-guide.html">Workspace guide and current limitations</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/actions/runs/38578889318">October 14 implementation CI: passed</a></p></section>\n' +
     '<section class="live-panel">\n' +
     '  <h2>Live render — generated in your browser, right now</h2>\n' +
     '  <p class="sub">The diagram below is rendered client-side by the DDN runtime inlined into this page. No server, no network.</p>\n' +
@@ -472,9 +473,9 @@ writeOut('index.html', shell({
       '    <a class="card" href="' + href + '"><h3>' + esc(h) + '</h3><p>' + esc(p) + '</p><small>' + esc(small) + '</small></a>').join('\n') +
     '\n  </div>\n</section>\n' +
     '<section>\n  <h2>The product family</h2>\n  <div class="grid">\n' +
-    '    <div class="card"><h3>ddn · ddn-viewer · ddn-designer — open source (this project)</h3><p>The dialect itself (<strong>ddn</strong>), the reference runtime, the free <strong>ddn-viewer</strong> (display and verify .ddn diagrams) and the free <strong>ddn-designer</strong> (simple edits and small diagrams) — GPL-2.0-or-later. The free tools ship the complete notation and rendering core; only tool depth differs from the commercial offerings. Sister project: <a href="https://github.com/scratchbird-software-inc/ScratchBird">ScratchBird on GitHub</a> · <a href="https://github.com/scratchbird-software-inc/ScratchBird/wiki">ScratchBird wiki</a>.</p></div>\n' +
+    '    <div class="card"><h3>ddn · ddn-viewer · ddn-designer — open source (this project)</h3><p>The dialect itself (<strong>ddn</strong>), the reference runtime, the free <strong>ddn-viewer</strong> (display and verify .ddn diagrams) and the free <strong>ddn-designer</strong> (visual editing and multi-file workspaces) — GPL-2.0-or-later. The free tools ship the complete notation and rendering core; only tool depth differs from the commercial offerings. Sister project: <a href="https://github.com/scratchbird-software-inc/ScratchBird">ScratchBird on GitHub</a> · <a href="https://github.com/scratchbird-software-inc/ScratchBird/wiki">ScratchBird wiki</a>.</p></div>\n' +
     '    <div class="card"><h3><a href="https://scratchbird.ca/weaver">ScratchWeaver</a> — sponsoring project</h3><p>ScratchWeaver sponsors the open-source ddn family and is also the full commercial diagramming suite (subscription, with some on-site licensing) built on ddn as its file storage and communication format.</p></div>\n' +
-    '    <div class="card"><h3>ScratchRobin — open-source console</h3><p>The open-source database management console, BI and data-analytics project that uses DDN/DDNA in its own project and owns backend capabilities such as KEEL. KEEL is not part of DDN, the viewer, or the designer, and never will be.</p></div>\n' +
+    '    <div class="card"><h3>ScratchRobin — open-source console</h3><p>The open-source database management console, BI and data-analytics project that uses DDN/DDNA in its own project and owns backend capabilities such as KEEL. The DDN viewer/designer remains client-side and includes bounded KEEL L0 evaluation for supported DDNA profiles. Database connectivity and execution belong to separate applications; stored procedure text remains inert.</p></div>\n' +
     '\n  </div>\n</section>\n' +
     '<p><small>Draft proposal, pre-1.0 — the project provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</small></p>\n' +
     '</main>\n' +
@@ -484,6 +485,9 @@ writeOut('index.html', shell({
 
 // Features page.
 const FEATURES = [
+  ['Unified project workspace', 'Logical and file navigation, shared models, multiple data bindings and view tabs, reusable settings with local overrides, and complete DDN/DDNA/DDNN workspace ZIP save/reopen.'],
+  ['Composable elements and text documents', 'Choose name, type, table and notes using kind defaults and per-element overrides. Place the table above or below text-only Markdown/code, scroll overflowing text, and reuse DDNN documents across elements.'],
+  ['Bounded automation and safe edits', 'Edit supported DDNA rules and replay/generate bounded traces locally. Shared validation, undo/redo, retained drafts and descriptive error dialogs protect accepted work. Full DMN/FEEL and EM-5 engines are not implemented.'],
   ['Model-first authoring', 'Data, format, and view declarations live in separate, composable sections of plain-text .ddn files. One semantic model projects into many diagram types — edit the model once, every view follows.'],
   [PROFILE_COUNT + ' installed profiles, ' + PROJECTION_KIND_COUNT + ' projection kinds', 'ERDs (Chen and crow’s-foot), DFDs, flowcharts, C4 views, RACI/CRUD matrices, bar/line/pie/radar/funnel/gauge/candlestick charts, treemaps, Sankey, Gantt, fishbones, decision tables, org charts, WBS, mind maps, concept maps, EPC chains, strategy canvases, journey and story maps, pyramids, Venn, sequence, communication, object, state machine, activity, BPMN-style, timing, interaction overview, CMMN-style, SysML-style, ArchiMate-style, PERT/CPM, fault/event trees, network diagrams, wireframes, family trees, geographic maps — plus the Category-2 chart pack: histograms, density/Q-Q/quantile-dot/box/violin/beeswarm/top-K distributions, tidy and radial trees, circle packing, sunbursts, packed bubbles, heatmaps, calendars, parallel coordinates, word clouds, arc diagrams, seeded force networks and hierarchical edge bundling, with error-bar and regression/loess overlays — see the <a href="../gallery/index.html">gallery</a>.'],
   ['CMMN 1.1 — case diagrams', 'Full CMMN notation: case plan containers, typed tasks with decorator badges (required, repetition, manual activation, completion), timer and user event listeners, sentries with on-part/if-part criteria attached to plan-item borders, planning tables, and case file items — see the <a href="../gallery/index.html">gallery</a> for a rendered example.'],
@@ -563,6 +567,7 @@ writeOut('features/uml.html', page('../', 'features', 'UML 2.5.1 diagram support
 writeOut('docs/index.html', page('../', 'docs', 'Documentation — DDN',
   '<h1 class="page-title">Documentation</h1>\n' +
   '<p class="lede">Developer documentation for embedding, the workspace API, styling hooks, data refresh, and authoring .ddn sources — rendered from the Markdown in <code>website/docs/</code>.</p>\n' +
+  '<p><a href="developers/workspace-guide.html">Start with the DDN/DDNA/DDNN workspace walkthrough</a> — current functionality, file lifecycle and limitations.</p>\n' +
   '<h2>Developer guide</h2>\n' + docList(path.join(REPO, 'website/docs/developers'), 'docs/developers', 'developers/') +
   '<h2>Engineering notes</h2>\n' + docList(path.join(REPO, 'website/docs/notes'), 'docs/notes', 'notes/')));
 

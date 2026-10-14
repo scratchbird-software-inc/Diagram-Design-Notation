@@ -1,11 +1,19 @@
 # @ddn/notation — DDN reference runtime
 
-Pure-JavaScript (ES2022+) reference implementation of the Data Design
+Pure-JavaScript (ES2022+) reference implementation of the Diagram Design
 Notation language: **parse → validate → lay out → render deterministic SVG**.
 Zero runtime dependencies; runs in Node 22+ and browsers. Implements
 `standard/` (the specification, grammar, schemas, and vocabulary registry).
 Build tooling (Rollup + terser) is a pinned devDependency used only to
 produce `dist/`; it never ships in the package or the bundles.
+
+## Current tools
+
+Package version 0.8.0 remains alpha. The unified browser tool provides model/view
+and shared-setting editors, DDNA companions and optional DDNN text documents.
+See the [workspace guide](../website/docs/developers/workspace-guide.md) and
+[tool API](../website/docs/developers/tool.md). The renderer remains notation-only;
+bounded DDNA automation lives in the client-side tool. Stored code is inert.
 
 ## Layout
 

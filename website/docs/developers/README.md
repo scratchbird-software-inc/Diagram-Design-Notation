@@ -1,7 +1,7 @@
 # DDN developer documentation
 
 Developer-facing documentation for the Diagram Design Notation (DDN) reference
-runtime, version 0.7.0. These pages cover using the runtime as a
+runtime, version 0.8.0. These pages cover using the runtime as a
 library and embedding rendered diagrams; they are verified against
 `notation/studio/src/public.d.ts` and the shipped bundles under
 `notation/dist/` by the permanent gate `notation/tests/gallery-coverage.js`.
@@ -10,6 +10,7 @@ library and embedding rendered diagrams; they are verified against
 
 | Page | Read it when |
 |---|---|
+| [workspace-guide.md](workspace-guide.md) | You want to manage DDN models/views, DDNA rules and DDNN text as one project. |
 | [getting-started.md](getting-started.md) | You want the first render on screen in ten lines — browser script tag or Node `require`. |
 | [modules.md](modules.md) | You want to load only part of the runtime (core/graph/projections/quality bundles, sizes, load order). |
 | [api-reference.md](api-reference.md) | You need the workspace object: parse, check, render, mount, snapshots, data replacement, authoring, io. |

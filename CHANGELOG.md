@@ -6,6 +6,22 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+### October 9–14, 2026 — current 0.8.0 alpha
+
+- Unified Logical/Files workspace navigation, section editors, persistent view tabs,
+  shared models/settings, local overrides and DDN/DDNA/DDNN ZIP round trips.
+- Composable name/type/table/note sections, text-only Markdown/code, scrollable
+  notes, DDNN library and host-provided sidecar loading.
+- Active-editor creation destinations, sizing/columns, comparison, route attachment,
+  timeline movement/calendars/timezones, local publication tiles and DDNA rules.
+- Repaired palette silhouettes, tab navigation, failed-action recovery, Select/Pin
+  movement and repeated Link-to connections.
+- CI repaired and green at `9899e2c5`: pinned-browser discovery shared with legacy
+  designer tests, corrected routing expectation, optional external corpus with
+  explicit required-path support, and regenerated Chen-aware gallery snapshots.
+- Documentation now describes the shipped client-side capabilities and limitations;
+  no database execution or hosted service was introduced, and no 0.9.1 release is declared.
+
 ### Changed
 
 - Added `ddna.em2.tables-l0@1` with unique, first and collect row policies, strict boolean predicates, bounded rule counts and full table evidence in verified replay. Rules remain explicit companion declarations; display tables and stored source code remain inert.
@@ -18,8 +34,8 @@ Component-level history predating the monorepo import lives in
 
 - **Open/commercial boundary amended (owner direction, 2026-10-08).** The old
   capability split ("open viewer/designer render DDN only; DDNA support is
-  commercial/closed") is **repealed**. The open tool includes full DDNA
-  support — companion files, trace replay AND trace generation, execution
+  commercial/closed") is **repealed**. The open tool is intended to support DDNA
+  without a licensing exclusion; implemented profiles are documented separately. This includes companion files, trace replay AND trace generation, execution
   engines, KEEL evaluation. The commercial product (ScratchWeaver)
   differentiates **quantitatively and collaboratively**: per-view display
   limits removed, concurrent editing, collaboration, history and extended

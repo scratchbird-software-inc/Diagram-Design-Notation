@@ -4,6 +4,16 @@ The normative core of the project: what the language is, what the vocabulary
 means, and how the standard evolves. The runtime in `../notation/`
 implements this directory; anything here outranks the implementation.
 
+## Current tool implementation
+
+The reference tools are at package version 0.8.0 (alpha). Chapter 59 defines
+composable name/type/table/note sections and optional DDNN text storage; the
+[workspace guide](../website/docs/developers/workspace-guide.md) covers their
+current UI alongside shared models, multiple views and DDNA companions.
+Source dialect versions are separate from the package version. No 0.9.1 release
+is declared by these amendments. DDNN stores text; database execution is outside
+the viewer/designer.
+
 ## Contents
 
 - `specification/` — the standard itself, numbered chapters `00–50`, plus the
@@ -13,7 +23,7 @@ implements this directory; anything here outranks the implementation.
   vectors, composable element sections and text documents). Start at `00-status-and-scope.md`.
 - `grammar/ddn.ebnf` — formal EBNF grammar of the syntactic core.
 - `schemas/` — JSON Schemas (draft 2020-12): resolved IR, scene, value,
-  extension, publication manifest, layout state, workspace.
+  extension, publication manifest, layout state, workspace, DDNN text documents.
 - `registry/` — the machine-readable vocabulary: `catalogue.json`
   (152 object kinds, 90 relation verbs, 118 facets at 0.7.0),
   `capabilities.json`, `data-properties.json`, `relation-constraints.json`,

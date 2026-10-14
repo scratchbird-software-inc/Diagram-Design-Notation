@@ -8,10 +8,12 @@ stubs forwarding their parameters. The full runtime and the example corpus
 are inlined into one HTML file, so it runs from `file://` with no server,
 install, or network (deep links that fetch need HTTP — see below).
 
+For an end-to-end workflow, see [Working with DDN, DDNA and DDNN](workspace-guide.md).
+
 ## Getting and rebuilding
 
 The file is committed and regenerated deterministically from
-`notation/tool/src/{template.html,tool.css,tool.js,worker.js}` by
+`notation/tool/src/` (including the workspace model/UI modules) by
 `node tools/build-tool.js` (run after `build:sdk`). Do not edit the built
 file.
 

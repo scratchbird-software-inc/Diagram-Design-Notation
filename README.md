@@ -2,7 +2,7 @@
 
 ## ddn — the Diagram Design Notation project
 
-**ddn** (Diagram Design Notation) is an open-source diagram dialect sponsored by the **[ScratchWeaver](https://scratchbird.ca/weaver)** project at **[ScratchBird Software Inc.](https://www.scratchbird.ca)**. The free tools are **ddn-viewer** (display and verify .ddn diagrams) and **ddn-designer** (simple edits and small diagrams). The free tools ship the complete notation and rendering core — only tool depth differs from the commercial offerings.
+**ddn** (Diagram Design Notation) is an open-source diagram dialect sponsored by the **[ScratchWeaver](https://scratchbird.ca/weaver)** project at **[ScratchBird Software Inc.](https://www.scratchbird.ca)**. The free tools are **ddn-viewer** (display and verify .ddn diagrams) and **ddn-designer** (visual editing and multi-file workspaces). The free tools ship the complete notation and rendering core — only tool depth differs from the commercial offerings.
 
 Sister project: [ScratchBird on GitHub](https://github.com/scratchbird-software-inc/ScratchBird) ([wiki](https://github.com/scratchbird-software-inc/ScratchBird/wiki)).
 
@@ -20,7 +20,7 @@ I am working on a very large, very complex project that I need to document.  I a
 
 So in creating the tools I needed, I created tools I thought others may find helpful.
 
-The visual editors and viewers are not used in my other projects so they are very basic and need alot of polish.
+The visual tools now include workspace and section editing; they remain alpha and need continued usability and performance qualification.
 
 ### Repository layout
 
@@ -35,31 +35,45 @@ The visual editors and viewers are not used in my other projects so they are ver
 
 ## Status
 
-See [current work and qualification status](WORK-STATUS.md) for the consolidated takeover register.
+Package/runtime version **0.8.0**, alpha, with pre-1.0 standards drafts.
+The October 9–14 work adds a unified workspace for **DDN models and views**,
+**DDNA automation companions**, and **DDNN text documents**. It includes shared
+settings, per-view tabs/state, section editors, validated undoable edits, and
+complete accepted-workspace ZIP save/reopen. Select/Pin movement, repeated
+Link-to actions, palette silhouettes and error recovery have also been repaired.
 
-Currently this is still in very early development and released/made-public so that I can get some feedback before officially releasing it.
+The viewer/designer runs entirely client-side. Stored SQL/procedure text is inert;
+database connections and execution belong to a separate application. DDNA support
+is bounded to implemented profiles, not every execution model in the draft.
 
-I am thinking that once this is finished to submit it as a standard, but it is concept only and the forms are currently AI slop.
+- [Workspace walkthrough](website/docs/developers/workspace-guide.md)
+- [Tool and host API](website/docs/developers/tool.md)
+- [Current work and qualification](WORK-STATUS.md)
+- [Successful CI for implementation commit 9899e2c5](https://github.com/scratchbird-software-inc/Diagram-Design-Notation/actions/runs/38578889318)
+
+This is not a 0.9.1 release. Source dialect and automation profile identifiers
+version independently of the package. Large-workspace responsiveness and some
+advanced editing/execution capabilities remain work in progress.
 
 ## Quick start
 
-I designed everything as a set of static modules so you do not need a web server - everything in the project should work by just opening the files in a browser
+[Open the designer](https://scratchbird-software-inc.github.io/Diagram-Design-Notation/tools/index.html?mode=design),
+choose **Workspace** (folder icon), and open files or a saved workspace ZIP.
+Use Models, Views, Shared settings, Text documents and Automation to manage the
+same project. The standalone `notation/tool/ddn-tool.html` also opens locally;
+URL-based loading requires HTTP. Save the workspace ZIP to retain companion files.
 
 ### Runtime bundles
 
-The browser SDK in `notation/dist/` ships as optional libraries plus the unchanged all-in-one build. Sources are real ES modules; the bundles are built with Rollup (pinned devDependency) in three formats each — readable IIFE (`.js`), ES module (`.mjs`), minified IIFE with source map (`.min.js` + `.min.js.map`). Byte sizes at 0.7.0 (generated details in `notation/dist/README.md`; the same bundles are downloadable from the site's `website/download/` page):
+The browser SDK in `notation/dist/` ships as optional libraries plus the unchanged all-in-one build. Sources are real ES modules; the bundles are built with Rollup (pinned devDependency) in three formats each — readable IIFE (`.js`), ES module (`.mjs`), minified IIFE with source map (`.min.js` + `.min.js.map`). Current sizes and module dependencies are generated in
+[the bundle inventory](notation/dist/README.md), with downloadable copies on the
+[website](https://scratchbird-software-inc.github.io/Diagram-Design-Notation/download/).
 
-| Bundle               | Contains                                                                                      | Requires                                            | `.js` bytes | `.min.js` bytes | `.min.js` gzip |
-| -------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------- | ----------- | --------------- | -------------- |
-| `ddn-core`           | Parse/build/validate/export, projection + quality planning data, workspace API (no rendering) | —                                                   | 695,510     | 596,571         | 133,757        |
-| `ddn-graph`          | Graph renderer (ERD/flow/C4/state/BPMN…); registers the `graph` kind                          | `ddn-core.js`                                       | 151,781     | 108,180         | 40,007         |
-| `ddn-quality`        | Quality charts, decision tables, fishbone renderers                                           | core + graph (renders through `ddn-projections.js`) | 20,469      | 15,633          | 7,022          |
-| `ddn-projections`    | Chart/matrix/panels/timeline/table/sequence/timing/chen                                       | core + graph                                        | 91,683      | 75,333          | 27,810         |
-| `ddn-geo` (optional) | Map projections (mercator/equirectangular/albers/equalEarth), GeoJSON, choropleth/symbol/outline maps | core + graph                             | 23,771      | 16,201          | 6,841          |
-| `ddn-iso` (optional) | Isometric depth (B1-034): axonometric 30° projection, chart extrusions (bar/pie/donut/area/treemap), iso graph prisms | core + graph | 23,406 | 14,396 | 5,996 |
-| `ddn.global`         | All of the above except `ddn-geo` and `ddn-iso` + Studio component (what tests and standalone pages embed) | — | 980,489     | 819,295         | 213,042        |
-
-Import just what you need: a downstream bundler pulling only the check-level API from `ddn-core.mjs` emits ≈640 KB instead of ≈876 KB for the all-in-one (measured in `notation/tests/esm-dist.js`), and the minified core gzips to ≈121 KB. Each `ddn-X` bundle has `.js`/`.mjs`/`.min.js` + `.d.ts` copies. Loading modules out of order throws immediately; rendering a kind whose bundle is missing throws coded error `DDN-E010` naming the providing bundle — with owner-directed exceptions for the two optional modules: `ddn-geo` ("Map view requires ddn-geo.js") and `ddn-iso` ("Isometric view requires ddn-iso.js") degrade to a visible inline placeholder plus the coded `DDN-E010` diagnostic, never silently; a `depth` property without `ddn-iso` renders flat with the coded diagnostic. See `website/examples/embed/` for live proofs.
+Use `ddn-core` for parsing, validation and workspace APIs; add `ddn-graph`,
+`ddn-projections` and `ddn-quality` as needed. `ddn.global` includes those plus
+Studio. Geographic and isometric rendering are separate optional modules
+(`ddn-geo`, `ddn-iso`). The [module guide](website/docs/developers/modules.md)
+explains load order and coded missing-renderer diagnostics.
 
 **Data refresh:** a host page (dashboard, live report) can replace the records of a named `data` block without touching the model, views or layout — `ws.replaceData(name, records)` rewrites only that block's record lines and returns `{committed, revision, added, removed, updated, diagnostics}`. Records match by an optional `key` field (the declaration id), so reordered payloads never corrupt identities; without keys the fallback is positional and order-sensitive. Records must carry the same field keys as the block's existing first record (`DDN-E011` otherwise; unknown block name is `DDN-E002`). Refresh is transactional: field types are checked against the block's declared types and every affected view is validated before commit — on failure nothing commits and `diagnostics` names the view, record key and failure (`DDN-E012`). Removing a record a view still references is rejected; selector-membership views pick up added records automatically while explicit-membership views keep their bound records and get a `DDN-W015` `addedRecordsNotVisible` report; refreshing to an empty set is legal and renders the declared empty state. Same values re-render every view byte-identical; changed values move only the marks of data-driven views. 
 
@@ -79,12 +93,12 @@ See `website/examples/basics/59-data-refresh.ddn` and `website/examples/embed/da
 ### npm package
 
 The runtime is pack-able as `@ddn/notation` (`notation/`; version
-0.7.0, license GPL-2.0-or-later, zero *runtime* dependencies — the
+0.8.0, license GPL-2.0-or-later, zero *runtime* dependencies — the
 Rollup build toolchain is a pinned devDependency and never ships in the
 package). `npm pack` in
 `notation/` produces a tarball limited to `dist/`, `README.md`, and
 `package.json`. **Not yet published to the npm registry** — install the
-tarball directly (`npm i ./ddn-notation-0.7.0.tgz`); `npm i
+tarball directly (`npm i ./ddn-notation-0.8.0.tgz`); `npm i
 @ddn/notation` becomes available once the first `v*` tag is published. The
 publish path itself is ready and continuously validated:
 `.github/workflows/publish.yml` runs the packaging gate and

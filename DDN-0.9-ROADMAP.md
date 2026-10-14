@@ -2,6 +2,10 @@
 
 Current work register: [WORK-STATUS.md](WORK-STATUS.md). Unchecked mixed items below have delivered portions but unresolved runtime or interaction work.
 
+Implementation update (2026-10-14): several candidates have shipped as 0.8 amendments;
+see the current work register and [workspace guide](website/docs/developers/workspace-guide.md).
+This roadmap is not a 0.9/0.9.1 release announcement.
+
 Status: candidate list, owner-approved for tracking. Nothing here is committed
 for 0.9 scope until individually ratified. Items dispositioned "0.9" in the
 closure audit (kimi-specification-workarea/ddn-opensource-closure-2026-10-05/02)

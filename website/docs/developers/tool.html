@@ -31,8 +31,9 @@
 <article class="md-body">
 <h1>Unified diagram tool</h1>
 <p><code>notation/tool/ddn-tool.html</code> — served on the website as <code>tools/index.html</code> — is the single-file unified diagram tool. It replaces the three retired pages (<code>tools/viewer/index.html</code>, <code>tools/studio/index.html</code>, <code>tools/studio/editor.html</code>), which are now redirect stubs forwarding their parameters. The full runtime and the example corpus are inlined into one HTML file, so it runs from <code>file://</code> with no server, install, or network (deep links that fetch need HTTP — see below).</p>
+<p>For an end-to-end workflow, see <a href="workspace-guide.html">Working with DDN, DDNA and DDNN</a>.</p>
 <h2>Getting and rebuilding</h2>
-<p>The file is committed and regenerated deterministically from <code>notation/tool/src/{template.html,tool.css,tool.js,worker.js}</code> by <code>node tools/build-tool.js</code> (run after <code>build:sdk</code>). Do not edit the built file.</p>
+<p>The file is committed and regenerated deterministically from <code>notation/tool/src/</code> (including the workspace model/UI modules) by <code>node tools/build-tool.js</code> (run after <code>build:sdk</code>). Do not edit the built file.</p>
 <h2>Workspace navigation and section editing</h2>
 <p>In design mode, the <strong>Workspace</strong> drawer provides Logical and Files views, search, and entry points for Models, Views, Shared settings, Text documents, and Automation. The workspace bar provides New, Open, Save, Save As, Undo, and Redo. Existing file import, rename, and download controls are under <strong>Open, import, files and downloads</strong>.</p>
 <p>Editors open in a horizontally scrolling tab strip. View identities include the source file and module, so equal view names in separate modules remain independent. Each view remembers its fit/zoom, scroll, selection, presentation, and retained layout. The scope strip identifies the current view and the owning source of a selected shared definition.</p>

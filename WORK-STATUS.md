@@ -1,13 +1,48 @@
 # DDN takeover status and outstanding work
 
-Updated 2026-10-09. This is the consolidated DDN/DDNA work register. It replaces
+Updated 2026-10-14. This is the consolidated DDN/DDNA/DDNN work register. It replaces
 older workplan status summaries, while their requirements and recorded owner
 decisions remain evidence. A shipped implementation, a written proposal, and an
 approved scope exclusion are different states; a checkbox alone establishes none
 of them. The project is still alpha, package version 0.8.0, with pre-submission
 standards drafts.
 
-## Current work
+## Current implementation and qualification — October 14
+
+The unified workspace is shipped on `main` and the static website. Models,
+Views, Shared settings, Text documents and Automation have section editors;
+Logical/Files navigation and qualified view tabs tie them together. Save/reopen
+preserves accepted DDN/DDNA/DDNN files, loaded traces and view sessions. Shared
+validation, undo/redo and retained drafts protect edits. See the
+[workspace walkthrough](website/docs/developers/workspace-guide.md).
+
+The active editor also implements creation destinations, sizing/column controls,
+model/appearance comparison, route attachment controls, timeline movement and
+explicit calendars/timezones, local publication tiles, host-provided DDNN loading,
+and bounded DDNA rule editing. Palette silhouettes, Select/Pin movement, context
+menus and repeated Link-to actions were repaired. All processing is client-side;
+procedure code is inert and database execution belongs to another application.
+
+[GitHub CI for 9899e2c5](https://github.com/scratchbird-software-inc/Diagram-Design-Notation/actions/runs/38578889318)
+passed both jobs on October 14: notation suites, CLI/schema checks, designer and
+browser integration, and the 617-target link crawl. Workspace acceptance previously
+passed native Chromium with workers on/off and Firefox DOM smoke checks. Local
+conformance vectors also passed 302/302, including 277 external patent figures;
+that private corpus is explicitly skipped when absent from a clean public checkout.
+
+Remaining implementation limits include synchronous all-view section validation,
+non-virtualized model lists, session-only drafts/history, advanced JSON/Source
+controls, and the requirement to retain a view. Full database-scale performance
+has not been qualified. EM-5 contracts are not installed engines; full DMN/FEEL,
+EM-5 execution and EM-6 interpretations remain open. These limits do not allocate
+features to commercial products. Package version remains 0.8.0 alpha.
+
+## Takeover history
+
+The dated evidence sections below describe their original milestones. Their
+“next priority” statements are historical; use this summary and the register for
+current status.
+
 
 The takeover began at `c1e0cf1d` with six modified runtime/registry files. Their
 exact original patch, status and base commit were preserved outside the product
@@ -57,11 +92,11 @@ implement unrelated work.
 | DDN-T05 | P1 | COMPLETE | Explicit same-view frame containment, registry depth limit 4, coded parent/cycle/depth/geometry errors, nested graph bounds and inherited confine constraints. Positive and negative vectors active. Focused 16/16, notation 149/149, root 8/8, designer pass; 277 patent SVGs byte-identical. See `../kimi-specification-workarea/ddn-frame-nesting-2026-10-09/REPORT.md`. |
 | DDN-T06 | P1 | COMPLETE | AUD-005: generated 55 silhouette identifiers from kind defaults and profile variants (previously 14); SDK builds reject drift and unknown recipes. Explicit legacy intermediate fallback retained. Focused 62/62, six targeted notation groups, three root groups and browser 11/11 pass. See `../kimi-specification-workarea/ddn-shape-catalogue-2026-10-09/REPORT.md`. |
 | DDN-T07 | P1 | IN PROGRESS | Bounded EM-2 KEEL L0 DAG evaluation implemented (chapter 14). Bounded unique/first/collect tables also implemented; broader DMN/FEEL semantics, EM-5 host contracts and boundary validation specified in chapter 15; actual EM-5 engines and EM-6 protocol interpretations remain outstanding; generic unsupported profiles still report DDN-A006. |
-| DDN-T08 | P1 | OPEN | Preserve DDNA A–C and WW-001–007 acceptance probes as repeatable tracked suites. Temporary `/tmp` probes and implementation notes are insufficient durable acceptance evidence. |
+| DDN-T08 | P1 | PARTIAL | Durable host I/O, DDNA replay/generation, workspace model, native Chromium and Firefox smoke suites now ship. A complete mapping of every historical A–C/WW acceptance criterion remains to be reconciled. |
 | DDN-T09 | P1 | OPEN | Deterministic cross-tool display qualification: reconcile DSP-AC-01–07 and OWN-081 ignore behavior, run against the intended downstream revision, preserve canonical scenes and input manifests. Ordinary DDN vector tests do not prove cross-product equivalence. |
-| DDN-T10 | P2 | OPEN | AUD-002 explicit create destination: reconcile active WW-002/003 file/view creation with definition-creation destination and atomic create-plus-occurrence acceptance. Do not close from similarly named file controls alone. |
+| DDN-T10 | P2 | COMPLETE | Explicit definition-creation destinations and atomic creation/undo are implemented in the active editor; creation-destination unit and browser checks qualify the behavior. |
 | DDN-T11 | P2 | OPEN | Measure completed-editor responsiveness against chapter 16 budgets, including DOM install, drag, dense views and failures. Existing runtime/worker measurements do not establish editor targets. |
-| DDN-T12 | P2 | OPEN | Reference-tool follow-ups: element-targeted sizing controls, diff-view UI, attachment-policy contract/editing, actual timeline drag, and designer controls/spreadsheet editing for the newly implemented column and field-wrap source properties. Also migrate existing visual gestures to the preview/apply adapter and qualify additional draft-validator sites individually. The roadmap's implemented helpers, draft contracts or typed date fields do not alone satisfy these interaction requirements. |
+| DDN-T12 | P2 | PARTIAL | Sizing, model/appearance diff UI, route attachment, timeline shift, column/field controls and guided preview/apply adoption are implemented and tested. Remaining raw paths, live incomplete-draft rendering and additional draft-validator sites still need closure. |
 | DDN-T13 | P2 | DECISION | Rebaseline designer specification 00–21 and M1–M3 acceptance against the active tool; settle what declares the reference PoC complete. Retired prototype evidence must remain distinguishable. |
 | DDN-T14 | P2 | DECISION | Finalize icon release selection/digests, reproducible-output input manifest, Weaver-target revision, REF-CLI consumption, and formal closure release notes. October 5 checklist is not approval of its recommendations. |
 | DDN-T15 | P2 | OPEN | DDNA specification remainder: DATA A-vs-C, final feature core/optional tags, cited-text acquisition, DMN/UAF version reconciliation, converter licensing and 1.0 claims. Reconcile `ddna/12-what-remains.md` with landed companion/integration conventions. |
@@ -69,7 +104,7 @@ implement unrelated work.
 | DDN-T17 | P2 | DECISION | T04 now validates all files syntactically and all declared views authoritatively for adapter actions. Reconcile the remaining AUD-008 legacy/raw edit paths and lab-manifest coverage; no automatic closure by referral to Weaver. |
 | DDN-T18 | P3 | HISTORICAL | ScratchBird Core audit: October 3 report records 52 owner questions and 389 open markers after repairs. Revalidate against current Core authority in a separate ScratchBird task before treating these counts as current. |
 | DDN-T19 | P3 | HISTORICAL | Twenty counsel-review patent packages, 277 DDN figures. Preserve source and confidentiality; draft completion is not filing/counsel approval. Figures are also a DDN regression corpus. |
-| DDN-T20 | P2 | OPEN | Occurrence follow-ups outside the implemented flat binary-graph contract: hidden-endpoint boundary-cross routing, occurrence-level visual diffing, and explicit addressing in data-bound/isometric/fixed-lane/n-ary projections. Each needs its own projection and interaction contract; current sources reject unsupported cases rather than silently dropping qualifiers. |
+| DDN-T20 | P2 | OPEN | Occurrence follow-ups outside the implemented flat binary-graph contract: hidden-endpoint boundary-cross routing, occurrence-level visual diffing, and explicit addressing in data-bound/fixed-lane/n-ary projections (isometric graph expansion is now implemented). Each needs its own projection and interaction contract; current sources reject unsupported cases rather than silently dropping qualifiers. |
 | DDN-T21 | P1 | COMPLETE | Chapter 59/source dialect 0.7: type/element/appearance section defaults, table-note order, text-only Markdown/code, scrollable notes and optional DDNN storage. Full text transfer, atomic undo and DDNA appearance replay are implemented. Focused 35/35, browser 2/2, all 147 notation scripts, root 8/8 and designer pass. See `../kimi-specification-workarea/ddn-composable-elements-implementation-2026-10-09/REPORT.md`. |
 
 ## Scope and ownership reconciliation

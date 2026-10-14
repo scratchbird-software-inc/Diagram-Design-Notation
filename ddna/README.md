@@ -1,7 +1,13 @@
 # DDNA — DDN with Automation · proposed open standard (draft, pre-1.0)
 
-**Status:** full draft skeleton, 2026-09-29. All twelve chapters and the
-appendix are full drafts. Per-family chapters: the full program has landed under `ddna/families/` (twelve chapters covering all six execution-model classes plus the no-standard families; tier-3 gated families excepted, chapter 12 §1).
+**Status (2026-10-14):** pre-1.0 draft, with chapters 01–15, the appendix and
+per-family drafts. The open client-side tool loads companions, edits supported
+rules, generates bounded traces and replays them. Chapter 14 defines implemented
+DAG and unique/first/collect table profiles; chapter 15 supplies boundary contracts,
+not an installed EM-5 engine. Full DMN/FEEL, solver/query engines and EM-6 remain
+outside the implemented profile set. The [workspace guide](../website/docs/developers/workspace-guide.md)
+explains the current UI and file lifecycle. Product policy does not establish
+implementation or conformance of every draft feature.
 
 ## Scope
 
