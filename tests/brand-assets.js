@@ -15,21 +15,38 @@ function* walk(dir) {
   }
 }
 
-const BRAND_FILES = ['ddn.svg', 'ddn.png', 'scratchweaver.svg', 'scratchweaver.png', 'favicon.svg', 'favicon-32.png', 'favicon-64.png'];
+const BRAND_FILES = [
+  'ddn.svg', 'ddn-dark.svg', 'ddn.png',
+  'scratchweaver.svg', 'scratchweaver-dark.svg', 'scratchweaver.png',
+  'scratchbird.svg', 'scratchbird-dark.svg',
+  'scratchrobin.svg', 'scratchrobin-dark.svg',
+  'opensource.svg', 'opensource-dark.svg',
+  'favicon.svg', 'favicon-32.png', 'favicon-64.png',
+];
 
-test('assets/brand/ contains the five brand files', () => {
+test('assets/brand/ contains the family marks and dark variants', () => {
   for (const f of BRAND_FILES) assert.ok(fs.statSync(path.join(root, 'assets/brand', f)).size > 0, f + ' missing or empty');
 });
 
 test('ddn.svg is self-contained with a synthesized viewBox and no editor cruft', () => {
   const svg = fs.readFileSync(path.join(root, 'assets/brand/ddn.svg'), 'utf8');
   assert.match(svg, /<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" viewBox="[\d.\- ]+"/);
-  assert.ok(svg.includes('fill:#0c75bd'), 'logo blue missing');
+  assert.ok(svg.includes('#0c75bd'), 'logo blue missing');
   assert.ok(!/inkscape:|sodipodi:/.test(svg), 'inkscape/sodipodi attributes left in the logo');
   assert.ok(!/href=|src=|url\(\s*['"]?https?:/.test(svg), 'external reference in the logo');
+  const inverse = fs.readFileSync(path.join(root, 'assets/brand/ddn-dark.svg'), 'utf8');
+  assert.ok(inverse.includes('#ffffff'), 'blue-to-white inverse missing');
+  assert.ok(fs.readFileSync(path.join(root, 'assets/brand/scratchrobin-dark.svg'), 'utf8').includes('#0c75bd'),
+    'white-to-blue inverse missing');
 });
 
-test('build:brand is fresh (re-run into temp dir byte-matches committed assets)', () => {
+test('build:brand is fresh when owner artwork is available', () => {
+  const source = process.env.DDN_BRAND_SOURCE || '/home/dcalford/Sandbox/ScratchBirdLogos.svg';
+  const png = process.env.DDN_WEAVER_PNG || '/home/dcalford/Sandbox/ScratchWeaver.png';
+  if (!fs.existsSync(source) || !fs.existsSync(png)) {
+    console.log('SKIP owner artwork not installed; committed SVG and site checks still run');
+    return;
+  }
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ddn-brand-'));
   cp.execFileSync(process.execPath, [path.join(root, 'tools/build-brand.mjs')],
     { env: { ...process.env, DDN_BRAND_OUT: tmp }, stdio: 'pipe' });
@@ -44,10 +61,10 @@ test('build:brand is fresh (re-run into temp dir byte-matches committed assets)'
 
 test('website shell pages carry the logo, favicons, wordmark, and ScratchBird footer', () => {
   const home = fs.readFileSync(path.join(root, 'website/index.html'), 'utf8');
-  assert.ok(home.includes('assets/brand/ddn.svg'), 'logo missing from home header');
+  assert.ok(home.includes('assets/brand/ddn-dark.svg'), 'inverse logo missing from home header');
   assert.ok(home.includes('assets/brand/favicon.svg') && home.includes('assets/brand/favicon-32.png'), 'favicons missing');
   assert.ok(home.includes('>ddn<small>Diagram Design Notation</small>'), 'wordmark missing');
-  assert.ok(home.includes('assets/brand/scratchweaver.svg'), 'sponsor mark missing from footer');
+  assert.ok(home.includes('assets/brand/scratchweaver-dark.svg'), 'inverse sponsor mark missing from footer');
   assert.ok(home.includes('ScratchWeaver-sponsored') || home.includes('ScratchWeaver project'), 'ScratchWeaver sponsor framing missing');
   assert.ok(home.includes('ScratchWeaver</strong></a>-sponsored open-source project') && home.includes('href="https://scratchbird.ca/weaver"') && home.includes('href="https://www.scratchbird.ca"'), 'footer provenance/link missing');
   const download = fs.readFileSync(path.join(root, 'website/download/index.html'), 'utf8');

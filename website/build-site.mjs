@@ -185,14 +185,14 @@ function shell({ base, title, active, body, description }) {
     favicons(base) +
     '<link rel="stylesheet" href="' + base + 'assets/site.css">\n</head>\n<body>\n' +
     '<header class="site-header"><div class="bar">\n' +
-    '  <a class="wordmark" href="' + base + 'index.html"><img class="logo" src="' + base + 'assets/brand/ddn.svg" alt="DDN logo">' +
+    '  <a class="wordmark" href="' + base + 'index.html"><img class="logo" src="' + base + 'assets/brand/ddn-dark.svg" alt="DDN logo">' +
     '<span class="name">ddn<small>Diagram Design Notation</small></span></a>\n' +
     '  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>\n' +
     '  <nav class="site-nav">\n      ' + nav + '\n  </nav>\n</div></header>\n' +
     body + '\n' +
     '<footer class="site-footer"><div class="inner">\n' +
     '  <span>ddn ' + VERSION + ' — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>\n' +
-    '  <span><img src="' + base + 'assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>\n' +
+    '  <span><img src="' + base + 'assets/brand/scratchweaver-dark.svg" alt="ScratchWeaver logo" style="height:25px;vertical-align:middle"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>\n' +
     '  <a href="' + base + 'license/index.html">License: GPL-2.0-or-later</a>\n' +
     '  <a href="' + base + 'docs/index.html">Docs</a>\n' +
     '  <a href="' + base + 'standard/index.html">Standard</a>\n' +
@@ -270,7 +270,7 @@ function withSiteChrome(html, base, active) {
     .match(/<header class="site-header">[\s\S]*?<\/header>/)[0];
   const footer = '<footer class="site-footer"><div class="inner">\n' +
     '  <span>ddn ' + VERSION + ' — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>\n' +
-    '  <span><img src="' + base + 'assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>\n' +
+    '  <span><img src="' + base + 'assets/brand/scratchweaver-dark.svg" alt="ScratchWeaver logo" style="height:25px;vertical-align:middle"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>\n' +
     '  <a href="' + base + 'license/index.html">License: GPL-2.0-or-later</a>\n' +
     '  <a href="' + base + 'docs/index.html">Docs</a>\n' +
     '  <a href="' + base + 'standard/index.html">Standard</a>\n' +
@@ -462,6 +462,7 @@ writeOut('index.html', shell({
     '    <a class="cta secondary" href="standard/index.html">Read the standard</a>\n' +
     '  </div>\n</div></section>\n' +
     '<main class="site-main">\n' +
+    '<section class="family-banner"><img src="assets/brand/opensource-dark.svg" alt="ScratchBird open-source wing"><p>The open-source wing is derived from the commercial ScratchBird mark. On dark surfaces its blue and white artwork is exchanged for contrast; the full product marks identify the engine, ScratchRobin and ScratchWeaver separately.</p></section>\n' +
     '<section><h2>One workspace for DDN, DDNA and DDNN</h2><p>Manage shared models, multiple views, reusable settings, automation companions and text documents together. Save and reopen the accepted project as a workspace ZIP. The 0.8.0 alpha tools run client-side; database execution remains outside the designer.</p><p><a href="docs/developers/workspace-guide.html">Workspace guide and current limitations</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/actions/runs/38578889318">October 14 implementation CI: passed</a></p></section>\n' +
     '<section class="live-panel">\n' +
     '  <h2>Live render — generated in your browser, right now</h2>\n' +
@@ -472,10 +473,11 @@ writeOut('index.html', shell({
     homeCards.map(([href, h, p, small]) =>
       '    <a class="card" href="' + href + '"><h3>' + esc(h) + '</h3><p>' + esc(p) + '</p><small>' + esc(small) + '</small></a>').join('\n') +
     '\n  </div>\n</section>\n' +
-    '<section>\n  <h2>The product family</h2>\n  <div class="grid">\n' +
-    '    <div class="card"><h3>ddn · ddn-viewer · ddn-designer — open source (this project)</h3><p>The dialect itself (<strong>ddn</strong>), the reference runtime, the free <strong>ddn-viewer</strong> (display and verify .ddn diagrams) and the free <strong>ddn-designer</strong> (visual editing and multi-file workspaces) — GPL-2.0-or-later. The free tools ship the complete notation and rendering core; only tool depth differs from the commercial offerings. Sister project: <a href="https://github.com/scratchbird-software-inc/ScratchBird">ScratchBird on GitHub</a> · <a href="https://github.com/scratchbird-software-inc/ScratchBird/wiki">ScratchBird wiki</a>.</p></div>\n' +
-    '    <div class="card"><h3><a href="https://scratchbird.ca/weaver">ScratchWeaver</a> — sponsoring project</h3><p>ScratchWeaver sponsors the open-source ddn family and is also the full commercial diagramming suite (subscription, with some on-site licensing) built on ddn as its file storage and communication format.</p></div>\n' +
-    '    <div class="card"><h3>ScratchRobin — open-source console</h3><p>The open-source database management console, BI and data-analytics project that uses DDN/DDNA in its own project and owns backend capabilities such as KEEL. The DDN viewer/designer remains client-side and includes bounded KEEL L0 evaluation for supported DDNA profiles. Database connectivity and execution belong to separate applications; stored procedure text remains inert.</p></div>\n' +
+    '<section>\n  <h2>The ScratchBird project family</h2>\n  <div class="family-grid">\n' +
+    '    <div class="family-card"><img class="family-mark" src="assets/brand/ddn.svg" alt="Diagram Design Notation wing mark"><h3>DDN · open source</h3><p>The wing-based mark identifies Diagram Design Notation, its free viewer and designer, and the proposed open standard. <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation">Project source</a>.</p></div>\n' +
+    '    <div class="family-card"><img class="family-mark" src="assets/brand/scratchweaver.svg" alt="ScratchWeaver bird mark"><h3><a href="https://scratchbird.ca/weaver">ScratchWeaver</a> · commercial</h3><p>The full bird-and-network mark identifies the sponsoring diagramming suite; DDN remains its open notation and tooling project.</p></div>\n' +
+    '    <div class="family-card"><img class="family-mark" src="assets/brand/scratchbird.svg" alt="ScratchBird database mark"><h3><a href="https://scratchbird.ca/bird">ScratchBird</a> · database engine</h3><p>The bird perched on a database cylinder identifies the engine. Its <a href="https://github.com/scratchbird-software-inc/ScratchBird">source repository</a> is separate from DDN.</p></div>\n' +
+    '    <div class="family-card"><img class="family-mark" src="assets/brand/scratchrobin.svg" alt="ScratchRobin database workbench mark"><h3><a href="https://scratchbird-software-inc.github.io/CDEadmin/">ScratchRobin</a> · open-source workbench</h3><p>The bird, database and connected nodes identify the multi-engine console, which uses DDN for database diagrams and dashboards.</p></div>\n' +
     '\n  </div>\n</section>\n' +
     '<p><small>Draft proposal, pre-1.0 — the project provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</small></p>\n' +
     '</main>\n' +

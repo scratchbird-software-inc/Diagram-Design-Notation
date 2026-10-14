@@ -33,6 +33,16 @@ The visual tools now include workspace and section editing; they remain alpha an
 | `tools/`    | **Shared tooling**          | Build scripts (SDK, gallery, standalone pages, unified tool), local static server, packaging tests                                                                                                                                                                                                                                                              |
 | `tests/`    | **Repo-level tests**        | Website link-integrity and build-freshness gate; AI-REFERENCE.md ddn-block validation gate (skipped when the internal, gitignored AI-REFERENCE.md is absent)                                                                                                                                                                                                                                                                                                           |
 
+The open-source site follows the ScratchRobin family design system: dark navy
+header and hero, aqua actions, light content cards, and the same typography and
+spacing. `tools/build-brand.mjs` extracts distinct marks from
+the owner-provided `ScratchBirdLogos.svg` (set `DDN_BRAND_SOURCE` and
+`DDN_WEAVER_PNG` outside the owner workstation). DDN uses the *The Diagram Designer
+Project* wing mark; the full ScratchWeaver bird remains the commercial sponsor
+mark. Blue/white-swapped `-dark.svg` variants are used on dark surfaces. The
+committed `assets/brand/` and `website/assets/brand/` files are generated assets,
+not independent artwork sources.
+
 ## Status
 
 Package/runtime version **0.8.0**, alpha, with pre-1.0 standards drafts.
