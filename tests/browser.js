@@ -19,14 +19,16 @@ function findBrowser() {
     'No headless Chromium found: ' + shellDir + ' does not exist.\n' +
     'Install the browser with: npx playwright@1.49.1 install chromium\n' +
     'or set DDN_BROWSER=/path/to/chrome-headless-shell (or any Chromium/Chrome executable).');
-  const shell = fs.readdirSync(shellDir).filter(d => d.startsWith('chromium_headless_shell-')).sort().pop();
+  const shell = fs.readdirSync(shellDir).filter(d => d.startsWith('chromium_headless_shell-')).sort((a,b) => Number(a.split('-').pop()) - Number(b.split('-').pop())).pop();
   if (!shell) throw new Error(
     'No chromium_headless_shell-* under ' + shellDir + '.\n' +
     'Install the browser with: npx playwright@1.49.1 install chromium\n' +
     'or set DDN_BROWSER=/path/to/chrome-headless-shell.');
-  const bin = path.join(shellDir, shell, 'chrome-headless-shell-linux64', 'chrome-headless-shell');
-  if (!fs.existsSync(bin)) throw new Error(
-    'Playwright cache entry ' + shell + ' has no linux64 headless shell at ' + bin + '.\n' +
+  const candidates = [['chrome-headless-shell-linux64', 'chrome-headless-shell'], ['chrome-linux', 'headless_shell']].map(parts =>
+    path.join(shellDir, shell, ...parts));
+  const bin = candidates.find(candidate => fs.existsSync(candidate));
+  if (!bin) throw new Error(
+    'Playwright cache entry ' + shell + ' has no Linux headless shell at ' + candidates.join(' or ') + '.\n' +
     'Reinstall with: npx playwright@1.49.1 install chromium, or set DDN_BROWSER=/path/to/a/chromium.');
   return bin;
 }

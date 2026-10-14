@@ -59,7 +59,9 @@ jobs:
         run: npx playwright@1.49.1 install --with-deps chromium
 
       - name: Verify browser discovery
-        run: node -e "console.log(require('./tests/browser.js').findBrowser())"
+        run: |
+          node tests/browser-discovery.js
+          node -e "console.log(require('./tests/browser.js').findBrowser())"
 
       - name: Designer tests
         run: npm --prefix designer test

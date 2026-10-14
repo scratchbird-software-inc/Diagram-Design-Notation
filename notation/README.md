@@ -48,6 +48,12 @@ node cli/cli.js check ../website/examples/basics/01-customer.ddn --workspace ..
 node cli/cli.js render x.ddn --workspace . --no-motion   # static SVG (strip SMIL animation)
 ```
 
+The conformance vectors are included in this repository. The additional
+patent-drafts smoke corpus is external: local checkouts use the sibling
+`kimi-specification-workarea/patent-drafts` directory when present, and clean
+checkouts report it as skipped. Set `DDN_PATENT_CORPUS=/path/to/patent-drafts`
+to require a particular corpus; a missing or empty explicit directory fails.
+
 ## Flow animation (B1-033)
 
 Graph relations accept optional motion properties — `motion: flow|pulse|none`,

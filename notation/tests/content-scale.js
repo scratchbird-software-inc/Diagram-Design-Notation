@@ -110,9 +110,13 @@ test('DDN200: authored gap below 20px is rejected; >=20 is the verbatim inter-el
  assert.ok(r.svg.includes('<svg'),'gap 64 accepted');
  const a=r.scene.nodes.find(n=>n.id.endsWith('.a')),b=r.scene.nodes.find(n=>n.id.endsWith('.b'));
  assert.ok(Math.abs(b.x-(a.x+a.w)-64)<1e-9,'authored gap is used verbatim — no clearance floor added');
- // Clearances still govern routing: at gap 20 two facing endpoints cannot
- // escape past each other's inflated boxes and escape corridors, so the router
- // reports DDN212 instead of silently widening the authored spacing.
- assert.equal(code(()=>render(MODEL+'\nview v { data: [@m]; layout { gap: 20px; algorithm: grid; } }')),'DDN212','sub-clearance gap is a routing diagnostic, not a silent override');
+ // Free endpoints can choose clear sides without widening authored spacing.
+ const tight=render(MODEL+'\nview v { data: [@m]; layout { gap: 20px; algorithm: grid; } }');
+ const ta=tight.scene.nodes.find(n=>n.id.endsWith('.a')),tb=tight.scene.nodes.find(n=>n.id.endsWith('.b'));
+ assert.equal(tb.x-(ta.x+ta.w),20,'routing fallback preserves the authored gap');
+ assert.equal(tight.scene.routes.length,1,'the relation remains routed');
+ // Authored/member endpoint constraints that cannot escape are covered by
+ // endpoint-clearance.js; those must still report DDN212.
+
 });
 console.log('content-scale:',results.filter(r=>r.pass).length+'/'+results.length,'passed');
