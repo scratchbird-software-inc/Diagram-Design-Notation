@@ -261,3 +261,11 @@ events and Yourdon versus Gane–Sarson processes. Small previews preserve circl
 proportions, intrinsic symbol marks and relative outline weights. Text-only
 labels use an unboxed sample. Previews do not create a viewer, load optional
 profile families or alter the model.
+
+### Native distribution compression — 28 October 2026
+
+Generated schema data uses repeated-string and object-shape dictionaries around the existing wire representation. Decoding first restores that original representation, including numeric references and insertion order; the established decoder then rebuilds the catalogue. Generator checks and a full decoded-catalogue comparison guard the transformation. The DDN language and public utility ABI are unchanged.
+
+Single-file builds add pinned Terser 5.51.2 after esbuild and registry packaging, using three passes with property mangling disabled and no pure-getter assumptions. Worker factory serialization and cooperative fallback remain part of browser qualification. Static shell factory objects are checked before unavailable factory fields are specialized; new capabilities fail the build instead of being silently removed. The shared brand source reconstructs byte-identical light and dark SVG data URLs.
+
+Viewer and designer now meet their existing native compressed ceilings, enforced by the build. The verifier is smaller but remains above its original ceiling; its failed size result stays visible in the manifest. No target, catalogue, validator or supported role was reduced.

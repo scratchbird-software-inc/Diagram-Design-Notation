@@ -79,7 +79,9 @@ test('HTTP loader has a bounded timeout and can retry the same trusted chunk', a
         });
         assert.match(result.message, /Timed out loading DDN chunk/); assert.ok(result.elapsed >= 250 && result.elapsed < 4000);
         assert.equal(counts.get(target), 1);
-        delay = false; waiting.forEach(response => response.destroy());
+        // A reset connection can make Chromium transparently retry the old request.
+        // Finish that expired response explicitly so the counter measures loader retries.
+        delay = false; waiting.forEach(response => {response.writeHead(410,{'Cache-Control':'no-store'});response.end();});
         assert.equal(await page.evaluate(() => DDN_LOADER.loadEntry('verify:graphs').then(exports => exports.answer)), 7);
         assert.equal(counts.get(target), 2);
         assert.equal(await page.evaluate(() => DDN_LOADER.describe().pendingChunks.length), 0);

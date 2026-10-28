@@ -136,3 +136,9 @@ test('literal local dynamic imports remain outside the static closure and execut
  c.run(chunkScript(graph,graph.modules.keys(),options));
  c.global.DDN_MODULES.setImporter(id=>Promise.resolve(c.global.DDN_MODULES.require(id)));c.run(entryScript('entry.js'));assert.equal(await c.global.ready,42);
 });
+
+test('shell specialization rejects a new factory instead of dropping its capability',async()=>{
+ const {shellInputs}=await import('../../../../tooling/workspace/ddn-shells.mjs');
+ const f=fixture({'standalone/src/shell.js':'export function mountShell(factories){}','standalone/src/modular-shell.js':'export function bootModularShell(){}','standalone/src/verifier-entry.js':'import{mountShell}from"./shell.js";mountShell({mode:"verifier",options:()=>({}),verifier:()=>({}),viewer:()=>({})});'});
+ assert.throws(()=>shellInputs({main:join(f.built,'standalone/src/verifier-entry.js')},f.built,'native-verifier-contract-test'),/Review added shell factories/);
+});

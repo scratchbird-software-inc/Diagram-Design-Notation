@@ -9,7 +9,9 @@ const node=join(env.DDN_BUILD_WORKAREA,'tools/toolchain/node/bin/node'),npm=join
 const result=spawnSync(node,[npm,'ci','--ignore-scripts','--no-audit','--no-fund',...(process.argv.includes('--offline')?['--offline']:[])],{cwd:target,env,stdio:'inherit'});
 if(result.error)throw result.error;
 if(result.status!==0)process.exit(result.status??1);
-const expected=JSON.parse(readFileSync(join(target,'package.json'),'utf8')).dependencies.esbuild;
-const version=JSON.parse(readFileSync(join(target,'node_modules/esbuild/package.json'),'utf8')).version;
-if(version!==expected)throw Error('Optimizer version mismatch.');
-console.log('Production optimizer: esbuild '+version);
+const dependencies=JSON.parse(readFileSync(join(target,'package.json'),'utf8')).dependencies;
+for(const [name,expected]of Object.entries(dependencies)){
+ const version=JSON.parse(readFileSync(join(target,'node_modules',name,'package.json'),'utf8')).version;
+ if(version!==expected)throw Error('Optimizer version mismatch: '+name);
+ console.log('Production optimizer: '+name+' '+version);
+}

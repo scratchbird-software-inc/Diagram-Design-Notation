@@ -78,3 +78,21 @@ test('deferred native schema keeps a stable frozen facade and rejects incompatib
  for(const key of ['nodes','roots','properties','roles','core','profiles'])assert.deepEqual(facade[key],nativeCatalogue[key],key);
  store.installCore(nativeCatalogue,nativeSchemaHash);assert.ok(Object.isFrozen(facade.nodes));
 });
+
+test('compact native wire preserves every decoded schema index, value and property order',async()=>{
+ const {execFileSync}=await import('node:child_process');
+ const script=`import runpy,sys,json,contextlib,io\nsys.argv=['generate.py','--check']\nwith contextlib.redirect_stdout(io.StringIO()): g=runpy.run_path('project/ddn/packages/profiles/tools/generate.py')\nprint(json.dumps(g['wire'](g['native_data']),ensure_ascii=False,separators=(',',':')))\n`;
+ const legacyWire=JSON.parse(execFileSync('python3',['-c',script],{encoding:'utf8',maxBuffer:4*1024*1024,env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}}));
+ const {decodeCatalogue}=await load('generated-codec'),{nativeCatalogue}=await load('generated-native-data');
+ const legacy=decodeCatalogue(legacyWire);
+ assert.deepEqual(nativeCatalogue,legacy);assert.equal(JSON.stringify(nativeCatalogue),JSON.stringify(legacy));
+});
+
+test('compact wire retains literal negative numbers, empty containers and shared object references',async()=>{
+ const {execFileSync}=await import('node:child_process');
+ const wire=[{a:{$:0},b:{$:0},values:[-1,-3.5,0,true,false,null,'repeated','repeated'],empty:[[],{}]},[{same:'repeated',items:[1,2]}]];
+ const script=`import runpy,sys,json,contextlib,io\nvalue=json.load(sys.stdin)\nsys.argv=['generate.py','--check']\nwith contextlib.redirect_stdout(io.StringIO()): g=runpy.run_path('project/ddn/packages/profiles/tools/generate.py')\nprint(json.dumps(g['compact_wire'](value),ensure_ascii=False,separators=(',',':')))\n`;
+ const packed=JSON.parse(execFileSync('python3',['-c',script],{input:JSON.stringify(wire),encoding:'utf8',maxBuffer:4*1024*1024,env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}}));
+ const {decodeWire}=await load('generated-codec'),actual=decodeWire(packed),expected=decodeWire(wire);
+ assert.deepEqual(actual,expected);assert.strictEqual(actual.a,actual.b);assert.equal(JSON.stringify(actual),JSON.stringify(expected));
+});

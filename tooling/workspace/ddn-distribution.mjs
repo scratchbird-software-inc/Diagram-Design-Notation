@@ -4,6 +4,7 @@ import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
 import { bundle } from './ddn-bundle.mjs';
+import {standaloneMinifyPasses} from './ddn-optimize.mjs';
 import { buildModularDistribution } from './ddn-modular.mjs';
 import {buildFontPack} from './ddn-fonts.mjs';
 import {copyDdnLicense, ddnLicenseMetadata, ddnScriptNotice, ddnHtmlNotice} from './ddn-license.mjs';
@@ -18,6 +19,7 @@ mkdirSync(output, { recursive: true });
 
 
 const profileSource = JSON.parse(readFileSync(join(root, 'standard/codex/profile-contracts.json'), 'utf8'));
+const optimizerPins=JSON.parse(readFileSync(join(root,'tooling/optimizer/package.json'),'utf8')).dependencies;
 const nativeProfiles = ['ddn@1', 'mindmap.basic@1', 'concept.map@1', 'table.records@1'];
 const modulesOut = outputPath(join(output, 'modules'));
 mkdirSync(modulesOut, { recursive: true });
@@ -29,7 +31,7 @@ const destination = edition === 'native' ? output : outputPath(join(output, 'com
 mkdirSync(destination, { recursive: true });
 const fontPack=buildFontPack(destination);
 copyDdnLicense(destination);
-const manifest = { contract: 'ddn-next-1', edition, ...ddnLicenseMetadata, profiles: edition === 'native' ? nativeProfiles : Object.keys(profileSource), resources: [{file:'ddn-fonts.js',optional:true,rawBytes:fontPack.bytes,sha256:createHash('sha256').update(readFileSync(fontPack.script)).digest('hex'),provenance:'ddn-fonts-manifest.json',licenses:'ddn-fonts-LICENSES.txt'}], artifacts: [] };
+const manifest = { contract: 'ddn-next-1', edition, optimization:{esbuild:optimizerPins.esbuild,terser:optimizerPins.terser,passes:standaloneMinifyPasses}, ...ddnLicenseMetadata, profiles: edition === 'native' ? nativeProfiles : Object.keys(profileSource), resources: [{file:'ddn-fonts.js',optional:true,rawBytes:fontPack.bytes,sha256:createHash('sha256').update(readFileSync(fontPack.script)).digest('hex'),provenance:'ddn-fonts-manifest.json',licenses:'ddn-fonts-LICENSES.txt'}], artifacts: [] };
 const modulePrefix = edition === 'native' ? './modules' : '../modules';
 for (const [name, entry, moduleEntry, rawLimit, gzipLimit] of [
     ['ddn-viewer', 'viewer-entry', 'viewer', 2 * 1024 * 1024, 250 * 1024],
@@ -52,6 +54,7 @@ for (const [name, entry, moduleEntry, rawLimit, gzipLimit] of [
     console.log(`${edition}/${name}: ${rawBytes} bytes, ${gzipBytes} gzip; size gate ${manifest.artifacts.at(-1).sizeGate}`);
 }
 writeFileSync(outputPath(join(destination, 'manifest.json')), JSON.stringify(manifest, null, 2) + '\n');
+if(edition==='native'&&manifest.artifacts.some(artifact=>artifact.file!=='ddn-verifier.html'&&artifact.sizeGate!=='pass'))throw Error('Native viewer/designer size regression; see manifest.json.');
 }
 console.log('Standalone DDN distribution: ' + relative(root, output));
 

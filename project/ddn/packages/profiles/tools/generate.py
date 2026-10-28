@@ -196,7 +196,40 @@ def wire(value):
   return v
  return [pack(value),pool]
 def json_text(value):return json.dumps(value,separators=(',',':'),ensure_ascii=False)
-def encoded(value):return 'JSON.parse('+json.dumps(json_text(wire(value)),ensure_ascii=False)+')'
+def compact_wire(value):
+ # Preserve the original wire tree, including reference identities and ordering.
+ # Repeated string values and object key sequences get independent dictionaries.
+ counts=Counter()
+ def count(v):
+  if isinstance(v,str):counts[v]+=1
+  elif isinstance(v,(list,dict)):
+   for c in (v.values() if isinstance(v,dict) else v):count(c)
+ count(value)
+ strings=sorted((s for s,n in counts.items() if n>1),key=lambda s:(-counts[s],s))
+ string_ids={s:-i-1 for i,s in enumerate(strings)};shapes=[];shape_ids={}
+ def pack(v):
+  if isinstance(v,str):return string_ids.get(v,v)
+  if type(v) in (int,float) and v<0:return [None,v]
+  if isinstance(v,list):return [0,*map(pack,v)]
+  if isinstance(v,dict):
+   key=tuple(v)
+   if key not in shape_ids:shape_ids[key]=len(shapes)+1;shapes.append(list(key))
+   return [shape_ids[key],*map(pack,v.values())]
+  return v
+ packed=pack(value)
+ def restore(v):
+  if type(v) in (int,float) and v<0:return strings[-v-1]
+  if isinstance(v,list):
+   if v[0] is None:return v[1]
+   if v[0]==0:return list(map(restore,v[1:]))
+   return {key:restore(child) for key,child in zip(shapes[v[0]-1],v[1:])}
+  return v
+ assert json_text(restore(packed))==json_text(value),'Compact wire changed catalogue values or order'
+ return [shapes,strings,packed,'compact-1']
+def encoded(value,compact=False):
+ packed=wire(value)
+ if compact:packed=compact_wire(packed)
+ return 'JSON.parse('+json.dumps(json_text(packed),ensure_ascii=False)+')'
 def family_for(profile):
  if profile['id'] in native:return 'native'
  projection=profile['projection']
@@ -252,7 +285,7 @@ for parent in ['graphs','charts','geography','surfaces']:
  emit(TARGET.parent/'shards'/('all-'+parent+'.ts'),header+imports)
  emit(ROOT/'project/ddn/packages/standalone/src/shards'/('all-'+parent+'.ts'),header+imports)
 native_data={**data,'profiles':families['native']}
-native_expression='decodeCatalogue('+encoded(native_data)+')'
+native_expression='decodeCatalogue('+encoded(native_data,compact=True)+')'
 native_hash=hashlib.sha256(native_expression.encode()).hexdigest()
 emit(TARGET.with_name('generated-native-data.ts'),header+"import {decodeCatalogue} from './generated-codec.js';\nexport const nativeSchemaHash="+json_text(native_hash)+';\nexport const nativeCatalogue='+native_expression+';\n')
 index={key:deepcopy(original_data[key]) for key in ['version','nativeProfiles','knownProfiles','sourceHashes','coreTypes']}

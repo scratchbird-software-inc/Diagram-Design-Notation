@@ -223,5 +223,5 @@ export function bundle(entry, edition, { built, ts }) {
     const workerIds = moduleClosure(graph, graph.entries.worker);
     const loader = 'const require=(' + moduleLoader.toString() + ')(modules);';
     const workerFactory = 'Object.defineProperty(globalThis,"__ddnCreateWorker",{configurable:true,value:()=>{const source="const modules={"+' + JSON.stringify(workerIds) + '.map(id=>JSON.stringify(id)+":"+modules[id].toString()).join(",")+"};"+' + JSON.stringify(loader + 'require(' + JSON.stringify(graph.entries.worker) + ');') + ';const url=URL.createObjectURL(new Blob([source],{type:"text/javascript"}));try{return new Worker(url,{name:"ddn-compute"});}finally{URL.revokeObjectURL(url);}}});';
-    return optimized.minify('(()=>{"use strict";const modules=' + factories(graph, graph.modules.keys()) + ';' + loader + workerFactory + 'require(' + JSON.stringify(graph.entries.main) + ');})();');
+    return optimized.minifyStandalone('(()=>{"use strict";const modules=' + factories(graph, graph.modules.keys()) + ';' + loader + workerFactory + 'require(' + JSON.stringify(graph.entries.main) + ');})();');
 }
