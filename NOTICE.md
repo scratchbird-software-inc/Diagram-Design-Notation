@@ -38,3 +38,5 @@ Preserve these notices when redistributing the resources.
 
 Standards and product names identify supported notation conventions or design
 references. They do not imply endorsement, affiliation or certification.
+
+The gallery build uses the checked-in DejaVu Sans fixture as its fixed system-UI fallback. Its Bitstream/DejaVu licence and authors are retained under `project/tests/ddn/fixtures/fonts/`. This build input is separate from the optional OFL browser font pack.

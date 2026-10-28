@@ -40,3 +40,5 @@ The one-time `tooling/website/migrate-*.mjs` tools are separate migration eviden
 The drilldown example intentionally preserves its historical, dated frozen image as a static declared SVG asset. Its old version text is part of the snapshot, not an executable runtime or accepted source dialect. All gallery captures are produced by the new viewer.
 
 These are the bounded implementations of the 151 adopted profiles, not a claim of every feature in every external diagramming standard. PDF/DOCX/ODT adapters, shared editing and commercial services are outside these standalone tools. The complete review bundles contain all profiles; this review does not constitute size-budget or production-release qualification.
+
+Gallery builds use an isolated Fontconfig configuration with the shipped, hash-checked Inter, Source Serif 4, JetBrains Mono and Caveat resources, plus the attributed DejaVu Sans fallback fixture. System font installations cannot change the generated geometry. Linux builds need Fontconfig (`fc-match`); Chromium system dependencies provide it on CI. These build settings do not change the browser utilities’ user-selected fonts.

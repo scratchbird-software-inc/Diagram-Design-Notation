@@ -22,6 +22,7 @@
     "public contract paths",
     "DDN build environment names",
     "current public documentation and generated wiki",
-    "synchronize the imported popup-close regression with its expected window closure"
+    "synchronize the imported popup-close regression with its expected window closure",
+    "pin gallery build font resolution to shipped resources for host-independent geometry"
   ]
 }

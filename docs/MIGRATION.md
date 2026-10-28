@@ -26,7 +26,7 @@ The 0.8 grammar and public APIs are incompatible and retired. Historical impleme
 | Maintained JSON, tooling syntax and documentation links | Passed |
 | Clean integrity-pinned toolchain bootstrap | Passed; downloaded and verified Node, pnpm, npm and TypeScript |
 
-The gallery preserves the original 163 converted files and 466 views. Tests and gallery builds use the current parser and runtime; no retired runtime is needed. The website is directly usable from disk, through HTTP and from the offline distribution.
+The gallery preserves the original 163 converted files and 466 views. Tests and gallery builds use the current parser and runtime; no retired runtime is needed. The website is directly usable from disk, through HTTP and from the offline distribution. Gallery regeneration pins Fontconfig resolution to shipped, hash-checked font resources so host-installed system fonts cannot change the generated geometry; user font choices in the browser utilities remain independent.
 
 ## Explicit qualification limits
 

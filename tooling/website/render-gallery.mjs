@@ -1,3 +1,4 @@
+import {galleryFontEnvironment} from './gallery-fonts.mjs';
 import {matchesGalleryVerification} from './verification-expectations.mjs';
 import {readFileSync,writeFileSync,mkdirSync,copyFileSync,readdirSync,existsSync}from'node:fs';
 import{join,dirname}from'node:path';
@@ -8,7 +9,7 @@ const env=environment(),site=join(root,'website'),catalogue=JSON.parse(readFileS
 const{chromium}=await import(pathToFileURL(join(env.DDN_BUILD_WORKAREA,'tools/browser/node_modules/playwright/index.mjs')));
 const reportRoot=outputPath(join(env.DDN_BUILD_WORKAREA,'reports/ddn-website'));mkdirSync(reportRoot,{recursive:true});
 const destination=outputPath(join(env.DDN_BUILD_WORKAREA,'builds/ddn-website-gallery'));mkdirSync(destination,{recursive:true});
-const browser=await chromium.launch({headless:true}),context=await browser.newContext({viewport:{width:1600,height:1000}}),page=await context.newPage(),errors=[],network=[];
+const browser=await chromium.launch({headless:true,env:galleryFontEnvironment()}),context=await browser.newContext({viewport:{width:1600,height:1000}}),page=await context.newPage(),errors=[],network=[];
 await context.route(/^https?:\/\//,r=>{network.push(r.request().url());return r.abort();});page.on('pageerror',e=>errors.push(e.message));
 const art=JSON.parse(readFileSync(join(site,'assets/icons/map.json'),'utf8'));
 const frozen=existsSync(join(site,'assets/snapshots'))?readdirSync(join(site,'assets/snapshots')).filter(p=>p.endsWith('.svg')).map(p=>'assets/snapshots/'+p):[];
