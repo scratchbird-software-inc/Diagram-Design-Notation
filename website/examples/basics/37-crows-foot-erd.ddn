@@ -1,75 +1,483 @@
-ddn "0.5";
-module "ddn.examples.crows-foot";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:erd"
+    with
+        id "publication:erd"
+        title "Synthetic sales / crow's-foot ERD"
+        targets
+            item
+                target
+                    id "erd"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic orders/customers/invoices schema (all data invented) demonstrating the
-// erd.crowfoot@1 profile: every ref relation carries obligatory crow's-foot
-// source_mark/target_mark cardinality drawn from one, zeroone, many, zeromany.
 
-data sales {
-    object customer "Customer" {
-        kind: table;
-        fields {
-            field customer_id { key: primary; }
-            field display_name;
-        }
-    }
-    object purchase "Purchase" {
-        kind: table;
-        fields {
-            field purchase_id { key: primary; }
-            field customer_id;
-        }
-    }
-    object invoice "Invoice" {
-        kind: table;
-        fields {
-            field invoice_id { key: primary; }
-            field purchase_id;
-        }
-    }
-    object line "Invoice line" {
-        kind: table;
-        fields {
-            field line_id { key: primary; }
-            field invoice_id;
-        }
-    }
-    relation r_places "places" @customer -> @purchase {
-        kind: ref;
-        source_mark: one;
-        target_mark: zeromany;
-        enforcement: database;
-    }
-    relation r_billed "billed as" @purchase -> @invoice {
-        kind: ref;
-        source_mark: one;
-        target_mark: zeroone;
-        enforcement: database;
-    }
-    relation r_lists "lists" @invoice -> @line {
-        kind: ref;
-        source_mark: one;
-        target_mark: many;
-        enforcement: database;
-    }
-    relation r_customer_fk "purchase customer" @purchase.customer_id -> @customer.customer_id {
-        kind: ref;
-        source_mark: zeromany;
-        target_mark: one;
-        enforcement: database;
-    }
-}
+element "ddn.examples.crows-foot::sales.customer.customer_id" as "field"
+    with
+        id "ddn.examples.crows-foot::sales.customer.customer_id"
+        title "customer_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.examples.crows-foot::sales.customer"
+            ordinal 0
+            key "primary"
 
-view erd "Synthetic sales / crow's-foot ERD" {
-    data: [@sales];
-    format: @shared.styles.technical;
-    projection { kind:graph; profile:"erd.crowfoot@1"; }
-    // Organic placement spreads the four tables around the relation flow; the
-    // crow's-foot marks and relation labels carry the semantics, so the legend
-    // is switched off.
-    layout { algorithm: organic; }
-    chrome { legend: off; }
-    publication {size: content; fit: none; overflow: error;}
-}
+
+element "ddn.examples.crows-foot::sales.customer.display_name" as "field"
+    with
+        id "ddn.examples.crows-foot::sales.customer.display_name"
+        title "display_name"
+        content
+            parent
+                id "ddn.examples.crows-foot::sales.customer"
+            ordinal 1
+
+
+element "ddn.examples.crows-foot::sales.customer" as "table"
+    with
+        id "ddn.examples.crows-foot::sales.customer"
+        title "Customer"
+        members
+            item
+                id "ddn.examples.crows-foot::sales.customer.customer_id"
+            item
+                id "ddn.examples.crows-foot::sales.customer.display_name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.crows-foot::sales.purchase.purchase_id" as "field"
+    with
+        id "ddn.examples.crows-foot::sales.purchase.purchase_id"
+        title "purchase_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.examples.crows-foot::sales.purchase"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.examples.crows-foot::sales.purchase.customer_id" as "field"
+    with
+        id "ddn.examples.crows-foot::sales.purchase.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.examples.crows-foot::sales.purchase"
+            ordinal 1
+
+
+element "ddn.examples.crows-foot::sales.purchase" as "table"
+    with
+        id "ddn.examples.crows-foot::sales.purchase"
+        title "Purchase"
+        members
+            item
+                id "ddn.examples.crows-foot::sales.purchase.purchase_id"
+            item
+                id "ddn.examples.crows-foot::sales.purchase.customer_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "purchase_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.crows-foot::sales.invoice.invoice_id" as "field"
+    with
+        id "ddn.examples.crows-foot::sales.invoice.invoice_id"
+        title "invoice_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.examples.crows-foot::sales.invoice"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.examples.crows-foot::sales.invoice.purchase_id" as "field"
+    with
+        id "ddn.examples.crows-foot::sales.invoice.purchase_id"
+        title "purchase_id"
+        content
+            parent
+                id "ddn.examples.crows-foot::sales.invoice"
+            ordinal 1
+
+
+element "ddn.examples.crows-foot::sales.invoice" as "table"
+    with
+        id "ddn.examples.crows-foot::sales.invoice"
+        title "Invoice"
+        members
+            item
+                id "ddn.examples.crows-foot::sales.invoice.invoice_id"
+            item
+                id "ddn.examples.crows-foot::sales.invoice.purchase_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "invoice_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "purchase_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.crows-foot::sales.line.line_id" as "field"
+    with
+        id "ddn.examples.crows-foot::sales.line.line_id"
+        title "line_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.examples.crows-foot::sales.line"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.examples.crows-foot::sales.line.invoice_id" as "field"
+    with
+        id "ddn.examples.crows-foot::sales.line.invoice_id"
+        title "invoice_id"
+        content
+            parent
+                id "ddn.examples.crows-foot::sales.line"
+            ordinal 1
+
+
+element "ddn.examples.crows-foot::sales.line" as "table"
+    with
+        id "ddn.examples.crows-foot::sales.line"
+        title "Invoice line"
+        members
+            item
+                id "ddn.examples.crows-foot::sales.line.line_id"
+            item
+                id "ddn.examples.crows-foot::sales.line.invoice_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "line_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "invoice_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.crows-foot::sales.r_places" as "ref"
+    with
+        id "ddn.examples.crows-foot::sales.r_places"
+        title "places"
+        properties
+            source_mark "one"
+            target_mark "zeromany"
+            enforcement "database"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.crows-foot::sales.customer"
+            item
+                definition
+                    id "ddn.examples.crows-foot::sales.purchase"
+
+
+relation "ddn.examples.crows-foot::sales.r_billed" as "ref"
+    with
+        id "ddn.examples.crows-foot::sales.r_billed"
+        title "billed as"
+        properties
+            source_mark "one"
+            target_mark "zeroone"
+            enforcement "database"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.crows-foot::sales.purchase"
+            item
+                definition
+                    id "ddn.examples.crows-foot::sales.invoice"
+
+
+relation "ddn.examples.crows-foot::sales.r_lists" as "ref"
+    with
+        id "ddn.examples.crows-foot::sales.r_lists"
+        title "lists"
+        properties
+            source_mark "one"
+            target_mark "many"
+            enforcement "database"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.crows-foot::sales.invoice"
+            item
+                definition
+                    id "ddn.examples.crows-foot::sales.line"
+
+
+relation "ddn.examples.crows-foot::sales.r_customer_fk" as "ref"
+    with
+        id "ddn.examples.crows-foot::sales.r_customer_fk"
+        title "purchase customer"
+        properties
+            source_mark "zeromany"
+            target_mark "one"
+            enforcement "database"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.crows-foot::sales.purchase"
+                member
+                    id "ddn.examples.crows-foot::sales.purchase.customer_id"
+            item
+                definition
+                    id "ddn.examples.crows-foot::sales.customer"
+                member
+                    id "ddn.examples.crows-foot::sales.customer.customer_id"
+
+
+view "erd" as "erd.crowfoot@1"
+    with
+        id "erd"
+        title "Synthetic sales / crow's-foot ERD"
+        selection
+            include
+                item
+                    id "ddn.examples.crows-foot::sales.customer"
+                item
+                    id "ddn.examples.crows-foot::sales.purchase"
+                item
+                    id "ddn.examples.crows-foot::sales.invoice"
+                item
+                    id "ddn.examples.crows-foot::sales.line"
+                item
+                    id "ddn.examples.crows-foot::sales.r_places"
+                item
+                    id "ddn.examples.crows-foot::sales.r_billed"
+                item
+                    id "ddn.examples.crows-foot::sales.r_lists"
+                item
+                    id "ddn.examples.crows-foot::sales.r_customer_fk"
+        layout
+            algorithm "organic"
+            center "pins"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        chrome
+            legend "off"
+        publication
+            id "publication:erd"
+
+    use "ddn.examples.crows-foot::sales.customer" named "appearance:erd:ddn.examples.crows-foot::sales.customer"
+        with
+            id "appearance:erd:ddn.examples.crows-foot::sales.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.crows-foot::sales.purchase" named "appearance:erd:ddn.examples.crows-foot::sales.purchase"
+        with
+            id "appearance:erd:ddn.examples.crows-foot::sales.purchase"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.crows-foot::sales.invoice" named "appearance:erd:ddn.examples.crows-foot::sales.invoice"
+        with
+            id "appearance:erd:ddn.examples.crows-foot::sales.invoice"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.crows-foot::sales.line" named "appearance:erd:ddn.examples.crows-foot::sales.line"
+        with
+            id "appearance:erd:ddn.examples.crows-foot::sales.line"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.crows-foot::sales.r_places" named "appearance:erd:ddn.examples.crows-foot::sales.r_places"
+        with
+            id "appearance:erd:ddn.examples.crows-foot::sales.r_places"
+
+    use "ddn.examples.crows-foot::sales.r_billed" named "appearance:erd:ddn.examples.crows-foot::sales.r_billed"
+        with
+            id "appearance:erd:ddn.examples.crows-foot::sales.r_billed"
+
+    use "ddn.examples.crows-foot::sales.r_lists" named "appearance:erd:ddn.examples.crows-foot::sales.r_lists"
+        with
+            id "appearance:erd:ddn.examples.crows-foot::sales.r_lists"
+
+    use "ddn.examples.crows-foot::sales.r_customer_fk" named "appearance:erd:ddn.examples.crows-foot::sales.r_customer_fk"
+        with
+            id "appearance:erd:ddn.examples.crows-foot::sales.r_customer_fk"

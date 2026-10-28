@@ -1,38 +1,696 @@
-ddn "0.5";
-module "ddn.examples.customer-views";
-import "shared.ddn" as shared;
-import "customer-data.ddn" as customer;
+version ddn-next-1
 
-view overview "Customer data / a shared model" {
-    data: [@customer.model];
-    format: @shared.styles.technical;
-    legend: @shared.styles.numbers;
-    select: [@customer.model.customer, @customer.model.order, @customer.model.customer_identifier, @customer.model.customers];
-    legend { keys: { "model.order_customer": 7, "model.customer_domain": 12, "model.order_domain": 18 }; }
+publication "publication:overview"
+    with
+        id "publication:overview"
+        title "Customer data / a shared model"
+        targets
+            item
+                target
+                    id "overview"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-}
-view compact "Customer data / compact view" {
-    data: [@customer.model];
-    format: @shared.styles.technical;
-    display: @shared.styles.compact;
-    select: [@customer.model.order, @customer.model.customer];
 
-}
-view print "Customer data / print rendition" {
-    data: [@customer.model];
-    format: @shared.styles.technical;
-    style: @shared.styles.neutral;
-    publication: @shared.styles.paper;
-    select: [@customer.model.order, @customer.model.customer];
+publication "publication:compact"
+    with
+        id "publication:compact"
+        title "Customer data / compact view"
+        targets
+            item
+                target
+                    id "compact"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-}
-view embedded "Customer data / minimal chrome for embedding" {
-    data: [@customer.model];
-    format: @shared.styles.technical;
-    select: [@customer.model.order, @customer.model.customer];
-    // B1-045: the relations already label themselves (legend mode text), so the
-    // key is redundant here; title/footer off give a chrome-free embed.
-    legend: off;
-    title: off;
-    footer: off;
-}
+
+publication "publication:print"
+    with
+        id "publication:print"
+        title "Customer data / print rendition"
+        targets
+            item
+                target
+                    id "print"
+                kind "view"
+        format "svg"
+        page
+            size "a4"
+            orientation "landscape"
+            margin
+                top 30.236220472440948
+                right 30.236220472440948
+                bottom 30.236220472440948
+                left 30.236220472440948
+            minimum_text 9.333333333333332
+            overflow "report"
+
+
+publication "publication:embedded"
+    with
+        id "publication:embedded"
+        title "Customer data / minimal chrome for embedding"
+        targets
+            item
+                target
+                    id "embedded"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
+
+
+element "ddn.examples.customer-data::model.customer.customer_id" as "field"
+    with
+        id "ddn.examples.customer-data::model.customer.customer_id"
+        title "customer_id"
+        properties
+            key "primary"
+            domain
+                id "ddn.examples.customer-data::model.customer_identifier"
+        content
+            parent
+                id "urn:ddn:example:customer"
+            ordinal 0
+            domain
+                id "ddn.examples.customer-data::model.customer_identifier"
+            key "primary"
+
+
+element "ddn.examples.customer-data::model.customer.display_name" as "field"
+    with
+        id "ddn.examples.customer-data::model.customer.display_name"
+        title "display_name"
+        content
+            parent
+                id "urn:ddn:example:customer"
+            ordinal 1
+
+
+element "ddn.examples.customer-data::model.customer.status" as "field"
+    with
+        id "ddn.examples.customer-data::model.customer.status"
+        title "status"
+        content
+            parent
+                id "urn:ddn:example:customer"
+            ordinal 2
+
+
+element "urn:ddn:example:customer" as "table"
+    with
+        id "urn:ddn:example:customer"
+        title "Customer"
+        facets
+            maturity
+                item "DRF"
+            workload
+                item "OLTP"
+            authority
+                item "AUTH"
+        properties
+            workload
+                item "oltp"
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+        members
+            item
+                id "ddn.examples.customer-data::model.customer.customer_id"
+            item
+                id "ddn.examples.customer-data::model.customer.display_name"
+            item
+                id "ddn.examples.customer-data::model.customer.status"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item
+                        id "ddn.examples.customer-data::model.customer_identifier"
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.customer-data::model.order.order_id" as "field"
+    with
+        id "ddn.examples.customer-data::model.order.order_id"
+        title "order_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.examples.customer-data::model.order"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.examples.customer-data::model.order.customer_id" as "field"
+    with
+        id "ddn.examples.customer-data::model.order.customer_id"
+        title "customer_id"
+        properties
+            domain
+                id "ddn.examples.customer-data::model.customer_identifier"
+        content
+            parent
+                id "ddn.examples.customer-data::model.order"
+            ordinal 1
+            domain
+                id "ddn.examples.customer-data::model.customer_identifier"
+
+
+element "ddn.examples.customer-data::model.order.ordered_at" as "field"
+    with
+        id "ddn.examples.customer-data::model.order.ordered_at"
+        title "ordered_at"
+        content
+            parent
+                id "ddn.examples.customer-data::model.order"
+            ordinal 2
+
+
+element "ddn.examples.customer-data::model.order" as "table"
+    with
+        id "ddn.examples.customer-data::model.order"
+        title "Order"
+        facets
+            maturity
+                item "DRF"
+            workload
+                item "OLTP"
+        properties
+            workload
+                item "oltp"
+        members
+            item
+                id "ddn.examples.customer-data::model.order.order_id"
+            item
+                id "ddn.examples.customer-data::model.order.customer_id"
+            item
+                id "ddn.examples.customer-data::model.order.ordered_at"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "customer_id"
+                    item null
+                    item
+                        id "ddn.examples.customer-data::model.customer_identifier"
+                    item null
+                    item null
+                    item null
+                item
+                    item "ordered_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.customer-data::model.customer_identifier" as "domain"
+    with
+        id "ddn.examples.customer-data::model.customer_identifier"
+        title "Customer identifier"
+        content
+            meaning "Identifies a customer in the registry"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Identifies a customer in the registry"
+                    }
+                format "plain"
+
+
+element "ddn.examples.customer-data::model.customers" as "sample"
+    with
+        id "ddn.examples.customer-data::model.customers"
+        title "Synthetic customer records"
+        properties
+            mode "synthetic"
+            columns
+                item
+                    id "ddn.examples.customer-data::model.customer.customer_id"
+                item
+                    id "ddn.examples.customer-data::model.customer.display_name"
+                item
+                    id "ddn.examples.customer-data::model.customer.status"
+            rows
+                item
+                    item "C001"
+                    item "Customer A"
+                    item "Active"
+                item
+                    item "C002"
+                    item "Customer B"
+                    item "Suspended"
+        data
+            columns
+                item
+                    id "column-0"
+                    label "customer_id"
+                item
+                    id "column-1"
+                    label "display_name"
+                item
+                    id "column-2"
+                    label "status"
+            rows
+                item
+                    item "C001"
+                    item "Customer A"
+                    item "Active"
+                item
+                    item "C002"
+                    item "Customer B"
+                    item "Suspended"
+
+
+relation "ddn.examples.customer-data::model.order_customer" as "ref"
+    with
+        id "ddn.examples.customer-data::model.order_customer"
+        title "references"
+        properties
+            source_mark "zeromany"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.customer-data::model.order"
+                member
+                    id "ddn.examples.customer-data::model.order.customer_id"
+            item
+                definition
+                    id "urn:ddn:example:customer"
+                member
+                    id "ddn.examples.customer-data::model.customer.customer_id"
+
+
+relation "ddn.examples.customer-data::model.customer_domain" as "domain"
+    with
+        id "ddn.examples.customer-data::model.customer_domain"
+        title "uses semantic domain"
+        endpoints
+            item
+                definition
+                    id "urn:ddn:example:customer"
+                member
+                    id "ddn.examples.customer-data::model.customer.customer_id"
+            item
+                definition
+                    id "ddn.examples.customer-data::model.customer_identifier"
+
+
+relation "ddn.examples.customer-data::model.order_domain" as "domain"
+    with
+        id "ddn.examples.customer-data::model.order_domain"
+        title "uses semantic domain"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.customer-data::model.order"
+                member
+                    id "ddn.examples.customer-data::model.order.customer_id"
+            item
+                definition
+                    id "ddn.examples.customer-data::model.customer_identifier"
+
+
+view "overview" as "ddn@1"
+    with
+        id "overview"
+        title "Customer data / a shared model"
+        selection
+            include
+                item
+                    id "urn:ddn:example:customer"
+                item
+                    id "ddn.examples.customer-data::model.order"
+                item
+                    id "ddn.examples.customer-data::model.customer_identifier"
+                item
+                    id "ddn.examples.customer-data::model.customers"
+                item
+                    id "ddn.examples.customer-data::model.order_customer"
+                item
+                    id "ddn.examples.customer-data::model.customer_domain"
+                item
+                    id "ddn.examples.customer-data::model.order_domain"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            mode "numbers"
+            width 280
+            keys
+                model.order_customer "7"
+                model.customer_domain "12"
+                model.order_domain "18"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:overview"
+
+    use "urn:ddn:example:customer" named "appearance:overview:urn:ddn:example:customer"
+        with
+            id "appearance:overview:urn:ddn:example:customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.customer-data::model.order" named "appearance:overview:ddn.examples.customer-data::model.order"
+        with
+            id "appearance:overview:ddn.examples.customer-data::model.order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.customer-data::model.customer_identifier" named "appearance:overview:ddn.examples.customer-data::model.customer_identifier"
+        with
+            id "appearance:overview:ddn.examples.customer-data::model.customer_identifier"
+            body "notes"
+
+    use "ddn.examples.customer-data::model.customers" named "appearance:overview:ddn.examples.customer-data::model.customers"
+        with
+            id "appearance:overview:ddn.examples.customer-data::model.customers"
+            body "columns"
+
+    use "ddn.examples.customer-data::model.order_customer" named "appearance:overview:ddn.examples.customer-data::model.order_customer"
+        with
+            id "appearance:overview:ddn.examples.customer-data::model.order_customer"
+
+    use "ddn.examples.customer-data::model.customer_domain" named "appearance:overview:ddn.examples.customer-data::model.customer_domain"
+        with
+            id "appearance:overview:ddn.examples.customer-data::model.customer_domain"
+
+    use "ddn.examples.customer-data::model.order_domain" named "appearance:overview:ddn.examples.customer-data::model.order_domain"
+        with
+            id "appearance:overview:ddn.examples.customer-data::model.order_domain"
+
+
+view "compact" as "ddn@1"
+    with
+        id "compact"
+        title "Customer data / compact view"
+        selection
+            include
+                item
+                    id "ddn.examples.customer-data::model.order"
+                item
+                    id "urn:ddn:example:customer"
+                item
+                    id "ddn.examples.customer-data::model.order_customer"
+            exclude
+                item
+                    id "ddn.examples.customer-data::model.customer_domain"
+                item
+                    id "ddn.examples.customer-data::model.order_domain"
+        layout
+            algorithm "grid"
+            gap 80
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:compact"
+
+    use "ddn.examples.customer-data::model.order" named "appearance:compact:ddn.examples.customer-data::model.order"
+        with
+            id "appearance:compact:ddn.examples.customer-data::model.order"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "urn:ddn:example:customer" named "appearance:compact:urn:ddn:example:customer"
+        with
+            id "appearance:compact:urn:ddn:example:customer"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.customer-data::model.order_customer" named "appearance:compact:ddn.examples.customer-data::model.order_customer"
+        with
+            id "appearance:compact:ddn.examples.customer-data::model.order_customer"
+
+
+view "print" as "ddn@1"
+    with
+        id "print"
+        title "Customer data / print rendition"
+        selection
+            include
+                item
+                    id "ddn.examples.customer-data::model.order"
+                item
+                    id "urn:ddn:example:customer"
+                item
+                    id "ddn.examples.customer-data::model.order_customer"
+            exclude
+                item
+                    id "ddn.examples.customer-data::model.customer_domain"
+                item
+                    id "ddn.examples.customer-data::model.order_domain"
+        style
+            theme "neutral"
+            font "mono"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        publication
+            id "publication:print"
+
+    use "ddn.examples.customer-data::model.order" named "appearance:print:ddn.examples.customer-data::model.order"
+        with
+            id "appearance:print:ddn.examples.customer-data::model.order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "urn:ddn:example:customer" named "appearance:print:urn:ddn:example:customer"
+        with
+            id "appearance:print:urn:ddn:example:customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.customer-data::model.order_customer" named "appearance:print:ddn.examples.customer-data::model.order_customer"
+        with
+            id "appearance:print:ddn.examples.customer-data::model.order_customer"
+
+
+view "embedded" as "ddn@1"
+    with
+        id "embedded"
+        title "Customer data / minimal chrome for embedding"
+        selection
+            include
+                item
+                    id "ddn.examples.customer-data::model.order"
+                item
+                    id "urn:ddn:example:customer"
+                item
+                    id "ddn.examples.customer-data::model.order_customer"
+            exclude
+                item
+                    id "ddn.examples.customer-data::model.customer_domain"
+                item
+                    id "ddn.examples.customer-data::model.order_domain"
+        layout
+            algorithm "grid"
+            gap 80
+        background
+            color "#f6f8fc"
+        chrome
+            legend "off"
+            title false
+            footer false
+            banner false
+        publication
+            id "publication:embedded"
+
+    use "ddn.examples.customer-data::model.order" named "appearance:embedded:ddn.examples.customer-data::model.order"
+        with
+            id "appearance:embedded:ddn.examples.customer-data::model.order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "urn:ddn:example:customer" named "appearance:embedded:urn:ddn:example:customer"
+        with
+            id "appearance:embedded:urn:ddn:example:customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.customer-data::model.order_customer" named "appearance:embedded:ddn.examples.customer-data::model.order_customer"
+        with
+            id "appearance:embedded:ddn.examples.customer-data::model.order_customer"

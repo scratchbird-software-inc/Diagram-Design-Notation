@@ -1,0 +1,411 @@
+version ddn-next-1
+
+element ShadowOffset as note
+    with
+        title "Uniform offset"
+        content.text "The outline stays unchanged. Only the shadow silhouette changes."
+        background.color "#fffef9"
+        look "handdrawn"
+        shadow "offset"
+        shadow.blur 3.5
+        shadow.lift 24
+
+element ShadowCentre as note
+    with
+        title "Centre raised"
+        content.text "The outline stays unchanged. Only the shadow silhouette changes."
+        background.color "#fffef9"
+        look "handdrawn"
+        shadow "centre"
+        shadow.blur 3.5
+        shadow.lift 24
+
+element ShadowCorners as note
+    with
+        title "Lower corners raised"
+        content.text "The outline stays unchanged. Only the shadow silhouette changes."
+        background.color "#fffef9"
+        look "handdrawn"
+        shadow "corners"
+        shadow.blur 3.5
+        shadow.lift 24
+
+element ShadowCorner as note
+    with
+        title "One corner raised"
+        content.text "The outline stays unchanged. Only the shadow silhouette changes."
+        background.color "#fffef9"
+        look "handdrawn"
+        shadow "corner"
+        shadow.blur 3.5
+        shadow.lift 24
+
+view Shadows as ddn@1
+    with
+        id Shadows
+        title "Four paper shadow silhouettes"
+        background.color "#f1f0eb"
+        layout.algorithm manual
+    use ShadowOffset named ShadowOffsetInShadows
+        with
+            position.x 40
+            position.y 80
+            size.width 320
+            size.height 180
+    use ShadowCentre named ShadowCentreInShadows
+        with
+            position.x 430
+            position.y 80
+            size.width 320
+            size.height 180
+    use ShadowCorners named ShadowCornersInShadows
+        with
+            position.x 40
+            position.y 350
+            size.width 320
+            size.height 180
+    use ShadowCorner named ShadowCornerInShadows
+        with
+            position.x 430
+            position.y 350
+            size.width 320
+            size.height 180
+
+element Sheet as note
+    with
+        title "Plain paper"
+        content.text "Editable text remains ordinary DDN content."
+        paper "plain"
+        shadow "offset"
+
+element Sticky as note
+    with
+        title "Post-it note"
+        content.text "Editable text remains ordinary DDN content."
+        paper "note"
+        shadow "offset"
+
+element Pad as note
+    with
+        title "Post-it pad"
+        content.text "Editable text remains ordinary DDN content."
+        paper "pad"
+        shadow "corner"
+
+view Papers as ddn@1
+    with
+        id Papers
+        title "Paper, post-it notes and pads"
+        background.color "#f1f0eb"
+        layout.algorithm manual
+    use Sheet named SheetInPapers
+        with
+            position.x 40
+            position.y 100
+            size.width 260
+            size.height 210
+    use Sticky named StickyInPapers
+        with
+            position.x 350
+            position.y 100
+            size.width 260
+            size.height 210
+    use Pad named PadInPapers
+        with
+            position.x 660
+            position.y 100
+            size.width 260
+            size.height 210
+
+element Pushpin as note
+    with
+        title "Push Pin"
+        content.text "Choose the colour, position, size and angle."
+        paper "note"
+        shadow "offset"
+        decorations
+            item
+                kind push-pin
+                size 44
+                rotation -12
+
+element Roundpin as note
+    with
+        title "Round Pin"
+        content.text "Choose the colour, position, size and angle."
+        paper "note"
+        shadow "offset"
+        decorations
+            item
+                kind round-pin
+                size 44
+                rotation 10
+
+element Paperclip as note
+    with
+        title "Paper Clip"
+        content.text "Choose the colour, position, size and angle."
+        paper "note"
+        shadow "offset"
+        decorations
+            item
+                kind paper-clip
+                size 44
+                rotation 18
+
+element Binderclip as note
+    with
+        title "Binder Clip"
+        content.text "Choose the colour, position, size and angle."
+        paper "note"
+        shadow "offset"
+        decorations
+            item
+                kind binder-clip
+                size 44
+                rotation 0
+
+element Tape as note
+    with
+        title "Tape"
+        content.text "Choose the colour, position, size and angle."
+        paper "note"
+        shadow "offset"
+        decorations
+            item
+                kind tape
+                size 44
+                rotation -5
+
+view Attachments as ddn@1
+    with
+        id Attachments
+        title "Pins, paper clips, binder clips and tape"
+        background.color "#f1f0eb"
+        layout.algorithm manual
+    use Pushpin named PushpinInAttachments
+        with
+            position.x 40
+            position.y 100
+            size.width 250
+            size.height 170
+    use Roundpin named RoundpinInAttachments
+        with
+            position.x 340
+            position.y 100
+            size.width 250
+            size.height 170
+    use Paperclip named PaperclipInAttachments
+        with
+            position.x 640
+            position.y 100
+            size.width 250
+            size.height 170
+    use Binderclip named BinderclipInAttachments
+        with
+            position.x 40
+            position.y 350
+            size.width 250
+            size.height 170
+    use Tape named TapeInAttachments
+        with
+            position.x 340
+            position.y 350
+            size.width 250
+            size.height 170
+
+element Rose as note
+    with
+        title "Rose colours"
+        content.text "Paper, attachment and shadow colours are independent."
+        paper "note"
+        background.color "#ffd0cf"
+        shadow "corners"
+        shadow.color "#a92d51"
+        shadow.opacity 0.2
+        shadow.lift 18
+        decorations
+            item
+                kind push-pin
+                color "#a92d51"
+                size 44
+                position rt
+                rotation 18
+
+element Mint as note
+    with
+        title "Mint colours"
+        content.text "Paper, attachment and shadow colours are independent."
+        paper "pad"
+        background.color "#c7eedf"
+        shadow "corners"
+        shadow.color "#23765f"
+        shadow.opacity 0.2
+        shadow.lift 18
+        decorations
+            item
+                kind paper-clip
+                color "#23765f"
+                size 44
+                position rt
+                rotation 18
+
+element Sky as note
+    with
+        title "Sky colours"
+        content.text "Paper, attachment and shadow colours are independent."
+        paper "note"
+        background.color "#cfe3ff"
+        shadow "corners"
+        shadow.color "#2859a9"
+        shadow.opacity 0.2
+        shadow.lift 18
+        decorations
+            item
+                kind push-pin
+                color "#2859a9"
+                size 44
+                position rt
+                rotation 18
+
+element Lilac as note
+    with
+        title "Lilac colours"
+        content.text "Paper, attachment and shadow colours are independent."
+        paper "pad"
+        background.color "#e6d0f5"
+        shadow "corners"
+        shadow.color "#792c9e"
+        shadow.opacity 0.2
+        shadow.lift 18
+        decorations
+            item
+                kind paper-clip
+                color "#792c9e"
+                size 44
+                position rt
+                rotation 18
+
+view Colours as ddn@1
+    with
+        id Colours
+        title "Configurable paper, attachment and shadow colours"
+        background.color "#f1f0eb"
+        layout.algorithm manual
+    use Rose named RoseInColours
+        with
+            position.x 40
+            position.y 100
+            size.width 320
+            size.height 180
+    use Mint named MintInColours
+        with
+            position.x 430
+            position.y 100
+            size.width 320
+            size.height 180
+    use Sky named SkyInColours
+        with
+            position.x 40
+            position.y 360
+            size.width 320
+            size.height 180
+    use Lilac named LilacInColours
+        with
+            position.x 430
+            position.y 360
+            size.width 320
+            size.height 180
+
+element BoardIdea as note
+    with
+        title "Explore the idea"
+        content.text "Paper styling does not change identity, relationships or review status."
+        paper "note"
+        background.color "#fff59d"
+        shadow "centre"
+        shadow.lift 20
+        decorations
+            item
+                kind push-pin
+                color "#d64445"
+                position lt
+                size 36
+                rotation -16
+            item
+                kind paper-clip
+                color "#3d70a6"
+                position rt
+                size 42
+                rotation 18
+
+element BoardReview as note
+    with
+        title "Review together"
+        content.text "Paper styling does not change identity, relationships or review status."
+        paper "note"
+        background.color "#d3ebff"
+        shadow "centre"
+        shadow.lift 20
+        decorations
+            item
+                kind push-pin
+                color "#d64445"
+                position lt
+                size 36
+                rotation -16
+            item
+                kind paper-clip
+                color "#3d70a6"
+                position rt
+                size 42
+                rotation 18
+
+element BoardDecision as note
+    with
+        title "Capture the decision"
+        content.text "Paper styling does not change identity, relationships or review status."
+        paper "pad"
+        background.color "#d7efc7"
+        shadow "centre"
+        shadow.lift 20
+        decorations
+            item
+                kind push-pin
+                color "#d64445"
+                position lt
+                size 36
+                rotation -16
+            item
+                kind paper-clip
+                color "#3d70a6"
+                position rt
+                size 42
+                rotation 18
+
+view Board as ddn@1
+    with
+        id Board
+        title "A connected design board"
+        background.color "#f1f0eb"
+        layout.algorithm manual
+    use BoardIdea named BoardIdeaInBoard
+        with
+            position.x 40
+            position.y 100
+            size.width 280
+            size.height 210
+    use BoardReview named BoardReviewInBoard
+        with
+            position.x 375
+            position.y 180
+            size.width 280
+            size.height 210
+    use BoardDecision named BoardDecisionInBoard
+        with
+            position.x 710
+            position.y 100
+            size.width 280
+            size.height 210
+    connect BoardIdea to BoardReview as assoc
+    connect BoardReview to BoardDecision as assoc

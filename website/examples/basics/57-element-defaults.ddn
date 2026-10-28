@@ -1,18 +1,78 @@
-ddn "0.5";
-module "ddn.examples.element-defaults";
-import "shared.ddn" as shared;
+version ddn-next-1
 
-// B1-002: every element kind carries a registry-driven default property set
-// (standard/registry/catalogue.json kinds[].defaults). A bare declaration
-// renders with exactly those defaults implicit; an explicit property always
-// wins over the registry default. `cache` defaults to role: "cache".
-data model {
-    cache bare "Bare cache (registry default role)";
-    cache explicit "Explicit override wins" {role: primary; description: "role is stated in source, overriding the registry default role: cache."; }
-}
+publication "publication:defaults"
+    with
+        id "publication:defaults"
+        title "Element defaults / bare versus explicit"
+        targets
+            item
+                target
+                    id "defaults"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1600
+                unit "px"
+            height
+                value 1000
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view defaults "Element defaults / bare versus explicit" {
-    data: [@model];
-    format: @shared.styles.technical;
-    publication { width: 1600px; height: 1000px; minimum_text: 8pt; }
-}
+
+element "ddn.examples.element-defaults::model.bare" as "cache"
+    with
+        id "ddn.examples.element-defaults::model.bare"
+        title "Bare cache (registry default role)"
+
+
+element "ddn.examples.element-defaults::model.explicit" as "cache"
+    with
+        id "ddn.examples.element-defaults::model.explicit"
+        title "Explicit override wins"
+        description "role is stated in source, overriding the registry default role: cache."
+        facets
+            distribution
+                item "PRIMARY"
+        properties
+            role "primary"
+        metadata
+            x_record
+                layout_group "primary"
+
+
+view "defaults" as "ddn@1"
+    with
+        id "defaults"
+        title "Element defaults / bare versus explicit"
+        selection
+            include
+                item
+                    id "ddn.examples.element-defaults::model.bare"
+                item
+                    id "ddn.examples.element-defaults::model.explicit"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:defaults"
+
+    use "ddn.examples.element-defaults::model.bare" named "appearance:defaults:ddn.examples.element-defaults::model.bare"
+        with
+            id "appearance:defaults:ddn.examples.element-defaults::model.bare"
+
+    use "ddn.examples.element-defaults::model.explicit" named "appearance:defaults:ddn.examples.element-defaults::model.explicit"
+        with
+            id "appearance:defaults:ddn.examples.element-defaults::model.explicit"
+            body "notes"

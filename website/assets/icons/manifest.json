@@ -1,0 +1,1989 @@
+{
+  "contract": "ddn-website-artwork@1",
+  "note": "Referenced presentation artwork from the prior DDN website, preserved with its existing notices. These notices apply to the artwork; the ScratchWeaver repository remains private, authorized use only. No prior runtime or parser is included.",
+  "icons": {
+    "electrical-common@1:battery": {
+      "path": "assets/icons/electrical-common-1/battery.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "battery",
+      "name": "Battery",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "a09b796823886d1a9befde9a6dc131c632829e9500954ef02fd916315b7bd401",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:capacitor": {
+      "path": "assets/icons/electrical-common-1/capacitor.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "capacitor",
+      "name": "Capacitor",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "9ca5427730fbba261d2742c721f5bd7b51fc3991d936130e08de31b1da374a77",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:diode": {
+      "path": "assets/icons/electrical-common-1/diode.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "diode",
+      "name": "Diode",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "168e042a0f13e78410aa37cca85da55beaf0239907939e1c8e40c585e86b14a1",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:fuse": {
+      "path": "assets/icons/electrical-common-1/fuse.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "fuse",
+      "name": "Fuse",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "ed09cee72516cf293e88a59a306c09c7c8990bcfa4845b5ded2645ee64f77c84",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:gate-and": {
+      "path": "assets/icons/electrical-common-1/gate-and.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "gate-and",
+      "name": "AND gate",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "6d5b872766a0c36d5346649712a84c13c48cf1fda4388ad8a21d1ca5930588a0",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:gate-xor": {
+      "path": "assets/icons/electrical-common-1/gate-xor.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "gate-xor",
+      "name": "XOR gate",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "195520c45f5a35242af2d95316d05862c52c4b335294f0ca0b4dd98fbaf287ec",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:ground": {
+      "path": "assets/icons/electrical-common-1/ground.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "ground",
+      "name": "Ground",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "259aee7897f914224514217d8f38018f2301650feb2764dec3f62a0ce008b5a3",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:inductor": {
+      "path": "assets/icons/electrical-common-1/inductor.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "inductor",
+      "name": "Inductor",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "40d67dbe018456711a50b7770489fcd7e56961e00fb42a953ededbf94acbac25",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:led": {
+      "path": "assets/icons/electrical-common-1/led.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "led",
+      "name": "LED",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "5251cd0b5392fedf885a0ec484b28e9e4aa80d6a358477a3b4ca5c54c2ea26bd",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:op-amp": {
+      "path": "assets/icons/electrical-common-1/op-amp.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "op-amp",
+      "name": "Operational amplifier",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "36a186d5111323ae50643dcc831e3b2c12e23a214a9e1ac3de6df080009b0d1e",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:resistor": {
+      "path": "assets/icons/electrical-common-1/resistor.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "resistor",
+      "name": "Resistor (box form)",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "5b490865e407778f79cd3aa14e3212ae641cbe85210dca4f8194836dcc5eec8b",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:switch-no": {
+      "path": "assets/icons/electrical-common-1/switch-no.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "switch-no",
+      "name": "Switch, normally open",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "6948ad218779c61771e292a82cf3f454e5fc47e18a5493713481c157d3ecdbb9",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "electrical-common@1:transistor-npn": {
+      "path": "assets/icons/electrical-common-1/transistor-npn.svg",
+      "kind": "icon",
+      "library": "electrical-common@1",
+      "id": "transistor-npn",
+      "name": "Transistor NPN",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "ff856d55a1f6c1cc1a112e65a7b96bbccf881e0815cb8dddec3a020f2e963359",
+      "examples": [
+        "examples/basics/105-electrical-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "generic-demo@1:user": {
+      "path": "assets/icons/generic-demo-1/user.svg",
+      "kind": "icon",
+      "library": "generic-demo@1",
+      "id": "user",
+      "name": "User",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "4e86cbcb71a632574e594afc07f67ee2842d5c1b569866812c371b247833c341",
+      "examples": [
+        "examples/basics/98-icons.ddn"
+      ],
+      "kinds": []
+    },
+    "iconoir-infra@1:app-window": {
+      "path": "assets/icons/iconoir-infra-1/app-window.svg",
+      "kind": "icon",
+      "library": "iconoir-infra@1",
+      "id": "app-window",
+      "name": "App Window",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "0604d1f4465116e62c64ae3e1fcc3c6cc605b0690f52a21df433ddc5716809a2",
+      "examples": [
+        "examples/basics/107-iconoir-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure",
+        "development"
+      ],
+      "kinds": []
+    },
+    "iconoir-infra@1:archive": {
+      "path": "assets/icons/iconoir-infra-1/archive.svg",
+      "kind": "icon",
+      "library": "iconoir-infra@1",
+      "id": "archive",
+      "name": "Archive",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "b94ae566276be57f9ee54e0fe791cc0d7cece71643633cc5ebc7e223574679a1",
+      "examples": [
+        "examples/basics/107-iconoir-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure",
+        "development"
+      ],
+      "kinds": []
+    },
+    "iconoir-infra@1:cloud-sync": {
+      "path": "assets/icons/iconoir-infra-1/cloud-sync.svg",
+      "kind": "icon",
+      "library": "iconoir-infra@1",
+      "id": "cloud-sync",
+      "name": "Cloud Sync",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "062b17e033cadeff6b227061ac7a6e9819124f5670c7462686b03cfcca708c45",
+      "examples": [
+        "examples/basics/107-iconoir-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure",
+        "development"
+      ],
+      "kinds": []
+    },
+    "iconoir-infra@1:code-brackets": {
+      "path": "assets/icons/iconoir-infra-1/code-brackets.svg",
+      "kind": "icon",
+      "library": "iconoir-infra@1",
+      "id": "code-brackets",
+      "name": "Code Brackets",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "f3fb1bd62ac0a3dd2681b59a135b10bde3c8aac02b3ebb9f8148f3b71f66ceae",
+      "examples": [
+        "examples/basics/107-iconoir-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure",
+        "development"
+      ],
+      "kinds": []
+    },
+    "iconoir-infra@1:community": {
+      "path": "assets/icons/iconoir-infra-1/community.svg",
+      "kind": "icon",
+      "library": "iconoir-infra@1",
+      "id": "community",
+      "name": "Community",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "eb0cd3b2bbd50e0d47d8ccc59d197249e15f23c0267181d329079b4db398c4ee",
+      "examples": [
+        "examples/basics/107-iconoir-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure",
+        "development"
+      ],
+      "kinds": []
+    },
+    "iconoir-infra@1:database": {
+      "path": "assets/icons/iconoir-infra-1/database.svg",
+      "kind": "icon",
+      "library": "iconoir-infra@1",
+      "id": "database",
+      "name": "Database",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "dff34e97e064ee7c48817d7dbb0a9f088832d98a31a73bbc9480165cb40c9d81",
+      "examples": [
+        "examples/basics/107-iconoir-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure",
+        "development"
+      ],
+      "kinds": []
+    },
+    "iconoir-infra@1:database-backup": {
+      "path": "assets/icons/iconoir-infra-1/database-backup.svg",
+      "kind": "icon",
+      "library": "iconoir-infra@1",
+      "id": "database-backup",
+      "name": "Database Backup",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "57edf9f2242cb03c4f923e0934ca944ed6af0b7316733df219416713c9740871",
+      "examples": [
+        "examples/basics/107-iconoir-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure",
+        "development"
+      ],
+      "kinds": []
+    },
+    "iconoir-infra@1:terminal": {
+      "path": "assets/icons/iconoir-infra-1/terminal.svg",
+      "kind": "icon",
+      "library": "iconoir-infra@1",
+      "id": "terminal",
+      "name": "Terminal",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "3dfeb86c71fc6f7544b42c039abd5f711838b5100976f379e0b73a11d722007d",
+      "examples": [
+        "examples/basics/107-iconoir-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure",
+        "development"
+      ],
+      "kinds": []
+    },
+    "network-generic@1:cloud": {
+      "path": "assets/icons/network-generic-1/cloud.svg",
+      "kind": "icon",
+      "library": "network-generic@1",
+      "id": "cloud",
+      "name": "Cloud",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "4358218033c2ad0b13f74303aef16145999696dbe92e70db489f020501438e2d",
+      "examples": [
+        "examples/basics/103-network-symbols.ddn",
+        "examples/basics/106-tabler-icons.ddn",
+        "examples/basics/107-iconoir-icons.ddn",
+        "examples/basics/54-network-diagram.ddn",
+        "examples/basics/98-icons.ddn"
+      ],
+      "kinds": [
+        "network.bus"
+      ]
+    },
+    "network-generic@1:database": {
+      "path": "assets/icons/network-generic-1/database.svg",
+      "kind": "icon",
+      "library": "network-generic@1",
+      "id": "database",
+      "name": "Database",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "b9c0a99df5109403ea1d1a68a62255b98cfdf236e8be6cfdcf23e3d9f232a056",
+      "examples": [
+        "examples/basics/103-network-symbols.ddn",
+        "examples/basics/54-network-diagram.ddn",
+        "examples/basics/98-icons.ddn"
+      ],
+      "kinds": [
+        "network.rack"
+      ]
+    },
+    "network-generic@1:firewall": {
+      "path": "assets/icons/network-generic-1/firewall.svg",
+      "kind": "icon",
+      "library": "network-generic@1",
+      "id": "firewall",
+      "name": "Firewall",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "51cc48a958246d0972d92f476a0dfeedb104dcb51ec175bec3163ba77826c219",
+      "examples": [
+        "examples/basics/103-network-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "network-generic@1:load-balancer": {
+      "path": "assets/icons/network-generic-1/load-balancer.svg",
+      "kind": "icon",
+      "library": "network-generic@1",
+      "id": "load-balancer",
+      "name": "Load balancer",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "cfeac920e608c85013bab26b00835649e347748547fb261531521c5bde6eca53",
+      "examples": [
+        "examples/basics/103-network-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "network-generic@1:printer": {
+      "path": "assets/icons/network-generic-1/printer.svg",
+      "kind": "icon",
+      "library": "network-generic@1",
+      "id": "printer",
+      "name": "Printer",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "ffc5d671277df73becd10eac11701d0bc911d1a4a654a99146cc0fbe3ef13fe4",
+      "examples": [
+        "examples/basics/103-network-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "network-generic@1:router": {
+      "path": "assets/icons/network-generic-1/router.svg",
+      "kind": "icon",
+      "library": "network-generic@1",
+      "id": "router",
+      "name": "Router",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "cb846da2ee2a6293417cbe83de227da4d8903f71d11988168154974c805ab3ba",
+      "examples": [
+        "examples/basics/103-network-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "network-generic@1:server": {
+      "path": "assets/icons/network-generic-1/server.svg",
+      "kind": "icon",
+      "library": "network-generic@1",
+      "id": "server",
+      "name": "Server",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "eb8ad5473725e2c812466d4ac645396bbb25ed333a8ddd0981378f474367d434",
+      "examples": [
+        "examples/basics/103-network-symbols.ddn",
+        "examples/basics/54-network-diagram.ddn",
+        "examples/basics/98-icons.ddn"
+      ],
+      "kinds": [
+        "network.server"
+      ]
+    },
+    "network-generic@1:switch": {
+      "path": "assets/icons/network-generic-1/switch.svg",
+      "kind": "icon",
+      "library": "network-generic@1",
+      "id": "switch",
+      "name": "Switch",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "bcb178ad5ecdbf0c9870a267bd43ec68d0d550464f10cf82c89a804c67f0406f",
+      "examples": [
+        "examples/basics/103-network-symbols.ddn",
+        "examples/basics/54-network-diagram.ddn"
+      ],
+      "kinds": [
+        "network.switch"
+      ]
+    },
+    "network-generic@1:wifi-ap": {
+      "path": "assets/icons/network-generic-1/wifi-ap.svg",
+      "kind": "icon",
+      "library": "network-generic@1",
+      "id": "wifi-ap",
+      "name": "Wireless access point",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "1e498d5359b605c23684bd86833da62118f4436e5427d9243095d733884c6ae5",
+      "examples": [
+        "examples/basics/103-network-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "network-generic@1:workstation": {
+      "path": "assets/icons/network-generic-1/workstation.svg",
+      "kind": "icon",
+      "library": "network-generic@1",
+      "id": "workstation",
+      "name": "Workstation",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "652a5cc0efc234574f2c4a1c7a98ac737b7465b9193db294648c74d1a7ced7fd",
+      "examples": [
+        "examples/basics/103-network-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "pid-common@1:heat-exchanger": {
+      "path": "assets/icons/pid-common-1/heat-exchanger.svg",
+      "kind": "icon",
+      "library": "pid-common@1",
+      "id": "heat-exchanger",
+      "name": "Heat exchanger",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "fb2cbc82c51eb9454c7b12dca0a4d8741cb11b3fdd8e3f1eb282dd4a11219c99",
+      "examples": [
+        "examples/basics/104-pid-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "pid-common@1:instrument-dcs": {
+      "path": "assets/icons/pid-common-1/instrument-dcs.svg",
+      "kind": "icon",
+      "library": "pid-common@1",
+      "id": "instrument-dcs",
+      "name": "Instrument — DCS",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "3105f450ba2da5cf310be086e5a1a3494070a5fc068e90aec6cf7e04f7c86a3f",
+      "examples": [
+        "examples/basics/104-pid-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "pid-common@1:instrument-field": {
+      "path": "assets/icons/pid-common-1/instrument-field.svg",
+      "kind": "icon",
+      "library": "pid-common@1",
+      "id": "instrument-field",
+      "name": "Instrument — field mounted",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "dfd556b764478435e84a1d6c44b047465435e76e730d4582fe7926dea26359fb",
+      "examples": [
+        "examples/basics/104-pid-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "pid-common@1:instrument-panel": {
+      "path": "assets/icons/pid-common-1/instrument-panel.svg",
+      "kind": "icon",
+      "library": "pid-common@1",
+      "id": "instrument-panel",
+      "name": "Instrument — panel mounted",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "1e72642244ce637f8ee073ede90fd102f99ad8106f66625f9590aba68f40901e",
+      "examples": [
+        "examples/basics/104-pid-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "pid-common@1:pump-centrifugal": {
+      "path": "assets/icons/pid-common-1/pump-centrifugal.svg",
+      "kind": "icon",
+      "library": "pid-common@1",
+      "id": "pump-centrifugal",
+      "name": "Centrifugal pump",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "7873544311334af08811133f4c903f333fcb5839aba934730398b1f3583910db",
+      "examples": [
+        "examples/basics/104-pid-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "pid-common@1:tank-roof": {
+      "path": "assets/icons/pid-common-1/tank-roof.svg",
+      "kind": "icon",
+      "library": "pid-common@1",
+      "id": "tank-roof",
+      "name": "Tank with cone roof",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "fb087cbbb265a4ff91c633cdba509cedd1d72eac8ac9db3b6c1e2caed106913d",
+      "examples": [
+        "examples/basics/104-pid-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "pid-common@1:valve-control": {
+      "path": "assets/icons/pid-common-1/valve-control.svg",
+      "kind": "icon",
+      "library": "pid-common@1",
+      "id": "valve-control",
+      "name": "Control valve (diaphragm actuator)",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "4fa8367e4c7f8b9ee10e5a2976610a5713ef38146d84b333d64038cbd7c31c2f",
+      "examples": [
+        "examples/basics/104-pid-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "pid-common@1:valve-gate": {
+      "path": "assets/icons/pid-common-1/valve-gate.svg",
+      "kind": "icon",
+      "library": "pid-common@1",
+      "id": "valve-gate",
+      "name": "Gate valve",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "60e62205ac6ff6c741a7245d3178f7793e0449b53b9a80549aae2345b6aeec81",
+      "examples": [
+        "examples/basics/104-pid-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "pid-common@1:valve-relief": {
+      "path": "assets/icons/pid-common-1/valve-relief.svg",
+      "kind": "icon",
+      "library": "pid-common@1",
+      "id": "valve-relief",
+      "name": "Relief valve (spring)",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "428852bd9e781cfbadbdbe7aa0f57d4081e07140432e9e94a1e6eb0ecf8939c6",
+      "examples": [
+        "examples/basics/104-pid-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "pid-common@1:vessel-vertical": {
+      "path": "assets/icons/pid-common-1/vessel-vertical.svg",
+      "kind": "icon",
+      "library": "pid-common@1",
+      "id": "vessel-vertical",
+      "name": "Vertical vessel",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "e396bcf9838d3ab0bd9e3e5592176621183b2cf28460cf66f4347e5ab492487f",
+      "examples": [
+        "examples/basics/104-pid-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "presentation-devices@1:database": {
+      "path": "assets/icons/presentation-devices-1/database.svg",
+      "kind": "art",
+      "library": "presentation-devices@1",
+      "id": "database",
+      "name": "Database",
+      "viewBox": [
+        0.0,
+        0.0,
+        199.5,
+        286.6
+      ],
+      "width": 199.5,
+      "height": 286.6,
+      "license": "CC0-1.0",
+      "sha256": "68bdbfd786dd3ecadc66b82093db62c620b1a5acc73e167f9eb48e9dab9ff45b",
+      "examples": [
+        "examples/basics/110-presentation-architecture.ddn"
+      ],
+      "anchors": {
+        "north": [
+          99.75,
+          0
+        ],
+        "east": [
+          199.5,
+          143.3
+        ],
+        "south": [
+          99.75,
+          286.6
+        ],
+        "west": [
+          0,
+          143.3
+        ]
+      },
+      "provenance": {
+        "title": "Database Server",
+        "author": "ujmoser",
+        "license": "CC0-1.0",
+        "source": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Database_Server.svg",
+        "retrieved": "2026-10-01"
+      },
+      "tags": [
+        "database"
+      ]
+    },
+    "presentation-devices@1:factory": {
+      "path": "assets/icons/presentation-devices-1/factory.svg",
+      "kind": "art",
+      "library": "presentation-devices@1",
+      "id": "factory",
+      "name": "Factory",
+      "viewBox": [
+        0,
+        0,
+        510.0,
+        503.0
+      ],
+      "width": 510.0,
+      "height": 503.0,
+      "license": "CC0-1.0",
+      "sha256": "51c2a0d2c781b968ebb012a9a825d1dda398d6614fd732717f4c0b9b98d61b1f",
+      "examples": [
+        "examples/basics/110-presentation-architecture.ddn"
+      ],
+      "anchors": {
+        "north": [
+          255,
+          0
+        ],
+        "east": [
+          510,
+          251.5
+        ],
+        "south": [
+          255,
+          503
+        ],
+        "west": [
+          0,
+          251.5
+        ]
+      },
+      "provenance": {
+        "title": "factory",
+        "author": "Vedran",
+        "license": "CC0-1.0",
+        "source": "https://freesvg.org/1528412882",
+        "retrieved": "2026-10-01"
+      },
+      "tags": [
+        "factory"
+      ]
+    },
+    "presentation-devices@1:firewall": {
+      "path": "assets/icons/presentation-devices-1/firewall.svg",
+      "kind": "art",
+      "library": "presentation-devices@1",
+      "id": "firewall",
+      "name": "Firewall",
+      "viewBox": [
+        0.0,
+        0.0,
+        2212.0,
+        325.32
+      ],
+      "width": 2212.0,
+      "height": 325.32,
+      "license": "CC0-1.0",
+      "sha256": "54a6da500536200a52e43c07260c87488a49942e14311f6286322fedec3e9e87",
+      "examples": [
+        "examples/basics/110-presentation-architecture.ddn"
+      ],
+      "anchors": {
+        "north": [
+          1106,
+          0
+        ],
+        "east": [
+          2212,
+          162.66
+        ],
+        "south": [
+          1106,
+          325.32
+        ],
+        "west": [
+          0,
+          162.66
+        ]
+      },
+      "provenance": {
+        "title": "firewall",
+        "author": "Vedran",
+        "license": "CC0-1.0",
+        "source": "https://freesvg.org/red-firewall-appliance-vector-clip-art",
+        "retrieved": "2026-10-01"
+      },
+      "tags": [
+        "firewall"
+      ]
+    },
+    "presentation-devices@1:laptop": {
+      "path": "assets/icons/presentation-devices-1/laptop.svg",
+      "kind": "art",
+      "library": "presentation-devices@1",
+      "id": "laptop",
+      "name": "Laptop",
+      "viewBox": [
+        0.0,
+        0.0,
+        744.1,
+        1052.4
+      ],
+      "width": 744.1,
+      "height": 1052.4,
+      "license": "CC0-1.0",
+      "sha256": "771452b714ad6945a81f0d75ea24f2d047014f17ff381b0048232ee9150293ea",
+      "examples": [
+        "examples/basics/110-presentation-architecture.ddn"
+      ],
+      "anchors": {
+        "north": [
+          372.05,
+          0
+        ],
+        "east": [
+          744.1,
+          526.2
+        ],
+        "south": [
+          372.05,
+          1052.4
+        ],
+        "west": [
+          0,
+          526.2
+        ]
+      },
+      "provenance": {
+        "title": "laptop-computer-vector",
+        "author": "freesvg contributor",
+        "license": "CC0-1.0",
+        "source": "https://freesvg.org/laptop-computer-vector",
+        "retrieved": "2026-10-01"
+      },
+      "tags": [
+        "laptop"
+      ]
+    },
+    "presentation-devices@1:office-building": {
+      "path": "assets/icons/presentation-devices-1/office-building.svg",
+      "kind": "art",
+      "library": "presentation-devices@1",
+      "id": "office-building",
+      "name": "Office Building",
+      "viewBox": [
+        0.0,
+        0.0,
+        163.0,
+        293.7
+      ],
+      "width": 163.0,
+      "height": 293.7,
+      "license": "CC0-1.0",
+      "sha256": "ac81a6cd9f025fa35203cd8164c3d167f6731f15d4420fc3ab835fe3bcb3022f",
+      "examples": [
+        "examples/basics/110-presentation-architecture.ddn"
+      ],
+      "anchors": {
+        "north": [
+          81.5,
+          0
+        ],
+        "east": [
+          163,
+          146.85
+        ],
+        "south": [
+          81.5,
+          293.7
+        ],
+        "west": [
+          0,
+          146.85
+        ]
+      },
+      "provenance": {
+        "title": "building-skyscraper-blue-and-purple",
+        "author": "freesvg contributor",
+        "license": "CC0-1.0",
+        "source": "https://freesvg.org/building-skyscraper-blue-and-purple",
+        "retrieved": "2026-10-01"
+      },
+      "tags": [
+        "office"
+      ]
+    },
+    "presentation-devices@1:server": {
+      "path": "assets/icons/presentation-devices-1/server.svg",
+      "kind": "art",
+      "library": "presentation-devices@1",
+      "id": "server",
+      "name": "Server",
+      "viewBox": [
+        0.0,
+        0.0,
+        400.91,
+        277.66
+      ],
+      "width": 400.91,
+      "height": 277.66,
+      "license": "CC0-1.0",
+      "sha256": "6009e32343c0f21c1b4a39dc5ab94172e5ddd480bc6ab21b57b32288e8ac51b6",
+      "examples": [
+        "examples/basics/110-presentation-architecture.ddn"
+      ],
+      "anchors": {
+        "north": [
+          200.46,
+          0
+        ],
+        "east": [
+          400.91,
+          138.83
+        ],
+        "south": [
+          200.46,
+          277.66
+        ],
+        "west": [
+          0,
+          138.83
+        ]
+      },
+      "provenance": {
+        "title": "server-computer-vector-image",
+        "author": "freesvg contributor",
+        "license": "CC0-1.0",
+        "source": "https://freesvg.org/server-computer-vector-image",
+        "retrieved": "2026-10-01"
+      },
+      "tags": [
+        "server"
+      ]
+    },
+    "presentation-devices@1:server-rack": {
+      "path": "assets/icons/presentation-devices-1/server-rack.svg",
+      "kind": "art",
+      "library": "presentation-devices@1",
+      "id": "server-rack",
+      "name": "Server Rack",
+      "viewBox": [
+        0.0,
+        0.0,
+        58.5,
+        100.0
+      ],
+      "width": 58.5,
+      "height": 100.0,
+      "license": "CC0-1.0",
+      "sha256": "418c7e7c2d6fbe40106cf4f548e694602c778927cdb586bb909009bdf29bbe0d",
+      "examples": [
+        "examples/basics/110-presentation-architecture.ddn"
+      ],
+      "anchors": {
+        "north": [
+          29.25,
+          0
+        ],
+        "east": [
+          58.5,
+          50
+        ],
+        "south": [
+          29.25,
+          100
+        ],
+        "west": [
+          0,
+          50
+        ]
+      },
+      "provenance": {
+        "title": "isometric-server-cabinet-vector-graphics",
+        "author": "freesvg contributor",
+        "license": "CC0-1.0",
+        "source": "https://freesvg.org/isometric-server-cabinet-vector-graphics",
+        "retrieved": "2026-10-01"
+      },
+      "tags": [
+        "server"
+      ]
+    },
+    "presentation-devices@1:storage-array": {
+      "path": "assets/icons/presentation-devices-1/storage-array.svg",
+      "kind": "art",
+      "library": "presentation-devices@1",
+      "id": "storage-array",
+      "name": "Storage Array",
+      "viewBox": [
+        0,
+        0,
+        170.66666666666666,
+        170.66666666666666
+      ],
+      "width": 170.66666666666666,
+      "height": 170.66666666666666,
+      "license": "CC0-1.0",
+      "sha256": "57249bfe7e26fcd678fa5b15c6eadd530914fcecd6ef2867f8a7f82e9cb45327",
+      "examples": [
+        "examples/basics/110-presentation-architecture.ddn"
+      ],
+      "anchors": {
+        "north": [
+          64,
+          0
+        ],
+        "east": [
+          128,
+          64
+        ],
+        "south": [
+          64,
+          128
+        ],
+        "west": [
+          0,
+          64
+        ]
+      },
+      "provenance": {
+        "title": "storage-array",
+        "author": "Vedran",
+        "license": "CC0-1.0",
+        "source": "https://freesvg.org/vector-graphics-of-hard-disk-icon",
+        "retrieved": "2026-10-01"
+      },
+      "tags": [
+        "storage"
+      ]
+    },
+    "presentation-devices@1:team": {
+      "path": "assets/icons/presentation-devices-1/team.svg",
+      "kind": "art",
+      "library": "presentation-devices@1",
+      "id": "team",
+      "name": "Team",
+      "viewBox": [
+        0.0,
+        0.0,
+        1860.1,
+        1151.1
+      ],
+      "width": 1860.1,
+      "height": 1151.1,
+      "license": "CC0-1.0",
+      "sha256": "8a298b6ff77894962a1467d7cf442d08aaf96b421eb5544db951d6329b863e54",
+      "examples": [
+        "examples/basics/110-presentation-architecture.ddn"
+      ],
+      "anchors": {
+        "north": [
+          930.05,
+          0
+        ],
+        "east": [
+          1860.1,
+          575.55
+        ],
+        "south": [
+          930.05,
+          1151.1
+        ],
+        "west": [
+          0,
+          575.55
+        ]
+      },
+      "provenance": {
+        "title": "young-business-people-silhouettes-vector-image",
+        "author": "freesvg contributor",
+        "license": "CC0-1.0",
+        "source": "https://freesvg.org/young-business-people-silhouettes-vector-image",
+        "retrieved": "2026-10-01"
+      },
+      "tags": [
+        "team"
+      ]
+    },
+    "presentation-devices@1:truck": {
+      "path": "assets/icons/presentation-devices-1/truck.svg",
+      "kind": "art",
+      "library": "presentation-devices@1",
+      "id": "truck",
+      "name": "Truck",
+      "viewBox": [
+        0.0,
+        0.0,
+        340.4,
+        100.8
+      ],
+      "width": 340.4,
+      "height": 100.8,
+      "license": "CC0-1.0",
+      "sha256": "73118f80045fece4149e7b327914fe8e221e297001a14ef446d7dec01d921f7d",
+      "examples": [
+        "examples/basics/110-presentation-architecture.ddn"
+      ],
+      "anchors": {
+        "north": [
+          170.2,
+          0
+        ],
+        "east": [
+          340.4,
+          50.4
+        ],
+        "south": [
+          170.2,
+          100.8
+        ],
+        "west": [
+          0,
+          50.4
+        ]
+      },
+      "provenance": {
+        "title": "big-lorry-vector-illustration",
+        "author": "freesvg contributor",
+        "license": "CC0-1.0",
+        "source": "https://freesvg.org/big-lorry-vector-illustration",
+        "retrieved": "2026-10-01"
+      },
+      "tags": [
+        "truck"
+      ]
+    },
+    "tabler-infra@1:api": {
+      "path": "assets/icons/tabler-infra-1/api.svg",
+      "kind": "icon",
+      "library": "tabler-infra@1",
+      "id": "api",
+      "name": "Api",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "a1dab6dada5d08b186d4e4b1e845fd38f835f62f506aa5682db22e7445b45caf",
+      "examples": [
+        "examples/basics/106-tabler-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure"
+      ],
+      "kinds": []
+    },
+    "tabler-infra@1:database": {
+      "path": "assets/icons/tabler-infra-1/database.svg",
+      "kind": "icon",
+      "library": "tabler-infra@1",
+      "id": "database",
+      "name": "Database",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "b202b4b098cfd0e92e22589bd62f864a3ec98c1091f24b928d64fc1d621dded4",
+      "examples": [
+        "examples/basics/106-tabler-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure"
+      ],
+      "kinds": []
+    },
+    "tabler-infra@1:device-desktop": {
+      "path": "assets/icons/tabler-infra-1/device-desktop.svg",
+      "kind": "icon",
+      "library": "tabler-infra@1",
+      "id": "device-desktop",
+      "name": "Device Desktop",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "44eb88cca35249a1250a0e669d42b019ed6f75e9c83d28edee083c5920c78d03",
+      "examples": [
+        "examples/basics/106-tabler-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure"
+      ],
+      "kinds": []
+    },
+    "tabler-infra@1:device-laptop": {
+      "path": "assets/icons/tabler-infra-1/device-laptop.svg",
+      "kind": "icon",
+      "library": "tabler-infra@1",
+      "id": "device-laptop",
+      "name": "Device Laptop",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "e09601df5762e4c3ad0e81d82e7953d83f2145eccac237cd3fd3816121f7f56f",
+      "examples": [
+        "examples/basics/106-tabler-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure"
+      ],
+      "kinds": []
+    },
+    "tabler-infra@1:network": {
+      "path": "assets/icons/tabler-infra-1/network.svg",
+      "kind": "icon",
+      "library": "tabler-infra@1",
+      "id": "network",
+      "name": "Network",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "53100e3119a5e63719be8797b5efba5d599cce7a97cc57723c51ca953a5b7a67",
+      "examples": [
+        "examples/basics/106-tabler-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure"
+      ],
+      "kinds": []
+    },
+    "tabler-infra@1:router": {
+      "path": "assets/icons/tabler-infra-1/router.svg",
+      "kind": "icon",
+      "library": "tabler-infra@1",
+      "id": "router",
+      "name": "Router",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "375d7580ffb0c6de79f4e14552b522e70eba9e2e41f77e26257fec625c185549",
+      "examples": [
+        "examples/basics/106-tabler-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure"
+      ],
+      "kinds": []
+    },
+    "tabler-infra@1:server": {
+      "path": "assets/icons/tabler-infra-1/server.svg",
+      "kind": "icon",
+      "library": "tabler-infra@1",
+      "id": "server",
+      "name": "Server",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "4b0a8fe98d8c7f2671c3db8433e50f88afd88cbb8922d04ffa476a0c8ff774ce",
+      "examples": [
+        "examples/basics/106-tabler-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure"
+      ],
+      "kinds": []
+    },
+    "tabler-infra@1:shield-lock": {
+      "path": "assets/icons/tabler-infra-1/shield-lock.svg",
+      "kind": "icon",
+      "library": "tabler-infra@1",
+      "id": "shield-lock",
+      "name": "Shield Lock",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "MIT",
+      "sha256": "36b8ab30217561a240b247a6d290c040e59a8c2e01a39eacb870f5242d46a0e8",
+      "examples": [
+        "examples/basics/106-tabler-icons.ddn"
+      ],
+      "tags": [
+        "infrastructure"
+      ],
+      "kinds": []
+    },
+    "vsm-symbols@1:customer": {
+      "path": "assets/icons/vsm-symbols-1/customer.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "customer",
+      "name": "Customer (factory)",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "ee0f04f946cc8766f8a4bc5d037b75e291494469092cefc7972eec3d1ae60956",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn",
+        "examples/basics/97-vsm.ddn"
+      ],
+      "kinds": [
+        "vsm.customer"
+      ]
+    },
+    "vsm-symbols@1:einfo": {
+      "path": "assets/icons/vsm-symbols-1/einfo.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "einfo",
+      "name": "Electronic information",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "d3c51096ee13a9b72e67e6e889fcd0f6f9b067323e11740a842bfaea370588fe",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "vsm-symbols@1:fifo-lane": {
+      "path": "assets/icons/vsm-symbols-1/fifo-lane.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "fifo-lane",
+      "name": "FIFO lane",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "7d4b69345353ff5e0f38f58d02c0db3342ceebce119501456fb289b57cce5047",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "vsm-symbols@1:inventory": {
+      "path": "assets/icons/vsm-symbols-1/inventory.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "inventory",
+      "name": "Inventory",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "dee5fb6e6bc0c6fde4503ba22f262515a666d0591b914736a76c0e7c2b7f9e58",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn",
+        "examples/basics/97-vsm.ddn"
+      ],
+      "kinds": [
+        "vsm.inventory"
+      ]
+    },
+    "vsm-symbols@1:kaizen": {
+      "path": "assets/icons/vsm-symbols-1/kaizen.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "kaizen",
+      "name": "Kaizen burst",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "d117c3be86028f32eed3a1eaccaef473367432729c28ae75719d7080ac46d8a6",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn",
+        "examples/basics/97-vsm.ddn"
+      ],
+      "kinds": [
+        "vsm.kaizen"
+      ]
+    },
+    "vsm-symbols@1:operator": {
+      "path": "assets/icons/vsm-symbols-1/operator.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "operator",
+      "name": "Operator",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "38fdc00c7f3d91705c18adaaa444a334dcea65a743bcdc62b67cfeb9af0f9f20",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn",
+        "examples/basics/97-vsm.ddn"
+      ],
+      "kinds": [
+        "vsm.operator"
+      ]
+    },
+    "vsm-symbols@1:process": {
+      "path": "assets/icons/vsm-symbols-1/process.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "process",
+      "name": "Process box",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "270a1148ba3511e7e7dfe4390267673b361f9602de3e98f6491fc5ec337e4d0d",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn",
+        "examples/basics/97-vsm.ddn"
+      ],
+      "kinds": [
+        "vsm.process"
+      ]
+    },
+    "vsm-symbols@1:production-control": {
+      "path": "assets/icons/vsm-symbols-1/production-control.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "production-control",
+      "name": "Production control",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "97c96a3b6ef3bd5163cd9b167c9321ebc90f38bc7bbd0509ab1e2418ceed228b",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn",
+        "examples/basics/97-vsm.ddn"
+      ],
+      "kinds": [
+        "vsm.control"
+      ]
+    },
+    "vsm-symbols@1:safety-stock": {
+      "path": "assets/icons/vsm-symbols-1/safety-stock.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "safety-stock",
+      "name": "Safety / buffer stock",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "4eca93a7df873a7174c389898e2731b90cd8991016a0bdf942137e9ae5ccfc25",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "vsm-symbols@1:supermarket": {
+      "path": "assets/icons/vsm-symbols-1/supermarket.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "supermarket",
+      "name": "Supermarket",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "b1d127ec99c320b0fc16778ac471dd0eea2d90c3894e2d8493f84c30b60b7c09",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn",
+        "examples/basics/97-vsm.ddn"
+      ],
+      "kinds": [
+        "vsm.supermarket"
+      ]
+    },
+    "vsm-symbols@1:supplier": {
+      "path": "assets/icons/vsm-symbols-1/supplier.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "supplier",
+      "name": "Supplier (factory)",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "0f689a4784f44abb27b0d1a03ba0200eab14097bc3386cdd4e37c91dbd50fb71",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn"
+      ],
+      "kinds": []
+    },
+    "vsm-symbols@1:truck": {
+      "path": "assets/icons/vsm-symbols-1/truck.svg",
+      "kind": "icon",
+      "library": "vsm-symbols@1",
+      "id": "truck",
+      "name": "Truck shipment",
+      "viewBox": [
+        0.0,
+        0.0,
+        24.0,
+        24.0
+      ],
+      "width": 24.0,
+      "height": 24.0,
+      "license": "GPL-2.0-or-later",
+      "sha256": "6c051d90f685bc7450ede605d910578ab41d26cb1d9354386939531a9497773c",
+      "examples": [
+        "examples/basics/102-vsm-symbols.ddn"
+      ],
+      "kinds": []
+    }
+  },
+  "bindings": {
+    "vsm.control": "vsm-symbols@1:production-control",
+    "vsm.process": "vsm-symbols@1:process",
+    "vsm.inventory": "vsm-symbols@1:inventory",
+    "vsm.supermarket": "vsm-symbols@1:supermarket",
+    "vsm.customer": "vsm-symbols@1:customer",
+    "vsm.kaizen": "vsm-symbols@1:kaizen",
+    "vsm.operator": "vsm-symbols@1:operator",
+    "network.bus": "network-generic@1:cloud",
+    "network.switch": "network-generic@1:switch",
+    "network.server": "network-generic@1:server",
+    "network.rack": "network-generic@1:database"
+  },
+  "libraries": {
+    "electrical-common@1": {
+      "id": "electrical-common@1",
+      "name": "Electrical common symbols (agent-drawn)",
+      "version": "1.0.0",
+      "license": "GPL-2.0-or-later",
+      "attribution": "DDN contributors (agent-drawn artwork)",
+      "source": "https://github.com/scratchbird-software-inc/Diagram-Design-Notation",
+      "licenseText": "GPL-2.0-or-later. Agent-drawn for the Diagram Design Notation project; copyright the DDN contributors.",
+      "note": "Common-practice rendering — compliance against the governing standard pending document review. IEC 60617-style common set; the IEC 60617 document is not in hand, so forms follow well-known public renderings. Primary orientation only; rotate at bind time if needed.",
+      "notice": "assets/icons/electrical-common-1/NOTICE.txt"
+    },
+    "generic-demo@1": {
+      "id": "generic-demo@1",
+      "name": "Generic demo set (agent-drawn)",
+      "version": "1.0.0",
+      "license": "GPL-2.0-or-later",
+      "attribution": "DDN contributors (agent-drawn artwork)",
+      "source": "https://github.com/scratchbird-software-inc/Diagram-Design-Notation",
+      "licenseText": "GPL-2.0-or-later. Agent-drawn for the Diagram Design Notation project; copyright the DDN contributors.",
+      "notice": "assets/icons/generic-demo-1/NOTICE.txt"
+    },
+    "iconoir-infra@1": {
+      "id": "iconoir-infra@1",
+      "name": "Iconoir infrastructure & development selection (MIT)",
+      "version": "1.0.0",
+      "license": "MIT",
+      "attribution": "Iconoir, Copyright (c) 2021 Luca Burgio — https://iconoir.com",
+      "source": "https://github.com/iconoir-icons/iconoir",
+      "licenseText": "MIT License\n\nCopyright (c) 2021 Luca Burgio\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.",
+      "note": "Curated diagram-relevant subset of iconoir (regular style), chosen to complement the Tabler selection; the full set is not vendored.",
+      "notice": "assets/icons/iconoir-infra-1/NOTICE.txt"
+    },
+    "network-generic@1": {
+      "id": "network-generic@1",
+      "name": "Generic network infrastructure (agent-drawn)",
+      "version": "1.0.0",
+      "license": "GPL-2.0-or-later",
+      "attribution": "DDN contributors (agent-drawn artwork)",
+      "source": "https://github.com/scratchbird-software-inc/Diagram-Design-Notation",
+      "licenseText": "GPL-2.0-or-later. Agent-drawn for the Diagram Design Notation project; copyright the DDN contributors.",
+      "note": "Common-practice rendering — compliance against the governing standard pending document review. Generic glyphs only; vendor packs (Cisco/AWS/Azure/GCP) excluded pending licensing diligence.",
+      "notice": "assets/icons/network-generic-1/NOTICE.txt"
+    },
+    "pid-common@1": {
+      "id": "pid-common@1",
+      "name": "P&ID common symbols (agent-drawn)",
+      "version": "1.0.0",
+      "license": "GPL-2.0-or-later",
+      "attribution": "DDN contributors (agent-drawn artwork)",
+      "source": "https://github.com/scratchbird-software-inc/Diagram-Design-Notation",
+      "licenseText": "GPL-2.0-or-later. Agent-drawn for the Diagram Design Notation project; copyright the DDN contributors.",
+      "note": "Common-practice rendering — compliance against the governing standard pending document review. ISA-5.1-style common set; the ISA-5.1 document is not in hand, so forms follow well-known public renderings.",
+      "notice": "assets/icons/pid-common-1/NOTICE.txt"
+    },
+    "presentation-devices@1": {
+      "id": "presentation-devices@1",
+      "name": "Presentation devices and places (Wikimedia Commons CC0/PD selection)",
+      "version": "1.0.0",
+      "license": "CC0-1.0",
+      "attribution": "Individual Wikimedia Commons authors (per-item provenance); all items CC0 or public domain",
+      "source": "https://commons.wikimedia.org/",
+      "note": "Presentation-idiom illustrations (computers, servers, network gear, buildings, people), curated one per slot from Wikimedia Commons with license verification at curation time. Detailed artwork, not 24x24 stroke icons; side anchors are the viewBox edge midpoints.",
+      "notice": "assets/icons/presentation-devices-1/NOTICE.txt"
+    },
+    "tabler-infra@1": {
+      "id": "tabler-infra@1",
+      "name": "Tabler infrastructure selection (MIT)",
+      "version": "1.0.0",
+      "license": "MIT",
+      "attribution": "Tabler Icons, Copyright (c) 2020-2026 Paweł Kuna — https://tabler.io",
+      "source": "https://github.com/tabler/tabler-icons",
+      "licenseText": "MIT License\n\nCopyright (c) 2020-2026 Paweł Kuna\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.",
+      "note": "Curated diagram-relevant subset of tabler-icons (outline style); the full set is not vendored.",
+      "notice": "assets/icons/tabler-infra-1/NOTICE.txt"
+    },
+    "vsm-symbols@1": {
+      "id": "vsm-symbols@1",
+      "name": "Value-stream mapping symbols (agent-drawn)",
+      "version": "1.0.0",
+      "license": "GPL-2.0-or-later",
+      "attribution": "DDN contributors (agent-drawn artwork)",
+      "source": "https://github.com/scratchbird-software-inc/Diagram-Design-Notation",
+      "licenseText": "GPL-2.0-or-later. Agent-drawn for the Diagram Design Notation project; copyright the DDN contributors.",
+      "note": "Common-practice rendering — compliance against the governing standard pending document review. Artwork upgrade over the built-in simple VSM glyphs.",
+      "notice": "assets/icons/vsm-symbols-1/NOTICE.txt"
+    }
+  },
+  "counts": {
+    "assets": 72,
+    "icons": 62,
+    "illustrations": 10,
+    "libraries": 8
+  }
+}

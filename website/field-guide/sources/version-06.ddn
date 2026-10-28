@@ -1,0 +1,105 @@
+version ddn-next-1
+
+publication "publication:main"
+    with
+        id "publication:main"
+        title "Order service outline"
+        targets
+            item
+                target
+                    id "main"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.version06::model.api" as "service"
+    with
+        id "ddn.fieldguide.version06::model.api"
+        title "Order API"
+
+
+element "ddn.fieldguide.version06::model.store" as "database"
+    with
+        id "ddn.fieldguide.version06::model.store"
+        title "Order store"
+
+
+element "ddn.fieldguide.version06::model.events" as "queue"
+    with
+        id "ddn.fieldguide.version06::model.events"
+        title "Order events"
+
+
+relation "ddn.fieldguide.version06::model.read" as "flow"
+    with
+        id "ddn.fieldguide.version06::model.read"
+        title "persists"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.version06::model.api"
+            item
+                definition
+                    id "ddn.fieldguide.version06::model.store"
+
+
+relation "ddn.fieldguide.version06::model.emit" as "flow"
+    with
+        id "ddn.fieldguide.version06::model.emit"
+        title "publishes"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.version06::model.api"
+            item
+                definition
+                    id "ddn.fieldguide.version06::model.events"
+
+
+view "main" as "ddn@1"
+    with
+        id "main"
+        title "Order service outline"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.version06::model.api"
+                item
+                    id "ddn.fieldguide.version06::model.store"
+                item
+                    id "ddn.fieldguide.version06::model.events"
+                item
+                    id "ddn.fieldguide.version06::model.read"
+                item
+                    id "ddn.fieldguide.version06::model.emit"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:main"
+
+    use "ddn.fieldguide.version06::model.api" named "appearance:main:ddn.fieldguide.version06::model.api"
+        with
+            id "appearance:main:ddn.fieldguide.version06::model.api"
+
+    use "ddn.fieldguide.version06::model.store" named "appearance:main:ddn.fieldguide.version06::model.store"
+        with
+            id "appearance:main:ddn.fieldguide.version06::model.store"
+
+    use "ddn.fieldguide.version06::model.events" named "appearance:main:ddn.fieldguide.version06::model.events"
+        with
+            id "appearance:main:ddn.fieldguide.version06::model.events"
+
+    use "ddn.fieldguide.version06::model.read" named "appearance:main:ddn.fieldguide.version06::model.read"
+        with
+            id "appearance:main:ddn.fieldguide.version06::model.read"
+
+    use "ddn.fieldguide.version06::model.emit" named "appearance:main:ddn.fieldguide.version06::model.emit"
+        with
+            id "appearance:main:ddn.fieldguide.version06::model.emit"

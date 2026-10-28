@@ -1,42 +1,358 @@
-ddn "0.5";
-module "ddn.examples.ladder";
+version ddn-next-1
 
-// B1-085: an IEC 61131-3 ladder diagram — three rungs between the power
-// rails. Rung 1: a NO start contact in series with a NC stop contact drives
-// the motor coil. Rung 2: AUTO and MANUAL contacts in parallel (an OR branch
-// inferred from the shared junction) set a latch. Rung 3: a hosted FBD TON
-// timer block with typed pins resets a DONE coil, and a jump returns to the
-// L1 label on rung 1. All data is synthetic.
-data rung1 {
-    object l1 "L1" { kind: "ladder.label"; }
-    object start "START" { kind: "ladder.contact"; x_contact: { form: "no" }; }
-    object stop "STOP" { kind: "ladder.contact"; x_contact: { form: "nc" }; }
-    object motor "MOTOR" { kind: "ladder.coil"; x_coil: { mode: "normal" }; }
-    relation s1 "" @start -> @stop { kind: "ladder.series"; }
-    relation s2 "" @stop -> @motor { kind: "ladder.series"; }
-}
-data rung2 {
-    object auto_start "AUTO" { kind: "ladder.contact"; }
-    object manual_start "MANUAL" { kind: "ladder.contact"; }
-    object latch "LATCH" { kind: "ladder.coil"; x_coil: { mode: "set" }; }
-    relation s3 "" @auto_start -> @latch { kind: "ladder.series"; }
-    relation s4 "" @manual_start -> @latch { kind: "ladder.series"; }
-}
-data rung3 {
-    object run "RUN" { kind: "ladder.contact"; }
-    object t1 "T1" { kind: "fbd.block"; datatype: "TON";
-        ports {
-            in1 { direction: in; x_fbd: { type: "BOOL" }; }
-            pt { direction: in; x_fbd: { type: "TIME" }; }
-            q { direction: out; x_fbd: { type: "BOOL" }; }
-        }
-    }
-    object done "DONE" { kind: "ladder.coil"; x_coil: { mode: "reset" }; }
-    object j1 "NEXT" { kind: "ladder.jump"; x_jump: { target: @rung1.l1 }; }
-    relation s5 "" @run -> @t1.in1 { kind: "ladder.series"; }
-    relation s6 "" @t1.q -> @done { kind: "ladder.series"; }
-}
-view d "Motor control ladder": [@rung1, @rung2, @rung3] as "ladder.basic@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: ladder; }
-    publication { size: content; fit: none; }
-}
+publication "publication:d"
+    with
+        id "publication:d"
+        title "Motor control ladder"
+        targets
+            item
+                target
+                    id "d"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.ladder::rung1.l1" as "ladder.label"
+    with
+        id "ddn.examples.ladder::rung1.l1"
+        title "L1"
+
+
+element "ddn.examples.ladder::rung1.start" as "ladder.contact"
+    with
+        id "ddn.examples.ladder::rung1.start"
+        title "START"
+        metadata
+            x_contact
+                form "no"
+
+
+element "ddn.examples.ladder::rung1.stop" as "ladder.contact"
+    with
+        id "ddn.examples.ladder::rung1.stop"
+        title "STOP"
+        metadata
+            x_contact
+                form "nc"
+
+
+element "ddn.examples.ladder::rung1.motor" as "ladder.coil"
+    with
+        id "ddn.examples.ladder::rung1.motor"
+        title "MOTOR"
+        metadata
+            x_coil
+                mode "normal"
+
+
+element "ddn.examples.ladder::rung2.auto_start" as "ladder.contact"
+    with
+        id "ddn.examples.ladder::rung2.auto_start"
+        title "AUTO"
+
+
+element "ddn.examples.ladder::rung2.manual_start" as "ladder.contact"
+    with
+        id "ddn.examples.ladder::rung2.manual_start"
+        title "MANUAL"
+
+
+element "ddn.examples.ladder::rung2.latch" as "ladder.coil"
+    with
+        id "ddn.examples.ladder::rung2.latch"
+        title "LATCH"
+        metadata
+            x_coil
+                mode "set"
+
+
+element "ddn.examples.ladder::rung3.run" as "ladder.contact"
+    with
+        id "ddn.examples.ladder::rung3.run"
+        title "RUN"
+
+
+element "ddn.examples.ladder::rung3.t1.in1" as "core::Port"
+    with
+        id "ddn.examples.ladder::rung3.t1.in1"
+        title "in1"
+        metadata
+            x_fbd
+                type "BOOL"
+        content
+            owner
+                id "ddn.examples.ladder::rung3.t1"
+            direction "input"
+
+
+element "ddn.examples.ladder::rung3.t1.pt" as "core::Port"
+    with
+        id "ddn.examples.ladder::rung3.t1.pt"
+        title "pt"
+        metadata
+            x_fbd
+                type "TIME"
+        content
+            owner
+                id "ddn.examples.ladder::rung3.t1"
+            direction "input"
+
+
+element "ddn.examples.ladder::rung3.t1.q" as "core::Port"
+    with
+        id "ddn.examples.ladder::rung3.t1.q"
+        title "q"
+        metadata
+            x_fbd
+                type "BOOL"
+        content
+            owner
+                id "ddn.examples.ladder::rung3.t1"
+            direction "output"
+
+
+element "ddn.examples.ladder::rung3.t1" as "fbd.block"
+    with
+        id "ddn.examples.ladder::rung3.t1"
+        title "T1"
+        members
+            item
+                id "ddn.examples.ladder::rung3.t1.in1"
+            item
+                id "ddn.examples.ladder::rung3.t1.pt"
+            item
+                id "ddn.examples.ladder::rung3.t1.q"
+        metadata
+            x_record
+                block_type "TON"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "datatype": "TON"
+                    }
+                format "plain"
+
+
+element "ddn.examples.ladder::rung3.done" as "ladder.coil"
+    with
+        id "ddn.examples.ladder::rung3.done"
+        title "DONE"
+        metadata
+            x_coil
+                mode "reset"
+
+
+element "ddn.examples.ladder::rung3.j1" as "ladder.jump"
+    with
+        id "ddn.examples.ladder::rung3.j1"
+        title "NEXT"
+        metadata
+            x_jump
+                target
+                    id "ddn.examples.ladder::rung1.l1"
+
+
+relation "ddn.examples.ladder::rung1.s1" as "ladder.series"
+    with
+        id "ddn.examples.ladder::rung1.s1"
+        title "Series connection"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.ladder::rung1.start"
+            item
+                definition
+                    id "ddn.examples.ladder::rung1.stop"
+
+
+relation "ddn.examples.ladder::rung1.s2" as "ladder.series"
+    with
+        id "ddn.examples.ladder::rung1.s2"
+        title "Series connection"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.ladder::rung1.stop"
+            item
+                definition
+                    id "ddn.examples.ladder::rung1.motor"
+
+
+relation "ddn.examples.ladder::rung2.s3" as "ladder.series"
+    with
+        id "ddn.examples.ladder::rung2.s3"
+        title "Series connection"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.ladder::rung2.auto_start"
+            item
+                definition
+                    id "ddn.examples.ladder::rung2.latch"
+
+
+relation "ddn.examples.ladder::rung2.s4" as "ladder.series"
+    with
+        id "ddn.examples.ladder::rung2.s4"
+        title "Series connection"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.ladder::rung2.manual_start"
+            item
+                definition
+                    id "ddn.examples.ladder::rung2.latch"
+
+
+relation "ddn.examples.ladder::rung3.s5" as "ladder.series"
+    with
+        id "ddn.examples.ladder::rung3.s5"
+        title "Series connection"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.ladder::rung3.run"
+            item
+                definition
+                    id "ddn.examples.ladder::rung3.t1"
+                member
+                    id "ddn.examples.ladder::rung3.t1.in1"
+
+
+relation "ddn.examples.ladder::rung3.s6" as "ladder.series"
+    with
+        id "ddn.examples.ladder::rung3.s6"
+        title "Series connection"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.ladder::rung3.t1"
+                member
+                    id "ddn.examples.ladder::rung3.t1.q"
+            item
+                definition
+                    id "ddn.examples.ladder::rung3.done"
+
+
+view "d" as "ladder.basic@1"
+    with
+        id "d"
+        title "Motor control ladder"
+        selection
+            include
+                item
+                    id "ddn.examples.ladder::rung1.l1"
+                item
+                    id "ddn.examples.ladder::rung1.start"
+                item
+                    id "ddn.examples.ladder::rung1.stop"
+                item
+                    id "ddn.examples.ladder::rung1.motor"
+                item
+                    id "ddn.examples.ladder::rung2.auto_start"
+                item
+                    id "ddn.examples.ladder::rung2.manual_start"
+                item
+                    id "ddn.examples.ladder::rung2.latch"
+                item
+                    id "ddn.examples.ladder::rung3.run"
+                item
+                    id "ddn.examples.ladder::rung3.t1"
+                item
+                    id "ddn.examples.ladder::rung3.done"
+                item
+                    id "ddn.examples.ladder::rung3.j1"
+                item
+                    id "ddn.examples.ladder::rung1.s1"
+                item
+                    id "ddn.examples.ladder::rung1.s2"
+                item
+                    id "ddn.examples.ladder::rung2.s3"
+                item
+                    id "ddn.examples.ladder::rung2.s4"
+                item
+                    id "ddn.examples.ladder::rung3.s5"
+                item
+                    id "ddn.examples.ladder::rung3.s6"
+        layout
+            algorithm "ladder"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:d"
+
+    use "ddn.examples.ladder::rung1.l1" named "appearance:d:ddn.examples.ladder::rung1.l1"
+        with
+            id "appearance:d:ddn.examples.ladder::rung1.l1"
+
+    use "ddn.examples.ladder::rung1.start" named "appearance:d:ddn.examples.ladder::rung1.start"
+        with
+            id "appearance:d:ddn.examples.ladder::rung1.start"
+
+    use "ddn.examples.ladder::rung1.stop" named "appearance:d:ddn.examples.ladder::rung1.stop"
+        with
+            id "appearance:d:ddn.examples.ladder::rung1.stop"
+
+    use "ddn.examples.ladder::rung1.motor" named "appearance:d:ddn.examples.ladder::rung1.motor"
+        with
+            id "appearance:d:ddn.examples.ladder::rung1.motor"
+
+    use "ddn.examples.ladder::rung2.auto_start" named "appearance:d:ddn.examples.ladder::rung2.auto_start"
+        with
+            id "appearance:d:ddn.examples.ladder::rung2.auto_start"
+
+    use "ddn.examples.ladder::rung2.manual_start" named "appearance:d:ddn.examples.ladder::rung2.manual_start"
+        with
+            id "appearance:d:ddn.examples.ladder::rung2.manual_start"
+
+    use "ddn.examples.ladder::rung2.latch" named "appearance:d:ddn.examples.ladder::rung2.latch"
+        with
+            id "appearance:d:ddn.examples.ladder::rung2.latch"
+
+    use "ddn.examples.ladder::rung3.run" named "appearance:d:ddn.examples.ladder::rung3.run"
+        with
+            id "appearance:d:ddn.examples.ladder::rung3.run"
+
+    use "ddn.examples.ladder::rung3.t1" named "appearance:d:ddn.examples.ladder::rung3.t1"
+        with
+            id "appearance:d:ddn.examples.ladder::rung3.t1"
+
+    use "ddn.examples.ladder::rung3.done" named "appearance:d:ddn.examples.ladder::rung3.done"
+        with
+            id "appearance:d:ddn.examples.ladder::rung3.done"
+
+    use "ddn.examples.ladder::rung3.j1" named "appearance:d:ddn.examples.ladder::rung3.j1"
+        with
+            id "appearance:d:ddn.examples.ladder::rung3.j1"
+
+    use "ddn.examples.ladder::rung1.s1" named "appearance:d:ddn.examples.ladder::rung1.s1"
+        with
+            id "appearance:d:ddn.examples.ladder::rung1.s1"
+
+    use "ddn.examples.ladder::rung1.s2" named "appearance:d:ddn.examples.ladder::rung1.s2"
+        with
+            id "appearance:d:ddn.examples.ladder::rung1.s2"
+
+    use "ddn.examples.ladder::rung2.s3" named "appearance:d:ddn.examples.ladder::rung2.s3"
+        with
+            id "appearance:d:ddn.examples.ladder::rung2.s3"
+
+    use "ddn.examples.ladder::rung2.s4" named "appearance:d:ddn.examples.ladder::rung2.s4"
+        with
+            id "appearance:d:ddn.examples.ladder::rung2.s4"
+
+    use "ddn.examples.ladder::rung3.s5" named "appearance:d:ddn.examples.ladder::rung3.s5"
+        with
+            id "appearance:d:ddn.examples.ladder::rung3.s5"
+
+    use "ddn.examples.ladder::rung3.s6" named "appearance:d:ddn.examples.ladder::rung3.s6"
+        with
+            id "appearance:d:ddn.examples.ladder::rung3.s6"

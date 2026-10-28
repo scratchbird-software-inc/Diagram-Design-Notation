@@ -1,26 +1,292 @@
-ddn "0.5";
-module "ddn.examples.flow";
-import "shared.ddn" as shared;
+version ddn-next-1
 
-data model {
-    table source "Operational customer" {workload: [oltp]; role: authoritative; }
-    activity capture "Capture changes";
-    topic events "customer.changed";
-    activity history_job "Build valid + recorded history";
-    activity search_job "Build search projection";
-    history history "Customer history" {workload: [olap]; temporal: bitemporal; }
-    search_index search "Customer search" {role: derived; }
-    relation r1 @source -> @capture { kind: captures_changes_into; capture: cdc; }
-    relation r2 @capture -> @events { kind: publishes_to; transport: kafka; }
-    relation r3 @events -> @history_job { kind: delivers_to; scope: "history consumer"; }
-    relation r4 @events -> @search_job { kind: delivers_to; scope: "search consumer"; }
-    write r5 @history_job -> @history;
-    write r6 @search_job -> @search;
-}
-view flow "Capture, transport and transformation are different" {
-    layout { gap: 112px; row_gap: 112px; }
-    data: [@model]; format: @shared.styles.technical; display: @shared.styles.compact;
-    publication { width: 1550px; height: 1020px; }
-    legend { mode: numbers; keys: { "r1":1, "r2":2, "r3":3, "r4":4, "r5":5, "r6":6 }; width: 300px; }
+publication "publication:flow"
+    with
+        id "publication:flow"
+        title "Capture, transport and transformation are different"
+        targets
+            item
+                target
+                    id "flow"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1550
+                unit "px"
+            height
+                value 1020
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-}
+
+element "ddn.examples.flow::model.source" as "table"
+    with
+        id "ddn.examples.flow::model.source"
+        title "Operational customer"
+        facets
+            workload
+                item "OLTP"
+            authority
+                item "AUTH"
+        properties
+            workload
+                item "oltp"
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+
+
+element "ddn.examples.flow::model.capture" as "activity"
+    with
+        id "ddn.examples.flow::model.capture"
+        title "Capture changes"
+
+
+element "ddn.examples.flow::model.events" as "topic"
+    with
+        id "ddn.examples.flow::model.events"
+        title "customer.changed"
+
+
+element "ddn.examples.flow::model.history_job" as "activity"
+    with
+        id "ddn.examples.flow::model.history_job"
+        title "Build valid + recorded history"
+
+
+element "ddn.examples.flow::model.search_job" as "activity"
+    with
+        id "ddn.examples.flow::model.search_job"
+        title "Build search projection"
+
+
+element "ddn.examples.flow::model.history" as "history"
+    with
+        id "ddn.examples.flow::model.history"
+        title "Customer history"
+        facets
+            workload
+                item "OLAP"
+            temporal
+                item "BT"
+        properties
+            workload
+                item "olap"
+            temporal "bitemporal"
+
+
+element "ddn.examples.flow::model.search" as "search_index"
+    with
+        id "ddn.examples.flow::model.search"
+        title "Customer search"
+        facets
+            authority
+                item "DER"
+        properties
+            role "derived"
+        metadata
+            x_record
+                layout_group "derived"
+
+
+relation "ddn.examples.flow::model.r1" as "capture"
+    with
+        id "ddn.examples.flow::model.r1"
+        title "captures changes into"
+        properties
+            capture "cdc"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.flow::model.source"
+            item
+                definition
+                    id "ddn.examples.flow::model.capture"
+
+
+relation "ddn.examples.flow::model.r2" as "publish"
+    with
+        id "ddn.examples.flow::model.r2"
+        title "publishes to"
+        properties
+            transport "kafka"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.flow::model.capture"
+            item
+                definition
+                    id "ddn.examples.flow::model.events"
+
+
+relation "ddn.examples.flow::model.r3" as "deliver"
+    with
+        id "ddn.examples.flow::model.r3"
+        title "delivers to"
+        properties
+            scope "history consumer"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.flow::model.events"
+            item
+                definition
+                    id "ddn.examples.flow::model.history_job"
+
+
+relation "ddn.examples.flow::model.r4" as "deliver"
+    with
+        id "ddn.examples.flow::model.r4"
+        title "delivers to"
+        properties
+            scope "search consumer"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.flow::model.events"
+            item
+                definition
+                    id "ddn.examples.flow::model.search_job"
+
+
+relation "ddn.examples.flow::model.r5" as "write"
+    with
+        id "ddn.examples.flow::model.r5"
+        title "writes output to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.flow::model.history_job"
+            item
+                definition
+                    id "ddn.examples.flow::model.history"
+
+
+relation "ddn.examples.flow::model.r6" as "write"
+    with
+        id "ddn.examples.flow::model.r6"
+        title "writes output to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.flow::model.search_job"
+            item
+                definition
+                    id "ddn.examples.flow::model.search"
+
+
+view "flow" as "ddn@1"
+    with
+        id "flow"
+        title "Capture, transport and transformation are different"
+        selection
+            include
+                item
+                    id "ddn.examples.flow::model.source"
+                item
+                    id "ddn.examples.flow::model.capture"
+                item
+                    id "ddn.examples.flow::model.events"
+                item
+                    id "ddn.examples.flow::model.history_job"
+                item
+                    id "ddn.examples.flow::model.search_job"
+                item
+                    id "ddn.examples.flow::model.history"
+                item
+                    id "ddn.examples.flow::model.search"
+                item
+                    id "ddn.examples.flow::model.r1"
+                item
+                    id "ddn.examples.flow::model.r2"
+                item
+                    id "ddn.examples.flow::model.r3"
+                item
+                    id "ddn.examples.flow::model.r4"
+                item
+                    id "ddn.examples.flow::model.r5"
+                item
+                    id "ddn.examples.flow::model.r6"
+        layout
+            algorithm "grid"
+            gap 112
+            row_gap 112
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            mode "numbers"
+            width 300
+            keys
+                r1 "1"
+                r2 "2"
+                r3 "3"
+                r4 "4"
+                r5 "5"
+                r6 "6"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:flow"
+
+    use "ddn.examples.flow::model.source" named "appearance:flow:ddn.examples.flow::model.source"
+        with
+            id "appearance:flow:ddn.examples.flow::model.source"
+
+    use "ddn.examples.flow::model.capture" named "appearance:flow:ddn.examples.flow::model.capture"
+        with
+            id "appearance:flow:ddn.examples.flow::model.capture"
+
+    use "ddn.examples.flow::model.events" named "appearance:flow:ddn.examples.flow::model.events"
+        with
+            id "appearance:flow:ddn.examples.flow::model.events"
+
+    use "ddn.examples.flow::model.history_job" named "appearance:flow:ddn.examples.flow::model.history_job"
+        with
+            id "appearance:flow:ddn.examples.flow::model.history_job"
+
+    use "ddn.examples.flow::model.search_job" named "appearance:flow:ddn.examples.flow::model.search_job"
+        with
+            id "appearance:flow:ddn.examples.flow::model.search_job"
+
+    use "ddn.examples.flow::model.history" named "appearance:flow:ddn.examples.flow::model.history"
+        with
+            id "appearance:flow:ddn.examples.flow::model.history"
+
+    use "ddn.examples.flow::model.search" named "appearance:flow:ddn.examples.flow::model.search"
+        with
+            id "appearance:flow:ddn.examples.flow::model.search"
+
+    use "ddn.examples.flow::model.r1" named "appearance:flow:ddn.examples.flow::model.r1"
+        with
+            id "appearance:flow:ddn.examples.flow::model.r1"
+
+    use "ddn.examples.flow::model.r2" named "appearance:flow:ddn.examples.flow::model.r2"
+        with
+            id "appearance:flow:ddn.examples.flow::model.r2"
+
+    use "ddn.examples.flow::model.r3" named "appearance:flow:ddn.examples.flow::model.r3"
+        with
+            id "appearance:flow:ddn.examples.flow::model.r3"
+
+    use "ddn.examples.flow::model.r4" named "appearance:flow:ddn.examples.flow::model.r4"
+        with
+            id "appearance:flow:ddn.examples.flow::model.r4"
+
+    use "ddn.examples.flow::model.r5" named "appearance:flow:ddn.examples.flow::model.r5"
+        with
+            id "appearance:flow:ddn.examples.flow::model.r5"
+
+    use "ddn.examples.flow::model.r6" named "appearance:flow:ddn.examples.flow::model.r6"
+        with
+            id "appearance:flow:ddn.examples.flow::model.r6"

@@ -1,0 +1,4 @@
+erd Sales
+    Customer
+    Order
+    connect Customer to Order

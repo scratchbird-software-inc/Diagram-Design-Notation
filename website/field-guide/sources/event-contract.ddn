@@ -1,0 +1,209 @@
+version ddn-next-1
+
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "Synthetic event contract / producer to consumers"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.eventcontract::contract.orders_api" as "application"
+    with
+        id "ddn.fieldguide.eventcontract::contract.orders_api"
+        title "Orders API"
+        description "Synthetic producer: emits order lifecycle events."
+
+
+element "ddn.fieldguide.eventcontract::contract.topic" as "topic"
+    with
+        id "ddn.fieldguide.eventcontract::contract.topic"
+        title "order-events v3"
+        description "Synthetic topic carrying the current schema version."
+
+
+element "ddn.fieldguide.eventcontract::contract.schema_v2" as "record"
+    with
+        id "ddn.fieldguide.eventcontract::contract.schema_v2"
+        title "Schema v2 (deprecated)"
+        description "Synthetic previous schema: kept for the deprecation window."
+
+
+element "ddn.fieldguide.eventcontract::contract.schema_v3" as "record"
+    with
+        id "ddn.fieldguide.eventcontract::contract.schema_v3"
+        title "Schema v3"
+        description "Synthetic current schema: adds cancellation reason."
+
+
+element "ddn.fieldguide.eventcontract::contract.billing" as "application"
+    with
+        id "ddn.fieldguide.eventcontract::contract.billing"
+        title "Billing consumer"
+        description "Synthetic consumer: reads payment-relevant events only."
+
+
+element "ddn.fieldguide.eventcontract::contract.fulfil" as "application"
+    with
+        id "ddn.fieldguide.eventcontract::contract.fulfil"
+        title "Fulfilment consumer"
+        description "Synthetic consumer: drives warehouse tasks from confirmed orders."
+
+
+relation "ddn.fieldguide.eventcontract::contract.publishes" as "flow"
+    with
+        id "ddn.fieldguide.eventcontract::contract.publishes"
+        title "publishes"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.eventcontract::contract.orders_api"
+            item
+                definition
+                    id "ddn.fieldguide.eventcontract::contract.topic"
+
+
+relation "ddn.fieldguide.eventcontract::contract.carries" as "assoc"
+    with
+        id "ddn.fieldguide.eventcontract::contract.carries"
+        title "conforms to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.eventcontract::contract.topic"
+            item
+                definition
+                    id "ddn.fieldguide.eventcontract::contract.schema_v3"
+
+
+relation "ddn.fieldguide.eventcontract::contract.supersedes" as "assoc"
+    with
+        id "ddn.fieldguide.eventcontract::contract.supersedes"
+        title "backward compatible"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.eventcontract::contract.schema_v3"
+            item
+                definition
+                    id "ddn.fieldguide.eventcontract::contract.schema_v2"
+
+
+relation "ddn.fieldguide.eventcontract::contract.reads_billing" as "flow"
+    with
+        id "ddn.fieldguide.eventcontract::contract.reads_billing"
+        title "consumer group: billing"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.eventcontract::contract.topic"
+            item
+                definition
+                    id "ddn.fieldguide.eventcontract::contract.billing"
+
+
+relation "ddn.fieldguide.eventcontract::contract.reads_fulfil" as "flow"
+    with
+        id "ddn.fieldguide.eventcontract::contract.reads_fulfil"
+        title "consumer group: fulfilment"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.eventcontract::contract.topic"
+            item
+                definition
+                    id "ddn.fieldguide.eventcontract::contract.fulfil"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "Synthetic event contract / producer to consumers"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.eventcontract::contract.orders_api"
+                item
+                    id "ddn.fieldguide.eventcontract::contract.topic"
+                item
+                    id "ddn.fieldguide.eventcontract::contract.schema_v2"
+                item
+                    id "ddn.fieldguide.eventcontract::contract.schema_v3"
+                item
+                    id "ddn.fieldguide.eventcontract::contract.billing"
+                item
+                    id "ddn.fieldguide.eventcontract::contract.fulfil"
+                item
+                    id "ddn.fieldguide.eventcontract::contract.publishes"
+                item
+                    id "ddn.fieldguide.eventcontract::contract.carries"
+                item
+                    id "ddn.fieldguide.eventcontract::contract.supersedes"
+                item
+                    id "ddn.fieldguide.eventcontract::contract.reads_billing"
+                item
+                    id "ddn.fieldguide.eventcontract::contract.reads_fulfil"
+        layout
+            algorithm "layered"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.fieldguide.eventcontract::contract.orders_api" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.orders_api"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.orders_api"
+            body "notes"
+
+    use "ddn.fieldguide.eventcontract::contract.topic" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.topic"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.topic"
+            body "notes"
+
+    use "ddn.fieldguide.eventcontract::contract.schema_v2" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.schema_v2"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.schema_v2"
+            body "notes"
+
+    use "ddn.fieldguide.eventcontract::contract.schema_v3" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.schema_v3"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.schema_v3"
+            body "notes"
+
+    use "ddn.fieldguide.eventcontract::contract.billing" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.billing"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.billing"
+            body "notes"
+
+    use "ddn.fieldguide.eventcontract::contract.fulfil" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.fulfil"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.fulfil"
+            body "notes"
+
+    use "ddn.fieldguide.eventcontract::contract.publishes" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.publishes"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.publishes"
+
+    use "ddn.fieldguide.eventcontract::contract.carries" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.carries"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.carries"
+
+    use "ddn.fieldguide.eventcontract::contract.supersedes" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.supersedes"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.supersedes"
+
+    use "ddn.fieldguide.eventcontract::contract.reads_billing" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.reads_billing"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.reads_billing"
+
+    use "ddn.fieldguide.eventcontract::contract.reads_fulfil" named "appearance:diagram:ddn.fieldguide.eventcontract::contract.reads_fulfil"
+        with
+            id "appearance:diagram:ddn.fieldguide.eventcontract::contract.reads_fulfil"

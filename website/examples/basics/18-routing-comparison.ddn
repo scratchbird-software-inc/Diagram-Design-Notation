@@ -1,31 +1,333 @@
-ddn "0.5";
-module "ddn.examples.routing-comparison";
-import "shared.ddn" as shared;
-data model {
- context scope "Shared definition";
- dataset logical "Logical view";
- dataset physical "Deployment view";
- assoc a "Same model, first view" @scope -> @logical;
- assoc b "Same model, second view" @scope -> @physical;
-}
-format policies {
- layout branch { algorithm: tree; root: @model.scope; hierarchy: [assoc]; gap: 250px; row_gap: 120px; }
- publication screen { size: content; fit: none; }
- legend keys { mode: numbers; keys: { a: 1, b: 2 }; width: 300px; }
-}
-view orthogonal "Orthogonal / sharp corners" {
- data: [@model]; format: @shared.styles.technical; layout: @policies.branch; publication: @policies.screen; legend: @policies.keys;
- layout { routing: orthogonal; }
-}
-view straight "Straight / direct segments" {
- data: [@model]; format: @shared.styles.technical; layout: @policies.branch; publication: @policies.screen; legend: @policies.keys;
- layout { routing: straight; }
-}
-view bezier "Curved / broad cubic branches" {
- data: [@model]; format: @shared.styles.technical; layout: @policies.branch; publication: @policies.screen; legend: @policies.keys;
- layout { routing: curved; curve: bezier; curve_tension: 0.5; }
-}
-view rounded "Curved / softened route corners" {
- data: [@model]; format: @shared.styles.technical; layout: @policies.branch; publication: @policies.screen; legend: @policies.keys;
- layout { routing: curved; curve: rounded; curve_radius: 36px; }
-}
+version ddn-next-1
+
+publication "publication:orthogonal"
+    with
+        id "publication:orthogonal"
+        title "Orthogonal / sharp corners"
+        targets
+            item
+                target
+                    id "orthogonal"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:straight"
+    with
+        id "publication:straight"
+        title "Straight / direct segments"
+        targets
+            item
+                target
+                    id "straight"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:bezier"
+    with
+        id "publication:bezier"
+        title "Curved / broad cubic branches"
+        targets
+            item
+                target
+                    id "bezier"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:rounded"
+    with
+        id "publication:rounded"
+        title "Curved / softened route corners"
+        targets
+            item
+                target
+                    id "rounded"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.routing-comparison::model.scope" as "context"
+    with
+        id "ddn.examples.routing-comparison::model.scope"
+        title "Shared definition"
+
+
+element "ddn.examples.routing-comparison::model.logical" as "dataset"
+    with
+        id "ddn.examples.routing-comparison::model.logical"
+        title "Logical view"
+
+
+element "ddn.examples.routing-comparison::model.physical" as "dataset"
+    with
+        id "ddn.examples.routing-comparison::model.physical"
+        title "Deployment view"
+
+
+relation "ddn.examples.routing-comparison::model.a" as "assoc"
+    with
+        id "ddn.examples.routing-comparison::model.a"
+        title "Same model, first view"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.routing-comparison::model.scope"
+            item
+                definition
+                    id "ddn.examples.routing-comparison::model.logical"
+
+
+relation "ddn.examples.routing-comparison::model.b" as "assoc"
+    with
+        id "ddn.examples.routing-comparison::model.b"
+        title "Same model, second view"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.routing-comparison::model.scope"
+            item
+                definition
+                    id "ddn.examples.routing-comparison::model.physical"
+
+
+view "orthogonal" as "ddn@1"
+    with
+        id "orthogonal"
+        title "Orthogonal / sharp corners"
+        selection
+            include
+                item
+                    id "ddn.examples.routing-comparison::model.scope"
+                item
+                    id "ddn.examples.routing-comparison::model.logical"
+                item
+                    id "ddn.examples.routing-comparison::model.physical"
+                item
+                    id "ddn.examples.routing-comparison::model.a"
+                item
+                    id "ddn.examples.routing-comparison::model.b"
+        layout
+            algorithm "tree"
+            gap 250
+            row_gap 120
+            root
+                id "ddn.examples.routing-comparison::model.scope"
+            hierarchy "assoc"
+        legend
+            mode "numbers"
+            width 300
+            keys
+                a "1"
+                b "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:orthogonal"
+
+    use "ddn.examples.routing-comparison::model.scope" named "appearance:orthogonal:ddn.examples.routing-comparison::model.scope"
+        with
+            id "appearance:orthogonal:ddn.examples.routing-comparison::model.scope"
+
+    use "ddn.examples.routing-comparison::model.logical" named "appearance:orthogonal:ddn.examples.routing-comparison::model.logical"
+        with
+            id "appearance:orthogonal:ddn.examples.routing-comparison::model.logical"
+
+    use "ddn.examples.routing-comparison::model.physical" named "appearance:orthogonal:ddn.examples.routing-comparison::model.physical"
+        with
+            id "appearance:orthogonal:ddn.examples.routing-comparison::model.physical"
+
+    use "ddn.examples.routing-comparison::model.a" named "appearance:orthogonal:ddn.examples.routing-comparison::model.a"
+        with
+            id "appearance:orthogonal:ddn.examples.routing-comparison::model.a"
+
+    use "ddn.examples.routing-comparison::model.b" named "appearance:orthogonal:ddn.examples.routing-comparison::model.b"
+        with
+            id "appearance:orthogonal:ddn.examples.routing-comparison::model.b"
+
+
+view "straight" as "ddn@1"
+    with
+        id "straight"
+        title "Straight / direct segments"
+        selection
+            include
+                item
+                    id "ddn.examples.routing-comparison::model.scope"
+                item
+                    id "ddn.examples.routing-comparison::model.logical"
+                item
+                    id "ddn.examples.routing-comparison::model.physical"
+                item
+                    id "ddn.examples.routing-comparison::model.a"
+                item
+                    id "ddn.examples.routing-comparison::model.b"
+        layout
+            algorithm "tree"
+            routing "straight"
+            gap 250
+            row_gap 120
+            root
+                id "ddn.examples.routing-comparison::model.scope"
+            hierarchy "assoc"
+        legend
+            mode "numbers"
+            width 300
+            keys
+                a "1"
+                b "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:straight"
+
+    use "ddn.examples.routing-comparison::model.scope" named "appearance:straight:ddn.examples.routing-comparison::model.scope"
+        with
+            id "appearance:straight:ddn.examples.routing-comparison::model.scope"
+
+    use "ddn.examples.routing-comparison::model.logical" named "appearance:straight:ddn.examples.routing-comparison::model.logical"
+        with
+            id "appearance:straight:ddn.examples.routing-comparison::model.logical"
+
+    use "ddn.examples.routing-comparison::model.physical" named "appearance:straight:ddn.examples.routing-comparison::model.physical"
+        with
+            id "appearance:straight:ddn.examples.routing-comparison::model.physical"
+
+    use "ddn.examples.routing-comparison::model.a" named "appearance:straight:ddn.examples.routing-comparison::model.a"
+        with
+            id "appearance:straight:ddn.examples.routing-comparison::model.a"
+
+    use "ddn.examples.routing-comparison::model.b" named "appearance:straight:ddn.examples.routing-comparison::model.b"
+        with
+            id "appearance:straight:ddn.examples.routing-comparison::model.b"
+
+
+view "bezier" as "ddn@1"
+    with
+        id "bezier"
+        title "Curved / broad cubic branches"
+        selection
+            include
+                item
+                    id "ddn.examples.routing-comparison::model.scope"
+                item
+                    id "ddn.examples.routing-comparison::model.logical"
+                item
+                    id "ddn.examples.routing-comparison::model.physical"
+                item
+                    id "ddn.examples.routing-comparison::model.a"
+                item
+                    id "ddn.examples.routing-comparison::model.b"
+        layout
+            algorithm "tree"
+            routing "curved"
+            gap 250
+            row_gap 120
+            root
+                id "ddn.examples.routing-comparison::model.scope"
+            hierarchy "assoc"
+        legend
+            mode "numbers"
+            width 300
+            keys
+                a "1"
+                b "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:bezier"
+
+    use "ddn.examples.routing-comparison::model.scope" named "appearance:bezier:ddn.examples.routing-comparison::model.scope"
+        with
+            id "appearance:bezier:ddn.examples.routing-comparison::model.scope"
+
+    use "ddn.examples.routing-comparison::model.logical" named "appearance:bezier:ddn.examples.routing-comparison::model.logical"
+        with
+            id "appearance:bezier:ddn.examples.routing-comparison::model.logical"
+
+    use "ddn.examples.routing-comparison::model.physical" named "appearance:bezier:ddn.examples.routing-comparison::model.physical"
+        with
+            id "appearance:bezier:ddn.examples.routing-comparison::model.physical"
+
+    use "ddn.examples.routing-comparison::model.a" named "appearance:bezier:ddn.examples.routing-comparison::model.a"
+        with
+            id "appearance:bezier:ddn.examples.routing-comparison::model.a"
+
+    use "ddn.examples.routing-comparison::model.b" named "appearance:bezier:ddn.examples.routing-comparison::model.b"
+        with
+            id "appearance:bezier:ddn.examples.routing-comparison::model.b"
+
+
+view "rounded" as "ddn@1"
+    with
+        id "rounded"
+        title "Curved / softened route corners"
+        selection
+            include
+                item
+                    id "ddn.examples.routing-comparison::model.scope"
+                item
+                    id "ddn.examples.routing-comparison::model.logical"
+                item
+                    id "ddn.examples.routing-comparison::model.physical"
+                item
+                    id "ddn.examples.routing-comparison::model.a"
+                item
+                    id "ddn.examples.routing-comparison::model.b"
+        layout
+            algorithm "tree"
+            routing "curved"
+            curve "rounded"
+            curve_radius 36
+            gap 250
+            row_gap 120
+            root
+                id "ddn.examples.routing-comparison::model.scope"
+            hierarchy "assoc"
+        legend
+            mode "numbers"
+            width 300
+            keys
+                a "1"
+                b "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:rounded"
+
+    use "ddn.examples.routing-comparison::model.scope" named "appearance:rounded:ddn.examples.routing-comparison::model.scope"
+        with
+            id "appearance:rounded:ddn.examples.routing-comparison::model.scope"
+
+    use "ddn.examples.routing-comparison::model.logical" named "appearance:rounded:ddn.examples.routing-comparison::model.logical"
+        with
+            id "appearance:rounded:ddn.examples.routing-comparison::model.logical"
+
+    use "ddn.examples.routing-comparison::model.physical" named "appearance:rounded:ddn.examples.routing-comparison::model.physical"
+        with
+            id "appearance:rounded:ddn.examples.routing-comparison::model.physical"
+
+    use "ddn.examples.routing-comparison::model.a" named "appearance:rounded:ddn.examples.routing-comparison::model.a"
+        with
+            id "appearance:rounded:ddn.examples.routing-comparison::model.a"
+
+    use "ddn.examples.routing-comparison::model.b" named "appearance:rounded:ddn.examples.routing-comparison::model.b"
+        with
+            id "appearance:rounded:ddn.examples.routing-comparison::model.b"

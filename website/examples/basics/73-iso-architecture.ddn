@@ -1,28 +1,243 @@
-ddn "0.5";
-module "ddn.examples.iso-architecture";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:iso_map"
+    with
+        id "publication:iso_map"
+        title "Synthetic platform tiers / isometric"
+        targets
+            item
+                target
+                    id "iso_map"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// Isometric diagram nodes (B1-034, stage 2): iso: true on a graph view renders
-// every node as an extruded prism on an isometric ground plane; per-object
-// `depth` overrides the view depth (building heights differ). Relations are
-// routed flat by the ordinary engine and then projected onto the ground
-// plane — routing is never computed in 3D. All systems are synthetic.
 
-data platform {
-    activity client "Client app" {depth: 14px; workload: "interactive"; }
-    queue cdn "Edge CDN" {depth: 22px; workload: "edge"; }
-    topic gateway "API gateway" {depth: 34px; workload: "serving"; }
-    activity orders "Orders service" {depth: 46px; workload: "serving"; }
-    table ledger "Ledger store" {depth: 58px; workload: "system-of-record"; }
-    relation r1 "HTTPS" @client -> @cdn { kind: flow; }
-    relation r2 "forwards" @cdn -> @gateway { kind: flow; }
-    relation r3 "routes" @gateway -> @orders { kind: flow; }
-    relation r4 "persists" @orders -> @ledger { kind: flow; }
-}
+element "ddn.examples.iso-architecture::platform.client" as "activity"
+    with
+        id "ddn.examples.iso-architecture::platform.client"
+        title "Client app"
+        facets
+            workload
+                item "INT"
+        properties
+            depth 14
+            workload empty list
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "workload": "interactive"
+                    }
+                format "plain"
 
-view iso_map "Synthetic platform tiers / isometric" {
-    data: [@platform]; format: @shared.styles.technical;
-    projection { kind:graph; profile:"ddn@1"; iso:true; depth:18px; }
-    publication { size: content; fit: none; overflow: warn; minimum_text: 8pt; }
-}
+
+element "ddn.examples.iso-architecture::platform.cdn" as "queue"
+    with
+        id "ddn.examples.iso-architecture::platform.cdn"
+        title "Edge CDN"
+        properties
+            depth 22
+            workload empty list
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "workload": "edge"
+                    }
+                format "plain"
+
+
+element "ddn.examples.iso-architecture::platform.gateway" as "topic"
+    with
+        id "ddn.examples.iso-architecture::platform.gateway"
+        title "API gateway"
+        properties
+            depth 34
+            workload empty list
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "workload": "serving"
+                    }
+                format "plain"
+
+
+element "ddn.examples.iso-architecture::platform.orders" as "activity"
+    with
+        id "ddn.examples.iso-architecture::platform.orders"
+        title "Orders service"
+        properties
+            depth 46
+            workload empty list
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "workload": "serving"
+                    }
+                format "plain"
+
+
+element "ddn.examples.iso-architecture::platform.ledger" as "table"
+    with
+        id "ddn.examples.iso-architecture::platform.ledger"
+        title "Ledger store"
+        properties
+            depth 58
+            workload empty list
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "workload": "system-of-record"
+                    }
+                format "plain"
+
+
+relation "ddn.examples.iso-architecture::platform.r1" as "flow"
+    with
+        id "ddn.examples.iso-architecture::platform.r1"
+        title "HTTPS"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso-architecture::platform.client"
+            item
+                definition
+                    id "ddn.examples.iso-architecture::platform.cdn"
+
+
+relation "ddn.examples.iso-architecture::platform.r2" as "flow"
+    with
+        id "ddn.examples.iso-architecture::platform.r2"
+        title "forwards"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso-architecture::platform.cdn"
+            item
+                definition
+                    id "ddn.examples.iso-architecture::platform.gateway"
+
+
+relation "ddn.examples.iso-architecture::platform.r3" as "flow"
+    with
+        id "ddn.examples.iso-architecture::platform.r3"
+        title "routes"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso-architecture::platform.gateway"
+            item
+                definition
+                    id "ddn.examples.iso-architecture::platform.orders"
+
+
+relation "ddn.examples.iso-architecture::platform.r4" as "flow"
+    with
+        id "ddn.examples.iso-architecture::platform.r4"
+        title "persists"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso-architecture::platform.orders"
+            item
+                definition
+                    id "ddn.examples.iso-architecture::platform.ledger"
+
+
+view "iso_map" as "ddn@1"
+    with
+        id "iso_map"
+        title "Synthetic platform tiers / isometric"
+        selection
+            include
+                item
+                    id "ddn.examples.iso-architecture::platform.client"
+                item
+                    id "ddn.examples.iso-architecture::platform.cdn"
+                item
+                    id "ddn.examples.iso-architecture::platform.gateway"
+                item
+                    id "ddn.examples.iso-architecture::platform.orders"
+                item
+                    id "ddn.examples.iso-architecture::platform.ledger"
+                item
+                    id "ddn.examples.iso-architecture::platform.r1"
+                item
+                    id "ddn.examples.iso-architecture::platform.r2"
+                item
+                    id "ddn.examples.iso-architecture::platform.r3"
+                item
+                    id "ddn.examples.iso-architecture::platform.r4"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                iso true
+                depth 18
+        publication
+            id "publication:iso_map"
+
+    use "ddn.examples.iso-architecture::platform.client" named "appearance:iso_map:ddn.examples.iso-architecture::platform.client"
+        with
+            id "appearance:iso_map:ddn.examples.iso-architecture::platform.client"
+
+    use "ddn.examples.iso-architecture::platform.cdn" named "appearance:iso_map:ddn.examples.iso-architecture::platform.cdn"
+        with
+            id "appearance:iso_map:ddn.examples.iso-architecture::platform.cdn"
+
+    use "ddn.examples.iso-architecture::platform.gateway" named "appearance:iso_map:ddn.examples.iso-architecture::platform.gateway"
+        with
+            id "appearance:iso_map:ddn.examples.iso-architecture::platform.gateway"
+
+    use "ddn.examples.iso-architecture::platform.orders" named "appearance:iso_map:ddn.examples.iso-architecture::platform.orders"
+        with
+            id "appearance:iso_map:ddn.examples.iso-architecture::platform.orders"
+
+    use "ddn.examples.iso-architecture::platform.ledger" named "appearance:iso_map:ddn.examples.iso-architecture::platform.ledger"
+        with
+            id "appearance:iso_map:ddn.examples.iso-architecture::platform.ledger"
+
+    use "ddn.examples.iso-architecture::platform.r1" named "appearance:iso_map:ddn.examples.iso-architecture::platform.r1"
+        with
+            id "appearance:iso_map:ddn.examples.iso-architecture::platform.r1"
+
+    use "ddn.examples.iso-architecture::platform.r2" named "appearance:iso_map:ddn.examples.iso-architecture::platform.r2"
+        with
+            id "appearance:iso_map:ddn.examples.iso-architecture::platform.r2"
+
+    use "ddn.examples.iso-architecture::platform.r3" named "appearance:iso_map:ddn.examples.iso-architecture::platform.r3"
+        with
+            id "appearance:iso_map:ddn.examples.iso-architecture::platform.r3"
+
+    use "ddn.examples.iso-architecture::platform.r4" named "appearance:iso_map:ddn.examples.iso-architecture::platform.r4"
+        with
+            id "appearance:iso_map:ddn.examples.iso-architecture::platform.r4"

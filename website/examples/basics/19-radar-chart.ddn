@@ -1,33 +1,214 @@
-ddn "0.5";
-module "ddn.examples.radar";
+version ddn-next-1
 
-// Synthetic product-evaluation dataset: 6 criteria x 2 products.
-data facts {
-    object a1 "Aurora / Battery" { kind: record; x_record: {"product": "Aurora", "criterion": "Battery", "score": 8, "unit": "points"}; }
-    object a2 "Aurora / Camera" { kind: record; x_record: {"product": "Aurora", "criterion": "Camera", "score": 6, "unit": "points"}; }
-    object a3 "Aurora / Display" { kind: record; x_record: {"product": "Aurora", "criterion": "Display", "score": 9, "unit": "points"}; }
-    object a4 "Aurora / Performance" { kind: record; x_record: {"product": "Aurora", "criterion": "Performance", "score": 7, "unit": "points"}; }
-    object a5 "Aurora / Durability" { kind: record; x_record: {"product": "Aurora", "criterion": "Durability", "score": 5, "unit": "points"}; }
-    object a6 "Aurora / Value" { kind: record; x_record: {"product": "Aurora", "criterion": "Value", "score": 6, "unit": "points"}; }
-    object n1 "Nimbus / Battery" { kind: record; x_record: {"product": "Nimbus", "criterion": "Battery", "score": 6, "unit": "points"}; }
-    object n2 "Nimbus / Camera" { kind: record; x_record: {"product": "Nimbus", "criterion": "Camera", "score": 9, "unit": "points"}; }
-    object n3 "Nimbus / Display" { kind: record; x_record: {"product": "Nimbus", "criterion": "Display", "score": 7, "unit": "points"}; }
-    object n4 "Nimbus / Performance" { kind: record; x_record: {"product": "Nimbus", "criterion": "Performance", "score": 8, "unit": "points"}; }
-    object n5 "Nimbus / Durability" { kind: record; x_record: {"product": "Nimbus", "criterion": "Durability", "score": 8, "unit": "points"}; }
-    object n6 "Nimbus / Value" { kind: record; x_record: {"product": "Nimbus", "criterion": "Value", "score": 4, "unit": "points"}; }
-}
+publication "publication:radar"
+    with
+        id "publication:radar"
+        title "Product comparison / radar"
+        targets
+            item
+                target
+                    id "radar"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-format shared {
-    style standard;
-    layout logical { algorithm: layered; gap: 140px; row_gap: 130px; }
-    display readable { kind: none; badges: none; maturity: none; }
-    publication screen { size: content; fit: none; }
-    legend key { placement: none; }
-    bundle common { style: @standard; layout: @logical; display: @readable; publication: @screen; legend: @key; }
-}
 
-view radar "Product comparison / radar" {
-    data: [@facts];
-    format: @shared.common;
-    projection { kind: chart; profile: "chart.radar@1"; records: [@facts.a1, @facts.a2, @facts.a3, @facts.a4, @facts.a5, @facts.a6, @facts.n1, @facts.n2, @facts.n3, @facts.n4, @facts.n5, @facts.n6]; mark: radar; x: "x_record.criterion"; y: "x_record.score"; series: "x_record.product"; unit: "points"; width: 1050px; height: 700px; }
-}
+element "ddn.examples.radar::facts.a1" as "record"
+    with
+        id "ddn.examples.radar::facts.a1"
+        title "Aurora / Battery"
+        metadata
+            x_record
+                product "Aurora"
+                criterion "Battery"
+                score 8
+                unit "points"
+
+
+element "ddn.examples.radar::facts.a2" as "record"
+    with
+        id "ddn.examples.radar::facts.a2"
+        title "Aurora / Camera"
+        metadata
+            x_record
+                product "Aurora"
+                criterion "Camera"
+                score 6
+                unit "points"
+
+
+element "ddn.examples.radar::facts.a3" as "record"
+    with
+        id "ddn.examples.radar::facts.a3"
+        title "Aurora / Display"
+        metadata
+            x_record
+                product "Aurora"
+                criterion "Display"
+                score 9
+                unit "points"
+
+
+element "ddn.examples.radar::facts.a4" as "record"
+    with
+        id "ddn.examples.radar::facts.a4"
+        title "Aurora / Performance"
+        metadata
+            x_record
+                product "Aurora"
+                criterion "Performance"
+                score 7
+                unit "points"
+
+
+element "ddn.examples.radar::facts.a5" as "record"
+    with
+        id "ddn.examples.radar::facts.a5"
+        title "Aurora / Durability"
+        metadata
+            x_record
+                product "Aurora"
+                criterion "Durability"
+                score 5
+                unit "points"
+
+
+element "ddn.examples.radar::facts.a6" as "record"
+    with
+        id "ddn.examples.radar::facts.a6"
+        title "Aurora / Value"
+        metadata
+            x_record
+                product "Aurora"
+                criterion "Value"
+                score 6
+                unit "points"
+
+
+element "ddn.examples.radar::facts.n1" as "record"
+    with
+        id "ddn.examples.radar::facts.n1"
+        title "Nimbus / Battery"
+        metadata
+            x_record
+                product "Nimbus"
+                criterion "Battery"
+                score 6
+                unit "points"
+
+
+element "ddn.examples.radar::facts.n2" as "record"
+    with
+        id "ddn.examples.radar::facts.n2"
+        title "Nimbus / Camera"
+        metadata
+            x_record
+                product "Nimbus"
+                criterion "Camera"
+                score 9
+                unit "points"
+
+
+element "ddn.examples.radar::facts.n3" as "record"
+    with
+        id "ddn.examples.radar::facts.n3"
+        title "Nimbus / Display"
+        metadata
+            x_record
+                product "Nimbus"
+                criterion "Display"
+                score 7
+                unit "points"
+
+
+element "ddn.examples.radar::facts.n4" as "record"
+    with
+        id "ddn.examples.radar::facts.n4"
+        title "Nimbus / Performance"
+        metadata
+            x_record
+                product "Nimbus"
+                criterion "Performance"
+                score 8
+                unit "points"
+
+
+element "ddn.examples.radar::facts.n5" as "record"
+    with
+        id "ddn.examples.radar::facts.n5"
+        title "Nimbus / Durability"
+        metadata
+            x_record
+                product "Nimbus"
+                criterion "Durability"
+                score 8
+                unit "points"
+
+
+element "ddn.examples.radar::facts.n6" as "record"
+    with
+        id "ddn.examples.radar::facts.n6"
+        title "Nimbus / Value"
+        metadata
+            x_record
+                product "Nimbus"
+                criterion "Value"
+                score 4
+                unit "points"
+
+
+view "radar" as "chart.radar@1"
+    with
+        id "radar"
+        title "Product comparison / radar"
+        selection
+            include empty list
+        layout
+            algorithm "layered"
+            gap 140
+            row_gap 130
+        display
+            kind "none"
+            maturity "none"
+            badges "none"
+        legend
+            placement "none"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.radar::facts.a1"
+                    item
+                        id "ddn.examples.radar::facts.a2"
+                    item
+                        id "ddn.examples.radar::facts.a3"
+                    item
+                        id "ddn.examples.radar::facts.a4"
+                    item
+                        id "ddn.examples.radar::facts.a5"
+                    item
+                        id "ddn.examples.radar::facts.a6"
+                    item
+                        id "ddn.examples.radar::facts.n1"
+                    item
+                        id "ddn.examples.radar::facts.n2"
+                    item
+                        id "ddn.examples.radar::facts.n3"
+                    item
+                        id "ddn.examples.radar::facts.n4"
+                    item
+                        id "ddn.examples.radar::facts.n5"
+                    item
+                        id "ddn.examples.radar::facts.n6"
+                mark "radar"
+                x "metadata.x_record.criterion"
+                y "metadata.x_record.score"
+                series "metadata.x_record.product"
+                unit "points"
+                width 1050
+                height 700

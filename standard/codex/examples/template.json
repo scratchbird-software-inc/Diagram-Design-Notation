@@ -1,0 +1,20 @@
+{
+  "templates": [
+    {
+      "name": "BasicEntity",
+      "role": "entity",
+      "version": "1",
+      "parameters": {
+        "typeface": {
+          "type": "text",
+          "default": "serif"
+        }
+      },
+      "settings": {
+        "style.font": {
+          "parameter": "typeface"
+        }
+      }
+    }
+  ]
+}

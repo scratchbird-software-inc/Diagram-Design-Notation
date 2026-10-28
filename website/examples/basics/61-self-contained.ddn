@@ -1,67 +1,400 @@
-ddn "0.5";
+version ddn-next-1
 
-// a full design in one self-contained file. Three module sections —
-// model, data, views — no imports at all. Sibling sections reference each
-// other by module-qualified id (@shop.data.records), exactly as separate
-// files would through an import alias.
+publication "publication:overview"
+    with
+        id "publication:overview"
+        title "Self-contained / overview"
+        targets
+            item
+                target
+                    id "overview"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-module "shop.model";
 
-format styles {
-    notation core;
-    style classic;
-    layout wires { algorithm: grid; gap: 80px; }
-    display detailed;
-    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
-    legend words { width: 280px; }
-    bundle technical {
-        notation: @core;
-        style: @classic;
-        layout: @wires;
-        display: @detailed;
-        publication: @screen;
-        legend: @words;
-    }
-}
+publication "publication:compact"
+    with
+        id "publication:compact"
+        title "Self-contained / compact"
+        targets
+            item
+                target
+                    id "compact"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-module "shop.data";
 
-data records "Shop records" {
-    table customer "Customer" {
-        role: authoritative;
-        fields {
-            customer_id { key: primary; }
-            display_name;
-        }
-    }
-    table order "Order" {
-        fields {
-            order_id { key: primary; }
-            customer_id;
-            ordered_at;
-        }
-    }
-    relation order_customer "Customer places orders" @order.customer_id -> @customer.customer_id {
-        kind: references;
-        source_mark: zeromany;
-        target_mark: one;
-    }
-    sample customers "Synthetic customers" {
-        mode: synthetic;
-        columns: [@customer.customer_id, @customer.display_name];
-        rows: [["C001", "Customer A"], ["C002", "Customer B"]];
-    }
-}
+element "shop.data::records.customer.customer_id" as "field"
+    with
+        id "shop.data::records.customer.customer_id"
+        title "customer_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "shop.data::records.customer"
+            ordinal 0
+            key "primary"
 
-module "shop.views";
 
-view overview "Self-contained / overview" {
-    data: [@shop.data.records];
-    format: @shop.model.styles.technical;
-}
+element "shop.data::records.customer.display_name" as "field"
+    with
+        id "shop.data::records.customer.display_name"
+        title "display_name"
+        content
+            parent
+                id "shop.data::records.customer"
+            ordinal 1
 
-view compact "Self-contained / compact" {
-    data: [@shop.data.records];
-    format: @shop.model.styles.technical;
-    display { fields: none; }
-}
+
+element "shop.data::records.customer" as "table"
+    with
+        id "shop.data::records.customer"
+        title "Customer"
+        facets
+            authority
+                item "AUTH"
+        properties
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+        members
+            item
+                id "shop.data::records.customer.customer_id"
+            item
+                id "shop.data::records.customer.display_name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "shop.data::records.order.order_id" as "field"
+    with
+        id "shop.data::records.order.order_id"
+        title "order_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "shop.data::records.order"
+            ordinal 0
+            key "primary"
+
+
+element "shop.data::records.order.customer_id" as "field"
+    with
+        id "shop.data::records.order.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "shop.data::records.order"
+            ordinal 1
+
+
+element "shop.data::records.order.ordered_at" as "field"
+    with
+        id "shop.data::records.order.ordered_at"
+        title "ordered_at"
+        content
+            parent
+                id "shop.data::records.order"
+            ordinal 2
+
+
+element "shop.data::records.order" as "table"
+    with
+        id "shop.data::records.order"
+        title "Order"
+        members
+            item
+                id "shop.data::records.order.order_id"
+            item
+                id "shop.data::records.order.customer_id"
+            item
+                id "shop.data::records.order.ordered_at"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "ordered_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "shop.data::records.customers" as "sample"
+    with
+        id "shop.data::records.customers"
+        title "Synthetic customers"
+        properties
+            mode "synthetic"
+            columns
+                item
+                    id "shop.data::records.customer.customer_id"
+                item
+                    id "shop.data::records.customer.display_name"
+            rows
+                item
+                    item "C001"
+                    item "Customer A"
+                item
+                    item "C002"
+                    item "Customer B"
+        data
+            columns
+                item
+                    id "column-0"
+                    label "customer_id"
+                item
+                    id "column-1"
+                    label "display_name"
+            rows
+                item
+                    item "C001"
+                    item "Customer A"
+                item
+                    item "C002"
+                    item "Customer B"
+
+
+relation "shop.data::records.order_customer" as "ref"
+    with
+        id "shop.data::records.order_customer"
+        title "Customer places orders"
+        properties
+            source_mark "zeromany"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "shop.data::records.order"
+                member
+                    id "shop.data::records.order.customer_id"
+            item
+                definition
+                    id "shop.data::records.customer"
+                member
+                    id "shop.data::records.customer.customer_id"
+
+
+view "overview" as "ddn@1"
+    with
+        id "overview"
+        title "Self-contained / overview"
+        selection
+            include
+                item
+                    id "shop.data::records.customer"
+                item
+                    id "shop.data::records.order"
+                item
+                    id "shop.data::records.customers"
+                item
+                    id "shop.data::records.order_customer"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:overview"
+
+    use "shop.data::records.customer" named "appearance:overview:shop.data::records.customer"
+        with
+            id "appearance:overview:shop.data::records.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "shop.data::records.order" named "appearance:overview:shop.data::records.order"
+        with
+            id "appearance:overview:shop.data::records.order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "shop.data::records.customers" named "appearance:overview:shop.data::records.customers"
+        with
+            id "appearance:overview:shop.data::records.customers"
+            body "columns"
+
+    use "shop.data::records.order_customer" named "appearance:overview:shop.data::records.order_customer"
+        with
+            id "appearance:overview:shop.data::records.order_customer"
+
+
+view "compact" as "ddn@1"
+    with
+        id "compact"
+        title "Self-contained / compact"
+        selection
+            include
+                item
+                    id "shop.data::records.customer"
+                item
+                    id "shop.data::records.order"
+                item
+                    id "shop.data::records.customers"
+                item
+                    id "shop.data::records.order_customer"
+        layout
+            algorithm "grid"
+            gap 80
+        display
+            fields "none"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:compact"
+
+    use "shop.data::records.customer" named "appearance:compact:shop.data::records.customer"
+        with
+            id "appearance:compact:shop.data::records.customer"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "shop.data::records.order" named "appearance:compact:shop.data::records.order"
+        with
+            id "appearance:compact:shop.data::records.order"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "shop.data::records.customers" named "appearance:compact:shop.data::records.customers"
+        with
+            id "appearance:compact:shop.data::records.customers"
+            body "columns"
+
+    use "shop.data::records.order_customer" named "appearance:compact:shop.data::records.order_customer"
+        with
+            id "appearance:compact:shop.data::records.order_customer"

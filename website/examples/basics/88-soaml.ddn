@@ -1,57 +1,600 @@
-ddn "0.5";
-module "ddn.examples.soaml";
+version ddn-next-1
 
-// B1-072: SoaML 1.0.1 — a retail service architecture with a service
-// contract. Participants offer «Service» and consume through «Request» port
-// decorations; the assembly connector pairs a «Request» with a «Service»
-// port of the same interface type. The service contract is a collaboration
-// glyph with provider/consumer role rows and a choreography binding to the
-// sequence view below. All data is synthetic.
+publication "publication:arch"
+    with
+        id "publication:arch"
+        title "Retail service architecture"
+        targets
+            item
+                target
+                    id "arch"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data m {
-    object shop "Shop front" { kind: "soaml.participant";
-        ports { billing { direction: out; x_service: { kind: "request" }; datatype: "Billing"; } }
-    }
-    object warehouse "Warehouse" { kind: "soaml.participant";
-        ports { stock { direction: out; x_service: { kind: "request" }; datatype: "Billing"; } }
-    }
-    object billing "Billing service" { kind: "soaml.serviceinterface";
-        fields { charge "charge(order)"; invoice "issue(invoice)"; }
-        ports { api { direction: in; x_service: { kind: "service" }; datatype: "Billing"; } }
-    }
-    object org "Retail group" { kind: "soaml.agent"; }
-    object cap "Online retail" { kind: "soaml.capability"; }
-    object msg "Invoice" { kind: "soaml.message"; }
-    object ms "Payment received" { kind: "soaml.milestone"; }
-    object contract "Billing terms" { kind: "soaml.servicecontract";
-        fields {
-            provider { x_part: { classifier: "Billing" }; }
-            consumer { x_part: { classifier: "Shop" }; }
-        }
-        x_contract: { choreography: @choreography };
-    }
 
-    relation a1 "" @shop.billing -> @billing.api { kind: "uml.assembly"; }
-    relation a2 "" @warehouse.stock -> @billing.api { kind: "uml.assembly"; }
-    relation realize "" @billing -> @cap { kind: "uml.realization"; }
-    relation offers "" @contract -> @billing { kind: "uml.provided"; }
-    relation doc "" @billing -> @msg { kind: "uml.dependency"; }
-    relation done "" @contract -> @ms { kind: "uml.dependency"; }
-    relation owns "" @org -> @shop { kind: "uml.connector"; }
-}
+publication "publication:choreography"
+    with
+        id "publication:choreography"
+        title "Billing choreography"
+        targets
+            item
+                target
+                    id "choreography"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data choreo {
-    object shopper "Shop" { kind: "uml.class"; }
-    object biller "Billing" { kind: "uml.class"; }
-    relation m1 "charge(order)" @shopper -> @biller { kind: "uml.message"; }
-    relation m2 "invoice" @biller -> @shopper { kind: "uml.message"; x_message: { sort: "reply" }; }
-}
 
-view arch "Retail service architecture": [@m] as "soaml.services@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.soaml::m.shop.billing" as "core::Port"
+    with
+        id "ddn.examples.soaml::m.shop.billing"
+        title "billing"
+        properties
+            datatype "Billing"
+        metadata
+            x_service
+                kind "request"
+        content
+            owner
+                id "ddn.examples.soaml::m.shop"
+            direction "output"
 
-view choreography "Billing choreography": [@choreo] as "uml.sequence@2" {
-    publication { size: content; fit: none; }
-}
+
+element "ddn.examples.soaml::m.shop" as "soaml.participant"
+    with
+        id "ddn.examples.soaml::m.shop"
+        title "Shop front"
+        members
+            item
+                id "ddn.examples.soaml::m.shop.billing"
+
+
+element "ddn.examples.soaml::m.warehouse.stock" as "core::Port"
+    with
+        id "ddn.examples.soaml::m.warehouse.stock"
+        title "stock"
+        properties
+            datatype "Billing"
+        metadata
+            x_service
+                kind "request"
+        content
+            owner
+                id "ddn.examples.soaml::m.warehouse"
+            direction "output"
+
+
+element "ddn.examples.soaml::m.warehouse" as "soaml.participant"
+    with
+        id "ddn.examples.soaml::m.warehouse"
+        title "Warehouse"
+        members
+            item
+                id "ddn.examples.soaml::m.warehouse.stock"
+
+
+element "ddn.examples.soaml::m.billing.charge" as "field"
+    with
+        id "ddn.examples.soaml::m.billing.charge"
+        title "charge(order)"
+        content
+            parent
+                id "ddn.examples.soaml::m.billing"
+            ordinal 0
+
+
+element "ddn.examples.soaml::m.billing.invoice" as "field"
+    with
+        id "ddn.examples.soaml::m.billing.invoice"
+        title "issue(invoice)"
+        content
+            parent
+                id "ddn.examples.soaml::m.billing"
+            ordinal 1
+
+
+element "ddn.examples.soaml::m.billing.api" as "core::Port"
+    with
+        id "ddn.examples.soaml::m.billing.api"
+        title "api"
+        properties
+            datatype "Billing"
+        metadata
+            x_service
+                kind "service"
+        content
+            owner
+                id "ddn.examples.soaml::m.billing"
+            direction "input"
+
+
+element "ddn.examples.soaml::m.billing" as "soaml.serviceinterface"
+    with
+        id "ddn.examples.soaml::m.billing"
+        title "Billing service"
+        members
+            item
+                id "ddn.examples.soaml::m.billing.charge"
+            item
+                id "ddn.examples.soaml::m.billing.invoice"
+            item
+                id "ddn.examples.soaml::m.billing.api"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "charge(order)"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "issue(invoice)"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.soaml::m.org" as "soaml.agent"
+    with
+        id "ddn.examples.soaml::m.org"
+        title "Retail group"
+
+
+element "ddn.examples.soaml::m.cap" as "soaml.capability"
+    with
+        id "ddn.examples.soaml::m.cap"
+        title "Online retail"
+
+
+element "ddn.examples.soaml::m.msg" as "soaml.message"
+    with
+        id "ddn.examples.soaml::m.msg"
+        title "Invoice"
+
+
+element "ddn.examples.soaml::m.ms" as "soaml.milestone"
+    with
+        id "ddn.examples.soaml::m.ms"
+        title "Payment received"
+
+
+element "ddn.examples.soaml::m.contract.provider" as "field"
+    with
+        id "ddn.examples.soaml::m.contract.provider"
+        title "provider"
+        metadata
+            x_part
+                classifier "declared-classifier:Billing"
+        content
+            parent
+                id "ddn.examples.soaml::m.contract"
+            ordinal 0
+
+
+element "ddn.examples.soaml::m.contract.consumer" as "field"
+    with
+        id "ddn.examples.soaml::m.contract.consumer"
+        title "consumer"
+        metadata
+            x_part
+                classifier "declared-classifier:Shop"
+        content
+            parent
+                id "ddn.examples.soaml::m.contract"
+            ordinal 1
+
+
+element "ddn.examples.soaml::m.contract" as "soaml.servicecontract"
+    with
+        id "ddn.examples.soaml::m.contract"
+        title "Billing terms"
+        metadata
+            x_contract
+                choreography
+                    id "choreography"
+        members
+            item
+                id "ddn.examples.soaml::m.contract.provider"
+            item
+                id "ddn.examples.soaml::m.contract.consumer"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "provider"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "consumer"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.soaml::m.a1" as "uml.assembly"
+    with
+        id "ddn.examples.soaml::m.a1"
+        title "Assembly connector"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.soaml::m.shop"
+                member
+                    id "ddn.examples.soaml::m.shop.billing"
+            item
+                definition
+                    id "ddn.examples.soaml::m.billing"
+                member
+                    id "ddn.examples.soaml::m.billing.api"
+
+
+relation "ddn.examples.soaml::m.a2" as "uml.assembly"
+    with
+        id "ddn.examples.soaml::m.a2"
+        title "Assembly connector"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.soaml::m.warehouse"
+                member
+                    id "ddn.examples.soaml::m.warehouse.stock"
+            item
+                definition
+                    id "ddn.examples.soaml::m.billing"
+                member
+                    id "ddn.examples.soaml::m.billing.api"
+
+
+relation "ddn.examples.soaml::m.realize" as "uml.realization"
+    with
+        id "ddn.examples.soaml::m.realize"
+        title "Realization"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.soaml::m.billing"
+            item
+                definition
+                    id "ddn.examples.soaml::m.cap"
+
+
+relation "ddn.examples.soaml::m.offers" as "uml.provided"
+    with
+        id "ddn.examples.soaml::m.offers"
+        title "Provided interface"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.soaml::m.contract"
+            item
+                definition
+                    id "ddn.examples.soaml::m.billing"
+
+
+relation "ddn.examples.soaml::m.doc" as "uml.dependency"
+    with
+        id "ddn.examples.soaml::m.doc"
+        title "Dependency"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.soaml::m.billing"
+            item
+                definition
+                    id "ddn.examples.soaml::m.msg"
+
+
+relation "ddn.examples.soaml::m.done" as "uml.dependency"
+    with
+        id "ddn.examples.soaml::m.done"
+        title "Dependency"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.soaml::m.contract"
+            item
+                definition
+                    id "ddn.examples.soaml::m.ms"
+
+
+relation "ddn.examples.soaml::m.owns" as "uml.connector"
+    with
+        id "ddn.examples.soaml::m.owns"
+        title "Connector"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.soaml::m.org"
+            item
+                definition
+                    id "ddn.examples.soaml::m.shop"
+
+
+element "declared-classifier:Billing" as "uml.class"
+    with
+        id "declared-classifier:Billing"
+        title "Billing"
+
+
+element "declared-classifier:Shop" as "uml.class"
+    with
+        id "declared-classifier:Shop"
+        title "Shop"
+
+
+element "ddn.examples.soaml::choreo.shopper" as "uml.class"
+    with
+        id "ddn.examples.soaml::choreo.shopper"
+        title "Shop"
+
+
+element "ddn.examples.soaml::choreo.biller" as "uml.class"
+    with
+        id "ddn.examples.soaml::choreo.biller"
+        title "Billing"
+
+
+relation "ddn.examples.soaml::choreo.m1" as "uml.message"
+    with
+        id "ddn.examples.soaml::choreo.m1"
+        title "charge(order)"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.soaml::choreo.shopper"
+            item
+                definition
+                    id "ddn.examples.soaml::choreo.biller"
+
+
+relation "ddn.examples.soaml::choreo.m2" as "uml.message"
+    with
+        id "ddn.examples.soaml::choreo.m2"
+        title "invoice"
+        metadata
+            x_message
+                sort "reply"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.soaml::choreo.biller"
+            item
+                definition
+                    id "ddn.examples.soaml::choreo.shopper"
+
+
+view "arch" as "soaml.services@1"
+    with
+        id "arch"
+        title "Retail service architecture"
+        selection
+            include
+                item
+                    id "ddn.examples.soaml::m.shop"
+                item
+                    id "ddn.examples.soaml::m.warehouse"
+                item
+                    id "ddn.examples.soaml::m.billing"
+                item
+                    id "ddn.examples.soaml::m.org"
+                item
+                    id "ddn.examples.soaml::m.cap"
+                item
+                    id "ddn.examples.soaml::m.msg"
+                item
+                    id "ddn.examples.soaml::m.ms"
+                item
+                    id "ddn.examples.soaml::m.contract"
+                item
+                    id "ddn.examples.soaml::m.a1"
+                item
+                    id "ddn.examples.soaml::m.a2"
+                item
+                    id "ddn.examples.soaml::m.realize"
+                item
+                    id "ddn.examples.soaml::m.offers"
+                item
+                    id "ddn.examples.soaml::m.doc"
+                item
+                    id "ddn.examples.soaml::m.done"
+                item
+                    id "ddn.examples.soaml::m.owns"
+            exclude
+                item
+                    id "ddn.examples.soaml::choreo.m1"
+                item
+                    id "ddn.examples.soaml::choreo.m2"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:arch"
+
+    use "ddn.examples.soaml::m.shop" named "appearance:arch:ddn.examples.soaml::m.shop"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.shop"
+
+    use "ddn.examples.soaml::m.warehouse" named "appearance:arch:ddn.examples.soaml::m.warehouse"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.warehouse"
+
+    use "ddn.examples.soaml::m.billing" named "appearance:arch:ddn.examples.soaml::m.billing"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.billing"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.soaml::m.org" named "appearance:arch:ddn.examples.soaml::m.org"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.org"
+
+    use "ddn.examples.soaml::m.cap" named "appearance:arch:ddn.examples.soaml::m.cap"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.cap"
+
+    use "ddn.examples.soaml::m.msg" named "appearance:arch:ddn.examples.soaml::m.msg"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.msg"
+
+    use "ddn.examples.soaml::m.ms" named "appearance:arch:ddn.examples.soaml::m.ms"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.ms"
+
+    use "ddn.examples.soaml::m.contract" named "appearance:arch:ddn.examples.soaml::m.contract"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.contract"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.soaml::m.a1" named "appearance:arch:ddn.examples.soaml::m.a1"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.a1"
+
+    use "ddn.examples.soaml::m.a2" named "appearance:arch:ddn.examples.soaml::m.a2"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.a2"
+
+    use "ddn.examples.soaml::m.realize" named "appearance:arch:ddn.examples.soaml::m.realize"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.realize"
+
+    use "ddn.examples.soaml::m.offers" named "appearance:arch:ddn.examples.soaml::m.offers"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.offers"
+
+    use "ddn.examples.soaml::m.doc" named "appearance:arch:ddn.examples.soaml::m.doc"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.doc"
+
+    use "ddn.examples.soaml::m.done" named "appearance:arch:ddn.examples.soaml::m.done"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.done"
+
+    use "ddn.examples.soaml::m.owns" named "appearance:arch:ddn.examples.soaml::m.owns"
+        with
+            id "appearance:arch:ddn.examples.soaml::m.owns"
+
+
+view "choreography" as "uml.sequence@2"
+    with
+        id "choreography"
+        title "Billing choreography"
+        selection
+            include
+                item
+                    id "ddn.examples.soaml::choreo.shopper"
+                item
+                    id "ddn.examples.soaml::choreo.biller"
+                item
+                    id "ddn.examples.soaml::choreo.m1"
+                item
+                    id "ddn.examples.soaml::choreo.m2"
+            exclude
+                item
+                    id "ddn.examples.soaml::m.a1"
+                item
+                    id "ddn.examples.soaml::m.a2"
+                item
+                    id "ddn.examples.soaml::m.realize"
+                item
+                    id "ddn.examples.soaml::m.offers"
+                item
+                    id "ddn.examples.soaml::m.doc"
+                item
+                    id "ddn.examples.soaml::m.done"
+                item
+                    id "ddn.examples.soaml::m.owns"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:choreography"
+
+    use "ddn.examples.soaml::choreo.shopper" named "appearance:choreography:ddn.examples.soaml::choreo.shopper"
+        with
+            id "appearance:choreography:ddn.examples.soaml::choreo.shopper"
+
+    use "ddn.examples.soaml::choreo.biller" named "appearance:choreography:ddn.examples.soaml::choreo.biller"
+        with
+            id "appearance:choreography:ddn.examples.soaml::choreo.biller"
+
+    use "ddn.examples.soaml::choreo.m1" named "appearance:choreography:ddn.examples.soaml::choreo.m1"
+        with
+            id "appearance:choreography:ddn.examples.soaml::choreo.m1"
+
+    use "ddn.examples.soaml::choreo.m2" named "appearance:choreography:ddn.examples.soaml::choreo.m2"
+        with
+            id "appearance:choreography:ddn.examples.soaml::choreo.m2"

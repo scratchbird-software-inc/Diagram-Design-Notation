@@ -1,28 +1,481 @@
-ddn "0.5";
-module "ddn.examples.export";
-import "shared.ddn" as shared;
-data model {
- table workforce "Workforce public directory" {
-  fields {staff_id; display_name; salary {classification: restricted;}}
-  description: "Synthetic restricted note: SALARY_SECRET_CANARY";
- }
- table team "Team" {fields {team_id;name;}}
- ref membership "Membership" @workforce -> @team;
-}
-view private "Private source / hiding is not redaction" {
- data: [@model];format: @shared.styles.technical;
- display {fields: none;}
- publication {size: content;fit: none;overflow: error;}
-}
-view public "Allowlisted publication" {
- data: [@model];format: @shared.styles.technical;
- export {
-  mode: redacted;
-  elements: [@model.workforce, @model.team];
-  fields: [@model.workforce.staff_id,@model.workforce.display_name,@model.team.team_id,@model.team.name];
-  properties: [kind];
-  identifier_mode: opaque;
-  title: "Public directory / approved projection";
- }
- publication {size: content;fit: none;overflow: error;}
-}
+version ddn-next-1
+
+publication "publication:private"
+    with
+        id "publication:private"
+        title "Private source / hiding is not redaction"
+        targets
+            item
+                target
+                    id "private"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:public"
+    with
+        id "publication:public"
+        title "Public directory / approved projection"
+        targets
+            item
+                target
+                    id "public"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.export::model.workforce.staff_id" as "field"
+    with
+        id "ddn.examples.export::model.workforce.staff_id"
+        title "staff_id"
+        content
+            parent
+                id "ddn.examples.export::model.workforce"
+            ordinal 0
+
+
+element "ddn.examples.export::model.workforce.display_name" as "field"
+    with
+        id "ddn.examples.export::model.workforce.display_name"
+        title "display_name"
+        content
+            parent
+                id "ddn.examples.export::model.workforce"
+            ordinal 1
+
+
+element "ddn.examples.export::model.workforce.salary" as "field"
+    with
+        id "ddn.examples.export::model.workforce.salary"
+        title "salary"
+        properties
+            classification "restricted"
+        content
+            parent
+                id "ddn.examples.export::model.workforce"
+            ordinal 2
+
+
+element "ddn.examples.export::model.workforce" as "table"
+    with
+        id "ddn.examples.export::model.workforce"
+        title "Workforce public directory"
+        description "Synthetic restricted note: SALARY_SECRET_CANARY"
+        members
+            item
+                id "ddn.examples.export::model.workforce.staff_id"
+            item
+                id "ddn.examples.export::model.workforce.display_name"
+            item
+                id "ddn.examples.export::model.workforce.salary"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "staff_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "salary"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.export::model.team.team_id" as "field"
+    with
+        id "ddn.examples.export::model.team.team_id"
+        title "team_id"
+        content
+            parent
+                id "ddn.examples.export::model.team"
+            ordinal 0
+
+
+element "ddn.examples.export::model.team.name" as "field"
+    with
+        id "ddn.examples.export::model.team.name"
+        title "name"
+        content
+            parent
+                id "ddn.examples.export::model.team"
+            ordinal 1
+
+
+element "ddn.examples.export::model.team" as "table"
+    with
+        id "ddn.examples.export::model.team"
+        title "Team"
+        members
+            item
+                id "ddn.examples.export::model.team.team_id"
+            item
+                id "ddn.examples.export::model.team.name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "team_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.export::model.membership" as "ref"
+    with
+        id "ddn.examples.export::model.membership"
+        title "Membership"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.export::model.workforce"
+            item
+                definition
+                    id "ddn.examples.export::model.team"
+
+
+element "public-c97a7508913c4cee0e7b" as "field"
+    with
+        id "public-c97a7508913c4cee0e7b"
+        title "staff_id"
+        content
+            parent
+                id "public-5ff315ee37f14016159f"
+            ordinal 0
+
+
+element "public-c442c14b523b7fbad6ce" as "field"
+    with
+        id "public-c442c14b523b7fbad6ce"
+        title "display_name"
+        content
+            parent
+                id "public-5ff315ee37f14016159f"
+            ordinal 1
+
+
+element "public-5ff315ee37f14016159f" as "table"
+    with
+        id "public-5ff315ee37f14016159f"
+        title "Workforce public directory"
+        members
+            item
+                id "public-c97a7508913c4cee0e7b"
+            item
+                id "public-c442c14b523b7fbad6ce"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "staff_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "public-a8d0a3e637d66cc0acc6" as "field"
+    with
+        id "public-a8d0a3e637d66cc0acc6"
+        title "team_id"
+        content
+            parent
+                id "public-37dbfad5a94bb1d1af16"
+            ordinal 0
+
+
+element "public-f582fbfa1bbf3877375f" as "field"
+    with
+        id "public-f582fbfa1bbf3877375f"
+        title "name"
+        content
+            parent
+                id "public-37dbfad5a94bb1d1af16"
+            ordinal 1
+
+
+element "public-37dbfad5a94bb1d1af16" as "table"
+    with
+        id "public-37dbfad5a94bb1d1af16"
+        title "Team"
+        members
+            item
+                id "public-a8d0a3e637d66cc0acc6"
+            item
+                id "public-f582fbfa1bbf3877375f"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "team_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "public-2714562ed18a86e4a3cb" as "ref"
+    with
+        id "public-2714562ed18a86e4a3cb"
+        title "ref"
+        endpoints
+            item
+                definition
+                    id "public-5ff315ee37f14016159f"
+            item
+                definition
+                    id "public-37dbfad5a94bb1d1af16"
+
+
+view "private" as "ddn@1"
+    with
+        id "private"
+        title "Private source / hiding is not redaction"
+        selection
+            include
+                item
+                    id "ddn.examples.export::model.workforce"
+                item
+                    id "ddn.examples.export::model.team"
+                item
+                    id "ddn.examples.export::model.membership"
+            exclude
+                item
+                    id "public-2714562ed18a86e4a3cb"
+        layout
+            algorithm "grid"
+            gap 80
+        display
+            fields "none"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:private"
+
+    use "ddn.examples.export::model.workforce" named "appearance:private:ddn.examples.export::model.workforce"
+        with
+            id "appearance:private:ddn.examples.export::model.workforce"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.export::model.team" named "appearance:private:ddn.examples.export::model.team"
+        with
+            id "appearance:private:ddn.examples.export::model.team"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.export::model.membership" named "appearance:private:ddn.examples.export::model.membership"
+        with
+            id "appearance:private:ddn.examples.export::model.membership"
+
+
+view "public" as "ddn@1"
+    with
+        id "public"
+        title "Public directory / approved projection"
+        selection
+            include
+                item
+                    id "public-5ff315ee37f14016159f"
+                item
+                    id "public-37dbfad5a94bb1d1af16"
+                item
+                    id "public-2714562ed18a86e4a3cb"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:public"
+
+    use "public-5ff315ee37f14016159f" named "appearance:public:public-5ff315ee37f14016159f"
+        with
+            id "appearance:public:public-5ff315ee37f14016159f"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "public-37dbfad5a94bb1d1af16" named "appearance:public:public-37dbfad5a94bb1d1af16"
+        with
+            id "appearance:public:public-37dbfad5a94bb1d1af16"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "public-2714562ed18a86e4a3cb" named "appearance:public:public-2714562ed18a86e4a3cb"
+        with
+            id "appearance:public:public-2714562ed18a86e4a3cb"

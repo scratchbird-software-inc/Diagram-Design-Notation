@@ -1,0 +1,234 @@
+{
+  "version": "ddn-next-1",
+  "priority": [
+    "explicit occurrence",
+    "explicit definition",
+    "view defaults",
+    "active workarea defaults",
+    "declaring-file defaults",
+    "matching eligible CSS",
+    "profile/role standard",
+    "owner standard",
+    "general standard"
+  ],
+  "standard_changes": "Require a new language/defaults version; this is an unreleased frozen candidate.",
+  "status": "Own record only, never inherited or supplied by CSS/default rules.",
+  "no_value": "Absence is not zero, empty text, false or auto. Null is a supplied null only on nullable properties.",
+  "containers": "Child defaults apply when the container/role is present; materialization never manufactures semantic records.",
+  "file_identity": "Only the declaring physical file owns a declaration name; includes retain that identity.",
+  "output_recipes": {
+    "svg": {
+      "page.size": "content",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "png": {
+      "page.size": "content",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "webp": {
+      "page.size": "content",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "html": {
+      "page.size": "content",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "dashboard": {
+      "page.size": "content",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": true,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "markdown": {
+      "page.size": "content",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "json": {
+      "page.size": "content",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "csv": {
+      "page.size": "content",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "pdf": {
+      "page.size": "a4",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "docx": {
+      "page.size": "a4",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "odt": {
+      "page.size": "a4",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "sql": {
+      "page.size": "content",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    },
+    "vega_lite": {
+      "page.size": "content",
+      "page.orientation": "portrait",
+      "notes.mode": "full",
+      "live": false,
+      "snapshot": "revision-coherent",
+      "table_data": "complete rows, regardless of visual ellipsis",
+      "capability": "local adapter; delivery is a separate explicit operation"
+    }
+  },
+  "sources": {
+    "host.refresh": "supplied",
+    "file.refresh": "manual",
+    "calculation.refresh": "manual",
+    "update": "replace",
+    "access": "read",
+    "on_error": "keep_stale",
+    "persist": "reference"
+  },
+  "table": {
+    "alignment": "lt",
+    "percentage": "auto when absent",
+    "min_chars": 1,
+    "max_lines": 6,
+    "measurement": "default font zero advance and computed line-height",
+    "wrap": true,
+    "overflow": "ellipsis",
+    "unfit": "shaded-square",
+    "over_100": "Cap largest active group progressively until sum100; all leaders tie equally.",
+    "under_100_all_explicit": "Rightmost displayed column absorbs remainder.",
+    "under_100_with_auto": "Auto columns share remaining percentage equally.",
+    "constraints": "Apply computed percentages first. If any minimum width cannot fit its share, indicator replaces table; do not silently steal percentage from another column."
+  },
+  "paper_and_stationery": {
+    "version": "ddn-next-1",
+    "surface_owners": [
+      "definition",
+      "appearance",
+      "view_definition",
+      "view_placement",
+      "document"
+    ],
+    "paper": "plain",
+    "shadow": {
+      "absent": null,
+      "present": {
+        "kind": "offset",
+        "color": "#000000",
+        "opacity": 0.24,
+        "blur": 4,
+        "spread": 0,
+        "lift": 10
+      },
+      "offset_by_kind": {
+        "offset": {
+          "x": 6,
+          "y": 8
+        },
+        "none": {
+          "x": 0,
+          "y": 0
+        },
+        "centre": {
+          "x": 0,
+          "y": 0
+        },
+        "corners": {
+          "x": 0,
+          "y": 0
+        },
+        "corner": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "bounds": "Paint bounds expand; semantic geometry and hit areas do not."
+    },
+    "decorations": {
+      "absent": [],
+      "list_cascade": "A supplied list replaces the inherited list in source order.",
+      "entry": {
+        "position": "ct",
+        "size": 32,
+        "rotation": 0,
+        "opacity": 1,
+        "offset": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "color_by_kind": {
+        "push-pin": "#df4545",
+        "round-pin": "#45a3da",
+        "paper-clip": "#5b83b4",
+        "binder-clip": "#3b414b",
+        "tape": "#e4c788"
+      }
+    },
+    "surface_color": {
+      "path": "background.color",
+      "plain": "Existing surface default remains unchanged.",
+      "note": "#fff59d",
+      "pad": "#fff59d",
+      "priority": "Applies only at standard origin; explicit CSS, default rules and file values retain priority."
+    }
+  }
+}

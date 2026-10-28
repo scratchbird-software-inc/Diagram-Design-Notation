@@ -1,16 +1,333 @@
-ddn "0.5";
-module "ddn.usecases.views.graph-schema";
-import "formats.ddn" as fmt;
-import "data/graph.ddn" as g;
+version ddn-next-1
 
-// Can a relationship have properties of its own?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "06 / Property-graph schema" {
-    data: [@g.model];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.neo;
-    layout: @fmt.shared.row;
-    select: [@g.model.customer, @g.model.purchased, @g.model.product];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "model.r_source": 1, "model.r_target": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "06 / Property-graph schema"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.graph::model.customer.customer_id" as "field"
+    with
+        id "ddn.usecases.graph::model.customer.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.usecases.graph::model.customer"
+            ordinal 0
+
+
+element "ddn.usecases.graph::model.customer.name" as "field"
+    with
+        id "ddn.usecases.graph::model.customer.name"
+        title "name"
+        content
+            parent
+                id "ddn.usecases.graph::model.customer"
+            ordinal 1
+
+
+element "ddn.usecases.graph::model.customer" as "graph_node"
+    with
+        id "ddn.usecases.graph::model.customer"
+        title "Customer node"
+        members
+            item
+                id "ddn.usecases.graph::model.customer.customer_id"
+            item
+                id "ddn.usecases.graph::model.customer.name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.graph::model.purchased.purchased_at" as "field"
+    with
+        id "ddn.usecases.graph::model.purchased.purchased_at"
+        title "purchased_at"
+        content
+            parent
+                id "ddn.usecases.graph::model.purchased"
+            ordinal 0
+
+
+element "ddn.usecases.graph::model.purchased.quantity" as "field"
+    with
+        id "ddn.usecases.graph::model.purchased.quantity"
+        title "quantity"
+        content
+            parent
+                id "ddn.usecases.graph::model.purchased"
+            ordinal 1
+
+
+element "ddn.usecases.graph::model.purchased" as "graph_edge"
+    with
+        id "ddn.usecases.graph::model.purchased"
+        title "PURCHASED edge"
+        members
+            item
+                id "ddn.usecases.graph::model.purchased.purchased_at"
+            item
+                id "ddn.usecases.graph::model.purchased.quantity"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "purchased_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "quantity"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.graph::model.product.sku" as "field"
+    with
+        id "ddn.usecases.graph::model.product.sku"
+        title "sku"
+        content
+            parent
+                id "ddn.usecases.graph::model.product"
+            ordinal 0
+
+
+element "ddn.usecases.graph::model.product.title" as "field"
+    with
+        id "ddn.usecases.graph::model.product.title"
+        title "title"
+        content
+            parent
+                id "ddn.usecases.graph::model.product"
+            ordinal 1
+
+
+element "ddn.usecases.graph::model.product" as "graph_node"
+    with
+        id "ddn.usecases.graph::model.product"
+        title "Product node"
+        members
+            item
+                id "ddn.usecases.graph::model.product.sku"
+            item
+                id "ddn.usecases.graph::model.product.title"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "sku"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "title"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.usecases.graph::model.r_source" as "assoc"
+    with
+        id "ddn.usecases.graph::model.r_source"
+        title "source node type"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.graph::model.customer"
+            item
+                definition
+                    id "ddn.usecases.graph::model.purchased"
+
+
+relation "ddn.usecases.graph::model.r_target" as "assoc"
+    with
+        id "ddn.usecases.graph::model.r_target"
+        title "target node type"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.graph::model.purchased"
+            item
+                definition
+                    id "ddn.usecases.graph::model.product"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "06 / Property-graph schema"
+        selection
+            include
+                item
+                    id "ddn.usecases.graph::model.customer"
+                item
+                    id "ddn.usecases.graph::model.purchased"
+                item
+                    id "ddn.usecases.graph::model.product"
+                item
+                    id "ddn.usecases.graph::model.r_source"
+                item
+                    id "ddn.usecases.graph::model.r_target"
+        style
+            look "neo"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_source "1"
+                model.r_target "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.graph::model.customer" named "appearance:diagram:ddn.usecases.graph::model.customer"
+        with
+            id "appearance:diagram:ddn.usecases.graph::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.graph::model.purchased" named "appearance:diagram:ddn.usecases.graph::model.purchased"
+        with
+            id "appearance:diagram:ddn.usecases.graph::model.purchased"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.graph::model.product" named "appearance:diagram:ddn.usecases.graph::model.product"
+        with
+            id "appearance:diagram:ddn.usecases.graph::model.product"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.graph::model.r_source" named "appearance:diagram:ddn.usecases.graph::model.r_source"
+        with
+            id "appearance:diagram:ddn.usecases.graph::model.r_source"
+
+    use "ddn.usecases.graph::model.r_target" named "appearance:diagram:ddn.usecases.graph::model.r_target"
+        with
+            id "appearance:diagram:ddn.usecases.graph::model.r_target"

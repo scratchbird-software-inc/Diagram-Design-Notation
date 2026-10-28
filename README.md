@@ -1,254 +1,46 @@
-<p><img src="assets/brand/ddn.svg" alt="ddn logo" width="120"></p>
+# DDN — Diagram Design Notation
 
-## ddn — the Diagram Design Notation project
+DDN is free, open-source design notation with a standalone **viewer, visual designer and verifier**. The current language is **`ddn-next-1`**, with utility API **1.0** and **151 bounded diagram profiles**. It replaces the incompatible 0.8 proof of concept; there is no legacy parser or compatibility mode.
 
-**ddn** (Diagram Design Notation) is an open-source diagram dialect sponsored by the **[ScratchWeaver](https://scratchbird.ca/weaver)** project at **[ScratchBird Software Inc.](https://www.scratchbird.ca)**. The free tools are **ddn-viewer** (display and verify .ddn diagrams) and **ddn-designer** (visual editing and multi-file workspaces). The free tools ship the complete notation and rendering core — only tool depth differs from the commercial offerings.
+[Website](https://scratchbird-software-inc.github.io/Diagram-Design-Notation/) · [Try the designer](https://scratchbird-software-inc.github.io/Diagram-Design-Notation/tools/index.html?mode=design) · [Downloads](https://scratchbird-software-inc.github.io/Diagram-Design-Notation/download/) · [Wiki](https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki) · [Documentation](docs/README.md)
 
-Sister project: [ScratchBird on GitHub](https://github.com/scratchbird-software-inc/ScratchBird) ([wiki](https://github.com/scratchbird-software-inc/ScratchBird/wiki)).
+## Use DDN
 
-The product family: **ddn / ddn-viewer / ddn-designer** (this open-source project, sponsored by ScratchWeaver); **[ScratchWeaver](https://scratchbird.ca/weaver)** is also the commercial full diagramming suite (subscription, some on-site licensing) built on ddn as its file format; **ScratchRobin** is the open-source database console / BI / analytics project that uses ddn/ddna in its own project and owns backend capabilities such as KEEL. The open viewer/designer includes DDNA trace replay and generation with a bounded KEEL host (`keel-l0@1`, tiers T0–T2). ScratchRobin/Weaver can provide fuller execution services; the DDN rendering core remains notation-only. See [DDNA integration](ddna/13-open-tool-integration.md).
+Open [website/index.html](website/index.html) in your browser, or use the hosted website. Keep the directory intact: the site, examples, fonts and utilities work offline without an account or server. The download page offers single-file HTML utilities and a modular offline ZIP. The viewer is read-only; the designer adds local editing; both use the verifier.
 
-A simple script language that allows complex diagrams to be created with just a few lines of text.  
-
-It was inspired by mermaid diagrams, but, goes far beyond what mermaid supports
-
-It is currently alpha, working toward beta but can be used - please report all needed fixes into the discussions section.
-
-### Why did I create this?
-
-I am working on a very large, very complex project that I need to document.  I also have a second project that needs live dashboards and business analysis tools - but everything I wanted to use was either insufficient or too complex to work with.
-
-So in creating the tools I needed, I created tools I thought others may find helpful.
-
-The visual tools now include workspace and section editing; they remain alpha and need continued usability and performance qualification.
-
-### Repository layout
-
-| Directory   | Component                   | Contents                                                                                                                                                                                                                                                                                                                                                  |
-| ----------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `website/`  | **Project website**         | Deployable static root: generated pages + the examples and docs corpora                                                                                                                                                                                                                                                                                   |
-| `standard/` | **Proposed DDN standard**   | Normative specification chapters, EBNF grammar, JSON schemas, the notation vocabulary registry, notation plates, governance                                                                                                                                                                                                                               |
-| `notation/` | **Notation project**        | Pure-JavaScript reference runtime (parser → validation → layout/routing → deterministic SVG), CLI, browser Studio, adapters, tests                                                                                                                                                                                                                        |
-| `designer/` | **Visual designer project** | Designer specification (0.2), proposed contracts (schemas, UI maps, API types), research, decisions. The shipping designer is the unified tool in **design mode** (`/tools/index.html?mode=design` — the designer as the viewer with more functionality); the review prototype in `designer/prototype/` is retired (redirect stubs + deprecated sources kept for its regression suite) |
-| `tools/`    | **Shared tooling**          | Build scripts (SDK, gallery, standalone pages, unified tool), local static server, packaging tests                                                                                                                                                                                                                                                              |
-| `tests/`    | **Repo-level tests**        | Website link-integrity and build-freshness gate; AI-REFERENCE.md ddn-block validation gate (skipped when the internal, gitignored AI-REFERENCE.md is absent)                                                                                                                                                                                                                                                                                                           |
-
-The open-source site follows the ScratchRobin family design system: dark navy
-header and hero, aqua actions, light content cards, and the same typography and
-spacing. `tools/build-brand.mjs` extracts distinct marks from
-the owner-provided `ScratchBirdLogos.svg` (set `DDN_BRAND_SOURCE` and
-`DDN_WEAVER_PNG` outside the owner workstation). DDN uses the *The Diagram Designer
-Project* wing mark; the full ScratchWeaver bird remains the commercial sponsor
-mark. Blue/white-swapped `-dark.svg` variants are used on dark surfaces. The
-committed `assets/brand/` and `website/assets/brand/` files are generated assets,
-not independent artwork sources.
-Each mark also has normal and dark `.ico` files containing transparent 16, 24,
-32, 48, 64, 128 and 256 px frames. `favicon.ico` aliases the DDN mark.
-`tools/build-brand.mjs` regenerates the SVGs, raster assets and ICOs together;
-`tools/build-ico.py` can rebuild ICOs from existing SVG exports.
-
-## Status
-
-Package/runtime version **0.8.0**, alpha, with pre-1.0 standards drafts.
-The October 9–14 work adds a unified workspace for **DDN models and views**,
-**DDNA automation companions**, and **DDNN text documents**. It includes shared
-settings, per-view tabs/state, section editors, validated undoable edits, and
-complete accepted-workspace ZIP save/reopen. Select/Pin movement, repeated
-Link-to actions, palette silhouettes and error recovery have also been repaired.
-
-The viewer/designer runs entirely client-side. Stored SQL/procedure text is inert;
-database connections and execution belong to a separate application. DDNA support
-is bounded to implemented profiles, not every execution model in the draft.
-
-- [Workspace walkthrough](website/docs/developers/workspace-guide.md)
-- [Tool and host API](website/docs/developers/tool.md)
-- [Current work and qualification](WORK-STATUS.md)
-- [Successful CI for implementation commit 9899e2c5](https://github.com/scratchbird-software-inc/Diagram-Design-Notation/actions/runs/38578889318)
-
-This is not a 0.9.1 release. Source dialect and automation profile identifiers
-version independently of the package. Large-workspace responsiveness and some
-advanced editing/execution capabilities remain work in progress.
-
-## Quick start
-
-[Open the designer](https://scratchbird-software-inc.github.io/Diagram-Design-Notation/tools/index.html?mode=design),
-choose **Workspace** (folder icon), and open files or a saved workspace ZIP.
-Use Models, Views, Shared settings, Text documents and Automation to manage the
-same project. The standalone `notation/tool/ddn-tool.html` also opens locally;
-URL-based loading requires HTTP. Save the workspace ZIP to retain companion files.
-
-### Runtime bundles
-
-The browser SDK in `notation/dist/` ships as optional libraries plus the unchanged all-in-one build. Sources are real ES modules; the bundles are built with Rollup (pinned devDependency) in three formats each — readable IIFE (`.js`), ES module (`.mjs`), minified IIFE with source map (`.min.js` + `.min.js.map`). Current sizes and module dependencies are generated in
-[the bundle inventory](notation/dist/README.md), with downloadable copies on the
-[website](https://scratchbird-software-inc.github.io/Diagram-Design-Notation/download/).
-
-Use `ddn-core` for parsing, validation and workspace APIs; add `ddn-graph`,
-`ddn-projections` and `ddn-quality` as needed. `ddn.global` includes those plus
-Studio. Geographic and isometric rendering are separate optional modules
-(`ddn-geo`, `ddn-iso`). The [module guide](website/docs/developers/modules.md)
-explains load order and coded missing-renderer diagnostics.
-
-**Data refresh:** a host page (dashboard, live report) can replace the records of a named `data` block without touching the model, views or layout — `ws.replaceData(name, records)` rewrites only that block's record lines and returns `{committed, revision, added, removed, updated, diagnostics}`. Records match by an optional `key` field (the declaration id), so reordered payloads never corrupt identities; without keys the fallback is positional and order-sensitive. Records must carry the same field keys as the block's existing first record (`DDN-E011` otherwise; unknown block name is `DDN-E002`). Refresh is transactional: field types are checked against the block's declared types and every affected view is validated before commit — on failure nothing commits and `diagnostics` names the view, record key and failure (`DDN-E012`). Removing a record a view still references is rejected; selector-membership views pick up added records automatically while explicit-membership views keep their bound records and get a `DDN-W015` `addedRecordsNotVisible` report; refreshing to an empty set is legal and renders the declared empty state. Same values re-render every view byte-identical; changed values move only the marks of data-driven views. 
-
-
-The dashboard recipe is three lines:
-
-```js
-ws.replaceData('metrics', rows);
-const r = ws.renderSync({entry: 'main.ddn', view: 'latency_chart'});
-host.innerHTML = r.svg;
+```text
+version ddn-next-1
+view Orders : ddn@1
 ```
 
-See `website/examples/basics/59-data-refresh.ddn` and `website/examples/embed/data-refresh.html`.
+Start with the [quick start](website/guide/quick-start.html), [language guide](website/guide/language.html), [gallery](website/gallery/index.html) and [complete reference](website/reference/index.html). For AI-generated diagrams, supply the single [AI authoring reference](website/guide/ddn-ai-reference.txt) with your request. It contains the syntax, defaults, constraints, examples and all 151 profiles.
 
-**Spacing hints:** a view or a shared format bundle can declare spacing: tight|normal|loose|expanded
+Native DDN supports progressive design, shared definitions, linked views, structured fields, notes, datasets, file/CSS/standard defaults and explicit lifecycle commands. Additional profiles retain their own method rules. Profile support is bounded authoring, checking and presentation, not full external-standard certification or execution engines.
 
-### npm package
+## Build and test
 
-The runtime is pack-able as `@ddn/notation` (`notation/`; version
-0.8.0, license GPL-2.0-or-later, zero *runtime* dependencies — the
-Rollup build toolchain is a pinned devDependency and never ships in the
-package). `npm pack` in
-`notation/` produces a tarball limited to `dist/`, `README.md`, and
-`package.json`. **Not yet published to the npm registry** — install the
-tarball directly (`npm i ./ddn-notation-0.8.0.tgz`); `npm i
-@ddn/notation` becomes available once the first `v*` tag is published. The
-publish path itself is ready and continuously validated:
-`.github/workflows/publish.yml` runs the packaging gate and
-`npm publish --dry-run` on every push, and would publish on `v*` version tags
-once the `NPM_TOKEN` repository secret is configured (it skips gracefully
-until then; the committed `private: true` in `notation/package.json` is a
-deliberate accident guard the tag-gated job strips at publish time).
-Subpaths resolve in both CommonJS and ESM:
-
-| Import                      | Resolves to                           | Notes                                                                                     |
-| --------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `@ddn/notation`             | `dist/ddn.global.js` / `dist/ddn.mjs` | all-in-one runtime                                                                        |
-| `@ddn/notation/core`        | `dist/ddn-core.js` / `.mjs`           | parse/validate/export; rendering throws `DDN-E010`                                        |
-| `@ddn/notation/graph`       | `dist/ddn-graph.js` / `.mjs`          | graph renderer (ESM wrapper loads core first; CJS: `require('@ddn/notation/core')` first) |
-| `@ddn/notation/projections` | `dist/ddn-projections.js` / `.mjs`    | chart/matrix/panels/timeline/table/sequence/timing/chen                                   |
-| `@ddn/notation/quality`     | `dist/ddn-quality.js` / `.mjs`        | quality charts, decision tables, fishbone                                                 |
-| `@ddn/notation/geo`         | `dist/ddn-geo.js` / `.mjs`            | optional geographic module (map projections, GeoJSON, choropleth/symbol/outline)          |
-| `@ddn/notation/iso`         | `dist/ddn-iso.js` / `.mjs`            | optional isometric module (axonometric 30° depth, chart extrusions, iso graph prisms)     |
-
-```js
-import ddn from '@ddn/notation/graph';              // ESM: prerequisites auto-loaded
-const { createWorkspace } = require('@ddn/notation'); // CJS
-```
-
-`"sideEffects": ["dist/*.js"]` is deliberate: the IIFE bundles register onto
-`globalThis`, while the `.mjs` ES modules stay tree-shakeable for downstream
-bundlers.
-The package's license is GPL-2.0-or-later (the `license` field is
-authoritative; the tarball carries no `LICENSE` file because `notation/` has
-none — see the repository root).
-
-## Limits & capabilities
-
-Every cap below is enforced by code, not convention — hitting one raises a
-coded error, never silent truncation. Measured performance against these
-boundaries is in
-[`standard/registry/performance-baseline.json`](standard/registry/performance-baseline.json)
-(regenerate with `npm run benchmark`); the designer responsiveness numbers in
-`designer/specification/16-performance.md` are annotated TARGET vs MEASURED.
-
-| Cap | Value | Raised as | Enforcing code |
-| --- | ----- | --------- | -------------- |
-| Elements selected into one live view | 128 | `LIVE013` | `notation/studio/src/api.js` (`compiled()`) |
-| Relations visible in one live view | 384 | `LIVE013` | `notation/studio/src/api.js` (`compiled()`) |
-| Child view of a composed dashboard | 128 elements / 384 relations | `DDN-QP003` | `notation/runtime/ddn-core.js` (`build()`, panels branch) |
-| Dashboard nesting | one child-view level — no recursive dashboards | `DDN-QP002` | `notation/runtime/ddn-core.js` (`build()`, panels branch) |
-| Embedded child views per dashboard | 12 | `DDN-QP003` | `notation/runtime/ddn-core.js` (`build()`, panels branch) |
-| Panels in a `kind:panels` projection | 1–80 panels on a 1–12 column grid | `DDN-PJ020` | `notation/runtime/ddn-projection-data.js` |
-| Quality/chart reference list | 1–1000 references, unique identity | `DDN-Q003` | `notation/runtime/ddn-quality-data.js` |
-| Publication page width/height | 64–100000 px, finite | `DDN046` | `notation/runtime/ddn-core.js` |
-| Source file size (viewer / unified tool) | 50 MB per source | plain `Error` | `MAX_FILE_BYTES` in `notation/tool/src/tool.js`, `notation/viewer/src/viewer.js` |
-| Raster (PNG) export side | 16384 px | plain `Error` | `MAX_RASTER_PX` in `notation/viewer/src/viewer.js`, `notation/tool/src/tool.js` |
-| Workspace source size (library API) | 2,000,000 chars per file; 12,000,000 total | `LIVE010` / `LIVE011` | `notation/studio/src/api.js` (`filesChecked()`) |
-| Workspace file count | 1,500 files | `LIVE011` | `notation/studio/src/api.js` (`filesChecked()`) |
-| Workspace undo history | 60 entries / 16 MB of patches | (oldest entry dropped) | `notation/studio/src/api.js` (`commit()`) |
-| Compiled-IR cache per workspace | 4 views (LRU) | (recompiles on eviction) | `notation/studio/src/api.js` (`compiled()`) |
-
-The library API (`createWorkspace`/`renderSync`) guards workspace size too:
-each source is at most 2,000,000 characters and a workspace totals at most
-12,000,000 characters across 1,500 files (`LIVE010`/`LIVE011` in
-`notation/studio/src/api.js` `filesChecked()`). The larger 50 MB per-source
-cap of the browser surfaces sits on top of that, not instead of it.
-
-**Rendering is synchronous by default; the unified tool can offload to a
-worker.** The core renderer is synchronous and deterministic
-(`renderSync` in `notation/studio/src/api.js`). In the browser tool,
-`render()` additionally supports worker-based rendering (the layout/routing/
-SVG computation crosses a worker boundary; results are verified against
-seeded text metrics and degrade to byte-identical synchronous output when
-the worker cannot be trusted — see `notation/tool/src/tool.js`
-`createRenderBridge`). A render prepared at one source revision is refused if
-the source moved on before it finalized (DDN-W953). Size views to the limits
-above so the interactive path stays responsive.
-
-**Working within the limits — guidance patterns:**
-
-- *Filter, don't shrink the model.* Views select a subset of one model; keep
-  the model whole and declare narrow views (`data:` subsets, projection
-  `filter`).
-- *Drill down with subdiagrams.* A node can expose a detail view
-  (`subdiagram … { view: @detail; mode: reference }`); hosts get a
-  `ddn-navigate` event and swap the rendered view — each level stays under
-  128/384 independently.
-- *Compose dashboards.* `panels.composed@1` embeds up to 12 child views, each
-  with its own 128/384 budget, exactly one level deep.
-- *Link diagrams.* Split a large domain into linked views/files (imports)
-  rather than one giant view; the CLI and Studio navigate between them.
-
-## Licensing
-
-I am currently doing this as GPL-2.0-or-later; see `LICENSE` but depending on feedback I many change it to something like the postgresql license. — see `NOTICE.md`.
-
-## Legacy path mapping
-
-Documents imported from the 0.7.0 monolith and the designer specification 0.1 package may still reference their original paths.  This will be corrected over time.
-
-**Mapping:**
-
-| Legacy path              | Current path                          |
-| ------------------------ | ------------------------------------- |
-| `spec/`                  | `standard/specification/`             |
-| `grammar/`               | `standard/grammar/`                   |
-| `schema/`                | `standard/schemas/`                   |
-| `registry/`, `profiles/` | `standard/registry/`                  |
-| `gallery/`               | `standard/plates/`                    |
-| `reference/*.js`         | `notation/runtime/`                   |
-| `reference/cli.js`       | `notation/cli/cli.js`                 |
-| `live/`                  | `notation/studio/`                    |
-| `dist/`                  | `notation/dist/`                      |
-| `examples/*.ddn`         | `website/examples/basics/`            |
-| `use-cases/`             | `website/examples/use-cases/`         |
-| `docs/`                  | `website/docs/`                       |
-| root `index.html`        | `website/index.html`                  |
-| `codex/RFC-TEMPLATE.md`  | `standard/governance/RFC-TEMPLATE.md` |
-| designer pkg `spec/`     | `designer/specification/`             |
-| designer pkg `review/`   | `designer/decisions/`                 |
-
-## Contributing
-
-See `CONTRIBUTING.md`. Security reporting: `SECURITY.md`.
-
-### Running the browser test suites locally
-
-The root `npm test` includes browser-driven suites (`tests/viewer-src-http.js`,
-`tests/tool-worker-http.js`, `tests/tool-host-io-http.js`,
-`tests/example-links-http.js`) that drive the committed tool in headless
-Chromium. Prerequisite — install the pinned headless shell once:
+Development needs Node.js, Python 3 and tar. The integrity-pinned bootstrap installs Node **24.22.1**, TypeScript **5.9.3** and pnpm **10.34.7** under `.work`; its bundled Node archive currently targets **Linux x64**. Browser tests use pinned Playwright **1.64.1** and Chromium. The distributed browser utilities have no Node/Python dependency.
 
 ```sh
-npx playwright@1.49.1 install chromium
+node tooling/bootstrap/bootstrap.mjs
+bash tooling/run.sh check
+bash tooling/run.sh build:ddn
+bash tooling/run.sh test:ddn
+node tooling/browser/bootstrap.mjs
+bash tooling/run.sh build:ddn:website
+bash tooling/run.sh test:ddn:browser
+bash tooling/run.sh test:ddn:website
+python3 tooling/wiki/build-wiki.py
 ```
 
-Discovery (`tests/browser.js`): the newest `chromium_headless_shell-*` under
-the playwright cache (`PLAYWRIGHT_BROWSERS_PATH` honoured, default
-`~/.cache/ms-playwright`), or an explicit executable via
-`DDN_BROWSER=/path/to/chrome-headless-shell` (any Chromium/Chrome binary
-works). Absent browser → a clear error naming the install command. CI runs
-these suites as a visible release gate (`.github/workflows/ci.yml`,
-`browser-integration` job, one step per suite).
+Outputs live under `.work`. The website build refreshes the maintained static site, downloads and all 474 gallery views. Run it in a disposable copy when reviewing changes; repository agents must follow [AGENTS.md](AGENTS.md). npm scripts provide the same commands. [Contributing](CONTRIBUTING.md) explains validation and publishing.
+
+## Embed the modules
+
+See the [package and embedding guide](project/ddn/README.md), [modular delivery guide](docs/DDN/MODULAR-DISTRIBUTION.md), [browser API declarations](project/ddn/packages/types/src/browser.d.ts) and [adopted contracts](standard/README.md). Shared language/model/verifier packages are independent of the DOM and Node. Browser adapters and optional profile/worker/font packs are explicit.
+
+This repository contains only the standalone DDN foundation. Multi-user collaboration, accounts, coordinated servers and media belong to the separate commercial Weaver product; they are not required to use DDN.
+
+## Licence and sponsorship
+
+DDN source, documentation, examples and website are **[GPL-2.0-or-later](LICENSE)**. Third-party resources retain their own licences; preserve [notices](NOTICE.md) and bundled font/icon attribution. Sponsored by [ScratchBird Software Inc.](https://scratchbird.ca), alongside [Weaver](https://scratchbird.ca/weaver), [ScratchBird CDE](https://scratchbird.ca/bird) and [ScratchRobin](https://scratchbird.ca/robin).

@@ -1,13 +1,43 @@
-ddn "0.5";
-module "retail.gov";
+version ddn-next-1
 
-// B1-090: governance base of the cross-file UAF traceability example —
-// joined to the described architecture through the x_link reference from
-// 108-uaf-traceability.ddn (x_link files load as bases too). All data is
-// synthetic.
-data gov {
-    object policy1 "Data protection policy" { kind: "uaf.standard"; }
-}
-view gv "Governance": [@gov] as "uaf.standards@1" {
-    publication { size: content; fit: none; }
-}
+publication "publication:gv"
+    with
+        id "publication:gv"
+        title "Governance"
+        targets
+            item
+                target
+                    id "gv"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "retail.gov::gov.policy1" as "uaf.standard"
+    with
+        id "retail.gov::gov.policy1"
+        title "Data protection policy"
+
+
+view "gv" as "uaf.standards@1"
+    with
+        id "gv"
+        title "Governance"
+        selection
+            include
+                item
+                    id "retail.gov::gov.policy1"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:gv"
+
+    use "retail.gov::gov.policy1" named "appearance:gv:retail.gov::gov.policy1"
+        with
+            id "appearance:gv:retail.gov::gov.policy1"

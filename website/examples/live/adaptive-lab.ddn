@@ -1,123 +1,1620 @@
-ddn "0.5";
-module "ddn.live.adaptive-lab";
-// Presentation-only routing laboratory. No physical operations are executed.
-// Default placement is automatic. place.at and route.via remain hard hints.
-data pipeline {
-    application client "Order entry";
-    activity validate "Validate order";
-    table catalog "Product catalogue" {        fields { product_id { key: primary; } description; sellable; }
-    }
-    activity stock "Inventory reserve";
-    table orders "Accepted orders" {        fields { order_id { key: primary; } customer_id; accepted_at; row_version; }
-    }
-    topic events "Order events";
-    table reports "Sales projection" {workload: [olap]; role: derived;
-        fields { order_id; business_date; net_amount; }
-    }
-    relation submit "Submit proposed order" @client -> @validate { kind: flow; }
-    depends lookup "Check product status" @validate -> @catalog;
-    relation reserve "Request stock reservation" @validate -> @stock { kind: flow; }
-    relation persist "Record accepted order" @stock -> @orders { kind: flow; }
-    relation publish "Publish outbox event" @orders -> @events { kind: flow; }
-    relation project "Build sales projection" @events -> @reports { kind: flow; }
-}
-data ports {
-    application n0 "Sales application";
-    application n1 "Customer service";
-    application n2 "Order service";
-    application n3 "Reporting";
-    application n4 "Warehouse";
-    application n5 "Integration hub";
-    relation r0 "Order event" @n2 -> @n5 { kind: flow; }
-    relation r1 "Customer update" @n5 -> @n1 { kind: flow; }
-    relation r2 "Warehouse summary" @n4 -> @n3 { kind: flow; }
-    relation r3 "Acknowledgement" @n5 -> @n0 { kind: flow; }
-}
-data movement {
-    application n0 "Request handler";
-    application n1 "Client";
-    application n2 "Projection service";
-    application n3 "Gateway";
-    application n4 "Database";
-    application n5 "Middleware";
-    relation r0 "Dispatch request" @n3 -> @n0 { kind: flow; }
-    relation r1 "Forward request" @n5 -> @n3 { kind: flow; }
-    relation r2 "Persist projection" @n2 -> @n4 { kind: flow; }
-    relation r3 "Submit command" @n1 -> @n5 { kind: flow; }
-}
-data locked {
-    application left "Source A";
-    application right "Destination A";
-    application top "Source B";
-    application bottom "Destination B";
-    relation horizontal "Independent transfer A" @left -> @right { kind: flow; }
-    depends vertical "Independent dependency B" @top -> @bottom;
-}
-data blockers {
-    table a "Order lines" {fields { customer_id; } }
-    table b "Unrelated dataset" {fields { audit_id; } }
-    table c "Customers" {fields { customer_id { key: primary; } } }
-    ref a_c "Logical customer reference" @a.customer_id -> @c.customer_id {
-        enforcement: undecided;
-    }
-}
-format shared {
-    style night { theme: night; }
-    layout adaptive { gap: 90px; }
-    layout grid_seed { algorithm: grid; }
-    display details { maturity: none; }
-    legend numbered { mode: numbers; width: 320px; }
-    publication page { size: content; fit: none; }
-    bundle technical { style: @night; layout: @adaptive; display: @details; legend: @numbered; publication: @page; }
-}
-view automatic "Adaptive order flow / no positional coordinates" {
-    legend { keys: {"pipeline.submit": 1, "pipeline.lookup": 2, "pipeline.reserve": 3, "pipeline.persist": 4, "pipeline.publish": 5, "pipeline.project": 6}; }
-    data: [@pipeline]; format: @shared.technical;
-    // None of the seven nodes has place.at. Change visible detail and re-render.
-}
-view ports_first "1 / Move connection points before moving boxes" {
-    legend { keys: {"ports.r0": 1, "ports.r1": 2, "ports.r2": 3, "ports.r3": 4}; }
-    data: [@ports]; format: @shared.technical; layout: @shared.grid_seed;
-    publication { size: content; fit: none; }
-    place @ports.n0 { at: [0px, 0px]; size: [240px, 130px]; }
-    place @ports.n1 { at: [340px, 0px]; size: [240px, 130px]; }
-    place @ports.n2 { at: [680px, 0px]; size: [240px, 130px]; }
-    place @ports.n3 { at: [0px, 230px]; size: [240px, 130px]; }
-    place @ports.n4 { at: [340px, 230px]; size: [240px, 130px]; }
-    place @ports.n5 { at: [680px, 230px]; size: [240px, 130px]; }
-}
-view move_unpinned "2 / Move unpinned nodes after connection-point trials" {
-    legend { keys: {"movement.r0": 1, "movement.r1": 2, "movement.r2": 3, "movement.r3": 4}; }
-    data: [@movement]; format: @shared.technical; layout: @shared.grid_seed;
-    publication { size: content; fit: none; }
-    place @movement.n0 { size: [240px, 130px]; }
-    place @movement.n1 { size: [240px, 130px]; }
-    place @movement.n2 { size: [240px, 130px]; }
-    place @movement.n3 { size: [240px, 130px]; }
-    place @movement.n4 { size: [240px, 130px]; }
-    place @movement.n5 { size: [240px, 130px]; }
-    // Side constraints remain east/west; offsets on those sides are movable.
-    route @movement.r0 { source_side: east; target_side: west; }
-    route @movement.r1 { source_side: east; target_side: west; }
-    route @movement.r2 { source_side: east; target_side: west; }
-    route @movement.r3 { source_side: east; target_side: west; }
-}
-view pinned_crossing "3 / Short pinned routes with explicit nonconnection marks" {
-    legend { keys: {"locked.horizontal": 1, "locked.vertical": 2}; }
-    data: [@locked]; format: @shared.technical;
-    publication { size: content; fit: none; }
-    place @locked.left { at: [0px, 220px]; size: [220px, 100px]; }
-    place @locked.right { at: [1000px, 220px]; size: [220px, 100px]; }
-    place @locked.top { at: [500px, 0px]; size: [220px, 100px]; }
-    place @locked.bottom { at: [500px, 500px]; size: [220px, 100px]; }
-    route @locked.horizontal { source_side: east; target_side: west; x_source_fraction: 0.5; x_target_fraction: 0.5; via: [[450px, 270px], [850px, 270px]]; }
-    route @locked.vertical { source_side: south; target_side: north; x_source_fraction: 0.5; x_target_fraction: 0.5; via: [[610px, 170px], [610px, 440px]]; }
-}
-view obstacle "Named field endpoints / route around an unrelated box" {
-    legend { keys: {"blockers.a_c": 1}; }
-    data: [@blockers]; format: @shared.technical; layout: @shared.grid_seed;
-    publication { size: content; fit: none; }
-    place @blockers.a { at: [0px, 0px]; size: [240px, 150px]; }
-    place @blockers.b { at: [350px, 0px]; size: [240px, 150px]; }
-    place @blockers.c { at: [700px, 0px]; size: [240px, 150px]; }
-}
+version ddn-next-1
+
+publication "publication:automatic"
+    with
+        id "publication:automatic"
+        title "Adaptive order flow / no positional coordinates"
+        targets
+            item
+                target
+                    id "automatic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:ports_first"
+    with
+        id "publication:ports_first"
+        title "1 / Move connection points before moving boxes"
+        targets
+            item
+                target
+                    id "ports_first"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:move_unpinned"
+    with
+        id "publication:move_unpinned"
+        title "2 / Move unpinned nodes after connection-point trials"
+        targets
+            item
+                target
+                    id "move_unpinned"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:pinned_crossing"
+    with
+        id "publication:pinned_crossing"
+        title "3 / Short pinned routes with explicit nonconnection marks"
+        targets
+            item
+                target
+                    id "pinned_crossing"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:obstacle"
+    with
+        id "publication:obstacle"
+        title "Named field endpoints / route around an unrelated box"
+        targets
+            item
+                target
+                    id "obstacle"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.live.adaptive-lab::pipeline.client" as "application"
+    with
+        id "ddn.live.adaptive-lab::pipeline.client"
+        title "Order entry"
+
+
+element "ddn.live.adaptive-lab::pipeline.validate" as "activity"
+    with
+        id "ddn.live.adaptive-lab::pipeline.validate"
+        title "Validate order"
+
+
+element "ddn.live.adaptive-lab::pipeline.catalog.product_id" as "field"
+    with
+        id "ddn.live.adaptive-lab::pipeline.catalog.product_id"
+        title "product_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.live.adaptive-lab::pipeline.catalog"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.live.adaptive-lab::pipeline.catalog.description" as "field"
+    with
+        id "ddn.live.adaptive-lab::pipeline.catalog.description"
+        title "description"
+        content
+            parent
+                id "ddn.live.adaptive-lab::pipeline.catalog"
+            ordinal 1
+
+
+element "ddn.live.adaptive-lab::pipeline.catalog.sellable" as "field"
+    with
+        id "ddn.live.adaptive-lab::pipeline.catalog.sellable"
+        title "sellable"
+        content
+            parent
+                id "ddn.live.adaptive-lab::pipeline.catalog"
+            ordinal 2
+
+
+element "ddn.live.adaptive-lab::pipeline.catalog" as "table"
+    with
+        id "ddn.live.adaptive-lab::pipeline.catalog"
+        title "Product catalogue"
+        members
+            item
+                id "ddn.live.adaptive-lab::pipeline.catalog.product_id"
+            item
+                id "ddn.live.adaptive-lab::pipeline.catalog.description"
+            item
+                id "ddn.live.adaptive-lab::pipeline.catalog.sellable"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "product_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "description"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "sellable"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.live.adaptive-lab::pipeline.stock" as "activity"
+    with
+        id "ddn.live.adaptive-lab::pipeline.stock"
+        title "Inventory reserve"
+
+
+element "ddn.live.adaptive-lab::pipeline.orders.order_id" as "field"
+    with
+        id "ddn.live.adaptive-lab::pipeline.orders.order_id"
+        title "order_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.live.adaptive-lab::pipeline.orders"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.live.adaptive-lab::pipeline.orders.customer_id" as "field"
+    with
+        id "ddn.live.adaptive-lab::pipeline.orders.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.live.adaptive-lab::pipeline.orders"
+            ordinal 1
+
+
+element "ddn.live.adaptive-lab::pipeline.orders.accepted_at" as "field"
+    with
+        id "ddn.live.adaptive-lab::pipeline.orders.accepted_at"
+        title "accepted_at"
+        content
+            parent
+                id "ddn.live.adaptive-lab::pipeline.orders"
+            ordinal 2
+
+
+element "ddn.live.adaptive-lab::pipeline.orders.row_version" as "field"
+    with
+        id "ddn.live.adaptive-lab::pipeline.orders.row_version"
+        title "row_version"
+        content
+            parent
+                id "ddn.live.adaptive-lab::pipeline.orders"
+            ordinal 3
+
+
+element "ddn.live.adaptive-lab::pipeline.orders" as "table"
+    with
+        id "ddn.live.adaptive-lab::pipeline.orders"
+        title "Accepted orders"
+        members
+            item
+                id "ddn.live.adaptive-lab::pipeline.orders.order_id"
+            item
+                id "ddn.live.adaptive-lab::pipeline.orders.customer_id"
+            item
+                id "ddn.live.adaptive-lab::pipeline.orders.accepted_at"
+            item
+                id "ddn.live.adaptive-lab::pipeline.orders.row_version"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "accepted_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "row_version"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.live.adaptive-lab::pipeline.events" as "topic"
+    with
+        id "ddn.live.adaptive-lab::pipeline.events"
+        title "Order events"
+
+
+element "ddn.live.adaptive-lab::pipeline.reports.order_id" as "field"
+    with
+        id "ddn.live.adaptive-lab::pipeline.reports.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.live.adaptive-lab::pipeline.reports"
+            ordinal 0
+
+
+element "ddn.live.adaptive-lab::pipeline.reports.business_date" as "field"
+    with
+        id "ddn.live.adaptive-lab::pipeline.reports.business_date"
+        title "business_date"
+        content
+            parent
+                id "ddn.live.adaptive-lab::pipeline.reports"
+            ordinal 1
+
+
+element "ddn.live.adaptive-lab::pipeline.reports.net_amount" as "field"
+    with
+        id "ddn.live.adaptive-lab::pipeline.reports.net_amount"
+        title "net_amount"
+        content
+            parent
+                id "ddn.live.adaptive-lab::pipeline.reports"
+            ordinal 2
+
+
+element "ddn.live.adaptive-lab::pipeline.reports" as "table"
+    with
+        id "ddn.live.adaptive-lab::pipeline.reports"
+        title "Sales projection"
+        facets
+            workload
+                item "OLAP"
+            authority
+                item "DER"
+        properties
+            workload
+                item "olap"
+            role "derived"
+        metadata
+            x_record
+                layout_group "derived"
+        members
+            item
+                id "ddn.live.adaptive-lab::pipeline.reports.order_id"
+            item
+                id "ddn.live.adaptive-lab::pipeline.reports.business_date"
+            item
+                id "ddn.live.adaptive-lab::pipeline.reports.net_amount"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "business_date"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "net_amount"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.live.adaptive-lab::pipeline.submit" as "flow"
+    with
+        id "ddn.live.adaptive-lab::pipeline.submit"
+        title "Submit proposed order"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.client"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.validate"
+
+
+relation "ddn.live.adaptive-lab::pipeline.lookup" as "depends"
+    with
+        id "ddn.live.adaptive-lab::pipeline.lookup"
+        title "Check product status"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.validate"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.catalog"
+
+
+relation "ddn.live.adaptive-lab::pipeline.reserve" as "flow"
+    with
+        id "ddn.live.adaptive-lab::pipeline.reserve"
+        title "Request stock reservation"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.validate"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.stock"
+
+
+relation "ddn.live.adaptive-lab::pipeline.persist" as "flow"
+    with
+        id "ddn.live.adaptive-lab::pipeline.persist"
+        title "Record accepted order"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.stock"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.orders"
+
+
+relation "ddn.live.adaptive-lab::pipeline.publish" as "flow"
+    with
+        id "ddn.live.adaptive-lab::pipeline.publish"
+        title "Publish outbox event"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.orders"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.events"
+
+
+relation "ddn.live.adaptive-lab::pipeline.project" as "flow"
+    with
+        id "ddn.live.adaptive-lab::pipeline.project"
+        title "Build sales projection"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.events"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::pipeline.reports"
+
+
+element "ddn.live.adaptive-lab::ports.n0" as "application"
+    with
+        id "ddn.live.adaptive-lab::ports.n0"
+        title "Sales application"
+
+
+element "ddn.live.adaptive-lab::ports.n1" as "application"
+    with
+        id "ddn.live.adaptive-lab::ports.n1"
+        title "Customer service"
+
+
+element "ddn.live.adaptive-lab::ports.n2" as "application"
+    with
+        id "ddn.live.adaptive-lab::ports.n2"
+        title "Order service"
+
+
+element "ddn.live.adaptive-lab::ports.n3" as "application"
+    with
+        id "ddn.live.adaptive-lab::ports.n3"
+        title "Reporting"
+
+
+element "ddn.live.adaptive-lab::ports.n4" as "application"
+    with
+        id "ddn.live.adaptive-lab::ports.n4"
+        title "Warehouse"
+
+
+element "ddn.live.adaptive-lab::ports.n5" as "application"
+    with
+        id "ddn.live.adaptive-lab::ports.n5"
+        title "Integration hub"
+
+
+relation "ddn.live.adaptive-lab::ports.r0" as "flow"
+    with
+        id "ddn.live.adaptive-lab::ports.r0"
+        title "Order event"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::ports.n2"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::ports.n5"
+
+
+relation "ddn.live.adaptive-lab::ports.r1" as "flow"
+    with
+        id "ddn.live.adaptive-lab::ports.r1"
+        title "Customer update"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::ports.n5"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::ports.n1"
+
+
+relation "ddn.live.adaptive-lab::ports.r2" as "flow"
+    with
+        id "ddn.live.adaptive-lab::ports.r2"
+        title "Warehouse summary"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::ports.n4"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::ports.n3"
+
+
+relation "ddn.live.adaptive-lab::ports.r3" as "flow"
+    with
+        id "ddn.live.adaptive-lab::ports.r3"
+        title "Acknowledgement"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::ports.n5"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::ports.n0"
+
+
+element "ddn.live.adaptive-lab::movement.n0" as "application"
+    with
+        id "ddn.live.adaptive-lab::movement.n0"
+        title "Request handler"
+
+
+element "ddn.live.adaptive-lab::movement.n1" as "application"
+    with
+        id "ddn.live.adaptive-lab::movement.n1"
+        title "Client"
+
+
+element "ddn.live.adaptive-lab::movement.n2" as "application"
+    with
+        id "ddn.live.adaptive-lab::movement.n2"
+        title "Projection service"
+
+
+element "ddn.live.adaptive-lab::movement.n3" as "application"
+    with
+        id "ddn.live.adaptive-lab::movement.n3"
+        title "Gateway"
+
+
+element "ddn.live.adaptive-lab::movement.n4" as "application"
+    with
+        id "ddn.live.adaptive-lab::movement.n4"
+        title "Database"
+
+
+element "ddn.live.adaptive-lab::movement.n5" as "application"
+    with
+        id "ddn.live.adaptive-lab::movement.n5"
+        title "Middleware"
+
+
+relation "ddn.live.adaptive-lab::movement.r0" as "flow"
+    with
+        id "ddn.live.adaptive-lab::movement.r0"
+        title "Dispatch request"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::movement.n3"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::movement.n0"
+
+
+relation "ddn.live.adaptive-lab::movement.r1" as "flow"
+    with
+        id "ddn.live.adaptive-lab::movement.r1"
+        title "Forward request"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::movement.n5"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::movement.n3"
+
+
+relation "ddn.live.adaptive-lab::movement.r2" as "flow"
+    with
+        id "ddn.live.adaptive-lab::movement.r2"
+        title "Persist projection"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::movement.n2"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::movement.n4"
+
+
+relation "ddn.live.adaptive-lab::movement.r3" as "flow"
+    with
+        id "ddn.live.adaptive-lab::movement.r3"
+        title "Submit command"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::movement.n1"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::movement.n5"
+
+
+element "ddn.live.adaptive-lab::locked.left" as "application"
+    with
+        id "ddn.live.adaptive-lab::locked.left"
+        title "Source A"
+
+
+element "ddn.live.adaptive-lab::locked.right" as "application"
+    with
+        id "ddn.live.adaptive-lab::locked.right"
+        title "Destination A"
+
+
+element "ddn.live.adaptive-lab::locked.top" as "application"
+    with
+        id "ddn.live.adaptive-lab::locked.top"
+        title "Source B"
+
+
+element "ddn.live.adaptive-lab::locked.bottom" as "application"
+    with
+        id "ddn.live.adaptive-lab::locked.bottom"
+        title "Destination B"
+
+
+relation "ddn.live.adaptive-lab::locked.horizontal" as "flow"
+    with
+        id "ddn.live.adaptive-lab::locked.horizontal"
+        title "Independent transfer A"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::locked.left"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::locked.right"
+
+
+relation "ddn.live.adaptive-lab::locked.vertical" as "depends"
+    with
+        id "ddn.live.adaptive-lab::locked.vertical"
+        title "Independent dependency B"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::locked.top"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::locked.bottom"
+
+
+element "ddn.live.adaptive-lab::blockers.a.customer_id" as "field"
+    with
+        id "ddn.live.adaptive-lab::blockers.a.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.live.adaptive-lab::blockers.a"
+            ordinal 0
+
+
+element "ddn.live.adaptive-lab::blockers.a" as "table"
+    with
+        id "ddn.live.adaptive-lab::blockers.a"
+        title "Order lines"
+        members
+            item
+                id "ddn.live.adaptive-lab::blockers.a.customer_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.live.adaptive-lab::blockers.b.audit_id" as "field"
+    with
+        id "ddn.live.adaptive-lab::blockers.b.audit_id"
+        title "audit_id"
+        content
+            parent
+                id "ddn.live.adaptive-lab::blockers.b"
+            ordinal 0
+
+
+element "ddn.live.adaptive-lab::blockers.b" as "table"
+    with
+        id "ddn.live.adaptive-lab::blockers.b"
+        title "Unrelated dataset"
+        members
+            item
+                id "ddn.live.adaptive-lab::blockers.b.audit_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "audit_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.live.adaptive-lab::blockers.c.customer_id" as "field"
+    with
+        id "ddn.live.adaptive-lab::blockers.c.customer_id"
+        title "customer_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.live.adaptive-lab::blockers.c"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.live.adaptive-lab::blockers.c" as "table"
+    with
+        id "ddn.live.adaptive-lab::blockers.c"
+        title "Customers"
+        members
+            item
+                id "ddn.live.adaptive-lab::blockers.c.customer_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+
+
+relation "ddn.live.adaptive-lab::blockers.a_c" as "ref"
+    with
+        id "ddn.live.adaptive-lab::blockers.a_c"
+        title "Logical customer reference"
+        endpoints
+            item
+                definition
+                    id "ddn.live.adaptive-lab::blockers.a"
+                member
+                    id "ddn.live.adaptive-lab::blockers.a.customer_id"
+            item
+                definition
+                    id "ddn.live.adaptive-lab::blockers.c"
+                member
+                    id "ddn.live.adaptive-lab::blockers.c.customer_id"
+
+
+view "automatic" as "ddn@1"
+    with
+        id "automatic"
+        title "Adaptive order flow / no positional coordinates"
+        selection
+            include
+                item
+                    id "ddn.live.adaptive-lab::pipeline.client"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.validate"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.catalog"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.stock"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.orders"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.events"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.reports"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.submit"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.lookup"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.reserve"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.persist"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.publish"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.project"
+            exclude
+                item
+                    id "ddn.live.adaptive-lab::ports.r0"
+                item
+                    id "ddn.live.adaptive-lab::ports.r1"
+                item
+                    id "ddn.live.adaptive-lab::ports.r2"
+                item
+                    id "ddn.live.adaptive-lab::ports.r3"
+                item
+                    id "ddn.live.adaptive-lab::movement.r0"
+                item
+                    id "ddn.live.adaptive-lab::movement.r1"
+                item
+                    id "ddn.live.adaptive-lab::movement.r2"
+                item
+                    id "ddn.live.adaptive-lab::movement.r3"
+                item
+                    id "ddn.live.adaptive-lab::locked.horizontal"
+                item
+                    id "ddn.live.adaptive-lab::locked.vertical"
+                item
+                    id "ddn.live.adaptive-lab::blockers.a_c"
+        style
+            theme "night"
+        layout
+            center "pins"
+            gap 90
+            algorithm "auto"
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 320
+            keys
+                pipeline.submit "1"
+                pipeline.lookup "2"
+                pipeline.reserve "3"
+                pipeline.persist "4"
+                pipeline.publish "5"
+                pipeline.project "6"
+        publication
+            id "publication:automatic"
+
+    use "ddn.live.adaptive-lab::pipeline.client" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.client"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.client"
+
+    use "ddn.live.adaptive-lab::pipeline.validate" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.validate"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.validate"
+
+    use "ddn.live.adaptive-lab::pipeline.catalog" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.catalog"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.catalog"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.adaptive-lab::pipeline.stock" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.stock"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.stock"
+
+    use "ddn.live.adaptive-lab::pipeline.orders" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.orders"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.adaptive-lab::pipeline.events" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.events"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.events"
+
+    use "ddn.live.adaptive-lab::pipeline.reports" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.reports"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.reports"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.adaptive-lab::pipeline.submit" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.submit"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.submit"
+
+    use "ddn.live.adaptive-lab::pipeline.lookup" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.lookup"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.lookup"
+
+    use "ddn.live.adaptive-lab::pipeline.reserve" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.reserve"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.reserve"
+
+    use "ddn.live.adaptive-lab::pipeline.persist" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.persist"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.persist"
+
+    use "ddn.live.adaptive-lab::pipeline.publish" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.publish"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.publish"
+
+    use "ddn.live.adaptive-lab::pipeline.project" named "appearance:automatic:ddn.live.adaptive-lab::pipeline.project"
+        with
+            id "appearance:automatic:ddn.live.adaptive-lab::pipeline.project"
+
+
+view "ports_first" as "ddn@1"
+    with
+        id "ports_first"
+        title "1 / Move connection points before moving boxes"
+        selection
+            include
+                item
+                    id "ddn.live.adaptive-lab::ports.n0"
+                item
+                    id "ddn.live.adaptive-lab::ports.n1"
+                item
+                    id "ddn.live.adaptive-lab::ports.n2"
+                item
+                    id "ddn.live.adaptive-lab::ports.n3"
+                item
+                    id "ddn.live.adaptive-lab::ports.n4"
+                item
+                    id "ddn.live.adaptive-lab::ports.n5"
+                item
+                    id "ddn.live.adaptive-lab::ports.r0"
+                item
+                    id "ddn.live.adaptive-lab::ports.r1"
+                item
+                    id "ddn.live.adaptive-lab::ports.r2"
+                item
+                    id "ddn.live.adaptive-lab::ports.r3"
+            exclude
+                item
+                    id "ddn.live.adaptive-lab::pipeline.submit"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.lookup"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.reserve"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.persist"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.publish"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.project"
+                item
+                    id "ddn.live.adaptive-lab::movement.r0"
+                item
+                    id "ddn.live.adaptive-lab::movement.r1"
+                item
+                    id "ddn.live.adaptive-lab::movement.r2"
+                item
+                    id "ddn.live.adaptive-lab::movement.r3"
+                item
+                    id "ddn.live.adaptive-lab::locked.horizontal"
+                item
+                    id "ddn.live.adaptive-lab::locked.vertical"
+                item
+                    id "ddn.live.adaptive-lab::blockers.a_c"
+        style
+            theme "night"
+        layout
+            algorithm "grid"
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 320
+            keys
+                ports.r0 "1"
+                ports.r1 "2"
+                ports.r2 "3"
+                ports.r3 "4"
+        publication
+            id "publication:ports_first"
+
+    use "ddn.live.adaptive-lab::ports.n0" named "appearance:ports_first:ddn.live.adaptive-lab::ports.n0"
+        with
+            id "appearance:ports_first:ddn.live.adaptive-lab::ports.n0"
+            position
+                x 0
+                y 0
+            pinned true
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::ports.n1" named "appearance:ports_first:ddn.live.adaptive-lab::ports.n1"
+        with
+            id "appearance:ports_first:ddn.live.adaptive-lab::ports.n1"
+            position
+                x 340
+                y 0
+            pinned true
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::ports.n2" named "appearance:ports_first:ddn.live.adaptive-lab::ports.n2"
+        with
+            id "appearance:ports_first:ddn.live.adaptive-lab::ports.n2"
+            position
+                x 680
+                y 0
+            pinned true
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::ports.n3" named "appearance:ports_first:ddn.live.adaptive-lab::ports.n3"
+        with
+            id "appearance:ports_first:ddn.live.adaptive-lab::ports.n3"
+            position
+                x 0
+                y 230
+            pinned true
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::ports.n4" named "appearance:ports_first:ddn.live.adaptive-lab::ports.n4"
+        with
+            id "appearance:ports_first:ddn.live.adaptive-lab::ports.n4"
+            position
+                x 340
+                y 230
+            pinned true
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::ports.n5" named "appearance:ports_first:ddn.live.adaptive-lab::ports.n5"
+        with
+            id "appearance:ports_first:ddn.live.adaptive-lab::ports.n5"
+            position
+                x 680
+                y 230
+            pinned true
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::ports.r0" named "appearance:ports_first:ddn.live.adaptive-lab::ports.r0"
+        with
+            id "appearance:ports_first:ddn.live.adaptive-lab::ports.r0"
+
+    use "ddn.live.adaptive-lab::ports.r1" named "appearance:ports_first:ddn.live.adaptive-lab::ports.r1"
+        with
+            id "appearance:ports_first:ddn.live.adaptive-lab::ports.r1"
+
+    use "ddn.live.adaptive-lab::ports.r2" named "appearance:ports_first:ddn.live.adaptive-lab::ports.r2"
+        with
+            id "appearance:ports_first:ddn.live.adaptive-lab::ports.r2"
+
+    use "ddn.live.adaptive-lab::ports.r3" named "appearance:ports_first:ddn.live.adaptive-lab::ports.r3"
+        with
+            id "appearance:ports_first:ddn.live.adaptive-lab::ports.r3"
+
+
+view "move_unpinned" as "ddn@1"
+    with
+        id "move_unpinned"
+        title "2 / Move unpinned nodes after connection-point trials"
+        selection
+            include
+                item
+                    id "ddn.live.adaptive-lab::movement.n0"
+                item
+                    id "ddn.live.adaptive-lab::movement.n1"
+                item
+                    id "ddn.live.adaptive-lab::movement.n2"
+                item
+                    id "ddn.live.adaptive-lab::movement.n3"
+                item
+                    id "ddn.live.adaptive-lab::movement.n4"
+                item
+                    id "ddn.live.adaptive-lab::movement.n5"
+                item
+                    id "ddn.live.adaptive-lab::movement.r0"
+                item
+                    id "ddn.live.adaptive-lab::movement.r1"
+                item
+                    id "ddn.live.adaptive-lab::movement.r2"
+                item
+                    id "ddn.live.adaptive-lab::movement.r3"
+            exclude
+                item
+                    id "ddn.live.adaptive-lab::pipeline.submit"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.lookup"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.reserve"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.persist"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.publish"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.project"
+                item
+                    id "ddn.live.adaptive-lab::ports.r0"
+                item
+                    id "ddn.live.adaptive-lab::ports.r1"
+                item
+                    id "ddn.live.adaptive-lab::ports.r2"
+                item
+                    id "ddn.live.adaptive-lab::ports.r3"
+                item
+                    id "ddn.live.adaptive-lab::locked.horizontal"
+                item
+                    id "ddn.live.adaptive-lab::locked.vertical"
+                item
+                    id "ddn.live.adaptive-lab::blockers.a_c"
+        style
+            theme "night"
+        layout
+            algorithm "grid"
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 320
+            keys
+                movement.r0 "1"
+                movement.r1 "2"
+                movement.r2 "3"
+                movement.r3 "4"
+        publication
+            id "publication:move_unpinned"
+
+    use "ddn.live.adaptive-lab::movement.n0" named "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n0"
+        with
+            id "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n0"
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::movement.n1" named "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n1"
+        with
+            id "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n1"
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::movement.n2" named "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n2"
+        with
+            id "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n2"
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::movement.n3" named "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n3"
+        with
+            id "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n3"
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::movement.n4" named "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n4"
+        with
+            id "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n4"
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::movement.n5" named "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n5"
+        with
+            id "appearance:move_unpinned:ddn.live.adaptive-lab::movement.n5"
+            size
+                width 240
+                height 130
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::movement.r0" named "appearance:move_unpinned:ddn.live.adaptive-lab::movement.r0"
+        with
+            id "appearance:move_unpinned:ddn.live.adaptive-lab::movement.r0"
+            route
+                source_side "east"
+                target_side "west"
+
+    use "ddn.live.adaptive-lab::movement.r1" named "appearance:move_unpinned:ddn.live.adaptive-lab::movement.r1"
+        with
+            id "appearance:move_unpinned:ddn.live.adaptive-lab::movement.r1"
+            route
+                source_side "east"
+                target_side "west"
+
+    use "ddn.live.adaptive-lab::movement.r2" named "appearance:move_unpinned:ddn.live.adaptive-lab::movement.r2"
+        with
+            id "appearance:move_unpinned:ddn.live.adaptive-lab::movement.r2"
+            route
+                source_side "east"
+                target_side "west"
+
+    use "ddn.live.adaptive-lab::movement.r3" named "appearance:move_unpinned:ddn.live.adaptive-lab::movement.r3"
+        with
+            id "appearance:move_unpinned:ddn.live.adaptive-lab::movement.r3"
+            route
+                source_side "east"
+                target_side "west"
+
+
+view "pinned_crossing" as "ddn@1"
+    with
+        id "pinned_crossing"
+        title "3 / Short pinned routes with explicit nonconnection marks"
+        selection
+            include
+                item
+                    id "ddn.live.adaptive-lab::locked.left"
+                item
+                    id "ddn.live.adaptive-lab::locked.right"
+                item
+                    id "ddn.live.adaptive-lab::locked.top"
+                item
+                    id "ddn.live.adaptive-lab::locked.bottom"
+                item
+                    id "ddn.live.adaptive-lab::locked.horizontal"
+                item
+                    id "ddn.live.adaptive-lab::locked.vertical"
+            exclude
+                item
+                    id "ddn.live.adaptive-lab::pipeline.submit"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.lookup"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.reserve"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.persist"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.publish"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.project"
+                item
+                    id "ddn.live.adaptive-lab::ports.r0"
+                item
+                    id "ddn.live.adaptive-lab::ports.r1"
+                item
+                    id "ddn.live.adaptive-lab::ports.r2"
+                item
+                    id "ddn.live.adaptive-lab::ports.r3"
+                item
+                    id "ddn.live.adaptive-lab::movement.r0"
+                item
+                    id "ddn.live.adaptive-lab::movement.r1"
+                item
+                    id "ddn.live.adaptive-lab::movement.r2"
+                item
+                    id "ddn.live.adaptive-lab::movement.r3"
+                item
+                    id "ddn.live.adaptive-lab::blockers.a_c"
+        style
+            theme "night"
+        layout
+            center "pins"
+            gap 90
+            algorithm "auto"
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 320
+            keys
+                locked.horizontal "1"
+                locked.vertical "2"
+        publication
+            id "publication:pinned_crossing"
+
+    use "ddn.live.adaptive-lab::locked.left" named "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.left"
+        with
+            id "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.left"
+            position
+                x 0
+                y 220
+            pinned true
+            size
+                width 220
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::locked.right" named "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.right"
+        with
+            id "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.right"
+            position
+                x 1000
+                y 220
+            pinned true
+            size
+                width 220
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::locked.top" named "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.top"
+        with
+            id "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.top"
+            position
+                x 500
+                y 0
+            pinned true
+            size
+                width 220
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::locked.bottom" named "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.bottom"
+        with
+            id "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.bottom"
+            position
+                x 500
+                y 500
+            pinned true
+            size
+                width 220
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::locked.horizontal" named "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.horizontal"
+        with
+            id "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.horizontal"
+            route
+                source_side "east"
+                target_side "west"
+                via
+                    item
+                        x 450
+                        y 270
+                    item
+                        x 850
+                        y 270
+
+    use "ddn.live.adaptive-lab::locked.vertical" named "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.vertical"
+        with
+            id "appearance:pinned_crossing:ddn.live.adaptive-lab::locked.vertical"
+            route
+                source_side "south"
+                target_side "north"
+                via
+                    item
+                        x 610
+                        y 170
+                    item
+                        x 610
+                        y 440
+
+
+view "obstacle" as "ddn@1"
+    with
+        id "obstacle"
+        title "Named field endpoints / route around an unrelated box"
+        selection
+            include
+                item
+                    id "ddn.live.adaptive-lab::blockers.a"
+                item
+                    id "ddn.live.adaptive-lab::blockers.b"
+                item
+                    id "ddn.live.adaptive-lab::blockers.c"
+                item
+                    id "ddn.live.adaptive-lab::blockers.a_c"
+            exclude
+                item
+                    id "ddn.live.adaptive-lab::pipeline.submit"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.lookup"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.reserve"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.persist"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.publish"
+                item
+                    id "ddn.live.adaptive-lab::pipeline.project"
+                item
+                    id "ddn.live.adaptive-lab::ports.r0"
+                item
+                    id "ddn.live.adaptive-lab::ports.r1"
+                item
+                    id "ddn.live.adaptive-lab::ports.r2"
+                item
+                    id "ddn.live.adaptive-lab::ports.r3"
+                item
+                    id "ddn.live.adaptive-lab::movement.r0"
+                item
+                    id "ddn.live.adaptive-lab::movement.r1"
+                item
+                    id "ddn.live.adaptive-lab::movement.r2"
+                item
+                    id "ddn.live.adaptive-lab::movement.r3"
+                item
+                    id "ddn.live.adaptive-lab::locked.horizontal"
+                item
+                    id "ddn.live.adaptive-lab::locked.vertical"
+        style
+            theme "night"
+        layout
+            algorithm "grid"
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 320
+            keys
+                blockers.a_c "1"
+        publication
+            id "publication:obstacle"
+
+    use "ddn.live.adaptive-lab::blockers.a" named "appearance:obstacle:ddn.live.adaptive-lab::blockers.a"
+        with
+            id "appearance:obstacle:ddn.live.adaptive-lab::blockers.a"
+            position
+                x 0
+                y 0
+            pinned true
+            size
+                width 240
+                height 150
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::blockers.b" named "appearance:obstacle:ddn.live.adaptive-lab::blockers.b"
+        with
+            id "appearance:obstacle:ddn.live.adaptive-lab::blockers.b"
+            position
+                x 350
+                y 0
+            pinned true
+            size
+                width 240
+                height 150
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::blockers.c" named "appearance:obstacle:ddn.live.adaptive-lab::blockers.c"
+        with
+            id "appearance:obstacle:ddn.live.adaptive-lab::blockers.c"
+            position
+                x 700
+                y 0
+            pinned true
+            size
+                width 240
+                height 150
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.adaptive-lab::blockers.a_c" named "appearance:obstacle:ddn.live.adaptive-lab::blockers.a_c"
+        with
+            id "appearance:obstacle:ddn.live.adaptive-lab::blockers.a_c"

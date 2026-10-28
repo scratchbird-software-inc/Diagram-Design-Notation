@@ -1,17 +1,623 @@
-ddn "0.5";
-module "ddn.usecases.views.sql-dependencies";
-import "formats.ddn" as fmt;
-import "data/commerce.ddn" as c;
-import "data/sql.ddn" as s;
+version ddn-next-1
 
-// What could be affected by changing a SQL definition?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "04 / SQL object dependencies" {
-    data: [@s.model, @c.tables, @c.domains];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.row;
-    select: [@s.model.routine, @s.model.view, @c.tables.orders];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "model.r_routine_view": 1, "model.r_view_orders": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "04 / SQL object dependencies"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.sql::model.routine" as "procedure"
+    with
+        id "ddn.usecases.sql::model.routine"
+        title "Refresh open orders"
+        description "Definition of callable SQL code; not an observed execution."
+
+
+element "ddn.usecases.sql::model.view.order_id" as "field"
+    with
+        id "ddn.usecases.sql::model.view.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.usecases.sql::model.view"
+            ordinal 0
+
+
+element "ddn.usecases.sql::model.view.customer_id" as "field"
+    with
+        id "ddn.usecases.sql::model.view.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.usecases.sql::model.view"
+            ordinal 1
+
+
+element "ddn.usecases.sql::model.view" as "view"
+    with
+        id "ddn.usecases.sql::model.view"
+        title "Open orders"
+        members
+            item
+                id "ddn.usecases.sql::model.view.order_id"
+            item
+                id "ddn.usecases.sql::model.view.customer_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.sql::model.index" as "index"
+    with
+        id "ddn.usecases.sql::model.index"
+        title "Customer lookup"
+        description "Proposed access path; engine and index method are undecided."
+
+
+element "ddn.usecases.commerce::tables.customer.customer_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.customer.customer_id"
+        title "customer_id"
+        properties
+            key "primary"
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.customer"
+            ordinal 0
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+            key "primary"
+
+
+element "ddn.usecases.commerce::tables.customer.display_name" as "field"
+    with
+        id "ddn.usecases.commerce::tables.customer.display_name"
+        title "display_name"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.customer"
+            ordinal 1
+
+
+element "ddn.usecases.commerce::tables.customer.status" as "field"
+    with
+        id "ddn.usecases.commerce::tables.customer.status"
+        title "status"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.customer"
+            ordinal 2
+
+
+element "ddn.usecases.commerce::tables.customer" as "table"
+    with
+        id "ddn.usecases.commerce::tables.customer"
+        title "Customer"
+        description "Authority for the customer registry, not for every customer attribute in all systems."
+        facets
+            workload
+                item "OLTP"
+            authority
+                item "AUTH"
+        properties
+            level "definition"
+            workload
+                item "oltp"
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+        members
+            item
+                id "ddn.usecases.commerce::tables.customer.customer_id"
+            item
+                id "ddn.usecases.commerce::tables.customer.display_name"
+            item
+                id "ddn.usecases.commerce::tables.customer.status"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item
+                        id "ddn.usecases.commerce::domains.customer_id"
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.commerce::tables.orders.order_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.orders.order_id"
+        title "order_id"
+        properties
+            key "primary"
+            domain
+                id "ddn.usecases.commerce::domains.order_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.orders"
+            ordinal 0
+            domain
+                id "ddn.usecases.commerce::domains.order_id"
+            key "primary"
+
+
+element "ddn.usecases.commerce::tables.orders.customer_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.orders.customer_id"
+        title "customer_id"
+        properties
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.orders"
+            ordinal 1
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+
+
+element "ddn.usecases.commerce::tables.orders.ordered_at" as "field"
+    with
+        id "ddn.usecases.commerce::tables.orders.ordered_at"
+        title "ordered_at"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.orders"
+            ordinal 2
+
+
+element "ddn.usecases.commerce::tables.orders" as "table"
+    with
+        id "ddn.usecases.commerce::tables.orders"
+        title "Orders"
+        facets
+            workload
+                item "OLTP"
+        properties
+            level "definition"
+            workload
+                item "oltp"
+        members
+            item
+                id "ddn.usecases.commerce::tables.orders.order_id"
+            item
+                id "ddn.usecases.commerce::tables.orders.customer_id"
+            item
+                id "ddn.usecases.commerce::tables.orders.ordered_at"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item
+                        id "ddn.usecases.commerce::domains.order_id"
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "customer_id"
+                    item null
+                    item
+                        id "ddn.usecases.commerce::domains.customer_id"
+                    item null
+                    item null
+                    item null
+                item
+                    item "ordered_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.commerce::tables.line.line_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.line_id"
+        title "line_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.usecases.commerce::tables.line.order_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 1
+
+
+element "ddn.usecases.commerce::tables.line.sku" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.sku"
+        title "sku"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 2
+
+
+element "ddn.usecases.commerce::tables.line.quantity" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.quantity"
+        title "quantity"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 3
+
+
+element "ddn.usecases.commerce::tables.line" as "table"
+    with
+        id "ddn.usecases.commerce::tables.line"
+        title "Order line"
+        facets
+            workload
+                item "OLTP"
+        properties
+            level "definition"
+            workload
+                item "oltp"
+        members
+            item
+                id "ddn.usecases.commerce::tables.line.line_id"
+            item
+                id "ddn.usecases.commerce::tables.line.order_id"
+            item
+                id "ddn.usecases.commerce::tables.line.sku"
+            item
+                id "ddn.usecases.commerce::tables.line.quantity"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "line_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "sku"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "quantity"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.commerce::domains.customer_id" as "domain"
+    with
+        id "ddn.usecases.commerce::domains.customer_id"
+        title "Customer identifier"
+        content
+            meaning "Identifies a customer in the registry."
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Identifies a customer in the registry."
+                    }
+                format "plain"
+
+
+element "ddn.usecases.commerce::domains.order_id" as "domain"
+    with
+        id "ddn.usecases.commerce::domains.order_id"
+        title "Order identifier"
+        content
+            meaning "Identifies an order in the order book."
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Identifies an order in the order book."
+                    }
+                format "plain"
+
+
+relation "ddn.usecases.sql::model.r_routine_view" as "depends"
+    with
+        id "ddn.usecases.sql::model.r_routine_view"
+        title "depends on"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.sql::model.routine"
+            item
+                definition
+                    id "ddn.usecases.sql::model.view"
+
+
+relation "ddn.usecases.sql::model.r_view_orders" as "depends"
+    with
+        id "ddn.usecases.sql::model.r_view_orders"
+        title "depends on"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.sql::model.view"
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.orders"
+
+
+relation "ddn.usecases.sql::model.r_index_orders" as "depends"
+    with
+        id "ddn.usecases.sql::model.r_index_orders"
+        title "depends on"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.sql::model.index"
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.orders"
+
+
+relation "ddn.usecases.commerce::tables.r_line_order" as "ref"
+    with
+        id "ddn.usecases.commerce::tables.r_line_order"
+        title "references"
+        properties
+            source_mark "many"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.line"
+                member
+                    id "ddn.usecases.commerce::tables.line.order_id"
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.orders"
+                member
+                    id "ddn.usecases.commerce::tables.orders.order_id"
+
+
+relation "ddn.usecases.commerce::tables.r_order_customer" as "ref"
+    with
+        id "ddn.usecases.commerce::tables.r_order_customer"
+        title "references"
+        properties
+            source_mark "zeromany"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.orders"
+                member
+                    id "ddn.usecases.commerce::tables.orders.customer_id"
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.customer"
+                member
+                    id "ddn.usecases.commerce::tables.customer.customer_id"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "04 / SQL object dependencies"
+        selection
+            include
+                item
+                    id "ddn.usecases.sql::model.routine"
+                item
+                    id "ddn.usecases.sql::model.view"
+                item
+                    id "ddn.usecases.commerce::tables.orders"
+                item
+                    id "ddn.usecases.sql::model.r_routine_view"
+                item
+                    id "ddn.usecases.sql::model.r_view_orders"
+            exclude
+                item
+                    id "ddn.usecases.sql::model.r_index_orders"
+                item
+                    id "ddn.usecases.commerce::tables.r_line_order"
+                item
+                    id "ddn.usecases.commerce::tables.r_order_customer"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_routine_view "1"
+                model.r_view_orders "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.sql::model.routine" named "appearance:diagram:ddn.usecases.sql::model.routine"
+        with
+            id "appearance:diagram:ddn.usecases.sql::model.routine"
+            body "notes"
+
+    use "ddn.usecases.sql::model.view" named "appearance:diagram:ddn.usecases.sql::model.view"
+        with
+            id "appearance:diagram:ddn.usecases.sql::model.view"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.commerce::tables.orders" named "appearance:diagram:ddn.usecases.commerce::tables.orders"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::tables.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.sql::model.r_routine_view" named "appearance:diagram:ddn.usecases.sql::model.r_routine_view"
+        with
+            id "appearance:diagram:ddn.usecases.sql::model.r_routine_view"
+
+    use "ddn.usecases.sql::model.r_view_orders" named "appearance:diagram:ddn.usecases.sql::model.r_view_orders"
+        with
+            id "appearance:diagram:ddn.usecases.sql::model.r_view_orders"

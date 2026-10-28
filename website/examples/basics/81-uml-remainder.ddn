@@ -1,92 +1,1313 @@
-ddn "0.5";
-module "ddn.examples.umlrem";
+version ddn-next-1
 
-// B1-061 : UML 2.5.1 remainder — object@2 (underlined instances, slot
-// datatype checks, link multiplicity), packages («import»/«access»/«merge» +
-// visibility), profile diagram (uml.profile@1), communication@2 (fragments +
-// {…} constraints), interaction overview @2 (inline expansion, gates,
-// arguments), timing@2 (annotations, constraints, compaction, lifeline
-// messages), usecase@3 (extension-point conditions). Minimal dialect, no pins.
+publication "publication:objects"
+    with
+        id "publication:objects"
+        title "Objects"
+        targets
+            item
+                target
+                    id "objects"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data obj {
-    object customer "Customer" { kind: "uml.class";
-        fields { customer_id { datatype: "string"; } age { datatype: "number"; } }
-    }
-    record ada "ada : Customer" {x_instance: { classifier: @obj.customer; };
-        fields { customer_id "C-1001"; age "41"; }
-    }
-    record bob "bob : Customer" {x_instance: { classifier: @obj.customer; };
-        fields { customer_id "C-1002"; age "36"; }
-    }
-    relation link1 "knows" @ada -> @bob { kind: "uml.link"; x_endlabels: { source: { multiplicity: "0..*"; }; target: { multiplicity: "1"; }; }; }
-}
 
-data pkg {
-    object shop "shop" { kind: "uml.package"; }
-    object core "core" { kind: "uml.package"; }
-    object domain_model "Domain model" { kind: "uml.class"; x_pack: { visibility: public; }; }
-    object helper "Helper" { kind: "uml.class"; x_pack: { visibility: private; }; }
-    relation imp "" @shop -> @core { kind: "uml.import"; }
-}
+publication "publication:packages"
+    with
+        id "publication:packages"
+        title "Packages"
+        targets
+            item
+                target
+                    id "packages"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data prof {
-    object meta "Classifier" { kind: "uml.metaclass"; }
-    object stereo "Audited" { kind: "uml.stereotype";
-        fields { audited_by { x_member: { kind: attribute; }; } }
-    }
-    object base_pkg "base" { kind: "uml.package"; }
-    object applied_pkg "shop" { kind: "uml.package"; }
-    relation ext "" @stereo -> @meta { kind: "uml.extension"; }
-    relation app "" @applied_pkg -> @base_pkg { kind: "uml.application"; }
-}
 
-data comm {
-    application ui "UI";
-    service svc "Service";
-    relation m1 "request" @ui -> @svc { kind: "uml.message"; x_message: { seq: "1"; time: "{t1}"; };
-        x_fragment: { operator: alt; operands: [ { guard: "ok"; messages: [@comm.m1]; }, { guard: "else"; messages: [@comm.m2]; } ] };
-    }
-    relation m2 "fail" @svc -> @ui { kind: "uml.message"; x_message: { seq: "2"; duration: "{0..2s}"; }; }
-}
+publication "publication:profiles"
+    with
+        id "publication:profiles"
+        title "Profile diagram"
+        targets
+            item
+                target
+                    id "profiles"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data io {
-    object start "Start" { kind: "flow.start"; }
-    object pay "Pay" { kind: "flow.process"; x_subdiagram: { view: "detail" };
-        x_use: { arguments: [ "order" ]; gates: [ "in", "out" ]; };
-    }
-    object end "End" { kind: "flow.end"; }
-    relation t1 "" @start -> @pay { kind: "flow.next"; }
-    relation t2 "" @pay -> @end { kind: "flow.next"; }
-}
-data detail_data {
-    object a "Authorize" { kind: "flow.process"; }
-    object b "Capture" { kind: "flow.process"; }
-    relation ab "" @a -> @b { kind: "flow.next"; }
-}
 
-data tim {
-    service bus "Bus" {        x_timeconstraint: [ "{0..40}" ];
-        x_states: [ { at: 0; state: "idle"; }, { at: 10; state: "idle"; }, { at: 20; state: "busy"; duration: "{20..30}"; } ];
-    }
-    application card "Card" {        x_states: [ { at: 5; state: "out"; slew: "{2}"; }, { at: 25; state: "in"; } ];
-    }
-    relation tm "swipe" @card -> @bus { kind: "uml.message"; x_message: { at: 15 }; }
-}
+publication "publication:comms"
+    with
+        id "publication:comms"
+        title "Communication"
+        targets
+            item
+                target
+                    id "comms"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data uc {
-    object sys "Shop" { kind: "uml.subject"; }
-    object buyer "Buyer" { kind: "uml.actor"; }
-    object checkout "Checkout" { kind: "uml.usecase"; x_usecase: { subjects: [@uc.sys]; extension_points: [ "payment" ]; }; }
-    object rush "Rush order" { kind: "uml.usecase"; x_usecase: { subjects: [@uc.sys]; }; }
-    relation u1 "" @buyer -> @checkout { kind: "uml.uses"; }
-    relation u2 "rush extends" @rush -> @checkout { kind: "uml.extend"; x_usecase: { extension_point: "payment"; condition: "basket > 200"; }; }
-}
 
-view objects "Objects" { data: [@obj]; projection { profile: "uml.object@2"; } publication { size: content; fit: none; } }
-view packages "Packages" { data: [@pkg]; projection { profile: "uml.structure@2"; } frame shopf "shop" { scope: @pkg.shop; members: [@pkg.domain_model, @pkg.helper]; } publication { size: content; fit: none; } }
-view profiles "Profile diagram" { data: [@prof]; projection { profile: "uml.profile@1"; } publication { size: content; fit: none; } }
-view comms "Communication" { data: [@comm]; projection { profile: "uml.communication@2"; } publication { size: content; fit: none; } }
-view overview "IO" { data: [@io]; projection { profile: "uml.interaction_overview@2"; } publication { size: content; fit: none; minimum_text: 6pt; } }
-view detail "Pay detail" { data: [@detail_data]; publication { size: content; fit: none; minimum_text: 6pt; } }
-view timing "Timing" { data: [@tim]; projection { kind: timing; profile: "uml.timing@2"; } publication { size: content; fit: none; minimum_text: 6pt; } }
-view usecases "Use cases" { data: [@uc]; projection { profile: "uml.usecase@3"; } publication { size: content; fit: none; } }
+publication "publication:overview"
+    with
+        id "publication:overview"
+        title "IO"
+        targets
+            item
+                target
+                    id "overview"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 8
+
+
+publication "publication:detail"
+    with
+        id "publication:detail"
+        title "Pay detail"
+        targets
+            item
+                target
+                    id "detail"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 8
+
+
+publication "publication:timing"
+    with
+        id "publication:timing"
+        title "Timing"
+        targets
+            item
+                target
+                    id "timing"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 8
+
+
+publication "publication:usecases"
+    with
+        id "publication:usecases"
+        title "Use cases"
+        targets
+            item
+                target
+                    id "usecases"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.umlrem::obj.customer.customer_id" as "field"
+    with
+        id "ddn.examples.umlrem::obj.customer.customer_id"
+        title "customer_id"
+        properties
+            datatype "string"
+        content
+            parent
+                id "ddn.examples.umlrem::obj.customer"
+            ordinal 0
+            datatype "string"
+
+
+element "ddn.examples.umlrem::obj.customer.age" as "field"
+    with
+        id "ddn.examples.umlrem::obj.customer.age"
+        title "age"
+        properties
+            datatype "number"
+        content
+            parent
+                id "ddn.examples.umlrem::obj.customer"
+            ordinal 1
+            datatype "number"
+
+
+element "ddn.examples.umlrem::obj.customer" as "uml.class"
+    with
+        id "ddn.examples.umlrem::obj.customer"
+        title "Customer"
+        members
+            item
+                id "ddn.examples.umlrem::obj.customer.customer_id"
+            item
+                id "ddn.examples.umlrem::obj.customer.age"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item "string"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "age"
+                    item "number"
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlrem::obj.ada.customer_id" as "field"
+    with
+        id "ddn.examples.umlrem::obj.ada.customer_id"
+        title "C-1001"
+        content
+            parent
+                id "ddn.examples.umlrem::obj.ada"
+            ordinal 0
+
+
+element "ddn.examples.umlrem::obj.ada.age" as "field"
+    with
+        id "ddn.examples.umlrem::obj.ada.age"
+        title "41"
+        content
+            parent
+                id "ddn.examples.umlrem::obj.ada"
+            ordinal 1
+
+
+element "ddn.examples.umlrem::obj.ada" as "record"
+    with
+        id "ddn.examples.umlrem::obj.ada"
+        title "ada : Customer"
+        metadata
+            x_instance
+                classifier
+                    id "ddn.examples.umlrem::obj.customer"
+        members
+            item
+                id "ddn.examples.umlrem::obj.ada.customer_id"
+            item
+                id "ddn.examples.umlrem::obj.ada.age"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "C-1001"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "41"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlrem::obj.bob.customer_id" as "field"
+    with
+        id "ddn.examples.umlrem::obj.bob.customer_id"
+        title "C-1002"
+        content
+            parent
+                id "ddn.examples.umlrem::obj.bob"
+            ordinal 0
+
+
+element "ddn.examples.umlrem::obj.bob.age" as "field"
+    with
+        id "ddn.examples.umlrem::obj.bob.age"
+        title "36"
+        content
+            parent
+                id "ddn.examples.umlrem::obj.bob"
+            ordinal 1
+
+
+element "ddn.examples.umlrem::obj.bob" as "record"
+    with
+        id "ddn.examples.umlrem::obj.bob"
+        title "bob : Customer"
+        metadata
+            x_instance
+                classifier
+                    id "ddn.examples.umlrem::obj.customer"
+        members
+            item
+                id "ddn.examples.umlrem::obj.bob.customer_id"
+            item
+                id "ddn.examples.umlrem::obj.bob.age"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "C-1002"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "36"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.umlrem::obj.link1" as "uml.link"
+    with
+        id "ddn.examples.umlrem::obj.link1"
+        title "knows"
+        metadata
+            x_endlabels
+                source
+                    multiplicity "0..*"
+                target
+                    multiplicity "1"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::obj.ada"
+            item
+                definition
+                    id "ddn.examples.umlrem::obj.bob"
+
+
+element "ddn.examples.umlrem::pkg.shop" as "uml.package"
+    with
+        id "ddn.examples.umlrem::pkg.shop"
+        title "shop"
+
+
+element "ddn.examples.umlrem::pkg.core" as "uml.package"
+    with
+        id "ddn.examples.umlrem::pkg.core"
+        title "core"
+
+
+element "ddn.examples.umlrem::pkg.domain_model" as "uml.class"
+    with
+        id "ddn.examples.umlrem::pkg.domain_model"
+        title "Domain model"
+        metadata
+            x_pack
+                visibility "public"
+
+
+element "ddn.examples.umlrem::pkg.helper" as "uml.class"
+    with
+        id "ddn.examples.umlrem::pkg.helper"
+        title "Helper"
+        metadata
+            x_pack
+                visibility "private"
+
+
+relation "ddn.examples.umlrem::pkg.imp" as "uml.import"
+    with
+        id "ddn.examples.umlrem::pkg.imp"
+        title "«import»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::pkg.shop"
+            item
+                definition
+                    id "ddn.examples.umlrem::pkg.core"
+
+
+element "ddn.examples.umlrem::prof.meta" as "uml.metaclass"
+    with
+        id "ddn.examples.umlrem::prof.meta"
+        title "Classifier"
+
+
+element "ddn.examples.umlrem::prof.stereo.audited_by" as "field"
+    with
+        id "ddn.examples.umlrem::prof.stereo.audited_by"
+        title "audited_by"
+        metadata
+            x_member
+                kind "attribute"
+        content
+            parent
+                id "ddn.examples.umlrem::prof.stereo"
+            ordinal 0
+
+
+element "ddn.examples.umlrem::prof.stereo" as "uml.stereotype"
+    with
+        id "ddn.examples.umlrem::prof.stereo"
+        title "Audited"
+        members
+            item
+                id "ddn.examples.umlrem::prof.stereo.audited_by"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "audited_by"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlrem::prof.base_pkg" as "uml.package"
+    with
+        id "ddn.examples.umlrem::prof.base_pkg"
+        title "base"
+
+
+element "ddn.examples.umlrem::prof.applied_pkg" as "uml.package"
+    with
+        id "ddn.examples.umlrem::prof.applied_pkg"
+        title "shop"
+
+
+relation "ddn.examples.umlrem::prof.ext" as "uml.extension"
+    with
+        id "ddn.examples.umlrem::prof.ext"
+        title "Extension"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::prof.stereo"
+            item
+                definition
+                    id "ddn.examples.umlrem::prof.meta"
+
+
+relation "ddn.examples.umlrem::prof.app" as "uml.application"
+    with
+        id "ddn.examples.umlrem::prof.app"
+        title "«apply»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::prof.applied_pkg"
+            item
+                definition
+                    id "ddn.examples.umlrem::prof.base_pkg"
+
+
+element "ddn.examples.umlrem::comm.ui" as "application"
+    with
+        id "ddn.examples.umlrem::comm.ui"
+        title "UI"
+
+
+element "ddn.examples.umlrem::comm.svc" as "service"
+    with
+        id "ddn.examples.umlrem::comm.svc"
+        title "Service"
+
+
+relation "ddn.examples.umlrem::comm.m1" as "uml.message"
+    with
+        id "ddn.examples.umlrem::comm.m1"
+        title "request"
+        metadata
+            x_message
+                seq "1"
+                time "{t1}"
+            x_fragment
+                operator "alt"
+                operands
+                    item
+                        guard "ok"
+                        messages
+                            item
+                                id "ddn.examples.umlrem::comm.m1"
+                    item
+                        guard "else"
+                        messages
+                            item
+                                id "ddn.examples.umlrem::comm.m2"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::comm.ui"
+            item
+                definition
+                    id "ddn.examples.umlrem::comm.svc"
+
+
+relation "ddn.examples.umlrem::comm.m2" as "uml.message"
+    with
+        id "ddn.examples.umlrem::comm.m2"
+        title "fail"
+        metadata
+            x_message
+                seq "2"
+                duration "{0..2s}"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::comm.svc"
+            item
+                definition
+                    id "ddn.examples.umlrem::comm.ui"
+
+
+element "ddn.examples.umlrem::io.start" as "flow.start"
+    with
+        id "ddn.examples.umlrem::io.start"
+        title "Start"
+
+
+element "ddn.examples.umlrem::io.pay" as "flow.process"
+    with
+        id "ddn.examples.umlrem::io.pay"
+        title "Pay"
+        metadata
+            x_subdiagram
+                view "detail"
+            x_use
+                arguments
+                    item "order"
+                gates
+                    item "in"
+                    item "out"
+
+
+element "ddn.examples.umlrem::io.end" as "flow.end"
+    with
+        id "ddn.examples.umlrem::io.end"
+        title "End"
+
+
+relation "ddn.examples.umlrem::io.t1" as "flow.next"
+    with
+        id "ddn.examples.umlrem::io.t1"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::io.start"
+            item
+                definition
+                    id "ddn.examples.umlrem::io.pay"
+
+
+relation "ddn.examples.umlrem::io.t2" as "flow.next"
+    with
+        id "ddn.examples.umlrem::io.t2"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::io.pay"
+            item
+                definition
+                    id "ddn.examples.umlrem::io.end"
+
+
+element "ddn.examples.umlrem::detail_data.a" as "flow.process"
+    with
+        id "ddn.examples.umlrem::detail_data.a"
+        title "Authorize"
+
+
+element "ddn.examples.umlrem::detail_data.b" as "flow.process"
+    with
+        id "ddn.examples.umlrem::detail_data.b"
+        title "Capture"
+
+
+relation "ddn.examples.umlrem::detail_data.ab" as "flow.next"
+    with
+        id "ddn.examples.umlrem::detail_data.ab"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::detail_data.a"
+            item
+                definition
+                    id "ddn.examples.umlrem::detail_data.b"
+
+
+element "ddn.examples.umlrem::tim.bus" as "service"
+    with
+        id "ddn.examples.umlrem::tim.bus"
+        title "Bus"
+        metadata
+            x_timeconstraint
+                item "{0..40}"
+            x_states
+                item
+                    at 0
+                    state "idle"
+                item
+                    at 10
+                    state "idle"
+                item
+                    at 20
+                    state "busy"
+                    duration "{20..30}"
+
+
+element "ddn.examples.umlrem::tim.card" as "application"
+    with
+        id "ddn.examples.umlrem::tim.card"
+        title "Card"
+        metadata
+            x_states
+                item
+                    at 5
+                    state "out"
+                    slew "{2}"
+                item
+                    at 25
+                    state "in"
+
+
+relation "ddn.examples.umlrem::tim.tm" as "uml.message"
+    with
+        id "ddn.examples.umlrem::tim.tm"
+        title "swipe"
+        metadata
+            x_message
+                at 15
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::tim.card"
+            item
+                definition
+                    id "ddn.examples.umlrem::tim.bus"
+
+
+element "ddn.examples.umlrem::uc.sys" as "uml.subject"
+    with
+        id "ddn.examples.umlrem::uc.sys"
+        title "Shop"
+
+
+element "ddn.examples.umlrem::uc.buyer" as "uml.actor"
+    with
+        id "ddn.examples.umlrem::uc.buyer"
+        title "Buyer"
+
+
+element "ddn.examples.umlrem::uc.checkout" as "uml.usecase"
+    with
+        id "ddn.examples.umlrem::uc.checkout"
+        title "Checkout"
+        metadata
+            x_usecase
+                subjects
+                    item
+                        id "ddn.examples.umlrem::uc.sys"
+                extension_points
+                    item "payment"
+
+
+element "ddn.examples.umlrem::uc.rush" as "uml.usecase"
+    with
+        id "ddn.examples.umlrem::uc.rush"
+        title "Rush order"
+        metadata
+            x_usecase
+                subjects
+                    item
+                        id "ddn.examples.umlrem::uc.sys"
+
+
+relation "ddn.examples.umlrem::uc.u1" as "uml.uses"
+    with
+        id "ddn.examples.umlrem::uc.u1"
+        title "Participates in"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::uc.buyer"
+            item
+                definition
+                    id "ddn.examples.umlrem::uc.checkout"
+
+
+relation "ddn.examples.umlrem::uc.u2" as "uml.extend"
+    with
+        id "ddn.examples.umlrem::uc.u2"
+        title "rush extends"
+        metadata
+            x_usecase
+                extension_point "payment"
+                condition "basket > 200"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlrem::uc.rush"
+            item
+                definition
+                    id "ddn.examples.umlrem::uc.checkout"
+
+
+view "objects" as "uml.object@2"
+    with
+        id "objects"
+        title "Objects"
+        selection
+            include
+                item
+                    id "ddn.examples.umlrem::obj.customer"
+                item
+                    id "ddn.examples.umlrem::obj.ada"
+                item
+                    id "ddn.examples.umlrem::obj.bob"
+                item
+                    id "ddn.examples.umlrem::obj.link1"
+            exclude
+                item
+                    id "ddn.examples.umlrem::pkg.imp"
+                item
+                    id "ddn.examples.umlrem::prof.ext"
+                item
+                    id "ddn.examples.umlrem::prof.app"
+                item
+                    id "ddn.examples.umlrem::comm.m1"
+                item
+                    id "ddn.examples.umlrem::comm.m2"
+                item
+                    id "ddn.examples.umlrem::io.t1"
+                item
+                    id "ddn.examples.umlrem::io.t2"
+                item
+                    id "ddn.examples.umlrem::detail_data.ab"
+                item
+                    id "ddn.examples.umlrem::tim.tm"
+                item
+                    id "ddn.examples.umlrem::uc.u1"
+                item
+                    id "ddn.examples.umlrem::uc.u2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:objects"
+
+    use "ddn.examples.umlrem::obj.customer" named "appearance:objects:ddn.examples.umlrem::obj.customer"
+        with
+            id "appearance:objects:ddn.examples.umlrem::obj.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlrem::obj.ada" named "appearance:objects:ddn.examples.umlrem::obj.ada"
+        with
+            id "appearance:objects:ddn.examples.umlrem::obj.ada"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlrem::obj.bob" named "appearance:objects:ddn.examples.umlrem::obj.bob"
+        with
+            id "appearance:objects:ddn.examples.umlrem::obj.bob"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlrem::obj.link1" named "appearance:objects:ddn.examples.umlrem::obj.link1"
+        with
+            id "appearance:objects:ddn.examples.umlrem::obj.link1"
+
+
+view "packages" as "uml.structure@2"
+    with
+        id "packages"
+        title "Packages"
+        selection
+            include
+                item
+                    id "ddn.examples.umlrem::pkg.shop"
+                item
+                    id "ddn.examples.umlrem::pkg.core"
+                item
+                    id "ddn.examples.umlrem::pkg.domain_model"
+                item
+                    id "ddn.examples.umlrem::pkg.helper"
+                item
+                    id "ddn.examples.umlrem::pkg.imp"
+            exclude
+                item
+                    id "ddn.examples.umlrem::obj.link1"
+                item
+                    id "ddn.examples.umlrem::prof.ext"
+                item
+                    id "ddn.examples.umlrem::prof.app"
+                item
+                    id "ddn.examples.umlrem::comm.m1"
+                item
+                    id "ddn.examples.umlrem::comm.m2"
+                item
+                    id "ddn.examples.umlrem::io.t1"
+                item
+                    id "ddn.examples.umlrem::io.t2"
+                item
+                    id "ddn.examples.umlrem::detail_data.ab"
+                item
+                    id "ddn.examples.umlrem::tim.tm"
+                item
+                    id "ddn.examples.umlrem::uc.u1"
+                item
+                    id "ddn.examples.umlrem::uc.u2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.umlrem::packages.shopf"
+                name "shop"
+                scope
+                    id "ddn.examples.umlrem::pkg.shop"
+                members
+                    item
+                        id "ddn.examples.umlrem::pkg.domain_model"
+                    item
+                        id "ddn.examples.umlrem::pkg.helper"
+        publication
+            id "publication:packages"
+
+    use "ddn.examples.umlrem::pkg.shop" named "appearance:packages:ddn.examples.umlrem::pkg.shop"
+        with
+            id "appearance:packages:ddn.examples.umlrem::pkg.shop"
+
+    use "ddn.examples.umlrem::pkg.core" named "appearance:packages:ddn.examples.umlrem::pkg.core"
+        with
+            id "appearance:packages:ddn.examples.umlrem::pkg.core"
+
+    use "ddn.examples.umlrem::pkg.domain_model" named "appearance:packages:ddn.examples.umlrem::pkg.domain_model"
+        with
+            id "appearance:packages:ddn.examples.umlrem::pkg.domain_model"
+
+    use "ddn.examples.umlrem::pkg.helper" named "appearance:packages:ddn.examples.umlrem::pkg.helper"
+        with
+            id "appearance:packages:ddn.examples.umlrem::pkg.helper"
+
+    use "ddn.examples.umlrem::pkg.imp" named "appearance:packages:ddn.examples.umlrem::pkg.imp"
+        with
+            id "appearance:packages:ddn.examples.umlrem::pkg.imp"
+
+
+view "profiles" as "uml.profile@1"
+    with
+        id "profiles"
+        title "Profile diagram"
+        selection
+            include
+                item
+                    id "ddn.examples.umlrem::prof.meta"
+                item
+                    id "ddn.examples.umlrem::prof.stereo"
+                item
+                    id "ddn.examples.umlrem::prof.base_pkg"
+                item
+                    id "ddn.examples.umlrem::prof.applied_pkg"
+                item
+                    id "ddn.examples.umlrem::prof.ext"
+                item
+                    id "ddn.examples.umlrem::prof.app"
+            exclude
+                item
+                    id "ddn.examples.umlrem::obj.link1"
+                item
+                    id "ddn.examples.umlrem::pkg.imp"
+                item
+                    id "ddn.examples.umlrem::comm.m1"
+                item
+                    id "ddn.examples.umlrem::comm.m2"
+                item
+                    id "ddn.examples.umlrem::io.t1"
+                item
+                    id "ddn.examples.umlrem::io.t2"
+                item
+                    id "ddn.examples.umlrem::detail_data.ab"
+                item
+                    id "ddn.examples.umlrem::tim.tm"
+                item
+                    id "ddn.examples.umlrem::uc.u1"
+                item
+                    id "ddn.examples.umlrem::uc.u2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:profiles"
+
+    use "ddn.examples.umlrem::prof.meta" named "appearance:profiles:ddn.examples.umlrem::prof.meta"
+        with
+            id "appearance:profiles:ddn.examples.umlrem::prof.meta"
+
+    use "ddn.examples.umlrem::prof.stereo" named "appearance:profiles:ddn.examples.umlrem::prof.stereo"
+        with
+            id "appearance:profiles:ddn.examples.umlrem::prof.stereo"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlrem::prof.base_pkg" named "appearance:profiles:ddn.examples.umlrem::prof.base_pkg"
+        with
+            id "appearance:profiles:ddn.examples.umlrem::prof.base_pkg"
+
+    use "ddn.examples.umlrem::prof.applied_pkg" named "appearance:profiles:ddn.examples.umlrem::prof.applied_pkg"
+        with
+            id "appearance:profiles:ddn.examples.umlrem::prof.applied_pkg"
+
+    use "ddn.examples.umlrem::prof.ext" named "appearance:profiles:ddn.examples.umlrem::prof.ext"
+        with
+            id "appearance:profiles:ddn.examples.umlrem::prof.ext"
+
+    use "ddn.examples.umlrem::prof.app" named "appearance:profiles:ddn.examples.umlrem::prof.app"
+        with
+            id "appearance:profiles:ddn.examples.umlrem::prof.app"
+
+
+view "comms" as "uml.communication@2"
+    with
+        id "comms"
+        title "Communication"
+        selection
+            include
+                item
+                    id "ddn.examples.umlrem::comm.ui"
+                item
+                    id "ddn.examples.umlrem::comm.svc"
+                item
+                    id "ddn.examples.umlrem::comm.m1"
+                item
+                    id "ddn.examples.umlrem::comm.m2"
+            exclude
+                item
+                    id "ddn.examples.umlrem::obj.link1"
+                item
+                    id "ddn.examples.umlrem::pkg.imp"
+                item
+                    id "ddn.examples.umlrem::prof.ext"
+                item
+                    id "ddn.examples.umlrem::prof.app"
+                item
+                    id "ddn.examples.umlrem::io.t1"
+                item
+                    id "ddn.examples.umlrem::io.t2"
+                item
+                    id "ddn.examples.umlrem::detail_data.ab"
+                item
+                    id "ddn.examples.umlrem::tim.tm"
+                item
+                    id "ddn.examples.umlrem::uc.u1"
+                item
+                    id "ddn.examples.umlrem::uc.u2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:comms"
+
+    use "ddn.examples.umlrem::comm.ui" named "appearance:comms:ddn.examples.umlrem::comm.ui"
+        with
+            id "appearance:comms:ddn.examples.umlrem::comm.ui"
+
+    use "ddn.examples.umlrem::comm.svc" named "appearance:comms:ddn.examples.umlrem::comm.svc"
+        with
+            id "appearance:comms:ddn.examples.umlrem::comm.svc"
+
+    use "ddn.examples.umlrem::comm.m1" named "appearance:comms:ddn.examples.umlrem::comm.m1"
+        with
+            id "appearance:comms:ddn.examples.umlrem::comm.m1"
+
+    use "ddn.examples.umlrem::comm.m2" named "appearance:comms:ddn.examples.umlrem::comm.m2"
+        with
+            id "appearance:comms:ddn.examples.umlrem::comm.m2"
+
+
+view "overview" as "uml.interaction_overview@2"
+    with
+        id "overview"
+        title "IO"
+        selection
+            include
+                item
+                    id "ddn.examples.umlrem::io.start"
+                item
+                    id "ddn.examples.umlrem::io.pay"
+                item
+                    id "ddn.examples.umlrem::io.end"
+                item
+                    id "ddn.examples.umlrem::io.t1"
+                item
+                    id "ddn.examples.umlrem::io.t2"
+            exclude
+                item
+                    id "ddn.examples.umlrem::obj.link1"
+                item
+                    id "ddn.examples.umlrem::pkg.imp"
+                item
+                    id "ddn.examples.umlrem::prof.ext"
+                item
+                    id "ddn.examples.umlrem::prof.app"
+                item
+                    id "ddn.examples.umlrem::comm.m1"
+                item
+                    id "ddn.examples.umlrem::comm.m2"
+                item
+                    id "ddn.examples.umlrem::detail_data.ab"
+                item
+                    id "ddn.examples.umlrem::tim.tm"
+                item
+                    id "ddn.examples.umlrem::uc.u1"
+                item
+                    id "ddn.examples.umlrem::uc.u2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:overview"
+
+    use "ddn.examples.umlrem::io.start" named "appearance:overview:ddn.examples.umlrem::io.start"
+        with
+            id "appearance:overview:ddn.examples.umlrem::io.start"
+
+    use "ddn.examples.umlrem::io.pay" named "appearance:overview:ddn.examples.umlrem::io.pay"
+        with
+            id "appearance:overview:ddn.examples.umlrem::io.pay"
+
+    use "ddn.examples.umlrem::io.end" named "appearance:overview:ddn.examples.umlrem::io.end"
+        with
+            id "appearance:overview:ddn.examples.umlrem::io.end"
+
+    use "ddn.examples.umlrem::io.t1" named "appearance:overview:ddn.examples.umlrem::io.t1"
+        with
+            id "appearance:overview:ddn.examples.umlrem::io.t1"
+
+    use "ddn.examples.umlrem::io.t2" named "appearance:overview:ddn.examples.umlrem::io.t2"
+        with
+            id "appearance:overview:ddn.examples.umlrem::io.t2"
+
+
+view "detail" as "ddn@1"
+    with
+        id "detail"
+        title "Pay detail"
+        selection
+            include
+                item
+                    id "ddn.examples.umlrem::detail_data.a"
+                item
+                    id "ddn.examples.umlrem::detail_data.b"
+                item
+                    id "ddn.examples.umlrem::detail_data.ab"
+            exclude
+                item
+                    id "ddn.examples.umlrem::obj.link1"
+                item
+                    id "ddn.examples.umlrem::pkg.imp"
+                item
+                    id "ddn.examples.umlrem::prof.ext"
+                item
+                    id "ddn.examples.umlrem::prof.app"
+                item
+                    id "ddn.examples.umlrem::comm.m1"
+                item
+                    id "ddn.examples.umlrem::comm.m2"
+                item
+                    id "ddn.examples.umlrem::io.t1"
+                item
+                    id "ddn.examples.umlrem::io.t2"
+                item
+                    id "ddn.examples.umlrem::tim.tm"
+                item
+                    id "ddn.examples.umlrem::uc.u1"
+                item
+                    id "ddn.examples.umlrem::uc.u2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:detail"
+
+    use "ddn.examples.umlrem::detail_data.a" named "appearance:detail:ddn.examples.umlrem::detail_data.a"
+        with
+            id "appearance:detail:ddn.examples.umlrem::detail_data.a"
+
+    use "ddn.examples.umlrem::detail_data.b" named "appearance:detail:ddn.examples.umlrem::detail_data.b"
+        with
+            id "appearance:detail:ddn.examples.umlrem::detail_data.b"
+
+    use "ddn.examples.umlrem::detail_data.ab" named "appearance:detail:ddn.examples.umlrem::detail_data.ab"
+        with
+            id "appearance:detail:ddn.examples.umlrem::detail_data.ab"
+
+
+view "timing" as "uml.timing@2"
+    with
+        id "timing"
+        title "Timing"
+        selection
+            include
+                item
+                    id "ddn.examples.umlrem::tim.bus"
+                item
+                    id "ddn.examples.umlrem::tim.card"
+                item
+                    id "ddn.examples.umlrem::tim.tm"
+            exclude
+                item
+                    id "ddn.examples.umlrem::obj.link1"
+                item
+                    id "ddn.examples.umlrem::pkg.imp"
+                item
+                    id "ddn.examples.umlrem::prof.ext"
+                item
+                    id "ddn.examples.umlrem::prof.app"
+                item
+                    id "ddn.examples.umlrem::comm.m1"
+                item
+                    id "ddn.examples.umlrem::comm.m2"
+                item
+                    id "ddn.examples.umlrem::io.t1"
+                item
+                    id "ddn.examples.umlrem::io.t2"
+                item
+                    id "ddn.examples.umlrem::detail_data.ab"
+                item
+                    id "ddn.examples.umlrem::uc.u1"
+                item
+                    id "ddn.examples.umlrem::uc.u2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:timing"
+
+    use "ddn.examples.umlrem::tim.bus" named "appearance:timing:ddn.examples.umlrem::tim.bus"
+        with
+            id "appearance:timing:ddn.examples.umlrem::tim.bus"
+
+    use "ddn.examples.umlrem::tim.card" named "appearance:timing:ddn.examples.umlrem::tim.card"
+        with
+            id "appearance:timing:ddn.examples.umlrem::tim.card"
+
+    use "ddn.examples.umlrem::tim.tm" named "appearance:timing:ddn.examples.umlrem::tim.tm"
+        with
+            id "appearance:timing:ddn.examples.umlrem::tim.tm"
+
+
+view "usecases" as "uml.usecase@3"
+    with
+        id "usecases"
+        title "Use cases"
+        selection
+            include
+                item
+                    id "ddn.examples.umlrem::uc.sys"
+                item
+                    id "ddn.examples.umlrem::uc.buyer"
+                item
+                    id "ddn.examples.umlrem::uc.checkout"
+                item
+                    id "ddn.examples.umlrem::uc.rush"
+                item
+                    id "ddn.examples.umlrem::uc.u1"
+                item
+                    id "ddn.examples.umlrem::uc.u2"
+            exclude
+                item
+                    id "ddn.examples.umlrem::obj.link1"
+                item
+                    id "ddn.examples.umlrem::pkg.imp"
+                item
+                    id "ddn.examples.umlrem::prof.ext"
+                item
+                    id "ddn.examples.umlrem::prof.app"
+                item
+                    id "ddn.examples.umlrem::comm.m1"
+                item
+                    id "ddn.examples.umlrem::comm.m2"
+                item
+                    id "ddn.examples.umlrem::io.t1"
+                item
+                    id "ddn.examples.umlrem::io.t2"
+                item
+                    id "ddn.examples.umlrem::detail_data.ab"
+                item
+                    id "ddn.examples.umlrem::tim.tm"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:usecases"
+
+    use "ddn.examples.umlrem::uc.sys" named "appearance:usecases:ddn.examples.umlrem::uc.sys"
+        with
+            id "appearance:usecases:ddn.examples.umlrem::uc.sys"
+
+    use "ddn.examples.umlrem::uc.buyer" named "appearance:usecases:ddn.examples.umlrem::uc.buyer"
+        with
+            id "appearance:usecases:ddn.examples.umlrem::uc.buyer"
+
+    use "ddn.examples.umlrem::uc.checkout" named "appearance:usecases:ddn.examples.umlrem::uc.checkout"
+        with
+            id "appearance:usecases:ddn.examples.umlrem::uc.checkout"
+
+    use "ddn.examples.umlrem::uc.rush" named "appearance:usecases:ddn.examples.umlrem::uc.rush"
+        with
+            id "appearance:usecases:ddn.examples.umlrem::uc.rush"
+
+    use "ddn.examples.umlrem::uc.u1" named "appearance:usecases:ddn.examples.umlrem::uc.u1"
+        with
+            id "appearance:usecases:ddn.examples.umlrem::uc.u1"
+
+    use "ddn.examples.umlrem::uc.u2" named "appearance:usecases:ddn.examples.umlrem::uc.u2"
+        with
+            id "appearance:usecases:ddn.examples.umlrem::uc.u2"

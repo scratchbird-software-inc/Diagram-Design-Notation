@@ -1,0 +1,240 @@
+version ddn-next-1
+
+publication "publication:main"
+    with
+        id "publication:main"
+        title "Ledger integration — marked"
+        targets
+            item
+                target
+                    id "main"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:mono"
+    with
+        id "publication:mono"
+        title "Same model — mono print theme"
+        targets
+            item
+                target
+                    id "mono"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.markings::integration.portal" as "service"
+    with
+        id "ddn.fieldguide.markings::integration.portal"
+        title "Customer portal"
+
+
+element "ddn.fieldguide.markings::integration.legacy" as "service"
+    with
+        id "ddn.fieldguide.markings::integration.legacy"
+        title "Legacy billing"
+
+
+element "ddn.fieldguide.markings::integration.ledger" as "database"
+    with
+        id "ddn.fieldguide.markings::integration.ledger"
+        title "General ledger"
+
+
+element "ddn.fieldguide.markings::integration.experimental" as "export"
+    with
+        id "ddn.fieldguide.markings::integration.experimental"
+        title "Experimental export"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "marks": [
+                        "tentative"
+                      ]
+                    }
+                format "plain"
+
+
+relation "ddn.fieldguide.markings::integration.current" as "flow"
+    with
+        id "ddn.fieldguide.markings::integration.current"
+        title "posts via API"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.markings::integration.portal"
+            item
+                definition
+                    id "ddn.fieldguide.markings::integration.ledger"
+
+
+relation "ddn.fieldguide.markings::integration.old_path" as "flow"
+    with
+        id "ddn.fieldguide.markings::integration.old_path"
+        title "direct table write"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.markings::integration.legacy"
+            item
+                definition
+                    id "ddn.fieldguide.markings::integration.ledger"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "marks": [
+                        "forbidden"
+                      ],
+                      "assertion": "no component writes the ledger outside the posting API"
+                    }
+                format "plain"
+
+
+relation "ddn.fieldguide.markings::integration.feed" as "flow"
+    with
+        id "ddn.fieldguide.markings::integration.feed"
+        title "nightly extract"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.markings::integration.ledger"
+            item
+                definition
+                    id "ddn.fieldguide.markings::integration.experimental"
+
+
+view "main" as "ddn@1"
+    with
+        id "main"
+        title "Ledger integration — marked"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.markings::integration.portal"
+                item
+                    id "ddn.fieldguide.markings::integration.legacy"
+                item
+                    id "ddn.fieldguide.markings::integration.ledger"
+                item
+                    id "ddn.fieldguide.markings::integration.experimental"
+                item
+                    id "ddn.fieldguide.markings::integration.current"
+                item
+                    id "ddn.fieldguide.markings::integration.old_path"
+                item
+                    id "ddn.fieldguide.markings::integration.feed"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:main"
+
+    use "ddn.fieldguide.markings::integration.portal" named "appearance:main:ddn.fieldguide.markings::integration.portal"
+        with
+            id "appearance:main:ddn.fieldguide.markings::integration.portal"
+
+    use "ddn.fieldguide.markings::integration.legacy" named "appearance:main:ddn.fieldguide.markings::integration.legacy"
+        with
+            id "appearance:main:ddn.fieldguide.markings::integration.legacy"
+
+    use "ddn.fieldguide.markings::integration.ledger" named "appearance:main:ddn.fieldguide.markings::integration.ledger"
+        with
+            id "appearance:main:ddn.fieldguide.markings::integration.ledger"
+
+    use "ddn.fieldguide.markings::integration.experimental" named "appearance:main:ddn.fieldguide.markings::integration.experimental"
+        with
+            id "appearance:main:ddn.fieldguide.markings::integration.experimental"
+            marks
+                item "tentative"
+
+    use "ddn.fieldguide.markings::integration.current" named "appearance:main:ddn.fieldguide.markings::integration.current"
+        with
+            id "appearance:main:ddn.fieldguide.markings::integration.current"
+
+    use "ddn.fieldguide.markings::integration.old_path" named "appearance:main:ddn.fieldguide.markings::integration.old_path"
+        with
+            id "appearance:main:ddn.fieldguide.markings::integration.old_path"
+            marks
+                item "forbidden"
+
+    use "ddn.fieldguide.markings::integration.feed" named "appearance:main:ddn.fieldguide.markings::integration.feed"
+        with
+            id "appearance:main:ddn.fieldguide.markings::integration.feed"
+
+
+view "mono" as "ddn@1"
+    with
+        id "mono"
+        title "Same model — mono print theme"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.markings::integration.portal"
+                item
+                    id "ddn.fieldguide.markings::integration.legacy"
+                item
+                    id "ddn.fieldguide.markings::integration.ledger"
+                item
+                    id "ddn.fieldguide.markings::integration.experimental"
+                item
+                    id "ddn.fieldguide.markings::integration.current"
+                item
+                    id "ddn.fieldguide.markings::integration.old_path"
+                item
+                    id "ddn.fieldguide.markings::integration.feed"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#ffffff"
+        style
+            theme "neutral"
+        publication
+            id "publication:mono"
+
+    use "ddn.fieldguide.markings::integration.portal" named "appearance:mono:ddn.fieldguide.markings::integration.portal"
+        with
+            id "appearance:mono:ddn.fieldguide.markings::integration.portal"
+
+    use "ddn.fieldguide.markings::integration.legacy" named "appearance:mono:ddn.fieldguide.markings::integration.legacy"
+        with
+            id "appearance:mono:ddn.fieldguide.markings::integration.legacy"
+
+    use "ddn.fieldguide.markings::integration.ledger" named "appearance:mono:ddn.fieldguide.markings::integration.ledger"
+        with
+            id "appearance:mono:ddn.fieldguide.markings::integration.ledger"
+
+    use "ddn.fieldguide.markings::integration.experimental" named "appearance:mono:ddn.fieldguide.markings::integration.experimental"
+        with
+            id "appearance:mono:ddn.fieldguide.markings::integration.experimental"
+            marks
+                item "tentative"
+
+    use "ddn.fieldguide.markings::integration.current" named "appearance:mono:ddn.fieldguide.markings::integration.current"
+        with
+            id "appearance:mono:ddn.fieldguide.markings::integration.current"
+
+    use "ddn.fieldguide.markings::integration.old_path" named "appearance:mono:ddn.fieldguide.markings::integration.old_path"
+        with
+            id "appearance:mono:ddn.fieldguide.markings::integration.old_path"
+            marks
+                item "forbidden"
+
+    use "ddn.fieldguide.markings::integration.feed" named "appearance:mono:ddn.fieldguide.markings::integration.feed"
+        with
+            id "appearance:mono:ddn.fieldguide.markings::integration.feed"

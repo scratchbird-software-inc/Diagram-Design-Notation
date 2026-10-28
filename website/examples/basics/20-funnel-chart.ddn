@@ -1,22 +1,116 @@
-ddn "0.5";
-module "ddn.examples.funnel-chart";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:funnel"
+    with
+        id "publication:funnel"
+        title "Synthetic sales pipeline / funnel"
+        targets
+            item
+                target
+                    id "funnel"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic sales-pipeline dataset: five funnel stages, one value per stage.
-// All data is synthetic.
-records pipeline {
-    columns: stage, value, unit;
-    label_column: stage;
-    row s1: "Visits", 1200, "deals";
-    row s2: "Signups", 480, "deals";
-    row s3: "Trials", 210, "deals";
-    row s4: "Qualified", 96, "deals";
-    row s5: "Closed", 42, "deals";
-}
 
-view funnel "Synthetic sales pipeline / funnel" {
-    data: [@pipeline]; format: @shared.styles.technical;
-    projection { kind:chart; profile:"chart.funnel@1"; records:[@pipeline.s1, @pipeline.s2, @pipeline.s3, @pipeline.s4, @pipeline.s5]; mark:funnel; x:"x_record.stage"; y:"x_record.value"; unit:"deals"; width:1120px; height:620px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+element "ddn.examples.funnel-chart::pipeline.s1" as "record"
+    with
+        id "ddn.examples.funnel-chart::pipeline.s1"
+        title "Visits"
+        metadata
+            x_record
+                stage "Visits"
+                value 1200
+                unit "deals"
+
+
+element "ddn.examples.funnel-chart::pipeline.s2" as "record"
+    with
+        id "ddn.examples.funnel-chart::pipeline.s2"
+        title "Signups"
+        metadata
+            x_record
+                stage "Signups"
+                value 480
+                unit "deals"
+
+
+element "ddn.examples.funnel-chart::pipeline.s3" as "record"
+    with
+        id "ddn.examples.funnel-chart::pipeline.s3"
+        title "Trials"
+        metadata
+            x_record
+                stage "Trials"
+                value 210
+                unit "deals"
+
+
+element "ddn.examples.funnel-chart::pipeline.s4" as "record"
+    with
+        id "ddn.examples.funnel-chart::pipeline.s4"
+        title "Qualified"
+        metadata
+            x_record
+                stage "Qualified"
+                value 96
+                unit "deals"
+
+
+element "ddn.examples.funnel-chart::pipeline.s5" as "record"
+    with
+        id "ddn.examples.funnel-chart::pipeline.s5"
+        title "Closed"
+        metadata
+            x_record
+                stage "Closed"
+                value 42
+                unit "deals"
+
+
+view "funnel" as "chart.funnel@1"
+    with
+        id "funnel"
+        title "Synthetic sales pipeline / funnel"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.funnel-chart::pipeline.s1"
+                    item
+                        id "ddn.examples.funnel-chart::pipeline.s2"
+                    item
+                        id "ddn.examples.funnel-chart::pipeline.s3"
+                    item
+                        id "ddn.examples.funnel-chart::pipeline.s4"
+                    item
+                        id "ddn.examples.funnel-chart::pipeline.s5"
+                mark "funnel"
+                x "metadata.x_record.stage"
+                y "metadata.x_record.value"
+                unit "deals"
+                width 1120
+                height 620

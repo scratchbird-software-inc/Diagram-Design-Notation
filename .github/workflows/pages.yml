@@ -1,31 +1,39 @@
-name: Deploy website to GitHub Pages
-
+name: Deploy DDN website
 on:
-  push:
+  workflow_run:
+    workflows: [DDN qualification]
+    types: [completed]
     branches: [main]
-    paths:
-      - 'website/**'
-      - '.github/workflows/pages.yml'
   workflow_dispatch:
-
 permissions:
+  contents: read
   pages: write
   id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: true
-
 jobs:
+  qualify:
+    if: github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/ci.yml
   deploy:
+    if: >-
+      always() &&
+      ((github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push') ||
+       (github.event_name == 'workflow_dispatch' && needs.qualify.result == 'success'))
+    needs: qualify
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify site freshness
-        run: node website/build-site.mjs && git diff --exit-code -- website
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Require the qualified commit to remain current main
+        run: |
+          CURRENT_MAIN="$(git ls-remote origin refs/heads/main | cut -f1)"
+          test "$(git rev-parse HEAD)" = "$CURRENT_MAIN"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

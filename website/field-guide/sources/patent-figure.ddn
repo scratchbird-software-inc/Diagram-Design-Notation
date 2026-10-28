@@ -1,0 +1,429 @@
+version ddn-next-1
+
+publication "publication:fig1"
+    with
+        id "publication:fig1"
+        title "FIG. 1 — shutoff control method"
+        targets
+            item
+                target
+                    id "fig1"
+                kind "view"
+        format "svg"
+        page
+            size "a4"
+            margin
+                top 37.795275590551185
+                right 37.795275590551185
+                bottom 37.795275590551185
+                left 37.795275590551185
+            minimum_text 9.333333333333332
+        header
+            runs
+                right
+                    text "$date"
+                    align "right"
+                    size 10.666666666666666
+                    lines 1
+            visible true
+        footer
+            runs
+                center
+                    text "FIG. $figure"
+                    align "center"
+                    font "serif"
+                    size 13.333333333333332
+                    lines 1
+                right
+                    text "Page $page"
+                    align "right"
+                    size 10.666666666666666
+                    lines 1
+            visible true
+        border
+            width 1
+            style "solid"
+            color "#475569"
+
+
+publication "publication:fig2"
+    with
+        id "publication:fig2"
+        title "FIG. 2 — same method with narration note, content-sized"
+        targets
+            item
+                target
+                    id "fig2"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+        header
+            runs
+                left
+                    text "$title"
+                    align "left"
+                    size 9
+                    lines 1
+                right
+                    text "$date"
+                    align "right"
+                    size 9
+                    lines 1
+            visible true
+        footer
+            runs
+                center
+                    text "FIG. $figure"
+                    align "center"
+                    font "serif"
+                    size 10
+                    lines 1
+                right
+                    text "Page $page"
+                    align "right"
+                    size 8
+                    lines 1
+            visible true
+        border
+            width 1
+            style "solid"
+            color "#475569"
+
+
+element "ddn.fieldguide.patent::method.begin" as "flow.start"
+    with
+        id "ddn.fieldguide.patent::method.begin"
+        title "Start"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 100
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.patent::method.receive" as "flow.process"
+    with
+        id "ddn.fieldguide.patent::method.receive"
+        title "Receive reading"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 102
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.patent::method.compare" as "flow.decision"
+    with
+        id "ddn.fieldguide.patent::method.compare"
+        title "Above threshold?"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 104
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.patent::method.actuate" as "flow.process"
+    with
+        id "ddn.fieldguide.patent::method.actuate"
+        title "Actuate valve"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 106
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.patent::method.end" as "flow.end"
+    with
+        id "ddn.fieldguide.patent::method.end"
+        title "End"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 110
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.patent::method.ops" as "note"
+    with
+        id "ddn.fieldguide.patent::method.ops"
+        title "106 latches until 102 reports two normal readings."
+
+
+relation "ddn.fieldguide.patent::method.f1" as "flow.next"
+    with
+        id "ddn.fieldguide.patent::method.f1"
+        title "tick"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.patent::method.begin"
+            item
+                definition
+                    id "ddn.fieldguide.patent::method.receive"
+
+
+relation "ddn.fieldguide.patent::method.f2" as "flow.next"
+    with
+        id "ddn.fieldguide.patent::method.f2"
+        title "read"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.patent::method.receive"
+            item
+                definition
+                    id "ddn.fieldguide.patent::method.compare"
+
+
+relation "ddn.fieldguide.patent::method.f3" as "flow.next"
+    with
+        id "ddn.fieldguide.patent::method.f3"
+        title "yes"
+        metadata
+            x_diagram
+                branch "above"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.patent::method.compare"
+            item
+                definition
+                    id "ddn.fieldguide.patent::method.actuate"
+
+
+relation "ddn.fieldguide.patent::method.f4" as "flow.next"
+    with
+        id "ddn.fieldguide.patent::method.f4"
+        title "no"
+        metadata
+            x_diagram
+                branch "below"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.patent::method.compare"
+            item
+                definition
+                    id "ddn.fieldguide.patent::method.end"
+
+
+relation "ddn.fieldguide.patent::method.f5" as "flow.next"
+    with
+        id "ddn.fieldguide.patent::method.f5"
+        title "close"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.patent::method.actuate"
+            item
+                definition
+                    id "ddn.fieldguide.patent::method.end"
+
+
+view "fig1" as "ddn@1"
+    with
+        id "fig1"
+        title "FIG. 1 — shutoff control method"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.patent::method.begin"
+                item
+                    id "ddn.fieldguide.patent::method.receive"
+                item
+                    id "ddn.fieldguide.patent::method.compare"
+                item
+                    id "ddn.fieldguide.patent::method.actuate"
+                item
+                    id "ddn.fieldguide.patent::method.end"
+                item
+                    id "ddn.fieldguide.patent::method.ops"
+                item
+                    id "ddn.fieldguide.patent::method.f1"
+                item
+                    id "ddn.fieldguide.patent::method.f2"
+                item
+                    id "ddn.fieldguide.patent::method.f3"
+                item
+                    id "ddn.fieldguide.patent::method.f4"
+                item
+                    id "ddn.fieldguide.patent::method.f5"
+        layout
+            center "pins"
+            direction "down"
+            algorithm "auto"
+        background
+            color "#ffffff"
+        style
+            theme "neutral"
+        publication
+            id "publication:fig1"
+
+    use "ddn.fieldguide.patent::method.begin" named "appearance:fig1:ddn.fieldguide.patent::method.begin"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.begin"
+            marks
+                item "100"
+
+    use "ddn.fieldguide.patent::method.receive" named "appearance:fig1:ddn.fieldguide.patent::method.receive"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.receive"
+            marks
+                item "102"
+
+    use "ddn.fieldguide.patent::method.compare" named "appearance:fig1:ddn.fieldguide.patent::method.compare"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.compare"
+            marks
+                item "104"
+
+    use "ddn.fieldguide.patent::method.actuate" named "appearance:fig1:ddn.fieldguide.patent::method.actuate"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.actuate"
+            marks
+                item "106"
+
+    use "ddn.fieldguide.patent::method.end" named "appearance:fig1:ddn.fieldguide.patent::method.end"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.end"
+            marks
+                item "110"
+
+    use "ddn.fieldguide.patent::method.ops" named "appearance:fig1:ddn.fieldguide.patent::method.ops"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.ops"
+            body "draft"
+
+    use "ddn.fieldguide.patent::method.f1" named "appearance:fig1:ddn.fieldguide.patent::method.f1"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.f1"
+
+    use "ddn.fieldguide.patent::method.f2" named "appearance:fig1:ddn.fieldguide.patent::method.f2"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.f2"
+
+    use "ddn.fieldguide.patent::method.f3" named "appearance:fig1:ddn.fieldguide.patent::method.f3"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.f3"
+
+    use "ddn.fieldguide.patent::method.f4" named "appearance:fig1:ddn.fieldguide.patent::method.f4"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.f4"
+
+    use "ddn.fieldguide.patent::method.f5" named "appearance:fig1:ddn.fieldguide.patent::method.f5"
+        with
+            id "appearance:fig1:ddn.fieldguide.patent::method.f5"
+
+
+view "fig2" as "ddn@1"
+    with
+        id "fig2"
+        title "FIG. 2 — same method with narration note, content-sized"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.patent::method.begin"
+                item
+                    id "ddn.fieldguide.patent::method.receive"
+                item
+                    id "ddn.fieldguide.patent::method.compare"
+                item
+                    id "ddn.fieldguide.patent::method.actuate"
+                item
+                    id "ddn.fieldguide.patent::method.end"
+                item
+                    id "ddn.fieldguide.patent::method.ops"
+                item
+                    id "ddn.fieldguide.patent::method.f1"
+                item
+                    id "ddn.fieldguide.patent::method.f2"
+                item
+                    id "ddn.fieldguide.patent::method.f3"
+                item
+                    id "ddn.fieldguide.patent::method.f4"
+                item
+                    id "ddn.fieldguide.patent::method.f5"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#ffffff"
+        style
+            theme "neutral"
+        publication
+            id "publication:fig2"
+
+    use "ddn.fieldguide.patent::method.begin" named "appearance:fig2:ddn.fieldguide.patent::method.begin"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.begin"
+            marks
+                item "100"
+
+    use "ddn.fieldguide.patent::method.receive" named "appearance:fig2:ddn.fieldguide.patent::method.receive"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.receive"
+            marks
+                item "102"
+
+    use "ddn.fieldguide.patent::method.compare" named "appearance:fig2:ddn.fieldguide.patent::method.compare"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.compare"
+            marks
+                item "104"
+
+    use "ddn.fieldguide.patent::method.actuate" named "appearance:fig2:ddn.fieldguide.patent::method.actuate"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.actuate"
+            marks
+                item "106"
+
+    use "ddn.fieldguide.patent::method.end" named "appearance:fig2:ddn.fieldguide.patent::method.end"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.end"
+            marks
+                item "110"
+
+    use "ddn.fieldguide.patent::method.ops" named "appearance:fig2:ddn.fieldguide.patent::method.ops"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.ops"
+            body "draft"
+
+    use "ddn.fieldguide.patent::method.f1" named "appearance:fig2:ddn.fieldguide.patent::method.f1"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.f1"
+
+    use "ddn.fieldguide.patent::method.f2" named "appearance:fig2:ddn.fieldguide.patent::method.f2"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.f2"
+
+    use "ddn.fieldguide.patent::method.f3" named "appearance:fig2:ddn.fieldguide.patent::method.f3"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.f3"
+
+    use "ddn.fieldguide.patent::method.f4" named "appearance:fig2:ddn.fieldguide.patent::method.f4"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.f4"
+
+    use "ddn.fieldguide.patent::method.f5" named "appearance:fig2:ddn.fieldguide.patent::method.f5"
+        with
+            id "appearance:fig2:ddn.fieldguide.patent::method.f5"

@@ -1,33 +1,480 @@
-ddn "0.5";
-module "ddn.examples.process";
-import "shared.ddn" as shared;
-data model {
- message request "Stock-transfer command" {fields {command_id;source_id;target_id;}}
- message result "Transfer decision" {fields {command_id;state;}}
- pipeline transfer "Transfer boundary" {  ports {input {direction: in;payload: @request;} output {direction: out;payload: @result;}}
-  x_boundary: {ports:[@transfer.input,@transfer.output],bindings:[{external:@transfer.input,internal:@validate.input},{external:@transfer.output,internal:@validate.output}]};
- }
- activity validate "Validate and reserve" {  ports {input {direction: in;payload: @request;} output {direction: out;payload: @result;}}
-  x_workflow: {
-   states:[pending,accepted,rejected,compensated],initial:pending,terminal:[rejected,compensated],
-   transitions:[
-    {id:approve,from:pending,to:accepted,event:decide,guard:{field:"approved",op:eq,value:true}},
-    {id:deny,from:pending,to:rejected,event:decide,guard:{field:"approved",op:eq,value:false}},
-    {id:cancel,from:accepted,to:compensated,event:cancel,guard:true}
-   ]
-  };
-  x_reconciliation: {owner:"Inventory command service",idempotency_key:"command_id",states:[pending,accepted,rejected,compensated],timeout:"PT5M",compensation:"release allocation once",evidence:"durable decision and recovery checkpoint"};
- }
- rule deployment_gate "Operational verification pending" {  x_requirement: {id:"R-OPS",owner:"SRE reviewer",acceptance:"Run outage, duplicate delivery and replay tests against real infrastructure",state:required};
- }
- relation input @request -> @transfer.input {kind: flow;}
- depends internal @transfer -> @validate;
- relation output @transfer.output -> @result {kind: flow;}
- depends gate @validate -> @deployment_gate;
-}
-view balanced "Balanced interfaces / declared state and verification" {
- data: [@model];format:@shared.styles.technical;
- layout {algorithm: layered;}
- legend {mode:numbers;keys:{input:1,internal:2,output:3,gate:4};}
- publication {size:content;fit:none;overflow:error;}
-}
+version ddn-next-1
+
+publication "publication:balanced"
+    with
+        id "publication:balanced"
+        title "Balanced interfaces / declared state and verification"
+        targets
+            item
+                target
+                    id "balanced"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.process::model.request.command_id" as "field"
+    with
+        id "ddn.examples.process::model.request.command_id"
+        title "command_id"
+        content
+            parent
+                id "ddn.examples.process::model.request"
+            ordinal 0
+
+
+element "ddn.examples.process::model.request.source_id" as "field"
+    with
+        id "ddn.examples.process::model.request.source_id"
+        title "source_id"
+        content
+            parent
+                id "ddn.examples.process::model.request"
+            ordinal 1
+
+
+element "ddn.examples.process::model.request.target_id" as "field"
+    with
+        id "ddn.examples.process::model.request.target_id"
+        title "target_id"
+        content
+            parent
+                id "ddn.examples.process::model.request"
+            ordinal 2
+
+
+element "ddn.examples.process::model.request" as "message"
+    with
+        id "ddn.examples.process::model.request"
+        title "Stock-transfer command"
+        members
+            item
+                id "ddn.examples.process::model.request.command_id"
+            item
+                id "ddn.examples.process::model.request.source_id"
+            item
+                id "ddn.examples.process::model.request.target_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "command_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "source_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "target_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.process::model.result.command_id" as "field"
+    with
+        id "ddn.examples.process::model.result.command_id"
+        title "command_id"
+        content
+            parent
+                id "ddn.examples.process::model.result"
+            ordinal 0
+
+
+element "ddn.examples.process::model.result.state" as "field"
+    with
+        id "ddn.examples.process::model.result.state"
+        title "state"
+        content
+            parent
+                id "ddn.examples.process::model.result"
+            ordinal 1
+
+
+element "ddn.examples.process::model.result" as "message"
+    with
+        id "ddn.examples.process::model.result"
+        title "Transfer decision"
+        members
+            item
+                id "ddn.examples.process::model.result.command_id"
+            item
+                id "ddn.examples.process::model.result.state"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "command_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "state"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.process::model.transfer.input" as "core::Port"
+    with
+        id "ddn.examples.process::model.transfer.input"
+        title "input"
+        content
+            owner
+                id "ddn.examples.process::model.transfer"
+            direction "input"
+            schema
+                id "ddn.examples.process::model.request"
+
+
+element "ddn.examples.process::model.transfer.output" as "core::Port"
+    with
+        id "ddn.examples.process::model.transfer.output"
+        title "output"
+        content
+            owner
+                id "ddn.examples.process::model.transfer"
+            direction "output"
+            schema
+                id "ddn.examples.process::model.result"
+
+
+element "ddn.examples.process::model.transfer" as "pipeline"
+    with
+        id "ddn.examples.process::model.transfer"
+        title "Transfer boundary"
+        metadata
+            x_boundary
+                ports
+                    item
+                        id "ddn.examples.process::model.transfer.input"
+                    item
+                        id "ddn.examples.process::model.transfer.output"
+                bindings
+                    item
+                        external
+                            id "ddn.examples.process::model.transfer.input"
+                        internal
+                            id "ddn.examples.process::model.validate.input"
+                    item
+                        external
+                            id "ddn.examples.process::model.transfer.output"
+                        internal
+                            id "ddn.examples.process::model.validate.output"
+        members
+            item
+                id "ddn.examples.process::model.transfer.input"
+            item
+                id "ddn.examples.process::model.transfer.output"
+
+
+element "ddn.examples.process::model.validate.input" as "core::Port"
+    with
+        id "ddn.examples.process::model.validate.input"
+        title "input"
+        content
+            owner
+                id "ddn.examples.process::model.validate"
+            direction "input"
+            schema
+                id "ddn.examples.process::model.request"
+
+
+element "ddn.examples.process::model.validate.output" as "core::Port"
+    with
+        id "ddn.examples.process::model.validate.output"
+        title "output"
+        content
+            owner
+                id "ddn.examples.process::model.validate"
+            direction "output"
+            schema
+                id "ddn.examples.process::model.result"
+
+
+element "ddn.examples.process::model.validate" as "activity"
+    with
+        id "ddn.examples.process::model.validate"
+        title "Validate and reserve"
+        metadata
+            x_workflow
+                states
+                    item "pending"
+                    item "accepted"
+                    item "rejected"
+                    item "compensated"
+                initial "pending"
+                terminal
+                    item "rejected"
+                    item "compensated"
+                transitions
+                    item
+                        id "approve"
+                        from "pending"
+                        to "accepted"
+                        event "decide"
+                        guard
+                            field "approved"
+                            op "eq"
+                            value true
+                    item
+                        id "deny"
+                        from "pending"
+                        to "rejected"
+                        event "decide"
+                        guard
+                            field "approved"
+                            op "eq"
+                            value false
+                    item
+                        id "cancel"
+                        from "accepted"
+                        to "compensated"
+                        event "cancel"
+                        guard true
+            x_reconciliation
+                owner "Inventory command service"
+                idempotency_key "command_id"
+                states
+                    item "pending"
+                    item "accepted"
+                    item "rejected"
+                    item "compensated"
+                timeout
+                    value 5
+                    unit "min"
+                compensation "release allocation once"
+                evidence "durable decision and recovery checkpoint"
+        members
+            item
+                id "ddn.examples.process::model.validate.input"
+            item
+                id "ddn.examples.process::model.validate.output"
+
+
+element "ddn.examples.process::model.deployment_gate" as "rule"
+    with
+        id "ddn.examples.process::model.deployment_gate"
+        title "Operational verification pending"
+        metadata
+            x_requirement
+                id "R-OPS"
+                owner "SRE reviewer"
+                acceptance "Run outage, duplicate delivery and replay tests against real infrastructure"
+                state "required"
+
+
+relation "ddn.examples.process::model.input" as "flow"
+    with
+        id "ddn.examples.process::model.input"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.process::model.request"
+            item
+                definition
+                    id "ddn.examples.process::model.transfer"
+                member
+                    id "ddn.examples.process::model.transfer.input"
+
+
+relation "ddn.examples.process::model.internal" as "depends"
+    with
+        id "ddn.examples.process::model.internal"
+        title "depends on"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.process::model.transfer"
+            item
+                definition
+                    id "ddn.examples.process::model.validate"
+
+
+relation "ddn.examples.process::model.output" as "flow"
+    with
+        id "ddn.examples.process::model.output"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.process::model.transfer"
+                member
+                    id "ddn.examples.process::model.transfer.output"
+            item
+                definition
+                    id "ddn.examples.process::model.result"
+
+
+relation "ddn.examples.process::model.gate" as "depends"
+    with
+        id "ddn.examples.process::model.gate"
+        title "depends on"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.process::model.validate"
+            item
+                definition
+                    id "ddn.examples.process::model.deployment_gate"
+
+
+view "balanced" as "ddn@1"
+    with
+        id "balanced"
+        title "Balanced interfaces / declared state and verification"
+        selection
+            include
+                item
+                    id "ddn.examples.process::model.request"
+                item
+                    id "ddn.examples.process::model.result"
+                item
+                    id "ddn.examples.process::model.transfer"
+                item
+                    id "ddn.examples.process::model.validate"
+                item
+                    id "ddn.examples.process::model.deployment_gate"
+                item
+                    id "ddn.examples.process::model.input"
+                item
+                    id "ddn.examples.process::model.internal"
+                item
+                    id "ddn.examples.process::model.output"
+                item
+                    id "ddn.examples.process::model.gate"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            mode "numbers"
+            width 280
+            keys
+                input "1"
+                internal "2"
+                output "3"
+                gate "4"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:balanced"
+
+    use "ddn.examples.process::model.request" named "appearance:balanced:ddn.examples.process::model.request"
+        with
+            id "appearance:balanced:ddn.examples.process::model.request"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.process::model.result" named "appearance:balanced:ddn.examples.process::model.result"
+        with
+            id "appearance:balanced:ddn.examples.process::model.result"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.process::model.transfer" named "appearance:balanced:ddn.examples.process::model.transfer"
+        with
+            id "appearance:balanced:ddn.examples.process::model.transfer"
+
+    use "ddn.examples.process::model.validate" named "appearance:balanced:ddn.examples.process::model.validate"
+        with
+            id "appearance:balanced:ddn.examples.process::model.validate"
+
+    use "ddn.examples.process::model.deployment_gate" named "appearance:balanced:ddn.examples.process::model.deployment_gate"
+        with
+            id "appearance:balanced:ddn.examples.process::model.deployment_gate"
+
+    use "ddn.examples.process::model.input" named "appearance:balanced:ddn.examples.process::model.input"
+        with
+            id "appearance:balanced:ddn.examples.process::model.input"
+
+    use "ddn.examples.process::model.internal" named "appearance:balanced:ddn.examples.process::model.internal"
+        with
+            id "appearance:balanced:ddn.examples.process::model.internal"
+
+    use "ddn.examples.process::model.output" named "appearance:balanced:ddn.examples.process::model.output"
+        with
+            id "appearance:balanced:ddn.examples.process::model.output"
+
+    use "ddn.examples.process::model.gate" named "appearance:balanced:ddn.examples.process::model.gate"
+        with
+            id "appearance:balanced:ddn.examples.process::model.gate"

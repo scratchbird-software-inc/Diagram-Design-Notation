@@ -1,0 +1,118 @@
+version ddn-next-1
+
+publication "publication:main"
+    with
+        id "publication:main"
+        title "Order service — print target"
+        targets
+            item
+                target
+                    id "main"
+                kind "view"
+        format "svg"
+        page
+            size "a4"
+            orientation "landscape"
+            margin
+                top 37.795275590551185
+                right 37.795275590551185
+                bottom 37.795275590551185
+                left 37.795275590551185
+            minimum_text 9.333333333333332
+        footer
+            runs
+                center
+                    text "Figure $figure — $title"
+                    align "center"
+                    size 10.666666666666666
+                    lines 1
+            visible true
+
+
+element "ddn.fieldguide.clitools::model.api" as "service"
+    with
+        id "ddn.fieldguide.clitools::model.api"
+        title "Order API"
+
+
+element "ddn.fieldguide.clitools::model.store" as "database"
+    with
+        id "ddn.fieldguide.clitools::model.store"
+        title "Order store"
+
+
+element "ddn.fieldguide.clitools::model.events" as "queue"
+    with
+        id "ddn.fieldguide.clitools::model.events"
+        title "Order events"
+
+
+relation "ddn.fieldguide.clitools::model.persist" as "flow"
+    with
+        id "ddn.fieldguide.clitools::model.persist"
+        title "persists"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.clitools::model.api"
+            item
+                definition
+                    id "ddn.fieldguide.clitools::model.store"
+
+
+relation "ddn.fieldguide.clitools::model.publish" as "flow"
+    with
+        id "ddn.fieldguide.clitools::model.publish"
+        title "publishes"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.clitools::model.api"
+            item
+                definition
+                    id "ddn.fieldguide.clitools::model.events"
+
+
+view "main" as "ddn@1"
+    with
+        id "main"
+        title "Order service — print target"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.clitools::model.api"
+                item
+                    id "ddn.fieldguide.clitools::model.store"
+                item
+                    id "ddn.fieldguide.clitools::model.events"
+                item
+                    id "ddn.fieldguide.clitools::model.persist"
+                item
+                    id "ddn.fieldguide.clitools::model.publish"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:main"
+
+    use "ddn.fieldguide.clitools::model.api" named "appearance:main:ddn.fieldguide.clitools::model.api"
+        with
+            id "appearance:main:ddn.fieldguide.clitools::model.api"
+
+    use "ddn.fieldguide.clitools::model.store" named "appearance:main:ddn.fieldguide.clitools::model.store"
+        with
+            id "appearance:main:ddn.fieldguide.clitools::model.store"
+
+    use "ddn.fieldguide.clitools::model.events" named "appearance:main:ddn.fieldguide.clitools::model.events"
+        with
+            id "appearance:main:ddn.fieldguide.clitools::model.events"
+
+    use "ddn.fieldguide.clitools::model.persist" named "appearance:main:ddn.fieldguide.clitools::model.persist"
+        with
+            id "appearance:main:ddn.fieldguide.clitools::model.persist"
+
+    use "ddn.fieldguide.clitools::model.publish" named "appearance:main:ddn.fieldguide.clitools::model.publish"
+        with
+            id "appearance:main:ddn.fieldguide.clitools::model.publish"

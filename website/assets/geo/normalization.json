@@ -1,0 +1,17 @@
+{
+  "originalSha256": "bd7c4e466c12f8d9e514b3f58daf10de49196665c746088d829e8c796621fa52",
+  "removedZeroAreaPolygonMembers": [
+    {
+      "feature": "840",
+      "polygon": 3,
+      "coordinates": 3
+    },
+    {
+      "feature": "408",
+      "polygon": 0,
+      "coordinates": 1
+    }
+  ],
+  "featuresPreserved": 177,
+  "reason": "Two degenerate polygon members have fewer than four ring coordinates; valid rings and every feature are preserved."
+}

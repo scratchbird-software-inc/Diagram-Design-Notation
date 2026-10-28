@@ -1,0 +1,32 @@
+{
+  "sources": [
+    {
+      "name": "Feed",
+      "mode": "host",
+      "channel": "customer-fields"
+    }
+  ],
+  "data": [
+    {
+      "name": "Fields",
+      "source": {
+        "name": "Feed"
+      },
+      "persist": "snapshot",
+      "snapshot": {
+        "columns": [
+          {
+            "id": "field"
+          }
+        ],
+        "rows": [
+          [
+            "Key"
+          ]
+        ],
+        "revision": "r1",
+        "captured_at": "2026-10-23T12:00:00Z"
+      }
+    }
+  ]
+}

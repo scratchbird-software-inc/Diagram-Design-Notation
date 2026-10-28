@@ -1,31 +1,330 @@
-ddn "0.5";
-module "ddn.examples.orm";
+version ddn-next-1
 
-// B1-080: a small ORM 2 fact model — entity types (solid ellipses), a value
-// type (dashed ellipse) with a value constraint, a fact type drawn as a
-// role-box predicate row (mandatory dot, uniqueness bar), a subset arc, an
-// exclusion arc, objectification and derivation text. All data is synthetic.
-data m {
-    object cust "Customer" { kind: "orm.entitytype"; }
-    object name "Name" { kind: "orm.valuetype"; x_values: { values: [ "short", "full" ]; }; }
-    object has "has / is of" { kind: "orm.facttype";
-        fields {
-            who { x_role: { mandatory: true }; }
-            what { x_role: { uniqueness: true }; }
-        }
-        x_derive: { text: "from CRM extract" };
-    }
-    object vip "VIP customer" { kind: "orm.entitytype"; }
-    object viporder "places priority order" { kind: "orm.facttype";
-        fields { v; o; }
-        x_objectified: { name: "PriorityOrder" };
-    }
-    relation p1 "" @has.who -> @cust { kind: "orm.plays"; }
-    relation p2 "" @has.what -> @name { kind: "orm.plays"; }
-    relation s1 "" @vip -> @cust { kind: "orm.subset"; }
-    relation x1 "" @viporder -> @has { kind: "orm.exclusion"; }
-}
-view model "Customer fact model": [@m] as "orm.basic@1" {
-    layout { gap: 112px; row_gap: 112px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:model"
+    with
+        id "publication:model"
+        title "Customer fact model"
+        targets
+            item
+                target
+                    id "model"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.orm::m.cust" as "orm.entitytype"
+    with
+        id "ddn.examples.orm::m.cust"
+        title "Customer"
+
+
+element "ddn.examples.orm::m.name" as "orm.valuetype"
+    with
+        id "ddn.examples.orm::m.name"
+        title "Name"
+        metadata
+            x_values
+                values
+                    item "short"
+                    item "full"
+
+
+element "ddn.examples.orm::m.has.who" as "field"
+    with
+        id "ddn.examples.orm::m.has.who"
+        title "who"
+        metadata
+            x_role
+                mandatory true
+        content
+            parent
+                id "ddn.examples.orm::m.has"
+            ordinal 0
+
+
+element "ddn.examples.orm::m.has.what" as "field"
+    with
+        id "ddn.examples.orm::m.has.what"
+        title "what"
+        metadata
+            x_role
+                uniqueness true
+        content
+            parent
+                id "ddn.examples.orm::m.has"
+            ordinal 1
+
+
+element "ddn.examples.orm::m.has" as "orm.facttype"
+    with
+        id "ddn.examples.orm::m.has"
+        title "has / is of"
+        metadata
+            x_derive
+                text "from CRM extract"
+        members
+            item
+                id "ddn.examples.orm::m.has.who"
+            item
+                id "ddn.examples.orm::m.has.what"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "who"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "what"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.orm::m.vip" as "orm.entitytype"
+    with
+        id "ddn.examples.orm::m.vip"
+        title "VIP customer"
+
+
+element "ddn.examples.orm::m.viporder.v" as "field"
+    with
+        id "ddn.examples.orm::m.viporder.v"
+        title "v"
+        content
+            parent
+                id "ddn.examples.orm::m.viporder"
+            ordinal 0
+
+
+element "ddn.examples.orm::m.viporder.o" as "field"
+    with
+        id "ddn.examples.orm::m.viporder.o"
+        title "o"
+        content
+            parent
+                id "ddn.examples.orm::m.viporder"
+            ordinal 1
+
+
+element "ddn.examples.orm::m.viporder" as "orm.facttype"
+    with
+        id "ddn.examples.orm::m.viporder"
+        title "places priority order"
+        metadata
+            x_objectified
+                name "PriorityOrder"
+        members
+            item
+                id "ddn.examples.orm::m.viporder.v"
+            item
+                id "ddn.examples.orm::m.viporder.o"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "v"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "o"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.orm::m.p1" as "orm.plays"
+    with
+        id "ddn.examples.orm::m.p1"
+        title "Plays"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.orm::m.has"
+                member
+                    id "ddn.examples.orm::m.has.who"
+            item
+                definition
+                    id "ddn.examples.orm::m.cust"
+
+
+relation "ddn.examples.orm::m.p2" as "orm.plays"
+    with
+        id "ddn.examples.orm::m.p2"
+        title "Plays"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.orm::m.has"
+                member
+                    id "ddn.examples.orm::m.has.what"
+            item
+                definition
+                    id "ddn.examples.orm::m.name"
+
+
+relation "ddn.examples.orm::m.s1" as "orm.subset"
+    with
+        id "ddn.examples.orm::m.s1"
+        title "«subset»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.orm::m.vip"
+            item
+                definition
+                    id "ddn.examples.orm::m.cust"
+
+
+relation "ddn.examples.orm::m.x1" as "orm.exclusion"
+    with
+        id "ddn.examples.orm::m.x1"
+        title "«exclusion»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.orm::m.viporder"
+            item
+                definition
+                    id "ddn.examples.orm::m.has"
+
+
+view "model" as "orm.basic@1"
+    with
+        id "model"
+        title "Customer fact model"
+        selection
+            include
+                item
+                    id "ddn.examples.orm::m.cust"
+                item
+                    id "ddn.examples.orm::m.name"
+                item
+                    id "ddn.examples.orm::m.has"
+                item
+                    id "ddn.examples.orm::m.vip"
+                item
+                    id "ddn.examples.orm::m.viporder"
+                item
+                    id "ddn.examples.orm::m.p1"
+                item
+                    id "ddn.examples.orm::m.p2"
+                item
+                    id "ddn.examples.orm::m.s1"
+                item
+                    id "ddn.examples.orm::m.x1"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:model"
+
+    use "ddn.examples.orm::m.cust" named "appearance:model:ddn.examples.orm::m.cust"
+        with
+            id "appearance:model:ddn.examples.orm::m.cust"
+
+    use "ddn.examples.orm::m.name" named "appearance:model:ddn.examples.orm::m.name"
+        with
+            id "appearance:model:ddn.examples.orm::m.name"
+
+    use "ddn.examples.orm::m.has" named "appearance:model:ddn.examples.orm::m.has"
+        with
+            id "appearance:model:ddn.examples.orm::m.has"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.orm::m.vip" named "appearance:model:ddn.examples.orm::m.vip"
+        with
+            id "appearance:model:ddn.examples.orm::m.vip"
+
+    use "ddn.examples.orm::m.viporder" named "appearance:model:ddn.examples.orm::m.viporder"
+        with
+            id "appearance:model:ddn.examples.orm::m.viporder"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.orm::m.p1" named "appearance:model:ddn.examples.orm::m.p1"
+        with
+            id "appearance:model:ddn.examples.orm::m.p1"
+
+    use "ddn.examples.orm::m.p2" named "appearance:model:ddn.examples.orm::m.p2"
+        with
+            id "appearance:model:ddn.examples.orm::m.p2"
+
+    use "ddn.examples.orm::m.s1" named "appearance:model:ddn.examples.orm::m.s1"
+        with
+            id "appearance:model:ddn.examples.orm::m.s1"
+
+    use "ddn.examples.orm::m.x1" named "appearance:model:ddn.examples.orm::m.x1"
+        with
+            id "appearance:model:ddn.examples.orm::m.x1"

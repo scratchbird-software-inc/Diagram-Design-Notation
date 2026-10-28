@@ -1,59 +1,463 @@
-ddn "0.5";
-module "ddn.examples.c4-views";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:context"
+    with
+        id "publication:context"
+        title "Synthetic shop / C4 context"
+        targets
+            item
+                target
+                    id "context"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic online-shop workspace for the C4-style profiles. All data is synthetic.
-data shop {
-    object customer "Customer" { kind: "c4.person"; }
-    object site "Online shop" { kind: "c4.system"; }
-    object mailer "Notification service" { kind: "c4.system"; }
-    object web "Web application" { kind: "c4.container"; }
-    object db "Orders database" { kind: "c4.store"; }
-    object events "Order events" { kind: "c4.queue"; }
-    object checkout "Checkout component" { kind: "c4.component"; }
-    object cart "Cart component" { kind: "c4.component"; }
-    relation browses "Browses and buys" @customer -> @site { kind: "c4.rel"; }
-    relation notifies "Sends notifications" @site -> @mailer { kind: "c4.rel"; }
-    relation visits @customer -> @web { kind: "c4.rel"; }
-    relation orders "Reads/writes orders" @web -> @db { kind: "c4.rel"; }
-    relation publishes "Publishes order events" @web -> @events { kind: "c4.rel"; }
-    relation persists @checkout -> @db { kind: "c4.rel"; }
-    relation uses "Uses" @cart -> @checkout { kind: "c4.rel"; }
-}
 
-format options {
-    layout c4ctx { algorithm: layered; }
-    layout c4grid { algorithm: grid; }
-    layout c4layered { algorithm: layered; }
-}
+publication "publication:container"
+    with
+        id "publication:container"
+        title "Synthetic shop / C4 container"
+        targets
+            item
+                target
+                    id "container"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view context "Synthetic shop / C4 context" {
-    data: [@shop]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "c4.context@1"; }
-    select: [@shop.customer, @shop.site, @shop.mailer];
-    display { fields: none; }
-    layout: @options.c4ctx;
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
 
-view container "Synthetic shop / C4 container" {
-    layout { gap: 112px; row_gap: 112px; }
-    data: [@shop]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "c4.container@1"; }
-    select: [@shop.customer, @shop.site, @shop.web, @shop.db, @shop.events];
-    display { fields: none; }
-    layout: @options.c4grid;
-    frame system_boundary { scope: @shop.site; members: [@shop.web, @shop.db, @shop.events]; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+publication "publication:component"
+    with
+        id "publication:component"
+        title "Synthetic shop / C4 component"
+        targets
+            item
+                target
+                    id "component"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view component "Synthetic shop / C4 component" {
-    data: [@shop]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "c4.component@1"; }
-    select: [@shop.customer, @shop.web, @shop.checkout, @shop.cart, @shop.db];
-    display { fields: none; }
-    layout: @options.c4layered;
-    frame container_boundary { scope: @shop.web; members: [@shop.checkout, @shop.cart]; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+
+element "ddn.examples.c4-views::shop.customer" as "c4.person"
+    with
+        id "ddn.examples.c4-views::shop.customer"
+        title "Customer"
+
+
+element "ddn.examples.c4-views::shop.site" as "c4.system"
+    with
+        id "ddn.examples.c4-views::shop.site"
+        title "Online shop"
+
+
+element "ddn.examples.c4-views::shop.mailer" as "c4.system"
+    with
+        id "ddn.examples.c4-views::shop.mailer"
+        title "Notification service"
+
+
+element "ddn.examples.c4-views::shop.web" as "c4.container"
+    with
+        id "ddn.examples.c4-views::shop.web"
+        title "Web application"
+
+
+element "ddn.examples.c4-views::shop.db" as "c4.store"
+    with
+        id "ddn.examples.c4-views::shop.db"
+        title "Orders database"
+
+
+element "ddn.examples.c4-views::shop.events" as "c4.queue"
+    with
+        id "ddn.examples.c4-views::shop.events"
+        title "Order events"
+
+
+element "ddn.examples.c4-views::shop.checkout" as "c4.component"
+    with
+        id "ddn.examples.c4-views::shop.checkout"
+        title "Checkout component"
+
+
+element "ddn.examples.c4-views::shop.cart" as "c4.component"
+    with
+        id "ddn.examples.c4-views::shop.cart"
+        title "Cart component"
+
+
+relation "ddn.examples.c4-views::shop.browses" as "c4.rel"
+    with
+        id "ddn.examples.c4-views::shop.browses"
+        title "Browses and buys"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.customer"
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.site"
+
+
+relation "ddn.examples.c4-views::shop.notifies" as "c4.rel"
+    with
+        id "ddn.examples.c4-views::shop.notifies"
+        title "Sends notifications"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.site"
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.mailer"
+
+
+relation "ddn.examples.c4-views::shop.visits" as "c4.rel"
+    with
+        id "ddn.examples.c4-views::shop.visits"
+        title "Uses / interacts with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.customer"
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.web"
+
+
+relation "ddn.examples.c4-views::shop.orders" as "c4.rel"
+    with
+        id "ddn.examples.c4-views::shop.orders"
+        title "Reads/writes orders"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.web"
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.db"
+
+
+relation "ddn.examples.c4-views::shop.publishes" as "c4.rel"
+    with
+        id "ddn.examples.c4-views::shop.publishes"
+        title "Publishes order events"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.web"
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.events"
+
+
+relation "ddn.examples.c4-views::shop.persists" as "c4.rel"
+    with
+        id "ddn.examples.c4-views::shop.persists"
+        title "Uses / interacts with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.checkout"
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.db"
+
+
+relation "ddn.examples.c4-views::shop.uses" as "c4.rel"
+    with
+        id "ddn.examples.c4-views::shop.uses"
+        title "Uses"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.cart"
+            item
+                definition
+                    id "ddn.examples.c4-views::shop.checkout"
+
+
+view "context" as "c4.context@1"
+    with
+        id "context"
+        title "Synthetic shop / C4 context"
+        selection
+            include
+                item
+                    id "ddn.examples.c4-views::shop.customer"
+                item
+                    id "ddn.examples.c4-views::shop.site"
+                item
+                    id "ddn.examples.c4-views::shop.mailer"
+                item
+                    id "ddn.examples.c4-views::shop.browses"
+                item
+                    id "ddn.examples.c4-views::shop.notifies"
+            exclude
+                item
+                    id "ddn.examples.c4-views::shop.visits"
+                item
+                    id "ddn.examples.c4-views::shop.orders"
+                item
+                    id "ddn.examples.c4-views::shop.publishes"
+                item
+                    id "ddn.examples.c4-views::shop.persists"
+                item
+                    id "ddn.examples.c4-views::shop.uses"
+        layout
+            algorithm "layered"
+        display
+            fields "none"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:context"
+
+    use "ddn.examples.c4-views::shop.customer" named "appearance:context:ddn.examples.c4-views::shop.customer"
+        with
+            id "appearance:context:ddn.examples.c4-views::shop.customer"
+
+    use "ddn.examples.c4-views::shop.site" named "appearance:context:ddn.examples.c4-views::shop.site"
+        with
+            id "appearance:context:ddn.examples.c4-views::shop.site"
+
+    use "ddn.examples.c4-views::shop.mailer" named "appearance:context:ddn.examples.c4-views::shop.mailer"
+        with
+            id "appearance:context:ddn.examples.c4-views::shop.mailer"
+
+    use "ddn.examples.c4-views::shop.browses" named "appearance:context:ddn.examples.c4-views::shop.browses"
+        with
+            id "appearance:context:ddn.examples.c4-views::shop.browses"
+
+    use "ddn.examples.c4-views::shop.notifies" named "appearance:context:ddn.examples.c4-views::shop.notifies"
+        with
+            id "appearance:context:ddn.examples.c4-views::shop.notifies"
+
+
+view "container" as "c4.container@1"
+    with
+        id "container"
+        title "Synthetic shop / C4 container"
+        selection
+            include
+                item
+                    id "ddn.examples.c4-views::shop.customer"
+                item
+                    id "ddn.examples.c4-views::shop.site"
+                item
+                    id "ddn.examples.c4-views::shop.web"
+                item
+                    id "ddn.examples.c4-views::shop.db"
+                item
+                    id "ddn.examples.c4-views::shop.events"
+                item
+                    id "ddn.examples.c4-views::shop.browses"
+                item
+                    id "ddn.examples.c4-views::shop.visits"
+                item
+                    id "ddn.examples.c4-views::shop.orders"
+                item
+                    id "ddn.examples.c4-views::shop.publishes"
+            exclude
+                item
+                    id "ddn.examples.c4-views::shop.notifies"
+                item
+                    id "ddn.examples.c4-views::shop.persists"
+                item
+                    id "ddn.examples.c4-views::shop.uses"
+        layout
+            algorithm "grid"
+            gap 112
+            row_gap 112
+        display
+            fields "none"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.c4-views::container.system_boundary"
+                name "system_boundary"
+                scope
+                    id "ddn.examples.c4-views::shop.site"
+                members
+                    item
+                        id "ddn.examples.c4-views::shop.web"
+                    item
+                        id "ddn.examples.c4-views::shop.db"
+                    item
+                        id "ddn.examples.c4-views::shop.events"
+        publication
+            id "publication:container"
+
+    use "ddn.examples.c4-views::shop.customer" named "appearance:container:ddn.examples.c4-views::shop.customer"
+        with
+            id "appearance:container:ddn.examples.c4-views::shop.customer"
+
+    use "ddn.examples.c4-views::shop.site" named "appearance:container:ddn.examples.c4-views::shop.site"
+        with
+            id "appearance:container:ddn.examples.c4-views::shop.site"
+
+    use "ddn.examples.c4-views::shop.web" named "appearance:container:ddn.examples.c4-views::shop.web"
+        with
+            id "appearance:container:ddn.examples.c4-views::shop.web"
+
+    use "ddn.examples.c4-views::shop.db" named "appearance:container:ddn.examples.c4-views::shop.db"
+        with
+            id "appearance:container:ddn.examples.c4-views::shop.db"
+
+    use "ddn.examples.c4-views::shop.events" named "appearance:container:ddn.examples.c4-views::shop.events"
+        with
+            id "appearance:container:ddn.examples.c4-views::shop.events"
+
+    use "ddn.examples.c4-views::shop.browses" named "appearance:container:ddn.examples.c4-views::shop.browses"
+        with
+            id "appearance:container:ddn.examples.c4-views::shop.browses"
+
+    use "ddn.examples.c4-views::shop.visits" named "appearance:container:ddn.examples.c4-views::shop.visits"
+        with
+            id "appearance:container:ddn.examples.c4-views::shop.visits"
+
+    use "ddn.examples.c4-views::shop.orders" named "appearance:container:ddn.examples.c4-views::shop.orders"
+        with
+            id "appearance:container:ddn.examples.c4-views::shop.orders"
+
+    use "ddn.examples.c4-views::shop.publishes" named "appearance:container:ddn.examples.c4-views::shop.publishes"
+        with
+            id "appearance:container:ddn.examples.c4-views::shop.publishes"
+
+
+view "component" as "c4.component@1"
+    with
+        id "component"
+        title "Synthetic shop / C4 component"
+        selection
+            include
+                item
+                    id "ddn.examples.c4-views::shop.customer"
+                item
+                    id "ddn.examples.c4-views::shop.web"
+                item
+                    id "ddn.examples.c4-views::shop.checkout"
+                item
+                    id "ddn.examples.c4-views::shop.cart"
+                item
+                    id "ddn.examples.c4-views::shop.db"
+                item
+                    id "ddn.examples.c4-views::shop.visits"
+                item
+                    id "ddn.examples.c4-views::shop.orders"
+                item
+                    id "ddn.examples.c4-views::shop.persists"
+                item
+                    id "ddn.examples.c4-views::shop.uses"
+            exclude
+                item
+                    id "ddn.examples.c4-views::shop.browses"
+                item
+                    id "ddn.examples.c4-views::shop.notifies"
+                item
+                    id "ddn.examples.c4-views::shop.publishes"
+        layout
+            algorithm "layered"
+        display
+            fields "none"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.c4-views::component.container_boundary"
+                name "container_boundary"
+                scope
+                    id "ddn.examples.c4-views::shop.web"
+                members
+                    item
+                        id "ddn.examples.c4-views::shop.checkout"
+                    item
+                        id "ddn.examples.c4-views::shop.cart"
+        publication
+            id "publication:component"
+
+    use "ddn.examples.c4-views::shop.customer" named "appearance:component:ddn.examples.c4-views::shop.customer"
+        with
+            id "appearance:component:ddn.examples.c4-views::shop.customer"
+
+    use "ddn.examples.c4-views::shop.web" named "appearance:component:ddn.examples.c4-views::shop.web"
+        with
+            id "appearance:component:ddn.examples.c4-views::shop.web"
+
+    use "ddn.examples.c4-views::shop.checkout" named "appearance:component:ddn.examples.c4-views::shop.checkout"
+        with
+            id "appearance:component:ddn.examples.c4-views::shop.checkout"
+
+    use "ddn.examples.c4-views::shop.cart" named "appearance:component:ddn.examples.c4-views::shop.cart"
+        with
+            id "appearance:component:ddn.examples.c4-views::shop.cart"
+
+    use "ddn.examples.c4-views::shop.db" named "appearance:component:ddn.examples.c4-views::shop.db"
+        with
+            id "appearance:component:ddn.examples.c4-views::shop.db"
+
+    use "ddn.examples.c4-views::shop.visits" named "appearance:component:ddn.examples.c4-views::shop.visits"
+        with
+            id "appearance:component:ddn.examples.c4-views::shop.visits"
+
+    use "ddn.examples.c4-views::shop.orders" named "appearance:component:ddn.examples.c4-views::shop.orders"
+        with
+            id "appearance:component:ddn.examples.c4-views::shop.orders"
+
+    use "ddn.examples.c4-views::shop.persists" named "appearance:component:ddn.examples.c4-views::shop.persists"
+        with
+            id "appearance:component:ddn.examples.c4-views::shop.persists"
+
+    use "ddn.examples.c4-views::shop.uses" named "appearance:component:ddn.examples.c4-views::shop.uses"
+        with
+            id "appearance:component:ddn.examples.c4-views::shop.uses"

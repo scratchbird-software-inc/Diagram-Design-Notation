@@ -1,97 +1,1974 @@
-ddn "0.5";
-module "ddn.gallery.looks";
+version ddn-next-1
 
-// Gallery look/palette sheet. One small order-to-cash graph rendered in every
-// look (classic, handDrawn, neo) crossed with every palette theme
-// (default, neutral, dark, night, forest, base).
-data model {
-    object customer "Customer" { kind: actor; }
-    application storefront "Online storefront";
-    application orders "Order service";
-    table ledger "Sales ledger" {fields { order_id; amount; } }
-    object warehouse "Warehouse dispatch" { kind: process; }
-    assoc places @customer -> @storefront;
-    assoc confirms @storefront -> @orders;
-    assoc posts @orders -> @ledger;
-    assoc ships @orders -> @warehouse;
-}
+publication "publication:classic_default"
+    with
+        id "publication:classic_default"
+        title "Looks / classic × default"
+        targets
+            item
+                target
+                    id "classic_default"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-format gallery {
-    layout flow_right { algorithm: layered; gap: 120px; row_gap: 110px; }
-    display readable { badges: none; maturity: none; }
-    publication screen { size: content; fit: none; }
-    legend key { width: 260px; }
-}
 
-view classic_default "Looks / classic × default" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: classic; theme: default; }
-}
-view classic_neutral "Looks / classic × neutral" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: classic; theme: neutral; }
-}
-view classic_dark "Looks / classic × dark" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: classic; theme: dark; }
-}
-view classic_night "Looks / classic × night" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: classic; theme: night; }
-}
-view classic_forest "Looks / classic × forest" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: classic; theme: forest; }
-}
-view classic_base "Looks / classic × base" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: classic; theme: base; }
-}
-view handdrawn_default "Looks / handDrawn × default" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: handDrawn; theme: default; }
-}
-view handdrawn_neutral "Looks / handDrawn × neutral" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: handDrawn; theme: neutral; }
-}
-view handdrawn_dark "Looks / handDrawn × dark" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: handDrawn; theme: dark; }
-}
-view handdrawn_night "Looks / handDrawn × night" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: handDrawn; theme: night; }
-}
-view handdrawn_forest "Looks / handDrawn × forest" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: handDrawn; theme: forest; }
-}
-view handdrawn_base "Looks / handDrawn × base" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: handDrawn; theme: base; }
-}
-view neo_default "Looks / neo × default" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: neo; theme: default; }
-}
-view neo_neutral "Looks / neo × neutral" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: neo; theme: neutral; }
-}
-view neo_dark "Looks / neo × dark" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: neo; theme: dark; }
-}
-view neo_night "Looks / neo × night" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: neo; theme: night; }
-}
-view neo_forest "Looks / neo × forest" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: neo; theme: forest; }
-}
-view neo_base "Looks / neo × base" {
-    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    style { look: neo; theme: base; }
-}
+publication "publication:classic_neutral"
+    with
+        id "publication:classic_neutral"
+        title "Looks / classic × neutral"
+        targets
+            item
+                target
+                    id "classic_neutral"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:classic_dark"
+    with
+        id "publication:classic_dark"
+        title "Looks / classic × dark"
+        targets
+            item
+                target
+                    id "classic_dark"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:classic_night"
+    with
+        id "publication:classic_night"
+        title "Looks / classic × night"
+        targets
+            item
+                target
+                    id "classic_night"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:classic_forest"
+    with
+        id "publication:classic_forest"
+        title "Looks / classic × forest"
+        targets
+            item
+                target
+                    id "classic_forest"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:classic_base"
+    with
+        id "publication:classic_base"
+        title "Looks / classic × base"
+        targets
+            item
+                target
+                    id "classic_base"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:handdrawn_default"
+    with
+        id "publication:handdrawn_default"
+        title "Looks / handDrawn × default"
+        targets
+            item
+                target
+                    id "handdrawn_default"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:handdrawn_neutral"
+    with
+        id "publication:handdrawn_neutral"
+        title "Looks / handDrawn × neutral"
+        targets
+            item
+                target
+                    id "handdrawn_neutral"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:handdrawn_dark"
+    with
+        id "publication:handdrawn_dark"
+        title "Looks / handDrawn × dark"
+        targets
+            item
+                target
+                    id "handdrawn_dark"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:handdrawn_night"
+    with
+        id "publication:handdrawn_night"
+        title "Looks / handDrawn × night"
+        targets
+            item
+                target
+                    id "handdrawn_night"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:handdrawn_forest"
+    with
+        id "publication:handdrawn_forest"
+        title "Looks / handDrawn × forest"
+        targets
+            item
+                target
+                    id "handdrawn_forest"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:handdrawn_base"
+    with
+        id "publication:handdrawn_base"
+        title "Looks / handDrawn × base"
+        targets
+            item
+                target
+                    id "handdrawn_base"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:neo_default"
+    with
+        id "publication:neo_default"
+        title "Looks / neo × default"
+        targets
+            item
+                target
+                    id "neo_default"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:neo_neutral"
+    with
+        id "publication:neo_neutral"
+        title "Looks / neo × neutral"
+        targets
+            item
+                target
+                    id "neo_neutral"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:neo_dark"
+    with
+        id "publication:neo_dark"
+        title "Looks / neo × dark"
+        targets
+            item
+                target
+                    id "neo_dark"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:neo_night"
+    with
+        id "publication:neo_night"
+        title "Looks / neo × night"
+        targets
+            item
+                target
+                    id "neo_night"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:neo_forest"
+    with
+        id "publication:neo_forest"
+        title "Looks / neo × forest"
+        targets
+            item
+                target
+                    id "neo_forest"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:neo_base"
+    with
+        id "publication:neo_base"
+        title "Looks / neo × base"
+        targets
+            item
+                target
+                    id "neo_base"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.gallery.looks::model.customer" as "uml.actor"
+    with
+        id "ddn.gallery.looks::model.customer"
+        title "Customer"
+
+
+element "ddn.gallery.looks::model.storefront" as "application"
+    with
+        id "ddn.gallery.looks::model.storefront"
+        title "Online storefront"
+
+
+element "ddn.gallery.looks::model.orders" as "application"
+    with
+        id "ddn.gallery.looks::model.orders"
+        title "Order service"
+
+
+element "ddn.gallery.looks::model.ledger.order_id" as "field"
+    with
+        id "ddn.gallery.looks::model.ledger.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.gallery.looks::model.ledger"
+            ordinal 0
+
+
+element "ddn.gallery.looks::model.ledger.amount" as "field"
+    with
+        id "ddn.gallery.looks::model.ledger.amount"
+        title "amount"
+        content
+            parent
+                id "ddn.gallery.looks::model.ledger"
+            ordinal 1
+
+
+element "ddn.gallery.looks::model.ledger" as "table"
+    with
+        id "ddn.gallery.looks::model.ledger"
+        title "Sales ledger"
+        members
+            item
+                id "ddn.gallery.looks::model.ledger.order_id"
+            item
+                id "ddn.gallery.looks::model.ledger.amount"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "amount"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.gallery.looks::model.warehouse" as "flow.process"
+    with
+        id "ddn.gallery.looks::model.warehouse"
+        title "Warehouse dispatch"
+
+
+relation "ddn.gallery.looks::model.places" as "assoc"
+    with
+        id "ddn.gallery.looks::model.places"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.looks::model.customer"
+            item
+                definition
+                    id "ddn.gallery.looks::model.storefront"
+
+
+relation "ddn.gallery.looks::model.confirms" as "assoc"
+    with
+        id "ddn.gallery.looks::model.confirms"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.looks::model.storefront"
+            item
+                definition
+                    id "ddn.gallery.looks::model.orders"
+
+
+relation "ddn.gallery.looks::model.posts" as "assoc"
+    with
+        id "ddn.gallery.looks::model.posts"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.looks::model.orders"
+            item
+                definition
+                    id "ddn.gallery.looks::model.ledger"
+
+
+relation "ddn.gallery.looks::model.ships" as "assoc"
+    with
+        id "ddn.gallery.looks::model.ships"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.looks::model.orders"
+            item
+                definition
+                    id "ddn.gallery.looks::model.warehouse"
+
+
+view "classic_default" as "ddn@1"
+    with
+        id "classic_default"
+        title "Looks / classic × default"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:classic_default"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:classic_default:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:classic_default:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:classic_default:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:classic_default:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:classic_default:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:classic_default:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:classic_default:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:classic_default:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:classic_default:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:classic_default:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:classic_default:ddn.gallery.looks::model.places"
+        with
+            id "appearance:classic_default:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:classic_default:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:classic_default:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:classic_default:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:classic_default:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:classic_default:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:classic_default:ddn.gallery.looks::model.ships"
+
+
+view "classic_neutral" as "ddn@1"
+    with
+        id "classic_neutral"
+        title "Looks / classic × neutral"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            theme "neutral"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:classic_neutral"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:classic_neutral:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:classic_neutral:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:classic_neutral:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:classic_neutral:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:classic_neutral:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:classic_neutral:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:classic_neutral:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:classic_neutral:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:classic_neutral:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:classic_neutral:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:classic_neutral:ddn.gallery.looks::model.places"
+        with
+            id "appearance:classic_neutral:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:classic_neutral:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:classic_neutral:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:classic_neutral:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:classic_neutral:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:classic_neutral:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:classic_neutral:ddn.gallery.looks::model.ships"
+
+
+view "classic_dark" as "ddn@1"
+    with
+        id "classic_dark"
+        title "Looks / classic × dark"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            theme "dark"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:classic_dark"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:classic_dark:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:classic_dark:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:classic_dark:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:classic_dark:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:classic_dark:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:classic_dark:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:classic_dark:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:classic_dark:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:classic_dark:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:classic_dark:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:classic_dark:ddn.gallery.looks::model.places"
+        with
+            id "appearance:classic_dark:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:classic_dark:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:classic_dark:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:classic_dark:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:classic_dark:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:classic_dark:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:classic_dark:ddn.gallery.looks::model.ships"
+
+
+view "classic_night" as "ddn@1"
+    with
+        id "classic_night"
+        title "Looks / classic × night"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            theme "night"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:classic_night"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:classic_night:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:classic_night:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:classic_night:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:classic_night:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:classic_night:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:classic_night:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:classic_night:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:classic_night:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:classic_night:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:classic_night:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:classic_night:ddn.gallery.looks::model.places"
+        with
+            id "appearance:classic_night:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:classic_night:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:classic_night:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:classic_night:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:classic_night:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:classic_night:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:classic_night:ddn.gallery.looks::model.ships"
+
+
+view "classic_forest" as "ddn@1"
+    with
+        id "classic_forest"
+        title "Looks / classic × forest"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            theme "forest"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:classic_forest"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:classic_forest:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:classic_forest:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:classic_forest:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:classic_forest:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:classic_forest:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:classic_forest:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:classic_forest:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:classic_forest:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:classic_forest:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:classic_forest:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:classic_forest:ddn.gallery.looks::model.places"
+        with
+            id "appearance:classic_forest:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:classic_forest:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:classic_forest:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:classic_forest:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:classic_forest:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:classic_forest:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:classic_forest:ddn.gallery.looks::model.ships"
+
+
+view "classic_base" as "ddn@1"
+    with
+        id "classic_base"
+        title "Looks / classic × base"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            theme "base"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:classic_base"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:classic_base:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:classic_base:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:classic_base:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:classic_base:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:classic_base:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:classic_base:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:classic_base:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:classic_base:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:classic_base:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:classic_base:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:classic_base:ddn.gallery.looks::model.places"
+        with
+            id "appearance:classic_base:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:classic_base:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:classic_base:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:classic_base:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:classic_base:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:classic_base:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:classic_base:ddn.gallery.looks::model.ships"
+
+
+view "handdrawn_default" as "ddn@1"
+    with
+        id "handdrawn_default"
+        title "Looks / handDrawn × default"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "handdrawn"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:handdrawn_default"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:handdrawn_default:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:handdrawn_default:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:handdrawn_default:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:handdrawn_default:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:handdrawn_default:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:handdrawn_default:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:handdrawn_default:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:handdrawn_default:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:handdrawn_default:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:handdrawn_default:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:handdrawn_default:ddn.gallery.looks::model.places"
+        with
+            id "appearance:handdrawn_default:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:handdrawn_default:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:handdrawn_default:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:handdrawn_default:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:handdrawn_default:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:handdrawn_default:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:handdrawn_default:ddn.gallery.looks::model.ships"
+
+
+view "handdrawn_neutral" as "ddn@1"
+    with
+        id "handdrawn_neutral"
+        title "Looks / handDrawn × neutral"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "handdrawn"
+            theme "neutral"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:handdrawn_neutral"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:handdrawn_neutral:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:handdrawn_neutral:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:handdrawn_neutral:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:handdrawn_neutral:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:handdrawn_neutral:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:handdrawn_neutral:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:handdrawn_neutral:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:handdrawn_neutral:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:handdrawn_neutral:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:handdrawn_neutral:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:handdrawn_neutral:ddn.gallery.looks::model.places"
+        with
+            id "appearance:handdrawn_neutral:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:handdrawn_neutral:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:handdrawn_neutral:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:handdrawn_neutral:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:handdrawn_neutral:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:handdrawn_neutral:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:handdrawn_neutral:ddn.gallery.looks::model.ships"
+
+
+view "handdrawn_dark" as "ddn@1"
+    with
+        id "handdrawn_dark"
+        title "Looks / handDrawn × dark"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "handdrawn"
+            theme "dark"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:handdrawn_dark"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:handdrawn_dark:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:handdrawn_dark:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:handdrawn_dark:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:handdrawn_dark:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:handdrawn_dark:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:handdrawn_dark:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:handdrawn_dark:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:handdrawn_dark:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:handdrawn_dark:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:handdrawn_dark:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:handdrawn_dark:ddn.gallery.looks::model.places"
+        with
+            id "appearance:handdrawn_dark:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:handdrawn_dark:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:handdrawn_dark:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:handdrawn_dark:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:handdrawn_dark:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:handdrawn_dark:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:handdrawn_dark:ddn.gallery.looks::model.ships"
+
+
+view "handdrawn_night" as "ddn@1"
+    with
+        id "handdrawn_night"
+        title "Looks / handDrawn × night"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "handdrawn"
+            theme "night"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:handdrawn_night"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:handdrawn_night:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:handdrawn_night:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:handdrawn_night:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:handdrawn_night:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:handdrawn_night:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:handdrawn_night:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:handdrawn_night:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:handdrawn_night:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:handdrawn_night:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:handdrawn_night:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:handdrawn_night:ddn.gallery.looks::model.places"
+        with
+            id "appearance:handdrawn_night:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:handdrawn_night:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:handdrawn_night:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:handdrawn_night:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:handdrawn_night:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:handdrawn_night:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:handdrawn_night:ddn.gallery.looks::model.ships"
+
+
+view "handdrawn_forest" as "ddn@1"
+    with
+        id "handdrawn_forest"
+        title "Looks / handDrawn × forest"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "handdrawn"
+            theme "forest"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:handdrawn_forest"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:handdrawn_forest:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:handdrawn_forest:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:handdrawn_forest:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:handdrawn_forest:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:handdrawn_forest:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:handdrawn_forest:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:handdrawn_forest:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:handdrawn_forest:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:handdrawn_forest:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:handdrawn_forest:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:handdrawn_forest:ddn.gallery.looks::model.places"
+        with
+            id "appearance:handdrawn_forest:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:handdrawn_forest:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:handdrawn_forest:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:handdrawn_forest:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:handdrawn_forest:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:handdrawn_forest:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:handdrawn_forest:ddn.gallery.looks::model.ships"
+
+
+view "handdrawn_base" as "ddn@1"
+    with
+        id "handdrawn_base"
+        title "Looks / handDrawn × base"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "handdrawn"
+            theme "base"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:handdrawn_base"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:handdrawn_base:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:handdrawn_base:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:handdrawn_base:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:handdrawn_base:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:handdrawn_base:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:handdrawn_base:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:handdrawn_base:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:handdrawn_base:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:handdrawn_base:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:handdrawn_base:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:handdrawn_base:ddn.gallery.looks::model.places"
+        with
+            id "appearance:handdrawn_base:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:handdrawn_base:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:handdrawn_base:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:handdrawn_base:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:handdrawn_base:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:handdrawn_base:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:handdrawn_base:ddn.gallery.looks::model.ships"
+
+
+view "neo_default" as "ddn@1"
+    with
+        id "neo_default"
+        title "Looks / neo × default"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "neo"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:neo_default"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:neo_default:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:neo_default:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:neo_default:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:neo_default:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:neo_default:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:neo_default:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:neo_default:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:neo_default:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:neo_default:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:neo_default:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:neo_default:ddn.gallery.looks::model.places"
+        with
+            id "appearance:neo_default:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:neo_default:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:neo_default:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:neo_default:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:neo_default:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:neo_default:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:neo_default:ddn.gallery.looks::model.ships"
+
+
+view "neo_neutral" as "ddn@1"
+    with
+        id "neo_neutral"
+        title "Looks / neo × neutral"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "neo"
+            theme "neutral"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:neo_neutral"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:neo_neutral:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:neo_neutral:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:neo_neutral:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:neo_neutral:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:neo_neutral:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:neo_neutral:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:neo_neutral:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:neo_neutral:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:neo_neutral:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:neo_neutral:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:neo_neutral:ddn.gallery.looks::model.places"
+        with
+            id "appearance:neo_neutral:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:neo_neutral:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:neo_neutral:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:neo_neutral:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:neo_neutral:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:neo_neutral:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:neo_neutral:ddn.gallery.looks::model.ships"
+
+
+view "neo_dark" as "ddn@1"
+    with
+        id "neo_dark"
+        title "Looks / neo × dark"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "neo"
+            theme "dark"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:neo_dark"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:neo_dark:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:neo_dark:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:neo_dark:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:neo_dark:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:neo_dark:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:neo_dark:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:neo_dark:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:neo_dark:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:neo_dark:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:neo_dark:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:neo_dark:ddn.gallery.looks::model.places"
+        with
+            id "appearance:neo_dark:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:neo_dark:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:neo_dark:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:neo_dark:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:neo_dark:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:neo_dark:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:neo_dark:ddn.gallery.looks::model.ships"
+
+
+view "neo_night" as "ddn@1"
+    with
+        id "neo_night"
+        title "Looks / neo × night"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "neo"
+            theme "night"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:neo_night"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:neo_night:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:neo_night:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:neo_night:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:neo_night:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:neo_night:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:neo_night:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:neo_night:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:neo_night:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:neo_night:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:neo_night:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:neo_night:ddn.gallery.looks::model.places"
+        with
+            id "appearance:neo_night:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:neo_night:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:neo_night:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:neo_night:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:neo_night:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:neo_night:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:neo_night:ddn.gallery.looks::model.ships"
+
+
+view "neo_forest" as "ddn@1"
+    with
+        id "neo_forest"
+        title "Looks / neo × forest"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "neo"
+            theme "forest"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:neo_forest"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:neo_forest:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:neo_forest:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:neo_forest:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:neo_forest:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:neo_forest:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:neo_forest:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:neo_forest:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:neo_forest:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:neo_forest:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:neo_forest:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:neo_forest:ddn.gallery.looks::model.places"
+        with
+            id "appearance:neo_forest:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:neo_forest:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:neo_forest:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:neo_forest:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:neo_forest:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:neo_forest:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:neo_forest:ddn.gallery.looks::model.ships"
+
+
+view "neo_base" as "ddn@1"
+    with
+        id "neo_base"
+        title "Looks / neo × base"
+        selection
+            include
+                item
+                    id "ddn.gallery.looks::model.customer"
+                item
+                    id "ddn.gallery.looks::model.storefront"
+                item
+                    id "ddn.gallery.looks::model.orders"
+                item
+                    id "ddn.gallery.looks::model.ledger"
+                item
+                    id "ddn.gallery.looks::model.warehouse"
+                item
+                    id "ddn.gallery.looks::model.places"
+                item
+                    id "ddn.gallery.looks::model.confirms"
+                item
+                    id "ddn.gallery.looks::model.posts"
+                item
+                    id "ddn.gallery.looks::model.ships"
+        style
+            look "neo"
+            theme "base"
+        layout
+            algorithm "layered"
+            gap 120
+            row_gap 110
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        publication
+            id "publication:neo_base"
+
+    use "ddn.gallery.looks::model.customer" named "appearance:neo_base:ddn.gallery.looks::model.customer"
+        with
+            id "appearance:neo_base:ddn.gallery.looks::model.customer"
+
+    use "ddn.gallery.looks::model.storefront" named "appearance:neo_base:ddn.gallery.looks::model.storefront"
+        with
+            id "appearance:neo_base:ddn.gallery.looks::model.storefront"
+
+    use "ddn.gallery.looks::model.orders" named "appearance:neo_base:ddn.gallery.looks::model.orders"
+        with
+            id "appearance:neo_base:ddn.gallery.looks::model.orders"
+
+    use "ddn.gallery.looks::model.ledger" named "appearance:neo_base:ddn.gallery.looks::model.ledger"
+        with
+            id "appearance:neo_base:ddn.gallery.looks::model.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.looks::model.warehouse" named "appearance:neo_base:ddn.gallery.looks::model.warehouse"
+        with
+            id "appearance:neo_base:ddn.gallery.looks::model.warehouse"
+
+    use "ddn.gallery.looks::model.places" named "appearance:neo_base:ddn.gallery.looks::model.places"
+        with
+            id "appearance:neo_base:ddn.gallery.looks::model.places"
+
+    use "ddn.gallery.looks::model.confirms" named "appearance:neo_base:ddn.gallery.looks::model.confirms"
+        with
+            id "appearance:neo_base:ddn.gallery.looks::model.confirms"
+
+    use "ddn.gallery.looks::model.posts" named "appearance:neo_base:ddn.gallery.looks::model.posts"
+        with
+            id "appearance:neo_base:ddn.gallery.looks::model.posts"
+
+    use "ddn.gallery.looks::model.ships" named "appearance:neo_base:ddn.gallery.looks::model.ships"
+        with
+            id "appearance:neo_base:ddn.gallery.looks::model.ships"

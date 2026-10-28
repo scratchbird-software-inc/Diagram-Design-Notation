@@ -1,54 +1,466 @@
-ddn "0.5";
-module "ddn.examples.umldep";
+version ddn-next-1
 
-// B1-058 : UML 2.5.1 deployment diagrams on uml.deployment@1.
-// View 1: devices, execution environment, artifacts, deploy/manifest,
-// communication paths with multiplicity. View 2: node nesting via frames.
-// Minimal current-dialect style, no pinned layout.
+publication "publication:main"
+    with
+        id "publication:main"
+        title "UML deployment / nodes and artifacts"
+        targets
+            item
+                target
+                    id "main"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data shop {
-    object lb "Load balancer" { kind: "uml.device"; }
-    object appsrv "App server" { kind: "uml.device"; }
-    object jvm "Tomcat 10" { kind: "uml.executionenv"; }
-    object war "shop.war" { kind: "uml.artifact"; }
-    object cart "Cart component" { kind: "uml.component"; }
-    object dbnode "DB server" { kind: "uml.node"; }
-    object jar "persistence.jar" { kind: "uml.artifact"; }
 
-    relation lan "https" @lb -> @appsrv { kind: "uml.commpath";
-        x_endlabels: { source: { multiplicity: "1"; }; target: { multiplicity: "1..*"; }; };
-    }
-    relation dep1 "" @war -> @jvm { kind: "uml.deploy"; }
-    relation dep2 "" @cart -> @jvm { kind: "uml.deploy"; }
-    relation dep3 "" @jar -> @dbnode { kind: "uml.deploy"; }
-    relation man "" @war -> @cart { kind: "uml.manifest"; }
-    relation sql "jdbc" @appsrv -> @dbnode { kind: "uml.commpath"; }
-}
+publication "publication:nested"
+    with
+        id "publication:nested"
+        title "UML deployment / nested nodes"
+        targets
+            item
+                target
+                    id "nested"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data cluster {
-    object zone "Failover zone" { kind: "uml.node"; }
-    object node_a "Node A" { kind: "uml.device"; }
-    object node_b "Node B" { kind: "uml.device"; }
-    object ee_a "JVM" { kind: "uml.executionenv"; }
-    object ee_b "JVM" { kind: "uml.executionenv"; }
-    object app_a "orders.ear" { kind: "uml.artifact"; }
-    object app_b "orders.ear" { kind: "uml.artifact"; }
 
-    relation ha "" @node_a -> @node_b { kind: "uml.commpath";
-        x_endlabels: { source: { multiplicity: "1"; }; target: { multiplicity: "1"; }; };
-    }
-    relation za "" @app_a -> @ee_a { kind: "uml.deploy"; }
-    relation zb "" @app_b -> @ee_b { kind: "uml.deploy"; }
-}
+element "ddn.examples.umldep::shop.lb" as "uml.device"
+    with
+        id "ddn.examples.umldep::shop.lb"
+        title "Load balancer"
 
-view main "UML deployment / nodes and artifacts": [@shop] as "uml.deployment@1" {
-    layout { gap: 112px; row_gap: 112px; }
-    publication { size: content; fit: none; }
-}
 
-view nested "UML deployment / nested nodes": [@cluster] as "uml.deployment@1" {
-    frame f_zone "Failover zone" { scope: @cluster.zone; members: [@cluster.node_a, @cluster.node_b]; }
-    frame f_a "Node A" { scope: @cluster.node_a; members: [@cluster.ee_a, @cluster.app_a]; }
-    frame f_b "Node B" { scope: @cluster.node_b; members: [@cluster.ee_b, @cluster.app_b]; }
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.umldep::shop.appsrv" as "uml.device"
+    with
+        id "ddn.examples.umldep::shop.appsrv"
+        title "App server"
+
+
+element "ddn.examples.umldep::shop.jvm" as "uml.executionenv"
+    with
+        id "ddn.examples.umldep::shop.jvm"
+        title "Tomcat 10"
+
+
+element "ddn.examples.umldep::shop.war" as "uml.artifact"
+    with
+        id "ddn.examples.umldep::shop.war"
+        title "shop.war"
+
+
+element "ddn.examples.umldep::shop.cart" as "uml.component"
+    with
+        id "ddn.examples.umldep::shop.cart"
+        title "Cart component"
+
+
+element "ddn.examples.umldep::shop.dbnode" as "uml.node"
+    with
+        id "ddn.examples.umldep::shop.dbnode"
+        title "DB server"
+
+
+element "ddn.examples.umldep::shop.jar" as "uml.artifact"
+    with
+        id "ddn.examples.umldep::shop.jar"
+        title "persistence.jar"
+
+
+relation "ddn.examples.umldep::shop.lan" as "uml.commpath"
+    with
+        id "ddn.examples.umldep::shop.lan"
+        title "https"
+        metadata
+            x_endlabels
+                source
+                    multiplicity "1"
+                target
+                    multiplicity "1..*"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umldep::shop.lb"
+            item
+                definition
+                    id "ddn.examples.umldep::shop.appsrv"
+
+
+relation "ddn.examples.umldep::shop.dep1" as "uml.deploy"
+    with
+        id "ddn.examples.umldep::shop.dep1"
+        title "«deploy»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umldep::shop.war"
+            item
+                definition
+                    id "ddn.examples.umldep::shop.jvm"
+
+
+relation "ddn.examples.umldep::shop.dep2" as "uml.deploy"
+    with
+        id "ddn.examples.umldep::shop.dep2"
+        title "«deploy»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umldep::shop.cart"
+            item
+                definition
+                    id "ddn.examples.umldep::shop.jvm"
+
+
+relation "ddn.examples.umldep::shop.dep3" as "uml.deploy"
+    with
+        id "ddn.examples.umldep::shop.dep3"
+        title "«deploy»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umldep::shop.jar"
+            item
+                definition
+                    id "ddn.examples.umldep::shop.dbnode"
+
+
+relation "ddn.examples.umldep::shop.man" as "uml.manifest"
+    with
+        id "ddn.examples.umldep::shop.man"
+        title "«manifest»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umldep::shop.war"
+            item
+                definition
+                    id "ddn.examples.umldep::shop.cart"
+
+
+relation "ddn.examples.umldep::shop.sql" as "uml.commpath"
+    with
+        id "ddn.examples.umldep::shop.sql"
+        title "jdbc"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umldep::shop.appsrv"
+            item
+                definition
+                    id "ddn.examples.umldep::shop.dbnode"
+
+
+element "ddn.examples.umldep::cluster.zone" as "uml.node"
+    with
+        id "ddn.examples.umldep::cluster.zone"
+        title "Failover zone"
+
+
+element "ddn.examples.umldep::cluster.node_a" as "uml.device"
+    with
+        id "ddn.examples.umldep::cluster.node_a"
+        title "Node A"
+
+
+element "ddn.examples.umldep::cluster.node_b" as "uml.device"
+    with
+        id "ddn.examples.umldep::cluster.node_b"
+        title "Node B"
+
+
+element "ddn.examples.umldep::cluster.ee_a" as "uml.executionenv"
+    with
+        id "ddn.examples.umldep::cluster.ee_a"
+        title "JVM"
+
+
+element "ddn.examples.umldep::cluster.ee_b" as "uml.executionenv"
+    with
+        id "ddn.examples.umldep::cluster.ee_b"
+        title "JVM"
+
+
+element "ddn.examples.umldep::cluster.app_a" as "uml.artifact"
+    with
+        id "ddn.examples.umldep::cluster.app_a"
+        title "orders.ear"
+
+
+element "ddn.examples.umldep::cluster.app_b" as "uml.artifact"
+    with
+        id "ddn.examples.umldep::cluster.app_b"
+        title "orders.ear"
+
+
+relation "ddn.examples.umldep::cluster.ha" as "uml.commpath"
+    with
+        id "ddn.examples.umldep::cluster.ha"
+        title "Communication path"
+        metadata
+            x_endlabels
+                source
+                    multiplicity "1"
+                target
+                    multiplicity "1"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umldep::cluster.node_a"
+            item
+                definition
+                    id "ddn.examples.umldep::cluster.node_b"
+
+
+relation "ddn.examples.umldep::cluster.za" as "uml.deploy"
+    with
+        id "ddn.examples.umldep::cluster.za"
+        title "«deploy»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umldep::cluster.app_a"
+            item
+                definition
+                    id "ddn.examples.umldep::cluster.ee_a"
+
+
+relation "ddn.examples.umldep::cluster.zb" as "uml.deploy"
+    with
+        id "ddn.examples.umldep::cluster.zb"
+        title "«deploy»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umldep::cluster.app_b"
+            item
+                definition
+                    id "ddn.examples.umldep::cluster.ee_b"
+
+
+view "main" as "uml.deployment@1"
+    with
+        id "main"
+        title "UML deployment / nodes and artifacts"
+        selection
+            include
+                item
+                    id "ddn.examples.umldep::shop.lb"
+                item
+                    id "ddn.examples.umldep::shop.appsrv"
+                item
+                    id "ddn.examples.umldep::shop.jvm"
+                item
+                    id "ddn.examples.umldep::shop.war"
+                item
+                    id "ddn.examples.umldep::shop.cart"
+                item
+                    id "ddn.examples.umldep::shop.dbnode"
+                item
+                    id "ddn.examples.umldep::shop.jar"
+                item
+                    id "ddn.examples.umldep::shop.lan"
+                item
+                    id "ddn.examples.umldep::shop.dep1"
+                item
+                    id "ddn.examples.umldep::shop.dep2"
+                item
+                    id "ddn.examples.umldep::shop.dep3"
+                item
+                    id "ddn.examples.umldep::shop.man"
+                item
+                    id "ddn.examples.umldep::shop.sql"
+            exclude
+                item
+                    id "ddn.examples.umldep::cluster.ha"
+                item
+                    id "ddn.examples.umldep::cluster.za"
+                item
+                    id "ddn.examples.umldep::cluster.zb"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:main"
+
+    use "ddn.examples.umldep::shop.lb" named "appearance:main:ddn.examples.umldep::shop.lb"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.lb"
+
+    use "ddn.examples.umldep::shop.appsrv" named "appearance:main:ddn.examples.umldep::shop.appsrv"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.appsrv"
+
+    use "ddn.examples.umldep::shop.jvm" named "appearance:main:ddn.examples.umldep::shop.jvm"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.jvm"
+
+    use "ddn.examples.umldep::shop.war" named "appearance:main:ddn.examples.umldep::shop.war"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.war"
+
+    use "ddn.examples.umldep::shop.cart" named "appearance:main:ddn.examples.umldep::shop.cart"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.cart"
+
+    use "ddn.examples.umldep::shop.dbnode" named "appearance:main:ddn.examples.umldep::shop.dbnode"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.dbnode"
+
+    use "ddn.examples.umldep::shop.jar" named "appearance:main:ddn.examples.umldep::shop.jar"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.jar"
+
+    use "ddn.examples.umldep::shop.lan" named "appearance:main:ddn.examples.umldep::shop.lan"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.lan"
+
+    use "ddn.examples.umldep::shop.dep1" named "appearance:main:ddn.examples.umldep::shop.dep1"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.dep1"
+
+    use "ddn.examples.umldep::shop.dep2" named "appearance:main:ddn.examples.umldep::shop.dep2"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.dep2"
+
+    use "ddn.examples.umldep::shop.dep3" named "appearance:main:ddn.examples.umldep::shop.dep3"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.dep3"
+
+    use "ddn.examples.umldep::shop.man" named "appearance:main:ddn.examples.umldep::shop.man"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.man"
+
+    use "ddn.examples.umldep::shop.sql" named "appearance:main:ddn.examples.umldep::shop.sql"
+        with
+            id "appearance:main:ddn.examples.umldep::shop.sql"
+
+
+view "nested" as "uml.deployment@1"
+    with
+        id "nested"
+        title "UML deployment / nested nodes"
+        selection
+            include
+                item
+                    id "ddn.examples.umldep::cluster.zone"
+                item
+                    id "ddn.examples.umldep::cluster.node_a"
+                item
+                    id "ddn.examples.umldep::cluster.node_b"
+                item
+                    id "ddn.examples.umldep::cluster.ee_a"
+                item
+                    id "ddn.examples.umldep::cluster.ee_b"
+                item
+                    id "ddn.examples.umldep::cluster.app_a"
+                item
+                    id "ddn.examples.umldep::cluster.app_b"
+                item
+                    id "ddn.examples.umldep::cluster.ha"
+                item
+                    id "ddn.examples.umldep::cluster.za"
+                item
+                    id "ddn.examples.umldep::cluster.zb"
+            exclude
+                item
+                    id "ddn.examples.umldep::shop.lan"
+                item
+                    id "ddn.examples.umldep::shop.dep1"
+                item
+                    id "ddn.examples.umldep::shop.dep2"
+                item
+                    id "ddn.examples.umldep::shop.dep3"
+                item
+                    id "ddn.examples.umldep::shop.man"
+                item
+                    id "ddn.examples.umldep::shop.sql"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.umldep::nested.f_zone"
+                name "Failover zone"
+                scope
+                    id "ddn.examples.umldep::cluster.zone"
+                members
+                    item
+                        id "ddn.examples.umldep::cluster.node_a"
+                    item
+                        id "ddn.examples.umldep::cluster.node_b"
+            item
+                id "ddn.examples.umldep::nested.f_a"
+                name "Node A"
+                scope
+                    id "ddn.examples.umldep::cluster.node_a"
+                members
+                    item
+                        id "ddn.examples.umldep::cluster.ee_a"
+                    item
+                        id "ddn.examples.umldep::cluster.app_a"
+            item
+                id "ddn.examples.umldep::nested.f_b"
+                name "Node B"
+                scope
+                    id "ddn.examples.umldep::cluster.node_b"
+                members
+                    item
+                        id "ddn.examples.umldep::cluster.ee_b"
+                    item
+                        id "ddn.examples.umldep::cluster.app_b"
+        publication
+            id "publication:nested"
+
+    use "ddn.examples.umldep::cluster.zone" named "appearance:nested:ddn.examples.umldep::cluster.zone"
+        with
+            id "appearance:nested:ddn.examples.umldep::cluster.zone"
+
+    use "ddn.examples.umldep::cluster.node_a" named "appearance:nested:ddn.examples.umldep::cluster.node_a"
+        with
+            id "appearance:nested:ddn.examples.umldep::cluster.node_a"
+
+    use "ddn.examples.umldep::cluster.node_b" named "appearance:nested:ddn.examples.umldep::cluster.node_b"
+        with
+            id "appearance:nested:ddn.examples.umldep::cluster.node_b"
+
+    use "ddn.examples.umldep::cluster.ee_a" named "appearance:nested:ddn.examples.umldep::cluster.ee_a"
+        with
+            id "appearance:nested:ddn.examples.umldep::cluster.ee_a"
+
+    use "ddn.examples.umldep::cluster.ee_b" named "appearance:nested:ddn.examples.umldep::cluster.ee_b"
+        with
+            id "appearance:nested:ddn.examples.umldep::cluster.ee_b"
+
+    use "ddn.examples.umldep::cluster.app_a" named "appearance:nested:ddn.examples.umldep::cluster.app_a"
+        with
+            id "appearance:nested:ddn.examples.umldep::cluster.app_a"
+
+    use "ddn.examples.umldep::cluster.app_b" named "appearance:nested:ddn.examples.umldep::cluster.app_b"
+        with
+            id "appearance:nested:ddn.examples.umldep::cluster.app_b"
+
+    use "ddn.examples.umldep::cluster.ha" named "appearance:nested:ddn.examples.umldep::cluster.ha"
+        with
+            id "appearance:nested:ddn.examples.umldep::cluster.ha"
+
+    use "ddn.examples.umldep::cluster.za" named "appearance:nested:ddn.examples.umldep::cluster.za"
+        with
+            id "appearance:nested:ddn.examples.umldep::cluster.za"
+
+    use "ddn.examples.umldep::cluster.zb" named "appearance:nested:ddn.examples.umldep::cluster.zb"
+        with
+            id "appearance:nested:ddn.examples.umldep::cluster.zb"

@@ -1,0 +1,343 @@
+{
+  "x_erp": {
+    "field": "meta_x_erp_field",
+    "domain": "meta_x_erp_domain",
+    "relation": "meta_x_erp_relation",
+    "object:table": "meta_x_erp_object__table",
+    "object:api": "meta_x_erp_object__api",
+    "object:report": "meta_x_erp_object__report",
+    "object:rule": "meta_x_erp_object__rule",
+    "object:message": "meta_x_erp_object__message",
+    "object:context": "meta_x_erp_object__context",
+    "object:pipeline": "meta_x_erp_object__pipeline",
+    "object:activity": "meta_x_erp_object__activity",
+    "object:record": "meta_x_erp_object__record",
+    "object:queue": "meta_x_erp_object__queue"
+  },
+  "x_role": {
+    "field": "meta_x_role_field",
+    "object": "meta_x_role_object"
+  },
+  "x_interaction": {
+    "layout": "meta_x_interaction_layout"
+  },
+  "x_sequence": {
+    "layout": "meta_x_sequence_layout"
+  },
+  "x_row_height": {
+    "layout": "meta_x_row_height_layout"
+  },
+  "x_protocol_role": {
+    "object": "meta_x_protocol_role_object"
+  },
+  "x_zone": {
+    "object": "meta_x_zone_object"
+  },
+  "x_protocol": {
+    "relation": "meta_x_protocol_relation"
+  },
+  "x_detail_steps": {
+    "relation": "meta_x_detail_steps_relation"
+  },
+  "x_source_fraction": {
+    "route": "meta_x_source_fraction_route"
+  },
+  "x_target_fraction": {
+    "route": "meta_x_target_fraction_route"
+  },
+  "x_phases": {
+    "layout": "meta_x_phases_layout"
+  },
+  "x_workflow": {
+    "object": "meta_x_workflow_object",
+    "relation": "meta_x_workflow_relation",
+    "assertion": "meta_x_workflow_assertion"
+  },
+  "x_boundary": {
+    "object": "meta_x_boundary_object",
+    "relation": "meta_x_boundary_relation",
+    "assertion": "meta_x_boundary_assertion"
+  },
+  "x_requirement": {
+    "object": "meta_x_requirement_object",
+    "relation": "meta_x_requirement_relation",
+    "assertion": "meta_x_requirement_assertion"
+  },
+  "x_evidence": {
+    "object": "meta_x_evidence_object",
+    "relation": "meta_x_evidence_relation",
+    "assertion": "meta_x_evidence_assertion"
+  },
+  "x_constraint": {
+    "object": "meta_x_constraint_object",
+    "relation": "meta_x_constraint_relation",
+    "assertion": "meta_x_constraint_assertion"
+  },
+  "x_affinity": {
+    "object": "meta_x_affinity_object",
+    "relation": "meta_x_affinity_relation",
+    "assertion": "meta_x_affinity_assertion"
+  },
+  "x_reconciliation": {
+    "object": "meta_x_reconciliation_object",
+    "relation": "meta_x_reconciliation_relation",
+    "assertion": "meta_x_reconciliation_assertion"
+  },
+  "x_ui": {
+    "object": "meta_x_ui_object",
+    "relation": "meta_x_ui_relation",
+    "assertion": "meta_x_ui_assertion"
+  },
+  "x_report": {
+    "object": "meta_x_report_object",
+    "relation": "meta_x_report_relation",
+    "assertion": "meta_x_report_assertion"
+  },
+  "x_custody": {
+    "object": "meta_x_custody_object",
+    "relation": "meta_x_custody_relation",
+    "assertion": "meta_x_custody_assertion"
+  },
+  "x_record": {
+    "object": "meta_x_record_object",
+    "relation": "meta_x_record_relation"
+  },
+  "x_story": {
+    "relation": "meta_x_story_relation"
+  },
+  "x_rule": {
+    "object": "meta_x_rule_object",
+    "relation": "meta_x_rule_relation"
+  },
+  "x_usecase": {
+    "object": "meta_x_usecase_object",
+    "relation": "meta_x_usecase_relation"
+  },
+  "x_chen": {
+    "object": "meta_x_chen_object",
+    "field": "meta_x_chen_field",
+    "relation": "meta_x_chen_relation"
+  },
+  "x_continuation": {
+    "object": "meta_x_continuation_object",
+    "relation": "meta_x_continuation_relation"
+  },
+  "x_state": {
+    "object": "meta_x_state_object"
+  },
+  "x_transition": {
+    "relation": "meta_x_transition_relation"
+  },
+  "x_assignment": {
+    "relation": "meta_x_assignment_relation"
+  },
+  "x_category": {
+    "object": "meta_x_category_object"
+  },
+  "x_member": {
+    "field": "meta_x_member_field"
+  },
+  "x_endlabels": {
+    "relation": "meta_x_endlabels_relation"
+  },
+  "x_association_class": {
+    "relation": "meta_x_association_class_relation"
+  },
+  "x_nary": {
+    "relation": "meta_x_nary_relation"
+  },
+  "x_genset": {
+    "relation": "meta_x_genset_relation"
+  },
+  "x_template": {
+    "object": "meta_x_template_object"
+  },
+  "x_part": {
+    "field": "meta_x_part_field"
+  },
+  "x_diagram": {
+    "object": "meta_x_diagram_object",
+    "relation": "meta_x_diagram_relation"
+  },
+  "x_epc": {
+    "object": "meta_x_epc_object"
+  },
+  "x_sets": {
+    "object": "meta_x_sets_object"
+  },
+  "x_return": {
+    "relation": "meta_x_return_relation"
+  },
+  "x_sticky": {
+    "object": "meta_x_sticky_object"
+  },
+  "x_art": {
+    "object": "meta_x_art_object"
+  },
+  "x_message": {
+    "relation": "meta_x_message_relation"
+  },
+  "x_fragment": {
+    "relation": "meta_x_fragment_relation"
+  },
+  "x_invariant": {
+    "object": "meta_x_invariant_object"
+  },
+  "x_activation": {
+    "object": "meta_x_activation_object"
+  },
+  "x_instance": {
+    "object": "meta_x_instance_object"
+  },
+  "x_partition": {
+    "object": "meta_x_partition_object"
+  },
+  "x_event": {
+    "object": "meta_x_event_object"
+  },
+  "x_gateway": {
+    "object": "meta_x_gateway_object"
+  },
+  "x_states": {
+    "object": "meta_x_states_object"
+  },
+  "x_sdl": {
+    "object": "meta_x_sdl_object",
+    "relation": "meta_x_sdl_relation"
+  },
+  "x_hmscref": {
+    "object": "meta_x_hmscref_object"
+  },
+  "x_link": {
+    "relation": "meta_x_link_relation"
+  },
+  "x_compatibility": {
+    "relation": "meta_x_compatibility_relation"
+  },
+  "x_contact": {
+    "object": "meta_x_contact_object"
+  },
+  "x_coil": {
+    "object": "meta_x_coil_object"
+  },
+  "x_jump": {
+    "object": "meta_x_jump_object"
+  },
+  "x_fbd": {
+    "port": "meta_x_fbd_port"
+  },
+  "x_icon": {
+    "object": "meta_x_icon_object"
+  },
+  "x_vsm": {
+    "object": "meta_x_vsm_object"
+  },
+  "x_values": {
+    "object": "meta_x_values_object"
+  },
+  "x_objectified": {
+    "object": "meta_x_objectified_object"
+  },
+  "x_derive": {
+    "object": "meta_x_derive_object"
+  },
+  "x_petri": {
+    "object": "meta_x_petri_object",
+    "relation": "meta_x_petri_relation"
+  },
+  "x_icom": {
+    "port": "meta_x_icom_port"
+  },
+  "x_idef0": {
+    "object": "meta_x_idef0_object"
+  },
+  "x_tunnel": {
+    "relation": "meta_x_tunnel_relation"
+  },
+  "x_c4tag": {
+    "object": "meta_x_c4tag_object"
+  },
+  "x_subdiagram": {
+    "object": "meta_x_subdiagram_object"
+  },
+  "x_sentry": {
+    "object": "meta_x_sentry_object"
+  },
+  "x_cmmn": {
+    "object": "meta_x_cmmn_object"
+  },
+  "x_planning": {
+    "object": "meta_x_planning_object"
+  },
+  "x_estimate": {
+    "object": "meta_x_estimate_object"
+  },
+  "x_gate": {
+    "object": "meta_x_gate_object"
+  },
+  "x_rack": {
+    "object": "meta_x_rack_object"
+  },
+  "x_birth": {
+    "object": "meta_x_birth_object"
+  },
+  "x_death": {
+    "object": "meta_x_death_object"
+  },
+  "x_pin": {
+    "port": "meta_x_pin_port"
+  },
+  "x_interrupt": {
+    "relation": "meta_x_interrupt_relation"
+  },
+  "x_exception": {
+    "relation": "meta_x_exception_relation"
+  },
+  "x_pack": {
+    "object": "meta_x_pack_object"
+  },
+  "x_interfaces": {
+    "object": "meta_x_interfaces_object",
+    "port": "meta_x_interfaces_port",
+    "field": "meta_x_interfaces_field"
+  },
+  "x_use": {
+    "object": "meta_x_use_object"
+  },
+  "x_timeconstraint": {
+    "object": "meta_x_timeconstraint_object"
+  },
+  "x_block": {
+    "field": "meta_x_block_field"
+  },
+  "x_port": {
+    "port": "meta_x_port_port"
+  },
+  "x_unit": {
+    "field": "meta_x_unit_field"
+  },
+  "x_service": {
+    "port": "meta_x_service_port"
+  },
+  "x_contract": {
+    "object": "meta_x_contract_object"
+  },
+  "x_boxed": {
+    "object": "meta_x_boxed_object"
+  },
+  "x_flow": {
+    "relation": "meta_x_flow_relation"
+  },
+  "x_activity": {
+    "object": "meta_x_activity_object"
+  },
+  "x_io": {
+    "object": "meta_x_io_object"
+  },
+  "x_bands": {
+    "object": "meta_x_bands_object"
+  },
+  "x_mindmap": {
+    "object": "meta_x_mindmap_object"
+  }
+}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"><meta name="description" content="DDN is free, open-source diagramming under GPLv2 or later, sponsored by ScratchBird Software Inc. Explore the language, viewer, designer and verifier."><title>Language guide · DDN</title><link rel="icon" href="../assets/brand/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/site.css"><script>try{let n=JSON.parse(localStorage.getItem('ddn.interface.v1')||'null')?.name,q=new URLSearchParams(location.search).get('theme');if(['light','dark','midnight','warm'].includes(q))n=q;if(['light','dark','midnight','warm'].includes(n))document.documentElement.dataset.theme=n;}catch{}</script></head>
+<body data-site-root="../"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="bar"><a class="wordmark" href="../index.html"><img class="logo" data-brand="ddn" src="../assets/brand/ddn-dark.svg" alt="DDN"><span class="name">Diagram Design Notation<small>Design · describe · connect</small></span></a><nav class="site-nav" id="site-nav" aria-label="Main"><a href="../index.html">Home</a><a href="../features/index.html">Features</a><a href="../gallery/index.html">Gallery</a><a href="../icons/index.html">Icons</a><a href="../guide/index.html" class="active" aria-current="page">Guide</a><a href="../reference/index.html">Reference</a><a href="../docs/index.html">Docs</a><a href="../standard/index.html">Standard</a><a href="../tools/index.html">Tools</a><a href="../download/index.html">Download</a></nav><div class="header-controls"><label class="site-theme"><span class="sr-only">Website theme</span><select data-site-theme aria-label="Website theme"><option value="dark">Dark</option><option value="light">Light</option><option value="midnight">Midnight</option><option value="warm">Warm</option></select></label><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button></div></div><div class="project-bar">Free and open source · <a href="../license/index.html" rel="license">GPLv2 or later</a> · Sponsored by <a href="https://scratchbird.ca">ScratchBird Software Inc.</a></div></header>
+<main id="main"><p class="eyebrow">ddn-next-1</p><h1 class="page-title">The DDN language</h1><p class="lede">Short notation for a structured workarea, with optional settings when more detail is needed.</p>
+<div class="code-list"><a href="#structure">Structure</a><a href="#views">Views</a><a href="#tables">Tables</a><a href="#data">Data</a><a href="#notes">Notes</a><a href="#defaults">Defaults</a><a href="#drafts">Lifecycle</a><a href="#files">Files</a></div>
+<section id="structure"><h2>Indentation, names and quotes</h2><p>DDN is UTF-8 text. Spaces indent nested blocks; four spaces are the recommended saved form. A physical line finishes an ordinary declaration, setting or table row. There are no required section brackets or semicolons.</p><p>Names are unique within their physical file. A colon gives an optional displayed title without changing that name. Values may be quoted when they contain punctuation or words used by a statement.</p><pre><code>erd Sales : Customer relationships
+    &quot;Orders to review&quot;
+    &quot;Customer: retail&quot;
+    connect &quot;Customer: retail&quot; to &quot;Orders to review&quot;</code></pre><p>Use either quote delimiter and double that delimiter to include it literally. The other quote is ordinary content. Backslashes remain data in DDN quoting.</p><pre><code>&quot;text &#x27;quoted text&#x27; more text&quot;
+&#x27;text &quot;quoted text&quot; more text&#x27;
+&quot;He said &quot;&quot;it&#x27;s ready&quot;&quot;.&quot;</code></pre><p>A line beginning with <code>//</code> is a comment outside literal notes, drafts and table data. There are no inline comments. Markdown headings use <code>#</code>.</p></section>
+<section id="views"><h2>Views, definitions and connections</h2><p>The explicit view form selects an exact profile. A definition at file level is reusable; <code>use</code> places an appearance without duplicating its identity.</p><pre><code>element Customer as entity
+
+erd Sales
+    use Customer
+    Order
+    connect Customer to Order as assoc named OrdersPlaced : places
+
+erd Support
+    use Customer
+
+view Process as flow.basic@1
+    element Start as flow.start
+    element Work as flow.process
+    element Finish as flow.end
+    connect Start to Work as flow.next
+    connect Work to Finish as flow.next</code></pre><p>The selected profile governs legal element roles, connection roles and endpoint rules. The native <code>erd</code>, <code>mindmap</code> and <code>bar</code> recipes keep common cases short. <a href="../reference/profiles.html">Every profile remains available by its exact identifier.</a></p></section>
+<section id="tables"><h2>Table rows and column settings</h2><pre><code>data CustomerFields
+    field:lt:45:12:3.type:ct:25.domain:lt.key:ct
+    Id.int..primary key
+    Name.varchar(25)
+    &quot;A dotted.name&quot;.&quot;Text with a . inside&quot;
+
+erd Sales
+    Customer from CustomerFields</code></pre><p>The first row of a data body declares its columns. A dot separates cells, consecutive dots skip cells, and omitted trailing cells remain empty. Quoted punctuation stays inside a cell. Extra cells beyond the header are diagnosed.</p><p>The optional column settings are <code>name:alignment:percentage:min-characters:max-lines</code>. Empty positions between colons omit settings. Alignment uses horizontal <code>r</code>, <code>l</code>, <code>c</code> or <code>f</code>, then vertical <code>t</code>, <code>m</code> or <code>b</code>. For example, <code>ct</code> means centre/top.</p><p>Columns without percentages share the remaining space equally. If every column has a percentage and the total is below 100, the rightmost column grows. Excess allocation is reduced from the largest columns, sharing tied reductions. Wrapping increases the displayed row height up to its limit; ellipsis marks clipped text. A table that cannot fit displays its shaded-square indicator.</p><p>A plain list of field names uses <code>fields</code> without a header:</p><pre><code>erd Sales
+    Customer
+        fields
+            Id
+            Name
+            Email</code></pre></section>
+<section id="data"><h2>Separate and changing data</h2><p>Named datasets can feed multiple consumers. A source declaration identifies a registered provider and its configuration; it does not execute arbitrary code or grant access to a network service.</p><pre><code>source CustomerFeed as host
+    with
+        channel customer-fields
+        update replace
+
+data LiveFields from CustomerFeed
+    with
+        mapping
+            field source_name
+            type source_type
+        key source_id
+        persist reference</code></pre><p>The host supplies revisioned data. Schema and rows change coherently; failures retain the previous successful revision as stale. A viewer can receive these updates while remaining read-only.</p></section>
+<section id="notes"><h2>Notes and formatted text</h2><pre><code>notes customer_notes : ##Customer design
+    The **name** is required,
+    and this continues the same paragraph.
+
+    A new paragraph may contain *emphasis*,
+    ++underlining++ or a simple list.
+
+    - Review naming
+    - Confirm ownership</code></pre><p>Blank lines separate paragraphs; ordinary line breaks wrap into one paragraph. Headings, lists, quotations, code and links use the supported Markdown subset. Raw HTML is not interpreted. Markdown tables and images use DDN table and asset declarations instead.</p></section>
+<section id="defaults"><h2>Properties and defaults</h2><pre><code>defaults element as entity
+    font serif
+
+erd Sales
+    Customer
+    with
+        style.font_size 12pt</code></pre><p>Properties use an indented <code>with</code> block; nested records and dotted paths are equivalent. At an occurrence, eligible explicit file values resolve from occurrence, definition, view defaults, active workarea defaults and declaring-file defaults. Then eligible type-scoped CSS applies, then fixed standard defaults.</p><p>Removing an authored setting restores omission. Explicit values equal to the default remain explicit. Names, references, status and acceptance are semantic content and do not inherit from CSS.</p><p><a href="../reference/properties.html">Search every property and omission rule</a></p></section>
+<section id="drafts"><h2>Drafts and lifecycle</h2><pre><code>erd Sales
+    Customer
+        draft fields
+            Identifier
+            Name
+            Perhaps a preferred contact method
+        with
+            status draft</code></pre><p>A draft body is literal text until the user explicitly converts it into structured columns. The conversion preserves the original draft. Body editor mode, drawing style, visible field details and lifecycle status are separate choices.</p><table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td>draft</td><td>Free-form design content is allowed.</td></tr><tr><td>in-progress</td><td>Structured work may still lack settings or data.</td></tr><tr><td>in-review</td><td>Content must be complete and pass verification.</td></tr><tr><td>accepted</td><td>Records acceptance date, time and user. An authorized user may reopen it for review or work.</td></tr></tbody></table><p>These are user actions with explicit authority. A theme or successful render does not accept a design.</p></section>
+<section id="files"><h2>One active workarea and included files</h2><pre><code>version ddn-next-1
+include &quot;shared.ddn&quot;
+
+workarea Planning as ddn
+    with
+        background.color &quot;#f5f5f5&quot;
+
+erd Sales
+    use &quot;shared.ddn&quot;::Customer</code></pre><p>The first opened file supplies the active workarea. Included views, data and documents participate in it while retaining their physical-file identity. An included file’s workarea declaration is inactive in that opening context. References across files always use <code>file::name</code>; loading order never determines identity.</p><p>A document is a view designed for targeted output. Declaring an output format and having an installed exporter are separate concerns; the utility reports unsupported output capabilities explicitly.</p></section></main>
+<footer class="site-footer"><div class="inner"><div class="footer-brand"><a href="https://scratchbird.ca" aria-label="ScratchBird Software Inc."><img data-brand="scratchbird" src="../assets/brand/scratchbird-dark.svg" alt="ScratchBird"></a><p>© ScratchBird Software Inc. and DDN contributors.<br><a href="../license/index.html" rel="license">Free and open source — GPLv2 or later</a></p></div><span class="spacer"></span><p><a href="../guide/quick-start.html">Start with a few lines</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation">DDN project</a> · <a href="../license/index.html">Licence &amp; sponsorship</a></p><nav class="suite-links" aria-label="ScratchBird suite"><a href="https://scratchbird.ca">ScratchBird Software Inc.</a><a href="https://scratchbird.ca/weaver">Weaver · commercial</a><a href="https://scratchbird.ca/bird">ScratchBird CDE</a><a href="https://scratchbird.ca/robin">ScratchRobin</a></nav><p class="project-note">DDN is free software for general public use, sponsored by ScratchBird Software Inc. Weaver is a separate commercial platform in the ScratchBird suite of systems software.</p></div></footer>
+<script src="../assets/site.js"></script>
+</body></html>

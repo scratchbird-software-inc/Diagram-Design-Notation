@@ -1,0 +1,18 @@
+source CustomerFeed as host
+    with
+        channel customer-fields
+        update replace
+
+data LiveFields from CustomerFeed
+    with
+        mapping
+            field source_name
+            type source_type
+        key source_id
+        persist reference
+
+erd LiveDesign
+    Customer from LiveFields
+
+document Monitor as dashboard
+    use LiveDesign

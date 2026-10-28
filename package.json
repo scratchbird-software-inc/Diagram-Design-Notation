@@ -1,36 +1,22 @@
 {
   "name": "diagram-design-notation",
-  "version": "0.8.0",
+  "version": "0.0.0",
   "private": true,
-  "description": "ddn, the Diagram Design Notation project (a ScratchWeaver-sponsored open-source project from ScratchBird Software Inc.): a model-first diagram dialect, reference runtime, free ddn-viewer and simple-edits ddn-designer, and open standard draft.",
+  "type": "module",
   "license": "GPL-2.0-or-later",
-  "homepage": "website/index.html",
-  "workspaces": [
-    "notation",
-    "designer"
-  ],
-  "scripts": {
-    "test": "npm --prefix notation test && npm run test:packaging && npm --prefix designer test && npm run test:site && npm run test:brand && npm run test:ai-reference && npm run test:normalize && npm run test:submission && npm run test:field-guide && npm run test:benchmark",
-    "test:benchmark": "node --expose-gc tools/benchmark.mjs --smoke",
-    "benchmark": "node --expose-gc tools/benchmark.mjs",
-    "test:normalize": "node tests/normalize-ddn.js",
-    "test:packaging": "node tools/tests/packaging.js",
-    "test:ai-reference": "node tests/ai-reference.js",
-    "test:site": "node tests/website-links.js && node tests/viewer-src-http.js && node tests/tool-worker-http.js && node tests/tool-host-io-http.js && node tests/example-links-http.js && node tests/tool-mindmap-http.js && node tests/tool-icon-picker-http.js && node tests/icons-page-http.js && node tests/field-presentation-browser.js && node tests/occurrences-browser.js && node tests/composition-browser.js && node tests/editor-preview-browser.js && node tests/editor-recovery-browser.js && node tests/creator-tabs-browser.js && node tests/creator-toolbar-browser.js && node tests/context-menu-browser.js && node tests/link-to-native-browser.js && node tests/ddna-declarative-browser.js && node tests/editor-gaps-browser.js && npm run test:workspace",
-    "test:brand": "node tests/brand-assets.js",
-    "build:brand": "node tools/build-brand.mjs",
-    "test:core": "npm --prefix notation run test:core",
-    "build:sdk": "npm --prefix notation run build:sdk",
-    "build:gallery": "node tools/build-gallery.js",
-    "build:site": "node website/build-site.mjs",
-    "serve": "node tools/serve.js",
-    "build:tool": "node tools/build-tool.js",
-    "test:submission": "node tests/submission-freshness.js",
-    "test:field-guide": "node tests/field-guide.js && node tests/field-guide-browser.js",
-    "build:shape-catalogue": "node tools/build-shape-catalogue.mjs",
-    "test:workspace": "node notation/tests/workspace-model.js && node tests/workspace-native-browser.js && DDN_WORKER=on node tests/workspace-native-browser.js && node tests/workspace-firefox-browser.js"
-  },
+  "description": "Standalone ddn-next-1 language, viewer, visual designer and verifier",
   "engines": {
-    "node": ">=22"
+    "node": "24.22.1"
+  },
+  "scripts": {
+    "bootstrap": "node tooling/bootstrap/bootstrap.mjs",
+    "bootstrap:browser": "node tooling/browser/bootstrap.mjs",
+    "check": "node tooling/workspace/run.mjs check",
+    "build": "node tooling/workspace/run.mjs build:ddn",
+    "build:website": "node tooling/workspace/run.mjs build:ddn:website",
+    "build:wiki": "python3 tooling/wiki/build-wiki.py",
+    "test": "node tooling/workspace/run.mjs test:ddn",
+    "test:browser": "node tooling/workspace/run.mjs test:ddn:browser",
+    "test:website": "node tooling/workspace/run.mjs test:ddn:website"
   }
 }

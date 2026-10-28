@@ -1,0 +1,22 @@
+erd TableDesign
+    Customer
+        data
+            field:lt:60.type:ct:60.comment:lt:10
+            Key.int."A **required** identifier."
+            name.varchar(25)
+            email..""
+    Order
+        fields
+            Key
+            CustomerKey
+            Total
+
+data Measurements
+    label.value.comment
+    First."3.14"."Quoted dot stays in one cell."
+    Second.."No supplied value."
+
+erd CompactFields as field:rt.type:ct.domain:lt.key:ct
+    Invoice
+        Key.int..primary key
+        name.varchar(25)

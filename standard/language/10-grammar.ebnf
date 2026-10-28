@@ -1,0 +1,130 @@
+(* DDN notation draft ddn-next-1. Specification, not a product parser.
+   EBNF punctuation belongs to this grammar document, not to DDN source.
+   Lexer modes and registered-type constraints are normative in chapter 09.
+   NL terminates a physical line. INDENT/DEDENT represent structural spaces.
+   RAW_TEXT/ROWS/FIELDS are mode-specific blocks, not structural statements.
+   [ x ] means optional, { x } means repetition, | means alternatives. *)
+
+file = { root_statement } , EOF ;
+
+root_statement = version | include | stylesheet | workarea | defaults
+               | view | short_view | document | element | data
+               | source | notes | asset | template | connection | relation ;
+
+version = "version" , CONTRACT , NL ;
+include = "include" , LOCATION , NL ;
+stylesheet = "style" , LOCATION , NL ;
+
+workarea = "workarea" , NAME , [ "as" , METHOD ] , [ title ] , NL ,
+           [ INDENT , { with_block | defaults } , DEDENT ] ;
+
+view = "view" , NAME , "as" , PROFILE , [ title ] , NL ,
+       [ INDENT , { view_item } , DEDENT ] ;
+short_view = RECIPE , NAME , [ columns_clause ] , [ title ] , NL ,
+             [ INDENT , { view_item } , DEDENT ] ;
+columns_clause = "as" , HEADER ;
+
+view_item = element | use | connection | relation | notes | data
+          | with_block | defaults | stylesheet | short_element
+          | chart_row ;
+
+element = "element" , [ NAME ] , "as" , ROLE ,
+          [ "using" , REFERENCE ] , [ "from" , REFERENCE ] , [ title ] , NL ,
+          [ INDENT , { element_item } , DEDENT ] ;
+short_element = NAME , [ "from" , REFERENCE ] , [ title ] , NL ,
+                [ INDENT , element_body , DEDENT ] ;
+element_body = { element_item | IMPLICIT_FIELD_ROW | short_element } ;
+element_item = with_block | notes | data | fields | draft ;
+(* Recursive short_element children are admitted only by a recipe defining
+   a hierarchical relation. IMPLICIT_FIELD_ROW uses the surrounding ERD
+   input header or its fixed recipe column order. Optional with/notes/data
+   blocks can coexist with those children where permitted by the recipe.
+   Chart rows and bare names are dispatched by recipe,
+   never by whether a line resembles natural-language prose. *)
+
+use = "use" , REFERENCE , [ "named" , NAME ] , [ title ] , NL ,
+      [ INDENT , { with_block } , DEDENT ] ;
+
+connection = "connect" , endpoint , "to" , endpoint ,
+             [ "as" , ROLE ] , [ "named" , NAME ] , [ title ] , NL ,
+             [ INDENT , { with_block } , DEDENT ] ;
+endpoint = REFERENCE , [ "at" , MEMBER ] ;
+relation = "relation" , NAME , "as" , ROLE , [ title ] , NL ,
+           INDENT , { endpoint_statement | with_block } , DEDENT ;
+endpoint_statement = "endpoint" , endpoint , NL ,
+                     [ INDENT , { with_block } , DEDENT ] ;
+(* Relation contracts enforce participant counts, endpoint roles,
+   multiplicities and allowed qualifiers. The grammar does not widen them. *)
+
+data = "data" , [ NAME ] , NL , ROWS
+     | "data" , NAME , "from" , REFERENCE , NL ,
+       [ INDENT , { with_block } , DEDENT ] ;
+fields = "fields" , NL , FIELDS ;
+draft = "draft" , [ "fields" | "table" ] , NL , [ RAW_TEXT ] ;
+notes = "notes" , [ NAME ] , ":" , TEXT , NL , [ RAW_TEXT ] ;
+(* At file level data requires NAME. At an element, unnamed data is a body.
+   ROWS begins with HEADER and has zero or more physical data rows.
+   FIELDS contains one whole field-name value per nonblank physical line.
+   RAW_TEXT preserves comment-looking and blank lines; dedent/EOF closes it. *)
+
+source = "source" , NAME , "as" , PROVIDER , NL ,
+         [ INDENT , { with_block } , DEDENT ] ;
+asset = "asset" , NAME , "as" , ASSET_KIND , "from" , LOCATION , NL ,
+        [ INDENT , { with_block } , DEDENT ] ;
+template = "template" , NAME , "as" , ROLE , NL ,
+           [ INDENT , { with_block | element | notes | data } , DEDENT ] ;
+
+document = "document" , NAME , "as" , OUTPUT , [ title ] , NL ,
+           [ INDENT , { use | notes | data | with_block | defaults
+                        | stylesheet } , DEDENT ] ;
+
+with_block = "with" , NL , INDENT , { property } , DEDENT ;
+defaults = "defaults" , OWNER , [ "as" , ROLE_OR_PROFILE ] , NL ,
+           INDENT , { property } , DEDENT ;
+property = KEY , VALUE , NL
+         | KEY , "parameter" , NAME , NL
+         | KEY , NL , [ typed_block ] ;
+typed_block = INDENT , { property } , DEDENT
+            | INDENT , { item } , DEDENT
+            | RAW_TEXT ;
+item = "item" , VALUE , NL
+     | "item" , NL , [ INDENT , { property } , DEDENT ] ;
+(* The registered property type selects record/list/text interpretation.
+   No children means empty record/list if that type admits it, otherwise an
+   incomplete scalar. Reserved parameter values require a template binding.
+   NAME/REFERENCE type conversion is driven by the target property schema. *)
+
+title = ":" , TEXT ;
+chart_row = CHART_LABEL , NUMBER_VALUE , NL ;
+
+(* Lexical definitions, whitespace between ordinary terms is insignificant.
+   NAME/TEXT/VALUE consume quote-aware spans to their next legal delimiter.
+   Clause words are delimiters only as standalone unquoted words in the
+   corresponding header position. Quoted components protect punctuation.
+   :: is recognized before a title colon. *)
+
+REFERENCE = NAME | LOCATION , "::" , NAME ;
+HEADER = column , { "." , column } ;
+column = CELL_NAME , [ ":" , [ ALIGNMENT ] ,
+         [ ":" , [ PERCENT_VALUE ] ,
+         [ ":" , [ INTEGER_VALUE ] ,
+         [ ":" , [ INTEGER_VALUE ] ] ] ] ] ;
+ALIGNMENT = ( "r" | "l" | "c" | "f" ) , ( "t" | "m" | "b" ) ;
+row = [ CELL ] , { "." , [ CELL ] } , NL ;
+(* Rows are positional; quote dotted values, including decimal cells.
+   Column numeric suffixes can quote a fraction, e.g. :"12.5".
+   Empty positions are absent; quoted empty cells are supplied empty text. *)
+
+quoted = single_quoted | double_quoted ;
+single_quoted = "'" , { NON_SINGLE_QUOTE_OR_NEWLINE | "''" } , "'" ;
+double_quoted = '"' , { NON_DOUBLE_QUOTE_OR_NEWLINE | '""' } , '"' ;
+number = [ "+" | "-" ] , DIGITS , [ "." , DIGITS ] ,
+         [ ( "e" | "E" ) , [ "+" | "-" ] , DIGITS ] ;
+(* NUMBER_VALUE/INTEGER_VALUE/PERCENT_VALUE admit quoted equivalents, then
+   convert according to their registered type. Text is not globally coerced.
+   Names preserve case after NFC normalization. The scanner rejects tabs in
+   structural indentation and unmatched quote delimiters outside raw text.
+   Full-line // comments are skipped only in structural mode.
+   Semantic constraints: one workarea/version per file, unique named
+   declarations per file, finite values, valid units/roles/owners/targets,
+   no include-driven extra active workarea and no invented references. *)

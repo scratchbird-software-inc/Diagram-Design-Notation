@@ -1,38 +1,337 @@
-ddn "0.5";
-module "ddn.examples.epc";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:epc"
+    with
+        id "publication:epc"
+        title "Synthetic order-to-cash / EPC"
+        targets
+            item
+                target
+                    id "epc"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic order-to-cash snippet for the epc.basic@1 profile.
-// Events (hexagons) and functions (rounded rects) alternate through XOR/AND/OR connectors (circles).
-data chain {
-    object ev1 "Order received" { kind: "epk.event"; }
-    object fn1 "Check stock" { kind: "epk.function"; }
-    object ev2 "Stock confirmed" { kind: "epk.event"; }
-    object c1 "XOR" { kind: "epk.connector"; x_epc: { operator: "xor" }; }
-    object fn2 "Ship order" { kind: "epk.function"; }
-    object ev3 "Shipment confirmed" { kind: "epk.event"; }
-    object fn3 "Send invoice" { kind: "epk.function"; }
-    object ev4 "Invoice paid" { kind: "epk.event"; }
-    object fn4 "Record backorder" { kind: "epk.function"; }
-    object ev5 "Backorder recorded" { kind: "epk.event"; }
-    relation r1 @ev1 -> @fn1 { kind: "epk.next"; }
-    relation r2 @fn1 -> @ev2 { kind: "epk.next"; }
-    relation r3 @ev2 -> @c1 { kind: "epk.next"; }
-    relation r4 @c1 -> @fn2 { kind: "epk.next"; }
-    relation r5 @c1 -> @fn4 { kind: "epk.next"; }
-    relation r6 @fn2 -> @ev3 { kind: "epk.next"; }
-    relation r7 @fn4 -> @ev5 { kind: "epk.next"; }
-    relation r8 @ev3 -> @fn3 { kind: "epk.next"; }
-    relation r9 @fn3 -> @ev4 { kind: "epk.next"; }
-}
 
-format options {
-    layout epc { algorithm: layered; }
-}
+element "ddn.examples.epc::chain.ev1" as "epk.event"
+    with
+        id "ddn.examples.epc::chain.ev1"
+        title "Order received"
 
-view epc "Synthetic order-to-cash / EPC" {
-    data: [@chain]; format: @shared.styles.technical; layout: @options.epc;
-    projection { kind: graph; profile: "epc.basic@1"; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+
+element "ddn.examples.epc::chain.fn1" as "epk.function"
+    with
+        id "ddn.examples.epc::chain.fn1"
+        title "Check stock"
+
+
+element "ddn.examples.epc::chain.ev2" as "epk.event"
+    with
+        id "ddn.examples.epc::chain.ev2"
+        title "Stock confirmed"
+
+
+element "ddn.examples.epc::chain.c1" as "epk.connector"
+    with
+        id "ddn.examples.epc::chain.c1"
+        title "XOR"
+        metadata
+            x_epc
+                operator "xor"
+
+
+element "ddn.examples.epc::chain.fn2" as "epk.function"
+    with
+        id "ddn.examples.epc::chain.fn2"
+        title "Ship order"
+
+
+element "ddn.examples.epc::chain.ev3" as "epk.event"
+    with
+        id "ddn.examples.epc::chain.ev3"
+        title "Shipment confirmed"
+
+
+element "ddn.examples.epc::chain.fn3" as "epk.function"
+    with
+        id "ddn.examples.epc::chain.fn3"
+        title "Send invoice"
+
+
+element "ddn.examples.epc::chain.ev4" as "epk.event"
+    with
+        id "ddn.examples.epc::chain.ev4"
+        title "Invoice paid"
+
+
+element "ddn.examples.epc::chain.fn4" as "epk.function"
+    with
+        id "ddn.examples.epc::chain.fn4"
+        title "Record backorder"
+
+
+element "ddn.examples.epc::chain.ev5" as "epk.event"
+    with
+        id "ddn.examples.epc::chain.ev5"
+        title "Backorder recorded"
+
+
+relation "ddn.examples.epc::chain.r1" as "epk.next"
+    with
+        id "ddn.examples.epc::chain.r1"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.epc::chain.ev1"
+            item
+                definition
+                    id "ddn.examples.epc::chain.fn1"
+
+
+relation "ddn.examples.epc::chain.r2" as "epk.next"
+    with
+        id "ddn.examples.epc::chain.r2"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.epc::chain.fn1"
+            item
+                definition
+                    id "ddn.examples.epc::chain.ev2"
+
+
+relation "ddn.examples.epc::chain.r3" as "epk.next"
+    with
+        id "ddn.examples.epc::chain.r3"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.epc::chain.ev2"
+            item
+                definition
+                    id "ddn.examples.epc::chain.c1"
+
+
+relation "ddn.examples.epc::chain.r4" as "epk.next"
+    with
+        id "ddn.examples.epc::chain.r4"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.epc::chain.c1"
+            item
+                definition
+                    id "ddn.examples.epc::chain.fn2"
+
+
+relation "ddn.examples.epc::chain.r5" as "epk.next"
+    with
+        id "ddn.examples.epc::chain.r5"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.epc::chain.c1"
+            item
+                definition
+                    id "ddn.examples.epc::chain.fn4"
+
+
+relation "ddn.examples.epc::chain.r6" as "epk.next"
+    with
+        id "ddn.examples.epc::chain.r6"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.epc::chain.fn2"
+            item
+                definition
+                    id "ddn.examples.epc::chain.ev3"
+
+
+relation "ddn.examples.epc::chain.r7" as "epk.next"
+    with
+        id "ddn.examples.epc::chain.r7"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.epc::chain.fn4"
+            item
+                definition
+                    id "ddn.examples.epc::chain.ev5"
+
+
+relation "ddn.examples.epc::chain.r8" as "epk.next"
+    with
+        id "ddn.examples.epc::chain.r8"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.epc::chain.ev3"
+            item
+                definition
+                    id "ddn.examples.epc::chain.fn3"
+
+
+relation "ddn.examples.epc::chain.r9" as "epk.next"
+    with
+        id "ddn.examples.epc::chain.r9"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.epc::chain.fn3"
+            item
+                definition
+                    id "ddn.examples.epc::chain.ev4"
+
+
+view "epc" as "epc.basic@1"
+    with
+        id "epc"
+        title "Synthetic order-to-cash / EPC"
+        selection
+            include
+                item
+                    id "ddn.examples.epc::chain.ev1"
+                item
+                    id "ddn.examples.epc::chain.fn1"
+                item
+                    id "ddn.examples.epc::chain.ev2"
+                item
+                    id "ddn.examples.epc::chain.c1"
+                item
+                    id "ddn.examples.epc::chain.fn2"
+                item
+                    id "ddn.examples.epc::chain.ev3"
+                item
+                    id "ddn.examples.epc::chain.fn3"
+                item
+                    id "ddn.examples.epc::chain.ev4"
+                item
+                    id "ddn.examples.epc::chain.fn4"
+                item
+                    id "ddn.examples.epc::chain.ev5"
+                item
+                    id "ddn.examples.epc::chain.r1"
+                item
+                    id "ddn.examples.epc::chain.r2"
+                item
+                    id "ddn.examples.epc::chain.r3"
+                item
+                    id "ddn.examples.epc::chain.r4"
+                item
+                    id "ddn.examples.epc::chain.r5"
+                item
+                    id "ddn.examples.epc::chain.r6"
+                item
+                    id "ddn.examples.epc::chain.r7"
+                item
+                    id "ddn.examples.epc::chain.r8"
+                item
+                    id "ddn.examples.epc::chain.r9"
+        layout
+            algorithm "layered"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:epc"
+
+    use "ddn.examples.epc::chain.ev1" named "appearance:epc:ddn.examples.epc::chain.ev1"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.ev1"
+
+    use "ddn.examples.epc::chain.fn1" named "appearance:epc:ddn.examples.epc::chain.fn1"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.fn1"
+
+    use "ddn.examples.epc::chain.ev2" named "appearance:epc:ddn.examples.epc::chain.ev2"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.ev2"
+
+    use "ddn.examples.epc::chain.c1" named "appearance:epc:ddn.examples.epc::chain.c1"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.c1"
+
+    use "ddn.examples.epc::chain.fn2" named "appearance:epc:ddn.examples.epc::chain.fn2"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.fn2"
+
+    use "ddn.examples.epc::chain.ev3" named "appearance:epc:ddn.examples.epc::chain.ev3"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.ev3"
+
+    use "ddn.examples.epc::chain.fn3" named "appearance:epc:ddn.examples.epc::chain.fn3"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.fn3"
+
+    use "ddn.examples.epc::chain.ev4" named "appearance:epc:ddn.examples.epc::chain.ev4"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.ev4"
+
+    use "ddn.examples.epc::chain.fn4" named "appearance:epc:ddn.examples.epc::chain.fn4"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.fn4"
+
+    use "ddn.examples.epc::chain.ev5" named "appearance:epc:ddn.examples.epc::chain.ev5"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.ev5"
+
+    use "ddn.examples.epc::chain.r1" named "appearance:epc:ddn.examples.epc::chain.r1"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.r1"
+
+    use "ddn.examples.epc::chain.r2" named "appearance:epc:ddn.examples.epc::chain.r2"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.r2"
+
+    use "ddn.examples.epc::chain.r3" named "appearance:epc:ddn.examples.epc::chain.r3"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.r3"
+
+    use "ddn.examples.epc::chain.r4" named "appearance:epc:ddn.examples.epc::chain.r4"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.r4"
+
+    use "ddn.examples.epc::chain.r5" named "appearance:epc:ddn.examples.epc::chain.r5"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.r5"
+
+    use "ddn.examples.epc::chain.r6" named "appearance:epc:ddn.examples.epc::chain.r6"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.r6"
+
+    use "ddn.examples.epc::chain.r7" named "appearance:epc:ddn.examples.epc::chain.r7"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.r7"
+
+    use "ddn.examples.epc::chain.r8" named "appearance:epc:ddn.examples.epc::chain.r8"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.r8"
+
+    use "ddn.examples.epc::chain.r9" named "appearance:epc:ddn.examples.epc::chain.r9"
+        with
+            id "appearance:epc:ddn.examples.epc::chain.r9"

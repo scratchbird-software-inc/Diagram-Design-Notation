@@ -1,131 +1,2028 @@
-ddn "0.5";
-module "ddn.examples.curved-relations";
-import "shared.ddn" as shared;
+version ddn-next-1
 
-// One semantic graph, several independent routing and drawing choices.
-data capabilities {
- context enterprise "Meridian Works";
- application finance "Accounting";
- application inventory "Inventory control";
- application production "Production control";
- application logistics "Logistics";
- application workforce "Human resources";
- dataset journals "Journals and periods";
- dataset lots "Lots and reservations";
- dataset work_orders "Work orders and WIP";
- dataset shipments "Loads and delivery";
- dataset employment "Employment and payroll";
- assoc f01 @enterprise -> @finance;
- assoc f02 @enterprise -> @inventory;
- assoc f03 @enterprise -> @production;
- assoc f04 @enterprise -> @logistics;
- assoc f05 @enterprise -> @workforce;
- assoc f06 @finance -> @journals;
- assoc f07 @inventory -> @lots;
- assoc f08 @production -> @work_orders;
- assoc f09 @logistics -> @shipments;
- assoc f10 @workforce -> @employment;
-}
-data exchange {
- application client "Client";
- application manager "Connection manager";
- relation request "Connection request" @client -> @manager { kind: flow; }
- relation response "Authentication prompt" @manager -> @client { kind: flow; }
- invoke verify "Validate negotiated settings" @manager -> @manager;
-}
-data crossing {
- dataset a "Orders source";
- dataset b "Stock source";
- dataset c "Stock projection";
- dataset d "Orders projection";
- relation orders "Order projection input" @a -> @d { kind: flow; }
- derives stock "Stock projection input" @b -> @c;
-}
-data obstruction {
- dataset source "Upstream";
- database unrelated "Unrelated database";
- dataset target "Downstream";
- relation deliver "Route around unrelated storage" @source -> @target { kind: flow; }
-}
-format options {
- layout branch_layout { algorithm: mindmap; root: @capabilities.enterprise; hierarchy: [assoc]; routing: curved; curve: bezier; curve_tension: 0.5; crossings: gap; gap: 150px; }
- legend branches { mode: numbers; keys: { f01:1,f02:2,f03:3,f04:4,f05:5,f06:6,f07:7,f08:8,f09:9,f10:10 }; width: 350px; }
- legend exchange { mode: numbers; keys: { request:1,response:2,verify:3 }; width: 350px; }
- legend crossing { mode: numbers; keys: { orders:1,stock:2 }; width: 350px; }
- publication screen { size: content; fit: none; }
-}
-view mindmap_classic "Curved mind-map / classic" {
- data: [@capabilities]; format: @shared.styles.technical;
- layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
- display { fields: none; }
-}
-view mindmap_handdrawn "Curved mind-map / handDrawn" {
- data: [@capabilities]; format: @shared.styles.technical;
- layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
- style { look: handDrawn; font: sans; seed: 42; }
- display { fields: none; }
-}
-view mindmap_neo "Curved mind-map / neo" {
- data: [@capabilities]; format: @shared.styles.technical;
- layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
- style { look: neo; }
- display { fields: none; }
-}
-view mindmap_angular "Same mind-map / orthogonal routes" {
- data: [@capabilities]; format: @shared.styles.technical;
- layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
- layout { routing: orthogonal; }
- display { fields: none; }
-}
-view mindmap_rounded "Same mind-map / rounded corridor corners" {
- data: [@capabilities]; format: @shared.styles.technical;
- layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
- layout { curve: rounded; curve_radius: 36px; }
- display { fields: none; }
-}
-view mixed "One view / independent per-relation route overrides" {
- data: [@capabilities]; format: @shared.styles.technical;
- layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
- display { fields: none; }
- route @capabilities.f01 { routing: orthogonal; }
- route @capabilities.f06 { routing: straight; }
- route @capabilities.f03 { routing: curved; curve: rounded; curve_radius: 24px; }
-}
-view crossing_gap "Curved disconnected crossing / gap" {
- data: [@crossing]; format: @shared.styles.technical;
- legend: @options.crossing; publication: @options.screen;
- layout { algorithm: manual; routing: curved; curve: bezier; crossings: gap; }
- place @crossing.a { at: [0px,0px]; }
- place @crossing.b { at: [0px,480px]; }
- place @crossing.c { at: [800px,0px]; }
- place @crossing.d { at: [800px,480px]; }
-}
-view crossing_bridge "Curved disconnected crossing / rounded jump" {
- data: [@crossing]; format: @shared.styles.technical;
- legend: @options.crossing; publication: @options.screen;
- layout { algorithm: manual; routing: curved; curve: bezier; crossings: bridge; }
- place @crossing.a { at: [0px,0px]; }
- place @crossing.b { at: [0px,480px]; }
- place @crossing.c { at: [800px,0px]; }
- place @crossing.d { at: [800px,480px]; }
-}
-view crossing_square "Curved disconnected crossing / local square jump" {
- data: [@crossing]; format: @shared.styles.technical;
- legend: @options.crossing; publication: @options.screen;
- layout { algorithm: manual; routing: curved; curve: bezier; crossings: square_bridge; }
- place @crossing.a { at: [0px,0px]; }
- place @crossing.b { at: [0px,480px]; }
- place @crossing.c { at: [800px,0px]; }
- place @crossing.d { at: [800px,480px]; }
-}
-view obstacle "Curved detour / no relation to the middle database" {
- data: [@obstruction]; format: @shared.styles.technical;
- publication: @options.screen;
- layout { algorithm: grid; columns: 3; routing: curved; curve: bezier; }
- legend { mode: numbers; keys: { deliver: 1 }; }
-}
-view bidirectional "Curved request, response and internal action" {
- data: [@exchange]; format: @shared.styles.technical;
- publication: @options.screen; legend: @options.exchange;
- layout { algorithm: layered; routing: curved; curve: bezier; gap: 180px; }
-}
+publication "publication:mindmap_classic"
+    with
+        id "publication:mindmap_classic"
+        title "Curved mind-map / classic"
+        targets
+            item
+                target
+                    id "mindmap_classic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:mindmap_handdrawn"
+    with
+        id "publication:mindmap_handdrawn"
+        title "Curved mind-map / handDrawn"
+        targets
+            item
+                target
+                    id "mindmap_handdrawn"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:mindmap_neo"
+    with
+        id "publication:mindmap_neo"
+        title "Curved mind-map / neo"
+        targets
+            item
+                target
+                    id "mindmap_neo"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:mindmap_angular"
+    with
+        id "publication:mindmap_angular"
+        title "Same mind-map / orthogonal routes"
+        targets
+            item
+                target
+                    id "mindmap_angular"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:mindmap_rounded"
+    with
+        id "publication:mindmap_rounded"
+        title "Same mind-map / rounded corridor corners"
+        targets
+            item
+                target
+                    id "mindmap_rounded"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:mixed"
+    with
+        id "publication:mixed"
+        title "One view / independent per-relation route overrides"
+        targets
+            item
+                target
+                    id "mixed"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:crossing_gap"
+    with
+        id "publication:crossing_gap"
+        title "Curved disconnected crossing / gap"
+        targets
+            item
+                target
+                    id "crossing_gap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:crossing_bridge"
+    with
+        id "publication:crossing_bridge"
+        title "Curved disconnected crossing / rounded jump"
+        targets
+            item
+                target
+                    id "crossing_bridge"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:crossing_square"
+    with
+        id "publication:crossing_square"
+        title "Curved disconnected crossing / local square jump"
+        targets
+            item
+                target
+                    id "crossing_square"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:obstacle"
+    with
+        id "publication:obstacle"
+        title "Curved detour / no relation to the middle database"
+        targets
+            item
+                target
+                    id "obstacle"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:bidirectional"
+    with
+        id "publication:bidirectional"
+        title "Curved request, response and internal action"
+        targets
+            item
+                target
+                    id "bidirectional"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.curved-relations::capabilities.enterprise" as "context"
+    with
+        id "ddn.examples.curved-relations::capabilities.enterprise"
+        title "Meridian Works"
+
+
+element "ddn.examples.curved-relations::capabilities.finance" as "application"
+    with
+        id "ddn.examples.curved-relations::capabilities.finance"
+        title "Accounting"
+
+
+element "ddn.examples.curved-relations::capabilities.inventory" as "application"
+    with
+        id "ddn.examples.curved-relations::capabilities.inventory"
+        title "Inventory control"
+
+
+element "ddn.examples.curved-relations::capabilities.production" as "application"
+    with
+        id "ddn.examples.curved-relations::capabilities.production"
+        title "Production control"
+
+
+element "ddn.examples.curved-relations::capabilities.logistics" as "application"
+    with
+        id "ddn.examples.curved-relations::capabilities.logistics"
+        title "Logistics"
+
+
+element "ddn.examples.curved-relations::capabilities.workforce" as "application"
+    with
+        id "ddn.examples.curved-relations::capabilities.workforce"
+        title "Human resources"
+
+
+element "ddn.examples.curved-relations::capabilities.journals" as "dataset"
+    with
+        id "ddn.examples.curved-relations::capabilities.journals"
+        title "Journals and periods"
+
+
+element "ddn.examples.curved-relations::capabilities.lots" as "dataset"
+    with
+        id "ddn.examples.curved-relations::capabilities.lots"
+        title "Lots and reservations"
+
+
+element "ddn.examples.curved-relations::capabilities.work_orders" as "dataset"
+    with
+        id "ddn.examples.curved-relations::capabilities.work_orders"
+        title "Work orders and WIP"
+
+
+element "ddn.examples.curved-relations::capabilities.shipments" as "dataset"
+    with
+        id "ddn.examples.curved-relations::capabilities.shipments"
+        title "Loads and delivery"
+
+
+element "ddn.examples.curved-relations::capabilities.employment" as "dataset"
+    with
+        id "ddn.examples.curved-relations::capabilities.employment"
+        title "Employment and payroll"
+
+
+relation "ddn.examples.curved-relations::capabilities.f01" as "assoc"
+    with
+        id "ddn.examples.curved-relations::capabilities.f01"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.finance"
+
+
+relation "ddn.examples.curved-relations::capabilities.f02" as "assoc"
+    with
+        id "ddn.examples.curved-relations::capabilities.f02"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.inventory"
+
+
+relation "ddn.examples.curved-relations::capabilities.f03" as "assoc"
+    with
+        id "ddn.examples.curved-relations::capabilities.f03"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.production"
+
+
+relation "ddn.examples.curved-relations::capabilities.f04" as "assoc"
+    with
+        id "ddn.examples.curved-relations::capabilities.f04"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.logistics"
+
+
+relation "ddn.examples.curved-relations::capabilities.f05" as "assoc"
+    with
+        id "ddn.examples.curved-relations::capabilities.f05"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.workforce"
+
+
+relation "ddn.examples.curved-relations::capabilities.f06" as "assoc"
+    with
+        id "ddn.examples.curved-relations::capabilities.f06"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.finance"
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.journals"
+
+
+relation "ddn.examples.curved-relations::capabilities.f07" as "assoc"
+    with
+        id "ddn.examples.curved-relations::capabilities.f07"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.inventory"
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.lots"
+
+
+relation "ddn.examples.curved-relations::capabilities.f08" as "assoc"
+    with
+        id "ddn.examples.curved-relations::capabilities.f08"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.production"
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.work_orders"
+
+
+relation "ddn.examples.curved-relations::capabilities.f09" as "assoc"
+    with
+        id "ddn.examples.curved-relations::capabilities.f09"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.logistics"
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.shipments"
+
+
+relation "ddn.examples.curved-relations::capabilities.f10" as "assoc"
+    with
+        id "ddn.examples.curved-relations::capabilities.f10"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.workforce"
+            item
+                definition
+                    id "ddn.examples.curved-relations::capabilities.employment"
+
+
+element "ddn.examples.curved-relations::crossing.a" as "dataset"
+    with
+        id "ddn.examples.curved-relations::crossing.a"
+        title "Orders source"
+
+
+element "ddn.examples.curved-relations::crossing.b" as "dataset"
+    with
+        id "ddn.examples.curved-relations::crossing.b"
+        title "Stock source"
+
+
+element "ddn.examples.curved-relations::crossing.c" as "dataset"
+    with
+        id "ddn.examples.curved-relations::crossing.c"
+        title "Stock projection"
+
+
+element "ddn.examples.curved-relations::crossing.d" as "dataset"
+    with
+        id "ddn.examples.curved-relations::crossing.d"
+        title "Orders projection"
+
+
+relation "ddn.examples.curved-relations::crossing.orders" as "flow"
+    with
+        id "ddn.examples.curved-relations::crossing.orders"
+        title "Order projection input"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::crossing.a"
+            item
+                definition
+                    id "ddn.examples.curved-relations::crossing.d"
+
+
+relation "ddn.examples.curved-relations::crossing.stock" as "derives"
+    with
+        id "ddn.examples.curved-relations::crossing.stock"
+        title "Stock projection input"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::crossing.b"
+            item
+                definition
+                    id "ddn.examples.curved-relations::crossing.c"
+
+
+element "ddn.examples.curved-relations::obstruction.source" as "dataset"
+    with
+        id "ddn.examples.curved-relations::obstruction.source"
+        title "Upstream"
+
+
+element "ddn.examples.curved-relations::obstruction.unrelated" as "database"
+    with
+        id "ddn.examples.curved-relations::obstruction.unrelated"
+        title "Unrelated database"
+
+
+element "ddn.examples.curved-relations::obstruction.target" as "dataset"
+    with
+        id "ddn.examples.curved-relations::obstruction.target"
+        title "Downstream"
+
+
+relation "ddn.examples.curved-relations::obstruction.deliver" as "flow"
+    with
+        id "ddn.examples.curved-relations::obstruction.deliver"
+        title "Route around unrelated storage"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::obstruction.source"
+            item
+                definition
+                    id "ddn.examples.curved-relations::obstruction.target"
+
+
+element "ddn.examples.curved-relations::exchange.client" as "application"
+    with
+        id "ddn.examples.curved-relations::exchange.client"
+        title "Client"
+
+
+element "ddn.examples.curved-relations::exchange.manager" as "application"
+    with
+        id "ddn.examples.curved-relations::exchange.manager"
+        title "Connection manager"
+
+
+relation "ddn.examples.curved-relations::exchange.request" as "flow"
+    with
+        id "ddn.examples.curved-relations::exchange.request"
+        title "Connection request"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::exchange.client"
+            item
+                definition
+                    id "ddn.examples.curved-relations::exchange.manager"
+
+
+relation "ddn.examples.curved-relations::exchange.response" as "flow"
+    with
+        id "ddn.examples.curved-relations::exchange.response"
+        title "Authentication prompt"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::exchange.manager"
+            item
+                definition
+                    id "ddn.examples.curved-relations::exchange.client"
+
+
+relation "ddn.examples.curved-relations::exchange.verify" as "invoke"
+    with
+        id "ddn.examples.curved-relations::exchange.verify"
+        title "Validate negotiated settings"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.curved-relations::exchange.manager"
+            item
+                definition
+                    id "ddn.examples.curved-relations::exchange.manager"
+
+
+view "mindmap_classic" as "ddn@1"
+    with
+        id "mindmap_classic"
+        title "Curved mind-map / classic"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+                item
+                    id "ddn.examples.curved-relations::capabilities.finance"
+                item
+                    id "ddn.examples.curved-relations::capabilities.inventory"
+                item
+                    id "ddn.examples.curved-relations::capabilities.production"
+                item
+                    id "ddn.examples.curved-relations::capabilities.logistics"
+                item
+                    id "ddn.examples.curved-relations::capabilities.workforce"
+                item
+                    id "ddn.examples.curved-relations::capabilities.journals"
+                item
+                    id "ddn.examples.curved-relations::capabilities.lots"
+                item
+                    id "ddn.examples.curved-relations::capabilities.work_orders"
+                item
+                    id "ddn.examples.curved-relations::capabilities.shipments"
+                item
+                    id "ddn.examples.curved-relations::capabilities.employment"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+        layout
+            algorithm "mindmap"
+            routing "curved"
+            gap 150
+            root
+                id "ddn.examples.curved-relations::capabilities.enterprise"
+            hierarchy "assoc"
+        display
+            fields "none"
+        legend
+            mode "numbers"
+            width 350
+            keys
+                f01 "1"
+                f02 "2"
+                f03 "3"
+                f04 "4"
+                f05 "5"
+                f06 "6"
+                f07 "7"
+                f08 "8"
+                f09 "9"
+                f10 "10"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:mindmap_classic"
+
+    use "ddn.examples.curved-relations::capabilities.enterprise" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.enterprise"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.enterprise"
+
+    use "ddn.examples.curved-relations::capabilities.finance" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.finance"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.finance"
+
+    use "ddn.examples.curved-relations::capabilities.inventory" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.inventory"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.inventory"
+
+    use "ddn.examples.curved-relations::capabilities.production" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.production"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.production"
+
+    use "ddn.examples.curved-relations::capabilities.logistics" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.logistics"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.logistics"
+
+    use "ddn.examples.curved-relations::capabilities.workforce" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.workforce"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.workforce"
+
+    use "ddn.examples.curved-relations::capabilities.journals" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.journals"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.journals"
+
+    use "ddn.examples.curved-relations::capabilities.lots" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.lots"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.lots"
+
+    use "ddn.examples.curved-relations::capabilities.work_orders" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.work_orders"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.work_orders"
+
+    use "ddn.examples.curved-relations::capabilities.shipments" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.shipments"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.shipments"
+
+    use "ddn.examples.curved-relations::capabilities.employment" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.employment"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.employment"
+
+    use "ddn.examples.curved-relations::capabilities.f01" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f01"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f01"
+
+    use "ddn.examples.curved-relations::capabilities.f02" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f02"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f02"
+
+    use "ddn.examples.curved-relations::capabilities.f03" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f03"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f03"
+
+    use "ddn.examples.curved-relations::capabilities.f04" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f04"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f04"
+
+    use "ddn.examples.curved-relations::capabilities.f05" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f05"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f05"
+
+    use "ddn.examples.curved-relations::capabilities.f06" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f06"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f06"
+
+    use "ddn.examples.curved-relations::capabilities.f07" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f07"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f07"
+
+    use "ddn.examples.curved-relations::capabilities.f08" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f08"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f08"
+
+    use "ddn.examples.curved-relations::capabilities.f09" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f09"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f09"
+
+    use "ddn.examples.curved-relations::capabilities.f10" named "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f10"
+        with
+            id "appearance:mindmap_classic:ddn.examples.curved-relations::capabilities.f10"
+
+
+view "mindmap_handdrawn" as "ddn@1"
+    with
+        id "mindmap_handdrawn"
+        title "Curved mind-map / handDrawn"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+                item
+                    id "ddn.examples.curved-relations::capabilities.finance"
+                item
+                    id "ddn.examples.curved-relations::capabilities.inventory"
+                item
+                    id "ddn.examples.curved-relations::capabilities.production"
+                item
+                    id "ddn.examples.curved-relations::capabilities.logistics"
+                item
+                    id "ddn.examples.curved-relations::capabilities.workforce"
+                item
+                    id "ddn.examples.curved-relations::capabilities.journals"
+                item
+                    id "ddn.examples.curved-relations::capabilities.lots"
+                item
+                    id "ddn.examples.curved-relations::capabilities.work_orders"
+                item
+                    id "ddn.examples.curved-relations::capabilities.shipments"
+                item
+                    id "ddn.examples.curved-relations::capabilities.employment"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+        style
+            look "handdrawn"
+        layout
+            algorithm "mindmap"
+            routing "curved"
+            gap 150
+            root
+                id "ddn.examples.curved-relations::capabilities.enterprise"
+            hierarchy "assoc"
+        display
+            fields "none"
+        legend
+            mode "numbers"
+            width 350
+            keys
+                f01 "1"
+                f02 "2"
+                f03 "3"
+                f04 "4"
+                f05 "5"
+                f06 "6"
+                f07 "7"
+                f08 "8"
+                f09 "9"
+                f10 "10"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:mindmap_handdrawn"
+
+    use "ddn.examples.curved-relations::capabilities.enterprise" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.enterprise"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.enterprise"
+
+    use "ddn.examples.curved-relations::capabilities.finance" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.finance"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.finance"
+
+    use "ddn.examples.curved-relations::capabilities.inventory" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.inventory"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.inventory"
+
+    use "ddn.examples.curved-relations::capabilities.production" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.production"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.production"
+
+    use "ddn.examples.curved-relations::capabilities.logistics" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.logistics"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.logistics"
+
+    use "ddn.examples.curved-relations::capabilities.workforce" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.workforce"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.workforce"
+
+    use "ddn.examples.curved-relations::capabilities.journals" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.journals"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.journals"
+
+    use "ddn.examples.curved-relations::capabilities.lots" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.lots"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.lots"
+
+    use "ddn.examples.curved-relations::capabilities.work_orders" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.work_orders"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.work_orders"
+
+    use "ddn.examples.curved-relations::capabilities.shipments" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.shipments"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.shipments"
+
+    use "ddn.examples.curved-relations::capabilities.employment" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.employment"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.employment"
+
+    use "ddn.examples.curved-relations::capabilities.f01" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f01"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f01"
+
+    use "ddn.examples.curved-relations::capabilities.f02" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f02"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f02"
+
+    use "ddn.examples.curved-relations::capabilities.f03" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f03"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f03"
+
+    use "ddn.examples.curved-relations::capabilities.f04" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f04"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f04"
+
+    use "ddn.examples.curved-relations::capabilities.f05" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f05"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f05"
+
+    use "ddn.examples.curved-relations::capabilities.f06" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f06"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f06"
+
+    use "ddn.examples.curved-relations::capabilities.f07" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f07"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f07"
+
+    use "ddn.examples.curved-relations::capabilities.f08" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f08"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f08"
+
+    use "ddn.examples.curved-relations::capabilities.f09" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f09"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f09"
+
+    use "ddn.examples.curved-relations::capabilities.f10" named "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f10"
+        with
+            id "appearance:mindmap_handdrawn:ddn.examples.curved-relations::capabilities.f10"
+
+
+view "mindmap_neo" as "ddn@1"
+    with
+        id "mindmap_neo"
+        title "Curved mind-map / neo"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+                item
+                    id "ddn.examples.curved-relations::capabilities.finance"
+                item
+                    id "ddn.examples.curved-relations::capabilities.inventory"
+                item
+                    id "ddn.examples.curved-relations::capabilities.production"
+                item
+                    id "ddn.examples.curved-relations::capabilities.logistics"
+                item
+                    id "ddn.examples.curved-relations::capabilities.workforce"
+                item
+                    id "ddn.examples.curved-relations::capabilities.journals"
+                item
+                    id "ddn.examples.curved-relations::capabilities.lots"
+                item
+                    id "ddn.examples.curved-relations::capabilities.work_orders"
+                item
+                    id "ddn.examples.curved-relations::capabilities.shipments"
+                item
+                    id "ddn.examples.curved-relations::capabilities.employment"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+        style
+            look "neo"
+        layout
+            algorithm "mindmap"
+            routing "curved"
+            gap 150
+            root
+                id "ddn.examples.curved-relations::capabilities.enterprise"
+            hierarchy "assoc"
+        display
+            fields "none"
+        legend
+            mode "numbers"
+            width 350
+            keys
+                f01 "1"
+                f02 "2"
+                f03 "3"
+                f04 "4"
+                f05 "5"
+                f06 "6"
+                f07 "7"
+                f08 "8"
+                f09 "9"
+                f10 "10"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:mindmap_neo"
+
+    use "ddn.examples.curved-relations::capabilities.enterprise" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.enterprise"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.enterprise"
+
+    use "ddn.examples.curved-relations::capabilities.finance" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.finance"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.finance"
+
+    use "ddn.examples.curved-relations::capabilities.inventory" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.inventory"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.inventory"
+
+    use "ddn.examples.curved-relations::capabilities.production" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.production"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.production"
+
+    use "ddn.examples.curved-relations::capabilities.logistics" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.logistics"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.logistics"
+
+    use "ddn.examples.curved-relations::capabilities.workforce" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.workforce"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.workforce"
+
+    use "ddn.examples.curved-relations::capabilities.journals" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.journals"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.journals"
+
+    use "ddn.examples.curved-relations::capabilities.lots" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.lots"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.lots"
+
+    use "ddn.examples.curved-relations::capabilities.work_orders" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.work_orders"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.work_orders"
+
+    use "ddn.examples.curved-relations::capabilities.shipments" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.shipments"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.shipments"
+
+    use "ddn.examples.curved-relations::capabilities.employment" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.employment"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.employment"
+
+    use "ddn.examples.curved-relations::capabilities.f01" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f01"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f01"
+
+    use "ddn.examples.curved-relations::capabilities.f02" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f02"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f02"
+
+    use "ddn.examples.curved-relations::capabilities.f03" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f03"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f03"
+
+    use "ddn.examples.curved-relations::capabilities.f04" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f04"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f04"
+
+    use "ddn.examples.curved-relations::capabilities.f05" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f05"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f05"
+
+    use "ddn.examples.curved-relations::capabilities.f06" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f06"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f06"
+
+    use "ddn.examples.curved-relations::capabilities.f07" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f07"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f07"
+
+    use "ddn.examples.curved-relations::capabilities.f08" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f08"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f08"
+
+    use "ddn.examples.curved-relations::capabilities.f09" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f09"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f09"
+
+    use "ddn.examples.curved-relations::capabilities.f10" named "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f10"
+        with
+            id "appearance:mindmap_neo:ddn.examples.curved-relations::capabilities.f10"
+
+
+view "mindmap_angular" as "ddn@1"
+    with
+        id "mindmap_angular"
+        title "Same mind-map / orthogonal routes"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+                item
+                    id "ddn.examples.curved-relations::capabilities.finance"
+                item
+                    id "ddn.examples.curved-relations::capabilities.inventory"
+                item
+                    id "ddn.examples.curved-relations::capabilities.production"
+                item
+                    id "ddn.examples.curved-relations::capabilities.logistics"
+                item
+                    id "ddn.examples.curved-relations::capabilities.workforce"
+                item
+                    id "ddn.examples.curved-relations::capabilities.journals"
+                item
+                    id "ddn.examples.curved-relations::capabilities.lots"
+                item
+                    id "ddn.examples.curved-relations::capabilities.work_orders"
+                item
+                    id "ddn.examples.curved-relations::capabilities.shipments"
+                item
+                    id "ddn.examples.curved-relations::capabilities.employment"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+        layout
+            algorithm "mindmap"
+            gap 150
+            root
+                id "ddn.examples.curved-relations::capabilities.enterprise"
+            hierarchy "assoc"
+        display
+            fields "none"
+        legend
+            mode "numbers"
+            width 350
+            keys
+                f01 "1"
+                f02 "2"
+                f03 "3"
+                f04 "4"
+                f05 "5"
+                f06 "6"
+                f07 "7"
+                f08 "8"
+                f09 "9"
+                f10 "10"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:mindmap_angular"
+
+    use "ddn.examples.curved-relations::capabilities.enterprise" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.enterprise"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.enterprise"
+
+    use "ddn.examples.curved-relations::capabilities.finance" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.finance"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.finance"
+
+    use "ddn.examples.curved-relations::capabilities.inventory" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.inventory"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.inventory"
+
+    use "ddn.examples.curved-relations::capabilities.production" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.production"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.production"
+
+    use "ddn.examples.curved-relations::capabilities.logistics" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.logistics"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.logistics"
+
+    use "ddn.examples.curved-relations::capabilities.workforce" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.workforce"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.workforce"
+
+    use "ddn.examples.curved-relations::capabilities.journals" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.journals"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.journals"
+
+    use "ddn.examples.curved-relations::capabilities.lots" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.lots"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.lots"
+
+    use "ddn.examples.curved-relations::capabilities.work_orders" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.work_orders"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.work_orders"
+
+    use "ddn.examples.curved-relations::capabilities.shipments" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.shipments"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.shipments"
+
+    use "ddn.examples.curved-relations::capabilities.employment" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.employment"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.employment"
+
+    use "ddn.examples.curved-relations::capabilities.f01" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f01"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f01"
+
+    use "ddn.examples.curved-relations::capabilities.f02" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f02"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f02"
+
+    use "ddn.examples.curved-relations::capabilities.f03" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f03"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f03"
+
+    use "ddn.examples.curved-relations::capabilities.f04" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f04"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f04"
+
+    use "ddn.examples.curved-relations::capabilities.f05" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f05"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f05"
+
+    use "ddn.examples.curved-relations::capabilities.f06" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f06"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f06"
+
+    use "ddn.examples.curved-relations::capabilities.f07" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f07"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f07"
+
+    use "ddn.examples.curved-relations::capabilities.f08" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f08"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f08"
+
+    use "ddn.examples.curved-relations::capabilities.f09" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f09"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f09"
+
+    use "ddn.examples.curved-relations::capabilities.f10" named "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f10"
+        with
+            id "appearance:mindmap_angular:ddn.examples.curved-relations::capabilities.f10"
+
+
+view "mindmap_rounded" as "ddn@1"
+    with
+        id "mindmap_rounded"
+        title "Same mind-map / rounded corridor corners"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+                item
+                    id "ddn.examples.curved-relations::capabilities.finance"
+                item
+                    id "ddn.examples.curved-relations::capabilities.inventory"
+                item
+                    id "ddn.examples.curved-relations::capabilities.production"
+                item
+                    id "ddn.examples.curved-relations::capabilities.logistics"
+                item
+                    id "ddn.examples.curved-relations::capabilities.workforce"
+                item
+                    id "ddn.examples.curved-relations::capabilities.journals"
+                item
+                    id "ddn.examples.curved-relations::capabilities.lots"
+                item
+                    id "ddn.examples.curved-relations::capabilities.work_orders"
+                item
+                    id "ddn.examples.curved-relations::capabilities.shipments"
+                item
+                    id "ddn.examples.curved-relations::capabilities.employment"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+        layout
+            algorithm "mindmap"
+            routing "curved"
+            curve "rounded"
+            curve_radius 36
+            gap 150
+            root
+                id "ddn.examples.curved-relations::capabilities.enterprise"
+            hierarchy "assoc"
+        display
+            fields "none"
+        legend
+            mode "numbers"
+            width 350
+            keys
+                f01 "1"
+                f02 "2"
+                f03 "3"
+                f04 "4"
+                f05 "5"
+                f06 "6"
+                f07 "7"
+                f08 "8"
+                f09 "9"
+                f10 "10"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:mindmap_rounded"
+
+    use "ddn.examples.curved-relations::capabilities.enterprise" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.enterprise"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.enterprise"
+
+    use "ddn.examples.curved-relations::capabilities.finance" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.finance"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.finance"
+
+    use "ddn.examples.curved-relations::capabilities.inventory" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.inventory"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.inventory"
+
+    use "ddn.examples.curved-relations::capabilities.production" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.production"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.production"
+
+    use "ddn.examples.curved-relations::capabilities.logistics" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.logistics"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.logistics"
+
+    use "ddn.examples.curved-relations::capabilities.workforce" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.workforce"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.workforce"
+
+    use "ddn.examples.curved-relations::capabilities.journals" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.journals"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.journals"
+
+    use "ddn.examples.curved-relations::capabilities.lots" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.lots"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.lots"
+
+    use "ddn.examples.curved-relations::capabilities.work_orders" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.work_orders"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.work_orders"
+
+    use "ddn.examples.curved-relations::capabilities.shipments" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.shipments"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.shipments"
+
+    use "ddn.examples.curved-relations::capabilities.employment" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.employment"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.employment"
+
+    use "ddn.examples.curved-relations::capabilities.f01" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f01"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f01"
+
+    use "ddn.examples.curved-relations::capabilities.f02" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f02"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f02"
+
+    use "ddn.examples.curved-relations::capabilities.f03" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f03"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f03"
+
+    use "ddn.examples.curved-relations::capabilities.f04" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f04"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f04"
+
+    use "ddn.examples.curved-relations::capabilities.f05" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f05"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f05"
+
+    use "ddn.examples.curved-relations::capabilities.f06" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f06"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f06"
+
+    use "ddn.examples.curved-relations::capabilities.f07" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f07"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f07"
+
+    use "ddn.examples.curved-relations::capabilities.f08" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f08"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f08"
+
+    use "ddn.examples.curved-relations::capabilities.f09" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f09"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f09"
+
+    use "ddn.examples.curved-relations::capabilities.f10" named "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f10"
+        with
+            id "appearance:mindmap_rounded:ddn.examples.curved-relations::capabilities.f10"
+
+
+view "mixed" as "ddn@1"
+    with
+        id "mixed"
+        title "One view / independent per-relation route overrides"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::capabilities.enterprise"
+                item
+                    id "ddn.examples.curved-relations::capabilities.finance"
+                item
+                    id "ddn.examples.curved-relations::capabilities.inventory"
+                item
+                    id "ddn.examples.curved-relations::capabilities.production"
+                item
+                    id "ddn.examples.curved-relations::capabilities.logistics"
+                item
+                    id "ddn.examples.curved-relations::capabilities.workforce"
+                item
+                    id "ddn.examples.curved-relations::capabilities.journals"
+                item
+                    id "ddn.examples.curved-relations::capabilities.lots"
+                item
+                    id "ddn.examples.curved-relations::capabilities.work_orders"
+                item
+                    id "ddn.examples.curved-relations::capabilities.shipments"
+                item
+                    id "ddn.examples.curved-relations::capabilities.employment"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+        layout
+            algorithm "mindmap"
+            routing "curved"
+            gap 150
+            root
+                id "ddn.examples.curved-relations::capabilities.enterprise"
+            hierarchy "assoc"
+        display
+            fields "none"
+        legend
+            mode "numbers"
+            width 350
+            keys
+                f01 "1"
+                f02 "2"
+                f03 "3"
+                f04 "4"
+                f05 "5"
+                f06 "6"
+                f07 "7"
+                f08 "8"
+                f09 "9"
+                f10 "10"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:mixed"
+
+    use "ddn.examples.curved-relations::capabilities.enterprise" named "appearance:mixed:ddn.examples.curved-relations::capabilities.enterprise"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.enterprise"
+
+    use "ddn.examples.curved-relations::capabilities.finance" named "appearance:mixed:ddn.examples.curved-relations::capabilities.finance"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.finance"
+
+    use "ddn.examples.curved-relations::capabilities.inventory" named "appearance:mixed:ddn.examples.curved-relations::capabilities.inventory"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.inventory"
+
+    use "ddn.examples.curved-relations::capabilities.production" named "appearance:mixed:ddn.examples.curved-relations::capabilities.production"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.production"
+
+    use "ddn.examples.curved-relations::capabilities.logistics" named "appearance:mixed:ddn.examples.curved-relations::capabilities.logistics"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.logistics"
+
+    use "ddn.examples.curved-relations::capabilities.workforce" named "appearance:mixed:ddn.examples.curved-relations::capabilities.workforce"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.workforce"
+
+    use "ddn.examples.curved-relations::capabilities.journals" named "appearance:mixed:ddn.examples.curved-relations::capabilities.journals"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.journals"
+
+    use "ddn.examples.curved-relations::capabilities.lots" named "appearance:mixed:ddn.examples.curved-relations::capabilities.lots"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.lots"
+
+    use "ddn.examples.curved-relations::capabilities.work_orders" named "appearance:mixed:ddn.examples.curved-relations::capabilities.work_orders"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.work_orders"
+
+    use "ddn.examples.curved-relations::capabilities.shipments" named "appearance:mixed:ddn.examples.curved-relations::capabilities.shipments"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.shipments"
+
+    use "ddn.examples.curved-relations::capabilities.employment" named "appearance:mixed:ddn.examples.curved-relations::capabilities.employment"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.employment"
+
+    use "ddn.examples.curved-relations::capabilities.f01" named "appearance:mixed:ddn.examples.curved-relations::capabilities.f01"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.f01"
+            route
+                routing "orthogonal"
+
+    use "ddn.examples.curved-relations::capabilities.f02" named "appearance:mixed:ddn.examples.curved-relations::capabilities.f02"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.f02"
+
+    use "ddn.examples.curved-relations::capabilities.f03" named "appearance:mixed:ddn.examples.curved-relations::capabilities.f03"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.f03"
+            route
+                routing "curved"
+                curve "rounded"
+                curve_radius 24
+
+    use "ddn.examples.curved-relations::capabilities.f04" named "appearance:mixed:ddn.examples.curved-relations::capabilities.f04"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.f04"
+
+    use "ddn.examples.curved-relations::capabilities.f05" named "appearance:mixed:ddn.examples.curved-relations::capabilities.f05"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.f05"
+
+    use "ddn.examples.curved-relations::capabilities.f06" named "appearance:mixed:ddn.examples.curved-relations::capabilities.f06"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.f06"
+            route
+                routing "straight"
+
+    use "ddn.examples.curved-relations::capabilities.f07" named "appearance:mixed:ddn.examples.curved-relations::capabilities.f07"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.f07"
+
+    use "ddn.examples.curved-relations::capabilities.f08" named "appearance:mixed:ddn.examples.curved-relations::capabilities.f08"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.f08"
+
+    use "ddn.examples.curved-relations::capabilities.f09" named "appearance:mixed:ddn.examples.curved-relations::capabilities.f09"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.f09"
+
+    use "ddn.examples.curved-relations::capabilities.f10" named "appearance:mixed:ddn.examples.curved-relations::capabilities.f10"
+        with
+            id "appearance:mixed:ddn.examples.curved-relations::capabilities.f10"
+
+
+view "crossing_gap" as "ddn@1"
+    with
+        id "crossing_gap"
+        title "Curved disconnected crossing / gap"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::crossing.a"
+                item
+                    id "ddn.examples.curved-relations::crossing.b"
+                item
+                    id "ddn.examples.curved-relations::crossing.c"
+                item
+                    id "ddn.examples.curved-relations::crossing.d"
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+        layout
+            algorithm "manual"
+            routing "curved"
+            gap 80
+        legend
+            mode "numbers"
+            width 350
+            keys
+                orders "1"
+                stock "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:crossing_gap"
+
+    use "ddn.examples.curved-relations::crossing.a" named "appearance:crossing_gap:ddn.examples.curved-relations::crossing.a"
+        with
+            id "appearance:crossing_gap:ddn.examples.curved-relations::crossing.a"
+            position
+                x 0
+                y 0
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.b" named "appearance:crossing_gap:ddn.examples.curved-relations::crossing.b"
+        with
+            id "appearance:crossing_gap:ddn.examples.curved-relations::crossing.b"
+            position
+                x 0
+                y 480
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.c" named "appearance:crossing_gap:ddn.examples.curved-relations::crossing.c"
+        with
+            id "appearance:crossing_gap:ddn.examples.curved-relations::crossing.c"
+            position
+                x 800
+                y 0
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.d" named "appearance:crossing_gap:ddn.examples.curved-relations::crossing.d"
+        with
+            id "appearance:crossing_gap:ddn.examples.curved-relations::crossing.d"
+            position
+                x 800
+                y 480
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.orders" named "appearance:crossing_gap:ddn.examples.curved-relations::crossing.orders"
+        with
+            id "appearance:crossing_gap:ddn.examples.curved-relations::crossing.orders"
+
+    use "ddn.examples.curved-relations::crossing.stock" named "appearance:crossing_gap:ddn.examples.curved-relations::crossing.stock"
+        with
+            id "appearance:crossing_gap:ddn.examples.curved-relations::crossing.stock"
+
+
+view "crossing_bridge" as "ddn@1"
+    with
+        id "crossing_bridge"
+        title "Curved disconnected crossing / rounded jump"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::crossing.a"
+                item
+                    id "ddn.examples.curved-relations::crossing.b"
+                item
+                    id "ddn.examples.curved-relations::crossing.c"
+                item
+                    id "ddn.examples.curved-relations::crossing.d"
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+        layout
+            algorithm "manual"
+            routing "curved"
+            crossings "bridge"
+            gap 80
+        legend
+            mode "numbers"
+            width 350
+            keys
+                orders "1"
+                stock "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:crossing_bridge"
+
+    use "ddn.examples.curved-relations::crossing.a" named "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.a"
+        with
+            id "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.a"
+            position
+                x 0
+                y 0
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.b" named "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.b"
+        with
+            id "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.b"
+            position
+                x 0
+                y 480
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.c" named "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.c"
+        with
+            id "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.c"
+            position
+                x 800
+                y 0
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.d" named "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.d"
+        with
+            id "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.d"
+            position
+                x 800
+                y 480
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.orders" named "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.orders"
+        with
+            id "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.orders"
+
+    use "ddn.examples.curved-relations::crossing.stock" named "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.stock"
+        with
+            id "appearance:crossing_bridge:ddn.examples.curved-relations::crossing.stock"
+
+
+view "crossing_square" as "ddn@1"
+    with
+        id "crossing_square"
+        title "Curved disconnected crossing / local square jump"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::crossing.a"
+                item
+                    id "ddn.examples.curved-relations::crossing.b"
+                item
+                    id "ddn.examples.curved-relations::crossing.c"
+                item
+                    id "ddn.examples.curved-relations::crossing.d"
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+        layout
+            algorithm "manual"
+            routing "curved"
+            crossings "square_bridge"
+            gap 80
+        legend
+            mode "numbers"
+            width 350
+            keys
+                orders "1"
+                stock "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:crossing_square"
+
+    use "ddn.examples.curved-relations::crossing.a" named "appearance:crossing_square:ddn.examples.curved-relations::crossing.a"
+        with
+            id "appearance:crossing_square:ddn.examples.curved-relations::crossing.a"
+            position
+                x 0
+                y 0
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.b" named "appearance:crossing_square:ddn.examples.curved-relations::crossing.b"
+        with
+            id "appearance:crossing_square:ddn.examples.curved-relations::crossing.b"
+            position
+                x 0
+                y 480
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.c" named "appearance:crossing_square:ddn.examples.curved-relations::crossing.c"
+        with
+            id "appearance:crossing_square:ddn.examples.curved-relations::crossing.c"
+            position
+                x 800
+                y 0
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.d" named "appearance:crossing_square:ddn.examples.curved-relations::crossing.d"
+        with
+            id "appearance:crossing_square:ddn.examples.curved-relations::crossing.d"
+            position
+                x 800
+                y 480
+            pinned true
+
+    use "ddn.examples.curved-relations::crossing.orders" named "appearance:crossing_square:ddn.examples.curved-relations::crossing.orders"
+        with
+            id "appearance:crossing_square:ddn.examples.curved-relations::crossing.orders"
+
+    use "ddn.examples.curved-relations::crossing.stock" named "appearance:crossing_square:ddn.examples.curved-relations::crossing.stock"
+        with
+            id "appearance:crossing_square:ddn.examples.curved-relations::crossing.stock"
+
+
+view "obstacle" as "ddn@1"
+    with
+        id "obstacle"
+        title "Curved detour / no relation to the middle database"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::obstruction.source"
+                item
+                    id "ddn.examples.curved-relations::obstruction.unrelated"
+                item
+                    id "ddn.examples.curved-relations::obstruction.target"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+        layout
+            algorithm "grid"
+            routing "curved"
+            gap 80
+        legend
+            mode "numbers"
+            width 280
+            keys
+                deliver "1"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:obstacle"
+
+    use "ddn.examples.curved-relations::obstruction.source" named "appearance:obstacle:ddn.examples.curved-relations::obstruction.source"
+        with
+            id "appearance:obstacle:ddn.examples.curved-relations::obstruction.source"
+
+    use "ddn.examples.curved-relations::obstruction.unrelated" named "appearance:obstacle:ddn.examples.curved-relations::obstruction.unrelated"
+        with
+            id "appearance:obstacle:ddn.examples.curved-relations::obstruction.unrelated"
+
+    use "ddn.examples.curved-relations::obstruction.target" named "appearance:obstacle:ddn.examples.curved-relations::obstruction.target"
+        with
+            id "appearance:obstacle:ddn.examples.curved-relations::obstruction.target"
+
+    use "ddn.examples.curved-relations::obstruction.deliver" named "appearance:obstacle:ddn.examples.curved-relations::obstruction.deliver"
+        with
+            id "appearance:obstacle:ddn.examples.curved-relations::obstruction.deliver"
+
+
+view "bidirectional" as "ddn@1"
+    with
+        id "bidirectional"
+        title "Curved request, response and internal action"
+        selection
+            include
+                item
+                    id "ddn.examples.curved-relations::exchange.client"
+                item
+                    id "ddn.examples.curved-relations::exchange.manager"
+                item
+                    id "ddn.examples.curved-relations::exchange.request"
+                item
+                    id "ddn.examples.curved-relations::exchange.response"
+                item
+                    id "ddn.examples.curved-relations::exchange.verify"
+            exclude
+                item
+                    id "ddn.examples.curved-relations::capabilities.f01"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f02"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f03"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f04"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f05"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f06"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f07"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f08"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f09"
+                item
+                    id "ddn.examples.curved-relations::capabilities.f10"
+                item
+                    id "ddn.examples.curved-relations::crossing.orders"
+                item
+                    id "ddn.examples.curved-relations::crossing.stock"
+                item
+                    id "ddn.examples.curved-relations::obstruction.deliver"
+        layout
+            algorithm "layered"
+            routing "curved"
+            gap 180
+        legend
+            mode "numbers"
+            width 350
+            keys
+                request "1"
+                response "2"
+                verify "3"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:bidirectional"
+
+    use "ddn.examples.curved-relations::exchange.client" named "appearance:bidirectional:ddn.examples.curved-relations::exchange.client"
+        with
+            id "appearance:bidirectional:ddn.examples.curved-relations::exchange.client"
+
+    use "ddn.examples.curved-relations::exchange.manager" named "appearance:bidirectional:ddn.examples.curved-relations::exchange.manager"
+        with
+            id "appearance:bidirectional:ddn.examples.curved-relations::exchange.manager"
+
+    use "ddn.examples.curved-relations::exchange.request" named "appearance:bidirectional:ddn.examples.curved-relations::exchange.request"
+        with
+            id "appearance:bidirectional:ddn.examples.curved-relations::exchange.request"
+
+    use "ddn.examples.curved-relations::exchange.response" named "appearance:bidirectional:ddn.examples.curved-relations::exchange.response"
+        with
+            id "appearance:bidirectional:ddn.examples.curved-relations::exchange.response"
+
+    use "ddn.examples.curved-relations::exchange.verify" named "appearance:bidirectional:ddn.examples.curved-relations::exchange.verify"
+        with
+            id "appearance:bidirectional:ddn.examples.curved-relations::exchange.verify"

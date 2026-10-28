@@ -1,60 +1,525 @@
-ddn "0.5";
-module "ddn.examples.matrix-pack";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:bcg"
+    with
+        id "publication:bcg"
+        title "Synthetic portfolio / BCG"
+        targets
+            item
+                target
+                    id "bcg"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// Synthetic product portfolio of the invented beverage company "Fizzberry" (all names
-// and data invented) for the matrix.bcg@1, matrix.ansoff@1 and matrix.tows@1 profiles.
-// Row/column category elements carry x_category {axis, level}; quadrant cells are
-// ordinary assoc relations from a row category to a column category, labeled by name.
-data axes {
-    object g_high "Market growth: high" { kind: record; x_category: {axis:"growth", level:"high"}; description: "Synthetic: fast-growing beverage segments in Fizzberry's markets."; }
-    object g_low "Market growth: low" { kind: record; x_category: {axis:"growth", level:"low"}; description: "Synthetic: flat or declining beverage segments in Fizzberry's markets."; }
-    object s_high "Relative share: high" { kind: record; x_category: {axis:"share", level:"high"}; description: "Synthetic: Fizzberry leads the segment versus the largest rival."; }
-    object s_low "Relative share: low" { kind: record; x_category: {axis:"share", level:"low"}; description: "Synthetic: Fizzberry trails the segment leader."; }
-    object m_existing "Market: existing" { kind: record; x_category: {axis:"market", level:"existing"}; description: "Synthetic: regions and channels Fizzberry already serves."; }
-    object m_new "Market: new" { kind: record; x_category: {axis:"market", level:"new"}; description: "Synthetic: regions and channels Fizzberry does not yet serve."; }
-    object p_existing "Product: existing" { kind: record; x_category: {axis:"product", level:"existing"}; description: "Synthetic: Fizzberry's current beverage lines."; }
-    object p_new "Product: new" { kind: record; x_category: {axis:"product", level:"new"}; description: "Synthetic: beverage lines Fizzberry has not launched yet."; }
-    object int_s "Internal: strength" { kind: record; x_category: {axis:"internal", level:"strength"}; description: "Synthetic: brand recognition for botanical sparkling drinks."; }
-    object int_w "Internal: weakness" { kind: record; x_category: {axis:"internal", level:"weakness"}; description: "Synthetic: limited cold-chain distribution inland."; }
-    object ext_o "External: opportunity" { kind: record; x_category: {axis:"external", level:"opportunity"}; description: "Synthetic: subscription delivery apps growing in coastal cities."; }
-    object ext_t "External: threat" { kind: record; x_category: {axis:"external", level:"threat"}; description: "Synthetic: proposed sugar levy on sweetened beverages."; }
-}
 
-data items {
-    relation bcg_star "Sparkling tea" @axes.g_high -> @axes.s_high { kind: assoc; }
-    relation bcg_star2 "Ginger sparkler" @axes.g_high -> @axes.s_high { kind: assoc; }
-    relation bcq_question "Nitro kombucha" @axes.g_high -> @axes.s_low { kind: assoc; }
-    relation bcg_cow "Classic cola" @axes.g_low -> @axes.s_high { kind: assoc; }
-    relation bcg_dog "Diet cream soda" @axes.g_low -> @axes.s_low { kind: assoc; }
-    relation an_penetration "Cola bundle promotion" @axes.m_existing -> @axes.p_existing { kind: assoc; }
-    relation an_market_dev "Coastal export launch" @axes.m_new -> @axes.p_existing { kind: assoc; }
-    relation an_product_dev "Botanical tonic line" @axes.m_existing -> @axes.p_new { kind: assoc; }
-    relation an_diversification "Kombucha subscription box" @axes.m_new -> @axes.p_new { kind: assoc; }
-    relation tows_so "Use brand strength in subscription channel" @axes.int_s -> @axes.ext_o { kind: assoc; }
-    relation tows_wo "Partner with delivery apps to bypass cold-chain gap" @axes.int_w -> @axes.ext_o { kind: assoc; }
-    relation tows_st "Lead low-sugar reformulation ahead of the levy" @axes.int_s -> @axes.ext_t { kind: assoc; }
-    relation tows_wt "Hedge sweetener sourcing before levy passes" @axes.int_w -> @axes.ext_t { kind: assoc; }
-}
+publication "publication:ansoff"
+    with
+        id "publication:ansoff"
+        title "Synthetic portfolio / Ansoff"
+        targets
+            item
+                target
+                    id "ansoff"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view bcg "Synthetic portfolio / BCG" {
-    layout { gap: 112px; row_gap: 112px; }
-    data: [@axes, @items];
-    format: @shared.styles.technical;
-    projection { kind:matrix; profile:"matrix.bcg@1"; rows:[@axes.g_high, @axes.g_low]; columns:[@axes.s_high, @axes.s_low]; relation:"assoc"; value:"name"; duplicates:join; }
-}
 
-view ansoff "Synthetic portfolio / Ansoff" {
-    layout { gap: 112px; row_gap: 112px; }
-    data: [@axes, @items];
-    format: @shared.styles.technical;
-    projection { kind:matrix; profile:"matrix.ansoff@1"; rows:[@axes.m_existing, @axes.m_new]; columns:[@axes.p_existing, @axes.p_new]; relation:"assoc"; value:"name"; duplicates:join; }
-}
+publication "publication:tows"
+    with
+        id "publication:tows"
+        title "Synthetic portfolio / TOWS"
+        targets
+            item
+                target
+                    id "tows"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view tows "Synthetic portfolio / TOWS" {
-    layout { gap: 112px; row_gap: 112px; }
-    data: [@axes, @items];
-    format: @shared.styles.technical;
-    projection { kind:matrix; profile:"matrix.tows@1"; rows:[@axes.int_s, @axes.int_w]; columns:[@axes.ext_o, @axes.ext_t]; relation:"assoc"; value:"name"; duplicates:join; }
-}
+
+element "ddn.examples.matrix-pack::axes.g_high" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.g_high"
+        title "Market growth: high"
+        description "Synthetic: fast-growing beverage segments in Fizzberry's markets."
+        metadata
+            x_category
+                axis "growth"
+                level "high"
+
+
+element "ddn.examples.matrix-pack::axes.g_low" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.g_low"
+        title "Market growth: low"
+        description "Synthetic: flat or declining beverage segments in Fizzberry's markets."
+        metadata
+            x_category
+                axis "growth"
+                level "low"
+
+
+element "ddn.examples.matrix-pack::axes.s_high" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.s_high"
+        title "Relative share: high"
+        description "Synthetic: Fizzberry leads the segment versus the largest rival."
+        metadata
+            x_category
+                axis "share"
+                level "high"
+
+
+element "ddn.examples.matrix-pack::axes.s_low" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.s_low"
+        title "Relative share: low"
+        description "Synthetic: Fizzberry trails the segment leader."
+        metadata
+            x_category
+                axis "share"
+                level "low"
+
+
+element "ddn.examples.matrix-pack::axes.m_existing" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.m_existing"
+        title "Market: existing"
+        description "Synthetic: regions and channels Fizzberry already serves."
+        metadata
+            x_category
+                axis "market"
+                level "existing"
+
+
+element "ddn.examples.matrix-pack::axes.m_new" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.m_new"
+        title "Market: new"
+        description "Synthetic: regions and channels Fizzberry does not yet serve."
+        metadata
+            x_category
+                axis "market"
+                level "new"
+
+
+element "ddn.examples.matrix-pack::axes.p_existing" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.p_existing"
+        title "Product: existing"
+        description "Synthetic: Fizzberry's current beverage lines."
+        metadata
+            x_category
+                axis "product"
+                level "existing"
+
+
+element "ddn.examples.matrix-pack::axes.p_new" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.p_new"
+        title "Product: new"
+        description "Synthetic: beverage lines Fizzberry has not launched yet."
+        metadata
+            x_category
+                axis "product"
+                level "new"
+
+
+element "ddn.examples.matrix-pack::axes.int_s" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.int_s"
+        title "Internal: strength"
+        description "Synthetic: brand recognition for botanical sparkling drinks."
+        metadata
+            x_category
+                axis "internal"
+                level "strength"
+
+
+element "ddn.examples.matrix-pack::axes.int_w" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.int_w"
+        title "Internal: weakness"
+        description "Synthetic: limited cold-chain distribution inland."
+        metadata
+            x_category
+                axis "internal"
+                level "weakness"
+
+
+element "ddn.examples.matrix-pack::axes.ext_o" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.ext_o"
+        title "External: opportunity"
+        description "Synthetic: subscription delivery apps growing in coastal cities."
+        metadata
+            x_category
+                axis "external"
+                level "opportunity"
+
+
+element "ddn.examples.matrix-pack::axes.ext_t" as "record"
+    with
+        id "ddn.examples.matrix-pack::axes.ext_t"
+        title "External: threat"
+        description "Synthetic: proposed sugar levy on sweetened beverages."
+        metadata
+            x_category
+                axis "external"
+                level "threat"
+
+
+relation "ddn.examples.matrix-pack::items.bcg_star" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.bcg_star"
+        title "Sparkling tea"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.g_high"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.s_high"
+
+
+relation "ddn.examples.matrix-pack::items.bcg_star2" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.bcg_star2"
+        title "Ginger sparkler"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.g_high"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.s_high"
+
+
+relation "ddn.examples.matrix-pack::items.bcq_question" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.bcq_question"
+        title "Nitro kombucha"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.g_high"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.s_low"
+
+
+relation "ddn.examples.matrix-pack::items.bcg_cow" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.bcg_cow"
+        title "Classic cola"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.g_low"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.s_high"
+
+
+relation "ddn.examples.matrix-pack::items.bcg_dog" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.bcg_dog"
+        title "Diet cream soda"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.g_low"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.s_low"
+
+
+relation "ddn.examples.matrix-pack::items.an_penetration" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.an_penetration"
+        title "Cola bundle promotion"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.m_existing"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.p_existing"
+
+
+relation "ddn.examples.matrix-pack::items.an_market_dev" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.an_market_dev"
+        title "Coastal export launch"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.m_new"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.p_existing"
+
+
+relation "ddn.examples.matrix-pack::items.an_product_dev" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.an_product_dev"
+        title "Botanical tonic line"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.m_existing"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.p_new"
+
+
+relation "ddn.examples.matrix-pack::items.an_diversification" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.an_diversification"
+        title "Kombucha subscription box"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.m_new"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.p_new"
+
+
+relation "ddn.examples.matrix-pack::items.tows_so" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.tows_so"
+        title "Use brand strength in subscription channel"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.int_s"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.ext_o"
+
+
+relation "ddn.examples.matrix-pack::items.tows_wo" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.tows_wo"
+        title "Partner with delivery apps to bypass cold-chain gap"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.int_w"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.ext_o"
+
+
+relation "ddn.examples.matrix-pack::items.tows_st" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.tows_st"
+        title "Lead low-sugar reformulation ahead of the levy"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.int_s"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.ext_t"
+
+
+relation "ddn.examples.matrix-pack::items.tows_wt" as "assoc"
+    with
+        id "ddn.examples.matrix-pack::items.tows_wt"
+        title "Hedge sweetener sourcing before levy passes"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.int_w"
+            item
+                definition
+                    id "ddn.examples.matrix-pack::axes.ext_t"
+
+
+view "bcg" as "matrix.bcg@1"
+    with
+        id "bcg"
+        title "Synthetic portfolio / BCG"
+        selection
+            include
+                item
+                    id "ddn.examples.matrix-pack::axes.g_high"
+                item
+                    id "ddn.examples.matrix-pack::axes.g_low"
+                item
+                    id "ddn.examples.matrix-pack::axes.s_high"
+                item
+                    id "ddn.examples.matrix-pack::axes.s_low"
+                item
+                    id "ddn.examples.matrix-pack::items.bcg_star"
+                item
+                    id "ddn.examples.matrix-pack::items.bcg_star2"
+                item
+                    id "ddn.examples.matrix-pack::items.bcq_question"
+                item
+                    id "ddn.examples.matrix-pack::items.bcg_cow"
+                item
+                    id "ddn.examples.matrix-pack::items.bcg_dog"
+        layout
+            algorithm "grid"
+            gap 112
+            row_gap 112
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                rows
+                    item
+                        id "ddn.examples.matrix-pack::axes.g_high"
+                    item
+                        id "ddn.examples.matrix-pack::axes.g_low"
+                columns
+                    item
+                        id "ddn.examples.matrix-pack::axes.s_high"
+                    item
+                        id "ddn.examples.matrix-pack::axes.s_low"
+                relation "assoc"
+                value "title"
+                duplicates "join"
+
+
+view "ansoff" as "matrix.ansoff@1"
+    with
+        id "ansoff"
+        title "Synthetic portfolio / Ansoff"
+        selection
+            include
+                item
+                    id "ddn.examples.matrix-pack::axes.m_existing"
+                item
+                    id "ddn.examples.matrix-pack::axes.m_new"
+                item
+                    id "ddn.examples.matrix-pack::axes.p_existing"
+                item
+                    id "ddn.examples.matrix-pack::axes.p_new"
+                item
+                    id "ddn.examples.matrix-pack::items.an_penetration"
+                item
+                    id "ddn.examples.matrix-pack::items.an_market_dev"
+                item
+                    id "ddn.examples.matrix-pack::items.an_product_dev"
+                item
+                    id "ddn.examples.matrix-pack::items.an_diversification"
+        layout
+            algorithm "grid"
+            gap 112
+            row_gap 112
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                rows
+                    item
+                        id "ddn.examples.matrix-pack::axes.m_existing"
+                    item
+                        id "ddn.examples.matrix-pack::axes.m_new"
+                columns
+                    item
+                        id "ddn.examples.matrix-pack::axes.p_existing"
+                    item
+                        id "ddn.examples.matrix-pack::axes.p_new"
+                relation "assoc"
+                value "title"
+                duplicates "join"
+
+
+view "tows" as "matrix.tows@1"
+    with
+        id "tows"
+        title "Synthetic portfolio / TOWS"
+        selection
+            include
+                item
+                    id "ddn.examples.matrix-pack::axes.int_s"
+                item
+                    id "ddn.examples.matrix-pack::axes.int_w"
+                item
+                    id "ddn.examples.matrix-pack::axes.ext_o"
+                item
+                    id "ddn.examples.matrix-pack::axes.ext_t"
+                item
+                    id "ddn.examples.matrix-pack::items.tows_so"
+                item
+                    id "ddn.examples.matrix-pack::items.tows_wo"
+                item
+                    id "ddn.examples.matrix-pack::items.tows_st"
+                item
+                    id "ddn.examples.matrix-pack::items.tows_wt"
+        layout
+            algorithm "grid"
+            gap 112
+            row_gap 112
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                rows
+                    item
+                        id "ddn.examples.matrix-pack::axes.int_s"
+                    item
+                        id "ddn.examples.matrix-pack::axes.int_w"
+                columns
+                    item
+                        id "ddn.examples.matrix-pack::axes.ext_o"
+                    item
+                        id "ddn.examples.matrix-pack::axes.ext_t"
+                relation "assoc"
+                value "title"
+                duplicates "join"

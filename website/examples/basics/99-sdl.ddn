@@ -1,61 +1,713 @@
-ddn "0.5";
-module "ddn.examples.sdl";
+version ddn-next-1
 
-// B1-083: ITU-T Z.100 SDL — a system view (blocks with gates, a channel with
-// its signal list as resolved x_sdl references, signal and signal-set
-// vocabulary) and an SDL process diagram (start, state, input/output flags,
-// decision, task, save, create, procedure reference), plus B1-089 timer
-// constructs: a timer declaration with set/reset nodes, a priority input and
-// an active() query. All data is synthetic.
-data sys {
-    object net "Network block" { kind: "sdl.block";
-        ports { g1 { direction: inout; } }
-    }
-    object app "Application block" { kind: "sdl.block";
-        ports { g2 { direction: inout; } }
-    }
-    object sig "OrderReq" { kind: "sdl.signal"; }
-    object sigs "Order signals" { kind: "sdl.signalset"; }
-    object ack "OrderAck" { kind: "sdl.signal"; }
-    relation ch "[OrderReq, OrderAck]" @net.g1 -> @app.g2 { kind: "sdl.channel"; x_sdl: { signals: [ @sig, @ack ] }; }
-    relation l1 "" @sig -> @net { kind: "sdl.links"; }
-    relation l2 "" @sigs -> @app { kind: "sdl.links"; }
-}
-data p {
-    object start "" { kind: "state.initial"; }
-    object idle "Idle" { kind: "state.state"; }
-    object in1 "OrderReq" { kind: "sdl.input"; x_sdl: { priority: "high" }; }
-    object tmr "T1" { kind: "sdl.timer"; }
-    object sett "set(now+5, T1)" { kind: "sdl.set"; x_sdl: { timer: @tmr, duration: "5s" }; }
-    object rstm "reset(T1)" { kind: "sdl.reset"; x_sdl: { timer: @tmr }; }
-    object waiting "waiting" { kind: "sdl.input"; x_sdl: { active: @tmr }; }
-    object work "Process order" { kind: "sdl.task"; }
-    object dec "" { kind: "state.junction"; }
-    object out1 "OrderAck" { kind: "sdl.output"; }
-    object store "Save order" { kind: "sdl.save"; }
-    object proc "Billing" { kind: "sdl.procedure"; }
-    object newstate "Tracking" { kind: "sdl.create"; }
-    object done "" { kind: "state.final"; }
-    relation t1 "" @start -> @idle { kind: "state.transition"; }
-    relation t2 "OrderReq" @idle -> @in1 { kind: "state.transition"; }
-    relation t2b "timeout" @idle -> @waiting { kind: "state.transition"; }
-    relation t3 "" @in1 -> @sett { kind: "state.transition"; }
-    relation t3b "" @sett -> @work { kind: "state.transition"; }
-    relation t3c "" @waiting -> @rstm { kind: "state.transition"; }
-    relation t3d "" @rstm -> @work { kind: "state.transition"; }
-    relation t4 "" @work -> @dec { kind: "state.transition"; }
-    relation t5 "ok" @dec -> @out1 { kind: "state.transition"; }
-    relation t6 "hold" @dec -> @store { kind: "state.transition"; }
-    relation t7 "" @out1 -> @proc { kind: "state.transition"; }
-    relation t8 "" @store -> @proc { kind: "state.transition"; }
-    relation t9 "" @proc -> @newstate { kind: "state.transition"; }
-    relation t10 "" @newstate -> @done { kind: "state.transition"; }
-}
-view system "SDL system": [@sys] as "sdl.basic@1" {
-    frame nb "Network" { scope: @sys.net; members: [@sys.sig]; }
-    publication { size: content; fit: none; }
-}
-view process "Order process": [@p] as "sdl.process@1" {
-    layout { gap: 112px; row_gap: 112px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:system"
+    with
+        id "publication:system"
+        title "SDL system"
+        targets
+            item
+                target
+                    id "system"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:process"
+    with
+        id "publication:process"
+        title "Order process"
+        targets
+            item
+                target
+                    id "process"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.sdl::sys.net.g1" as "core::Port"
+    with
+        id "ddn.examples.sdl::sys.net.g1"
+        title "g1"
+        content
+            owner
+                id "ddn.examples.sdl::sys.net"
+            direction "inout"
+
+
+element "ddn.examples.sdl::sys.net" as "sdl.block"
+    with
+        id "ddn.examples.sdl::sys.net"
+        title "Network block"
+        members
+            item
+                id "ddn.examples.sdl::sys.net.g1"
+
+
+element "ddn.examples.sdl::sys.app.g2" as "core::Port"
+    with
+        id "ddn.examples.sdl::sys.app.g2"
+        title "g2"
+        content
+            owner
+                id "ddn.examples.sdl::sys.app"
+            direction "inout"
+
+
+element "ddn.examples.sdl::sys.app" as "sdl.block"
+    with
+        id "ddn.examples.sdl::sys.app"
+        title "Application block"
+        members
+            item
+                id "ddn.examples.sdl::sys.app.g2"
+
+
+element "ddn.examples.sdl::sys.sig" as "sdl.signal"
+    with
+        id "ddn.examples.sdl::sys.sig"
+        title "OrderReq"
+
+
+element "ddn.examples.sdl::sys.sigs" as "sdl.signalset"
+    with
+        id "ddn.examples.sdl::sys.sigs"
+        title "Order signals"
+
+
+element "ddn.examples.sdl::sys.ack" as "sdl.signal"
+    with
+        id "ddn.examples.sdl::sys.ack"
+        title "OrderAck"
+
+
+relation "ddn.examples.sdl::sys.ch" as "sdl.channel"
+    with
+        id "ddn.examples.sdl::sys.ch"
+        title "[OrderReq, OrderAck]"
+        metadata
+            x_sdl
+                signals
+                    item
+                        id "ddn.examples.sdl::sys.sig"
+                    item
+                        id "ddn.examples.sdl::sys.ack"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::sys.net"
+                member
+                    id "ddn.examples.sdl::sys.net.g1"
+            item
+                definition
+                    id "ddn.examples.sdl::sys.app"
+                member
+                    id "ddn.examples.sdl::sys.app.g2"
+
+
+relation "ddn.examples.sdl::sys.l1" as "sdl.links"
+    with
+        id "ddn.examples.sdl::sys.l1"
+        title "Links"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::sys.sig"
+            item
+                definition
+                    id "ddn.examples.sdl::sys.net"
+
+
+relation "ddn.examples.sdl::sys.l2" as "sdl.links"
+    with
+        id "ddn.examples.sdl::sys.l2"
+        title "Links"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::sys.sigs"
+            item
+                definition
+                    id "ddn.examples.sdl::sys.app"
+
+
+element "ddn.examples.sdl::p.start" as "state.initial"
+    with
+        id "ddn.examples.sdl::p.start"
+        title "start"
+
+
+element "ddn.examples.sdl::p.idle" as "state.state"
+    with
+        id "ddn.examples.sdl::p.idle"
+        title "Idle"
+
+
+element "ddn.examples.sdl::p.in1" as "sdl.input"
+    with
+        id "ddn.examples.sdl::p.in1"
+        title "OrderReq"
+        metadata
+            x_sdl
+                priority "high"
+
+
+element "ddn.examples.sdl::p.tmr" as "sdl.timer"
+    with
+        id "ddn.examples.sdl::p.tmr"
+        title "T1"
+
+
+element "ddn.examples.sdl::p.sett" as "sdl.set"
+    with
+        id "ddn.examples.sdl::p.sett"
+        title "set(now+5, T1)"
+        metadata
+            x_sdl
+                timer
+                    id "ddn.examples.sdl::p.tmr"
+                duration "5s"
+
+
+element "ddn.examples.sdl::p.rstm" as "sdl.reset"
+    with
+        id "ddn.examples.sdl::p.rstm"
+        title "reset(T1)"
+        metadata
+            x_sdl
+                timer
+                    id "ddn.examples.sdl::p.tmr"
+
+
+element "ddn.examples.sdl::p.waiting" as "sdl.input"
+    with
+        id "ddn.examples.sdl::p.waiting"
+        title "waiting"
+        metadata
+            x_sdl
+                active
+                    id "ddn.examples.sdl::p.tmr"
+
+
+element "ddn.examples.sdl::p.work" as "sdl.task"
+    with
+        id "ddn.examples.sdl::p.work"
+        title "Process order"
+
+
+element "ddn.examples.sdl::p.dec" as "state.junction"
+    with
+        id "ddn.examples.sdl::p.dec"
+        title "dec"
+
+
+element "ddn.examples.sdl::p.out1" as "sdl.output"
+    with
+        id "ddn.examples.sdl::p.out1"
+        title "OrderAck"
+
+
+element "ddn.examples.sdl::p.store" as "sdl.save"
+    with
+        id "ddn.examples.sdl::p.store"
+        title "Save order"
+
+
+element "ddn.examples.sdl::p.proc" as "sdl.procedure"
+    with
+        id "ddn.examples.sdl::p.proc"
+        title "Billing"
+
+
+element "ddn.examples.sdl::p.newstate" as "sdl.create"
+    with
+        id "ddn.examples.sdl::p.newstate"
+        title "Tracking"
+
+
+element "ddn.examples.sdl::p.done" as "state.final"
+    with
+        id "ddn.examples.sdl::p.done"
+        title "done"
+
+
+relation "ddn.examples.sdl::p.t1" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t1"
+        title "Event transition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.start"
+            item
+                definition
+                    id "ddn.examples.sdl::p.idle"
+
+
+relation "ddn.examples.sdl::p.t2" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t2"
+        title "OrderReq"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.idle"
+            item
+                definition
+                    id "ddn.examples.sdl::p.in1"
+
+
+relation "ddn.examples.sdl::p.t2b" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t2b"
+        title "timeout"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.idle"
+            item
+                definition
+                    id "ddn.examples.sdl::p.waiting"
+
+
+relation "ddn.examples.sdl::p.t3" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t3"
+        title "Event transition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.in1"
+            item
+                definition
+                    id "ddn.examples.sdl::p.sett"
+
+
+relation "ddn.examples.sdl::p.t3b" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t3b"
+        title "Event transition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.sett"
+            item
+                definition
+                    id "ddn.examples.sdl::p.work"
+
+
+relation "ddn.examples.sdl::p.t3c" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t3c"
+        title "Event transition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.waiting"
+            item
+                definition
+                    id "ddn.examples.sdl::p.rstm"
+
+
+relation "ddn.examples.sdl::p.t3d" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t3d"
+        title "Event transition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.rstm"
+            item
+                definition
+                    id "ddn.examples.sdl::p.work"
+
+
+relation "ddn.examples.sdl::p.t4" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t4"
+        title "Event transition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.work"
+            item
+                definition
+                    id "ddn.examples.sdl::p.dec"
+
+
+relation "ddn.examples.sdl::p.t5" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t5"
+        title "ok"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.dec"
+            item
+                definition
+                    id "ddn.examples.sdl::p.out1"
+
+
+relation "ddn.examples.sdl::p.t6" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t6"
+        title "hold"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.dec"
+            item
+                definition
+                    id "ddn.examples.sdl::p.store"
+
+
+relation "ddn.examples.sdl::p.t7" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t7"
+        title "Event transition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.out1"
+            item
+                definition
+                    id "ddn.examples.sdl::p.proc"
+
+
+relation "ddn.examples.sdl::p.t8" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t8"
+        title "Event transition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.store"
+            item
+                definition
+                    id "ddn.examples.sdl::p.proc"
+
+
+relation "ddn.examples.sdl::p.t9" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t9"
+        title "Event transition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.proc"
+            item
+                definition
+                    id "ddn.examples.sdl::p.newstate"
+
+
+relation "ddn.examples.sdl::p.t10" as "state.transition"
+    with
+        id "ddn.examples.sdl::p.t10"
+        title "Event transition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sdl::p.newstate"
+            item
+                definition
+                    id "ddn.examples.sdl::p.done"
+
+
+view "system" as "sdl.basic@1"
+    with
+        id "system"
+        title "SDL system"
+        selection
+            include
+                item
+                    id "ddn.examples.sdl::sys.net"
+                item
+                    id "ddn.examples.sdl::sys.app"
+                item
+                    id "ddn.examples.sdl::sys.sig"
+                item
+                    id "ddn.examples.sdl::sys.sigs"
+                item
+                    id "ddn.examples.sdl::sys.ack"
+                item
+                    id "ddn.examples.sdl::sys.ch"
+                item
+                    id "ddn.examples.sdl::sys.l1"
+                item
+                    id "ddn.examples.sdl::sys.l2"
+            exclude
+                item
+                    id "ddn.examples.sdl::p.t1"
+                item
+                    id "ddn.examples.sdl::p.t2"
+                item
+                    id "ddn.examples.sdl::p.t2b"
+                item
+                    id "ddn.examples.sdl::p.t3"
+                item
+                    id "ddn.examples.sdl::p.t3b"
+                item
+                    id "ddn.examples.sdl::p.t3c"
+                item
+                    id "ddn.examples.sdl::p.t3d"
+                item
+                    id "ddn.examples.sdl::p.t4"
+                item
+                    id "ddn.examples.sdl::p.t5"
+                item
+                    id "ddn.examples.sdl::p.t6"
+                item
+                    id "ddn.examples.sdl::p.t7"
+                item
+                    id "ddn.examples.sdl::p.t8"
+                item
+                    id "ddn.examples.sdl::p.t9"
+                item
+                    id "ddn.examples.sdl::p.t10"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.sdl::system.nb"
+                name "Network"
+                scope
+                    id "ddn.examples.sdl::sys.net"
+                members
+                    item
+                        id "ddn.examples.sdl::sys.sig"
+        publication
+            id "publication:system"
+
+    use "ddn.examples.sdl::sys.net" named "appearance:system:ddn.examples.sdl::sys.net"
+        with
+            id "appearance:system:ddn.examples.sdl::sys.net"
+
+    use "ddn.examples.sdl::sys.app" named "appearance:system:ddn.examples.sdl::sys.app"
+        with
+            id "appearance:system:ddn.examples.sdl::sys.app"
+
+    use "ddn.examples.sdl::sys.sig" named "appearance:system:ddn.examples.sdl::sys.sig"
+        with
+            id "appearance:system:ddn.examples.sdl::sys.sig"
+
+    use "ddn.examples.sdl::sys.sigs" named "appearance:system:ddn.examples.sdl::sys.sigs"
+        with
+            id "appearance:system:ddn.examples.sdl::sys.sigs"
+
+    use "ddn.examples.sdl::sys.ack" named "appearance:system:ddn.examples.sdl::sys.ack"
+        with
+            id "appearance:system:ddn.examples.sdl::sys.ack"
+
+    use "ddn.examples.sdl::sys.ch" named "appearance:system:ddn.examples.sdl::sys.ch"
+        with
+            id "appearance:system:ddn.examples.sdl::sys.ch"
+
+    use "ddn.examples.sdl::sys.l1" named "appearance:system:ddn.examples.sdl::sys.l1"
+        with
+            id "appearance:system:ddn.examples.sdl::sys.l1"
+
+    use "ddn.examples.sdl::sys.l2" named "appearance:system:ddn.examples.sdl::sys.l2"
+        with
+            id "appearance:system:ddn.examples.sdl::sys.l2"
+
+
+view "process" as "sdl.process@1"
+    with
+        id "process"
+        title "Order process"
+        selection
+            include
+                item
+                    id "ddn.examples.sdl::p.start"
+                item
+                    id "ddn.examples.sdl::p.idle"
+                item
+                    id "ddn.examples.sdl::p.in1"
+                item
+                    id "ddn.examples.sdl::p.tmr"
+                item
+                    id "ddn.examples.sdl::p.sett"
+                item
+                    id "ddn.examples.sdl::p.rstm"
+                item
+                    id "ddn.examples.sdl::p.waiting"
+                item
+                    id "ddn.examples.sdl::p.work"
+                item
+                    id "ddn.examples.sdl::p.dec"
+                item
+                    id "ddn.examples.sdl::p.out1"
+                item
+                    id "ddn.examples.sdl::p.store"
+                item
+                    id "ddn.examples.sdl::p.proc"
+                item
+                    id "ddn.examples.sdl::p.newstate"
+                item
+                    id "ddn.examples.sdl::p.done"
+                item
+                    id "ddn.examples.sdl::p.t1"
+                item
+                    id "ddn.examples.sdl::p.t2"
+                item
+                    id "ddn.examples.sdl::p.t2b"
+                item
+                    id "ddn.examples.sdl::p.t3"
+                item
+                    id "ddn.examples.sdl::p.t3b"
+                item
+                    id "ddn.examples.sdl::p.t3c"
+                item
+                    id "ddn.examples.sdl::p.t3d"
+                item
+                    id "ddn.examples.sdl::p.t4"
+                item
+                    id "ddn.examples.sdl::p.t5"
+                item
+                    id "ddn.examples.sdl::p.t6"
+                item
+                    id "ddn.examples.sdl::p.t7"
+                item
+                    id "ddn.examples.sdl::p.t8"
+                item
+                    id "ddn.examples.sdl::p.t9"
+                item
+                    id "ddn.examples.sdl::p.t10"
+            exclude
+                item
+                    id "ddn.examples.sdl::sys.ch"
+                item
+                    id "ddn.examples.sdl::sys.l1"
+                item
+                    id "ddn.examples.sdl::sys.l2"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:process"
+
+    use "ddn.examples.sdl::p.start" named "appearance:process:ddn.examples.sdl::p.start"
+        with
+            id "appearance:process:ddn.examples.sdl::p.start"
+
+    use "ddn.examples.sdl::p.idle" named "appearance:process:ddn.examples.sdl::p.idle"
+        with
+            id "appearance:process:ddn.examples.sdl::p.idle"
+
+    use "ddn.examples.sdl::p.in1" named "appearance:process:ddn.examples.sdl::p.in1"
+        with
+            id "appearance:process:ddn.examples.sdl::p.in1"
+
+    use "ddn.examples.sdl::p.tmr" named "appearance:process:ddn.examples.sdl::p.tmr"
+        with
+            id "appearance:process:ddn.examples.sdl::p.tmr"
+
+    use "ddn.examples.sdl::p.sett" named "appearance:process:ddn.examples.sdl::p.sett"
+        with
+            id "appearance:process:ddn.examples.sdl::p.sett"
+
+    use "ddn.examples.sdl::p.rstm" named "appearance:process:ddn.examples.sdl::p.rstm"
+        with
+            id "appearance:process:ddn.examples.sdl::p.rstm"
+
+    use "ddn.examples.sdl::p.waiting" named "appearance:process:ddn.examples.sdl::p.waiting"
+        with
+            id "appearance:process:ddn.examples.sdl::p.waiting"
+
+    use "ddn.examples.sdl::p.work" named "appearance:process:ddn.examples.sdl::p.work"
+        with
+            id "appearance:process:ddn.examples.sdl::p.work"
+
+    use "ddn.examples.sdl::p.dec" named "appearance:process:ddn.examples.sdl::p.dec"
+        with
+            id "appearance:process:ddn.examples.sdl::p.dec"
+
+    use "ddn.examples.sdl::p.out1" named "appearance:process:ddn.examples.sdl::p.out1"
+        with
+            id "appearance:process:ddn.examples.sdl::p.out1"
+
+    use "ddn.examples.sdl::p.store" named "appearance:process:ddn.examples.sdl::p.store"
+        with
+            id "appearance:process:ddn.examples.sdl::p.store"
+
+    use "ddn.examples.sdl::p.proc" named "appearance:process:ddn.examples.sdl::p.proc"
+        with
+            id "appearance:process:ddn.examples.sdl::p.proc"
+
+    use "ddn.examples.sdl::p.newstate" named "appearance:process:ddn.examples.sdl::p.newstate"
+        with
+            id "appearance:process:ddn.examples.sdl::p.newstate"
+
+    use "ddn.examples.sdl::p.done" named "appearance:process:ddn.examples.sdl::p.done"
+        with
+            id "appearance:process:ddn.examples.sdl::p.done"
+
+    use "ddn.examples.sdl::p.t1" named "appearance:process:ddn.examples.sdl::p.t1"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t1"
+
+    use "ddn.examples.sdl::p.t2" named "appearance:process:ddn.examples.sdl::p.t2"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t2"
+
+    use "ddn.examples.sdl::p.t2b" named "appearance:process:ddn.examples.sdl::p.t2b"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t2b"
+
+    use "ddn.examples.sdl::p.t3" named "appearance:process:ddn.examples.sdl::p.t3"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t3"
+
+    use "ddn.examples.sdl::p.t3b" named "appearance:process:ddn.examples.sdl::p.t3b"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t3b"
+
+    use "ddn.examples.sdl::p.t3c" named "appearance:process:ddn.examples.sdl::p.t3c"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t3c"
+
+    use "ddn.examples.sdl::p.t3d" named "appearance:process:ddn.examples.sdl::p.t3d"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t3d"
+
+    use "ddn.examples.sdl::p.t4" named "appearance:process:ddn.examples.sdl::p.t4"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t4"
+
+    use "ddn.examples.sdl::p.t5" named "appearance:process:ddn.examples.sdl::p.t5"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t5"
+
+    use "ddn.examples.sdl::p.t6" named "appearance:process:ddn.examples.sdl::p.t6"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t6"
+
+    use "ddn.examples.sdl::p.t7" named "appearance:process:ddn.examples.sdl::p.t7"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t7"
+
+    use "ddn.examples.sdl::p.t8" named "appearance:process:ddn.examples.sdl::p.t8"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t8"
+
+    use "ddn.examples.sdl::p.t9" named "appearance:process:ddn.examples.sdl::p.t9"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t9"
+
+    use "ddn.examples.sdl::p.t10" named "appearance:process:ddn.examples.sdl::p.t10"
+        with
+            id "appearance:process:ddn.examples.sdl::p.t10"

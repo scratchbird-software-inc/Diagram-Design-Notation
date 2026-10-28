@@ -1,0 +1,2146 @@
+{
+  "api": "1.0",
+  "language": "ddn-next-1",
+  "semantics": "Logical dependency boundaries, not one-file-per-module packaging; profiles loaded explicitly.",
+  "modules": [
+    {
+      "id": "types",
+      "dependencies": [],
+      "headless": true
+    },
+    {
+      "id": "model",
+      "dependencies": [
+        "types"
+      ],
+      "headless": true
+    },
+    {
+      "id": "language",
+      "dependencies": [
+        "model"
+      ],
+      "headless": true
+    },
+    {
+      "id": "defaults",
+      "dependencies": [
+        "model"
+      ],
+      "headless": true
+    },
+    {
+      "id": "execution",
+      "dependencies": [
+        "types"
+      ],
+      "headless": true
+    },
+    {
+      "id": "rules-common",
+      "dependencies": [
+        "model",
+        "defaults"
+      ],
+      "headless": true
+    },
+    {
+      "id": "ddn-verifier",
+      "dependencies": [
+        "language",
+        "rules-common",
+        "execution"
+      ],
+      "headless": true,
+      "public": true
+    },
+    {
+      "id": "runtime",
+      "dependencies": [
+        "model",
+        "language",
+        "defaults",
+        "execution",
+        "ddn-verifier"
+      ],
+      "headless": true
+    },
+    {
+      "id": "presentation",
+      "dependencies": [
+        "model",
+        "defaults",
+        "execution"
+      ],
+      "headless": true
+    },
+    {
+      "id": "svg-renderer",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": false
+    },
+    {
+      "id": "browser-io",
+      "dependencies": [
+        "types"
+      ],
+      "headless": false
+    },
+    {
+      "id": "ddn-viewer",
+      "dependencies": [
+        "runtime",
+        "ddn-verifier",
+        "presentation",
+        "svg-renderer",
+        "browser-io"
+      ],
+      "headless": false,
+      "public": true
+    },
+    {
+      "id": "commands",
+      "dependencies": [
+        "runtime",
+        "language",
+        "ddn-verifier"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editors",
+      "dependencies": [
+        "commands"
+      ],
+      "headless": false
+    },
+    {
+      "id": "ddn-visual-designer",
+      "dependencies": [
+        "ddn-viewer",
+        "commands",
+        "editors"
+      ],
+      "headless": false,
+      "public": true
+    },
+    {
+      "id": "verifier-shell",
+      "dependencies": [
+        "ddn-verifier",
+        "browser-io"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/chart",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/chart",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/chen",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/chen",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/decision",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/decision",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/fishbone",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/fishbone",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/geo",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/geo",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/graph",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/graph",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/matrix",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/matrix",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/panels",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/panels",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/sequence",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/sequence",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/table",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/table",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/timeline",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/timeline",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "projection/timing",
+      "dependencies": [
+        "presentation"
+      ],
+      "headless": true
+    },
+    {
+      "id": "editor/timing",
+      "dependencies": [
+        "editors"
+      ],
+      "headless": false
+    },
+    {
+      "id": "output/svg",
+      "dependencies": [
+        "presentation",
+        "browser-io"
+      ],
+      "headless": false,
+      "optional": true
+    },
+    {
+      "id": "output/png",
+      "dependencies": [
+        "presentation",
+        "browser-io"
+      ],
+      "headless": false,
+      "optional": true
+    },
+    {
+      "id": "output/markdown",
+      "dependencies": [
+        "presentation",
+        "browser-io"
+      ],
+      "headless": false,
+      "optional": true
+    },
+    {
+      "id": "output/csv",
+      "dependencies": [
+        "presentation",
+        "browser-io"
+      ],
+      "headless": false,
+      "optional": true
+    },
+    {
+      "id": "output/json",
+      "dependencies": [
+        "presentation",
+        "browser-io"
+      ],
+      "headless": false,
+      "optional": true
+    },
+    {
+      "id": "output/html",
+      "dependencies": [
+        "presentation",
+        "browser-io"
+      ],
+      "headless": false,
+      "optional": true
+    },
+    {
+      "id": "output/pdf",
+      "dependencies": [
+        "presentation",
+        "browser-io"
+      ],
+      "headless": false,
+      "optional": true
+    },
+    {
+      "id": "output/docx",
+      "dependencies": [
+        "presentation",
+        "browser-io"
+      ],
+      "headless": false,
+      "optional": true
+    },
+    {
+      "id": "output/odt",
+      "dependencies": [
+        "presentation",
+        "browser-io"
+      ],
+      "headless": false,
+      "optional": true
+    },
+    {
+      "id": "profile/ddn@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "ddn@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/flow.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "flow.basic@1",
+      "method": "MT04",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/dfd.gane_sarson@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "dfd.gane_sarson@1",
+      "method": "MT09",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/dfd.yourdon@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "dfd.yourdon@1",
+      "method": "MT09",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.structure@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.structure@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.structure@2",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.structure@1"
+      ],
+      "headless": true,
+      "profile": "uml.structure@2",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.deployment@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.deployment@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.composite@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.composite@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.usecase@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.usecase@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/requirements.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "requirements.basic@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chen.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "chen.basic@1",
+      "method": "MT03",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/matrix.raci@1",
+      "dependencies": [
+        "rules-common",
+        "profile/matrix.relations@1"
+      ],
+      "headless": true,
+      "profile": "matrix.raci@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/matrix.crud@1",
+      "dependencies": [
+        "rules-common",
+        "profile/matrix.relations@1"
+      ],
+      "headless": true,
+      "profile": "matrix.crud@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/matrix.relations@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "matrix.relations@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/panels.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "panels.basic@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/canvas.bmc@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "canvas.bmc@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/canvas.lean@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "canvas.lean@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/canvas.pest@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "canvas.pest@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/canvas.pestle@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "canvas.pestle@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/canvas.porter5@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "canvas.porter5@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/canvas.empathy@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "canvas.empathy@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/canvas.scorecard@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "canvas.scorecard@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/table.records@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "table.records@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "chart.basic@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.radar@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.radar@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.funnel@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.funnel@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/timeline.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "timeline.basic@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/fishbone.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "fishbone.basic@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/matrix.heatmap@1",
+      "dependencies": [
+        "rules-common",
+        "profile/matrix.relations@1"
+      ],
+      "headless": true,
+      "profile": "matrix.heatmap@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.quality@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.quality@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/state.flat@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "state.flat@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/decision.rules@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "decision.rules@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/panels.composed@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "panels.composed@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.usecase@2",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.usecase@1"
+      ],
+      "headless": true,
+      "profile": "uml.usecase@2",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.usecase@3",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.usecase@2"
+      ],
+      "headless": true,
+      "profile": "uml.usecase@3",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chen.binary@2",
+      "dependencies": [
+        "rules-common",
+        "profile/chen.basic@1"
+      ],
+      "headless": true,
+      "profile": "chen.binary@2",
+      "method": "MT03",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chen.nary@3",
+      "dependencies": [
+        "rules-common",
+        "profile/chen.binary@2"
+      ],
+      "headless": true,
+      "profile": "chen.nary@3",
+      "method": "MT03",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/flow.documented@2",
+      "dependencies": [
+        "rules-common",
+        "profile/flow.basic@1"
+      ],
+      "headless": true,
+      "profile": "flow.documented@2",
+      "method": "MT04",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.gauge@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.gauge@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.candlestick@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.candlestick@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.treemap@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.treemap@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.sankey@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.sankey@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/c4.context@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "c4.context@1",
+      "method": "MT08",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/c4.container@1",
+      "dependencies": [
+        "rules-common",
+        "profile/c4.context@1"
+      ],
+      "headless": true,
+      "profile": "c4.container@1",
+      "method": "MT08",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/c4.component@1",
+      "dependencies": [
+        "rules-common",
+        "profile/c4.context@1"
+      ],
+      "headless": true,
+      "profile": "c4.component@1",
+      "method": "MT08",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/org.tree@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "org.tree@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/wbs.tree@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "wbs.tree@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/mindmap.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "mindmap.basic@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/concept.map@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "concept.map@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/epc.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "epc.basic@1",
+      "method": "MT12",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/matrix.bcg@1",
+      "dependencies": [
+        "rules-common",
+        "profile/matrix.relations@1"
+      ],
+      "headless": true,
+      "profile": "matrix.bcg@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/matrix.ansoff@1",
+      "dependencies": [
+        "rules-common",
+        "profile/matrix.relations@1"
+      ],
+      "headless": true,
+      "profile": "matrix.ansoff@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/matrix.tows@1",
+      "dependencies": [
+        "rules-common",
+        "profile/matrix.relations@1"
+      ],
+      "headless": true,
+      "profile": "matrix.tows@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/panels.journey@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "panels.journey@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/matrix.storymap@1",
+      "dependencies": [
+        "rules-common",
+        "profile/matrix.relations@1"
+      ],
+      "headless": true,
+      "profile": "matrix.storymap@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/erd.crowfoot@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "erd.crowfoot@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/panels.pyramid@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "panels.pyramid@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/panels.venn@1",
+      "dependencies": [
+        "rules-common",
+        "profile/panels.basic@1"
+      ],
+      "headless": true,
+      "profile": "panels.venn@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.sequence@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.sequence@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.sequence@2",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.sequence@1"
+      ],
+      "headless": true,
+      "profile": "uml.sequence@2",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.communication@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.communication@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.communication@2",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.communication@1"
+      ],
+      "headless": true,
+      "profile": "uml.communication@2",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.object@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.object@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.object@2",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.object@1"
+      ],
+      "headless": true,
+      "profile": "uml.object@2",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/state.composite@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "state.composite@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.statemachine@1",
+      "dependencies": [
+        "rules-common",
+        "profile/state.composite@1"
+      ],
+      "headless": true,
+      "profile": "uml.statemachine@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.activity@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.activity@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.activity@2",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.activity@1"
+      ],
+      "headless": true,
+      "profile": "uml.activity@2",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/bpmn.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "bpmn.basic@1",
+      "method": "MT05",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/bpmn.process@1",
+      "dependencies": [
+        "rules-common",
+        "profile/bpmn.basic@1"
+      ],
+      "headless": true,
+      "profile": "bpmn.process@1",
+      "method": "MT05",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/bpmn.choreography@1",
+      "dependencies": [
+        "rules-common",
+        "profile/bpmn.process@1"
+      ],
+      "headless": true,
+      "profile": "bpmn.choreography@1",
+      "method": "MT05",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/bpmn.conversation@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "bpmn.conversation@1",
+      "method": "MT05",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.timing@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.timing@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.timing@2",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.timing@1"
+      ],
+      "headless": true,
+      "profile": "uml.timing@2",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.interaction_overview@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.interaction_overview@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.interaction_overview@2",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.interaction_overview@1"
+      ],
+      "headless": true,
+      "profile": "uml.interaction_overview@2",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uml.profile@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uml.profile@1",
+      "method": "MT02",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/cmmn.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "cmmn.basic@1",
+      "method": "MT06",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/cmmn.complete@1",
+      "dependencies": [
+        "rules-common",
+        "profile/cmmn.basic@1"
+      ],
+      "headless": true,
+      "profile": "cmmn.complete@1",
+      "method": "MT06",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.bdd@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "sysml.bdd@1",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.ibd@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "sysml.ibd@1",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.parametric@1",
+      "dependencies": [
+        "rules-common",
+        "profile/sysml.ibd@1"
+      ],
+      "headless": true,
+      "profile": "sysml.parametric@1",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/archimate.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "archimate.basic@1",
+      "method": "MT11",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/pert.cpm@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "pert.cpm@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/fault.tree@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "fault.tree@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/event.tree@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "event.tree@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/network.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "network.basic@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/network.rack@1",
+      "dependencies": [
+        "rules-common",
+        "profile/network.basic@1"
+      ],
+      "headless": true,
+      "profile": "network.rack@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/wireframe.ui@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "wireframe.ui@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/family.tree@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "family.tree@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.histogram@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.histogram@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.density@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.density@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.qq@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.qq@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.quantiledot@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.quantiledot@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.dotplot@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.dotplot@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.boxplot@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.boxplot@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.violin@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.violin@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.beeswarm@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.beeswarm@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.topk@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.topk@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.tidytree@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.tidytree@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.radialtree@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.radialtree@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.circlepack@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.circlepack@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.sunburst@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.sunburst@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.packedbubble@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.packedbubble@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.heatmap@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.heatmap@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.densityheatmap@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.densityheatmap@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.calendar@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.calendar@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.parallelcoords@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.parallelcoords@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.wordcloud@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.wordcloud@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.arc@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.arc@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.force@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.force@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/chart.edgebundle@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chart.basic@1"
+      ],
+      "headless": true,
+      "profile": "chart.edgebundle@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/geo.choropleth@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "geo.choropleth@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/geo.symbols@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "geo.symbols@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/geo.outline@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "geo.outline@1",
+      "method": "MT01",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.requirements@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "sysml.requirements@1",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.bdd@2",
+      "dependencies": [
+        "rules-common",
+        "profile/sysml.bdd@1"
+      ],
+      "headless": true,
+      "profile": "sysml.bdd@2",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.ibd@2",
+      "dependencies": [
+        "rules-common",
+        "profile/sysml.ibd@1"
+      ],
+      "headless": true,
+      "profile": "sysml.ibd@2",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.parametric@2",
+      "dependencies": [
+        "rules-common",
+        "profile/sysml.ibd@2"
+      ],
+      "headless": true,
+      "profile": "sysml.parametric@2",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.package@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "sysml.package@1",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.usecase@1",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.usecase@3"
+      ],
+      "headless": true,
+      "profile": "sysml.usecase@1",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.activity@1",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.activity@2"
+      ],
+      "headless": true,
+      "profile": "sysml.activity@1",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.sequence@1",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.sequence@2"
+      ],
+      "headless": true,
+      "profile": "sysml.sequence@1",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sysml.statemachine@1",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.statemachine@1"
+      ],
+      "headless": true,
+      "profile": "sysml.statemachine@1",
+      "method": "MT10",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/dmn.drd@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "dmn.drd@1",
+      "method": "MT07",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/soaml.services@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "soaml.services@1",
+      "method": "MT19",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.strategic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.strategic@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.operational@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.operational@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.services@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.services@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.systems@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.systems@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.personnel@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.personnel@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.resources@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.resources@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.security@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.security@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.projects@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.projects@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.standards@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.standards@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.actualresources@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.actualresources@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.dictionary@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.dictionary@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/uaf.summary@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "uaf.summary@1",
+      "method": "MT20",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/flow.iso5807@1",
+      "dependencies": [
+        "rules-common",
+        "profile/flow.basic@1"
+      ],
+      "headless": true,
+      "profile": "flow.iso5807@1",
+      "method": "MT04",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/c4.deployment@1",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.deployment@1"
+      ],
+      "headless": true,
+      "profile": "c4.deployment@1",
+      "method": "MT08",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/c4.dynamic@1",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.communication@2"
+      ],
+      "headless": true,
+      "profile": "c4.dynamic@1",
+      "method": "MT08",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/epc.complete@1",
+      "dependencies": [
+        "rules-common",
+        "profile/epc.basic@1"
+      ],
+      "headless": true,
+      "profile": "epc.complete@1",
+      "method": "MT12",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/msc.basic@1",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.sequence@2"
+      ],
+      "headless": true,
+      "profile": "msc.basic@1",
+      "method": "MT18",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/idef0.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "idef0.basic@1",
+      "method": "MT13",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/petri.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "petri.basic@1",
+      "method": "MT14",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/orm.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "orm.basic@1",
+      "method": "MT15",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/vsm.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "vsm.basic@1",
+      "method": "MT16",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sdl.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "sdl.basic@1",
+      "method": "MT17",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/sdl.process@1",
+      "dependencies": [
+        "rules-common",
+        "profile/uml.statemachine@1"
+      ],
+      "headless": true,
+      "profile": "sdl.process@1",
+      "method": "MT17",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/fbd.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "fbd.basic@1",
+      "method": "MT21",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
+      "id": "profile/ladder.basic@1",
+      "dependencies": [
+        "rules-common"
+      ],
+      "headless": true,
+      "profile": "ladder.basic@1",
+      "method": "MT21",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    }
+  ],
+  "native_profiles": [
+    "ddn@1",
+    "mindmap.basic@1",
+    "concept.map@1",
+    "table.records@1"
+  ],
+  "complete_profiles": [
+    "ddn@1",
+    "flow.basic@1",
+    "dfd.gane_sarson@1",
+    "dfd.yourdon@1",
+    "uml.structure@1",
+    "uml.structure@2",
+    "uml.deployment@1",
+    "uml.composite@1",
+    "uml.usecase@1",
+    "requirements.basic@1",
+    "chen.basic@1",
+    "matrix.raci@1",
+    "matrix.crud@1",
+    "matrix.relations@1",
+    "panels.basic@1",
+    "canvas.bmc@1",
+    "canvas.lean@1",
+    "canvas.pest@1",
+    "canvas.pestle@1",
+    "canvas.porter5@1",
+    "canvas.empathy@1",
+    "canvas.scorecard@1",
+    "table.records@1",
+    "chart.basic@1",
+    "chart.radar@1",
+    "chart.funnel@1",
+    "timeline.basic@1",
+    "fishbone.basic@1",
+    "matrix.heatmap@1",
+    "chart.quality@1",
+    "state.flat@1",
+    "decision.rules@1",
+    "panels.composed@1",
+    "uml.usecase@2",
+    "uml.usecase@3",
+    "chen.binary@2",
+    "chen.nary@3",
+    "flow.documented@2",
+    "chart.gauge@1",
+    "chart.candlestick@1",
+    "chart.treemap@1",
+    "chart.sankey@1",
+    "c4.context@1",
+    "c4.container@1",
+    "c4.component@1",
+    "org.tree@1",
+    "wbs.tree@1",
+    "mindmap.basic@1",
+    "concept.map@1",
+    "epc.basic@1",
+    "matrix.bcg@1",
+    "matrix.ansoff@1",
+    "matrix.tows@1",
+    "panels.journey@1",
+    "matrix.storymap@1",
+    "erd.crowfoot@1",
+    "panels.pyramid@1",
+    "panels.venn@1",
+    "uml.sequence@1",
+    "uml.sequence@2",
+    "uml.communication@1",
+    "uml.communication@2",
+    "uml.object@1",
+    "uml.object@2",
+    "state.composite@1",
+    "uml.statemachine@1",
+    "uml.activity@1",
+    "uml.activity@2",
+    "bpmn.basic@1",
+    "bpmn.process@1",
+    "bpmn.choreography@1",
+    "bpmn.conversation@1",
+    "uml.timing@1",
+    "uml.timing@2",
+    "uml.interaction_overview@1",
+    "uml.interaction_overview@2",
+    "uml.profile@1",
+    "cmmn.basic@1",
+    "cmmn.complete@1",
+    "sysml.bdd@1",
+    "sysml.ibd@1",
+    "sysml.parametric@1",
+    "archimate.basic@1",
+    "pert.cpm@1",
+    "fault.tree@1",
+    "event.tree@1",
+    "network.basic@1",
+    "network.rack@1",
+    "wireframe.ui@1",
+    "family.tree@1",
+    "chart.histogram@1",
+    "chart.density@1",
+    "chart.qq@1",
+    "chart.quantiledot@1",
+    "chart.dotplot@1",
+    "chart.boxplot@1",
+    "chart.violin@1",
+    "chart.beeswarm@1",
+    "chart.topk@1",
+    "chart.tidytree@1",
+    "chart.radialtree@1",
+    "chart.circlepack@1",
+    "chart.sunburst@1",
+    "chart.packedbubble@1",
+    "chart.heatmap@1",
+    "chart.densityheatmap@1",
+    "chart.calendar@1",
+    "chart.parallelcoords@1",
+    "chart.wordcloud@1",
+    "chart.arc@1",
+    "chart.force@1",
+    "chart.edgebundle@1",
+    "geo.choropleth@1",
+    "geo.symbols@1",
+    "geo.outline@1",
+    "sysml.requirements@1",
+    "sysml.bdd@2",
+    "sysml.ibd@2",
+    "sysml.parametric@2",
+    "sysml.package@1",
+    "sysml.usecase@1",
+    "sysml.activity@1",
+    "sysml.sequence@1",
+    "sysml.statemachine@1",
+    "dmn.drd@1",
+    "soaml.services@1",
+    "uaf.strategic@1",
+    "uaf.operational@1",
+    "uaf.services@1",
+    "uaf.systems@1",
+    "uaf.personnel@1",
+    "uaf.resources@1",
+    "uaf.security@1",
+    "uaf.projects@1",
+    "uaf.standards@1",
+    "uaf.actualresources@1",
+    "uaf.dictionary@1",
+    "uaf.summary@1",
+    "flow.iso5807@1",
+    "c4.deployment@1",
+    "c4.dynamic@1",
+    "epc.complete@1",
+    "msc.basic@1",
+    "idef0.basic@1",
+    "petri.basic@1",
+    "orm.basic@1",
+    "vsm.basic@1",
+    "sdl.basic@1",
+    "sdl.process@1",
+    "fbd.basic@1",
+    "ladder.basic@1"
+  ],
+  "worker_roots": [
+    "language",
+    "ddn-verifier",
+    "presentation"
+  ],
+  "public_entries": [
+    "ddn-viewer",
+    "ddn-visual-designer",
+    "ddn-verifier"
+  ]
+}

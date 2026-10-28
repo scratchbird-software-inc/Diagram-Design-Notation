@@ -1,82 +1,893 @@
-ddn "0.5";
-module "ddn.examples.umlclass";
+version ddn-next-1
 
-// B1-055 : UML 2.5.1 class-diagram completeness on uml.structure@2.
-// View 1 exercises every association-end feature; view 2 the classifier
-// features. Minimal current-dialect style, no pinned layout.
+publication "publication:associations"
+    with
+        id "publication:associations"
+        title "UML class diagram / association ends"
+        targets
+            item
+                target
+                    id "associations"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data fleet {
-    object company "Company" { kind: "uml.class";
-        fields { name { datatype: "string"; } }
-    }
-    object person "Person" { kind: "uml.class";
-        fields {
-            name { datatype: "string"; }
-            age { x_member: { kind: attribute; derived: true; visibility: private; }; }
-        }
-    }
-    object employment "Employment" { kind: "uml.class";
-        fields { started { datatype: "date"; } grade { datatype: "string"; } }
-    }
-    object vehicle "Vehicle" { kind: "uml.class"; }
-    object car "Car" { kind: "uml.class"; }
-    object van "Van" { kind: "uml.class"; }
-    object engine "Engine" { kind: "uml.class"; }
-    object shipment "Shipment" { kind: "uml.class"; }
-    object product "Product" { kind: "uml.class"; }
-    object warehouse "Warehouse" { kind: "uml.class"; }
 
-    // Aggregation (hollow diamond at the whole) + roles, multiplicity, qualifier.
-    relation employs "employs" @company -> @person { kind: "uml.association"; target_mark: hollow_diamond;
-        x_endlabels: { source: { role: "employer"; multiplicity: "1"; qualifier: "employeeId"; };
-                       target: { role: "employee"; multiplicity: "0..*"; }; };
-    }
-    // Composition (filled diamond at the whole) + navigability arrowhead.
-    relation powered "powered by" @car -> @engine { kind: "uml.association"; source_mark: diamond; target_mark: open; }
-    // Association class attached at the path midpoint.
-    relation works "works in" @person -> @warehouse { kind: "uml.association";
-        x_association_class: { class: @employment; };
-    }
-    // N-ary association: diamond junction over three classifier ends.
-    relation stocks "stocks" @shipment -> @product { kind: "uml.association";
-        x_nary: { ends: [ { element: @warehouse; role: "stocks"; multiplicity: "1..*"; } ] };
-    }
-    // Generalization set on a shared generalization target.
-    relation gen_car "" @car -> @vehicle { kind: "uml.generalization"; x_genset: { name: "body"; disjoint: true; complete: true; }; }
-    relation gen_van "" @van -> @vehicle { kind: "uml.generalization"; x_genset: { name: "body"; disjoint: true; complete: true; }; }
-}
+publication "publication:classifiers"
+    with
+        id "publication:classifiers"
+        title "UML class diagram / classifiers"
+        targets
+            item
+                target
+                    id "classifiers"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data library {
-    object catalog "Catalog" { kind: "uml.class"; x_template: { parameters: ["T", "N: int"]; };
-        fields {
-            size { x_member: { kind: attribute; derived: true; }; }
-            items { x_member: { kind: attribute; multiplicity: "0..*"; modifiers: ["ordered", "unique"]; }; }
-            find { x_member: { kind: operation; visibility: public; }; }
-        }
-    }
-    object status "Loan status" { kind: "uml.enumeration";
-        fields {
-            available { x_member: { kind: literal; }; }
-            on_loan { x_member: { kind: literal; }; }
-            lost { x_member: { kind: literal; }; }
-        }
-    }
-    object loans "Loan registry" { kind: "uml.interface"; }
-    object desk "Desk service" { kind: "uml.component"; }
 
-    relation tracks "tracks" @catalog -> @status { kind: "uml.association";
-        x_endlabels: { target: { role: "state"; multiplicity: "1"; }; };
-    }
-    // Provided interface (lollipop) and required interface (socket).
-    relation provides "provides" @desk -> @loans { kind: "uml.provided"; }
-    relation requires "requires" @catalog -> @loans { kind: "uml.required"; }
-}
+element "ddn.examples.umlclass::fleet.company.name" as "field"
+    with
+        id "ddn.examples.umlclass::fleet.company.name"
+        title "name"
+        properties
+            datatype "string"
+        content
+            parent
+                id "ddn.examples.umlclass::fleet.company"
+            ordinal 0
+            datatype "string"
 
-view associations "UML class diagram / association ends": [@fleet] as "uml.structure@2" {
-    publication { size: content; fit: none; }
-}
 
-view classifiers "UML class diagram / classifiers": [@library] as "uml.structure@2" {
-    layout { gap: 112px; row_gap: 112px; }
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.umlclass::fleet.company" as "uml.class"
+    with
+        id "ddn.examples.umlclass::fleet.company"
+        title "Company"
+        members
+            item
+                id "ddn.examples.umlclass::fleet.company.name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "name"
+                    item "string"
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlclass::fleet.person.name" as "field"
+    with
+        id "ddn.examples.umlclass::fleet.person.name"
+        title "name"
+        properties
+            datatype "string"
+        content
+            parent
+                id "ddn.examples.umlclass::fleet.person"
+            ordinal 0
+            datatype "string"
+
+
+element "ddn.examples.umlclass::fleet.person.age" as "field"
+    with
+        id "ddn.examples.umlclass::fleet.person.age"
+        title "age"
+        metadata
+            x_member
+                kind "attribute"
+                derived true
+                visibility "private"
+        content
+            parent
+                id "ddn.examples.umlclass::fleet.person"
+            ordinal 1
+
+
+element "ddn.examples.umlclass::fleet.person" as "uml.class"
+    with
+        id "ddn.examples.umlclass::fleet.person"
+        title "Person"
+        members
+            item
+                id "ddn.examples.umlclass::fleet.person.name"
+            item
+                id "ddn.examples.umlclass::fleet.person.age"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "name"
+                    item "string"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "age"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlclass::fleet.employment.started" as "field"
+    with
+        id "ddn.examples.umlclass::fleet.employment.started"
+        title "started"
+        properties
+            datatype "date"
+        content
+            parent
+                id "ddn.examples.umlclass::fleet.employment"
+            ordinal 0
+            datatype "date"
+
+
+element "ddn.examples.umlclass::fleet.employment.grade" as "field"
+    with
+        id "ddn.examples.umlclass::fleet.employment.grade"
+        title "grade"
+        properties
+            datatype "string"
+        content
+            parent
+                id "ddn.examples.umlclass::fleet.employment"
+            ordinal 1
+            datatype "string"
+
+
+element "ddn.examples.umlclass::fleet.employment" as "uml.class"
+    with
+        id "ddn.examples.umlclass::fleet.employment"
+        title "Employment"
+        members
+            item
+                id "ddn.examples.umlclass::fleet.employment.started"
+            item
+                id "ddn.examples.umlclass::fleet.employment.grade"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "started"
+                    item "date"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "grade"
+                    item "string"
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlclass::fleet.vehicle" as "uml.class"
+    with
+        id "ddn.examples.umlclass::fleet.vehicle"
+        title "Vehicle"
+
+
+element "ddn.examples.umlclass::fleet.car" as "uml.class"
+    with
+        id "ddn.examples.umlclass::fleet.car"
+        title "Car"
+
+
+element "ddn.examples.umlclass::fleet.van" as "uml.class"
+    with
+        id "ddn.examples.umlclass::fleet.van"
+        title "Van"
+
+
+element "ddn.examples.umlclass::fleet.engine" as "uml.class"
+    with
+        id "ddn.examples.umlclass::fleet.engine"
+        title "Engine"
+
+
+element "ddn.examples.umlclass::fleet.shipment" as "uml.class"
+    with
+        id "ddn.examples.umlclass::fleet.shipment"
+        title "Shipment"
+
+
+element "ddn.examples.umlclass::fleet.product" as "uml.class"
+    with
+        id "ddn.examples.umlclass::fleet.product"
+        title "Product"
+
+
+element "ddn.examples.umlclass::fleet.warehouse" as "uml.class"
+    with
+        id "ddn.examples.umlclass::fleet.warehouse"
+        title "Warehouse"
+
+
+relation "ddn.examples.umlclass::fleet.employs" as "uml.association"
+    with
+        id "ddn.examples.umlclass::fleet.employs"
+        title "employs"
+        metadata
+            x_endlabels
+                source
+                    role "employer"
+                    multiplicity "1"
+                    qualifier "employeeId"
+                target
+                    role "employee"
+                    multiplicity "0..*"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.company"
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.person"
+        qualifiers
+            target
+                mark "hollow-diamond"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "target_mark": "hollow_diamond"
+                    }
+                format "plain"
+
+
+relation "ddn.examples.umlclass::fleet.powered" as "uml.association"
+    with
+        id "ddn.examples.umlclass::fleet.powered"
+        title "powered by"
+        properties
+            source_mark "diamond"
+            target_mark "open"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.car"
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.engine"
+        qualifiers
+            source
+                mark "diamond"
+            target
+                mark "open"
+
+
+relation "ddn.examples.umlclass::fleet.works" as "uml.association"
+    with
+        id "ddn.examples.umlclass::fleet.works"
+        title "works in"
+        metadata
+            x_association_class
+                class
+                    id "ddn.examples.umlclass::fleet.employment"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.person"
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.warehouse"
+
+
+relation "ddn.examples.umlclass::fleet.stocks" as "uml.association"
+    with
+        id "ddn.examples.umlclass::fleet.stocks"
+        title "stocks"
+        metadata
+            x_nary
+                ends
+                    item
+                        element
+                            id "ddn.examples.umlclass::fleet.warehouse"
+                        role "stocks"
+                        multiplicity "1..*"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.shipment"
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.product"
+
+
+relation "ddn.examples.umlclass::fleet.gen_car" as "uml.generalization"
+    with
+        id "ddn.examples.umlclass::fleet.gen_car"
+        title "Generalization"
+        metadata
+            x_genset
+                name "body"
+                disjoint true
+                complete true
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.car"
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.vehicle"
+
+
+relation "ddn.examples.umlclass::fleet.gen_van" as "uml.generalization"
+    with
+        id "ddn.examples.umlclass::fleet.gen_van"
+        title "Generalization"
+        metadata
+            x_genset
+                name "body"
+                disjoint true
+                complete true
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.van"
+            item
+                definition
+                    id "ddn.examples.umlclass::fleet.vehicle"
+
+
+element "ddn.examples.umlclass::library.catalog.size" as "field"
+    with
+        id "ddn.examples.umlclass::library.catalog.size"
+        title "size"
+        metadata
+            x_member
+                kind "attribute"
+                derived true
+        content
+            parent
+                id "ddn.examples.umlclass::library.catalog"
+            ordinal 0
+
+
+element "ddn.examples.umlclass::library.catalog.items" as "field"
+    with
+        id "ddn.examples.umlclass::library.catalog.items"
+        title "items"
+        metadata
+            x_member
+                kind "attribute"
+                multiplicity "0..*"
+                modifiers
+                    item "ordered"
+                    item "unique"
+        content
+            parent
+                id "ddn.examples.umlclass::library.catalog"
+            ordinal 1
+
+
+element "ddn.examples.umlclass::library.catalog.find" as "field"
+    with
+        id "ddn.examples.umlclass::library.catalog.find"
+        title "find"
+        metadata
+            x_member
+                kind "operation"
+                visibility "public"
+        content
+            parent
+                id "ddn.examples.umlclass::library.catalog"
+            ordinal 2
+
+
+element "ddn.examples.umlclass::library.catalog" as "uml.class"
+    with
+        id "ddn.examples.umlclass::library.catalog"
+        title "Catalog"
+        metadata
+            x_template
+                parameters
+                    item "T"
+                    item "N: int"
+        members
+            item
+                id "ddn.examples.umlclass::library.catalog.size"
+            item
+                id "ddn.examples.umlclass::library.catalog.items"
+            item
+                id "ddn.examples.umlclass::library.catalog.find"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "size"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "items"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "find"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlclass::library.status.available" as "field"
+    with
+        id "ddn.examples.umlclass::library.status.available"
+        title "available"
+        metadata
+            x_member
+                kind "literal"
+        content
+            parent
+                id "ddn.examples.umlclass::library.status"
+            ordinal 0
+
+
+element "ddn.examples.umlclass::library.status.on_loan" as "field"
+    with
+        id "ddn.examples.umlclass::library.status.on_loan"
+        title "on_loan"
+        metadata
+            x_member
+                kind "literal"
+        content
+            parent
+                id "ddn.examples.umlclass::library.status"
+            ordinal 1
+
+
+element "ddn.examples.umlclass::library.status.lost" as "field"
+    with
+        id "ddn.examples.umlclass::library.status.lost"
+        title "lost"
+        metadata
+            x_member
+                kind "literal"
+        content
+            parent
+                id "ddn.examples.umlclass::library.status"
+            ordinal 2
+
+
+element "ddn.examples.umlclass::library.status" as "uml.enumeration"
+    with
+        id "ddn.examples.umlclass::library.status"
+        title "Loan status"
+        members
+            item
+                id "ddn.examples.umlclass::library.status.available"
+            item
+                id "ddn.examples.umlclass::library.status.on_loan"
+            item
+                id "ddn.examples.umlclass::library.status.lost"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "available"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "on_loan"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "lost"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlclass::library.loans" as "uml.interface"
+    with
+        id "ddn.examples.umlclass::library.loans"
+        title "Loan registry"
+
+
+element "ddn.examples.umlclass::library.desk" as "uml.component"
+    with
+        id "ddn.examples.umlclass::library.desk"
+        title "Desk service"
+
+
+relation "ddn.examples.umlclass::library.tracks" as "uml.association"
+    with
+        id "ddn.examples.umlclass::library.tracks"
+        title "tracks"
+        metadata
+            x_endlabels
+                target
+                    role "state"
+                    multiplicity "1"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlclass::library.catalog"
+            item
+                definition
+                    id "ddn.examples.umlclass::library.status"
+
+
+relation "ddn.examples.umlclass::library.provides" as "uml.provided"
+    with
+        id "ddn.examples.umlclass::library.provides"
+        title "provides"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlclass::library.desk"
+            item
+                definition
+                    id "ddn.examples.umlclass::library.loans"
+
+
+relation "ddn.examples.umlclass::library.requires" as "uml.required"
+    with
+        id "ddn.examples.umlclass::library.requires"
+        title "requires"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlclass::library.catalog"
+            item
+                definition
+                    id "ddn.examples.umlclass::library.loans"
+
+
+view "associations" as "uml.structure@2"
+    with
+        id "associations"
+        title "UML class diagram / association ends"
+        selection
+            include
+                item
+                    id "ddn.examples.umlclass::fleet.company"
+                item
+                    id "ddn.examples.umlclass::fleet.person"
+                item
+                    id "ddn.examples.umlclass::fleet.employment"
+                item
+                    id "ddn.examples.umlclass::fleet.vehicle"
+                item
+                    id "ddn.examples.umlclass::fleet.car"
+                item
+                    id "ddn.examples.umlclass::fleet.van"
+                item
+                    id "ddn.examples.umlclass::fleet.engine"
+                item
+                    id "ddn.examples.umlclass::fleet.shipment"
+                item
+                    id "ddn.examples.umlclass::fleet.product"
+                item
+                    id "ddn.examples.umlclass::fleet.warehouse"
+                item
+                    id "ddn.examples.umlclass::fleet.employs"
+                item
+                    id "ddn.examples.umlclass::fleet.powered"
+                item
+                    id "ddn.examples.umlclass::fleet.works"
+                item
+                    id "ddn.examples.umlclass::fleet.stocks"
+                item
+                    id "ddn.examples.umlclass::fleet.gen_car"
+                item
+                    id "ddn.examples.umlclass::fleet.gen_van"
+            exclude
+                item
+                    id "ddn.examples.umlclass::library.tracks"
+                item
+                    id "ddn.examples.umlclass::library.provides"
+                item
+                    id "ddn.examples.umlclass::library.requires"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:associations"
+
+    use "ddn.examples.umlclass::fleet.company" named "appearance:associations:ddn.examples.umlclass::fleet.company"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.company"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlclass::fleet.person" named "appearance:associations:ddn.examples.umlclass::fleet.person"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.person"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlclass::fleet.employment" named "appearance:associations:ddn.examples.umlclass::fleet.employment"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.employment"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlclass::fleet.vehicle" named "appearance:associations:ddn.examples.umlclass::fleet.vehicle"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.vehicle"
+
+    use "ddn.examples.umlclass::fleet.car" named "appearance:associations:ddn.examples.umlclass::fleet.car"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.car"
+
+    use "ddn.examples.umlclass::fleet.van" named "appearance:associations:ddn.examples.umlclass::fleet.van"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.van"
+
+    use "ddn.examples.umlclass::fleet.engine" named "appearance:associations:ddn.examples.umlclass::fleet.engine"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.engine"
+
+    use "ddn.examples.umlclass::fleet.shipment" named "appearance:associations:ddn.examples.umlclass::fleet.shipment"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.shipment"
+
+    use "ddn.examples.umlclass::fleet.product" named "appearance:associations:ddn.examples.umlclass::fleet.product"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.product"
+
+    use "ddn.examples.umlclass::fleet.warehouse" named "appearance:associations:ddn.examples.umlclass::fleet.warehouse"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.warehouse"
+
+    use "ddn.examples.umlclass::fleet.employs" named "appearance:associations:ddn.examples.umlclass::fleet.employs"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.employs"
+
+    use "ddn.examples.umlclass::fleet.powered" named "appearance:associations:ddn.examples.umlclass::fleet.powered"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.powered"
+
+    use "ddn.examples.umlclass::fleet.works" named "appearance:associations:ddn.examples.umlclass::fleet.works"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.works"
+
+    use "ddn.examples.umlclass::fleet.stocks" named "appearance:associations:ddn.examples.umlclass::fleet.stocks"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.stocks"
+
+    use "ddn.examples.umlclass::fleet.gen_car" named "appearance:associations:ddn.examples.umlclass::fleet.gen_car"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.gen_car"
+
+    use "ddn.examples.umlclass::fleet.gen_van" named "appearance:associations:ddn.examples.umlclass::fleet.gen_van"
+        with
+            id "appearance:associations:ddn.examples.umlclass::fleet.gen_van"
+
+
+view "classifiers" as "uml.structure@2"
+    with
+        id "classifiers"
+        title "UML class diagram / classifiers"
+        selection
+            include
+                item
+                    id "ddn.examples.umlclass::library.catalog"
+                item
+                    id "ddn.examples.umlclass::library.status"
+                item
+                    id "ddn.examples.umlclass::library.loans"
+                item
+                    id "ddn.examples.umlclass::library.desk"
+                item
+                    id "ddn.examples.umlclass::library.tracks"
+                item
+                    id "ddn.examples.umlclass::library.provides"
+                item
+                    id "ddn.examples.umlclass::library.requires"
+            exclude
+                item
+                    id "ddn.examples.umlclass::fleet.employs"
+                item
+                    id "ddn.examples.umlclass::fleet.powered"
+                item
+                    id "ddn.examples.umlclass::fleet.works"
+                item
+                    id "ddn.examples.umlclass::fleet.stocks"
+                item
+                    id "ddn.examples.umlclass::fleet.gen_car"
+                item
+                    id "ddn.examples.umlclass::fleet.gen_van"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:classifiers"
+
+    use "ddn.examples.umlclass::library.catalog" named "appearance:classifiers:ddn.examples.umlclass::library.catalog"
+        with
+            id "appearance:classifiers:ddn.examples.umlclass::library.catalog"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlclass::library.status" named "appearance:classifiers:ddn.examples.umlclass::library.status"
+        with
+            id "appearance:classifiers:ddn.examples.umlclass::library.status"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlclass::library.loans" named "appearance:classifiers:ddn.examples.umlclass::library.loans"
+        with
+            id "appearance:classifiers:ddn.examples.umlclass::library.loans"
+
+    use "ddn.examples.umlclass::library.desk" named "appearance:classifiers:ddn.examples.umlclass::library.desk"
+        with
+            id "appearance:classifiers:ddn.examples.umlclass::library.desk"
+
+    use "ddn.examples.umlclass::library.tracks" named "appearance:classifiers:ddn.examples.umlclass::library.tracks"
+        with
+            id "appearance:classifiers:ddn.examples.umlclass::library.tracks"
+
+    use "ddn.examples.umlclass::library.provides" named "appearance:classifiers:ddn.examples.umlclass::library.provides"
+        with
+            id "appearance:classifiers:ddn.examples.umlclass::library.provides"
+
+    use "ddn.examples.umlclass::library.requires" named "appearance:classifiers:ddn.examples.umlclass::library.requires"
+        with
+            id "appearance:classifiers:ddn.examples.umlclass::library.requires"

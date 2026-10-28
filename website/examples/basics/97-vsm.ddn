@@ -1,36 +1,516 @@
-ddn "0.5";
-module "ddn.examples.vsm";
+version ddn-next-1
 
-// B1-081: a small current-state value stream map — process boxes with data
-// rows and VA/NVA values feeding the timeline ladder strip, an inventory
-// triangle, push/pull and material arrows, electronic (zigzag) and manual
-// (dashed) information arrows, a supermarket, a kaizen burst and an
-// operator. All data is synthetic.
-data m {
-    object cust "Retailer" { kind: "vsm.customer"; }
-    object ctrl "Production control" { kind: "vsm.control"; }
-    object stamp "Stamping" { kind: "vsm.process"; x_vsm: { va: 1.5, nva: 3, unit: "d" };
-        fields { co "C/O 30 min"; up "85%"; }
-    }
-    object inv1 "" { kind: "vsm.inventory"; }
-    object weld "Welding" { kind: "vsm.process"; x_vsm: { va: 2, nva: 1.5, unit: "d" };
-        fields { co "C/O 15 min"; }
-    }
-    object sup "Supermarket" { kind: "vsm.supermarket"; }
-    object asm "Assembly" { kind: "vsm.process"; x_vsm: { va: 3, nva: 2, unit: "d" }; }
-    object kz "" { kind: "vsm.kaizen"; }
-    object op "Operator" { kind: "vsm.operator"; }
-    relation m1 "" @cust -> @stamp { kind: "vsm.pull"; }
-    relation m2 "" @stamp -> @inv1 { kind: "vsm.material"; }
-    relation m3 "" @inv1 -> @weld { kind: "vsm.push"; }
-    relation m4 "" @weld -> @sup { kind: "vsm.material"; }
-    relation m5 "" @sup -> @asm { kind: "vsm.pull"; }
-    relation i1 "" @ctrl -> @stamp { kind: "vsm.einfo"; }
-    relation i2 "" @ctrl -> @asm { kind: "vsm.minfo"; }
-    relation i3 "" @asm -> @cust { kind: "vsm.material"; }
-    relation o1 "" @op -> @weld { kind: "vsm.minfo"; }
-}
-view map "Current state map": [@m] as "vsm.basic@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
-    publication { size: content; fit: none; }
-}
+asset "artwork::vsm-symbols@1:customer" as resource from "../../assets/icons/vsm-symbols-1/customer.svg"
+    with
+        id "artwork::vsm-symbols@1:customer"
+        media_type "image/svg+xml"
+
+
+asset "artwork::vsm-symbols@1:production-control" as resource from "../../assets/icons/vsm-symbols-1/production-control.svg"
+    with
+        id "artwork::vsm-symbols@1:production-control"
+        media_type "image/svg+xml"
+
+
+asset "artwork::vsm-symbols@1:process" as resource from "../../assets/icons/vsm-symbols-1/process.svg"
+    with
+        id "artwork::vsm-symbols@1:process"
+        media_type "image/svg+xml"
+
+
+asset "artwork::vsm-symbols@1:inventory" as resource from "../../assets/icons/vsm-symbols-1/inventory.svg"
+    with
+        id "artwork::vsm-symbols@1:inventory"
+        media_type "image/svg+xml"
+
+
+asset "artwork::vsm-symbols@1:supermarket" as resource from "../../assets/icons/vsm-symbols-1/supermarket.svg"
+    with
+        id "artwork::vsm-symbols@1:supermarket"
+        media_type "image/svg+xml"
+
+
+asset "artwork::vsm-symbols@1:kaizen" as resource from "../../assets/icons/vsm-symbols-1/kaizen.svg"
+    with
+        id "artwork::vsm-symbols@1:kaizen"
+        media_type "image/svg+xml"
+
+
+asset "artwork::vsm-symbols@1:operator" as resource from "../../assets/icons/vsm-symbols-1/operator.svg"
+    with
+        id "artwork::vsm-symbols@1:operator"
+        media_type "image/svg+xml"
+
+
+publication "publication:map"
+    with
+        id "publication:map"
+        title "Current state map"
+        targets
+            item
+                target
+                    id "map"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.vsm::m.cust" as "vsm.customer"
+    with
+        id "ddn.examples.vsm::m.cust"
+        title "Retailer"
+
+
+element "ddn.examples.vsm::m.ctrl" as "vsm.control"
+    with
+        id "ddn.examples.vsm::m.ctrl"
+        title "Production control"
+
+
+element "ddn.examples.vsm::m.stamp.co" as "field"
+    with
+        id "ddn.examples.vsm::m.stamp.co"
+        title "C/O 30 min"
+        content
+            parent
+                id "ddn.examples.vsm::m.stamp"
+            ordinal 0
+
+
+element "ddn.examples.vsm::m.stamp.up" as "field"
+    with
+        id "ddn.examples.vsm::m.stamp.up"
+        title "85%"
+        content
+            parent
+                id "ddn.examples.vsm::m.stamp"
+            ordinal 1
+
+
+element "ddn.examples.vsm::m.stamp" as "vsm.process"
+    with
+        id "ddn.examples.vsm::m.stamp"
+        title "Stamping"
+        metadata
+            x_vsm
+                va 1.5
+                nva 3
+                unit "d"
+        members
+            item
+                id "ddn.examples.vsm::m.stamp.co"
+            item
+                id "ddn.examples.vsm::m.stamp.up"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "C/O 30 min"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "85%"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.vsm::m.inv1" as "vsm.inventory"
+    with
+        id "ddn.examples.vsm::m.inv1"
+        title "inv1"
+
+
+element "ddn.examples.vsm::m.weld.co" as "field"
+    with
+        id "ddn.examples.vsm::m.weld.co"
+        title "C/O 15 min"
+        content
+            parent
+                id "ddn.examples.vsm::m.weld"
+            ordinal 0
+
+
+element "ddn.examples.vsm::m.weld" as "vsm.process"
+    with
+        id "ddn.examples.vsm::m.weld"
+        title "Welding"
+        metadata
+            x_vsm
+                va 2
+                nva 1.5
+                unit "d"
+        members
+            item
+                id "ddn.examples.vsm::m.weld.co"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "C/O 15 min"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.vsm::m.sup" as "vsm.supermarket"
+    with
+        id "ddn.examples.vsm::m.sup"
+        title "Supermarket"
+
+
+element "ddn.examples.vsm::m.asm" as "vsm.process"
+    with
+        id "ddn.examples.vsm::m.asm"
+        title "Assembly"
+        metadata
+            x_vsm
+                va 3
+                nva 2
+                unit "d"
+
+
+element "ddn.examples.vsm::m.kz" as "vsm.kaizen"
+    with
+        id "ddn.examples.vsm::m.kz"
+        title "kz"
+
+
+element "ddn.examples.vsm::m.op" as "vsm.operator"
+    with
+        id "ddn.examples.vsm::m.op"
+        title "Operator"
+
+
+relation "ddn.examples.vsm::m.m1" as "vsm.pull"
+    with
+        id "ddn.examples.vsm::m.m1"
+        title "Pull"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.vsm::m.cust"
+            item
+                definition
+                    id "ddn.examples.vsm::m.stamp"
+
+
+relation "ddn.examples.vsm::m.m2" as "vsm.material"
+    with
+        id "ddn.examples.vsm::m.m2"
+        title "Material flow"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.vsm::m.stamp"
+            item
+                definition
+                    id "ddn.examples.vsm::m.inv1"
+
+
+relation "ddn.examples.vsm::m.m3" as "vsm.push"
+    with
+        id "ddn.examples.vsm::m.m3"
+        title "Push"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.vsm::m.inv1"
+            item
+                definition
+                    id "ddn.examples.vsm::m.weld"
+
+
+relation "ddn.examples.vsm::m.m4" as "vsm.material"
+    with
+        id "ddn.examples.vsm::m.m4"
+        title "Material flow"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.vsm::m.weld"
+            item
+                definition
+                    id "ddn.examples.vsm::m.sup"
+
+
+relation "ddn.examples.vsm::m.m5" as "vsm.pull"
+    with
+        id "ddn.examples.vsm::m.m5"
+        title "Pull"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.vsm::m.sup"
+            item
+                definition
+                    id "ddn.examples.vsm::m.asm"
+
+
+relation "ddn.examples.vsm::m.i1" as "vsm.einfo"
+    with
+        id "ddn.examples.vsm::m.i1"
+        title "Electronic information"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.vsm::m.ctrl"
+            item
+                definition
+                    id "ddn.examples.vsm::m.stamp"
+
+
+relation "ddn.examples.vsm::m.i2" as "vsm.minfo"
+    with
+        id "ddn.examples.vsm::m.i2"
+        title "Manual information"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.vsm::m.ctrl"
+            item
+                definition
+                    id "ddn.examples.vsm::m.asm"
+
+
+relation "ddn.examples.vsm::m.i3" as "vsm.material"
+    with
+        id "ddn.examples.vsm::m.i3"
+        title "Material flow"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.vsm::m.asm"
+            item
+                definition
+                    id "ddn.examples.vsm::m.cust"
+
+
+relation "ddn.examples.vsm::m.o1" as "vsm.minfo"
+    with
+        id "ddn.examples.vsm::m.o1"
+        title "Manual information"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.vsm::m.op"
+            item
+                definition
+                    id "ddn.examples.vsm::m.weld"
+
+
+view "map" as "vsm.basic@1"
+    with
+        id "map"
+        title "Current state map"
+        selection
+            include
+                item
+                    id "ddn.examples.vsm::m.cust"
+                item
+                    id "ddn.examples.vsm::m.ctrl"
+                item
+                    id "ddn.examples.vsm::m.stamp"
+                item
+                    id "ddn.examples.vsm::m.inv1"
+                item
+                    id "ddn.examples.vsm::m.weld"
+                item
+                    id "ddn.examples.vsm::m.sup"
+                item
+                    id "ddn.examples.vsm::m.asm"
+                item
+                    id "ddn.examples.vsm::m.kz"
+                item
+                    id "ddn.examples.vsm::m.op"
+                item
+                    id "ddn.examples.vsm::m.m1"
+                item
+                    id "ddn.examples.vsm::m.m2"
+                item
+                    id "ddn.examples.vsm::m.m3"
+                item
+                    id "ddn.examples.vsm::m.m4"
+                item
+                    id "ddn.examples.vsm::m.m5"
+                item
+                    id "ddn.examples.vsm::m.i1"
+                item
+                    id "ddn.examples.vsm::m.i2"
+                item
+                    id "ddn.examples.vsm::m.i3"
+                item
+                    id "ddn.examples.vsm::m.o1"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:map"
+
+    use "ddn.examples.vsm::m.cust" named "appearance:map:ddn.examples.vsm::m.cust"
+        with
+            id "appearance:map:ddn.examples.vsm::m.cust"
+            background
+                image
+                    id "artwork::vsm-symbols@1:customer"
+
+    use "ddn.examples.vsm::m.ctrl" named "appearance:map:ddn.examples.vsm::m.ctrl"
+        with
+            id "appearance:map:ddn.examples.vsm::m.ctrl"
+            background
+                image
+                    id "artwork::vsm-symbols@1:production-control"
+
+    use "ddn.examples.vsm::m.stamp" named "appearance:map:ddn.examples.vsm::m.stamp"
+        with
+            id "appearance:map:ddn.examples.vsm::m.stamp"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            background
+                image
+                    id "artwork::vsm-symbols@1:process"
+
+    use "ddn.examples.vsm::m.inv1" named "appearance:map:ddn.examples.vsm::m.inv1"
+        with
+            id "appearance:map:ddn.examples.vsm::m.inv1"
+            background
+                image
+                    id "artwork::vsm-symbols@1:inventory"
+
+    use "ddn.examples.vsm::m.weld" named "appearance:map:ddn.examples.vsm::m.weld"
+        with
+            id "appearance:map:ddn.examples.vsm::m.weld"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            background
+                image
+                    id "artwork::vsm-symbols@1:process"
+
+    use "ddn.examples.vsm::m.sup" named "appearance:map:ddn.examples.vsm::m.sup"
+        with
+            id "appearance:map:ddn.examples.vsm::m.sup"
+            background
+                image
+                    id "artwork::vsm-symbols@1:supermarket"
+
+    use "ddn.examples.vsm::m.asm" named "appearance:map:ddn.examples.vsm::m.asm"
+        with
+            id "appearance:map:ddn.examples.vsm::m.asm"
+            background
+                image
+                    id "artwork::vsm-symbols@1:process"
+
+    use "ddn.examples.vsm::m.kz" named "appearance:map:ddn.examples.vsm::m.kz"
+        with
+            id "appearance:map:ddn.examples.vsm::m.kz"
+            background
+                image
+                    id "artwork::vsm-symbols@1:kaizen"
+
+    use "ddn.examples.vsm::m.op" named "appearance:map:ddn.examples.vsm::m.op"
+        with
+            id "appearance:map:ddn.examples.vsm::m.op"
+            background
+                image
+                    id "artwork::vsm-symbols@1:operator"
+
+    use "ddn.examples.vsm::m.m1" named "appearance:map:ddn.examples.vsm::m.m1"
+        with
+            id "appearance:map:ddn.examples.vsm::m.m1"
+
+    use "ddn.examples.vsm::m.m2" named "appearance:map:ddn.examples.vsm::m.m2"
+        with
+            id "appearance:map:ddn.examples.vsm::m.m2"
+
+    use "ddn.examples.vsm::m.m3" named "appearance:map:ddn.examples.vsm::m.m3"
+        with
+            id "appearance:map:ddn.examples.vsm::m.m3"
+
+    use "ddn.examples.vsm::m.m4" named "appearance:map:ddn.examples.vsm::m.m4"
+        with
+            id "appearance:map:ddn.examples.vsm::m.m4"
+
+    use "ddn.examples.vsm::m.m5" named "appearance:map:ddn.examples.vsm::m.m5"
+        with
+            id "appearance:map:ddn.examples.vsm::m.m5"
+
+    use "ddn.examples.vsm::m.i1" named "appearance:map:ddn.examples.vsm::m.i1"
+        with
+            id "appearance:map:ddn.examples.vsm::m.i1"
+
+    use "ddn.examples.vsm::m.i2" named "appearance:map:ddn.examples.vsm::m.i2"
+        with
+            id "appearance:map:ddn.examples.vsm::m.i2"
+
+    use "ddn.examples.vsm::m.i3" named "appearance:map:ddn.examples.vsm::m.i3"
+        with
+            id "appearance:map:ddn.examples.vsm::m.i3"
+
+    use "ddn.examples.vsm::m.o1" named "appearance:map:ddn.examples.vsm::m.o1"
+        with
+            id "appearance:map:ddn.examples.vsm::m.o1"

@@ -1,41 +1,795 @@
-ddn "0.5";
-module "ddn.examples.electricalsymbols";
+version ddn-next-1
 
-// B1-087: the electrical-common@1 icon library — an IEC 60617-style common
-// set (passives, semiconductors, sources, switchgear, logic gates in
-// distinct-shape form). Electrical symbols have no dedicated DDN profile;
-// they bind per node via x_icon on any profile-kind node (network.server
-// serves as the neutral host here). Common-practice rendering — IEC 60617
-// is not in hand, so compliance against the standard is pending document
-// review. Primary orientation only; rotate at bind time if needed.
-// All data is synthetic.
-data m {
-    object bat "Battery" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "battery" }; }
-    object sw "Main switch" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "switch-no" }; }
-    object fu "Fuse" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "fuse" }; }
-    object r1 "R1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "resistor" }; }
-    object c1 "C1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "capacitor" }; }
-    object l1 "L1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "inductor" }; }
-    object d1 "D1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "diode" }; }
-    object led "LED1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "led" }; }
-    object q1 "Q1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "transistor-npn" }; }
-    object gnd "GND" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "ground" }; }
-    object u1 "AND gate" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "gate-and" }; }
-    object u2 "XOR gate" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "gate-xor" }; }
-    object u3 "Op-amp" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "op-amp" }; }
-    assoc w1 "" @bat -> @sw;
-    assoc w2 "" @sw -> @fu;
-    assoc w3 "" @fu -> @r1;
-    assoc w4 "" @r1 -> @led;
-    assoc w5 "" @led -> @gnd;
-    assoc w6 "" @c1 -> @gnd;
-    assoc w7 "" @l1 -> @c1;
-    assoc w8 "" @d1 -> @q1;
-    assoc w9 "" @q1 -> @gnd;
-    assoc w10 "" @u1 -> @u2;
-    assoc w11 "" @u2 -> @u3;
-}
-view sch "Electrical symbol library": [@m] as "network.basic@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
-    publication { size: content; fit: none; }
-}
+asset "artwork::electrical-common@1:battery" as resource from "../../assets/icons/electrical-common-1/battery.svg"
+    with
+        id "artwork::electrical-common@1:battery"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:switch-no" as resource from "../../assets/icons/electrical-common-1/switch-no.svg"
+    with
+        id "artwork::electrical-common@1:switch-no"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:fuse" as resource from "../../assets/icons/electrical-common-1/fuse.svg"
+    with
+        id "artwork::electrical-common@1:fuse"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:resistor" as resource from "../../assets/icons/electrical-common-1/resistor.svg"
+    with
+        id "artwork::electrical-common@1:resistor"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:capacitor" as resource from "../../assets/icons/electrical-common-1/capacitor.svg"
+    with
+        id "artwork::electrical-common@1:capacitor"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:inductor" as resource from "../../assets/icons/electrical-common-1/inductor.svg"
+    with
+        id "artwork::electrical-common@1:inductor"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:diode" as resource from "../../assets/icons/electrical-common-1/diode.svg"
+    with
+        id "artwork::electrical-common@1:diode"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:led" as resource from "../../assets/icons/electrical-common-1/led.svg"
+    with
+        id "artwork::electrical-common@1:led"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:transistor-npn" as resource from "../../assets/icons/electrical-common-1/transistor-npn.svg"
+    with
+        id "artwork::electrical-common@1:transistor-npn"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:ground" as resource from "../../assets/icons/electrical-common-1/ground.svg"
+    with
+        id "artwork::electrical-common@1:ground"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:gate-and" as resource from "../../assets/icons/electrical-common-1/gate-and.svg"
+    with
+        id "artwork::electrical-common@1:gate-and"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:gate-xor" as resource from "../../assets/icons/electrical-common-1/gate-xor.svg"
+    with
+        id "artwork::electrical-common@1:gate-xor"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::electrical-common@1:op-amp" as resource from "../../assets/icons/electrical-common-1/op-amp.svg"
+    with
+        id "artwork::electrical-common@1:op-amp"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+publication "publication:sch"
+    with
+        id "publication:sch"
+        title "Electrical symbols and terminal connections"
+        targets
+            item
+                target
+                    id "sch"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.electricalsymbols::m.bat" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.bat"
+        title "Battery"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "battery"
+
+
+element "ddn.examples.electricalsymbols::m.sw" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.sw"
+        title "Main switch"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "switch-no"
+
+
+element "ddn.examples.electricalsymbols::m.fu" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.fu"
+        title "Fuse"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "fuse"
+
+
+element "ddn.examples.electricalsymbols::m.r1" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.r1"
+        title "R1"
+        notes
+            item
+                text "R1 · 1 kΩ / 0.25 W"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "resistor"
+
+
+element "ddn.examples.electricalsymbols::m.c1" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.c1"
+        title "C1"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "capacitor"
+
+
+element "ddn.examples.electricalsymbols::m.l1" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.l1"
+        title "L1"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "inductor"
+
+
+element "ddn.examples.electricalsymbols::m.d1" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.d1"
+        title "D1"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "diode"
+
+
+element "ddn.examples.electricalsymbols::m.led" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.led"
+        title "LED1"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "led"
+
+
+element "ddn.examples.electricalsymbols::m.q1" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.q1"
+        title "Q1"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "transistor-npn"
+
+
+element "ddn.examples.electricalsymbols::m.gnd" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.gnd"
+        title "GND"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "ground"
+
+
+element "ddn.examples.electricalsymbols::m.u1" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.u1"
+        title "AND gate"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "gate-and"
+
+
+element "ddn.examples.electricalsymbols::m.u2" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.u2"
+        title "XOR gate"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "gate-xor"
+
+
+element "ddn.examples.electricalsymbols::m.u3" as "network.server"
+    with
+        id "ddn.examples.electricalsymbols::m.u3"
+        title "Op-amp"
+        metadata
+            x_icon
+                library "electrical-common@1"
+                icon "op-amp"
+
+
+relation "ddn.examples.electricalsymbols::m.w1" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w1"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.bat"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.sw"
+
+
+relation "ddn.examples.electricalsymbols::m.w2" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w2"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.sw"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.fu"
+
+
+relation "ddn.examples.electricalsymbols::m.w3" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w3"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.fu"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.r1"
+
+
+relation "ddn.examples.electricalsymbols::m.w4" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w4"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.r1"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.led"
+
+
+relation "ddn.examples.electricalsymbols::m.w5" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w5"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.led"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.gnd"
+
+
+relation "ddn.examples.electricalsymbols::m.w6" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w6"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.c1"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.gnd"
+
+
+relation "ddn.examples.electricalsymbols::m.w7" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w7"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.l1"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.c1"
+
+
+relation "ddn.examples.electricalsymbols::m.w8" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w8"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.d1"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.q1"
+
+
+relation "ddn.examples.electricalsymbols::m.w9" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w9"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.q1"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.gnd"
+
+
+relation "ddn.examples.electricalsymbols::m.w10" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w10"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.u1"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.u2"
+
+
+relation "ddn.examples.electricalsymbols::m.w11" as "assoc"
+    with
+        id "ddn.examples.electricalsymbols::m.w11"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.u2"
+            item
+                definition
+                    id "ddn.examples.electricalsymbols::m.u3"
+
+
+view "sch" as "network.basic@1"
+    with
+        id "sch"
+        title "Electrical symbols and terminal connections"
+        selection
+            include
+                item
+                    id "ddn.examples.electricalsymbols::m.bat"
+                item
+                    id "ddn.examples.electricalsymbols::m.sw"
+                item
+                    id "ddn.examples.electricalsymbols::m.fu"
+                item
+                    id "ddn.examples.electricalsymbols::m.r1"
+                item
+                    id "ddn.examples.electricalsymbols::m.c1"
+                item
+                    id "ddn.examples.electricalsymbols::m.l1"
+                item
+                    id "ddn.examples.electricalsymbols::m.d1"
+                item
+                    id "ddn.examples.electricalsymbols::m.led"
+                item
+                    id "ddn.examples.electricalsymbols::m.q1"
+                item
+                    id "ddn.examples.electricalsymbols::m.gnd"
+                item
+                    id "ddn.examples.electricalsymbols::m.u1"
+                item
+                    id "ddn.examples.electricalsymbols::m.u2"
+                item
+                    id "ddn.examples.electricalsymbols::m.u3"
+                item
+                    id "ddn.examples.electricalsymbols::m.w1"
+                item
+                    id "ddn.examples.electricalsymbols::m.w2"
+                item
+                    id "ddn.examples.electricalsymbols::m.w3"
+                item
+                    id "ddn.examples.electricalsymbols::m.w4"
+                item
+                    id "ddn.examples.electricalsymbols::m.w5"
+                item
+                    id "ddn.examples.electricalsymbols::m.w6"
+                item
+                    id "ddn.examples.electricalsymbols::m.w7"
+                item
+                    id "ddn.examples.electricalsymbols::m.w8"
+                item
+                    id "ddn.examples.electricalsymbols::m.w9"
+                item
+                    id "ddn.examples.electricalsymbols::m.w10"
+                item
+                    id "ddn.examples.electricalsymbols::m.w11"
+        layout
+            algorithm "manual"
+            routing "orthogonal"
+            port_clearance 16
+        background
+            color "#ffffff"
+        legend
+            mode "none"
+            placement "none"
+        publication
+            id "publication:sch"
+
+    use "ddn.examples.electricalsymbols::m.bat" named "appearance:sch:ddn.examples.electricalsymbols::m.bat"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.bat"
+            position
+                x 60
+                y 100
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:battery"
+
+    use "ddn.examples.electricalsymbols::m.sw" named "appearance:sch:ddn.examples.electricalsymbols::m.sw"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.sw"
+            position
+                x 220
+                y 82
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:switch-no"
+
+    use "ddn.examples.electricalsymbols::m.fu" named "appearance:sch:ddn.examples.electricalsymbols::m.fu"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.fu"
+            position
+                x 380
+                y 100
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:fuse"
+
+    use "ddn.examples.electricalsymbols::m.r1" named "appearance:sch:ddn.examples.electricalsymbols::m.r1"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.r1"
+            body "notes"
+            position
+                x 540
+                y 100
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:resistor"
+
+    use "ddn.examples.electricalsymbols::m.c1" named "appearance:sch:ddn.examples.electricalsymbols::m.c1"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.c1"
+            position
+                x 220
+                y 250
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:capacitor"
+
+    use "ddn.examples.electricalsymbols::m.l1" named "appearance:sch:ddn.examples.electricalsymbols::m.l1"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.l1"
+            position
+                x 60
+                y 250
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:inductor"
+
+    use "ddn.examples.electricalsymbols::m.d1" named "appearance:sch:ddn.examples.electricalsymbols::m.d1"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.d1"
+            position
+                x 380
+                y 250
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:diode"
+
+    use "ddn.examples.electricalsymbols::m.led" named "appearance:sch:ddn.examples.electricalsymbols::m.led"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.led"
+            position
+                x 700
+                y 100
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:led"
+
+    use "ddn.examples.electricalsymbols::m.q1" named "appearance:sch:ddn.examples.electricalsymbols::m.q1"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.q1"
+            position
+                x 540
+                y 250
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:transistor-npn"
+
+    use "ddn.examples.electricalsymbols::m.gnd" named "appearance:sch:ddn.examples.electricalsymbols::m.gnd"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.gnd"
+            position
+                x 920
+                y 250
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:ground"
+
+    use "ddn.examples.electricalsymbols::m.u1" named "appearance:sch:ddn.examples.electricalsymbols::m.u1"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.u1"
+            position
+                x 60
+                y 430
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:gate-and"
+
+    use "ddn.examples.electricalsymbols::m.u2" named "appearance:sch:ddn.examples.electricalsymbols::m.u2"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.u2"
+            position
+                x 300
+                y 430
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:gate-xor"
+
+    use "ddn.examples.electricalsymbols::m.u3" named "appearance:sch:ddn.examples.electricalsymbols::m.u3"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.u3"
+            position
+                x 540
+                y 430
+            size
+                width 72
+                height 72
+            pinned true
+            symbol
+                mode "image"
+                label "none"
+                image
+                    id "artwork::electrical-common@1:op-amp"
+
+    use "ddn.examples.electricalsymbols::m.w1" named "appearance:sch:ddn.examples.electricalsymbols::m.w1"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w1"
+            route
+                source_side "east"
+                target_side "west"
+
+    use "ddn.examples.electricalsymbols::m.w2" named "appearance:sch:ddn.examples.electricalsymbols::m.w2"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w2"
+            route
+                source_side "east"
+                target_side "west"
+
+    use "ddn.examples.electricalsymbols::m.w3" named "appearance:sch:ddn.examples.electricalsymbols::m.w3"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w3"
+            route
+                source_side "east"
+                target_side "west"
+
+    use "ddn.examples.electricalsymbols::m.w4" named "appearance:sch:ddn.examples.electricalsymbols::m.w4"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w4"
+            route
+                source_side "east"
+                target_side "west"
+
+    use "ddn.examples.electricalsymbols::m.w5" named "appearance:sch:ddn.examples.electricalsymbols::m.w5"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w5"
+            route
+                via
+                    item
+                        x 800
+                        y 136
+                    item
+                        x 800
+                        y 226
+                    item
+                        x 956
+                        y 226
+                source_side "east"
+                target_side "north"
+
+    use "ddn.examples.electricalsymbols::m.w6" named "appearance:sch:ddn.examples.electricalsymbols::m.w6"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w6"
+            route
+                via
+                    item
+                        x 320
+                        y 286
+                    item
+                        x 320
+                        y 226
+                    item
+                        x 956
+                        y 226
+                source_side "east"
+                target_side "north"
+
+    use "ddn.examples.electricalsymbols::m.w7" named "appearance:sch:ddn.examples.electricalsymbols::m.w7"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w7"
+            route
+                source_side "east"
+                target_side "west"
+
+    use "ddn.examples.electricalsymbols::m.w8" named "appearance:sch:ddn.examples.electricalsymbols::m.w8"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w8"
+            route
+                source_side "east"
+                target_side "west"
+
+    use "ddn.examples.electricalsymbols::m.w9" named "appearance:sch:ddn.examples.electricalsymbols::m.w9"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w9"
+            route
+                via
+                    item
+                        x 594
+                        y 370
+                    item
+                        x 1000
+                        y 370
+                    item
+                        x 1000
+                        y 226
+                    item
+                        x 956
+                        y 226
+                source_side "south"
+                target_side "north"
+
+    use "ddn.examples.electricalsymbols::m.w10" named "appearance:sch:ddn.examples.electricalsymbols::m.w10"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w10"
+            route
+                source_side "east"
+                target_side "west"
+
+    use "ddn.examples.electricalsymbols::m.w11" named "appearance:sch:ddn.examples.electricalsymbols::m.w11"
+        with
+            id "appearance:sch:ddn.examples.electricalsymbols::m.w11"
+            route
+                source_side "east"
+                target_side "west"

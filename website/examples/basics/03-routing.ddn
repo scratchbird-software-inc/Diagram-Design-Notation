@@ -1,62 +1,540 @@
-ddn "0.5";
-module "ddn.examples.routing";
-import "shared.ddn" as shared;
+version ddn-next-1
 
-data model {
-    dataset west "West source";
-    dataset east "East target";
-    dataset north "North source";
-    dataset south "South target";
-    relation horizontal @west -> @east { kind: flow; }
-    relation vertical @north -> @south { kind: flow; }
-}
+publication "publication:gap"
+    with
+        id "publication:gap"
+        title "Orthogonal crossing / disconnected gap"
+        targets
+            item
+                target
+                    id "gap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1300
+                unit "px"
+            height
+                value 850
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view gap "Orthogonal crossing / disconnected gap" {
-    data: [@model]; format: @shared.styles.technical;
-    display: @shared.styles.compact;
-    layout { crossings: gap; }
-    legend { mode: numbers; keys: { "model.horizontal": 4, "model.vertical": 9 }; }
-    publication { width: 1300px; height: 850px; }
-    place @model.west { at: [0px, 220px]; size: [240px, 100px]; }
-    place @model.east { at: [630px, 220px]; size: [240px, 100px]; }
-    place @model.north { at: [315px, 0px]; size: [240px, 100px]; }
-    place @model.south { at: [315px, 450px]; size: [240px, 100px]; }
-    route @model.horizontal { source_side: east; target_side: west; via: [[435px,270px]]; callout: [300px, 270px]; }
-    route @model.vertical { source_side: south; target_side: north; via: [[435px,270px]]; callout: [435px, 365px]; }
-}
 
-view bridge "Orthogonal crossing / round bridge" {
-    data: [@model]; format: @shared.styles.technical;
-    display: @shared.styles.compact;
-    layout { crossings: bridge; }
-    legend { mode: numbers; keys: { "model.horizontal": 4, "model.vertical": 9 }; }
-    publication { width: 1300px; height: 850px; }
-    place @model.west { at: [0px, 220px]; size: [240px, 100px]; }
-    place @model.east { at: [630px, 220px]; size: [240px, 100px]; }
-    place @model.north { at: [315px, 0px]; size: [240px, 100px]; }
-    place @model.south { at: [315px, 450px]; size: [240px, 100px]; }
-    route @model.horizontal { source_side: east; target_side: west; via: [[435px,270px]]; callout: [300px, 270px]; }
-    route @model.vertical { source_side: south; target_side: north; via: [[435px,270px]]; callout: [435px, 365px]; }
-}
+publication "publication:bridge"
+    with
+        id "publication:bridge"
+        title "Orthogonal crossing / round bridge"
+        targets
+            item
+                target
+                    id "bridge"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1300
+                unit "px"
+            height
+                value 850
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view square_bridge "Orthogonal crossing / square bridge" {
-    data: [@model]; format: @shared.styles.technical;
-    display: @shared.styles.compact;
-    layout { crossings: square_bridge; }
-    legend { mode: numbers; keys: { "model.horizontal": 4, "model.vertical": 9 }; }
-    publication { width: 1300px; height: 850px; }
-    place @model.west { at: [0px, 220px]; size: [240px, 100px]; }
-    place @model.east { at: [630px, 220px]; size: [240px, 100px]; }
-    place @model.north { at: [315px, 0px]; size: [240px, 100px]; }
-    place @model.south { at: [315px, 450px]; size: [240px, 100px]; }
-    route @model.horizontal { source_side: east; target_side: west; via: [[435px,270px]]; callout: [300px, 270px]; }
-    route @model.vertical { source_side: south; target_side: north; via: [[435px,270px]]; callout: [435px, 365px]; }
-}
 
-view straight "Straight routing / relation family unchanged" {
-    data: [@model]; format: @shared.styles.technical;
-    select: [@model.west, @model.east];
-    layout { routing: straight; }
-    place @model.west { at: [0px, 0px]; }
-    place @model.east { at: [520px, 240px]; }
-}
+publication "publication:square_bridge"
+    with
+        id "publication:square_bridge"
+        title "Orthogonal crossing / square bridge"
+        targets
+            item
+                target
+                    id "square_bridge"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1300
+                unit "px"
+            height
+                value 850
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
+
+
+publication "publication:straight"
+    with
+        id "publication:straight"
+        title "Straight routing / relation family unchanged"
+        targets
+            item
+                target
+                    id "straight"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
+
+
+element "ddn.examples.routing::model.west" as "dataset"
+    with
+        id "ddn.examples.routing::model.west"
+        title "West source"
+
+
+element "ddn.examples.routing::model.east" as "dataset"
+    with
+        id "ddn.examples.routing::model.east"
+        title "East target"
+
+
+element "ddn.examples.routing::model.north" as "dataset"
+    with
+        id "ddn.examples.routing::model.north"
+        title "North source"
+
+
+element "ddn.examples.routing::model.south" as "dataset"
+    with
+        id "ddn.examples.routing::model.south"
+        title "South target"
+
+
+relation "ddn.examples.routing::model.horizontal" as "flow"
+    with
+        id "ddn.examples.routing::model.horizontal"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.routing::model.west"
+            item
+                definition
+                    id "ddn.examples.routing::model.east"
+
+
+relation "ddn.examples.routing::model.vertical" as "flow"
+    with
+        id "ddn.examples.routing::model.vertical"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.routing::model.north"
+            item
+                definition
+                    id "ddn.examples.routing::model.south"
+
+
+view "gap" as "ddn@1"
+    with
+        id "gap"
+        title "Orthogonal crossing / disconnected gap"
+        selection
+            include
+                item
+                    id "ddn.examples.routing::model.west"
+                item
+                    id "ddn.examples.routing::model.east"
+                item
+                    id "ddn.examples.routing::model.north"
+                item
+                    id "ddn.examples.routing::model.south"
+                item
+                    id "ddn.examples.routing::model.horizontal"
+                item
+                    id "ddn.examples.routing::model.vertical"
+        layout
+            algorithm "grid"
+            gap 80
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            mode "numbers"
+            width 280
+            keys
+                model.horizontal "4"
+                model.vertical "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:gap"
+
+    use "ddn.examples.routing::model.west" named "appearance:gap:ddn.examples.routing::model.west"
+        with
+            id "appearance:gap:ddn.examples.routing::model.west"
+            position
+                x 0
+                y 220
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.east" named "appearance:gap:ddn.examples.routing::model.east"
+        with
+            id "appearance:gap:ddn.examples.routing::model.east"
+            position
+                x 630
+                y 220
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.north" named "appearance:gap:ddn.examples.routing::model.north"
+        with
+            id "appearance:gap:ddn.examples.routing::model.north"
+            position
+                x 315
+                y 0
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.south" named "appearance:gap:ddn.examples.routing::model.south"
+        with
+            id "appearance:gap:ddn.examples.routing::model.south"
+            position
+                x 315
+                y 450
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.horizontal" named "appearance:gap:ddn.examples.routing::model.horizontal"
+        with
+            id "appearance:gap:ddn.examples.routing::model.horizontal"
+            route
+                source_side "east"
+                target_side "west"
+                via
+                    item
+                        x 435
+                        y 270
+
+    use "ddn.examples.routing::model.vertical" named "appearance:gap:ddn.examples.routing::model.vertical"
+        with
+            id "appearance:gap:ddn.examples.routing::model.vertical"
+            route
+                source_side "south"
+                target_side "north"
+                via
+                    item
+                        x 435
+                        y 270
+
+
+view "bridge" as "ddn@1"
+    with
+        id "bridge"
+        title "Orthogonal crossing / round bridge"
+        selection
+            include
+                item
+                    id "ddn.examples.routing::model.west"
+                item
+                    id "ddn.examples.routing::model.east"
+                item
+                    id "ddn.examples.routing::model.north"
+                item
+                    id "ddn.examples.routing::model.south"
+                item
+                    id "ddn.examples.routing::model.horizontal"
+                item
+                    id "ddn.examples.routing::model.vertical"
+        layout
+            algorithm "grid"
+            crossings "bridge"
+            gap 80
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            mode "numbers"
+            width 280
+            keys
+                model.horizontal "4"
+                model.vertical "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:bridge"
+
+    use "ddn.examples.routing::model.west" named "appearance:bridge:ddn.examples.routing::model.west"
+        with
+            id "appearance:bridge:ddn.examples.routing::model.west"
+            position
+                x 0
+                y 220
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.east" named "appearance:bridge:ddn.examples.routing::model.east"
+        with
+            id "appearance:bridge:ddn.examples.routing::model.east"
+            position
+                x 630
+                y 220
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.north" named "appearance:bridge:ddn.examples.routing::model.north"
+        with
+            id "appearance:bridge:ddn.examples.routing::model.north"
+            position
+                x 315
+                y 0
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.south" named "appearance:bridge:ddn.examples.routing::model.south"
+        with
+            id "appearance:bridge:ddn.examples.routing::model.south"
+            position
+                x 315
+                y 450
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.horizontal" named "appearance:bridge:ddn.examples.routing::model.horizontal"
+        with
+            id "appearance:bridge:ddn.examples.routing::model.horizontal"
+            route
+                source_side "east"
+                target_side "west"
+                via
+                    item
+                        x 435
+                        y 270
+
+    use "ddn.examples.routing::model.vertical" named "appearance:bridge:ddn.examples.routing::model.vertical"
+        with
+            id "appearance:bridge:ddn.examples.routing::model.vertical"
+            route
+                source_side "south"
+                target_side "north"
+                via
+                    item
+                        x 435
+                        y 270
+
+
+view "square_bridge" as "ddn@1"
+    with
+        id "square_bridge"
+        title "Orthogonal crossing / square bridge"
+        selection
+            include
+                item
+                    id "ddn.examples.routing::model.west"
+                item
+                    id "ddn.examples.routing::model.east"
+                item
+                    id "ddn.examples.routing::model.north"
+                item
+                    id "ddn.examples.routing::model.south"
+                item
+                    id "ddn.examples.routing::model.horizontal"
+                item
+                    id "ddn.examples.routing::model.vertical"
+        layout
+            algorithm "grid"
+            crossings "square_bridge"
+            gap 80
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            mode "numbers"
+            width 280
+            keys
+                model.horizontal "4"
+                model.vertical "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:square_bridge"
+
+    use "ddn.examples.routing::model.west" named "appearance:square_bridge:ddn.examples.routing::model.west"
+        with
+            id "appearance:square_bridge:ddn.examples.routing::model.west"
+            position
+                x 0
+                y 220
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.east" named "appearance:square_bridge:ddn.examples.routing::model.east"
+        with
+            id "appearance:square_bridge:ddn.examples.routing::model.east"
+            position
+                x 630
+                y 220
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.north" named "appearance:square_bridge:ddn.examples.routing::model.north"
+        with
+            id "appearance:square_bridge:ddn.examples.routing::model.north"
+            position
+                x 315
+                y 0
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.south" named "appearance:square_bridge:ddn.examples.routing::model.south"
+        with
+            id "appearance:square_bridge:ddn.examples.routing::model.south"
+            position
+                x 315
+                y 450
+            pinned true
+            size
+                width 240
+                height 100
+            text
+                fit "wrap"
+
+    use "ddn.examples.routing::model.horizontal" named "appearance:square_bridge:ddn.examples.routing::model.horizontal"
+        with
+            id "appearance:square_bridge:ddn.examples.routing::model.horizontal"
+            route
+                source_side "east"
+                target_side "west"
+                via
+                    item
+                        x 435
+                        y 270
+
+    use "ddn.examples.routing::model.vertical" named "appearance:square_bridge:ddn.examples.routing::model.vertical"
+        with
+            id "appearance:square_bridge:ddn.examples.routing::model.vertical"
+            route
+                source_side "south"
+                target_side "north"
+                via
+                    item
+                        x 435
+                        y 270
+
+
+view "straight" as "ddn@1"
+    with
+        id "straight"
+        title "Straight routing / relation family unchanged"
+        selection
+            include
+                item
+                    id "ddn.examples.routing::model.west"
+                item
+                    id "ddn.examples.routing::model.east"
+                item
+                    id "ddn.examples.routing::model.horizontal"
+            exclude
+                item
+                    id "ddn.examples.routing::model.vertical"
+        layout
+            algorithm "grid"
+            routing "straight"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:straight"
+
+    use "ddn.examples.routing::model.west" named "appearance:straight:ddn.examples.routing::model.west"
+        with
+            id "appearance:straight:ddn.examples.routing::model.west"
+            position
+                x 0
+                y 0
+            pinned true
+
+    use "ddn.examples.routing::model.east" named "appearance:straight:ddn.examples.routing::model.east"
+        with
+            id "appearance:straight:ddn.examples.routing::model.east"
+            position
+                x 520
+                y 240
+            pinned true
+
+    use "ddn.examples.routing::model.horizontal" named "appearance:straight:ddn.examples.routing::model.horizontal"
+        with
+            id "appearance:straight:ddn.examples.routing::model.horizontal"

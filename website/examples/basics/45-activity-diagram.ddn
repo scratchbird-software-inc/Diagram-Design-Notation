@@ -1,39 +1,325 @@
-ddn "0.5";
-module "ddn.examples.activitydiagram";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:fulfilment"
+    with
+        id "publication:fulfilment"
+        title "Order fulfilment activity"
+        targets
+            item
+                target
+                    id "fulfilment"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic activity-style flow for the uml.activity@1 profile.
-// An order-fulfilment activity with two swimlane partitions (webshop,
-// warehouse) drawn as view frames; lane membership is declared per node with
-// x_partition:{lane:"..."}. A flow.forkjoin fork splits the flow into
-// pick_items, take_payment and the order object node; a matching join
-// reunites them before end. All edges are uml.flow. All data is synthetic.
-// This is profile-level coverage, not UML conformance.
-data order {
-    object start "Start" { kind: "flow.start"; x_partition: { "lane": "webshop" }; }
-    object fork "Fork" { kind: "flow.forkjoin"; x_partition: { "lane": "warehouse" }; }
-    object pick_items "Pick items" { kind: "flow.process"; x_partition: { "lane": "warehouse" }; }
-    object take_payment "Take payment" { kind: "flow.process"; x_partition: { "lane": "webshop" }; }
-    object order_obj "Order" { kind: "flow.objectnode"; x_partition: { "lane": "warehouse" }; }
-    object join "Join" { kind: "flow.forkjoin"; x_partition: { "lane": "warehouse" }; }
-    object end "End" { kind: "flow.end"; x_partition: { "lane": "webshop" }; }
 
-    relation begin "begin" @start -> @fork { kind: "uml.flow"; }
-    relation to_pick "to pick" @fork -> @pick_items { kind: "uml.flow"; }
-    relation to_pay "to pay" @fork -> @take_payment { kind: "uml.flow"; }
-    relation to_order "to order" @fork -> @order_obj { kind: "uml.flow"; }
-    relation picked "picked" @pick_items -> @join { kind: "uml.flow"; }
-    relation paid "paid" @take_payment -> @join { kind: "uml.flow"; }
-    relation order_ready "order ready" @order_obj -> @join { kind: "uml.flow"; }
-    relation finish "finish" @join -> @end { kind: "uml.flow"; }
-}
+element "ddn.examples.activitydiagram::order.start" as "flow.start"
+    with
+        id "ddn.examples.activitydiagram::order.start"
+        title "Start"
+        metadata
+            x_partition
+                lane "ddn.examples.activitydiagram::fulfilment.webshop"
 
-view fulfilment "Order fulfilment activity" {
-    data: [@order]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "uml.activity@1"; }
-    layout { algorithm: layered; gap: 112px; row_gap: 112px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-    frame webshop "Webshop" { members: [@order.start, @order.take_payment, @order.end]; }
-    frame warehouse "Warehouse" { members: [@order.fork, @order.pick_items, @order.order_obj, @order.join]; }
-}
+
+element "ddn.examples.activitydiagram::order.fork" as "flow.forkjoin"
+    with
+        id "ddn.examples.activitydiagram::order.fork"
+        title "Fork"
+        metadata
+            x_partition
+                lane "ddn.examples.activitydiagram::fulfilment.warehouse"
+
+
+element "ddn.examples.activitydiagram::order.pick_items" as "flow.process"
+    with
+        id "ddn.examples.activitydiagram::order.pick_items"
+        title "Pick items"
+        metadata
+            x_partition
+                lane "ddn.examples.activitydiagram::fulfilment.warehouse"
+
+
+element "ddn.examples.activitydiagram::order.take_payment" as "flow.process"
+    with
+        id "ddn.examples.activitydiagram::order.take_payment"
+        title "Take payment"
+        metadata
+            x_partition
+                lane "ddn.examples.activitydiagram::fulfilment.webshop"
+
+
+element "ddn.examples.activitydiagram::order.order_obj" as "flow.objectnode"
+    with
+        id "ddn.examples.activitydiagram::order.order_obj"
+        title "Order"
+        metadata
+            x_partition
+                lane "ddn.examples.activitydiagram::fulfilment.warehouse"
+
+
+element "ddn.examples.activitydiagram::order.join" as "flow.forkjoin"
+    with
+        id "ddn.examples.activitydiagram::order.join"
+        title "Join"
+        metadata
+            x_partition
+                lane "ddn.examples.activitydiagram::fulfilment.warehouse"
+
+
+element "ddn.examples.activitydiagram::order.end" as "flow.end"
+    with
+        id "ddn.examples.activitydiagram::order.end"
+        title "End"
+        metadata
+            x_partition
+                lane "ddn.examples.activitydiagram::fulfilment.webshop"
+
+
+relation "ddn.examples.activitydiagram::order.begin" as "uml.flow"
+    with
+        id "ddn.examples.activitydiagram::order.begin"
+        title "begin"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.start"
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.fork"
+
+
+relation "ddn.examples.activitydiagram::order.to_pick" as "uml.flow"
+    with
+        id "ddn.examples.activitydiagram::order.to_pick"
+        title "to pick"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.fork"
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.pick_items"
+
+
+relation "ddn.examples.activitydiagram::order.to_pay" as "uml.flow"
+    with
+        id "ddn.examples.activitydiagram::order.to_pay"
+        title "to pay"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.fork"
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.take_payment"
+
+
+relation "ddn.examples.activitydiagram::order.to_order" as "uml.flow"
+    with
+        id "ddn.examples.activitydiagram::order.to_order"
+        title "to order"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.fork"
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.order_obj"
+
+
+relation "ddn.examples.activitydiagram::order.picked" as "uml.flow"
+    with
+        id "ddn.examples.activitydiagram::order.picked"
+        title "picked"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.pick_items"
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.join"
+
+
+relation "ddn.examples.activitydiagram::order.paid" as "uml.flow"
+    with
+        id "ddn.examples.activitydiagram::order.paid"
+        title "paid"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.take_payment"
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.join"
+
+
+relation "ddn.examples.activitydiagram::order.order_ready" as "uml.flow"
+    with
+        id "ddn.examples.activitydiagram::order.order_ready"
+        title "order ready"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.order_obj"
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.join"
+
+
+relation "ddn.examples.activitydiagram::order.finish" as "uml.flow"
+    with
+        id "ddn.examples.activitydiagram::order.finish"
+        title "finish"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.join"
+            item
+                definition
+                    id "ddn.examples.activitydiagram::order.end"
+
+
+view "fulfilment" as "uml.activity@1"
+    with
+        id "fulfilment"
+        title "Order fulfilment activity"
+        selection
+            include
+                item
+                    id "ddn.examples.activitydiagram::order.start"
+                item
+                    id "ddn.examples.activitydiagram::order.fork"
+                item
+                    id "ddn.examples.activitydiagram::order.pick_items"
+                item
+                    id "ddn.examples.activitydiagram::order.take_payment"
+                item
+                    id "ddn.examples.activitydiagram::order.order_obj"
+                item
+                    id "ddn.examples.activitydiagram::order.join"
+                item
+                    id "ddn.examples.activitydiagram::order.end"
+                item
+                    id "ddn.examples.activitydiagram::order.begin"
+                item
+                    id "ddn.examples.activitydiagram::order.to_pick"
+                item
+                    id "ddn.examples.activitydiagram::order.to_pay"
+                item
+                    id "ddn.examples.activitydiagram::order.to_order"
+                item
+                    id "ddn.examples.activitydiagram::order.picked"
+                item
+                    id "ddn.examples.activitydiagram::order.paid"
+                item
+                    id "ddn.examples.activitydiagram::order.order_ready"
+                item
+                    id "ddn.examples.activitydiagram::order.finish"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.activitydiagram::fulfilment.webshop"
+                name "Webshop"
+                members
+                    item
+                        id "ddn.examples.activitydiagram::order.start"
+                    item
+                        id "ddn.examples.activitydiagram::order.take_payment"
+                    item
+                        id "ddn.examples.activitydiagram::order.end"
+            item
+                id "ddn.examples.activitydiagram::fulfilment.warehouse"
+                name "Warehouse"
+                members
+                    item
+                        id "ddn.examples.activitydiagram::order.fork"
+                    item
+                        id "ddn.examples.activitydiagram::order.pick_items"
+                    item
+                        id "ddn.examples.activitydiagram::order.order_obj"
+                    item
+                        id "ddn.examples.activitydiagram::order.join"
+        publication
+            id "publication:fulfilment"
+
+    use "ddn.examples.activitydiagram::order.start" named "appearance:fulfilment:ddn.examples.activitydiagram::order.start"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.start"
+
+    use "ddn.examples.activitydiagram::order.fork" named "appearance:fulfilment:ddn.examples.activitydiagram::order.fork"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.fork"
+
+    use "ddn.examples.activitydiagram::order.pick_items" named "appearance:fulfilment:ddn.examples.activitydiagram::order.pick_items"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.pick_items"
+
+    use "ddn.examples.activitydiagram::order.take_payment" named "appearance:fulfilment:ddn.examples.activitydiagram::order.take_payment"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.take_payment"
+
+    use "ddn.examples.activitydiagram::order.order_obj" named "appearance:fulfilment:ddn.examples.activitydiagram::order.order_obj"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.order_obj"
+
+    use "ddn.examples.activitydiagram::order.join" named "appearance:fulfilment:ddn.examples.activitydiagram::order.join"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.join"
+
+    use "ddn.examples.activitydiagram::order.end" named "appearance:fulfilment:ddn.examples.activitydiagram::order.end"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.end"
+
+    use "ddn.examples.activitydiagram::order.begin" named "appearance:fulfilment:ddn.examples.activitydiagram::order.begin"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.begin"
+
+    use "ddn.examples.activitydiagram::order.to_pick" named "appearance:fulfilment:ddn.examples.activitydiagram::order.to_pick"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.to_pick"
+
+    use "ddn.examples.activitydiagram::order.to_pay" named "appearance:fulfilment:ddn.examples.activitydiagram::order.to_pay"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.to_pay"
+
+    use "ddn.examples.activitydiagram::order.to_order" named "appearance:fulfilment:ddn.examples.activitydiagram::order.to_order"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.to_order"
+
+    use "ddn.examples.activitydiagram::order.picked" named "appearance:fulfilment:ddn.examples.activitydiagram::order.picked"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.picked"
+
+    use "ddn.examples.activitydiagram::order.paid" named "appearance:fulfilment:ddn.examples.activitydiagram::order.paid"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.paid"
+
+    use "ddn.examples.activitydiagram::order.order_ready" named "appearance:fulfilment:ddn.examples.activitydiagram::order.order_ready"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.order_ready"
+
+    use "ddn.examples.activitydiagram::order.finish" named "appearance:fulfilment:ddn.examples.activitydiagram::order.finish"
+        with
+            id "appearance:fulfilment:ddn.examples.activitydiagram::order.finish"

@@ -1,0 +1,231 @@
+{
+  "status": "PROPOSED WORKED DEFAULT CONTEXTS; NOT THE COMPLETE PER-CATALOGUE/ROLE EXPANSION",
+  "outer_precedence": [
+    "file",
+    "css",
+    "standard"
+  ],
+  "sources": [
+    {
+      "purpose": "shared owner properties",
+      "path": "../../2026-10-surface-contracts/property-catalogue.json",
+      "sha256": "8d03e691ea148ef81672fc3e9a5db65c846f5921237ffd23690ee094697397fe"
+    },
+    {
+      "purpose": "retained profile contracts",
+      "path": "../../2026-10-profile-contracts/profile-contracts.json",
+      "sha256": "f6e0e01c55f2022af0ba09cff41f1188ce8c9f3505357d39d16aea0b4ed7f578"
+    },
+    {
+      "purpose": "retained common profile concern values",
+      "path": "../../2026-10-profile-contracts/evidence/runtime-contracts.json",
+      "sha256": "34be748ad766a5d5975e9f46eab9d56065d668953e69aa56a68b49bcdcb34d2d"
+    }
+  ],
+  "contexts": [
+    {
+      "id": "ddn::mindmap/defaults@proposal-1",
+      "method": "ddn",
+      "subtype_spelling": "candidate only: ddn::mindmap",
+      "profile": "mindmap.basic@1",
+      "catalogue_uses": [
+        "C093",
+        "C131",
+        "BF056"
+      ],
+      "activation": "Selected subtype context; catalogue membership tags alone do not activate defaults.",
+      "inherits": "The referenced shared owner standards and selected retained profile/role contracts, followed by these proposed context overrides.",
+      "standard_overrides": {
+        "workarea": {
+          "method": "ddn",
+          "background.color": "#f2f4f7",
+          "grid.visible": false,
+          "grid.spacing": 32,
+          "snap.grid": false
+        },
+        "view_definition": {
+          "design.state": "draft",
+          "style.look": "classic",
+          "style.font": "sans",
+          "style.font_size": 16,
+          "background.color": "transparent",
+          "layout.auto_place": true,
+          "layout.gap": 64,
+          "layout.row_gap": 64,
+          "profile": "mindmap.basic@1",
+          "layout.algorithm": "mindmap",
+          "layout.routing": "curved",
+          "layout.curve": "bezier"
+        },
+        "appearance": {
+          "body": "title",
+          "style.font": "sans",
+          "style.font_size": 16,
+          "text.weight": 400,
+          "sections": [
+            "name"
+          ]
+        },
+        "publication": {
+          "capture.scope": "content",
+          "capture.guides": false,
+          "notes.mode": "full",
+          "capture.partial": "error",
+          "capture.stale": "error"
+        }
+      },
+      "appearance_scope": {
+        "roles": [
+          "object"
+        ],
+        "category": "element",
+        "note": "The appearance overrides above are for the topic/entity role; they are not body/section defaults for relation appearances."
+      },
+      "creation": {
+        "subject_role": "object",
+        "stored_role": "Persist selected role when creating the definition.",
+        "identity": "Generate and persist once; never derive it from the display name.",
+        "name": "Empty string until supplied; placeholder is display only."
+      },
+      "display_placeholder": {
+        "role": "object",
+        "value": "<topic>",
+        "source_label_mutation": false
+      },
+      "role_specializations": [
+        {
+          "owner": "appearance",
+          "role": "object",
+          "variant": "root topic",
+          "condition": "A unique root is derivable from the selected assoc branch graph; no selection by position/name.",
+          "standard_overrides": {
+            "text.roles": {
+              "title": {
+                "size": 20,
+                "weight": 600
+              }
+            }
+          },
+          "otherwise": "No root-title specialization; retain ordinary title defaults and diagnose ambiguous/incomplete topology."
+        }
+      ],
+      "semantic_omissions": {
+        "domain": "unassigned; no semantic domain inferred from this view",
+        "datatype": "unset; role/purpose may report incomplete",
+        "key": "unspecified; omission is not a claim that no key exists",
+        "cardinality": "unspecified unless the selected relation contract supplies a declared semantic rule"
+      },
+      "remaining_properties": "Must inherit an applicable typed value or explicit omission classification; full expanded tables are a separate completion gate.",
+      "fixed_profile_constraints": [
+        "mindmap layout",
+        "one root at completion",
+        "at most one parent at completion",
+        "acyclic branch graph"
+      ],
+      "new_proposals": [
+        "Root title 20 units and weight 600",
+        "Topic placeholder <topic>"
+      ]
+    },
+    {
+      "id": "ddn::erd/defaults@proposal-1",
+      "method": "ddn",
+      "subtype_spelling": "candidate only: ddn::erd",
+      "profile": "ddn@1",
+      "catalogue_uses": [
+        "C088",
+        "BF100"
+      ],
+      "activation": "Selected subtype context; catalogue membership tags alone do not activate defaults.",
+      "inherits": "The referenced shared owner standards and selected retained profile/role contracts, followed by these proposed context overrides.",
+      "standard_overrides": {
+        "workarea": {
+          "method": "ddn",
+          "background.color": "#f2f4f7",
+          "grid.visible": false,
+          "grid.spacing": 32,
+          "snap.grid": false
+        },
+        "view_definition": {
+          "design.state": "draft",
+          "style.look": "classic",
+          "style.font": "sans",
+          "style.font_size": 16,
+          "background.color": "transparent",
+          "layout.auto_place": true,
+          "layout.gap": 64,
+          "layout.row_gap": 64,
+          "profile": "ddn@1",
+          "layout.algorithm": "grid",
+          "layout.routing": "orthogonal"
+        },
+        "appearance": {
+          "body": "title",
+          "style.font": "sans",
+          "style.font_size": 16,
+          "text.weight": 400,
+          "sections": [
+            "name",
+            "type",
+            "table",
+            "notes"
+          ]
+        },
+        "publication": {
+          "capture.scope": "content",
+          "capture.guides": false,
+          "notes.mode": "full",
+          "capture.partial": "error",
+          "capture.stale": "error"
+        }
+      },
+      "appearance_scope": {
+        "roles": [
+          "table"
+        ],
+        "category": "element",
+        "note": "The appearance overrides above are for the topic/entity role; they are not body/section defaults for relation appearances."
+      },
+      "creation": {
+        "subject_role": "table",
+        "stored_role": "Persist selected role when creating the definition.",
+        "identity": "Generate and persist once; never derive it from the display name.",
+        "name": "Empty string until supplied; placeholder is display only."
+      },
+      "display_placeholder": {
+        "role": "table",
+        "value": "<table>",
+        "source_label_mutation": false
+      },
+      "role_specializations": [],
+      "semantic_omissions": {
+        "domain": "unassigned; no semantic domain inferred from this view",
+        "datatype": "unset; role/purpose may report incomplete",
+        "key": "unspecified; omission is not a claim that no key exists",
+        "cardinality": "unspecified unless the selected relation contract supplies a declared semantic rule"
+      },
+      "remaining_properties": "Must inherit an applicable typed value or explicit omission classification; full expanded tables are a separate completion gate.",
+      "columns_mode": {
+        "default_column_ids": [
+          "name"
+        ],
+        "available_details": [
+          "name",
+          "type",
+          "domain",
+          "constraint",
+          "key",
+          "comment"
+        ],
+        "no_fields_required_for_title_body": true
+      },
+      "fixed_profile_constraints": [
+        "Native DDN role/endpoint integrity",
+        "No inherited crow-foot/Chen completion requirement"
+      ],
+      "new_proposals": [
+        "Grid for unplaced conceptual ERD entities; other admitted layout choices remain explicit overrides"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1814 @@
+{
+  "version": "ddn-next-1",
+  "baseline_runtime": "0.8.0",
+  "baseline_properties": {
+    "baseline_revision": "92daf7541d5f4447f4935b1c0f3cdc84b3cb4ff3",
+    "advertised_count": 249,
+    "structured_count": 47,
+    "advertised": [
+      {
+        "source": "projection.kind",
+        "target": "profile renderer kind",
+        "disposition": "derived",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.profile",
+        "target": "view_definition.profile",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.write_data",
+        "target": "view_definition.projection.options.write_data",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.rows",
+        "target": "view_definition.projection.options.rows",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.columns",
+        "target": "view_definition.projection.options.columns",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.relation",
+        "target": "view_definition.projection.options.relation",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.value",
+        "target": "view_definition.projection.options.value",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.duplicates",
+        "target": "view_definition.projection.options.duplicates",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.panels",
+        "target": "view_definition.projection.options.panels",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.records",
+        "target": "view_definition.projection.options.records",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.mark",
+        "target": "view_definition.projection.options.mark",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.x",
+        "target": "view_definition.projection.options.x",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.y",
+        "target": "view_definition.projection.options.y",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.x_type",
+        "target": "view_definition.projection.options.x_type",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.size",
+        "target": "view_definition.projection.options.size",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.unit",
+        "target": "view_definition.projection.options.unit",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.aggregate",
+        "target": "view_definition.projection.options.aggregate",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.start",
+        "target": "view_definition.projection.options.start",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.end",
+        "target": "view_definition.projection.options.end",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.label",
+        "target": "view_definition.projection.options.label",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.dependencies",
+        "target": "view_definition.projection.options.dependencies",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.width",
+        "target": "view_definition.projection.options.width",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.height",
+        "target": "view_definition.projection.options.height",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.filter",
+        "target": "view_definition.projection.options.filter",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.order",
+        "target": "view_definition.projection.options.order",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.missing",
+        "target": "view_definition.projection.options.missing",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.inner_radius",
+        "target": "view_definition.projection.options.inner_radius",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.values",
+        "target": "view_definition.projection.options.values",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.effect",
+        "target": "view_definition.projection.options.effect",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.encoding",
+        "target": "view_definition.projection.options.encoding",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.series",
+        "target": "view_definition.projection.options.series",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.series_missing",
+        "target": "view_definition.projection.options.series_missing",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.arrangement",
+        "target": "view_definition.projection.options.arrangement",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.transform",
+        "target": "view_definition.projection.options.transform",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.layers",
+        "target": "view_definition.projection.options.layers",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.bins",
+        "target": "view_definition.projection.options.bins",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.normalize",
+        "target": "view_definition.projection.options.normalize",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.outside",
+        "target": "view_definition.projection.options.outside",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.whiskers",
+        "target": "view_definition.projection.options.whiskers",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.quartiles",
+        "target": "view_definition.projection.options.quartiles",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.step",
+        "target": "view_definition.projection.options.step",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.baseline",
+        "target": "view_definition.projection.options.baseline",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.target",
+        "target": "view_definition.projection.options.target",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.open",
+        "target": "view_definition.projection.options.open",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.high",
+        "target": "view_definition.projection.options.high",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.low",
+        "target": "view_definition.projection.options.low",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.close",
+        "target": "view_definition.projection.options.close",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.bin_count",
+        "target": "view_definition.projection.options.bin_count",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.k",
+        "target": "view_definition.projection.options.k",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.others",
+        "target": "view_definition.projection.options.others",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.error",
+        "target": "view_definition.projection.options.error",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.trend",
+        "target": "view_definition.projection.options.trend",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.inputs",
+        "target": "view_definition.projection.options.inputs",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.outputs",
+        "target": "view_definition.projection.options.outputs",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.hit_policy",
+        "target": "view_definition.projection.options.hit_policy",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.coverage",
+        "target": "view_definition.projection.options.coverage",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.analysis_budget",
+        "target": "view_definition.projection.options.analysis_budget",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.x_completeness",
+        "target": "view_definition.projection.options.x_completeness",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.traces",
+        "target": "view_definition.projection.options.traces",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.geography",
+        "target": "view_definition.projection.options.geography",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.method",
+        "target": "view_definition.projection.options.method",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.graticule",
+        "target": "view_definition.projection.options.graticule",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.iso",
+        "target": "view_definition.projection.options.iso",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.depth",
+        "target": "view_definition.projection.options.depth",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.fiscal_year_start",
+        "target": "view_definition.projection.options.fiscal_year_start",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.calendar",
+        "target": "view_definition.projection.options.calendar",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "projection.timezone",
+        "target": "view_definition.projection.options.timezone",
+        "disposition": "profile-delegate",
+        "rule": "Profile is explicit; renderer kind is derived. Only the exact selected projection/mark admits its keys."
+      },
+      {
+        "source": "notation.registry",
+        "target": "package dependency manifest / host registry",
+        "disposition": "delegated",
+        "rule": "Resolve exact registry and profile versions before semantic checking; source cannot install code."
+      },
+      {
+        "source": "style.look",
+        "target": "view_definition.style.look",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.theme",
+        "target": "view_definition.style.theme",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.font",
+        "target": "view_definition.style.font",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.font_size",
+        "target": "view_definition.style.font_size",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.seed",
+        "target": "view_definition.style.seed",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.roughness",
+        "target": "view_definition.style.roughness",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.hachure",
+        "target": "view_definition.style.hachure",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.font_pin",
+        "target": "view_definition.text.font_pin",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.text_fit",
+        "target": "view_definition.text.fit",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.max_width",
+        "target": "view_definition.text.max_width",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.max_height",
+        "target": "view_definition.text.max_height",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "style.min_font",
+        "target": "view_definition.text.min_font",
+        "disposition": "reexpressed",
+        "rule": "Same presentation purpose; normalized handdrawn spelling, units and owner cascade are specified here."
+      },
+      {
+        "source": "layout.algorithm",
+        "target": "view_definition.layout.algorithm",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.auto_place",
+        "target": "view_definition.layout.auto_place",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.center",
+        "target": "view_definition.layout.center",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.grid_step",
+        "target": "view_definition.layout.grid_step",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.optimize",
+        "target": "view_definition.layout.optimize",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.endpoint_ordering",
+        "target": "view_definition.layout.endpoint_ordering",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.frame_overflow",
+        "target": "view_definition.layout.frame_overflow",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.direction",
+        "target": "view_definition.layout.direction",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.routing",
+        "target": "view_definition.layout.routing",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.curve",
+        "target": "view_definition.layout.curve",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.curve_tension",
+        "target": "view_definition.layout.curve_tension",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.curve_radius",
+        "target": "view_definition.layout.curve_radius",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.crossings",
+        "target": "view_definition.layout.crossings",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.gap",
+        "target": "view_definition.layout.gap",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.columns",
+        "target": "view_definition.layout.columns",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.port_clearance",
+        "target": "view_definition.layout.port_clearance",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.object_clearance",
+        "target": "view_definition.layout.object_clearance",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.edge_clearance",
+        "target": "view_definition.layout.edge_clearance",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.junctions",
+        "target": "view_definition.layout.junctions",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.shared_segments",
+        "target": "view_definition.layout.shared_segments",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.row_gap",
+        "target": "view_definition.layout.row_gap",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.route_policy",
+        "target": "view_definition.layout.route_policy",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.quality",
+        "target": "view_definition.layout.quality",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.root",
+        "target": "view_definition.layout.root",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.hierarchy",
+        "target": "view_definition.layout.hierarchy",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "layout.group_by",
+        "target": "view_definition.layout.group_by",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "display.fields",
+        "target": "view_definition.display.fields",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "display.kind",
+        "target": "view_definition.display.kind",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "display.maturity",
+        "target": "view_definition.display.maturity",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "display.badges",
+        "target": "view_definition.display.badges",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "display.relations",
+        "target": "view_definition.display.relations",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "display.samples",
+        "target": "view_definition.display.samples",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "display.datatypes",
+        "target": "view_definition.display.datatypes",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "display.domains",
+        "target": "view_definition.display.domains",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "display.depth",
+        "target": "view_definition.display.depth",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "publication.size",
+        "target": "publication.page.size",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.width",
+        "target": "publication.page.width",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.height",
+        "target": "publication.page.height",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.margin",
+        "target": "publication.page.margin",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.orientation",
+        "target": "publication.page.orientation",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.fit",
+        "target": "publication.page.fit",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.minimum_text",
+        "target": "publication.page.minimum_text",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.overflow",
+        "target": "publication.page.overflow",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.title",
+        "target": "publication.title",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.caption",
+        "target": "publication.caption",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.embedding_scale",
+        "target": "publication.page.embedding_scale",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.content_scale",
+        "target": "publication.page.content_scale",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.metrics",
+        "target": "publication.text.metrics",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.note_mode",
+        "target": "publication.notes.mode",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "publication.tiles",
+        "target": "publication.page.overflow + page.width + page.height + page.tile_overlap",
+        "disposition": "reexpressed",
+        "rule": "WARN overflow becomes explicit report; tile width/height become finite page drawable size plus margins/furniture. Defaults and loss policy follow publication contract."
+      },
+      {
+        "source": "legend.mode",
+        "target": "view_definition.legend.mode",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "legend.placement",
+        "target": "view_definition.legend.placement",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "legend.width",
+        "target": "view_definition.legend.width",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "legend.keys",
+        "target": "view_definition.legend.keys",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "legend.keyset",
+        "target": "view_definition.legend.keyset",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "legend.scope",
+        "target": "view_definition.legend.scope",
+        "disposition": "profile-delegate",
+        "rule": "Exact selected-profile applicability, value type, enum and limits remain in the 151-profile contract."
+      },
+      {
+        "source": "chrome.legend",
+        "target": "view_definition.chrome.legend",
+        "disposition": "retained",
+        "rule": "Diagram furniture; independent from publication header/footer and placed-view header."
+      },
+      {
+        "source": "chrome.title",
+        "target": "view_definition.chrome.title",
+        "disposition": "retained",
+        "rule": "Diagram furniture; independent from publication header/footer and placed-view header."
+      },
+      {
+        "source": "chrome.footer",
+        "target": "view_definition.chrome.footer",
+        "disposition": "retained",
+        "rule": "Diagram furniture; independent from publication header/footer and placed-view header."
+      },
+      {
+        "source": "chrome.banner",
+        "target": "view_definition.chrome.banner",
+        "disposition": "retained",
+        "rule": "Diagram furniture; independent from publication header/footer and placed-view header."
+      },
+      {
+        "source": "validation.mode",
+        "target": "view_definition.validation.stage + verification.purpose",
+        "disposition": "reexpressed",
+        "rule": "Sketch/logical/strict are replaced by draft/structural/complete plus registered purpose; no automatic SQL completion requirement."
+      },
+      {
+        "source": "validation.unknown_extensions",
+        "target": "view_definition.validation.unknown_metadata",
+        "disposition": "reexpressed",
+        "rule": "warn becomes preserve_warn; unknown executable semantics remain unsupported."
+      },
+      {
+        "source": "export.mode",
+        "target": "publication.audience.mode",
+        "disposition": "reexpressed",
+        "rule": "Retained allowlist projection rules remain profile-specific; default opaque identifiers and no samples for projected output."
+      },
+      {
+        "source": "export.elements",
+        "target": "publication.audience.policy: allowed element identities",
+        "disposition": "reexpressed",
+        "rule": "Retained allowlist projection rules remain profile-specific; default opaque identifiers and no samples for projected output."
+      },
+      {
+        "source": "export.fields",
+        "target": "publication.audience.policy: allowed member identities",
+        "disposition": "reexpressed",
+        "rule": "Retained allowlist projection rules remain profile-specific; default opaque identifiers and no samples for projected output."
+      },
+      {
+        "source": "export.properties",
+        "target": "publication.audience.policy: allowed typed metadata paths",
+        "disposition": "reexpressed",
+        "rule": "Retained allowlist projection rules remain profile-specific; default opaque identifiers and no samples for projected output."
+      },
+      {
+        "source": "export.include_samples",
+        "target": "publication.audience.policy: sample inclusion",
+        "disposition": "reexpressed",
+        "rule": "Retained allowlist projection rules remain profile-specific; default opaque identifiers and no samples for projected output."
+      },
+      {
+        "source": "export.identifier_mode",
+        "target": "publication.audience.policy: opaque/preserved identity mapping",
+        "disposition": "reexpressed",
+        "rule": "Retained allowlist projection rules remain profile-specific; default opaque identifiers and no samples for projected output."
+      },
+      {
+        "source": "export.title",
+        "target": "publication.title",
+        "disposition": "reexpressed",
+        "rule": "Retained allowlist projection rules remain profile-specific; default opaque identifiers and no samples for projected output."
+      },
+      {
+        "source": "export.format",
+        "target": "publication.format",
+        "disposition": "reexpressed",
+        "rule": "Retained allowlist projection rules remain profile-specific; default opaque identifiers and no samples for projected output."
+      },
+      {
+        "source": "bundle.projection",
+        "target": "Style kind defaults / file_defaults: projection",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.notation",
+        "target": "Style kind defaults / file_defaults: notation",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.style",
+        "target": "Style kind defaults / file_defaults: style",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.layout",
+        "target": "Style kind defaults / file_defaults: layout",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.display",
+        "target": "Style kind defaults / file_defaults: display",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.publication",
+        "target": "Style kind defaults / file_defaults: publication",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.legend",
+        "target": "Style kind defaults / file_defaults: legend",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.chrome",
+        "target": "Style kind defaults / file_defaults: chrome",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.title",
+        "target": "view_definition.chrome.title_text",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.footer",
+        "target": "view_definition.chrome.footer_text",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.banner",
+        "target": "view_definition.chrome.banner_text",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.validation",
+        "target": "view_definition.validation",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.export",
+        "target": "Publication/AudiencePolicy definitions",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.spacing",
+        "target": "Style kind defaults / file_defaults: spacing",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.kind",
+        "target": "Style kind defaults / file_defaults: kind",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "bundle.strictness",
+        "target": "Style kind defaults / file_defaults: strictness",
+        "disposition": "reexpressed",
+        "rule": "Reusable concern values are explicit typed file defaults; CSS Style rules remain a separate layer. Semantic concerns are explicit view/definition references, not CSS."
+      },
+      {
+        "source": "view.projection",
+        "target": "view_definition.projection.options / profile",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.data",
+        "target": "DataSet/Binding source definitions",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.format",
+        "target": "source Binding format",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.notation",
+        "target": "package registry dependency",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.style",
+        "target": "view_definition.style",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.layout",
+        "target": "view_definition.layout",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.display",
+        "target": "view_definition.display",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.publication",
+        "target": "view_definition.publication",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.legend",
+        "target": "view_definition.legend",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.chrome",
+        "target": "view_definition.chrome",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.title",
+        "target": "view_definition.chrome.title_text",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.footer",
+        "target": "view_definition.chrome.footer_text",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.banner",
+        "target": "view_definition.chrome.banner_text",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.select",
+        "target": "view_definition.selection.include / filters",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.exclude",
+        "target": "view_definition.selection.exclude",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.show",
+        "target": "appearance.visible / selected relation inclusion",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.hide",
+        "target": "appearance.visible / view display controls",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.description",
+        "target": "view_definition.description",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.uid",
+        "target": "view_definition.id",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.validation",
+        "target": "view_definition.validation",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.export",
+        "target": "Publication/AudiencePolicy definitions",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.spacing",
+        "target": "view_definition.layout gap/row_gap/port clearance defaults",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.kind",
+        "target": "view_definition.profile (renderer derived)",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.strictness",
+        "target": "view_definition.validation.stage / verification.purpose",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.theme",
+        "target": "view_definition.style.theme",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.source",
+        "target": "Binding/Artifact source provenance",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.generator",
+        "target": "Generator specification (inert; explicit run capability)",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.assertions",
+        "target": "Constraint/Assertion definitions selected by verification.scope",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.diff",
+        "target": "Comparison definition with explicit left/right source revisions",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "view.diff_scope",
+        "target": "Comparison mode model/appearance; retained diff profile",
+        "disposition": "reexpressed",
+        "rule": "Successor ownership is explicit; profile-specific source/analysis semantics remain in existing contracts."
+      },
+      {
+        "source": "place.at",
+        "target": "appearance.position",
+        "disposition": "reexpressed",
+        "rule": "Occurrence-only override; does not mutate shared semantic definition."
+      },
+      {
+        "source": "place.size",
+        "target": "appearance.size",
+        "disposition": "reexpressed",
+        "rule": "Occurrence-only override; does not mutate shared semantic definition."
+      },
+      {
+        "source": "place.fill",
+        "target": "appearance.background.color",
+        "disposition": "reexpressed",
+        "rule": "Occurrence-only override; does not mutate shared semantic definition."
+      },
+      {
+        "source": "place.opacity",
+        "target": "appearance.opacity",
+        "disposition": "reexpressed",
+        "rule": "Occurrence-only override; does not mutate shared semantic definition."
+      },
+      {
+        "source": "place.text_fit",
+        "target": "appearance.text.fit",
+        "disposition": "reexpressed",
+        "rule": "Occurrence-only override; does not mutate shared semantic definition."
+      },
+      {
+        "source": "place.max_width",
+        "target": "appearance.text.max_width",
+        "disposition": "reexpressed",
+        "rule": "Occurrence-only override; does not mutate shared semantic definition."
+      },
+      {
+        "source": "place.max_height",
+        "target": "appearance.text.max_height",
+        "disposition": "reexpressed",
+        "rule": "Occurrence-only override; does not mutate shared semantic definition."
+      },
+      {
+        "source": "place.min_font",
+        "target": "appearance.text.min_font",
+        "disposition": "reexpressed",
+        "rule": "Occurrence-only override; does not mutate shared semantic definition."
+      },
+      {
+        "source": "place.marks",
+        "target": "appearance.marks",
+        "disposition": "reexpressed",
+        "rule": "Occurrence-only override; does not mutate shared semantic definition."
+      },
+      {
+        "source": "route.from",
+        "target": "appearance.route.from",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.to",
+        "target": "appearance.route.to",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.via",
+        "target": "appearance.route.via",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.source_side",
+        "target": "appearance.route.source_side",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.target_side",
+        "target": "appearance.route.target_side",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.callout",
+        "target": "appearance.route.callout",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.policy",
+        "target": "appearance.route.policy",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.source_fraction",
+        "target": "appearance.route.source_fraction",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.target_fraction",
+        "target": "appearance.route.target_fraction",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.routing",
+        "target": "appearance.route.routing",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.curve",
+        "target": "appearance.route.curve",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.curve_tension",
+        "target": "appearance.route.curve_tension",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "route.curve_radius",
+        "target": "appearance.route.curve_radius",
+        "disposition": "profile-delegate",
+        "rule": "Retained manual-route contract; endpoint identities remain semantic definitions and must agree."
+      },
+      {
+        "source": "subdiagram.view",
+        "target": "View placement / retained x_subdiagram contract: view",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "subdiagram.mode",
+        "target": "View placement / retained x_subdiagram contract: mode",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "subdiagram.at",
+        "target": "View placement / retained x_subdiagram contract: at",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "subdiagram.size",
+        "target": "View placement / retained x_subdiagram contract: size",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "subdiagram.label",
+        "target": "View placement / retained x_subdiagram contract: label",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "subdiagram.binding",
+        "target": "View placement / retained x_subdiagram contract: binding",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "subdiagram.uid",
+        "target": "View placement / retained x_subdiagram contract: uid",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "frame.scope",
+        "target": "view_definition.regions / retained frame scope contract: scope",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "frame.members",
+        "target": "view_definition.regions / retained frame scope contract: members",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "frame.within",
+        "target": "view_definition.regions / retained frame scope contract: within",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "frame.at",
+        "target": "view_definition.regions / retained frame scope contract: at",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "frame.size",
+        "target": "view_definition.regions / retained frame scope contract: size",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "frame.label",
+        "target": "view_definition.regions / retained frame scope contract: label",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "frame.dimension",
+        "target": "view_definition.regions / retained frame scope contract: dimension",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "junction.at",
+        "target": "retained DDN046 rejection",
+        "disposition": "retained-rejection",
+        "rule": "Currently advertised but rejected junction declaration remains unsupported; this pack does not claim implemented junction support."
+      },
+      {
+        "source": "junction.relations",
+        "target": "retained DDN046 rejection",
+        "disposition": "retained-rejection",
+        "rule": "Currently advertised but rejected junction declaration remains unsupported; this pack does not claim implemented junction support."
+      },
+      {
+        "source": "junction.network",
+        "target": "retained DDN046 rejection",
+        "disposition": "retained-rejection",
+        "rule": "Currently advertised but rejected junction declaration remains unsupported; this pack does not claim implemented junction support."
+      },
+      {
+        "source": "keyset.keys",
+        "target": "view_definition.legend / retained LegendKeySet definition: keys",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "keyset.scope",
+        "target": "view_definition.legend / retained LegendKeySet definition: scope",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "flow.label",
+        "target": "view_definition.animation / retained flow trace contract: label",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "flow.steps",
+        "target": "view_definition.animation / retained flow trace contract: steps",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "flow.marker",
+        "target": "view_definition.animation / retained flow trace contract: marker",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "flow.marker_color",
+        "target": "view_definition.animation / retained flow trace contract: marker_color",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "flow.marker_size",
+        "target": "view_definition.animation / retained flow trace contract: marker_size",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "flow.speed",
+        "target": "view_definition.animation / retained flow trace contract: speed",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "flow.rate",
+        "target": "view_definition.animation / retained flow trace contract: rate",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "flow.uid",
+        "target": "view_definition.animation / retained flow trace contract: uid",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "architecture.files",
+        "target": "Architecture/package manifest / AP01 loader: files",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "architecture.views",
+        "target": "Architecture/package manifest / AP01 loader: views",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "architecture.description",
+        "target": "Architecture/package manifest / AP01 loader: description",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      },
+      {
+        "source": "architecture.uid",
+        "target": "Architecture/package manifest / AP01 loader: uid",
+        "disposition": "profile-delegate",
+        "rule": "Exact baseline declaration semantics retained by referenced profile/role contract; placement is not ownership and manifests do not authorize execution."
+      }
+    ],
+    "structured": [
+      {
+        "source": "background.color",
+        "target": "surface.background.color",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "background.image",
+        "target": "surface.background.image",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "background.pattern",
+        "target": "surface.background.pattern",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "background.opacity",
+        "target": "surface.background.opacity",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "text.weight",
+        "target": "definition / appearance / publication run.text.weight",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "text.italic",
+        "target": "definition / appearance / publication run.text.italic",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "text.decoration",
+        "target": "definition / appearance / publication run.text.decoration",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "text.variant",
+        "target": "definition / appearance / publication run.text.variant",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "text.color",
+        "target": "definition / appearance / publication run.text.color",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "stroke.color",
+        "target": "definition / appearance.stroke.color",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "stroke.weight",
+        "target": "definition / appearance.stroke.weight",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "stroke.dash",
+        "target": "definition / appearance.stroke.dash",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "stroke.corners",
+        "target": "definition / appearance.stroke.corners",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "line.color",
+        "target": "relation definition / appearance.stroke.color",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "line.weight",
+        "target": "relation definition / appearance.stroke.weight",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "line.dash",
+        "target": "relation definition / appearance.stroke.dash",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "columns.label",
+        "target": "appearance, profile column schema.columns[].label",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "columns.path",
+        "target": "appearance, profile column schema.columns[].path",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "columns.width",
+        "target": "appearance, profile column schema.columns[].width",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "columns.min_chars",
+        "target": "appearance, profile column schema.columns[].min_chars",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "columns.max_chars",
+        "target": "appearance, profile column schema.columns[].max_chars",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "columns.visibility",
+        "target": "appearance, profile column schema.columns[].visibility",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "page_border.style",
+        "target": "publication.page.frame.style",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "page_border.weight",
+        "target": "publication.page.frame.weight",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "page_border.inset",
+        "target": "publication.page.frame.inset",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "page_border.corner_marks",
+        "target": "publication.page.frame.corner_marks",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "chrome_run.text",
+        "target": "publication.header.runs / footer.runs: text",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "chrome_run.align",
+        "target": "publication.header.runs / footer.runs: align",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "chrome_run.font",
+        "target": "publication.header.runs / footer.runs: font",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "chrome_run.size",
+        "target": "publication.header.runs / footer.runs: size",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "chrome_run.lines",
+        "target": "publication.header.runs / footer.runs: lines",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "chrome_run.weight",
+        "target": "publication.header.runs / footer.runs: weight",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "chrome_run.italic",
+        "target": "publication.header.runs / footer.runs: italic",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "chrome_run.decoration",
+        "target": "publication.header.runs / footer.runs: decoration",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "chrome_run.variant",
+        "target": "publication.header.runs / footer.runs: variant",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "chrome_run.color",
+        "target": "publication.header.runs / footer.runs: color",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "composition.sections",
+        "target": "appearance.sections",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "composition.order",
+        "target": "appearance.section_order",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "composition.note_height",
+        "target": "appearance.note.height",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "composition.note_wrap",
+        "target": "appearance.note.wrap",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "document.format",
+        "target": "definition.definition.document / retained DDNN Document content: format",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "document.role",
+        "target": "definition.definition.document / retained DDNN Document content: role",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "document.language",
+        "target": "definition.definition.document / retained DDNN Document content: language",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "document.text",
+        "target": "definition.definition.document / retained DDNN Document content: text",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "document.digest",
+        "target": "definition.definition.document / retained DDNN Document content: digest",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "document.file",
+        "target": "definition.definition.document / retained DDNN Document content: file",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      },
+      {
+        "source": "document.id",
+        "target": "definition.definition.document / retained DDNN Document content: id",
+        "disposition": "reexpressed",
+        "rule": "Structured group preserved; sparse overriding, typed paths and audience rules apply."
+      }
+    ],
+    "scope": "Advertised runtime PROPERTIES plus explicitly audited structured group leaves. Not a claim that rejected declarations were implemented."
+  },
+  "superseded": {
+    "validation.stage": "Derived from design.state: draft, in-progress, complete for in-review/accepted.",
+    "acceptances": "Replaced by acceptance and acceptance_history typed records; user status is authoritative.",
+    "workarea.view_defaults": "Replaced by defaults with owner/profile selector.",
+    "workarea.element_defaults": "Replaced by defaults with owner/profile selector.",
+    "namespace": "Source-file name scope is authoritative; core::Namespace remains a semantic grouping only."
+  },
+  "amendments": [
+    "Names are declarations; title is display text.",
+    "One optional workarea per file, one active workarea per open bundle.",
+    "Four user-set lifecycle states with acceptance event/history.",
+    "Document is a view; EL42 remains the separate capture/publication job.",
+    "Dot table rows; column alignment/percentage/minimum characters/maximum lines.",
+    "Closed dispatched core payloads, relationship qualifiers, metadata and projection options.",
+    "General defaults frozen under ddn-next-1.",
+    "Output formats include csv and dashboard.",
+    "New inferred numeric cell defaults 1 minimum character, 6 maximum lines; existing mindmap body cap 10 retained.",
+    "Default font metrics use zero advance and line height.",
+    "Native ERD remains conceptual and incomplete designs are serializable.",
+    "Owner-requested paper and stationery extension within unreleased ddn-next-1: shared canonical shadow gains optional silhouette/opacity/lift and omission defaults; style.paper and ordered decorations are presentation-only and CSS/default eligible. Existing semantic types, statuses and omitted appearance remain unchanged.",
+    "Owner-requested deterministic background textures within unreleased ddn-next-1: nullable background.texture on workareas, definitions, appearances, views, placements and documents. Bounded paper/linen/grid/dots vector tiles preserve background colour, original shapes, hit geometry and clips; no executable markup or external resources.",
+    "Owner-requested new-document modes within unreleased ddn-next-1: explicit entry-file workarea.mode standalone limits the active include closure to one view/document and follows its bounds. Omission preserves existing multi-view workarea behavior. This is an opt-in capability; no existing default changes or private participation capabilities are introduced.",
+    "Owner-requested view-surface layouts within unreleased ddn-next-1: explicit view surface.preset selects dynamic or fixed TV dashboard recipes. Surface dimensions, scale, fit and padding are overridable; recipe paint and typography are standard-tier defaults below CSS and file settings. Omission preserves all current dynamic-view behavior. Physical-page and presentation creation tiles remain unavailable in the open-source designer; this amendment adds no publication adapter or collaboration capability."
+  ]
+}

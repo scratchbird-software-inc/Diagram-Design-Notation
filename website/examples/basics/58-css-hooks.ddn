@@ -1,24 +1,262 @@
-ddn "0.5";
-module "ddn.examples.css-hooks";
+version ddn-next-1
 
-// CSS class hooks: every rendered SVG mark carries deterministic classes
-// (ddn-svg / ddn-node ddn-kind-* / ddn-rel ddn-verb-* / ddn-field / ddn-label /
-// ddn-frame / ddn-panel / ddn-mark ddn-mark-*), so a web page can restyle a
-// diagram with its own stylesheet. Script-level look/format/object
-// declarations keep winning on the elements they name: the audit node is
-// declared kind: cache, so a page rule for .ddn-kind-tbl never matches it.
-// See the companion 58-css-hooks.html for the live page-CSS demonstration.
+publication "publication:hooks"
+    with
+        id "publication:hooks"
+        title "CSS hooks / page styling"
+        targets
+            item
+                target
+                    id "hooks"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data shop {
-    table orders "Orders" {fields { order_id { key: primary; } status; } }
-    table invoices "Invoices" {fields { invoice_id { key: primary; } total; } }
-    cache audit "Audit cache" {description: "Script-level kind choice: page CSS on .ddn-kind-tbl does not apply here."; }
-    publish billed @orders -> @invoices;
-    capture cached @invoices -> @audit;
-}
 
-view hooks "CSS hooks / page styling" {
-    data: [@shop];
-    publication { size: content; fit: none; }
-    frame billing "BILLING" { members: [@shop.orders, @shop.invoices]; }
-}
+element "ddn.examples.css-hooks::shop.orders.order_id" as "field"
+    with
+        id "ddn.examples.css-hooks::shop.orders.order_id"
+        title "order_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.examples.css-hooks::shop.orders"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.examples.css-hooks::shop.orders.status" as "field"
+    with
+        id "ddn.examples.css-hooks::shop.orders.status"
+        title "status"
+        content
+            parent
+                id "ddn.examples.css-hooks::shop.orders"
+            ordinal 1
+
+
+element "ddn.examples.css-hooks::shop.orders" as "table"
+    with
+        id "ddn.examples.css-hooks::shop.orders"
+        title "Orders"
+        members
+            item
+                id "ddn.examples.css-hooks::shop.orders.order_id"
+            item
+                id "ddn.examples.css-hooks::shop.orders.status"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.css-hooks::shop.invoices.invoice_id" as "field"
+    with
+        id "ddn.examples.css-hooks::shop.invoices.invoice_id"
+        title "invoice_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.examples.css-hooks::shop.invoices"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.examples.css-hooks::shop.invoices.total" as "field"
+    with
+        id "ddn.examples.css-hooks::shop.invoices.total"
+        title "total"
+        content
+            parent
+                id "ddn.examples.css-hooks::shop.invoices"
+            ordinal 1
+
+
+element "ddn.examples.css-hooks::shop.invoices" as "table"
+    with
+        id "ddn.examples.css-hooks::shop.invoices"
+        title "Invoices"
+        members
+            item
+                id "ddn.examples.css-hooks::shop.invoices.invoice_id"
+            item
+                id "ddn.examples.css-hooks::shop.invoices.total"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "invoice_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "total"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.css-hooks::shop.audit" as "cache"
+    with
+        id "ddn.examples.css-hooks::shop.audit"
+        title "Audit cache"
+        description "Script-level kind choice: page CSS on .ddn-kind-tbl does not apply here."
+
+
+relation "ddn.examples.css-hooks::shop.billed" as "publish"
+    with
+        id "ddn.examples.css-hooks::shop.billed"
+        title "publishes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.css-hooks::shop.orders"
+            item
+                definition
+                    id "ddn.examples.css-hooks::shop.invoices"
+
+
+relation "ddn.examples.css-hooks::shop.cached" as "capture"
+    with
+        id "ddn.examples.css-hooks::shop.cached"
+        title "captures changes into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.css-hooks::shop.invoices"
+            item
+                definition
+                    id "ddn.examples.css-hooks::shop.audit"
+
+
+view "hooks" as "ddn@1"
+    with
+        id "hooks"
+        title "CSS hooks / page styling"
+        selection
+            include
+                item
+                    id "ddn.examples.css-hooks::shop.orders"
+                item
+                    id "ddn.examples.css-hooks::shop.invoices"
+                item
+                    id "ddn.examples.css-hooks::shop.audit"
+                item
+                    id "ddn.examples.css-hooks::shop.billed"
+                item
+                    id "ddn.examples.css-hooks::shop.cached"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.css-hooks::hooks.billing"
+                name "BILLING"
+                members
+                    item
+                        id "ddn.examples.css-hooks::shop.orders"
+                    item
+                        id "ddn.examples.css-hooks::shop.invoices"
+        publication
+            id "publication:hooks"
+
+    use "ddn.examples.css-hooks::shop.orders" named "appearance:hooks:ddn.examples.css-hooks::shop.orders"
+        with
+            id "appearance:hooks:ddn.examples.css-hooks::shop.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.css-hooks::shop.invoices" named "appearance:hooks:ddn.examples.css-hooks::shop.invoices"
+        with
+            id "appearance:hooks:ddn.examples.css-hooks::shop.invoices"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.css-hooks::shop.audit" named "appearance:hooks:ddn.examples.css-hooks::shop.audit"
+        with
+            id "appearance:hooks:ddn.examples.css-hooks::shop.audit"
+            body "notes"
+
+    use "ddn.examples.css-hooks::shop.billed" named "appearance:hooks:ddn.examples.css-hooks::shop.billed"
+        with
+            id "appearance:hooks:ddn.examples.css-hooks::shop.billed"
+
+    use "ddn.examples.css-hooks::shop.cached" named "appearance:hooks:ddn.examples.css-hooks::shop.cached"
+        with
+            id "appearance:hooks:ddn.examples.css-hooks::shop.cached"

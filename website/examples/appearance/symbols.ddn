@@ -1,0 +1,215 @@
+version ddn-next-1
+
+asset ComputerArtwork as resource from "../../assets/icons/network-generic-1/workstation.svg"
+    with
+        media_type "image/svg+xml"
+        intrinsic_size.width 24
+        intrinsic_size.height 24
+
+asset BuildingArtwork as resource from "../../assets/icons/presentation-devices-1/office-building.svg"
+    with
+        media_type "image/svg+xml"
+        intrinsic_size.width 163
+        intrinsic_size.height 293.7
+
+element TopLeft as object
+    with
+        title "Top Left"
+        symbol.image ComputerArtwork
+        symbol.label top-left
+
+element Top as object
+    with
+        title "Top"
+        symbol.image ComputerArtwork
+        symbol.label top
+
+element TopRight as object
+    with
+        title "Top Right"
+        symbol.image ComputerArtwork
+        symbol.label top-right
+
+element Left as object
+    with
+        title "Left"
+        symbol.image ComputerArtwork
+        symbol.label left
+
+element Hidden as object
+    with
+        title "Hidden name"
+        symbol.image ComputerArtwork
+        symbol.label none
+
+element Right as object
+    with
+        title "Right"
+        symbol.image ComputerArtwork
+        symbol.label right
+
+element BottomLeft as object
+    with
+        title "Bottom Left"
+        symbol.image ComputerArtwork
+        symbol.label bottom-left
+
+element Bottom as object
+    with
+        title "Bottom"
+        symbol.image ComputerArtwork
+        symbol.label bottom
+
+element BottomRight as object
+    with
+        title "Bottom Right"
+        symbol.image ComputerArtwork
+        symbol.label bottom-right
+
+view LabelPositions as ddn@1
+    with
+        id LabelPositions
+        title "SVG symbols: eight label positions and a hidden label"
+        layout.algorithm manual
+        background.color "#ffffff"
+        legend.mode none
+    use TopLeft named TopLeftInLabels
+        with
+            position.x 150
+            position.y 130
+            size.width 96
+            size.height 96
+
+    use Top named TopInLabels
+        with
+            position.x 450
+            position.y 130
+            size.width 96
+            size.height 96
+
+    use TopRight named TopRightInLabels
+        with
+            position.x 750
+            position.y 130
+            size.width 96
+            size.height 96
+
+    use Left named LeftInLabels
+        with
+            position.x 150
+            position.y 360
+            size.width 96
+            size.height 96
+
+    use Hidden named HiddenInLabels
+        with
+            position.x 450
+            position.y 360
+            size.width 96
+            size.height 96
+
+    use Right named RightInLabels
+        with
+            position.x 750
+            position.y 360
+            size.width 96
+            size.height 96
+
+    use BottomLeft named BottomLeftInLabels
+        with
+            position.x 150
+            position.y 590
+            size.width 96
+            size.height 96
+
+    use Bottom named BottomInLabels
+        with
+            position.x 450
+            position.y 590
+            size.width 96
+            size.height 96
+
+    use BottomRight named BottomRightInLabels
+        with
+            position.x 750
+            position.y 590
+            size.width 96
+            size.height 96
+
+element Workstation as object
+    with
+        title "Design workstation"
+        symbol.image ComputerArtwork
+        symbol.label top
+
+element Office as object
+    with
+        title "North office"
+        symbol.image BuildingArtwork
+        symbol.label top
+
+element WorkstationNote as note
+    with
+        title "Workstation guidance"
+        content.text "Local design files stay on this workstation."
+        symbol.mode text
+        symbol.label none
+
+element OfficeNote as note
+    with
+        title "Office guidance"
+        content.text "The office image keeps its original proportions."
+        symbol.mode text
+        symbol.label none
+
+connect Workstation to Office as assoc named OfficeConnection
+    with
+        title "Office network"
+connect WorkstationNote to Workstation as note named WorkstationAnnotation
+    with
+        title ""
+connect OfficeNote to Office as note named OfficeAnnotation
+    with
+        title ""
+
+view ImageSymbols as ddn@1
+    with
+        id ImageSymbols
+        title "Image elements and associated notes"
+        layout.algorithm manual
+        layout.routing orthogonal
+        background.color "#ffffff"
+        legend.mode none
+    use Workstation named WorkstationInScene
+        with
+            position.x 160
+            position.y 160
+            size.width 144
+            size.height 144
+    use Office named OfficeInScene
+        with
+            position.x 640
+            position.y 140
+            size.width 180
+            size.height 210
+    use WorkstationNote named WorkstationNoteInScene
+        with
+            position.x 100
+            position.y 420
+            size.width 264
+            size.height 68
+    use OfficeNote named OfficeNoteInScene
+        with
+            position.x 590
+            position.y 440
+            size.width 280
+            size.height 68
+    use OfficeConnection named OfficeConnectionInScene
+    use WorkstationAnnotation named WorkstationAnnotationInScene
+        with
+            route.source_side north
+            route.target_side south
+    use OfficeAnnotation named OfficeAnnotationInScene
+        with
+            route.source_side north
+            route.target_side south

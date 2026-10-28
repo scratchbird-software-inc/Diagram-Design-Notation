@@ -1,0 +1,15 @@
+template BasicEntity as entity
+    with
+        parameters
+            typeface
+                type text
+                default serif
+        style.font parameter typeface
+
+erd TemplateDesign
+    element Customer as entity using BasicEntity
+        with
+            arguments
+                typeface sans
+    element Order as entity using BasicEntity
+    connect Customer to Order

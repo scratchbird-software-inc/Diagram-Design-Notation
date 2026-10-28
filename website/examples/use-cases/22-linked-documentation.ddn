@@ -1,26 +1,737 @@
-ddn "0.5";
-module "ddn.usecases.views.linked-documentation";
-import "formats.ddn" as fmt;
-import "data/commerce.ddn" as c;
+version ddn-next-1
 
-// One overview links to two independently selectable views.
-// No object or subdiagram coordinates are specified.
-view diagram "22 / Navigable design documentation" {
-    data: [@c.tables, @c.domains]; format: @fmt.shared.technical;
-    display: @fmt.shared.compact;
-    select: [@c.tables.orders, @c.tables.customer];
-    publication { width: 1580px; height: 780px; }
-    legend { keys: { "tables.r_order_customer": 1 }; }
-    subdiagram logical { view: @logical_detail; mode: reference; label: "Logical detail"; }
-    subdiagram business { view: @business_detail; mode: reference; label: "Business concepts"; }
-}
-view logical_detail "22b / Logical detail" {
-    data: [@c.tables, @c.domains]; format: @fmt.shared.technical;
-    select: [@c.tables.orders, @c.tables.customer];
-    legend { keys: { "tables.r_order_customer": 1 }; }
-}
-view business_detail "22c / Business concepts" {
-    data: [@c.concepts]; format: @fmt.shared.technical;
-    select: [@c.concepts.customer, @c.concepts.order];
-    legend { keys: { "concepts.r_places": 1 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "22 / Navigable design documentation"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 780
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:logical_detail"
+    with
+        id "publication:logical_detail"
+        title "22b / Logical detail"
+        targets
+            item
+                target
+                    id "logical_detail"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:business_detail"
+    with
+        id "publication:business_detail"
+        title "22c / Business concepts"
+        targets
+            item
+                target
+                    id "business_detail"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.commerce::tables.customer.customer_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.customer.customer_id"
+        title "customer_id"
+        properties
+            key "primary"
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.customer"
+            ordinal 0
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+            key "primary"
+
+
+element "ddn.usecases.commerce::tables.customer.display_name" as "field"
+    with
+        id "ddn.usecases.commerce::tables.customer.display_name"
+        title "display_name"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.customer"
+            ordinal 1
+
+
+element "ddn.usecases.commerce::tables.customer.status" as "field"
+    with
+        id "ddn.usecases.commerce::tables.customer.status"
+        title "status"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.customer"
+            ordinal 2
+
+
+element "ddn.usecases.commerce::tables.customer" as "table"
+    with
+        id "ddn.usecases.commerce::tables.customer"
+        title "Customer"
+        description "Authority for the customer registry, not for every customer attribute in all systems."
+        facets
+            workload
+                item "OLTP"
+            authority
+                item "AUTH"
+        properties
+            level "definition"
+            workload
+                item "oltp"
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+        members
+            item
+                id "ddn.usecases.commerce::tables.customer.customer_id"
+            item
+                id "ddn.usecases.commerce::tables.customer.display_name"
+            item
+                id "ddn.usecases.commerce::tables.customer.status"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item
+                        id "ddn.usecases.commerce::domains.customer_id"
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.commerce::tables.orders.order_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.orders.order_id"
+        title "order_id"
+        properties
+            key "primary"
+            domain
+                id "ddn.usecases.commerce::domains.order_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.orders"
+            ordinal 0
+            domain
+                id "ddn.usecases.commerce::domains.order_id"
+            key "primary"
+
+
+element "ddn.usecases.commerce::tables.orders.customer_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.orders.customer_id"
+        title "customer_id"
+        properties
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.orders"
+            ordinal 1
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+
+
+element "ddn.usecases.commerce::tables.orders.ordered_at" as "field"
+    with
+        id "ddn.usecases.commerce::tables.orders.ordered_at"
+        title "ordered_at"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.orders"
+            ordinal 2
+
+
+element "ddn.usecases.commerce::tables.orders" as "table"
+    with
+        id "ddn.usecases.commerce::tables.orders"
+        title "Orders"
+        facets
+            workload
+                item "OLTP"
+        properties
+            level "definition"
+            workload
+                item "oltp"
+        members
+            item
+                id "ddn.usecases.commerce::tables.orders.order_id"
+            item
+                id "ddn.usecases.commerce::tables.orders.customer_id"
+            item
+                id "ddn.usecases.commerce::tables.orders.ordered_at"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item
+                        id "ddn.usecases.commerce::domains.order_id"
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "customer_id"
+                    item null
+                    item
+                        id "ddn.usecases.commerce::domains.customer_id"
+                    item null
+                    item null
+                    item null
+                item
+                    item "ordered_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.commerce::tables.line.line_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.line_id"
+        title "line_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.usecases.commerce::tables.line.order_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 1
+
+
+element "ddn.usecases.commerce::tables.line.sku" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.sku"
+        title "sku"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 2
+
+
+element "ddn.usecases.commerce::tables.line.quantity" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.quantity"
+        title "quantity"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 3
+
+
+element "ddn.usecases.commerce::tables.line" as "table"
+    with
+        id "ddn.usecases.commerce::tables.line"
+        title "Order line"
+        facets
+            workload
+                item "OLTP"
+        properties
+            level "definition"
+            workload
+                item "oltp"
+        members
+            item
+                id "ddn.usecases.commerce::tables.line.line_id"
+            item
+                id "ddn.usecases.commerce::tables.line.order_id"
+            item
+                id "ddn.usecases.commerce::tables.line.sku"
+            item
+                id "ddn.usecases.commerce::tables.line.quantity"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "line_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "sku"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "quantity"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.commerce::domains.customer_id" as "domain"
+    with
+        id "ddn.usecases.commerce::domains.customer_id"
+        title "Customer identifier"
+        content
+            meaning "Identifies a customer in the registry."
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Identifies a customer in the registry."
+                    }
+                format "plain"
+
+
+element "ddn.usecases.commerce::domains.order_id" as "domain"
+    with
+        id "ddn.usecases.commerce::domains.order_id"
+        title "Order identifier"
+        content
+            meaning "Identifies an order in the order book."
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Identifies an order in the order book."
+                    }
+                format "plain"
+
+
+relation "ddn.usecases.commerce::tables.r_line_order" as "ref"
+    with
+        id "ddn.usecases.commerce::tables.r_line_order"
+        title "references"
+        properties
+            source_mark "many"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.line"
+                member
+                    id "ddn.usecases.commerce::tables.line.order_id"
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.orders"
+                member
+                    id "ddn.usecases.commerce::tables.orders.order_id"
+
+
+relation "ddn.usecases.commerce::tables.r_order_customer" as "ref"
+    with
+        id "ddn.usecases.commerce::tables.r_order_customer"
+        title "references"
+        properties
+            source_mark "zeromany"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.orders"
+                member
+                    id "ddn.usecases.commerce::tables.orders.customer_id"
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.customer"
+                member
+                    id "ddn.usecases.commerce::tables.customer.customer_id"
+
+
+element "ddn.usecases.views.linked-documentation::diagram.logical" as "object"
+    with
+        id "ddn.usecases.views.linked-documentation::diagram.logical"
+        title "Logical detail"
+        metadata
+            x_subdiagram
+                view "logical_detail"
+                display "badge"
+
+
+element "ddn.usecases.views.linked-documentation::diagram.business" as "object"
+    with
+        id "ddn.usecases.views.linked-documentation::diagram.business"
+        title "Business concepts"
+        metadata
+            x_subdiagram
+                view "business_detail"
+                display "badge"
+
+
+element "ddn.usecases.commerce::concepts.customer" as "entity"
+    with
+        id "ddn.usecases.commerce::concepts.customer"
+        title "Customer"
+
+
+element "ddn.usecases.commerce::concepts.order" as "entity"
+    with
+        id "ddn.usecases.commerce::concepts.order"
+        title "Order"
+
+
+element "ddn.usecases.commerce::concepts.shipment" as "entity"
+    with
+        id "ddn.usecases.commerce::concepts.shipment"
+        title "Shipment"
+
+
+relation "ddn.usecases.commerce::concepts.r_places" as "assoc"
+    with
+        id "ddn.usecases.commerce::concepts.r_places"
+        title "places"
+        properties
+            source_mark "one"
+            target_mark "zeromany"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::concepts.customer"
+            item
+                definition
+                    id "ddn.usecases.commerce::concepts.order"
+
+
+relation "ddn.usecases.commerce::concepts.r_ships" as "assoc"
+    with
+        id "ddn.usecases.commerce::concepts.r_ships"
+        title "fulfilled by"
+        properties
+            source_mark "one"
+            target_mark "zeromany"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::concepts.order"
+            item
+                definition
+                    id "ddn.usecases.commerce::concepts.shipment"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "22 / Navigable design documentation"
+        selection
+            include
+                item
+                    id "ddn.usecases.commerce::tables.orders"
+                item
+                    id "ddn.usecases.commerce::tables.customer"
+                item
+                    id "ddn.usecases.commerce::tables.r_order_customer"
+                item
+                    id "ddn.usecases.views.linked-documentation::diagram.logical"
+                item
+                    id "ddn.usecases.views.linked-documentation::diagram.business"
+            exclude
+                item
+                    id "ddn.usecases.commerce::tables.r_line_order"
+                item
+                    id "ddn.usecases.commerce::concepts.r_places"
+                item
+                    id "ddn.usecases.commerce::concepts.r_ships"
+        layout
+            algorithm "grid"
+            gap 120
+        display
+            fields "none"
+            maturity "none"
+        legend
+            mode "numbers"
+            width 340
+            keys
+                tables.r_order_customer "1"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.commerce::tables.orders" named "appearance:diagram:ddn.usecases.commerce::tables.orders"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::tables.orders"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.commerce::tables.customer" named "appearance:diagram:ddn.usecases.commerce::tables.customer"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::tables.customer"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.commerce::tables.r_order_customer" named "appearance:diagram:ddn.usecases.commerce::tables.r_order_customer"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::tables.r_order_customer"
+
+    use "ddn.usecases.views.linked-documentation::diagram.logical" named "appearance:diagram:ddn.usecases.views.linked-documentation::diagram.logical"
+        with
+            id "appearance:diagram:ddn.usecases.views.linked-documentation::diagram.logical"
+
+    use "ddn.usecases.views.linked-documentation::diagram.business" named "appearance:diagram:ddn.usecases.views.linked-documentation::diagram.business"
+        with
+            id "appearance:diagram:ddn.usecases.views.linked-documentation::diagram.business"
+
+
+view "logical_detail" as "ddn@1"
+    with
+        id "logical_detail"
+        title "22b / Logical detail"
+        selection
+            include
+                item
+                    id "ddn.usecases.commerce::tables.orders"
+                item
+                    id "ddn.usecases.commerce::tables.customer"
+                item
+                    id "ddn.usecases.commerce::tables.r_order_customer"
+            exclude
+                item
+                    id "ddn.usecases.commerce::tables.r_line_order"
+                item
+                    id "ddn.usecases.commerce::concepts.r_places"
+                item
+                    id "ddn.usecases.commerce::concepts.r_ships"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                tables.r_order_customer "1"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:logical_detail"
+
+    use "ddn.usecases.commerce::tables.orders" named "appearance:logical_detail:ddn.usecases.commerce::tables.orders"
+        with
+            id "appearance:logical_detail:ddn.usecases.commerce::tables.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.commerce::tables.customer" named "appearance:logical_detail:ddn.usecases.commerce::tables.customer"
+        with
+            id "appearance:logical_detail:ddn.usecases.commerce::tables.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.commerce::tables.r_order_customer" named "appearance:logical_detail:ddn.usecases.commerce::tables.r_order_customer"
+        with
+            id "appearance:logical_detail:ddn.usecases.commerce::tables.r_order_customer"
+
+
+view "business_detail" as "ddn@1"
+    with
+        id "business_detail"
+        title "22c / Business concepts"
+        selection
+            include
+                item
+                    id "ddn.usecases.commerce::concepts.customer"
+                item
+                    id "ddn.usecases.commerce::concepts.order"
+                item
+                    id "ddn.usecases.commerce::concepts.r_places"
+            exclude
+                item
+                    id "ddn.usecases.commerce::tables.r_line_order"
+                item
+                    id "ddn.usecases.commerce::tables.r_order_customer"
+                item
+                    id "ddn.usecases.commerce::concepts.r_ships"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                concepts.r_places "1"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:business_detail"
+
+    use "ddn.usecases.commerce::concepts.customer" named "appearance:business_detail:ddn.usecases.commerce::concepts.customer"
+        with
+            id "appearance:business_detail:ddn.usecases.commerce::concepts.customer"
+
+    use "ddn.usecases.commerce::concepts.order" named "appearance:business_detail:ddn.usecases.commerce::concepts.order"
+        with
+            id "appearance:business_detail:ddn.usecases.commerce::concepts.order"
+
+    use "ddn.usecases.commerce::concepts.r_places" named "appearance:business_detail:ddn.usecases.commerce::concepts.r_places"
+        with
+            id "appearance:business_detail:ddn.usecases.commerce::concepts.r_places"

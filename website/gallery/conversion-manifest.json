@@ -1,0 +1,5354 @@
+{
+  "contract": "ddn-next-1",
+  "original": {
+    "profiles": 151,
+    "sheets": 7,
+    "corpus": 141
+  },
+  "examples": [
+    {
+      "entry": "field-guide/sources/cli-workflow.ddn",
+      "sourceHashes": {
+        "field-guide/sources/cli-workflow.ddn": "e126e08d76ac30554e2efacff178b6ac45b2548f54ce5320510e29978af6fbf0"
+      },
+      "sha256": "b856cc55fe3fe940c28d52ee1cc46b6a5f881b349d34e336b34ac2538574ca26",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "main",
+          "title": "Order service — print target",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "field-guide/sources/diff-views.ddn",
+      "sourceHashes": {
+        "field-guide/sources/diff-views.ddn": "928dce6a27cbdf35b218e074b11c5fc1e6b81d9492cac875884c55e9ca17ddc3"
+      },
+      "sha256": "736fa43c2fbdbdc1025432cbfba37162ca01855787e87afc3b107e3ff165ab59",
+      "definitions": 17,
+      "data": 0,
+      "views": [
+        {
+          "id": "v1",
+          "title": "Before",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "v2",
+          "title": "After",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "main",
+          "title": "Before → after",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "field-guide/sources/etl.ddn",
+      "sourceHashes": {
+        "field-guide/sources/etl.ddn": "a69624baf40d2f94bc1150f9409158b076613fbaf0e342bf3538c5626928e019"
+      },
+      "sha256": "ab121980e21eb2722773665d1d2455d997dce5bf0b878c749cf4230fef1d7c40",
+      "definitions": 19,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "Synthetic ETL / sources to marts",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "field-guide/sources/event-contract.ddn",
+      "sourceHashes": {
+        "field-guide/sources/event-contract.ddn": "b9a8e0cc78dfe2408bf67bdfd6e9e7047317b4b1150d6b42f9635f27a134e187"
+      },
+      "sha256": "ffe709d7fe344616e3a66f151717ef0eedce08d0b67fcf6c0dd22e05a9a3443f",
+      "definitions": 11,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "Synthetic event contract / producer to consumers",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "field-guide/sources/fragment-params.ddn",
+      "sourceHashes": {
+        "field-guide/sources/fragment-params.ddn": "5bf06a32b31e52ed4e302b78f90afe6d91f6aa1762f5c32a0603761fbb7f8ea7"
+      },
+      "sha256": "ee23cbd93618fb6dbd4392816f0c49924753d875c9ae32287c11dff18fba0fcf",
+      "definitions": 6,
+      "data": 0,
+      "views": [
+        {
+          "id": "main",
+          "title": "Parameterized fragments",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "field-guide/sources/line-properties.ddn",
+      "sourceHashes": {
+        "field-guide/sources/line-properties.ddn": "5a33b4b581f5acf939d89d007fa4e095cf900614948d120866127df2c0a1966f"
+      },
+      "sha256": "c765bbbfd7f2381bfd4ac777392884bb99ef4417d8926daa66eba0c39474366d",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "main",
+          "title": "Portable stroke and line properties",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "field-guide/sources/markings.ddn",
+      "sourceHashes": {
+        "field-guide/sources/markings.ddn": "367b33032ebca7b32df11b29596d6957285d50d3721423d25fd7de162814e8d0"
+      },
+      "sha256": "475e18aa07fa988332b70301ee4d167e072a2bf744874211e976e55672f27389",
+      "definitions": 7,
+      "data": 0,
+      "views": [
+        {
+          "id": "main",
+          "title": "Ledger integration — marked",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "mono",
+          "title": "Same model — mono print theme",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "field-guide/sources/patent-figure.ddn",
+      "sourceHashes": {
+        "field-guide/sources/patent-figure.ddn": "69d77cc3268e7e2933b50a00d1101aba2001c6a925e7d91ab5637045ec32b18b"
+      },
+      "sha256": "fb3e2aa0db51fe8fe5056f0c3d97f28d8eb8b9709bce6b677b81c5cdd1f6bcd8",
+      "definitions": 11,
+      "data": 0,
+      "views": [
+        {
+          "id": "fig1",
+          "title": "FIG. 1 — shutoff control method",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "fig2",
+          "title": "FIG. 2 — same method with narration note, content-sized",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "field-guide/sources/publication-chrome.ddn",
+      "sourceHashes": {
+        "field-guide/sources/publication-chrome.ddn": "5d07ea2ad8bc9d6acf86df0adcd5a43efddf1287aff336a4cb3017a7e7742e24"
+      },
+      "sha256": "d2685db7ac1dc40291dba6fcfc43c98e64b7af2d249bd5de643127d970d6b460",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "overview",
+          "title": "Billing path overview",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "detail",
+          "title": "Billing path detail — rotated",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "field-guide/sources/roadmap.ddn",
+      "sourceHashes": {
+        "field-guide/sources/roadmap.ddn": "881d663a626d349a811f7acc14ff24f2744d3bf72738be326ec50e40ea224dbb"
+      },
+      "sha256": "419e08f8204f5c96302c97d6261cce9d94de7d551a33f6ab38d427f5b52332e5",
+      "definitions": 7,
+      "data": 0,
+      "views": [
+        {
+          "id": "roadmap",
+          "title": "Synthetic platform rebuild / roadmap",
+          "profile": "timeline.basic@1",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "field-guide/sources/shards-replicas.ddn",
+      "sourceHashes": {
+        "field-guide/sources/shards-replicas.ddn": "279545e4b0091c263c5554555d82ec7ec9be785482aa0a327e493da1f0487681"
+      },
+      "sha256": "97c07c17bbe72c07c6fb61d111c86f312ec9f587d18d4f5b0ad328e952679f34",
+      "definitions": 19,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "Synthetic shards and replicas / placement",
+          "profile": "ddn@1",
+          "elements": 7,
+          "relations": 12
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "field-guide/sources/sizing-opacity.ddn",
+      "sourceHashes": {
+        "field-guide/sources/sizing-opacity.ddn": "7c73d3273b35f1ada9c0957a83d22ca19ec98f462002f000d0642ab08363459d"
+      },
+      "sha256": "03650ed4d13c657d86a0b99cc342fa79806e4547bce575f1d0e867b04d6856c4",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "main",
+          "title": "Per-element sizing and opacity",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "field-guide/sources/text-fit.ddn",
+      "sourceHashes": {
+        "field-guide/sources/text-fit.ddn": "664afaa2b80a91d8ba2e4ff47dc5e3a229c08425856590abe4ea3de34270605f"
+      },
+      "sha256": "b272e7a90daacbffb26838790d0fe30f984379b791b707af48ddae435fe0702d",
+      "definitions": 4,
+      "data": 0,
+      "views": [
+        {
+          "id": "fitted",
+          "title": "Fitted boxes — wrap, grow and shrink",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 0
+        },
+        {
+          "id": "overflow",
+          "title": "Residual overflow — diagnosed, marked, not hidden",
+          "profile": "ddn@1",
+          "elements": 1,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "field-guide/sources/text-properties.ddn",
+      "sourceHashes": {
+        "field-guide/sources/text-properties.ddn": "c200339d0fe6205aa361eec036c93d296d5258328080fd41ab268663b8f0a81d"
+      },
+      "sha256": "e6a80aafd9a3338a86cb57ef4432f2dffdeb2c643588fc5c28b90cd3c11eb622",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "main",
+          "title": "Portable text properties",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "field-guide/sources/version-06.ddn",
+      "sourceHashes": {
+        "field-guide/sources/version-06.ddn": "699b85b800b58573d34c710c68e62b18b4b3fc01aecf8660dda740f6479c91c0"
+      },
+      "sha256": "0fdd51e69c33c4fee66ef6455a3ae16ce5e744f686c74a2ef1f3cc910ff1635c",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "main",
+          "title": "Order service outline",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "field-guide/sources/view-profiles.ddn",
+      "sourceHashes": {
+        "field-guide/sources/view-profiles.ddn": "1c1b575a3b475e76c59d24b3f96a9e87cb22d5b7b2913ea55b5ade9eda6e8a10"
+      },
+      "sha256": "e1fcdc8b1eab2c20b16e070f25079e44b394e04866f6b44446bb12089119bdba",
+      "definitions": 9,
+      "data": 0,
+      "views": [
+        {
+          "id": "flow_strict",
+          "title": "Request flow — strict flowchart",
+          "profile": "flow.documented@2",
+          "elements": 4,
+          "relations": 4
+        },
+        {
+          "id": "flow_permissive",
+          "title": "Same flow plus a guest note — permissive",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "flow_colorblind",
+          "title": "Same flow — colorblind-safe theme",
+          "profile": "flow.documented@2",
+          "elements": 4,
+          "relations": 4
+        },
+        {
+          "id": "flow_mono",
+          "title": "Same flow — mono print theme",
+          "profile": "flow.documented@2",
+          "elements": 4,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 4
+    },
+    {
+      "entry": "examples/basics/01-customer.ddn",
+      "sourceHashes": {
+        "website/examples/basics/01-customer.ddn": "bb4bb9a2d901e6eb3c72f7b6a5fa96cea1dad3a526cfd6ce01049332cc78f5e1",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010",
+        "website/examples/basics/customer-data.ddn": "c65466739bb86347a8ce88f2c74a3271424aef0b69b85d99c56f220ab28e7381"
+      },
+      "sha256": "3d2bd583943b08f613d88c42eb474a92e7453ad3aea457b3de127a89da7baf54",
+      "definitions": 13,
+      "data": 0,
+      "views": [
+        {
+          "id": "overview",
+          "title": "Customer data / a shared model",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "compact",
+          "title": "Customer data / compact view",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "print",
+          "title": "Customer data / print rendition",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "embedded",
+          "title": "Customer data / minimal chrome for embedding",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 4
+    },
+    {
+      "entry": "examples/basics/02-elements.ddn",
+      "sourceHashes": {
+        "website/examples/basics/02-elements.ddn": "4f3ede4b3269e72a625f76932a1d4a6e6911f6c664a70e29fc3ccd6bd329584a",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "904a94879cdb681713aff5811d070c885f007a88ee63a1868e43fa076ce28d59",
+      "definitions": 26,
+      "data": 0,
+      "views": [
+        {
+          "id": "classic",
+          "title": "Classic / fixed semantic notation",
+          "profile": "ddn@1",
+          "elements": 12,
+          "relations": 0
+        },
+        {
+          "id": "handDrawn",
+          "title": "Hand drawn / the same model",
+          "profile": "ddn@1",
+          "elements": 12,
+          "relations": 0
+        },
+        {
+          "id": "neo",
+          "title": "Neo / the same model",
+          "profile": "ddn@1",
+          "elements": 12,
+          "relations": 0
+        },
+        {
+          "id": "dark",
+          "title": "Dark canvas / fixed contrast palette",
+          "profile": "ddn@1",
+          "elements": 12,
+          "relations": 0
+        },
+        {
+          "id": "neutral",
+          "title": "Neutral / print-safe symbols",
+          "profile": "ddn@1",
+          "elements": 12,
+          "relations": 0
+        },
+        {
+          "id": "forest",
+          "title": "Forest canvas / hand-drawn treatment",
+          "profile": "ddn@1",
+          "elements": 12,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 6
+    },
+    {
+      "entry": "examples/basics/03-routing.ddn",
+      "sourceHashes": {
+        "website/examples/basics/03-routing.ddn": "83e1b714eba795ddcd71d64bd42ec57de6659b68d27049dab4385b56c185b404",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "b9af9056e021797111476748d25b092c5defd8c4d5f58425285b8ff39adf2340",
+      "definitions": 6,
+      "data": 0,
+      "views": [
+        {
+          "id": "gap",
+          "title": "Orthogonal crossing / disconnected gap",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "bridge",
+          "title": "Orthogonal crossing / round bridge",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "square_bridge",
+          "title": "Orthogonal crossing / square bridge",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "straight",
+          "title": "Straight routing / relation family unchanged",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 4
+    },
+    {
+      "entry": "examples/basics/04-hybrid.ddn",
+      "sourceHashes": {
+        "website/examples/basics/04-hybrid.ddn": "997c2a3c0f9adeeb0687b925d9c8ae3ea8048792f1756c0aef016263b886d84d",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "a5fac7c1b7f122083e11f700a0fb64c16d59c2f82feb14c6ef0b8ce26da1cd8d",
+      "definitions": 16,
+      "data": 0,
+      "views": [
+        {
+          "id": "deployment",
+          "title": "Hybrid deployment / fragments are not copies",
+          "profile": "ddn@1",
+          "elements": 7,
+          "relations": 7
+        },
+        {
+          "id": "namespaces",
+          "title": "Namespace / the same data, a different concern",
+          "profile": "ddn@1",
+          "elements": 7,
+          "relations": 7
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/05-flow.ddn",
+      "sourceHashes": {
+        "website/examples/basics/05-flow.ddn": "512f03e340eb7286556221e519f977fe765ed2b28f9fc45a67ba35a77f01129b",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "2e52dd925761cc02f1467790a1078b7337adcf9fd6be481ec7e809e02eb9d502",
+      "definitions": 13,
+      "data": 0,
+      "views": [
+        {
+          "id": "flow",
+          "title": "Capture, transport and transformation are different",
+          "profile": "ddn@1",
+          "elements": 7,
+          "relations": 6
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/06-temporal.ddn",
+      "sourceHashes": {
+        "website/examples/basics/06-temporal.ddn": "96b24e74bce8ce1bfe87cc5a39d2e0d4bb6ae36f13604ed0dc965ccb350fb8cc",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "24b1b4998760d02b0e7e5735ff9669835158e3afa1bcc267a0cc099dd2fe5990",
+      "definitions": 8,
+      "data": 0,
+      "views": [
+        {
+          "id": "temporal",
+          "title": "Two time axes / not the same as recovery",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/07-documents.ddn",
+      "sourceHashes": {
+        "website/examples/basics/07-documents.ddn": "b7e52dde6d1be682aaf597da19fcfdb6ce8d9ce69af1e1e5cb1dceea308417ce",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "e0ef610e1df0b4f0d0285a9114bfe2c7614f845ac3b749de4d0895bbe00537d0",
+      "definitions": 14,
+      "data": 0,
+      "views": [
+        {
+          "id": "documents",
+          "title": "Document structure / presence versus null",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/08-subdiagrams.ddn",
+      "sourceHashes": {
+        "website/examples/basics/08-subdiagrams.ddn": "268084244c44b5d91b7a1c0fbd891479eae0b32b8c600cadb899359bc5547a4d",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "923f356779c01b85e48751268a6abf9477d5f5bda5e1befe33a10e0946aaadea",
+      "definitions": 8,
+      "data": 0,
+      "views": [
+        {
+          "id": "overview",
+          "title": "A view can link to another view",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 1
+        },
+        {
+          "id": "detail",
+          "title": "Storage detail",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 1
+        },
+        {
+          "id": "inline",
+          "title": "An embedded view retains its own composition",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/09-look-comparison.ddn",
+      "sourceHashes": {
+        "website/examples/basics/09-look-comparison.ddn": "6b0e4bc57e0aea91c0b289209954446744ff67663d7d821012ab199610f64b9c",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "d1768c7f2db2505f51471d2ce97217f890e91fbc0a3a4bd169ef145cfdb6bbf8",
+      "definitions": 10,
+      "data": 0,
+      "views": [
+        {
+          "id": "classic",
+          "title": "Classic / precise single strokes",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "handDrawn",
+          "title": "Hand drawn / organic pen strokes",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "neo",
+          "title": "Neo / raised, precise cards",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/10-handdrawn-routing.ddn",
+      "sourceHashes": {
+        "website/examples/basics/10-handdrawn-routing.ddn": "eeb920056e2f350944f011a2da6ec9ef011c422c11f4412db707fa68bafc43ca",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "c1e2165cf6977c94122513bec121ac38cf3cfc8c75cb8f30d8ec54dd058c7bba",
+      "definitions": 6,
+      "data": 0,
+      "views": [
+        {
+          "id": "gap",
+          "title": "Hand-drawn crossing / disconnected gap",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "bridge",
+          "title": "Hand-drawn crossing / round bridge",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "square_bridge",
+          "title": "Hand-drawn crossing / square bridge",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "straight",
+          "title": "Hand-drawn straight routing / relation family unchanged",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 4
+    },
+    {
+      "entry": "examples/basics/100-fbd.ddn",
+      "sourceHashes": {
+        "website/examples/basics/100-fbd.ddn": "45307dc2e9378a0f5f5c61bb645265f838e92fba5ab2a6a17983c692f9e2b5d4"
+      },
+      "sha256": "07dac7f22ee82cfc5263bcf400f2a282c9d096522aa2b96c0bc9a05e14484895",
+      "definitions": 17,
+      "data": 0,
+      "views": [
+        {
+          "id": "d",
+          "title": "Motor control FBD",
+          "profile": "fbd.basic@1",
+          "elements": 5,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/101-ladder.ddn",
+      "sourceHashes": {
+        "website/examples/basics/101-ladder.ddn": "71b8a4137c4510b2978be049ccff1cd7436ae7756c86f2d7112dd0404e5321a2"
+      },
+      "sha256": "52a7f99658ebc2b1c99143ff94841b6a173df65eeff84d84b1218643a787948b",
+      "definitions": 20,
+      "data": 0,
+      "views": [
+        {
+          "id": "d",
+          "title": "Motor control ladder",
+          "profile": "ladder.basic@1",
+          "elements": 11,
+          "relations": 6
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/102-vsm-symbols.ddn",
+      "sourceHashes": {
+        "website/examples/basics/102-vsm-symbols.ddn": "b9447dd2436b0463a87316ab8dffcdd9402325f39d4755361288d22ee782b116"
+      },
+      "sha256": "86a5aef43ac92c0a67c028ba448d59614eec99f7df59813d29050a2e6289bc1c",
+      "definitions": 25,
+      "data": 0,
+      "views": [
+        {
+          "id": "map",
+          "title": "VSM symbol library",
+          "profile": "vsm.basic@1",
+          "elements": 13,
+          "relations": 11
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/103-network-symbols.ddn",
+      "sourceHashes": {
+        "website/examples/basics/103-network-symbols.ddn": "ce415a32dae311466a8a9e2d716e16899480f0ad0827b04d738c91f935cf1acf"
+      },
+      "sha256": "f130d562c024df979840ece9ff8f43c6fb2cc9a77f799453ffe27b2efeb2547c",
+      "definitions": 21,
+      "data": 0,
+      "views": [
+        {
+          "id": "net",
+          "title": "Network symbol library",
+          "profile": "network.basic@1",
+          "elements": 11,
+          "relations": 10
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/104-pid-symbols.ddn",
+      "sourceHashes": {
+        "website/examples/basics/104-pid-symbols.ddn": "d64fe67203cfdb90c4e40e8e630ddd0d3a528b7d18ba3acf234c3b30fd1441a0"
+      },
+      "sha256": "2e9a7713b12c11df6636eb96b0d6a4d0acd5f8a554877f5e78b2075c6a8b905c",
+      "definitions": 20,
+      "data": 0,
+      "views": [
+        {
+          "id": "pid",
+          "title": "P&ID symbol library",
+          "profile": "network.basic@1",
+          "elements": 10,
+          "relations": 10
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/105-electrical-symbols.ddn",
+      "sourceHashes": {
+        "website/examples/basics/105-electrical-symbols.ddn": "68df861f7913cdde381e9f98320077dcc0a501bd5cef1184d1b4180c513abe04"
+      },
+      "sha256": "7f129e17415b0c8ff34e3d4df59901a23c54110908858d85a8da6041544cb0f0",
+      "definitions": 24,
+      "data": 0,
+      "views": [
+        {
+          "id": "sch",
+          "title": "Electrical symbol library",
+          "profile": "network.basic@1",
+          "elements": 13,
+          "relations": 11
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/106-tabler-icons.ddn",
+      "sourceHashes": {
+        "website/examples/basics/106-tabler-icons.ddn": "d443e6545d9206d269629b5d0d49623455b715c9738240022aa442992ff08f66"
+      },
+      "sha256": "8420e035b8591642db2f211a66b8f82cab50f8df7d1950151711a8834f5e8082",
+      "definitions": 17,
+      "data": 0,
+      "views": [
+        {
+          "id": "net",
+          "title": "Tabler pack",
+          "profile": "network.basic@1",
+          "elements": 9,
+          "relations": 8
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/107-iconoir-icons.ddn",
+      "sourceHashes": {
+        "website/examples/basics/107-iconoir-icons.ddn": "4396d75dce8a7706b958ceda4c84cd70b7dedfd03922482c3e1e280a24c4c16e"
+      },
+      "sha256": "277726294257bf3d6afc8e5ca897795c6386894fd06ea14d981a80e18d60945e",
+      "definitions": 16,
+      "data": 0,
+      "views": [
+        {
+          "id": "net",
+          "title": "Iconoir pack",
+          "profile": "network.basic@1",
+          "elements": 9,
+          "relations": 7
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/108-uaf-governance.ddn",
+      "sourceHashes": {
+        "website/examples/basics/108-uaf-governance.ddn": "0af8d924508bc40d45cdc3b71f35fe908a01df6b3d79318399e31e2680995f6e"
+      },
+      "sha256": "61cc96b7b45164fcc4dbc0012a7396f44dbc2ed157e7e7e513c068872f3ecd49",
+      "definitions": 1,
+      "data": 0,
+      "views": [
+        {
+          "id": "gv",
+          "title": "Governance",
+          "profile": "uaf.standards@1",
+          "elements": 1,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/108-uaf-operations.ddn",
+      "sourceHashes": {
+        "website/examples/basics/108-uaf-operations.ddn": "43132bb848a42c5166b31470856556db21e199f5d1327af8ef698e723d513cce"
+      },
+      "sha256": "19eecb7239f8d5ccfbd0bc31d431377084445727ca7eb39c2c2a3b010b1518e7",
+      "definitions": 4,
+      "data": 0,
+      "views": [
+        {
+          "id": "ov",
+          "title": "Operational activities",
+          "profile": "uaf.operational@1",
+          "elements": 3,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/108-uaf-traceability.ddn",
+      "sourceHashes": {
+        "website/examples/basics/108-uaf-traceability.ddn": "23fa6101033e6bee96f9779a2461dd88b5178eb42146e4f04e2d6f7c9db41d8d",
+        "website/examples/basics/108-uaf-operations.ddn": "43132bb848a42c5166b31470856556db21e199f5d1327af8ef698e723d513cce",
+        "website/examples/basics/108-uaf-governance.ddn": "0af8d924508bc40d45cdc3b71f35fe908a01df6b3d79318399e31e2680995f6e"
+      },
+      "sha256": "a40ff9fce477666cb7a5ba276eaec7d558dc4c8fd61d43b8c53f092d23559053",
+      "definitions": 8,
+      "data": 0,
+      "views": [
+        {
+          "id": "sv",
+          "title": "Strategic capabilities",
+          "profile": "uaf.strategic@1",
+          "elements": 4,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/109-whiteboard-workshop.ddn",
+      "sourceHashes": {
+        "website/examples/basics/109-whiteboard-workshop.ddn": "5509902853fa573a3d342df38906b30056e1cfb0d8ae85c15aa1a113b97d1736",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "f4decda01644e43bb9a45bd41147b493e402ba24ccc1f86036d54837cd47d5fb",
+      "definitions": 11,
+      "data": 0,
+      "views": [
+        {
+          "id": "workshop",
+          "title": "Synthetic workshop wall",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/11-native-layouts.ddn",
+      "sourceHashes": {
+        "website/examples/basics/11-native-layouts.ddn": "5a968c0b55913f4a7d7ead679a77f3bff06c8f67608d4c00a785aa326c98a50e",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "530c9a100c2f89e6c8a9d7b29b59d83d4d788603ab65e17d2aab64a11685702b",
+      "definitions": 15,
+      "data": 0,
+      "views": [
+        {
+          "id": "grid",
+          "title": "Native grid / no coordinates",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "layered",
+          "title": "Native layered / no coordinates",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "tree",
+          "title": "Native tree / no coordinates",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "mindmap",
+          "title": "Native mind-map / no coordinates",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "grouped",
+          "title": "Native grouped / no coordinates",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 5
+    },
+    {
+      "entry": "examples/basics/110-presentation-architecture.ddn",
+      "sourceHashes": {
+        "website/examples/basics/110-presentation-architecture.ddn": "8e07e657def0489f03aba8e168d1469610f7dcf2867c165b36418ab1f540a919",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "b26875fd1d33a978f8f393d87b00415307010660020a03ea6816016d28e0759a",
+      "definitions": 20,
+      "data": 0,
+      "views": [
+        {
+          "id": "overview",
+          "title": "Storefront systems — presentation overview",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 10
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/111-publication-chrome.ddn",
+      "sourceHashes": {
+        "website/examples/basics/111-publication-chrome.ddn": "73b17fda740619e4b9cdc63d792bf6e62bf0bd3ef750962a8f0427097b592fea"
+      },
+      "sha256": "06d73a67a88a9853d177ad6f437bb351a5758b486b8ea6e569c8da1412862157",
+      "definitions": 8,
+      "data": 0,
+      "views": [
+        {
+          "id": "fig1",
+          "title": "Sensor monitor",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 4
+        },
+        {
+          "id": "fig2",
+          "title": "Sensor monitor (detail)",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/112-markings-metadata.ddn",
+      "sourceHashes": {
+        "website/examples/basics/112-markings-metadata.ddn": "ca4bbc81ab3c1f6445217b87c8c43086ce30c1e7d9876917816f74c271a98c91"
+      },
+      "sha256": "163a27887fdd9a52f5547dc932b868b3ec4b6bf0ad09b958dbf3ed1944a9c4a8",
+      "definitions": 6,
+      "data": 0,
+      "views": [
+        {
+          "id": "overview",
+          "title": "Billing overview",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "filing",
+          "title": "Billing overview (print)",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/12-nested-fields.ddn",
+      "sourceHashes": {
+        "website/examples/basics/12-nested-fields.ddn": "d15b9b0e0e93129875c1c0ccfd25dc045bfb27306db02e30ca7c88c9d3998823",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "b069d460f88cfc9a60ecfccb1b40ff1a732fc52b0b9877829cf0f16265a438b3",
+      "definitions": 25,
+      "data": 0,
+      "views": [
+        {
+          "id": "detailed",
+          "title": "Nested fields / domains and representations",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "large",
+          "title": "20px base / measured wrapping",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "collapsed",
+          "title": "Hidden nested rows / preserved endpoint identities",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "header",
+          "title": "One-line header / compact view declaration",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "metrics_chart",
+          "title": "Order timings / keyed tabular records",
+          "profile": "chart.basic@1",
+          "elements": 5,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 5
+    },
+    {
+      "entry": "examples/basics/13-publication.ddn",
+      "sourceHashes": {
+        "website/examples/basics/13-publication.ddn": "6d35dd5bd3cd51274c29f517b38d0fba8d32f40c57ae0f0b3f40a05f7d07f843",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "7b1ba4768f58ca1fc206cf4697856d6031439ad225eb640d46de29ed2598a9fc",
+      "definitions": 7,
+      "data": 0,
+      "views": [
+        {
+          "id": "paper",
+          "title": "A4 / explicit minimum text",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 1
+        },
+        {
+          "id": "screen",
+          "title": "Content-sized / same semantic model",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/14-authorized-export.ddn",
+      "sourceHashes": {
+        "website/examples/basics/14-authorized-export.ddn": "bd485dbd526900b4f525652f6851193dbe92ab6bf9cbab539c4d19f0f7049959",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "a52e0265bb37f6b9fa8d10bc8f727eeaf8d1d41a1d81013672911bd248144bf9",
+      "definitions": 15,
+      "data": 0,
+      "views": [
+        {
+          "id": "private",
+          "title": "Private source / hiding is not redaction",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 1
+        },
+        {
+          "id": "public",
+          "title": "Allowlisted publication",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/15-process-contracts.ddn",
+      "sourceHashes": {
+        "website/examples/basics/15-process-contracts.ddn": "46be056937a15a2581946d15f6192fb4f8b59e18ed0c64e6a0496f9bafac078d",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "f87b25fd9781481de3052dae2d41936d8a87ec54eeaadd71de7609bb487e875b",
+      "definitions": 18,
+      "data": 0,
+      "views": [
+        {
+          "id": "balanced",
+          "title": "Balanced interfaces / declared state and verification",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/16-enterprise-gates.ddn",
+      "sourceHashes": {
+        "website/examples/basics/16-enterprise-gates.ddn": "bc66a9ec859ffc0f65c139dbe5b9c07f2570f13c2d259592acc8daeaae5971ff",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "58dc953a4a3ae18caa294dc31573a76b3390ac30ee07a22630cfb90c8b3b5654",
+      "definitions": 26,
+      "data": 0,
+      "views": [
+        {
+          "id": "external",
+          "title": "External gates / required evidence",
+          "profile": "ddn@1",
+          "elements": 26,
+          "relations": 0
+        },
+        {
+          "id": "software",
+          "title": "Software changes / independent review checklist",
+          "profile": "ddn@1",
+          "elements": 26,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/17-curved-relations.ddn",
+      "sourceHashes": {
+        "website/examples/basics/17-curved-relations.ddn": "24a6d43ec9d8b562c61a1f2cc01ed5ada58590558152165a55bcb845d7a09344",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "d835d3475d9f2a722de48fd8c363da782cd1378c47dd2a6738b2f62fe07a7ae1",
+      "definitions": 36,
+      "data": 0,
+      "views": [
+        {
+          "id": "mindmap_classic",
+          "title": "Curved mind-map / classic",
+          "profile": "ddn@1",
+          "elements": 11,
+          "relations": 10
+        },
+        {
+          "id": "mindmap_handdrawn",
+          "title": "Curved mind-map / handDrawn",
+          "profile": "ddn@1",
+          "elements": 11,
+          "relations": 10
+        },
+        {
+          "id": "mindmap_neo",
+          "title": "Curved mind-map / neo",
+          "profile": "ddn@1",
+          "elements": 11,
+          "relations": 10
+        },
+        {
+          "id": "mindmap_angular",
+          "title": "Same mind-map / orthogonal routes",
+          "profile": "ddn@1",
+          "elements": 11,
+          "relations": 10
+        },
+        {
+          "id": "mindmap_rounded",
+          "title": "Same mind-map / rounded corridor corners",
+          "profile": "ddn@1",
+          "elements": 11,
+          "relations": 10
+        },
+        {
+          "id": "mixed",
+          "title": "One view / independent per-relation route overrides",
+          "profile": "ddn@1",
+          "elements": 11,
+          "relations": 10
+        },
+        {
+          "id": "crossing_gap",
+          "title": "Curved disconnected crossing / gap",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "crossing_bridge",
+          "title": "Curved disconnected crossing / rounded jump",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "crossing_square",
+          "title": "Curved disconnected crossing / local square jump",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "obstacle",
+          "title": "Curved detour / no relation to the middle database",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 1
+        },
+        {
+          "id": "bidirectional",
+          "title": "Curved request, response and internal action",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 11
+    },
+    {
+      "entry": "examples/basics/18-routing-comparison.ddn",
+      "sourceHashes": {
+        "website/examples/basics/18-routing-comparison.ddn": "c57f329ef1df034b2b42c492429666c3f919f5a05ef4ea2a0afb1506c5736bb3",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "f302ba8c7c9e4a4ee53ae17151b33125269c963fc8cf70732f8a2bbc4c35da92",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "orthogonal",
+          "title": "Orthogonal / sharp corners",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "straight",
+          "title": "Straight / direct segments",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "bezier",
+          "title": "Curved / broad cubic branches",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "rounded",
+          "title": "Curved / softened route corners",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 4
+    },
+    {
+      "entry": "examples/basics/19-radar-chart.ddn",
+      "sourceHashes": {
+        "website/examples/basics/19-radar-chart.ddn": "ca0c0910134dd44cc3f24e9a17033eb2a833817b0a0e1a5e2d1c8f63a153d087"
+      },
+      "sha256": "e8c3cd9128493e7345ee2562e9897569e2fd3040eb3711b213af15c68eccd5f0",
+      "definitions": 12,
+      "data": 0,
+      "views": [
+        {
+          "id": "radar",
+          "title": "Product comparison / radar",
+          "profile": "chart.radar@1",
+          "elements": 12,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/20-funnel-chart.ddn",
+      "sourceHashes": {
+        "website/examples/basics/20-funnel-chart.ddn": "e9fb6a688b1d75a60137517a59570236a3b041264abd27beec1f6c7e92ce77c1",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "98bd5c8a7444d30f9290b53672975b46b504dcb65cf294251dfc9692034f17a5",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "funnel",
+          "title": "Synthetic sales pipeline / funnel",
+          "profile": "chart.funnel@1",
+          "elements": 5,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/21-gauge-chart.ddn",
+      "sourceHashes": {
+        "website/examples/basics/21-gauge-chart.ddn": "800279f7d38926d9bed1f34e62067a23dca605a56ff98e26e322254e5060f7dd",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "623489343e5df485a94f38418547e6b063a5470d89c3606b4a9658aeb8cffffa",
+      "definitions": 1,
+      "data": 0,
+      "views": [
+        {
+          "id": "gauge",
+          "title": "Synthetic SLA attainment / gauge",
+          "profile": "chart.gauge@1",
+          "elements": 1,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/22-candlestick-chart.ddn",
+      "sourceHashes": {
+        "website/examples/basics/22-candlestick-chart.ddn": "0e6b4f62eb67912c834832039fc23d80d9720289124042ba8c42359ed2dc4c75",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "c49e54c67b81f733db1fa12500996ccf0fa303d6f54f76b7448b9ce9b9e06425",
+      "definitions": 8,
+      "data": 0,
+      "views": [
+        {
+          "id": "candlestick",
+          "title": "Synthetic trading sessions / candlestick",
+          "profile": "chart.candlestick@1",
+          "elements": 8,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/23-treemap.ddn",
+      "sourceHashes": {
+        "website/examples/basics/23-treemap.ddn": "1b54572e9715bac0aec3d93b76e3279495e007d1039af75f7bfe9c64e136b7da",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "e2fe4ade7193d725ab347364d3d27b32cb9c46237a58756b1ace9f2ecd4005b1",
+      "definitions": 6,
+      "data": 0,
+      "views": [
+        {
+          "id": "treemap",
+          "title": "Synthetic storage by domain and table / treemap",
+          "profile": "chart.treemap@1",
+          "elements": 6,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/24-sankey.ddn",
+      "sourceHashes": {
+        "website/examples/basics/24-sankey.ddn": "494fdf1e2927bda64b3c7757b2fc1df51e910f874acca4e6a2051fd6711d70d3",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "0a99dcc73c1fd6e0e52106c77678b84dbf4e1078f933e1843deca4495c92a288",
+      "definitions": 7,
+      "data": 0,
+      "views": [
+        {
+          "id": "sankey",
+          "title": "Synthetic energy spend across three stages / sankey",
+          "profile": "chart.sankey@1",
+          "elements": 7,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/25-c4-views.ddn",
+      "sourceHashes": {
+        "website/examples/basics/25-c4-views.ddn": "82059d7b5d92fb3c8b3c8b6950d86557db745498129bb06eca6265d083367dcc",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "52d85cc83f6fc457b4817ce19c085c7199a8b69e90e9858a731b106cfffe1fc4",
+      "definitions": 15,
+      "data": 0,
+      "views": [
+        {
+          "id": "context",
+          "title": "Synthetic shop / C4 context",
+          "profile": "c4.context@1",
+          "elements": 8,
+          "relations": 7
+        },
+        {
+          "id": "container",
+          "title": "Synthetic shop / C4 container",
+          "profile": "c4.container@1",
+          "elements": 8,
+          "relations": 7
+        },
+        {
+          "id": "component",
+          "title": "Synthetic shop / C4 component",
+          "profile": "c4.component@1",
+          "elements": 8,
+          "relations": 7
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/26-org-chart.ddn",
+      "sourceHashes": {
+        "website/examples/basics/26-org-chart.ddn": "193c8704aaed4bcdb3134ac6260ad8026d738766ec4ffb6d6d7b4359285b3a80",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "f0eb6532be1ac7c0db459cee926764b44fb019b2d45b08a88c3ba6b695f3fc63",
+      "definitions": 15,
+      "data": 0,
+      "views": [
+        {
+          "id": "org",
+          "title": "Synthetic organisation / org chart",
+          "profile": "org.tree@1",
+          "elements": 8,
+          "relations": 7
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/27-wbs.ddn",
+      "sourceHashes": {
+        "website/examples/basics/27-wbs.ddn": "fcd922659ceadea4f83532ed181197974a2089fc2b851a92015eb1b9936365d2",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "ecc140f07fb5f735c7836efc3eb3b8d83876502d1da948ba9e0cb18e04dcf892",
+      "definitions": 19,
+      "data": 0,
+      "views": [
+        {
+          "id": "wbs",
+          "title": "Synthetic project / work breakdown structure",
+          "profile": "wbs.tree@1",
+          "elements": 10,
+          "relations": 9
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/28-mind-map.ddn",
+      "sourceHashes": {
+        "website/examples/basics/28-mind-map.ddn": "d4fcde9859187d1ce5d8318c47017baed4646cfefc09dfc9a25a58fab0488994",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "0785d9f73b417e80dfd67d1e80f04e6610dda0fff3ea2ce4189a27e62ae43353",
+      "definitions": 17,
+      "data": 0,
+      "views": [
+        {
+          "id": "mindmap",
+          "title": "Synthetic brainstorm / mind map",
+          "profile": "mindmap.basic@1",
+          "elements": 9,
+          "relations": 8
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/29-concept-map.ddn",
+      "sourceHashes": {
+        "website/examples/basics/29-concept-map.ddn": "65da084996743a0368d346c0f7d5d977091f3ded11c4655534f9a6dd26da64ed",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "cf98a6ee881d8f93864bb7cd11b72b7f5d6af12b8699ee60917e507b2345e34a",
+      "definitions": 10,
+      "data": 0,
+      "views": [
+        {
+          "id": "concepts",
+          "title": "Synthetic order-to-cash concepts / concept map",
+          "profile": "concept.map@1",
+          "elements": 5,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/30-epc.ddn",
+      "sourceHashes": {
+        "website/examples/basics/30-epc.ddn": "77d17d147140ff86b7278b373c00182fab0d91784028272b14b8d06d987d59af",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "2ffd1a71caf7ea56f35074137de4831bd0a69c36822a4cdf5acd0e520ed32436",
+      "definitions": 19,
+      "data": 0,
+      "views": [
+        {
+          "id": "epc",
+          "title": "Synthetic order-to-cash / EPC",
+          "profile": "epc.basic@1",
+          "elements": 10,
+          "relations": 9
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/31-canvas-pack-a.ddn",
+      "sourceHashes": {
+        "website/examples/basics/31-canvas-pack-a.ddn": "d365e4477b3a7a9ac75cdb46785706b770995145459f4793e0730988eab1ca03",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "6ed338a9a2f8508ec1b6792a89c19ed0433ab79a2d330a9e4914730f88436c44",
+      "definitions": 36,
+      "data": 0,
+      "views": [
+        {
+          "id": "bmc",
+          "title": "Coffee cart / business model canvas",
+          "profile": "canvas.bmc@1",
+          "elements": 18,
+          "relations": 0
+        },
+        {
+          "id": "lean",
+          "title": "Coffee cart / lean canvas",
+          "profile": "canvas.lean@1",
+          "elements": 18,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/32-canvas-pack-b.ddn",
+      "sourceHashes": {
+        "website/examples/basics/32-canvas-pack-b.ddn": "739d58477dfa32a25ff70154711c2504d33eda144054b9120f81d67fca5268d8",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "99a2533ea074b4257820fad4b90674845f8ced93942a1cc6e7b57b6dcf52d26b",
+      "definitions": 30,
+      "data": 0,
+      "views": [
+        {
+          "id": "pest",
+          "title": "Fizzberry in Aurelia / PEST scan",
+          "profile": "canvas.pest@1",
+          "elements": 15,
+          "relations": 0
+        },
+        {
+          "id": "pestle",
+          "title": "Fizzberry in Aurelia / PESTLE scan",
+          "profile": "canvas.pestle@1",
+          "elements": 15,
+          "relations": 0
+        },
+        {
+          "id": "porter5",
+          "title": "Fizzberry in Aurelia / five forces",
+          "profile": "canvas.porter5@1",
+          "elements": 15,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/33-matrix-pack.ddn",
+      "sourceHashes": {
+        "website/examples/basics/33-matrix-pack.ddn": "15506ed81ae70d7d9cfa48bf1d8bfc7da009f0c47581c3a630baa83fdc8c19a1",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "3765081638f24a325083b2240bc66d40ee9ed1ccd895f96b3f7f403e6a7429d6",
+      "definitions": 25,
+      "data": 0,
+      "views": [
+        {
+          "id": "bcg",
+          "title": "Synthetic portfolio / BCG",
+          "profile": "matrix.bcg@1",
+          "elements": 12,
+          "relations": 13
+        },
+        {
+          "id": "ansoff",
+          "title": "Synthetic portfolio / Ansoff",
+          "profile": "matrix.ansoff@1",
+          "elements": 12,
+          "relations": 13
+        },
+        {
+          "id": "tows",
+          "title": "Synthetic portfolio / TOWS",
+          "profile": "matrix.tows@1",
+          "elements": 12,
+          "relations": 13
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/34-empathy-scorecard.ddn",
+      "sourceHashes": {
+        "website/examples/basics/34-empathy-scorecard.ddn": "862c8940ef37e194d74cb425fad8ca8e72472d58e3f573b28bc33e614782001f",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "0b948ea6672e31a34d766e4682086ec1574d4b5e3b52f5a3ff0de434552f159e",
+      "definitions": 23,
+      "data": 0,
+      "views": [
+        {
+          "id": "empathy",
+          "title": "Support team / empathy map",
+          "profile": "canvas.empathy@1",
+          "elements": 14,
+          "relations": 0
+        },
+        {
+          "id": "scorecard",
+          "title": "Department / balanced scorecard",
+          "profile": "canvas.scorecard@1",
+          "elements": 14,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/35-journey-map.ddn",
+      "sourceHashes": {
+        "website/examples/basics/35-journey-map.ddn": "7659b78210846af062a0b638f265ba4d8aa92c6efabe4c20f38c62e63ef6bf36",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "f188451665fe4ed0434cab2e4dfbb40bfe494737cfccb5182a622e3389416d34",
+      "definitions": 37,
+      "data": 0,
+      "views": [
+        {
+          "id": "returns",
+          "title": "Returns journey / synthetic",
+          "profile": "panels.journey@1",
+          "elements": 20,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/36-story-map.ddn",
+      "sourceHashes": {
+        "website/examples/basics/36-story-map.ddn": "2b7c704ff97d4b6eaba13917eb1590e8611193eff6183b07ba8ab3a1302e9cae",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "50ca4881f12d16b1f2740d31539ebdda78f6a51d16bf82dcb107b40288559f6a",
+      "definitions": 27,
+      "data": 0,
+      "views": [
+        {
+          "id": "storymap",
+          "title": "Shop rebuild / story map",
+          "profile": "matrix.storymap@1",
+          "elements": 17,
+          "relations": 10
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/37-crows-foot-erd.ddn",
+      "sourceHashes": {
+        "website/examples/basics/37-crows-foot-erd.ddn": "0484334ff95557ec8ab78bba13e9521a8c07549dadc84216a7f1649d28f56c3d",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "629da673c316f8e4e6e45d2a0ae342aa890434afec24a75838b8c7293ff2100f",
+      "definitions": 16,
+      "data": 0,
+      "views": [
+        {
+          "id": "erd",
+          "title": "Synthetic sales / crow's-foot ERD",
+          "profile": "erd.crowfoot@1",
+          "elements": 4,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/38-sql-ddl-export.ddn",
+      "sourceHashes": {
+        "website/examples/basics/38-sql-ddl-export.ddn": "d68a8702983d0f5cd66b382b8563450d38275eeb96934b6abb651ac1ea208fd0",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "ebe251e09f65b8b1e578459eb48b4faee9749eb92ce02289ceeaed9ab2b8193b",
+      "definitions": 10,
+      "data": 0,
+      "views": [
+        {
+          "id": "publish",
+          "title": "Synthetic shop / approved SQL DDL",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/39-pyramid.ddn",
+      "sourceHashes": {
+        "website/examples/basics/39-pyramid.ddn": "93e8bc58a1889d2b107d3caa52fea8324cb0787b0e6cbdb853c08313136ace81",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "f559389dfafee3721a2baead1b411c1af6ebfc26376bae6d92c49428e4adffb2",
+      "definitions": 7,
+      "data": 0,
+      "views": [
+        {
+          "id": "tiers",
+          "title": "Support tiers / pyramid",
+          "profile": "panels.pyramid@1",
+          "elements": 3,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/40-venn.ddn",
+      "sourceHashes": {
+        "website/examples/basics/40-venn.ddn": "eb06542f913d3b1e6fd7fa2504bb134c2959cd8d58cc3df08c2662e770573814",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "39643235a678698639013d64cd8b0273c37a30eec6f99a69e0d918713b391bfc",
+      "definitions": 11,
+      "data": 0,
+      "views": [
+        {
+          "id": "overlap",
+          "title": "Feature overlap / venn",
+          "profile": "panels.venn@1",
+          "elements": 8,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/41-sequence-diagram.ddn",
+      "sourceHashes": {
+        "website/examples/basics/41-sequence-diagram.ddn": "806b37e523032c0850f258ca125bb3f3f858039f879dd5817d459f163ae55f43",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "15cf66ddac5e74a4b11515cf3e178327079f929eeaa63954d2619047ff266192",
+      "definitions": 8,
+      "data": 0,
+      "views": [
+        {
+          "id": "sequence",
+          "title": "Synthetic order flow / sequence",
+          "profile": "uml.sequence@1",
+          "elements": 3,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/42-communication-diagram.ddn",
+      "sourceHashes": {
+        "website/examples/basics/42-communication-diagram.ddn": "36f18206528e5f208d9e3fc9b3c6f54b40f998fab58c3658292c0242de1cad31",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "d7404cfdf3607cfb0e6eded2b839ff92cd1eee509bbbe70761acdaa95df775d3",
+      "definitions": 8,
+      "data": 0,
+      "views": [
+        {
+          "id": "communication",
+          "title": "Synthetic order flow / communication",
+          "profile": "uml.communication@1",
+          "elements": 3,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/43-object-diagram.ddn",
+      "sourceHashes": {
+        "website/examples/basics/43-object-diagram.ddn": "cc831073ced0575c5ce7521d3f24db450e25802f257402c6ee6cd6fdaea74b33",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "2e5642d046b44d0f5d28a6c2d3aee0b4b3bb7b16b1d9f2851027eda6701bf5fb",
+      "definitions": 13,
+      "data": 0,
+      "views": [
+        {
+          "id": "objects",
+          "title": "Synthetic snapshot / objects",
+          "profile": "uml.object@1",
+          "elements": 4,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/44-hierarchical-state.ddn",
+      "sourceHashes": {
+        "website/examples/basics/44-hierarchical-state.ddn": "9196eddd020731e038764a4890a1d1081f02e84610815a0bbf186bcad9f736b6",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "32db1eb58902ca1eaa4087e5d7568056345ca84f4c3026968cbc70519d7aa387",
+      "definitions": 23,
+      "data": 0,
+      "views": [
+        {
+          "id": "lifecycle",
+          "title": "Order lifecycle / composite states",
+          "profile": "state.composite@1",
+          "elements": 13,
+          "relations": 10
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/45-activity-diagram.ddn",
+      "sourceHashes": {
+        "website/examples/basics/45-activity-diagram.ddn": "f98c0d5013d4960ee53f75b8329b47dcae2c23614114b13e3b36b6aaaf19b555",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "75626ad57eb43abdcc7b120ab10224c443d92fc18d8e4273c6d3a15efc563ee2",
+      "definitions": 15,
+      "data": 0,
+      "views": [
+        {
+          "id": "fulfilment",
+          "title": "Order fulfilment activity",
+          "profile": "uml.activity@1",
+          "elements": 7,
+          "relations": 8
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/46-bpmn.ddn",
+      "sourceHashes": {
+        "website/examples/basics/46-bpmn.ddn": "0a0a0cbb205a88348213192402553fa04c39748ec85b6e5a13ec8bbf9a4140b5",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "7b256862c8d9446280706c0dbce0ed0967c6053fce2e3a09c28b168282349aec",
+      "definitions": 13,
+      "data": 0,
+      "views": [
+        {
+          "id": "collaboration",
+          "title": "Buyer / seller collaboration",
+          "profile": "bpmn.basic@1",
+          "elements": 7,
+          "relations": 6
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/47-timing-diagram.ddn",
+      "sourceHashes": {
+        "website/examples/basics/47-timing-diagram.ddn": "262dcf4a1fe1b53473dfa64b2984997c5861f25ed8455d1565c20c9ed3a537b6",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "527118c581708198b062e1f24eafdfadcfe944353cfaf6eb96cdfe223ef857a1",
+      "definitions": 2,
+      "data": 0,
+      "views": [
+        {
+          "id": "timing",
+          "title": "Synthetic traffic lights / timing (seconds)",
+          "profile": "uml.timing@1",
+          "elements": 2,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/48-interaction-overview.ddn",
+      "sourceHashes": {
+        "website/examples/basics/48-interaction-overview.ddn": "d81645f31e4e65f3b80016880aecfe62016fd15315a5515f03acf6ae242567cc",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "027bef289e898f2475b4a6095bb45046699810aadd9d6de65176455f222477a7",
+      "definitions": 15,
+      "data": 0,
+      "views": [
+        {
+          "id": "overview",
+          "title": "Checkout interaction overview",
+          "profile": "uml.interaction_overview@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "payment_flow",
+          "title": "Payment flow detail",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 1
+        },
+        {
+          "id": "stock_flow",
+          "title": "Stock flow detail",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/49-cmmn.ddn",
+      "sourceHashes": {
+        "website/examples/basics/49-cmmn.ddn": "81b9fc380f2aa94f82e6e3b8cc6c1dbb26d815f6f34d61e570e3306a80b849bd",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "ff5c9a1c7166b400ab7caa6ebbb549fe42ff93534e5970f079d20362360bf447",
+      "definitions": 7,
+      "data": 0,
+      "views": [
+        {
+          "id": "case",
+          "title": "Claim handling",
+          "profile": "cmmn.basic@1",
+          "elements": 5,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/50-sysml.ddn",
+      "sourceHashes": {
+        "website/examples/basics/50-sysml.ddn": "8b201d090aa13b263376a7c0f38679fdf1fe598228a2f70941825807944558a9",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "f450eb2e0ecfb27cf27ea722ab2d63df6e4089035d34d22752353f9c4f831292",
+      "definitions": 9,
+      "data": 0,
+      "views": [
+        {
+          "id": "bdd",
+          "title": "Pump station block definition",
+          "profile": "sysml.bdd@1",
+          "elements": 3,
+          "relations": 4
+        },
+        {
+          "id": "ibd",
+          "title": "Pump station internal block",
+          "profile": "sysml.ibd@1",
+          "elements": 3,
+          "relations": 4
+        },
+        {
+          "id": "parametric",
+          "title": "Pump station flow balance",
+          "profile": "sysml.parametric@1",
+          "elements": 3,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/51-archimate.ddn",
+      "sourceHashes": {
+        "website/examples/basics/51-archimate.ddn": "6784a20470e8f06927c95915bd952305725eeffca457ab6bcdbe6d5f1e0649a5",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "1addb49f290e5272a90682d001b9bdf29f8bdceeba82ca46244bbfbd5ce4c855",
+      "definitions": 13,
+      "data": 0,
+      "views": [
+        {
+          "id": "landscape",
+          "title": "Order platform landscape",
+          "profile": "archimate.basic@1",
+          "elements": 7,
+          "relations": 6
+        },
+        {
+          "id": "business_viewpoint",
+          "title": "Order platform business viewpoint",
+          "profile": "archimate.basic@1",
+          "elements": 7,
+          "relations": 6
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/52-pert-cpm.ddn",
+      "sourceHashes": {
+        "website/examples/basics/52-pert-cpm.ddn": "264ec9055b66ae680babd36e87c4b608a6d48dfc9a0779543438ed8b9e5d0179",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "efdbe021b3e2ae088bc2d5d1341d6604a5a421a9e09166f7afb34ef17d109000",
+      "definitions": 12,
+      "data": 0,
+      "views": [
+        {
+          "id": "plan",
+          "title": "Release plan",
+          "profile": "pert.cpm@1",
+          "elements": 6,
+          "relations": 6
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/53-fault-event-tree.ddn",
+      "sourceHashes": {
+        "website/examples/basics/53-fault-event-tree.ddn": "5ce3ce8c40766267bc9b8161d2cb08cdc077a7cc274419d1d2a953b4d65075b3",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "3e940d9dc3788c1850f6759d49e4b663276c189e8cc51b8ab1af23b28e8a26a3",
+      "definitions": 17,
+      "data": 0,
+      "views": [
+        {
+          "id": "fault",
+          "title": "Service outage fault tree",
+          "profile": "fault.tree@1",
+          "elements": 10,
+          "relations": 7
+        },
+        {
+          "id": "event",
+          "title": "Alarm event tree",
+          "profile": "event.tree@1",
+          "elements": 10,
+          "relations": 7
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/54-network-diagram.ddn",
+      "sourceHashes": {
+        "website/examples/basics/54-network-diagram.ddn": "22e4a6ea2b89f8316f02ab8e015b2b14c6b3cd3438028ae1f8de2046a150717c",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "e166e1f7e1070407aef970c116e06bcb795759e6c99f080ffb675fe7e7036936",
+      "definitions": 13,
+      "data": 0,
+      "views": [
+        {
+          "id": "lan",
+          "title": "Office LAN",
+          "profile": "network.basic@1",
+          "elements": 6,
+          "relations": 4
+        },
+        {
+          "id": "rack",
+          "title": "Rack A elevation",
+          "profile": "network.rack@1",
+          "elements": 6,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/55-wireframe.ddn",
+      "sourceHashes": {
+        "website/examples/basics/55-wireframe.ddn": "83e2e02e700979bdfb417be1da2bb34d1ccae962b91466e165c20049d7cce5f2"
+      },
+      "sha256": "e2f79b13d6a851a3cf521aac673f50ad95b5626bd590b6353ee2b4e63db9f027",
+      "definitions": 10,
+      "data": 0,
+      "views": [
+        {
+          "id": "settings",
+          "title": "Settings screen",
+          "profile": "wireframe.ui@1",
+          "elements": 7,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/56-family-tree.ddn",
+      "sourceHashes": {
+        "website/examples/basics/56-family-tree.ddn": "5b4576b4cc3b91cf363e00b8a0e8b4ee62afeb5c0906a96a7e519a411a961612"
+      },
+      "sha256": "d05b081c53de93c0939f2063265aab5e5ce5875da3e9833a5d1dd26e789d1417",
+      "definitions": 13,
+      "data": 0,
+      "views": [
+        {
+          "id": "family",
+          "title": "Three generations",
+          "profile": "family.tree@1",
+          "elements": 7,
+          "relations": 6
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/57-element-defaults.ddn",
+      "sourceHashes": {
+        "website/examples/basics/57-element-defaults.ddn": "7b470b59f54b22dc06ae0e563b6d9fdc22fe96184ed6d38215964acfa7c58298",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "b70748b50004da04bf63517b64bc82f7a2f71e4da39b07a4f8c653ed75854f0b",
+      "definitions": 2,
+      "data": 0,
+      "views": [
+        {
+          "id": "defaults",
+          "title": "Element defaults / bare versus explicit",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/58-css-hooks.ddn",
+      "sourceHashes": {
+        "website/examples/basics/58-css-hooks.ddn": "ffc75e163c31b634722e27684f15690421c18c674b2b59369a04a53e373e087e"
+      },
+      "sha256": "bb5e419cdfca7118696412769195d813e50e82095a151ab5de7e07916a3ea933",
+      "definitions": 9,
+      "data": 0,
+      "views": [
+        {
+          "id": "hooks",
+          "title": "CSS hooks / page styling",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/59-data-refresh.ddn",
+      "sourceHashes": {
+        "website/examples/basics/59-data-refresh.ddn": "db1bba91b4568bec1bd1cace38027600312981ce203b3a9c5d57bea29ff9300c"
+      },
+      "sha256": "dabafb1b9f82ca82a2d9073a72c39420a7d912d66f37ae80b4577705ddeda46f",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "latency_chart",
+          "title": "Latency / chart",
+          "profile": "chart.basic@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "dependency_graph",
+          "title": "Latency / dependency graph",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/60-spacing-hints.ddn",
+      "sourceHashes": {
+        "website/examples/basics/60-spacing-hints.ddn": "aaa945b08e8015999241c21810ec022824e55e04907afdde3e57f867c1e924a8",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "00cdbffb6bdc672c11d7749ee27807a6b844b867664ec50c3913e821fb2580d7",
+      "definitions": 9,
+      "data": 0,
+      "views": [
+        {
+          "id": "tight",
+          "title": "Spacing / tight",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "normal",
+          "title": "Spacing / normal (default)",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "loose",
+          "title": "Spacing / loose",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "expanded",
+          "title": "Spacing / expanded",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 4
+    },
+    {
+      "entry": "examples/basics/61-self-contained.ddn",
+      "sourceHashes": {
+        "website/examples/basics/61-self-contained.ddn": "bac3bb52771fc27b0931622c3239a47cffa560355bf204fa5c33db143da01d91"
+      },
+      "sha256": "ea285330ea146596904ce6f39d0c028e026ad48284100e1ffd61f778923a1aca",
+      "definitions": 9,
+      "data": 0,
+      "views": [
+        {
+          "id": "overview",
+          "title": "Self-contained / overview",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 1
+        },
+        {
+          "id": "compact",
+          "title": "Self-contained / compact",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/62-distribution-charts.ddn",
+      "sourceHashes": {
+        "website/examples/basics/62-distribution-charts.ddn": "745fe27fc1df44f126c92de938dc8f3ae87c937981cf97a585bb32f0c4528176"
+      },
+      "sha256": "e26bd742b518bd9d17bb8c022534d42a139494944a4b7d6bf704caf2f5e4696a",
+      "definitions": 30,
+      "data": 0,
+      "views": [
+        {
+          "id": "histogram",
+          "title": "Response times / histogram",
+          "profile": "chart.histogram@1",
+          "elements": 30,
+          "relations": 0
+        },
+        {
+          "id": "density",
+          "title": "Response times / probability density",
+          "profile": "chart.density@1",
+          "elements": 30,
+          "relations": 0
+        },
+        {
+          "id": "qq",
+          "title": "Response times / normal Q-Q",
+          "profile": "chart.qq@1",
+          "elements": 30,
+          "relations": 0
+        },
+        {
+          "id": "quantiledot",
+          "title": "Response times / quantile dotplot",
+          "profile": "chart.quantiledot@1",
+          "elements": 30,
+          "relations": 0
+        },
+        {
+          "id": "dotplot",
+          "title": "Response times by service / dot plot",
+          "profile": "chart.dotplot@1",
+          "elements": 30,
+          "relations": 0
+        },
+        {
+          "id": "boxplot",
+          "title": "Response times by service / box plot",
+          "profile": "chart.boxplot@1",
+          "elements": 30,
+          "relations": 0
+        },
+        {
+          "id": "violin",
+          "title": "Response times by service / violin",
+          "profile": "chart.violin@1",
+          "elements": 30,
+          "relations": 0
+        },
+        {
+          "id": "beeswarm",
+          "title": "Response times by service / beeswarm",
+          "profile": "chart.beeswarm@1",
+          "elements": 30,
+          "relations": 0
+        },
+        {
+          "id": "topk",
+          "title": "Slowest services / top-K",
+          "profile": "chart.topk@1",
+          "elements": 30,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 9
+    },
+    {
+      "entry": "examples/basics/63-tree-charts.ddn",
+      "sourceHashes": {
+        "website/examples/basics/63-tree-charts.ddn": "984bdebc0a84824e341ba07f58d1ec20c3463ef1c97b62921987aa00efb13e3b"
+      },
+      "sha256": "4a70f73bfa25cc9099b61f862d40640b498c1564e91d7a5674d7662172de8fd4",
+      "definitions": 9,
+      "data": 0,
+      "views": [
+        {
+          "id": "tidytree",
+          "title": "Sales hierarchy / tidy tree",
+          "profile": "chart.tidytree@1",
+          "elements": 9,
+          "relations": 0
+        },
+        {
+          "id": "radialtree",
+          "title": "Sales hierarchy / radial tree",
+          "profile": "chart.radialtree@1",
+          "elements": 9,
+          "relations": 0
+        },
+        {
+          "id": "circlepack",
+          "title": "Sales hierarchy / circle packing",
+          "profile": "chart.circlepack@1",
+          "elements": 9,
+          "relations": 0
+        },
+        {
+          "id": "sunburst",
+          "title": "Sales hierarchy / sunburst",
+          "profile": "chart.sunburst@1",
+          "elements": 9,
+          "relations": 0
+        },
+        {
+          "id": "packedbubble",
+          "title": "Sales by region / packed bubbles",
+          "profile": "chart.packedbubble@1",
+          "elements": 9,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 5
+    },
+    {
+      "entry": "examples/basics/64-grid-charts.ddn",
+      "sourceHashes": {
+        "website/examples/basics/64-grid-charts.ddn": "82fc3defc90b45c363c4c190ace87bc99402f5b3f88f1ee43a5b1be9a33a82ee"
+      },
+      "sha256": "67e23e6039751f3538dfd3f3522a764069bee496d8d84127a125a9852c1ea134",
+      "definitions": 55,
+      "data": 0,
+      "views": [
+        {
+          "id": "heatmap",
+          "title": "Requests by hour and endpoint / heatmap",
+          "profile": "chart.heatmap@1",
+          "elements": 9,
+          "relations": 0
+        },
+        {
+          "id": "densityheatmap",
+          "title": "Latency vs payload / density heatmap",
+          "profile": "chart.densityheatmap@1",
+          "elements": 10,
+          "relations": 0
+        },
+        {
+          "id": "calendar",
+          "title": "Deploys per day / calendar",
+          "profile": "chart.calendar@1",
+          "elements": 14,
+          "relations": 0
+        },
+        {
+          "id": "parallelcoords",
+          "title": "Service metric vectors / parallel coordinates",
+          "profile": "chart.parallelcoords@1",
+          "elements": 12,
+          "relations": 0
+        },
+        {
+          "id": "wordcloud",
+          "title": "Incident tags / word cloud",
+          "profile": "chart.wordcloud@1",
+          "elements": 10,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 5
+    },
+    {
+      "entry": "examples/basics/65-network-charts.ddn",
+      "sourceHashes": {
+        "website/examples/basics/65-network-charts.ddn": "951464bbbe15ea59637f490229fae791191e45dfcef85eef9448b24ed9f16441"
+      },
+      "sha256": "0b18fd4c4111b8b7c8d4540006c54f152967f3ba244c10c4a2f5d72aa8fa480f",
+      "definitions": 16,
+      "data": 0,
+      "views": [
+        {
+          "id": "arc",
+          "title": "Service calls / arc diagram",
+          "profile": "chart.arc@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "force",
+          "title": "Service calls / force-directed",
+          "profile": "chart.force@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "edgebundle",
+          "title": "Deployment routes / edge bundling",
+          "profile": "chart.edgebundle@1",
+          "elements": 8,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/66-chart-overlays.ddn",
+      "sourceHashes": {
+        "website/examples/basics/66-chart-overlays.ddn": "b633bfa38996da7ab32747317de19af38c2b29b5c32680e043487cd23d0e7edb"
+      },
+      "sha256": "d74a9df0548f213f3fe07330a8ea1ce2fcfbda209b5c90deff7709e2a2fa0774",
+      "definitions": 17,
+      "data": 0,
+      "views": [
+        {
+          "id": "errorbars",
+          "title": "Stage timings with measurement error / bar + error bars",
+          "profile": "chart.basic@1",
+          "elements": 5,
+          "relations": 0
+        },
+        {
+          "id": "regression",
+          "title": "Payload vs latency / point + least-squares trend",
+          "profile": "chart.basic@1",
+          "elements": 12,
+          "relations": 0
+        },
+        {
+          "id": "loess",
+          "title": "Payload vs latency / point + loess trend",
+          "profile": "chart.basic@1",
+          "elements": 12,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/67-geo-choropleth.ddn",
+      "sourceHashes": {
+        "website/examples/basics/67-geo-choropleth.ddn": "213f0a685d38a953aa1c3709cb8f33d6618f6e82f34038dd8e7368c9e188b2c3",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "46d1135a57a66490f9f4edca6dca08b21e919bd6ace95cd17409e2a836a94bb6",
+      "definitions": 12,
+      "data": 0,
+      "views": [
+        {
+          "id": "choropleth",
+          "title": "Synthetic adoption index / world choropleth",
+          "profile": "geo.choropleth@1",
+          "elements": 12,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/68-geo-symbols.ddn",
+      "sourceHashes": {
+        "website/examples/basics/68-geo-symbols.ddn": "8c422b301e8c94646f53518eb7fdd470b57a5e97349f7c9f34e3b904796772ea",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "922a49c458edce1845370240cf85366884f5b5f9a19fc68b011e98ba0feae044",
+      "definitions": 10,
+      "data": 0,
+      "views": [
+        {
+          "id": "symbols",
+          "title": "Synthetic seismic catalog / symbol map",
+          "profile": "geo.symbols@1",
+          "elements": 10,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/69-geo-projections.ddn",
+      "sourceHashes": {
+        "website/examples/basics/69-geo-projections.ddn": "758cf964e6c19cfcc769a8e6f4a3a970363927cf2d7c3a6f7046a287867fc707",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "2058a4d630538eb1b54c44d6de7b63ffbd3d8a4874f0ba90b43b343cb7de2632",
+      "definitions": 1,
+      "data": 0,
+      "views": [
+        {
+          "id": "mercator",
+          "title": "World outline / mercator",
+          "profile": "geo.outline@1",
+          "elements": 1,
+          "relations": 0
+        },
+        {
+          "id": "equirectangular",
+          "title": "World outline / equirectangular",
+          "profile": "geo.outline@1",
+          "elements": 1,
+          "relations": 0
+        },
+        {
+          "id": "albers",
+          "title": "World outline / albers",
+          "profile": "geo.outline@1",
+          "elements": 1,
+          "relations": 0
+        },
+        {
+          "id": "equalearth",
+          "title": "World outline / equal-earth",
+          "profile": "geo.outline@1",
+          "elements": 1,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 4
+    },
+    {
+      "entry": "examples/basics/70-motion-relations.ddn",
+      "sourceHashes": {
+        "website/examples/basics/70-motion-relations.ddn": "66cb1bda2946a270e9be314db21b57528f2c4660d2dad7e448d01521bb1d8d19",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "9b34d444bf7f58afe5bd0c717f8094b6cc162d476e0e084340be9e69881e8d47",
+      "definitions": 13,
+      "data": 0,
+      "views": [
+        {
+          "id": "animated",
+          "title": "Order pipeline / motion showcase",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/71-flow-traces.ddn",
+      "sourceHashes": {
+        "website/examples/basics/71-flow-traces.ddn": "ce13dbb7224a30310d56350e1a0cf55879b3a6b89d4ba02c3e8295e9cabf8016",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "0ce2d10209d0dcd4a94cd563fd846f11a7681bf27338fcd28ff17eabc7e291e9",
+      "definitions": 11,
+      "data": 0,
+      "views": [
+        {
+          "id": "traces",
+          "title": "Checkout / multi-hop flow traces",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/72-iso-charts.ddn",
+      "sourceHashes": {
+        "website/examples/basics/72-iso-charts.ddn": "0b7dd756de4116c8e4be283203cfadfb85b1585f17877896accd6a48a407c1d4",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "a50ee890dc546cd641a1caeb095731647c2f0958950209ea5869e878f2a47806",
+      "definitions": 12,
+      "data": 0,
+      "views": [
+        {
+          "id": "iso_bar",
+          "title": "Synthetic tier throughput / iso bar",
+          "profile": "chart.basic@1",
+          "elements": 4,
+          "relations": 0
+        },
+        {
+          "id": "iso_pie",
+          "title": "Synthetic tier share / iso pie",
+          "profile": "chart.basic@1",
+          "elements": 4,
+          "relations": 0
+        },
+        {
+          "id": "iso_donut",
+          "title": "Synthetic tier share / iso donut",
+          "profile": "chart.basic@1",
+          "elements": 4,
+          "relations": 0
+        },
+        {
+          "id": "iso_area",
+          "title": "Synthetic tier throughput / iso area ribbon",
+          "profile": "chart.basic@1",
+          "elements": 4,
+          "relations": 0
+        },
+        {
+          "id": "iso_treemap",
+          "title": "Synthetic tier throughput / iso treemap blocks",
+          "profile": "chart.treemap@1",
+          "elements": 4,
+          "relations": 0
+        },
+        {
+          "id": "iso_multiseries_bar",
+          "title": "Synthetic line throughput / iso multi-series bar",
+          "profile": "chart.quality@1",
+          "elements": 8,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 6
+    },
+    {
+      "entry": "examples/basics/73-iso-architecture.ddn",
+      "sourceHashes": {
+        "website/examples/basics/73-iso-architecture.ddn": "eda3fc2e96023ab8d27c0aca16e88c8f93d01a9e98486e960998bba25bbe93a8",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "ac99b16d6d7379212b931c71db8f87a9cb37f856faf3331c660527dd328911c3",
+      "definitions": 9,
+      "data": 0,
+      "views": [
+        {
+          "id": "iso_map",
+          "title": "Synthetic platform tiers / isometric",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/74-reusable-presets.ddn",
+      "sourceHashes": {
+        "website/examples/basics/74-reusable-presets.ddn": "448f37261a75319ca4eddcf3d548b80fffbe785369ceffb58806f184ebb2bb86",
+        "website/examples/basics/shared.ddn": "d7f914146489f2a8ad034a9fd2249e8d8a1f52dff2276d082e0182f2d6d4c010"
+      },
+      "sha256": "71310e48513cbb413412fd16ff46454ef4f04644afd656c869dc4922b74d8cfb",
+      "definitions": 18,
+      "data": 0,
+      "views": [
+        {
+          "id": "reuse",
+          "title": "Reusable presets / customer orders",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "traced",
+          "title": "Reusable presets / event trace",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/75-uml-class-complete.ddn",
+      "sourceHashes": {
+        "website/examples/basics/75-uml-class-complete.ddn": "482f59c4dd7fecf0b7452c928d5932278ec5f7f0d5e95c45808b4749eeaedf32"
+      },
+      "sha256": "401e7ce36eee825df0a38f34fae5e494c2d9a5dfe507a0d9494a0bf994e4d69a",
+      "definitions": 34,
+      "data": 0,
+      "views": [
+        {
+          "id": "associations",
+          "title": "UML class diagram / association ends",
+          "profile": "uml.structure@2",
+          "elements": 10,
+          "relations": 6
+        },
+        {
+          "id": "classifiers",
+          "title": "UML class diagram / classifiers",
+          "profile": "uml.structure@2",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/76-uml-sequence-complete.ddn",
+      "sourceHashes": {
+        "website/examples/basics/76-uml-sequence-complete.ddn": "f41b8d7c355ac62c9c67bc99ace6e3f793408ec9c286987f3ea56ae618d3660b"
+      },
+      "sha256": "18e80787cd4ddc736401188f424dbeae493431594bbc3eafde51188ec216c039",
+      "definitions": 19,
+      "data": 0,
+      "views": [
+        {
+          "id": "fragments",
+          "title": "UML sequence / fragments and gates",
+          "profile": "uml.sequence@2",
+          "elements": 3,
+          "relations": 7
+        },
+        {
+          "id": "states",
+          "title": "UML sequence / lifecycle and annotations",
+          "profile": "uml.sequence@2",
+          "elements": 3,
+          "relations": 6
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/77-uml-statemachine-complete.ddn",
+      "sourceHashes": {
+        "website/examples/basics/77-uml-statemachine-complete.ddn": "6ee5cae2a79bda0cc08e629f2d43a13d08e19c4cff35cecd737473d71fa6e305"
+      },
+      "sha256": "89b291b44f3b63c578a08f60f3775503775b4f4ad186ac932bc82cb14e5bf436",
+      "definitions": 43,
+      "data": 0,
+      "views": [
+        {
+          "id": "pseudostates",
+          "title": "UML state machine / activities and pseudostates",
+          "profile": "uml.statemachine@1",
+          "elements": 8,
+          "relations": 9
+        },
+        {
+          "id": "composite",
+          "title": "UML state machine / composite, history, submachine",
+          "profile": "uml.statemachine@1",
+          "elements": 14,
+          "relations": 12
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/78-uml-deployment.ddn",
+      "sourceHashes": {
+        "website/examples/basics/78-uml-deployment.ddn": "449d377f6a95b5b37b8ea697c4f8b8061bfba2628a634b9c7e8ef6ed3e1e1055"
+      },
+      "sha256": "4d4913dc46ff7772c2c3d8b2202a16bf26e8a68c2d5e81630c0d7ec39211561c",
+      "definitions": 23,
+      "data": 0,
+      "views": [
+        {
+          "id": "main",
+          "title": "UML deployment / nodes and artifacts",
+          "profile": "uml.deployment@1",
+          "elements": 7,
+          "relations": 6
+        },
+        {
+          "id": "nested",
+          "title": "UML deployment / nested nodes",
+          "profile": "uml.deployment@1",
+          "elements": 7,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/79-uml-composite.ddn",
+      "sourceHashes": {
+        "website/examples/basics/79-uml-composite.ddn": "c51140a62a32d3b904b58a478fd51cbf433bbb42a4e69c4255b75e74a2c5b7b2"
+      },
+      "sha256": "3445634077be12c89a470e2f19d0c20b6e67bb160837832f6a3c9bf59a7a7725",
+      "definitions": 27,
+      "data": 0,
+      "views": [
+        {
+          "id": "components",
+          "title": "UML component / ports and assembly",
+          "profile": "uml.composite@1",
+          "elements": 3,
+          "relations": 3
+        },
+        {
+          "id": "structures",
+          "title": "UML composite structure / parts and connectors",
+          "profile": "uml.composite@1",
+          "elements": 3,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/80-uml-activity.ddn",
+      "sourceHashes": {
+        "website/examples/basics/80-uml-activity.ddn": "534e1ad189fd195bb346d4f4712acf92a031504fb0e50947780b30f2edfe8330"
+      },
+      "sha256": "7d113336a9410554ccfac04b4edb9d59da0ff691148d660577861095f570a8ef",
+      "definitions": 37,
+      "data": 0,
+      "views": [
+        {
+          "id": "pins",
+          "title": "UML activity / pins, decision and merge",
+          "profile": "uml.activity@2",
+          "elements": 8,
+          "relations": 8
+        },
+        {
+          "id": "interrupts",
+          "title": "UML activity / signals, interrupts, exceptions",
+          "profile": "uml.activity@2",
+          "elements": 9,
+          "relations": 10
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/81-uml-remainder.ddn",
+      "sourceHashes": {
+        "website/examples/basics/81-uml-remainder.ddn": "34f8b085c6faaef818460a7814240b8a269b0e0610e19eb8b73980a7de70f527"
+      },
+      "sha256": "c3d9869dfc1fd77c5283a6446e74bbec209c4214ab9061fbfbe139acd2285401",
+      "definitions": 43,
+      "data": 0,
+      "views": [
+        {
+          "id": "objects",
+          "title": "Objects",
+          "profile": "uml.object@2",
+          "elements": 3,
+          "relations": 1
+        },
+        {
+          "id": "packages",
+          "title": "Packages",
+          "profile": "uml.structure@2",
+          "elements": 4,
+          "relations": 1
+        },
+        {
+          "id": "profiles",
+          "title": "Profile diagram",
+          "profile": "uml.profile@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "comms",
+          "title": "Communication",
+          "profile": "uml.communication@2",
+          "elements": 2,
+          "relations": 2
+        },
+        {
+          "id": "overview",
+          "title": "IO",
+          "profile": "uml.interaction_overview@2",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "detail",
+          "title": "Pay detail",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 1
+        },
+        {
+          "id": "timing",
+          "title": "Timing",
+          "profile": "uml.timing@2",
+          "elements": 2,
+          "relations": 1
+        },
+        {
+          "id": "usecases",
+          "title": "Use cases",
+          "profile": "uml.usecase@3",
+          "elements": 4,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 8
+    },
+    {
+      "entry": "examples/basics/82-bpmn-complete.ddn",
+      "sourceHashes": {
+        "website/examples/basics/82-bpmn-complete.ddn": "dc45c0b8fc7ef8fdf17a90747c5fd53c3656e6bd4e14468aea47eb9a8afc02a3"
+      },
+      "sha256": "af3f37de293834123d8cf5a21432fc7b6e0661214e383b50824dc642d03993b2",
+      "definitions": 46,
+      "data": 0,
+      "views": [
+        {
+          "id": "process",
+          "title": "Process",
+          "profile": "bpmn.process@1",
+          "elements": 16,
+          "relations": 16
+        },
+        {
+          "id": "collaboration",
+          "title": "Collaboration",
+          "profile": "bpmn.process@1",
+          "elements": 16,
+          "relations": 16
+        },
+        {
+          "id": "choreography",
+          "title": "Choreography",
+          "profile": "bpmn.choreography@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "conversation",
+          "title": "Conversation",
+          "profile": "bpmn.conversation@1",
+          "elements": 5,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 4
+    },
+    {
+      "entry": "examples/basics/83-cmmn-complete.ddn",
+      "sourceHashes": {
+        "website/examples/basics/83-cmmn-complete.ddn": "ca6011a594875f8828a938075651c44c5193aef0146eb47133314d629f3dd584"
+      },
+      "sha256": "b705a41a0edb7e8fd05ad05ff143dcb46ca83e2731d5070ed054d763f2e2da80",
+      "definitions": 19,
+      "data": 0,
+      "views": [
+        {
+          "id": "v",
+          "title": "Case",
+          "profile": "cmmn.complete@1",
+          "elements": 12,
+          "relations": 7
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/84-sysml-requirements.ddn",
+      "sourceHashes": {
+        "website/examples/basics/84-sysml-requirements.ddn": "e470c32893efec19e7866377acd091ecb80a7476b7a63ca8eb27094c1c9392ef"
+      },
+      "sha256": "bd279f8078d9a79b26ddc88928dc3d97163c35d33ebca561f0d4b0ffad570e6e",
+      "definitions": 23,
+      "data": 0,
+      "views": [
+        {
+          "id": "requirements",
+          "title": "Pump requirements",
+          "profile": "sysml.requirements@1",
+          "elements": 7,
+          "relations": 10
+        },
+        {
+          "id": "packages",
+          "title": "Model packages",
+          "profile": "sysml.package@1",
+          "elements": 3,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/85-sysml-blocks.ddn",
+      "sourceHashes": {
+        "website/examples/basics/85-sysml-blocks.ddn": "2dfba93378cc9d4b548aef669bfcc9cc0d409a96514912af09725a8cf48d5381"
+      },
+      "sha256": "a74dbb127a635c40e2d9ff2db3c889633758a9d8892b7bfac65f960bdfbd7b81",
+      "definitions": 29,
+      "data": 0,
+      "views": [
+        {
+          "id": "bdd",
+          "title": "Pump block definition",
+          "profile": "sysml.bdd@2",
+          "elements": 7,
+          "relations": 7
+        },
+        {
+          "id": "ibd",
+          "title": "Pump station internals",
+          "profile": "sysml.ibd@2",
+          "elements": 7,
+          "relations": 7
+        },
+        {
+          "id": "parametric",
+          "title": "Flow balance",
+          "profile": "sysml.parametric@2",
+          "elements": 7,
+          "relations": 7
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/86-sysml-behavioral.ddn",
+      "sourceHashes": {
+        "website/examples/basics/86-sysml-behavioral.ddn": "c297051263c2512c0c9faee6c7dbf683c4d0790e90b000b92cdba7acfe38a917"
+      },
+      "sha256": "d8e035a5eff5b81bee2bd1e781173c71d61e36d5f2373f365e46b45d755c3b78",
+      "definitions": 24,
+      "data": 0,
+      "views": [
+        {
+          "id": "usecase",
+          "title": "Station use cases",
+          "profile": "sysml.usecase@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "activity",
+          "title": "Metering activity",
+          "profile": "sysml.activity@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "states",
+          "title": "Pump states",
+          "profile": "sysml.statemachine@1",
+          "elements": 3,
+          "relations": 3
+        },
+        {
+          "id": "sequence",
+          "title": "Start sequence",
+          "profile": "sysml.sequence@1",
+          "elements": 3,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 4
+    },
+    {
+      "entry": "examples/basics/87-dmn-drd.ddn",
+      "sourceHashes": {
+        "website/examples/basics/87-dmn-drd.ddn": "286a7d2e8cbe483ea9ef637f3254ee4bb92c628244b8c7ac8602956e103686eb"
+      },
+      "sha256": "be4858bf057dd8d685b3e2bedd948ec8de9cfc46be60e0f7ab0d647a94ab48dd",
+      "definitions": 18,
+      "data": 0,
+      "views": [
+        {
+          "id": "drd",
+          "title": "Claim handling DRD",
+          "profile": "dmn.drd@1",
+          "elements": 5,
+          "relations": 5
+        },
+        {
+          "id": "table",
+          "title": "Routing rules — priority",
+          "profile": "decision.rules@1",
+          "elements": 2,
+          "relations": 0
+        },
+        {
+          "id": "table_collect",
+          "title": "Routing rules — collect with completeness",
+          "profile": "decision.rules@1",
+          "elements": 2,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/88-soaml.ddn",
+      "sourceHashes": {
+        "website/examples/basics/88-soaml.ddn": "1ab97a19ab74786a9525f6f61ff31cca501ca1d359ffa5c557b1b3750d5a7367"
+      },
+      "sha256": "03c40595dbf76a572cddba11880db6a4f86f8be8efb82e14e9512cf5e7007927",
+      "definitions": 28,
+      "data": 0,
+      "views": [
+        {
+          "id": "arch",
+          "title": "Retail service architecture",
+          "profile": "soaml.services@1",
+          "elements": 8,
+          "relations": 7
+        },
+        {
+          "id": "choreography",
+          "title": "Billing choreography",
+          "profile": "uml.sequence@2",
+          "elements": 2,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/89-uaf.ddn",
+      "sourceHashes": {
+        "website/examples/basics/89-uaf.ddn": "2c67d9a2aa9239da1668c0b1597acbe4e007c24c3ef01f04aa5df36e9b0665eb"
+      },
+      "sha256": "86ba48b5e1812713880abef69d29225cb15c8e239938e32a9400231ab6240a35",
+      "definitions": 81,
+      "data": 0,
+      "views": [
+        {
+          "id": "strategic",
+          "title": "St — Strategic",
+          "profile": "uaf.strategic@1",
+          "elements": 5,
+          "relations": 3
+        },
+        {
+          "id": "operational",
+          "title": "Op — Operational",
+          "profile": "uaf.operational@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "services",
+          "title": "Svc — Services",
+          "profile": "uaf.services@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "systems",
+          "title": "Sys — Systems",
+          "profile": "uaf.systems@1",
+          "elements": 3,
+          "relations": 3
+        },
+        {
+          "id": "personnel",
+          "title": "Pr — Personnel",
+          "profile": "uaf.personnel@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "resources",
+          "title": "Rs — Resources",
+          "profile": "uaf.resources@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "security",
+          "title": "Sec — Security",
+          "profile": "uaf.security@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "projects",
+          "title": "Pj — Projects",
+          "profile": "uaf.projects@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "standards",
+          "title": "Std — Standards",
+          "profile": "uaf.standards@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "actualresources",
+          "title": "AR — Actual resources",
+          "profile": "uaf.actualresources@1",
+          "elements": 3,
+          "relations": 3
+        },
+        {
+          "id": "dictionary",
+          "title": "Dct — Dictionary",
+          "profile": "uaf.dictionary@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "summary",
+          "title": "S&O — Summary and overview",
+          "profile": "uaf.summary@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 12
+    },
+    {
+      "entry": "examples/basics/90-drilldown.ddn",
+      "sourceHashes": {
+        "website/examples/basics/90-drilldown.ddn": "285ac50aa15bfe954f7fb179f3d54056ec91d7c3d9eb95e54c4674cd42ab198d"
+      },
+      "sha256": "24ce644f22c7e499a01441bda548269853725123b2ef6c882348c5bf083ee278",
+      "definitions": 10,
+      "data": 0,
+      "views": [
+        {
+          "id": "overview",
+          "title": "Fulfillment overview",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "detail",
+          "title": "Order handling detail",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/91-iso5807-flowchart.ddn",
+      "sourceHashes": {
+        "website/examples/basics/91-iso5807-flowchart.ddn": "03154ff690aa9e67828fd4147599fb73389fcdf3ded9e9f5b56f4a70cee209c4"
+      },
+      "sha256": "c29aa0c10c0b16c7273372b167fee65ad83b609fb9629df531eee6bdc2be6c5e",
+      "definitions": 30,
+      "data": 0,
+      "views": [
+        {
+          "id": "chart",
+          "title": "ISO 5807 warehouse flow",
+          "profile": "flow.iso5807@1",
+          "elements": 15,
+          "relations": 15
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/92-c4-epc.ddn",
+      "sourceHashes": {
+        "website/examples/basics/92-c4-epc.ddn": "10a1b0da1ff2c14929b740ae03bafd64aec3cf61bc7f39270562371b32f30300"
+      },
+      "sha256": "be13dcb24c932227e756008c2d28f5a19327313a5057ef9f896366c5e447e55a",
+      "definitions": 41,
+      "data": 0,
+      "views": [
+        {
+          "id": "deployment",
+          "title": "Shop deployment",
+          "profile": "c4.deployment@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "dynamic",
+          "title": "Browse dynamic",
+          "profile": "c4.dynamic@1",
+          "elements": 3,
+          "relations": 4
+        },
+        {
+          "id": "epc",
+          "title": "Fulfillment EPC",
+          "profile": "epc.complete@1",
+          "elements": 13,
+          "relations": 14
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/basics/93-msc.ddn",
+      "sourceHashes": {
+        "website/examples/basics/93-msc.ddn": "6b5785f2db5a93623c0428949b8e340286a8bc7664a377f769221c7be88875bb"
+      },
+      "sha256": "b199903357dfedce660e9e9639eeb825c59d4dffcbc43198bf9fad8c8382ac13",
+      "definitions": 13,
+      "data": 0,
+      "views": [
+        {
+          "id": "chart",
+          "title": "Order MSC",
+          "profile": "msc.basic@1",
+          "elements": 4,
+          "relations": 6
+        },
+        {
+          "id": "billing",
+          "title": "Billing HMSC detail",
+          "profile": "msc.basic@1",
+          "elements": 2,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/94-idef0.ddn",
+      "sourceHashes": {
+        "website/examples/basics/94-idef0.ddn": "1897e581442711e1fdeeec2446f70144ab7979c7368b5af17e2423f363007272"
+      },
+      "sha256": "35adfcf26ca51989d07be8f613c5f315e0850601cea6a0b3c99f280819aa41a8",
+      "definitions": 17,
+      "data": 0,
+      "views": [
+        {
+          "id": "context",
+          "title": "A-0 context",
+          "profile": "idef0.basic@1",
+          "elements": 1,
+          "relations": 0
+        },
+        {
+          "id": "detail",
+          "title": "A0 decomposition",
+          "profile": "idef0.basic@1",
+          "elements": 3,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/basics/95-petrinet.ddn",
+      "sourceHashes": {
+        "website/examples/basics/95-petrinet.ddn": "e0f821e594213aa37c12b65fc818a06a845f7c0ee8d130c11e121021dc2670e1"
+      },
+      "sha256": "7605695ade9557851ea33f7953a3f3b9f1e01ff08213d15197057ad3bf9236e4",
+      "definitions": 11,
+      "data": 0,
+      "views": [
+        {
+          "id": "net",
+          "title": "Producer/consumer net",
+          "profile": "petri.basic@1",
+          "elements": 5,
+          "relations": 6
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/96-orm.ddn",
+      "sourceHashes": {
+        "website/examples/basics/96-orm.ddn": "e8ac91d7d63f02a0d0bd333d32032698788a986cb24c1059f13d615042688bb6"
+      },
+      "sha256": "34af6a786f279436491b6fd8cbf6dd7f91b64efa7efdff5163bdb1df0dcdbf03",
+      "definitions": 13,
+      "data": 0,
+      "views": [
+        {
+          "id": "model",
+          "title": "Customer fact model",
+          "profile": "orm.basic@1",
+          "elements": 5,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/97-vsm.ddn",
+      "sourceHashes": {
+        "website/examples/basics/97-vsm.ddn": "44d7f4589554273e15abb1816332fce0911375c390a14c77d72775e5e71eff89"
+      },
+      "sha256": "f58f0bf530291892f0d7a6e7fb3baf396e6270e02767dfef63a6d2276c02e76a",
+      "definitions": 21,
+      "data": 0,
+      "views": [
+        {
+          "id": "map",
+          "title": "Current state map",
+          "profile": "vsm.basic@1",
+          "elements": 9,
+          "relations": 9
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/98-icons.ddn",
+      "sourceHashes": {
+        "website/examples/basics/98-icons.ddn": "7b027132de130391430a61d517b5e3d8ce718599b094eca9aa380ed3bd205eb9"
+      },
+      "sha256": "cff5571c8cc3e9366d028f71d73074e758c7aff0e73739442afc0d8b0ef25689",
+      "definitions": 7,
+      "data": 0,
+      "views": [
+        {
+          "id": "net",
+          "title": "Icon network",
+          "profile": "network.basic@1",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/basics/99-sdl.ddn",
+      "sourceHashes": {
+        "website/examples/basics/99-sdl.ddn": "dc1dff67ecc84e4de7728ebf14ab0e204b80557a3ed70f908272945d806709fb"
+      },
+      "sha256": "5b34635d5e877d7f2cca8378fd247e47044122d608d6b72459b142d851bebd41",
+      "definitions": 38,
+      "data": 0,
+      "views": [
+        {
+          "id": "system",
+          "title": "SDL system",
+          "profile": "sdl.basic@1",
+          "elements": 5,
+          "relations": 3
+        },
+        {
+          "id": "process",
+          "title": "Order process",
+          "profile": "sdl.process@1",
+          "elements": 14,
+          "relations": 14
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/gallery/src/chen-nary.ddn",
+      "sourceHashes": {
+        "website/examples/gallery/src/chen-nary.ddn": "d70907d3b25b038e2bde79063ff0648a56aea933b344814fc063f0a7e2412363"
+      },
+      "sha256": "c9eb9ee31484ce3e083c66fcd0fe78d1b8891423c2f32e8bb5ee1aa62205429e",
+      "definitions": 7,
+      "data": 0,
+      "views": [
+        {
+          "id": "main",
+          "title": "main",
+          "profile": "chen.nary@3",
+          "elements": 3,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/gallery/src/layouts.ddn",
+      "sourceHashes": {
+        "website/examples/gallery/src/layouts.ddn": "5074b4692d93b15979fe060b0ba62268e5363395bae5d6e5588c3036092b7e38"
+      },
+      "sha256": "99a29a737158a31072d82db6a958bf938f67f33940b12844960486816737977c",
+      "definitions": 11,
+      "data": 0,
+      "views": [
+        {
+          "id": "grid",
+          "title": "Layouts / grid",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "manual",
+          "title": "Layouts / manual (pinned)",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "layered",
+          "title": "Layouts / layered",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "tree",
+          "title": "Layouts / tree",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "mindmap",
+          "title": "Layouts / mindmap",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "grouped",
+          "title": "Layouts / grouped",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "fit_grid",
+          "title": "Layouts / fit_grid",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "circular",
+          "title": "Layouts / circular",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "radial",
+          "title": "Layouts / radial",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "spanning_tree",
+          "title": "Layouts / spanning_tree",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "organic",
+          "title": "Layouts / organic",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "ladder",
+          "title": "Layouts / ladder",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 12
+    },
+    {
+      "entry": "examples/gallery/src/looks.ddn",
+      "sourceHashes": {
+        "website/examples/gallery/src/looks.ddn": "739601141bb5a372e2af72786be537c3283e40f9f54bcd1c357a61a2c29f3e2d"
+      },
+      "sha256": "1f6f6276da67331b3ede8dcbb20894d4ed4dd38be2a03b0e98511c26e357ae58",
+      "definitions": 11,
+      "data": 0,
+      "views": [
+        {
+          "id": "classic_default",
+          "title": "Looks / classic × default",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "classic_neutral",
+          "title": "Looks / classic × neutral",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "classic_dark",
+          "title": "Looks / classic × dark",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "classic_night",
+          "title": "Looks / classic × night",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "classic_forest",
+          "title": "Looks / classic × forest",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "classic_base",
+          "title": "Looks / classic × base",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "handdrawn_default",
+          "title": "Looks / handDrawn × default",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "handdrawn_neutral",
+          "title": "Looks / handDrawn × neutral",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "handdrawn_dark",
+          "title": "Looks / handDrawn × dark",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "handdrawn_night",
+          "title": "Looks / handDrawn × night",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "handdrawn_forest",
+          "title": "Looks / handDrawn × forest",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "handdrawn_base",
+          "title": "Looks / handDrawn × base",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "neo_default",
+          "title": "Looks / neo × default",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "neo_neutral",
+          "title": "Looks / neo × neutral",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "neo_dark",
+          "title": "Looks / neo × dark",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "neo_night",
+          "title": "Looks / neo × night",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "neo_forest",
+          "title": "Looks / neo × forest",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        },
+        {
+          "id": "neo_base",
+          "title": "Looks / neo × base",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 18
+    },
+    {
+      "entry": "examples/gallery/src/marks.ddn",
+      "sourceHashes": {
+        "website/examples/gallery/src/marks.ddn": "13f89334e67872ddbd1d7647201276a9573d5de399100da3952c319c23ef05c0"
+      },
+      "sha256": "cbca5fb3cba7c8a8f9a15475f64d72953d340616715605ab939958b938787a2b",
+      "definitions": 51,
+      "data": 0,
+      "views": [
+        {
+          "id": "mark_bar",
+          "title": "Chart marks / bar",
+          "profile": "chart.basic@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_line",
+          "title": "Chart marks / line",
+          "profile": "chart.basic@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_area",
+          "title": "Chart marks / area",
+          "profile": "chart.basic@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_point",
+          "title": "Chart marks / point",
+          "profile": "chart.basic@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_pie",
+          "title": "Chart marks / pie",
+          "profile": "chart.basic@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_donut",
+          "title": "Chart marks / donut",
+          "profile": "chart.basic@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_radar",
+          "title": "Chart marks / radar",
+          "profile": "chart.radar@1",
+          "elements": 10,
+          "relations": 0
+        },
+        {
+          "id": "mark_funnel",
+          "title": "Chart marks / funnel",
+          "profile": "chart.funnel@1",
+          "elements": 5,
+          "relations": 0
+        },
+        {
+          "id": "mark_gauge",
+          "title": "Chart marks / gauge",
+          "profile": "chart.gauge@1",
+          "elements": 1,
+          "relations": 0
+        },
+        {
+          "id": "mark_candlestick",
+          "title": "Chart marks / candlestick",
+          "profile": "chart.candlestick@1",
+          "elements": 5,
+          "relations": 0
+        },
+        {
+          "id": "mark_treemap",
+          "title": "Chart marks / treemap",
+          "profile": "chart.treemap@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "mark_sankey",
+          "title": "Chart marks / sankey",
+          "profile": "chart.sankey@1",
+          "elements": 5,
+          "relations": 0
+        },
+        {
+          "id": "mark_histogram",
+          "title": "Chart marks / histogram",
+          "profile": "chart.histogram@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_density",
+          "title": "Chart marks / density",
+          "profile": "chart.density@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_qq",
+          "title": "Chart marks / qq",
+          "profile": "chart.qq@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_quantiledot",
+          "title": "Chart marks / quantiledot",
+          "profile": "chart.quantiledot@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_dotplot",
+          "title": "Chart marks / dotplot",
+          "profile": "chart.dotplot@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_boxplot",
+          "title": "Chart marks / boxplot",
+          "profile": "chart.boxplot@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_violin",
+          "title": "Chart marks / violin",
+          "profile": "chart.violin@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_beeswarm",
+          "title": "Chart marks / beeswarm",
+          "profile": "chart.beeswarm@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_topk",
+          "title": "Chart marks / topk",
+          "profile": "chart.topk@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_tidytree",
+          "title": "Chart marks / tidytree",
+          "profile": "chart.tidytree@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "mark_radialtree",
+          "title": "Chart marks / radialtree",
+          "profile": "chart.radialtree@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "mark_circlepack",
+          "title": "Chart marks / circlepack",
+          "profile": "chart.circlepack@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "mark_sunburst",
+          "title": "Chart marks / sunburst",
+          "profile": "chart.sunburst@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "mark_packedbubble",
+          "title": "Chart marks / packedbubble",
+          "profile": "chart.packedbubble@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "mark_heatmap",
+          "title": "Chart marks / heatmap",
+          "profile": "chart.heatmap@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_densityheatmap",
+          "title": "Chart marks / densityheatmap",
+          "profile": "chart.densityheatmap@1",
+          "elements": 5,
+          "relations": 0
+        },
+        {
+          "id": "mark_calendar",
+          "title": "Chart marks / calendar",
+          "profile": "chart.calendar@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "mark_parallelcoords",
+          "title": "Chart marks / parallelcoords",
+          "profile": "chart.parallelcoords@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_wordcloud",
+          "title": "Chart marks / wordcloud",
+          "profile": "chart.wordcloud@1",
+          "elements": 10,
+          "relations": 0
+        },
+        {
+          "id": "mark_arc",
+          "title": "Chart marks / arc",
+          "profile": "chart.arc@1",
+          "elements": 5,
+          "relations": 0
+        },
+        {
+          "id": "mark_force",
+          "title": "Chart marks / force",
+          "profile": "chart.force@1",
+          "elements": 5,
+          "relations": 0
+        },
+        {
+          "id": "mark_edgebundle",
+          "title": "Chart marks / edgebundle",
+          "profile": "chart.edgebundle@1",
+          "elements": 5,
+          "relations": 0
+        },
+        {
+          "id": "mark_iso_bar",
+          "title": "Chart marks / iso bar",
+          "profile": "chart.basic@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_iso_pie",
+          "title": "Chart marks / iso pie",
+          "profile": "chart.basic@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_iso_donut",
+          "title": "Chart marks / iso donut",
+          "profile": "chart.basic@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_iso_area",
+          "title": "Chart marks / iso area",
+          "profile": "chart.basic@1",
+          "elements": 8,
+          "relations": 0
+        },
+        {
+          "id": "mark_iso_treemap",
+          "title": "Chart marks / iso treemap",
+          "profile": "chart.treemap@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "mark_iso_multiseries",
+          "title": "Chart marks / iso multi-series bar",
+          "profile": "chart.quality@1",
+          "elements": 8,
+          "relations": 0
+        }
+      ],
+      "renderedViews": 40
+    },
+    {
+      "entry": "examples/gallery/src/routing.ddn",
+      "sourceHashes": {
+        "website/examples/gallery/src/routing.ddn": "81b2eb960e6cd450b5ebdf0a8cd0f5c4aefb85db7f1be2a0240a86a992e936a7"
+      },
+      "sha256": "ad6396726c8d94e0f9b68e8a69b4eb84c27c0b1a0c3b14c5880e865852f6bdf5",
+      "definitions": 21,
+      "data": 0,
+      "views": [
+        {
+          "id": "orthogonal_classic",
+          "title": "Routing / orthogonal × classic",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 6
+        },
+        {
+          "id": "straight_classic",
+          "title": "Routing / straight × classic",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 5
+        },
+        {
+          "id": "curved_classic",
+          "title": "Routing / curved bezier × classic",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 6
+        },
+        {
+          "id": "rounded_classic",
+          "title": "Routing / rounded × classic",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 6
+        },
+        {
+          "id": "orthogonal_handdrawn",
+          "title": "Routing / orthogonal × handDrawn",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 6
+        },
+        {
+          "id": "straight_handdrawn",
+          "title": "Routing / straight × handDrawn",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 5
+        },
+        {
+          "id": "curved_handdrawn",
+          "title": "Routing / curved bezier × handDrawn",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 6
+        },
+        {
+          "id": "rounded_handdrawn",
+          "title": "Routing / rounded × handDrawn",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 6
+        },
+        {
+          "id": "orthogonal_neo",
+          "title": "Routing / orthogonal × neo",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 6
+        },
+        {
+          "id": "straight_neo",
+          "title": "Routing / straight × neo",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 5
+        },
+        {
+          "id": "curved_neo",
+          "title": "Routing / curved bezier × neo",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 6
+        },
+        {
+          "id": "rounded_neo",
+          "title": "Routing / rounded × neo",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 6
+        }
+      ],
+      "renderedViews": 12
+    },
+    {
+      "entry": "examples/gallery/src/spacing.ddn",
+      "sourceHashes": {
+        "website/examples/gallery/src/spacing.ddn": "671acb7f7612a4fefd5f3bbc6d4a1a4c573b5f57fa3596dbda02a5e560c4d0f2"
+      },
+      "sha256": "5876adb9e2980c826783efa03db210e73b7078b54bd856e2e20dc0f3cb3a79fe",
+      "definitions": 9,
+      "data": 0,
+      "views": [
+        {
+          "id": "tight",
+          "title": "Spacing / tight",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "normal",
+          "title": "Spacing / normal",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "loose",
+          "title": "Spacing / loose",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "expanded",
+          "title": "Spacing / expanded",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 4
+    },
+    {
+      "entry": "examples/live/adaptive-lab.ddn",
+      "sourceHashes": {
+        "website/examples/live/adaptive-lab.ddn": "2311aabf7c90155ea4f6a0fdf642b00f75d23d14f3f0dcf2144ddb023ea89a14"
+      },
+      "sha256": "0ba69099c9e4ac4c99e65139f666baa9e05932a125ed7e9d1375c3172be9d621",
+      "definitions": 56,
+      "data": 0,
+      "views": [
+        {
+          "id": "automatic",
+          "title": "Adaptive order flow / no positional coordinates",
+          "profile": "ddn@1",
+          "elements": 7,
+          "relations": 6
+        },
+        {
+          "id": "ports_first",
+          "title": "1 / Move connection points before moving boxes",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 4
+        },
+        {
+          "id": "move_unpinned",
+          "title": "2 / Move unpinned nodes after connection-point trials",
+          "profile": "ddn@1",
+          "elements": 6,
+          "relations": 4
+        },
+        {
+          "id": "pinned_crossing",
+          "title": "3 / Short pinned routes with explicit nonconnection marks",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        },
+        {
+          "id": "obstacle",
+          "title": "Named field endpoints / route around an unrelated box",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 5
+    },
+    {
+      "entry": "examples/live/pinned-patterns.ddn",
+      "sourceHashes": {
+        "website/examples/live/pinned-patterns.ddn": "add9055e02ace8679ae500e06e93a270eb79527f195858866ff5c301aa836b40"
+      },
+      "sha256": "914f2f94d8e21c8755ec73d4acb72a4ac4aa84525508f122156ad104cc579ab6",
+      "definitions": 29,
+      "data": 0,
+      "views": [
+        {
+          "id": "circular",
+          "title": "Circular / two fixed pins",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        },
+        {
+          "id": "fit_grid",
+          "title": "Fit to grid / around two pins",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        },
+        {
+          "id": "radial",
+          "title": "Radial / graph-distance rings",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        },
+        {
+          "id": "layered",
+          "title": "Hierarchical / directed layers",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        },
+        {
+          "id": "tree",
+          "title": "Tree / breadth levels from fixed pins",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        },
+        {
+          "id": "organic",
+          "title": "Organic / movable neighbours, fixed core",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        },
+        {
+          "id": "single_pin",
+          "title": "One pin / circular neighbours",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        },
+        {
+          "id": "no_pins",
+          "title": "No pins / deterministic radial root",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        },
+        {
+          "id": "paused",
+          "title": "Pause placement / retain the current scene",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        },
+        {
+          "id": "sketch_night",
+          "title": "Same anchored circle / hand-drawn night",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 9
+        }
+      ],
+      "renderedViews": 10
+    },
+    {
+      "entry": "examples/live/routing-lab.ddn",
+      "sourceHashes": {
+        "website/examples/live/routing-lab.ddn": "f0c7d66dbbfde16a3c47401f5d359e1276d11019862eeb64be212e920dab08ea"
+      },
+      "sha256": "27411d4657514882fabcb0e8bbdceb0cfe0103b5a1d72aadf9d2a5aa21ee14e1",
+      "definitions": 10,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "Order acceptance / illustration",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/projections/views.ddn",
+      "sourceHashes": {
+        "website/examples/projections/views.ddn": "df80179ec0ff0ca8fd785e91308f623fa38ceb7c8399cfa89ac7fba76796844b",
+        "website/examples/projections/model.ddn": "d831d4f37f42b2a1710abc5b8071644074698ad58a7d041e611ae27fe00eb220",
+        "website/examples/projections/formats.ddn": "c1ac7ec542e087e3ef2d78d81257d18a637dd0d231952dcf0813e7eae8b6e6c9"
+      },
+      "sha256": "d306237f07dbbee0b0ed328b48707db9e53bb92661c8d65ba4678717fe5317ae",
+      "definitions": 126,
+      "data": 0,
+      "views": [
+        {
+          "id": "flowchart",
+          "title": "01 / Purchasing control flow",
+          "profile": "flow.basic@1",
+          "elements": 9,
+          "relations": 9
+        },
+        {
+          "id": "responsibility_graph",
+          "title": "02 / Shared responsibility assignments",
+          "profile": "ddn@1",
+          "elements": 13,
+          "relations": 16
+        },
+        {
+          "id": "raci",
+          "title": "03 / Model-derived RACI",
+          "profile": "matrix.raci@1",
+          "elements": 13,
+          "relations": 16
+        },
+        {
+          "id": "crud",
+          "title": "04 / Model-derived CRUD",
+          "profile": "matrix.crud@1",
+          "elements": 12,
+          "relations": 16
+        },
+        {
+          "id": "dfd_gane",
+          "title": "05 / Numbered Gane–Sarson-style DFD",
+          "profile": "dfd.gane_sarson@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "dfd_yourdon",
+          "title": "06 / Yourdon-style DFD",
+          "profile": "dfd.yourdon@1",
+          "elements": 6,
+          "relations": 5
+        },
+        {
+          "id": "structure",
+          "title": "07 / Declared class / interface subset",
+          "profile": "uml.structure@1",
+          "elements": 6,
+          "relations": 4
+        },
+        {
+          "id": "usecases",
+          "title": "08 / Actor and use-case subset",
+          "profile": "uml.usecase@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "requirements",
+          "title": "09 / Requirement traceability",
+          "profile": "requirements.basic@1",
+          "elements": 4,
+          "relations": 3
+        },
+        {
+          "id": "erd",
+          "title": "10 / Entity-field representation",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "chen",
+          "title": "11 / Chen binary projection",
+          "profile": "chen.basic@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "chart_bar",
+          "title": "12 / Synthetic monthly value — bar",
+          "profile": "chart.basic@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "chart_line",
+          "title": "13 / Synthetic monthly value — line",
+          "profile": "chart.basic@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "chart_area",
+          "title": "14 / Synthetic monthly value — area",
+          "profile": "chart.basic@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "chart_pie",
+          "title": "15 / Synthetic monthly value — pie",
+          "profile": "chart.basic@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "chart_donut",
+          "title": "16 / Synthetic monthly value — donut",
+          "profile": "chart.basic@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "scatter",
+          "title": "17 / Cost versus recorded value",
+          "profile": "chart.basic@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "time_series",
+          "title": "18 / UTC monthly observations",
+          "profile": "chart.basic@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "record_table",
+          "title": "19 / Shared observation table",
+          "profile": "table.records@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "decision_table",
+          "title": "20 / Declarative decision-table presentation",
+          "profile": "table.records@1",
+          "elements": 4,
+          "relations": 0
+        },
+        {
+          "id": "gantt",
+          "title": "21 / Supplied-date procurement schedule",
+          "profile": "timeline.basic@1",
+          "elements": 9,
+          "relations": 11
+        },
+        {
+          "id": "schedule_table",
+          "title": "22 / Schedule source records",
+          "profile": "table.records@1",
+          "elements": 9,
+          "relations": 9
+        },
+        {
+          "id": "swot",
+          "title": "23 / Reusable SWOT panel template",
+          "profile": "panels.basic@1",
+          "elements": 12,
+          "relations": 0
+        },
+        {
+          "id": "sipoc",
+          "title": "24 / SIPOC from shared notes",
+          "profile": "panels.basic@1",
+          "elements": 12,
+          "relations": 0
+        },
+        {
+          "id": "journey",
+          "title": "25 / Service journey with spanning panels",
+          "profile": "panels.basic@1",
+          "elements": 12,
+          "relations": 0
+        },
+        {
+          "id": "matrix_general",
+          "title": "26 / General relationship matrix",
+          "profile": "matrix.relations@1",
+          "elements": 13,
+          "relations": 16
+        },
+        {
+          "id": "shape_atlas",
+          "title": "27 / Composable semantic silhouettes",
+          "profile": "ddn@1",
+          "elements": 25,
+          "relations": 21
+        }
+      ],
+      "renderedViews": 27
+    },
+    {
+      "entry": "examples/quality/views.ddn",
+      "sourceHashes": {
+        "website/examples/quality/views.ddn": "7ef0c495b6b71c4d5d19047d9e106484445e82619527887cfed0926c579d4190",
+        "website/examples/quality/model.ddn": "8b14fb0f6f5ed57d94b696b47f3c056ff6f993aec48938849c204a6d6e297c60",
+        "website/examples/quality/details.ddn": "692af432065001ef24a2dba02db7621519ab6ebdc2ae2d6380b4c8794dab7575",
+        "website/examples/quality/formats.ddn": "d3032308ca40e9344c38a736a52e16ae00d0b7ec7e1a757a536fec4831c19921"
+      },
+      "sha256": "4ceef17fda885a0c2165cec6194645af5100f57d873f80534f894433beb8e17d",
+      "definitions": 200,
+      "data": 0,
+      "views": [
+        {
+          "id": "fishbone",
+          "title": "01 / Possible causes",
+          "profile": "fishbone.basic@1",
+          "elements": 19,
+          "relations": 20
+        },
+        {
+          "id": "fishbone_sketch",
+          "title": "01 / Possible causes — sketch",
+          "profile": "fishbone.basic@1",
+          "elements": 19,
+          "relations": 20
+        },
+        {
+          "id": "heat_numeric",
+          "title": "02 / Review score — numeric",
+          "profile": "matrix.heatmap@1",
+          "elements": 12,
+          "relations": 18
+        },
+        {
+          "id": "heat_bands",
+          "title": "02 / Review score — bands",
+          "profile": "matrix.heatmap@1",
+          "elements": 12,
+          "relations": 18
+        },
+        {
+          "id": "heat_categories",
+          "title": "02 / Review score — categories",
+          "profile": "matrix.heatmap@1",
+          "elements": 12,
+          "relations": 18
+        },
+        {
+          "id": "raci",
+          "title": "03 / Quality responsibility assignments",
+          "profile": "matrix.raci@1",
+          "elements": 12,
+          "relations": 18
+        },
+        {
+          "id": "crud",
+          "title": "04 / Inspection data access",
+          "profile": "matrix.crud@1",
+          "elements": 12,
+          "relations": 18
+        },
+        {
+          "id": "responsibility_graph",
+          "title": "05 / Same assignments as a graph",
+          "profile": "ddn@1",
+          "elements": 12,
+          "relations": 18
+        },
+        {
+          "id": "grouped_bars",
+          "title": "06 / Defects — grouped bars",
+          "profile": "chart.quality@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "stacked_bars",
+          "title": "06 / Defects — stacked bars",
+          "profile": "chart.quality@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "percent_bars",
+          "title": "06 / Defects — percent bars",
+          "profile": "chart.quality@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "multiseries_line",
+          "title": "06 / Defects — multiseries line",
+          "profile": "chart.quality@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "multiseries_area",
+          "title": "06 / Defects — multiseries area",
+          "profile": "chart.quality@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "actual_target",
+          "title": "07 / Actual versus target",
+          "profile": "chart.quality@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "histogram",
+          "title": "08 / Dimension measurements — count",
+          "profile": "chart.quality@1",
+          "elements": 24,
+          "relations": 0
+        },
+        {
+          "id": "histogram_density",
+          "title": "08 / Dimension measurements — density",
+          "profile": "chart.quality@1",
+          "elements": 24,
+          "relations": 0
+        },
+        {
+          "id": "pareto",
+          "title": "09 / Defect priorities",
+          "profile": "chart.quality@1",
+          "elements": 4,
+          "relations": 0
+        },
+        {
+          "id": "waterfall",
+          "title": "10 / Cost-of-quality reconciliation",
+          "profile": "chart.quality@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "boxplot",
+          "title": "11 / Machine variation — tukey_1_5",
+          "profile": "chart.quality@1",
+          "elements": 24,
+          "relations": 0
+        },
+        {
+          "id": "boxplot_minmax",
+          "title": "11 / Machine variation — minmax",
+          "profile": "chart.quality@1",
+          "elements": 24,
+          "relations": 0
+        },
+        {
+          "id": "lifecycle",
+          "title": "12 / Corrective-action lifecycle",
+          "profile": "state.flat@1",
+          "elements": 7,
+          "relations": 7
+        },
+        {
+          "id": "lifecycle_trace",
+          "title": "13 / Corrective-action retry trace",
+          "profile": "state.flat@1",
+          "elements": 7,
+          "relations": 7
+        },
+        {
+          "id": "decision_unique",
+          "title": "14 / Disposition policy — unique",
+          "profile": "decision.rules@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "decision_first",
+          "title": "14 / Disposition policy — first",
+          "profile": "decision.rules@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "decision_collect",
+          "title": "14 / Disposition policy — collect",
+          "profile": "decision.rules@1",
+          "elements": 6,
+          "relations": 0
+        },
+        {
+          "id": "measurement_table",
+          "title": "15 / Shared measurement observations",
+          "profile": "table.records@1",
+          "elements": 24,
+          "relations": 0
+        },
+        {
+          "id": "defect_table",
+          "title": "16 / Shared defect counts",
+          "profile": "table.records@1",
+          "elements": 4,
+          "relations": 0
+        },
+        {
+          "id": "dashboard_quality",
+          "title": "17 / Dashboard Quality",
+          "profile": "panels.composed@1",
+          "elements": 1,
+          "relations": 0
+        },
+        {
+          "id": "dashboard_operations",
+          "title": "17 / Dashboard Operations",
+          "profile": "panels.composed@1",
+          "elements": 1,
+          "relations": 0
+        },
+        {
+          "id": "dashboard_repeated",
+          "title": "17 / Dashboard Repeated",
+          "profile": "panels.composed@1",
+          "elements": 1,
+          "relations": 0
+        },
+        {
+          "id": "chen_extended",
+          "title": "18 / Binary Chen details",
+          "profile": "chen.binary@2",
+          "elements": 2,
+          "relations": 1
+        },
+        {
+          "id": "erd_shared",
+          "title": "19 / Same entity definitions as cards",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 1
+        },
+        {
+          "id": "usecases_extended",
+          "title": "20 / Use-case subjects and extension points",
+          "profile": "uml.usecase@2",
+          "elements": 6,
+          "relations": 4
+        },
+        {
+          "id": "flow_documented",
+          "title": "21 / Documented cross-sheet control flow",
+          "profile": "flow.documented@2",
+          "elements": 10,
+          "relations": 10
+        }
+      ],
+      "renderedViews": 34
+    },
+    {
+      "entry": "examples/use-cases/01-whiteboard.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/01-whiteboard.ddn": "355aa1f0deeaf8685637843264e709c61846515013eeb4ab477b5984d6523bb2",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/sketch.ddn": "033028f6faabd154c6454791ad212f57ba13616af5cf8310c2143fe042b00dfe"
+      },
+      "sha256": "35ced2011d7a9d020509b6f8c6f1b97abf6fb49a3fed460b96737c2f57cad42d",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "01 / Whiteboard sketch",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/02-business-erd.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/02-business-erd.ddn": "d6a5e24eee8b9d59357c37e7e3e470dc33e10355f094d8940df16c2c68a1b130",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390"
+      },
+      "sha256": "cd5f196539c1174131b61b9bdfe2bdbd85fb392c45fbcae6bfbcd4e462055fb5",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "02 / Business concepts",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/03-relational.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/03-relational.ddn": "f0aa0eaec947aba99b16dcf25ea701aea147756219bcc199341cc85b302ed2b7",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390"
+      },
+      "sha256": "b5b49324ec07fdc84a4afb9fb805216e740a0735f099437947dbb4512ab24850",
+      "definitions": 17,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "03 / Logical relational schema",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 2
+        },
+        {
+          "id": "compact",
+          "title": "03b / Same schema, compact sketch",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 2
+        },
+        {
+          "id": "neo",
+          "title": "03c / Same schema, precise neo look",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 3
+    },
+    {
+      "entry": "examples/use-cases/04-sql-dependencies.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/04-sql-dependencies.ddn": "eea490845a26d198debf122f3888e36889e4670112822369a66d18e198e67d35",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390",
+        "website/examples/use-cases/data/sql.ddn": "6ecd1887c105af38666dc5bff3de044c4bf0e4be9fe626872f7b971e685bbd16"
+      },
+      "sha256": "a72430f6169a98e64e8d8377fa164ad42ffa352b4f37b8f70ad81eeffbe5526b",
+      "definitions": 25,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "04 / SQL object dependencies",
+          "profile": "ddn@1",
+          "elements": 8,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/05-documents.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/05-documents.ddn": "60cc6fcb70d6ca00ba32c671715134e0202564b527c35789626404d3909ab162",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/documents.ddn": "4c2d81c0a52b584c4dd605749b7fbf297150b2306ecd028ccc10b54543693d2c"
+      },
+      "sha256": "f00a16bdf0f4afe69511ba7275261feae8a80479f4a2be585cb5a3dcb1b8a4da",
+      "definitions": 10,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "05 / Nested document structure",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/06-graph-schema.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/06-graph-schema.ddn": "27bf1ecb35e95dd405d2db3b76f85917c9120248be092596e14370d75716b792",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/graph.ddn": "45687e22efdbed1933b113d55e8bce7793a95021d98fe31327842b0ea39ff19d"
+      },
+      "sha256": "706f8f41c42b93add0df18c195bc8a5bb7c82714e288ce7d43649e80322e7168",
+      "definitions": 11,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "06 / Property-graph schema",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/07-keyed-storage.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/07-keyed-storage.ddn": "85a5347fcad4aeab0d40066f1a375c7c6ce2d0f6f613c6d6708c047dedf06255",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/keyed.ddn": "02bd72c39779e6bdf307ca24691ea93bc6854715a7c603c75021e1ee59b7245f"
+      },
+      "sha256": "d472048dd7d767e3da23be9edb189cdb0832ff82c9a285d049e5a98c042e8305",
+      "definitions": 16,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "07 / Key-value design",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        },
+        {
+          "id": "wide_column",
+          "title": "07b / Wide-column access pattern",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 2
+    },
+    {
+      "entry": "examples/use-cases/08-domains.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/08-domains.ddn": "8db73b1dbaaf8b048fc5f56b5f2ca0d25fb149836f5f3b81267cd0efd3832cd3",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390",
+        "website/examples/use-cases/data/domains.ddn": "68f4a95de6443faac809849297787a29114e15a96f010d0500afbdd75c27c078"
+      },
+      "sha256": "2492d77c34e552e9286eba5a5bde6d0c5564e6a0974c7fd4f543f116b38cc9b4",
+      "definitions": 24,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "08 / Domain discovery and binding",
+          "profile": "ddn@1",
+          "elements": 7,
+          "relations": 5
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/09-namespaces.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/09-namespaces.ddn": "ff0401743a131adc65660f5b308593dd41dfada352c39b5e22a6a66989f67b30",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390",
+        "website/examples/use-cases/data/sql.ddn": "6ecd1887c105af38666dc5bff3de044c4bf0e4be9fe626872f7b971e685bbd16",
+        "website/examples/use-cases/data/namespace.ddn": "8867da8e37748c8b7488b2c38a08809e0da568dfcca9996fec3bf6efa2a1d651"
+      },
+      "sha256": "4c3b06e18c8a1488af9995be5cbbf613b16b5a8aff60739a0ab61a16aa011982",
+      "definitions": 29,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "09 / Namespace organization",
+          "profile": "ddn@1",
+          "elements": 9,
+          "relations": 8
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/10-hybrid-deployment.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/10-hybrid-deployment.ddn": "c67e8c978d18ab7b8bf93277840f4c281e4a739f9571b3253a33ef30e56d94fa",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390",
+        "website/examples/use-cases/data/deployment.ddn": "9d5f2d766a378fbd1727b8715cd4a4f33a9ad9fd0d83dbcfcc6da6167a640921"
+      },
+      "sha256": "dd6b4346ecc823cf0bd18641c2c1082148b12830db41d14040f11851bade324e",
+      "definitions": 28,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "10 / Shards, copies and placement",
+          "profile": "ddn@1",
+          "elements": 10,
+          "relations": 8
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/11-data-flow.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/11-data-flow.ddn": "d902f3ff8c26c75004334bcabda88d35a4b59bd087be8c9697d74102659a6e6b",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/flow.ddn": "f4e2973b4dbee0f8a89a5911fc6ae446683bfbe53182e972bf7c766e9b40f773",
+        "website/examples/use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390"
+      },
+      "sha256": "51d86139ba9051edea5320d795c4113b6b13fd71fb94224d66b9e0e1fb39332d",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "11 / Data-flow diagram",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/12-streaming.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/12-streaming.ddn": "ccecf86748a408300ab7c0d29842f8622f111499cb457d3e64be030495bf4556",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390",
+        "website/examples/use-cases/data/flow.ddn": "f4e2973b4dbee0f8a89a5911fc6ae446683bfbe53182e972bf7c766e9b40f773"
+      },
+      "sha256": "0dd960e0476eb73e0644cd1af6fcee447b3efd320f8f68dfe3ed4eccd3b2b865",
+      "definitions": 31,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "12 / Event publication and consumers",
+          "profile": "ddn@1",
+          "elements": 12,
+          "relations": 9
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/13-lineage.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/13-lineage.ddn": "fea400520e400b0b07c161f36509c244bb104a28bd5920932dc6048e10ad2a14",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390",
+        "website/examples/use-cases/data/lineage.ddn": "0c8c6c58611bb4826418bf2d9a3583e38695d12bfbeef384d33d91286e6c09fd"
+      },
+      "sha256": "45becf6a41d0db2a7b782b9991f0b25157e1c94e53ff94845de5c41e4e9cd242",
+      "definitions": 23,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "13 / Dataset lineage",
+          "profile": "ddn@1",
+          "elements": 7,
+          "relations": 4
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/14-temporal.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/14-temporal.ddn": "88739383c975e1edb259a684b1e98e173085fe12035a70004627081cd908f9c9",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/temporal.ddn": "eabe07229c643a1df884648ff7428393e58eed1de4eb9eae04c30e7f2b6543cc"
+      },
+      "sha256": "d94a3705e55cc376e297ff56e0fdf2b4c097fa174784a366972205175a971f9f",
+      "definitions": 9,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "14 / Valid time and recorded time",
+          "profile": "ddn@1",
+          "elements": 2,
+          "relations": 1
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/15-warehouse.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/15-warehouse.ddn": "38e6a24d352c44cd46d84bf88f2f01d277c2aa580790eabde2378e17adce4504",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/warehouse.ddn": "20f686796f1662c4694cc83a0e811e9a5134bafc709feffc3f5d9e0afd7c353a"
+      },
+      "sha256": "31f6bfea0f31a66e783617c0520f0d9254a5776dfee4dda995fb41056c3bc85b",
+      "definitions": 20,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "15 / Dimensional warehouse",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 3
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/16-vector-lineage.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/16-vector-lineage.ddn": "e18bf20ecf9bbcffeae84827711a02c32025ae79ae57e4c4f4b9ffe4d453216d",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/vectors.ddn": "4396cb18e39df90f6309b1b278085d5255ce30a646fa7ab43811dc3f6f0abfd0"
+      },
+      "sha256": "fc501b6a1dc3eae650e7cee893b5cfaf0129044ee4449252ee5ea5f867c3d69d",
+      "definitions": 8,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "16 / Vector and embedding lineage",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/17-governance.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/17-governance.ddn": "317c626286e35e5911b8c91745dcaba73fc8b9cf71c3c05cce17fcf8db8103e8",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/governance.ddn": "2bed1543a70e1ea3d4e80797eb23e9b383c52d6f141c21f58529f220fb5e5d46"
+      },
+      "sha256": "1efdced5571c5165e25880b946d58064de3ca69e8a8a78c4b5c2aa4963f3a070",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "17 / Data products and contracts",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/18-security.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/18-security.ddn": "b1311793c0d73f3bcb56046fcc580be60b0b49dd148612c26c00cb971780589c",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/security.ddn": "7611a199987e29896123bf8397fc945ac77eeba099e22d93f49a73ca2c48d4e9"
+      },
+      "sha256": "e0989f74068120f96917a8edd0dcbf5f0008f53d105c93cebdea84f105f27503",
+      "definitions": 11,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "18 / Data handling boundaries",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/19-recovery.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/19-recovery.ddn": "3f25e03ecb1935b805730a710100e90b379bcd696087712c42570fd75fb45d10",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/recovery.ddn": "38fcd8a8f8fef5c92ba63ef0280c4010de694496eaf2af584290515582b647c9"
+      },
+      "sha256": "c50d713ca4d00ae8e79e81da94fc321cd34ad57cec7c41867ea3218f21dcbad6",
+      "definitions": 5,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "19 / Backup and restore design",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/20-migration.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/20-migration.ddn": "1b4c58415f435c95a4f38967fabd3080177d337dde8df43d6fbf028ce6ab30ab",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/migration.ddn": "51829381b56494b2c6a143ff9d46f18643ff377c2dbe79d24f4d52a9e380a7a1"
+      },
+      "sha256": "18db52e4e543a3f024fe17a2b457e5fb3edcf51a2b061804fb78f9f8fbabd398",
+      "definitions": 9,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "20 / Migration and target design",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/21-quality.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/21-quality.ddn": "173662629f1be02266f09726256d6816eb89c547208e412d807429138077cf65",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/quality.ddn": "17fc0366018f85089b9479e6bcaf0d4b8948912e8c35ccb3b080fcb4b0c96ede"
+      },
+      "sha256": "3488d0c3a18507656504bcf5d009ccd3151c58690c282403520167585779c001",
+      "definitions": 8,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "21 / Example-driven data quality",
+          "profile": "ddn@1",
+          "elements": 4,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 1
+    },
+    {
+      "entry": "examples/use-cases/22-linked-documentation.ddn",
+      "sourceHashes": {
+        "website/examples/use-cases/22-linked-documentation.ddn": "6509f9967d01347fb51ce5f5d726abbe816df78a1f84f6850a500c43d8858049",
+        "website/examples/use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "website/examples/use-cases/data/commerce.ddn": "f94d8b26d2e16e56a1c1c1062fc056d714e2d82c60129b4e5d1727b35833e390"
+      },
+      "sha256": "a0ffec01288fd544e6c0ab7bed96424124ace601cd3870b38afa7510553848db",
+      "definitions": 24,
+      "data": 0,
+      "views": [
+        {
+          "id": "diagram",
+          "title": "22 / Navigable design documentation",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 2
+        },
+        {
+          "id": "logical_detail",
+          "title": "22b / Logical detail",
+          "profile": "ddn@1",
+          "elements": 5,
+          "relations": 2
+        },
+        {
+          "id": "business_detail",
+          "title": "22c / Business concepts",
+          "profile": "ddn@1",
+          "elements": 3,
+          "relations": 2
+        }
+      ],
+      "renderedViews": 3
+    }
+  ],
+  "conflicts": []
+}

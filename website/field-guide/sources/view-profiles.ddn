@@ -1,0 +1,534 @@
+version ddn-next-1
+
+publication "publication:flow_strict"
+    with
+        id "publication:flow_strict"
+        title "Request flow — strict flowchart"
+        targets
+            item
+                target
+                    id "flow_strict"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:flow_permissive"
+    with
+        id "publication:flow_permissive"
+        title "Same flow plus a guest note — permissive"
+        targets
+            item
+                target
+                    id "flow_permissive"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+        header
+            runs
+                left
+                    text "$title"
+                    align "left"
+                    size 9
+                    lines 1
+                right
+                    text "$date"
+                    align "right"
+                    size 9
+                    lines 1
+            visible true
+        footer
+            runs
+                center
+                    text "FIG. $figure"
+                    align "center"
+                    font "serif"
+                    size 10
+                    lines 1
+                right
+                    text "Page $page"
+                    align "right"
+                    size 8
+                    lines 1
+            visible true
+        border
+            width 1
+            style "solid"
+            color "#475569"
+
+
+publication "publication:flow_colorblind"
+    with
+        id "publication:flow_colorblind"
+        title "Same flow — colorblind-safe theme"
+        targets
+            item
+                target
+                    id "flow_colorblind"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:flow_mono"
+    with
+        id "publication:flow_mono"
+        title "Same flow — mono print theme"
+        targets
+            item
+                target
+                    id "flow_mono"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.viewprofiles::model.begin" as "flow.start"
+    with
+        id "ddn.fieldguide.viewprofiles::model.begin"
+        title "Start"
+
+
+element "ddn.fieldguide.viewprofiles::model.capture" as "flow.process"
+    with
+        id "ddn.fieldguide.viewprofiles::model.capture"
+        title "Capture request"
+
+
+element "ddn.fieldguide.viewprofiles::model.review" as "flow.decision"
+    with
+        id "ddn.fieldguide.viewprofiles::model.review"
+        title "Complete?"
+
+
+element "ddn.fieldguide.viewprofiles::model.done" as "flow.end"
+    with
+        id "ddn.fieldguide.viewprofiles::model.done"
+        title "End"
+
+
+relation "ddn.fieldguide.viewprofiles::model.s1" as "flow.next"
+    with
+        id "ddn.fieldguide.viewprofiles::model.s1"
+        title "submit"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.viewprofiles::model.begin"
+            item
+                definition
+                    id "ddn.fieldguide.viewprofiles::model.capture"
+
+
+relation "ddn.fieldguide.viewprofiles::model.s2" as "flow.next"
+    with
+        id "ddn.fieldguide.viewprofiles::model.s2"
+        title "check"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.viewprofiles::model.capture"
+            item
+                definition
+                    id "ddn.fieldguide.viewprofiles::model.review"
+
+
+relation "ddn.fieldguide.viewprofiles::model.s3" as "flow.next"
+    with
+        id "ddn.fieldguide.viewprofiles::model.s3"
+        title "yes"
+        metadata
+            x_diagram
+                branch "complete"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.viewprofiles::model.review"
+            item
+                definition
+                    id "ddn.fieldguide.viewprofiles::model.done"
+
+
+relation "ddn.fieldguide.viewprofiles::model.s4" as "flow.next"
+    with
+        id "ddn.fieldguide.viewprofiles::model.s4"
+        title "no"
+        metadata
+            x_diagram
+                branch "incomplete"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.viewprofiles::model.review"
+            item
+                definition
+                    id "ddn.fieldguide.viewprofiles::model.capture"
+
+
+element "ddn.fieldguide.viewprofiles::extras.audit" as "note"
+    with
+        id "ddn.fieldguide.viewprofiles::extras.audit"
+        title "Every rejection is written to the audit log."
+
+
+view "flow_strict" as "flow.documented@2"
+    with
+        id "flow_strict"
+        title "Request flow — strict flowchart"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.viewprofiles::model.begin"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.capture"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.review"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.done"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s1"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s2"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s3"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s4"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:flow_strict"
+
+    use "ddn.fieldguide.viewprofiles::model.begin" named "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.begin"
+        with
+            id "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.begin"
+
+    use "ddn.fieldguide.viewprofiles::model.capture" named "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.capture"
+        with
+            id "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.capture"
+
+    use "ddn.fieldguide.viewprofiles::model.review" named "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.review"
+        with
+            id "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.review"
+
+    use "ddn.fieldguide.viewprofiles::model.done" named "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.done"
+        with
+            id "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.done"
+
+    use "ddn.fieldguide.viewprofiles::model.s1" named "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.s1"
+        with
+            id "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.s1"
+
+    use "ddn.fieldguide.viewprofiles::model.s2" named "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.s2"
+        with
+            id "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.s2"
+
+    use "ddn.fieldguide.viewprofiles::model.s3" named "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.s3"
+        with
+            id "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.s3"
+
+    use "ddn.fieldguide.viewprofiles::model.s4" named "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.s4"
+        with
+            id "appearance:flow_strict:ddn.fieldguide.viewprofiles::model.s4"
+
+
+view "flow_permissive" as "ddn@1"
+    with
+        id "flow_permissive"
+        title "Same flow plus a guest note — permissive"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.viewprofiles::model.begin"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.capture"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.review"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.done"
+                item
+                    id "ddn.fieldguide.viewprofiles::extras.audit"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s1"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s2"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s3"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s4"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#ffffff"
+        style
+            theme "neutral"
+        publication
+            id "publication:flow_permissive"
+
+    use "ddn.fieldguide.viewprofiles::model.begin" named "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.begin"
+        with
+            id "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.begin"
+
+    use "ddn.fieldguide.viewprofiles::model.capture" named "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.capture"
+        with
+            id "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.capture"
+
+    use "ddn.fieldguide.viewprofiles::model.review" named "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.review"
+        with
+            id "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.review"
+
+    use "ddn.fieldguide.viewprofiles::model.done" named "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.done"
+        with
+            id "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.done"
+
+    use "ddn.fieldguide.viewprofiles::extras.audit" named "appearance:flow_permissive:ddn.fieldguide.viewprofiles::extras.audit"
+        with
+            id "appearance:flow_permissive:ddn.fieldguide.viewprofiles::extras.audit"
+            body "draft"
+
+    use "ddn.fieldguide.viewprofiles::model.s1" named "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.s1"
+        with
+            id "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.s1"
+
+    use "ddn.fieldguide.viewprofiles::model.s2" named "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.s2"
+        with
+            id "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.s2"
+
+    use "ddn.fieldguide.viewprofiles::model.s3" named "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.s3"
+        with
+            id "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.s3"
+
+    use "ddn.fieldguide.viewprofiles::model.s4" named "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.s4"
+        with
+            id "appearance:flow_permissive:ddn.fieldguide.viewprofiles::model.s4"
+
+
+view "flow_colorblind" as "flow.documented@2"
+    with
+        id "flow_colorblind"
+        title "Same flow — colorblind-safe theme"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.viewprofiles::model.begin"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.capture"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.review"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.done"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s1"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s2"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s3"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s4"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:flow_colorblind"
+
+    use "ddn.fieldguide.viewprofiles::model.begin" named "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.begin"
+        with
+            id "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.begin"
+            background
+                color "#eaf4fb"
+            border
+                color "#0072b2"
+                width 1.5
+            symbol
+                color "#0072b2"
+            stroke
+                color "#0072b2"
+            text
+                color "#17263d"
+
+    use "ddn.fieldguide.viewprofiles::model.capture" named "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.capture"
+        with
+            id "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.capture"
+            background
+                color "#eaf4fb"
+            border
+                color "#0072b2"
+                width 1.5
+            symbol
+                color "#0072b2"
+            stroke
+                color "#0072b2"
+            text
+                color "#17263d"
+
+    use "ddn.fieldguide.viewprofiles::model.review" named "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.review"
+        with
+            id "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.review"
+            background
+                color "#fff4d2"
+            border
+                color "#997300"
+                width 1.5
+            symbol
+                color "#997300"
+            stroke
+                color "#997300"
+            text
+                color "#17263d"
+
+    use "ddn.fieldguide.viewprofiles::model.done" named "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.done"
+        with
+            id "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.done"
+            background
+                color "#eaf4fb"
+            border
+                color "#0072b2"
+                width 1.5
+            symbol
+                color "#0072b2"
+            stroke
+                color "#0072b2"
+            text
+                color "#17263d"
+
+    use "ddn.fieldguide.viewprofiles::model.s1" named "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.s1"
+        with
+            id "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.s1"
+            background
+                color "#eaf4fb"
+            border
+                color "#0072b2"
+                width 1.5
+            symbol
+                color "#0072b2"
+            stroke
+                color "#0072b2"
+            text
+                color "#17263d"
+
+    use "ddn.fieldguide.viewprofiles::model.s2" named "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.s2"
+        with
+            id "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.s2"
+            background
+                color "#eaf4fb"
+            border
+                color "#0072b2"
+                width 1.5
+            symbol
+                color "#0072b2"
+            stroke
+                color "#0072b2"
+            text
+                color "#17263d"
+
+    use "ddn.fieldguide.viewprofiles::model.s3" named "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.s3"
+        with
+            id "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.s3"
+            background
+                color "#eaf4fb"
+            border
+                color "#0072b2"
+                width 1.5
+            symbol
+                color "#0072b2"
+            stroke
+                color "#0072b2"
+            text
+                color "#17263d"
+
+    use "ddn.fieldguide.viewprofiles::model.s4" named "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.s4"
+        with
+            id "appearance:flow_colorblind:ddn.fieldguide.viewprofiles::model.s4"
+            background
+                color "#eaf4fb"
+            border
+                color "#0072b2"
+                width 1.5
+            symbol
+                color "#0072b2"
+            stroke
+                color "#0072b2"
+            text
+                color "#17263d"
+
+
+view "flow_mono" as "flow.documented@2"
+    with
+        id "flow_mono"
+        title "Same flow — mono print theme"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.viewprofiles::model.begin"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.capture"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.review"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.done"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s1"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s2"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s3"
+                item
+                    id "ddn.fieldguide.viewprofiles::model.s4"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#ffffff"
+        style
+            theme "neutral"
+        publication
+            id "publication:flow_mono"
+
+    use "ddn.fieldguide.viewprofiles::model.begin" named "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.begin"
+        with
+            id "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.begin"
+
+    use "ddn.fieldguide.viewprofiles::model.capture" named "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.capture"
+        with
+            id "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.capture"
+
+    use "ddn.fieldguide.viewprofiles::model.review" named "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.review"
+        with
+            id "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.review"
+
+    use "ddn.fieldguide.viewprofiles::model.done" named "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.done"
+        with
+            id "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.done"
+
+    use "ddn.fieldguide.viewprofiles::model.s1" named "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.s1"
+        with
+            id "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.s1"
+
+    use "ddn.fieldguide.viewprofiles::model.s2" named "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.s2"
+        with
+            id "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.s2"
+
+    use "ddn.fieldguide.viewprofiles::model.s3" named "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.s3"
+        with
+            id "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.s3"
+
+    use "ddn.fieldguide.viewprofiles::model.s4" named "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.s4"
+        with
+            id "appearance:flow_mono:ddn.fieldguide.viewprofiles::model.s4"

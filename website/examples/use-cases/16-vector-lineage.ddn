@@ -1,16 +1,222 @@
-ddn "0.5";
-module "ddn.usecases.views.vector-lineage";
-import "formats.ddn" as fmt;
-import "data/vectors.ddn" as v;
+version ddn-next-1
 
-// Which source and transformation produced these vectors?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "16 / Vector and embedding lineage" {
-    data: [@v.model];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.neo;
-    layout: @fmt.shared.row;
-    select: [@v.model.source, @v.model.embedding, @v.model.index];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "model.r_input": 1, "model.r_output": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "16 / Vector and embedding lineage"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.vectors::model.source" as "dataset"
+    with
+        id "ddn.usecases.vectors::model.source"
+        title "Product descriptions"
+
+
+element "ddn.usecases.vectors::model.embedding" as "activity"
+    with
+        id "ddn.usecases.vectors::model.embedding"
+        title "Build embeddings"
+        description "Record the embedding model and preprocessing version before implementation approval."
+
+
+element "ddn.usecases.vectors::model.index.product_id" as "field"
+    with
+        id "ddn.usecases.vectors::model.index.product_id"
+        title "product_id"
+        content
+            parent
+                id "ddn.usecases.vectors::model.index"
+            ordinal 0
+
+
+element "ddn.usecases.vectors::model.index.embedding" as "field"
+    with
+        id "ddn.usecases.vectors::model.index.embedding"
+        title "embedding"
+        content
+            parent
+                id "ddn.usecases.vectors::model.index"
+            ordinal 1
+
+
+element "ddn.usecases.vectors::model.index.model_version" as "field"
+    with
+        id "ddn.usecases.vectors::model.index.model_version"
+        title "model_version"
+        content
+            parent
+                id "ddn.usecases.vectors::model.index"
+            ordinal 2
+
+
+element "ddn.usecases.vectors::model.index" as "vector"
+    with
+        id "ddn.usecases.vectors::model.index"
+        title "Product vectors"
+        facets
+            authority
+                item "DER"
+        properties
+            role "derived"
+        metadata
+            x_record
+                layout_group "derived"
+        members
+            item
+                id "ddn.usecases.vectors::model.index.product_id"
+            item
+                id "ddn.usecases.vectors::model.index.embedding"
+            item
+                id "ddn.usecases.vectors::model.index.model_version"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "product_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "embedding"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "model_version"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.usecases.vectors::model.r_input" as "consumed"
+    with
+        id "ddn.usecases.vectors::model.r_input"
+        title "used as input by"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.vectors::model.source"
+            item
+                definition
+                    id "ddn.usecases.vectors::model.embedding"
+
+
+relation "ddn.usecases.vectors::model.r_output" as "generates"
+    with
+        id "ddn.usecases.vectors::model.r_output"
+        title "generates"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.vectors::model.embedding"
+            item
+                definition
+                    id "ddn.usecases.vectors::model.index"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "16 / Vector and embedding lineage"
+        selection
+            include
+                item
+                    id "ddn.usecases.vectors::model.source"
+                item
+                    id "ddn.usecases.vectors::model.embedding"
+                item
+                    id "ddn.usecases.vectors::model.index"
+                item
+                    id "ddn.usecases.vectors::model.r_input"
+                item
+                    id "ddn.usecases.vectors::model.r_output"
+        style
+            look "neo"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_input "1"
+                model.r_output "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.vectors::model.source" named "appearance:diagram:ddn.usecases.vectors::model.source"
+        with
+            id "appearance:diagram:ddn.usecases.vectors::model.source"
+
+    use "ddn.usecases.vectors::model.embedding" named "appearance:diagram:ddn.usecases.vectors::model.embedding"
+        with
+            id "appearance:diagram:ddn.usecases.vectors::model.embedding"
+            body "notes"
+
+    use "ddn.usecases.vectors::model.index" named "appearance:diagram:ddn.usecases.vectors::model.index"
+        with
+            id "appearance:diagram:ddn.usecases.vectors::model.index"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.vectors::model.r_input" named "appearance:diagram:ddn.usecases.vectors::model.r_input"
+        with
+            id "appearance:diagram:ddn.usecases.vectors::model.r_input"
+
+    use "ddn.usecases.vectors::model.r_output" named "appearance:diagram:ddn.usecases.vectors::model.r_output"
+        with
+            id "appearance:diagram:ddn.usecases.vectors::model.r_output"

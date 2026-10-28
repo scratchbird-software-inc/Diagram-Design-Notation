@@ -1,17 +1,362 @@
-ddn "0.5";
-module "ddn.usecases.views.temporal";
-import "formats.ddn" as fmt;
-import "data/temporal.ddn" as t;
+version ddn-next-1
 
-// When did a fact apply, and when did we know it?
-// Fixed teaching layout: coordinates belong to this view only.
-view diagram "14 / Valid time and recorded time" {
-    data: [@t.model];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.teaching;
-    select: [@t.model.history, @t.model.example];
-    publication { width: 1700px; height: 850px; }
-    legend { keys: { "model.r_example": 1 }; }
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "14 / Valid time and recorded time"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1700
+                unit "px"
+            height
+                value 850
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-}
+
+element "ddn.usecases.temporal::model.history.customer_id" as "field"
+    with
+        id "ddn.usecases.temporal::model.history.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.usecases.temporal::model.history"
+            ordinal 0
+
+
+element "ddn.usecases.temporal::model.history.status" as "field"
+    with
+        id "ddn.usecases.temporal::model.history.status"
+        title "status"
+        content
+            parent
+                id "ddn.usecases.temporal::model.history"
+            ordinal 1
+
+
+element "ddn.usecases.temporal::model.history.valid_from" as "field"
+    with
+        id "ddn.usecases.temporal::model.history.valid_from"
+        title "valid_from"
+        content
+            parent
+                id "ddn.usecases.temporal::model.history"
+            ordinal 2
+
+
+element "ddn.usecases.temporal::model.history.valid_to" as "field"
+    with
+        id "ddn.usecases.temporal::model.history.valid_to"
+        title "valid_to"
+        content
+            parent
+                id "ddn.usecases.temporal::model.history"
+            ordinal 3
+
+
+element "ddn.usecases.temporal::model.history.recorded_from" as "field"
+    with
+        id "ddn.usecases.temporal::model.history.recorded_from"
+        title "recorded_from"
+        content
+            parent
+                id "ddn.usecases.temporal::model.history"
+            ordinal 4
+
+
+element "ddn.usecases.temporal::model.history.recorded_to" as "field"
+    with
+        id "ddn.usecases.temporal::model.history.recorded_to"
+        title "recorded_to"
+        content
+            parent
+                id "ddn.usecases.temporal::model.history"
+            ordinal 5
+
+
+element "ddn.usecases.temporal::model.history" as "history"
+    with
+        id "ddn.usecases.temporal::model.history"
+        title "Customer status history"
+        facets
+            temporal
+                item "BT"
+        properties
+            temporal "bitemporal"
+            time empty record
+        members
+            item
+                id "ddn.usecases.temporal::model.history.customer_id"
+            item
+                id "ddn.usecases.temporal::model.history.status"
+            item
+                id "ddn.usecases.temporal::model.history.valid_from"
+            item
+                id "ddn.usecases.temporal::model.history.valid_to"
+            item
+                id "ddn.usecases.temporal::model.history.recorded_from"
+            item
+                id "ddn.usecases.temporal::model.history.recorded_to"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "valid_from"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "valid_to"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "recorded_from"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "recorded_to"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "time": {
+                        "valid": "business-effective civil date",
+                        "recorded": "warehouse-known civil date",
+                        "retention": null
+                      }
+                    }
+                format "plain"
+
+
+element "ddn.usecases.temporal::model.example" as "sample"
+    with
+        id "ddn.usecases.temporal::model.example"
+        title "Correction received on March 5"
+        properties
+            mode "synthetic"
+            columns
+                item
+                    id "ddn.usecases.temporal::model.history.customer_id"
+                item
+                    id "ddn.usecases.temporal::model.history.status"
+                item
+                    id "ddn.usecases.temporal::model.history.valid_from"
+                item
+                    id "ddn.usecases.temporal::model.history.valid_to"
+                item
+                    id "ddn.usecases.temporal::model.history.recorded_from"
+                item
+                    id "ddn.usecases.temporal::model.history.recorded_to"
+            rows
+                item
+                    item "C001"
+                    item "Active"
+                    item "2026-03-01"
+                    item "2026-03-01"
+                    item "2026-03-05"
+                item
+                    item "C001"
+                    item "Active"
+                    item "2026-03-01"
+                    item "2026-03-03"
+                    item "2026-03-05"
+                item
+                    item "C001"
+                    item "Suspended"
+                    item "2026-03-03"
+                    item "2026-03-05"
+        data
+            columns
+                item
+                    id "column-0"
+                    label "customer_id"
+                item
+                    id "column-1"
+                    label "status"
+                item
+                    id "column-2"
+                    label "valid_from"
+                item
+                    id "column-3"
+                    label "valid_to"
+                item
+                    id "column-4"
+                    label "recorded_from"
+                item
+                    id "column-5"
+                    label "recorded_to"
+            rows
+                item
+                    item "C001"
+                    item "Active"
+                    item "2026-03-01"
+                    item null
+                    item "2026-03-01"
+                    item "2026-03-05"
+                item
+                    item "C001"
+                    item "Active"
+                    item "2026-03-01"
+                    item "2026-03-03"
+                    item "2026-03-05"
+                    item null
+                item
+                    item "C001"
+                    item "Suspended"
+                    item "2026-03-03"
+                    item null
+                    item "2026-03-05"
+                    item null
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "rows": [
+                        [
+                          "C001",
+                          "Active",
+                          "2026-03-01",
+                          null,
+                          "2026-03-01",
+                          "2026-03-05"
+                        ],
+                        [
+                          "C001",
+                          "Active",
+                          "2026-03-01",
+                          "2026-03-03",
+                          "2026-03-05",
+                          null
+                        ],
+                        [
+                          "C001",
+                          "Suspended",
+                          "2026-03-03",
+                          null,
+                          "2026-03-05",
+                          null
+                        ]
+                      ]
+                    }
+                format "plain"
+
+
+relation "ddn.usecases.temporal::model.r_example" as "example"
+    with
+        id "ddn.usecases.temporal::model.r_example"
+        title "illustrates"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.temporal::model.example"
+            item
+                definition
+                    id "ddn.usecases.temporal::model.history"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "14 / Valid time and recorded time"
+        selection
+            include
+                item
+                    id "ddn.usecases.temporal::model.history"
+                item
+                    id "ddn.usecases.temporal::model.example"
+                item
+                    id "ddn.usecases.temporal::model.r_example"
+        layout
+            algorithm "manual"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_example "1"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.temporal::model.history" named "appearance:diagram:ddn.usecases.temporal::model.history"
+        with
+            id "appearance:diagram:ddn.usecases.temporal::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.temporal::model.example" named "appearance:diagram:ddn.usecases.temporal::model.example"
+        with
+            id "appearance:diagram:ddn.usecases.temporal::model.example"
+            body "columns"
+
+    use "ddn.usecases.temporal::model.r_example" named "appearance:diagram:ddn.usecases.temporal::model.r_example"
+        with
+            id "appearance:diagram:ddn.usecases.temporal::model.r_example"

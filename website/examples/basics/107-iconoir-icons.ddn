@@ -1,28 +1,479 @@
-ddn "0.5";
-module "ddn.examples.iconoir";
+version ddn-next-1
 
-// B1-088: the iconoir-infra@1 icon pack — a curated infrastructure and
-// development selection from iconoir (MIT, license text and attribution in
-// the pack manifest; full set not vendored), chosen to complement the
-// Tabler selection. Icons bind per node via x_icon. All data is synthetic.
-data m {
-    object lan "Dev LAN" { kind: "network.bus"; }
-    object repo "Repository" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "archive" }; }
-    object ci "CI runner" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "terminal" }; }
-    object src "Source tree" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "code-brackets" }; }
-    object app "Application" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "app-window" }; }
-    object db "Database" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "database" }; }
-    object bak "Backups" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "database-backup" }; }
-    object cloud "Cloud sync" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "cloud-sync" }; }
-    object team "Team" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "community" }; }
-    relation a1 "" @ci -> @lan { kind: "network.attaches"; }
-    relation a2 "" @src -> @lan { kind: "network.attaches"; }
-    relation a3 "" @app -> @lan { kind: "network.attaches"; }
-    relation a4 "" @db -> @lan { kind: "network.attaches"; }
-    relation a5 "" @bak -> @lan { kind: "network.attaches"; }
-    relation a6 "" @cloud -> @lan { kind: "network.attaches"; }
-    relation a7 "" @team -> @lan { kind: "network.attaches"; }
-}
-view net "Iconoir pack": [@m] as "network.basic@1" {
-    publication { size: content; fit: none; }
-}
+asset "artwork::network-generic@1:cloud" as resource from "../../assets/icons/network-generic-1/cloud.svg"
+    with
+        id "artwork::network-generic@1:cloud"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::iconoir-infra@1:archive" as resource from "../../assets/icons/iconoir-infra-1/archive.svg"
+    with
+        id "artwork::iconoir-infra@1:archive"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::iconoir-infra@1:terminal" as resource from "../../assets/icons/iconoir-infra-1/terminal.svg"
+    with
+        id "artwork::iconoir-infra@1:terminal"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::iconoir-infra@1:code-brackets" as resource from "../../assets/icons/iconoir-infra-1/code-brackets.svg"
+    with
+        id "artwork::iconoir-infra@1:code-brackets"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::iconoir-infra@1:app-window" as resource from "../../assets/icons/iconoir-infra-1/app-window.svg"
+    with
+        id "artwork::iconoir-infra@1:app-window"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::iconoir-infra@1:database" as resource from "../../assets/icons/iconoir-infra-1/database.svg"
+    with
+        id "artwork::iconoir-infra@1:database"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::iconoir-infra@1:database-backup" as resource from "../../assets/icons/iconoir-infra-1/database-backup.svg"
+    with
+        id "artwork::iconoir-infra@1:database-backup"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::iconoir-infra@1:cloud-sync" as resource from "../../assets/icons/iconoir-infra-1/cloud-sync.svg"
+    with
+        id "artwork::iconoir-infra@1:cloud-sync"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::iconoir-infra@1:community" as resource from "../../assets/icons/iconoir-infra-1/community.svg"
+    with
+        id "artwork::iconoir-infra@1:community"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+publication "publication:net"
+    with
+        id "publication:net"
+        title "Iconoir pack"
+        targets
+            item
+                target
+                    id "net"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.iconoir::m.lan" as "network.bus"
+    with
+        id "ddn.examples.iconoir::m.lan"
+        title "Dev LAN"
+
+
+element "ddn.examples.iconoir::m.repo" as "network.server"
+    with
+        id "ddn.examples.iconoir::m.repo"
+        title "Repository"
+        metadata
+            x_icon
+                library "iconoir-infra@1"
+                icon "archive"
+
+
+element "ddn.examples.iconoir::m.ci" as "network.server"
+    with
+        id "ddn.examples.iconoir::m.ci"
+        title "CI runner"
+        metadata
+            x_icon
+                library "iconoir-infra@1"
+                icon "terminal"
+
+
+element "ddn.examples.iconoir::m.src" as "network.server"
+    with
+        id "ddn.examples.iconoir::m.src"
+        title "Source tree"
+        metadata
+            x_icon
+                library "iconoir-infra@1"
+                icon "code-brackets"
+
+
+element "ddn.examples.iconoir::m.app" as "network.server"
+    with
+        id "ddn.examples.iconoir::m.app"
+        title "Application"
+        metadata
+            x_icon
+                library "iconoir-infra@1"
+                icon "app-window"
+
+
+element "ddn.examples.iconoir::m.db" as "network.server"
+    with
+        id "ddn.examples.iconoir::m.db"
+        title "Database"
+        metadata
+            x_icon
+                library "iconoir-infra@1"
+                icon "database"
+
+
+element "ddn.examples.iconoir::m.bak" as "network.server"
+    with
+        id "ddn.examples.iconoir::m.bak"
+        title "Backups"
+        metadata
+            x_icon
+                library "iconoir-infra@1"
+                icon "database-backup"
+
+
+element "ddn.examples.iconoir::m.cloud" as "network.server"
+    with
+        id "ddn.examples.iconoir::m.cloud"
+        title "Cloud sync"
+        metadata
+            x_icon
+                library "iconoir-infra@1"
+                icon "cloud-sync"
+
+
+element "ddn.examples.iconoir::m.team" as "network.server"
+    with
+        id "ddn.examples.iconoir::m.team"
+        title "Team"
+        metadata
+            x_icon
+                library "iconoir-infra@1"
+                icon "community"
+
+
+relation "ddn.examples.iconoir::m.a1" as "network.attaches"
+    with
+        id "ddn.examples.iconoir::m.a1"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iconoir::m.ci"
+            item
+                definition
+                    id "ddn.examples.iconoir::m.lan"
+
+
+relation "ddn.examples.iconoir::m.a2" as "network.attaches"
+    with
+        id "ddn.examples.iconoir::m.a2"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iconoir::m.src"
+            item
+                definition
+                    id "ddn.examples.iconoir::m.lan"
+
+
+relation "ddn.examples.iconoir::m.a3" as "network.attaches"
+    with
+        id "ddn.examples.iconoir::m.a3"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iconoir::m.app"
+            item
+                definition
+                    id "ddn.examples.iconoir::m.lan"
+
+
+relation "ddn.examples.iconoir::m.a4" as "network.attaches"
+    with
+        id "ddn.examples.iconoir::m.a4"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iconoir::m.db"
+            item
+                definition
+                    id "ddn.examples.iconoir::m.lan"
+
+
+relation "ddn.examples.iconoir::m.a5" as "network.attaches"
+    with
+        id "ddn.examples.iconoir::m.a5"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iconoir::m.bak"
+            item
+                definition
+                    id "ddn.examples.iconoir::m.lan"
+
+
+relation "ddn.examples.iconoir::m.a6" as "network.attaches"
+    with
+        id "ddn.examples.iconoir::m.a6"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iconoir::m.cloud"
+            item
+                definition
+                    id "ddn.examples.iconoir::m.lan"
+
+
+relation "ddn.examples.iconoir::m.a7" as "network.attaches"
+    with
+        id "ddn.examples.iconoir::m.a7"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iconoir::m.team"
+            item
+                definition
+                    id "ddn.examples.iconoir::m.lan"
+
+
+view "net" as "network.basic@1"
+    with
+        id "net"
+        title "Iconoir pack"
+        selection
+            include
+                item
+                    id "ddn.examples.iconoir::m.lan"
+                item
+                    id "ddn.examples.iconoir::m.repo"
+                item
+                    id "ddn.examples.iconoir::m.ci"
+                item
+                    id "ddn.examples.iconoir::m.src"
+                item
+                    id "ddn.examples.iconoir::m.app"
+                item
+                    id "ddn.examples.iconoir::m.db"
+                item
+                    id "ddn.examples.iconoir::m.bak"
+                item
+                    id "ddn.examples.iconoir::m.cloud"
+                item
+                    id "ddn.examples.iconoir::m.team"
+                item
+                    id "ddn.examples.iconoir::m.a1"
+                item
+                    id "ddn.examples.iconoir::m.a2"
+                item
+                    id "ddn.examples.iconoir::m.a3"
+                item
+                    id "ddn.examples.iconoir::m.a4"
+                item
+                    id "ddn.examples.iconoir::m.a5"
+                item
+                    id "ddn.examples.iconoir::m.a6"
+                item
+                    id "ddn.examples.iconoir::m.a7"
+        layout
+            center "pins"
+            algorithm "manual"
+            routing "straight"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:net"
+
+    use "ddn.examples.iconoir::m.lan" named "appearance:net:ddn.examples.iconoir::m.lan"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.lan"
+            position.x 500
+            position.y 370
+            size.width 96
+            size.height 96
+            symbol
+                label "inside"
+                image
+                    id "artwork::network-generic@1:cloud"
+
+    use "ddn.examples.iconoir::m.repo" named "appearance:net:ddn.examples.iconoir::m.repo"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.repo"
+            position.x 140
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top-left"
+                image
+                    id "artwork::iconoir-infra@1:archive"
+
+    use "ddn.examples.iconoir::m.ci" named "appearance:net:ddn.examples.iconoir::m.ci"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.ci"
+            position.x 500
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top"
+                image
+                    id "artwork::iconoir-infra@1:terminal"
+
+    use "ddn.examples.iconoir::m.src" named "appearance:net:ddn.examples.iconoir::m.src"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.src"
+            position.x 860
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top-right"
+                image
+                    id "artwork::iconoir-infra@1:code-brackets"
+
+    use "ddn.examples.iconoir::m.app" named "appearance:net:ddn.examples.iconoir::m.app"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.app"
+            position.x 140
+            position.y 370
+            size.width 96
+            size.height 96
+            symbol
+                label "left"
+                image
+                    id "artwork::iconoir-infra@1:app-window"
+
+    use "ddn.examples.iconoir::m.db" named "appearance:net:ddn.examples.iconoir::m.db"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.db"
+            position.x 860
+            position.y 370
+            size.width 96
+            size.height 96
+            symbol
+                label "right"
+                image
+                    id "artwork::iconoir-infra@1:database"
+
+    use "ddn.examples.iconoir::m.bak" named "appearance:net:ddn.examples.iconoir::m.bak"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.bak"
+            position.x 140
+            position.y 640
+            size.width 96
+            size.height 96
+            symbol
+                label "bottom-left"
+                image
+                    id "artwork::iconoir-infra@1:database-backup"
+
+    use "ddn.examples.iconoir::m.cloud" named "appearance:net:ddn.examples.iconoir::m.cloud"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.cloud"
+            position.x 500
+            position.y 640
+            size.width 96
+            size.height 96
+            symbol
+                label "bottom"
+                image
+                    id "artwork::iconoir-infra@1:cloud-sync"
+
+    use "ddn.examples.iconoir::m.team" named "appearance:net:ddn.examples.iconoir::m.team"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.team"
+            position.x 860
+            position.y 640
+            size.width 96
+            size.height 96
+            symbol
+                label "bottom-right"
+                image
+                    id "artwork::iconoir-infra@1:community"
+
+    use "ddn.examples.iconoir::m.a1" named "appearance:net:ddn.examples.iconoir::m.a1"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.a1"
+            route.source_side "south"
+            route.target_side "north"
+            route.target_fraction 0.5
+
+    use "ddn.examples.iconoir::m.a2" named "appearance:net:ddn.examples.iconoir::m.a2"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.a2"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.2
+
+    use "ddn.examples.iconoir::m.a3" named "appearance:net:ddn.examples.iconoir::m.a3"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.a3"
+            route.source_side "east"
+            route.target_side "west"
+            route.target_fraction 0.5
+
+    use "ddn.examples.iconoir::m.a4" named "appearance:net:ddn.examples.iconoir::m.a4"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.a4"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.5
+
+    use "ddn.examples.iconoir::m.a5" named "appearance:net:ddn.examples.iconoir::m.a5"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.a5"
+            route.source_side "east"
+            route.target_side "west"
+            route.target_fraction 0.8
+
+    use "ddn.examples.iconoir::m.a6" named "appearance:net:ddn.examples.iconoir::m.a6"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.a6"
+            route.source_side "north"
+            route.target_side "south"
+            route.target_fraction 0.5
+
+    use "ddn.examples.iconoir::m.a7" named "appearance:net:ddn.examples.iconoir::m.a7"
+        with
+            id "appearance:net:ddn.examples.iconoir::m.a7"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.8

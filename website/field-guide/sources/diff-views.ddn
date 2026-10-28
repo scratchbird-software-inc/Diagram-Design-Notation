@@ -1,0 +1,421 @@
+version ddn-next-1
+
+publication "publication:v1"
+    with
+        id "publication:v1"
+        title "Before"
+        targets
+            item
+                target
+                    id "v1"
+                kind "view"
+        format "svg"
+        page
+            minimum_text 10.666666666666666
+
+
+publication "publication:v2"
+    with
+        id "publication:v2"
+        title "After"
+        targets
+            item
+                target
+                    id "v2"
+                kind "view"
+        format "svg"
+        page
+            minimum_text 10.666666666666666
+
+
+publication "publication:main"
+    with
+        id "publication:main"
+        title "Before → after"
+        targets
+            item
+                target
+                    id "main"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.diff::before.store" as "cache"
+    with
+        id "ddn.fieldguide.diff::before.store"
+        title "Shared store"
+
+
+element "ddn.fieldguide.diff::before.legacy" as "queue"
+    with
+        id "ddn.fieldguide.diff::before.legacy"
+        title "Legacy queue"
+
+
+element "ddn.fieldguide.diff::before.worker" as "service"
+    with
+        id "ddn.fieldguide.diff::before.worker"
+        title "Worker v1"
+
+
+relation "ddn.fieldguide.diff::before.r1" as "flow"
+    with
+        id "ddn.fieldguide.diff::before.r1"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.diff::before.store"
+            item
+                definition
+                    id "ddn.fieldguide.diff::before.legacy"
+
+
+relation "ddn.fieldguide.diff::before.r2" as "flow"
+    with
+        id "ddn.fieldguide.diff::before.r2"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.diff::before.store"
+            item
+                definition
+                    id "ddn.fieldguide.diff::before.worker"
+
+
+element "ddn.fieldguide.diff::after.store" as "cache"
+    with
+        id "ddn.fieldguide.diff::after.store"
+        title "Shared store"
+
+
+element "ddn.fieldguide.diff::after.worker" as "service"
+    with
+        id "ddn.fieldguide.diff::after.worker"
+        title "Worker v2"
+
+
+element "ddn.fieldguide.diff::after.ingest" as "service"
+    with
+        id "ddn.fieldguide.diff::after.ingest"
+        title "New ingest"
+
+
+relation "ddn.fieldguide.diff::after.r2" as "flow"
+    with
+        id "ddn.fieldguide.diff::after.r2"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.diff::after.store"
+            item
+                definition
+                    id "ddn.fieldguide.diff::after.worker"
+
+
+relation "ddn.fieldguide.diff::after.r3" as "flow"
+    with
+        id "ddn.fieldguide.diff::after.r3"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.diff::after.worker"
+            item
+                definition
+                    id "ddn.fieldguide.diff::after.ingest"
+
+
+element "ddn.fieldguide.diff::main::unchanged::store" as "cache"
+    with
+        id "ddn.fieldguide.diff::main::unchanged::store"
+        title "Shared store"
+
+
+element "ddn.fieldguide.diff::main::removed::legacy" as "queue"
+    with
+        id "ddn.fieldguide.diff::main::removed::legacy"
+        title "Legacy queue"
+
+
+element "ddn.fieldguide.diff::main::changed::worker" as "service"
+    with
+        id "ddn.fieldguide.diff::main::changed::worker"
+        title "Worker v1"
+
+
+element "ddn.fieldguide.diff::main::added::ingest" as "service"
+    with
+        id "ddn.fieldguide.diff::main::added::ingest"
+        title "New ingest"
+
+
+relation "ddn.fieldguide.diff::main::removed::r1" as "flow"
+    with
+        id "ddn.fieldguide.diff::main::removed::r1"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.diff::main::unchanged::store"
+            item
+                definition
+                    id "ddn.fieldguide.diff::main::removed::legacy"
+
+
+relation "ddn.fieldguide.diff::main::unchanged::r2" as "flow"
+    with
+        id "ddn.fieldguide.diff::main::unchanged::r2"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.diff::main::unchanged::store"
+            item
+                definition
+                    id "ddn.fieldguide.diff::main::changed::worker"
+
+
+relation "ddn.fieldguide.diff::main::added::r3" as "flow"
+    with
+        id "ddn.fieldguide.diff::main::added::r3"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.diff::main::changed::worker"
+            item
+                definition
+                    id "ddn.fieldguide.diff::main::added::ingest"
+
+
+view "v1" as "ddn@1"
+    with
+        id "v1"
+        title "Before"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.diff::before.store"
+                item
+                    id "ddn.fieldguide.diff::before.legacy"
+                item
+                    id "ddn.fieldguide.diff::before.worker"
+                item
+                    id "ddn.fieldguide.diff::before.r1"
+                item
+                    id "ddn.fieldguide.diff::before.r2"
+            exclude
+                item
+                    id "ddn.fieldguide.diff::after.r2"
+                item
+                    id "ddn.fieldguide.diff::after.r3"
+                item
+                    id "ddn.fieldguide.diff::main::removed::r1"
+                item
+                    id "ddn.fieldguide.diff::main::unchanged::r2"
+                item
+                    id "ddn.fieldguide.diff::main::added::r3"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:v1"
+
+    use "ddn.fieldguide.diff::before.store" named "appearance:v1:ddn.fieldguide.diff::before.store"
+        with
+            id "appearance:v1:ddn.fieldguide.diff::before.store"
+
+    use "ddn.fieldguide.diff::before.legacy" named "appearance:v1:ddn.fieldguide.diff::before.legacy"
+        with
+            id "appearance:v1:ddn.fieldguide.diff::before.legacy"
+
+    use "ddn.fieldguide.diff::before.worker" named "appearance:v1:ddn.fieldguide.diff::before.worker"
+        with
+            id "appearance:v1:ddn.fieldguide.diff::before.worker"
+
+    use "ddn.fieldguide.diff::before.r1" named "appearance:v1:ddn.fieldguide.diff::before.r1"
+        with
+            id "appearance:v1:ddn.fieldguide.diff::before.r1"
+
+    use "ddn.fieldguide.diff::before.r2" named "appearance:v1:ddn.fieldguide.diff::before.r2"
+        with
+            id "appearance:v1:ddn.fieldguide.diff::before.r2"
+
+
+view "v2" as "ddn@1"
+    with
+        id "v2"
+        title "After"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.diff::after.store"
+                item
+                    id "ddn.fieldguide.diff::after.worker"
+                item
+                    id "ddn.fieldguide.diff::after.ingest"
+                item
+                    id "ddn.fieldguide.diff::after.r2"
+                item
+                    id "ddn.fieldguide.diff::after.r3"
+            exclude
+                item
+                    id "ddn.fieldguide.diff::before.r1"
+                item
+                    id "ddn.fieldguide.diff::before.r2"
+                item
+                    id "ddn.fieldguide.diff::main::removed::r1"
+                item
+                    id "ddn.fieldguide.diff::main::unchanged::r2"
+                item
+                    id "ddn.fieldguide.diff::main::added::r3"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:v2"
+
+    use "ddn.fieldguide.diff::after.store" named "appearance:v2:ddn.fieldguide.diff::after.store"
+        with
+            id "appearance:v2:ddn.fieldguide.diff::after.store"
+
+    use "ddn.fieldguide.diff::after.worker" named "appearance:v2:ddn.fieldguide.diff::after.worker"
+        with
+            id "appearance:v2:ddn.fieldguide.diff::after.worker"
+
+    use "ddn.fieldguide.diff::after.ingest" named "appearance:v2:ddn.fieldguide.diff::after.ingest"
+        with
+            id "appearance:v2:ddn.fieldguide.diff::after.ingest"
+
+    use "ddn.fieldguide.diff::after.r2" named "appearance:v2:ddn.fieldguide.diff::after.r2"
+        with
+            id "appearance:v2:ddn.fieldguide.diff::after.r2"
+
+    use "ddn.fieldguide.diff::after.r3" named "appearance:v2:ddn.fieldguide.diff::after.r3"
+        with
+            id "appearance:v2:ddn.fieldguide.diff::after.r3"
+
+
+view "main" as "ddn@1"
+    with
+        id "main"
+        title "Before → after"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.diff::main::unchanged::store"
+                item
+                    id "ddn.fieldguide.diff::main::removed::legacy"
+                item
+                    id "ddn.fieldguide.diff::main::changed::worker"
+                item
+                    id "ddn.fieldguide.diff::main::added::ingest"
+                item
+                    id "ddn.fieldguide.diff::main::removed::r1"
+                item
+                    id "ddn.fieldguide.diff::main::unchanged::r2"
+                item
+                    id "ddn.fieldguide.diff::main::added::r3"
+            exclude
+                item
+                    id "ddn.fieldguide.diff::before.r1"
+                item
+                    id "ddn.fieldguide.diff::before.r2"
+                item
+                    id "ddn.fieldguide.diff::after.r2"
+                item
+                    id "ddn.fieldguide.diff::after.r3"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        chrome
+            footer_text "Added 1 · Removed 1 · Changed 1 · Unchanged 1"
+        publication
+            id "publication:main"
+
+    use "ddn.fieldguide.diff::main::unchanged::store" named "appearance:main:ddn.fieldguide.diff::main::unchanged::store"
+        with
+            id "appearance:main:ddn.fieldguide.diff::main::unchanged::store"
+
+    use "ddn.fieldguide.diff::main::removed::legacy" named "appearance:main:ddn.fieldguide.diff::main::removed::legacy"
+        with
+            id "appearance:main:ddn.fieldguide.diff::main::removed::legacy"
+            border
+                color "#bf3434"
+                width 2
+                style "dashed"
+            stroke
+                color "#bf3434"
+                weight 2
+                dash "dashed"
+            marks
+                item "REMOVED"
+
+    use "ddn.fieldguide.diff::main::changed::worker" named "appearance:main:ddn.fieldguide.diff::main::changed::worker"
+        with
+            id "appearance:main:ddn.fieldguide.diff::main::changed::worker"
+            border
+                color "#a76812"
+                width 2
+                style "solid"
+            stroke
+                color "#a76812"
+                weight 2
+                dash "solid"
+            marks
+                item "CHANGED"
+
+    use "ddn.fieldguide.diff::main::added::ingest" named "appearance:main:ddn.fieldguide.diff::main::added::ingest"
+        with
+            id "appearance:main:ddn.fieldguide.diff::main::added::ingest"
+            border
+                color "#168044"
+                width 2
+                style "solid"
+            stroke
+                color "#168044"
+                weight 2
+                dash "solid"
+            marks
+                item "ADDED"
+
+    use "ddn.fieldguide.diff::main::removed::r1" named "appearance:main:ddn.fieldguide.diff::main::removed::r1"
+        with
+            id "appearance:main:ddn.fieldguide.diff::main::removed::r1"
+            border
+                color "#bf3434"
+                width 2
+                style "dashed"
+            stroke
+                color "#bf3434"
+                weight 2
+                dash "dashed"
+
+    use "ddn.fieldguide.diff::main::unchanged::r2" named "appearance:main:ddn.fieldguide.diff::main::unchanged::r2"
+        with
+            id "appearance:main:ddn.fieldguide.diff::main::unchanged::r2"
+
+    use "ddn.fieldguide.diff::main::added::r3" named "appearance:main:ddn.fieldguide.diff::main::added::r3"
+        with
+            id "appearance:main:ddn.fieldguide.diff::main::added::r3"
+            border
+                color "#168044"
+                width 2
+                style "solid"
+            stroke
+                color "#168044"
+                weight 2
+                dash "solid"

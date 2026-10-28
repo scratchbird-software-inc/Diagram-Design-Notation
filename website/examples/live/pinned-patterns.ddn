@@ -1,90 +1,2803 @@
-ddn "0.5";
-module "ddn.live.pinned-patterns";
-// One shared model, six placement patterns. Only place.at locks a position.
-// Synthetic planning diagram, not a running integration architecture.
-data network {
-    application hub "Integration hub" {fields { request_id; schema_version; } }
-    table store "Transaction store" {fields { transaction_id; occurred_at; status; } }
-    application client "Client application";
-    application orders "Order service" {fields { order_id; } }
-    table inventory "Inventory" {fields { item_id; quantity; } }
-    application production "Production control";
-    topic events "Event channel";
-    table history "Historical projection" {workload: [olap]; role: derived; fields { valid_from; recorded_from; } }
-    application audit "Audit monitor";
-    note note "Review note" {description: "Layout does not establish timing, ownership, or authorization."; }
-    relation submit "Submit request" @client -> @hub { kind: flow; }
-    relation route "Dispatch order" @hub -> @orders { kind: flow; }
-    depends reserve "Check availability" @orders -> @inventory;
-    relation plan "Production request" @orders -> @production { kind: flow; }
-    relation persist "Store transaction" @hub -> @store { kind: flow; }
-    relation publish "Publish outbox" @store -> @events { kind: flow; }
-    relation history_projection "Build history" @events -> @history { kind: flow; }
-    relation monitor "Observe event" @events -> @audit { kind: flow; }
-    note document "Review design" @note -> @hub;
-}
-format patterns {
-    style day;
-    layout grid { algorithm: fit_grid; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
-    layout circle { algorithm: circular; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
-    layout rings { algorithm: radial; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
-    layout hierarchy { algorithm: layered; center: pins; gap: 112px; row_gap: 112px; }
-    layout breadth { algorithm: spanning_tree; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
-    layout force { algorithm: organic; center: pins; gap: 112px; row_gap: 112px; routing: curved; }
-    display detail { maturity: none; }
-    legend key { mode: numbers; width: 330px; keys: {"network.submit":1,"network.route":2,"network.reserve":3,"network.plan":4,"network.persist":5,"network.publish":6,"network.history_projection":7,"network.monitor":8,"network.document":9}; }
-    publication page { size: content; fit: none; }
-    bundle shared { style: @day; layout: @circle; display: @detail; legend: @key; publication: @page; }
-}
-view circular "Circular / two fixed pins" {
-    data: [@network]; format: @patterns.shared;
-    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
-    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
-}
-view fit_grid "Fit to grid / around two pins" {
-    data: [@network]; format: @patterns.shared; layout: @patterns.grid;
-    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
-    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
-}
-view radial "Radial / graph-distance rings" {
-    data: [@network]; format: @patterns.shared; layout: @patterns.rings;
-    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
-    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
-}
-view layered "Hierarchical / directed layers" {
-    data: [@network]; format: @patterns.shared; layout: @patterns.hierarchy;
-    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
-    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
-}
-view tree "Tree / breadth levels from fixed pins" {
-    data: [@network]; format: @patterns.shared; layout: @patterns.breadth;
-    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
-    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
-}
-view organic "Organic / movable neighbours, fixed core" {
-    data: [@network]; format: @patterns.shared; layout: @patterns.force;
-    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
-    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
-}
-view single_pin "One pin / circular neighbours" {
-    data: [@network]; format: @patterns.shared;
-    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
-    place @network.store { size: [270px, 170px]; }
-}
-view no_pins "No pins / deterministic radial root" {
-    data: [@network]; format: @patterns.shared; layout: @patterns.rings;
-    // The centre is an automatic drawing root, not a new semantic root.
-}
-view paused "Pause placement / retain the current scene" {
-    data: [@network]; format: @patterns.shared;
-    layout { auto_place: false; }
-    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
-    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
-    // On first render a seed is needed; the live component then retains it.
-}
-view sketch_night "Same anchored circle / hand-drawn night" {
-    data: [@network]; format: @patterns.shared;
-    style { look: handDrawn; theme: night; }
-    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
-    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
-}
+version ddn-next-1
+
+publication "publication:circular"
+    with
+        id "publication:circular"
+        title "Circular / two fixed pins"
+        targets
+            item
+                target
+                    id "circular"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:fit_grid"
+    with
+        id "publication:fit_grid"
+        title "Fit to grid / around two pins"
+        targets
+            item
+                target
+                    id "fit_grid"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:radial"
+    with
+        id "publication:radial"
+        title "Radial / graph-distance rings"
+        targets
+            item
+                target
+                    id "radial"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:layered"
+    with
+        id "publication:layered"
+        title "Hierarchical / directed layers"
+        targets
+            item
+                target
+                    id "layered"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:tree"
+    with
+        id "publication:tree"
+        title "Tree / breadth levels from fixed pins"
+        targets
+            item
+                target
+                    id "tree"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:organic"
+    with
+        id "publication:organic"
+        title "Organic / movable neighbours, fixed core"
+        targets
+            item
+                target
+                    id "organic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:single_pin"
+    with
+        id "publication:single_pin"
+        title "One pin / circular neighbours"
+        targets
+            item
+                target
+                    id "single_pin"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:no_pins"
+    with
+        id "publication:no_pins"
+        title "No pins / deterministic radial root"
+        targets
+            item
+                target
+                    id "no_pins"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:paused"
+    with
+        id "publication:paused"
+        title "Pause placement / retain the current scene"
+        targets
+            item
+                target
+                    id "paused"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:sketch_night"
+    with
+        id "publication:sketch_night"
+        title "Same anchored circle / hand-drawn night"
+        targets
+            item
+                target
+                    id "sketch_night"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.live.pinned-patterns::network.hub.request_id" as "field"
+    with
+        id "ddn.live.pinned-patterns::network.hub.request_id"
+        title "request_id"
+        content
+            parent
+                id "ddn.live.pinned-patterns::network.hub"
+            ordinal 0
+
+
+element "ddn.live.pinned-patterns::network.hub.schema_version" as "field"
+    with
+        id "ddn.live.pinned-patterns::network.hub.schema_version"
+        title "schema_version"
+        content
+            parent
+                id "ddn.live.pinned-patterns::network.hub"
+            ordinal 1
+
+
+element "ddn.live.pinned-patterns::network.hub" as "application"
+    with
+        id "ddn.live.pinned-patterns::network.hub"
+        title "Integration hub"
+        members
+            item
+                id "ddn.live.pinned-patterns::network.hub.request_id"
+            item
+                id "ddn.live.pinned-patterns::network.hub.schema_version"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "request_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "schema_version"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.live.pinned-patterns::network.store.transaction_id" as "field"
+    with
+        id "ddn.live.pinned-patterns::network.store.transaction_id"
+        title "transaction_id"
+        content
+            parent
+                id "ddn.live.pinned-patterns::network.store"
+            ordinal 0
+
+
+element "ddn.live.pinned-patterns::network.store.occurred_at" as "field"
+    with
+        id "ddn.live.pinned-patterns::network.store.occurred_at"
+        title "occurred_at"
+        content
+            parent
+                id "ddn.live.pinned-patterns::network.store"
+            ordinal 1
+
+
+element "ddn.live.pinned-patterns::network.store.status" as "field"
+    with
+        id "ddn.live.pinned-patterns::network.store.status"
+        title "status"
+        content
+            parent
+                id "ddn.live.pinned-patterns::network.store"
+            ordinal 2
+
+
+element "ddn.live.pinned-patterns::network.store" as "table"
+    with
+        id "ddn.live.pinned-patterns::network.store"
+        title "Transaction store"
+        members
+            item
+                id "ddn.live.pinned-patterns::network.store.transaction_id"
+            item
+                id "ddn.live.pinned-patterns::network.store.occurred_at"
+            item
+                id "ddn.live.pinned-patterns::network.store.status"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "transaction_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "occurred_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.live.pinned-patterns::network.client" as "application"
+    with
+        id "ddn.live.pinned-patterns::network.client"
+        title "Client application"
+
+
+element "ddn.live.pinned-patterns::network.orders.order_id" as "field"
+    with
+        id "ddn.live.pinned-patterns::network.orders.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.live.pinned-patterns::network.orders"
+            ordinal 0
+
+
+element "ddn.live.pinned-patterns::network.orders" as "application"
+    with
+        id "ddn.live.pinned-patterns::network.orders"
+        title "Order service"
+        members
+            item
+                id "ddn.live.pinned-patterns::network.orders.order_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.live.pinned-patterns::network.inventory.item_id" as "field"
+    with
+        id "ddn.live.pinned-patterns::network.inventory.item_id"
+        title "item_id"
+        content
+            parent
+                id "ddn.live.pinned-patterns::network.inventory"
+            ordinal 0
+
+
+element "ddn.live.pinned-patterns::network.inventory.quantity" as "field"
+    with
+        id "ddn.live.pinned-patterns::network.inventory.quantity"
+        title "quantity"
+        content
+            parent
+                id "ddn.live.pinned-patterns::network.inventory"
+            ordinal 1
+
+
+element "ddn.live.pinned-patterns::network.inventory" as "table"
+    with
+        id "ddn.live.pinned-patterns::network.inventory"
+        title "Inventory"
+        members
+            item
+                id "ddn.live.pinned-patterns::network.inventory.item_id"
+            item
+                id "ddn.live.pinned-patterns::network.inventory.quantity"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "item_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "quantity"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.live.pinned-patterns::network.production" as "application"
+    with
+        id "ddn.live.pinned-patterns::network.production"
+        title "Production control"
+
+
+element "ddn.live.pinned-patterns::network.events" as "topic"
+    with
+        id "ddn.live.pinned-patterns::network.events"
+        title "Event channel"
+
+
+element "ddn.live.pinned-patterns::network.history.valid_from" as "field"
+    with
+        id "ddn.live.pinned-patterns::network.history.valid_from"
+        title "valid_from"
+        content
+            parent
+                id "ddn.live.pinned-patterns::network.history"
+            ordinal 0
+
+
+element "ddn.live.pinned-patterns::network.history.recorded_from" as "field"
+    with
+        id "ddn.live.pinned-patterns::network.history.recorded_from"
+        title "recorded_from"
+        content
+            parent
+                id "ddn.live.pinned-patterns::network.history"
+            ordinal 1
+
+
+element "ddn.live.pinned-patterns::network.history" as "table"
+    with
+        id "ddn.live.pinned-patterns::network.history"
+        title "Historical projection"
+        facets
+            workload
+                item "OLAP"
+            authority
+                item "DER"
+        properties
+            workload
+                item "olap"
+            role "derived"
+        metadata
+            x_record
+                layout_group "derived"
+        members
+            item
+                id "ddn.live.pinned-patterns::network.history.valid_from"
+            item
+                id "ddn.live.pinned-patterns::network.history.recorded_from"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "valid_from"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "recorded_from"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.live.pinned-patterns::network.audit" as "application"
+    with
+        id "ddn.live.pinned-patterns::network.audit"
+        title "Audit monitor"
+
+
+element "ddn.live.pinned-patterns::network.note" as "note"
+    with
+        id "ddn.live.pinned-patterns::network.note"
+        title "Review note"
+        description "Layout does not establish timing, ownership, or authorization."
+        content
+            text "Layout does not establish timing, ownership, or authorization."
+        draft
+            text "Layout does not establish timing, ownership, or authorization."
+
+
+relation "ddn.live.pinned-patterns::network.submit" as "flow"
+    with
+        id "ddn.live.pinned-patterns::network.submit"
+        title "Submit request"
+        endpoints
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.client"
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.hub"
+
+
+relation "ddn.live.pinned-patterns::network.route" as "flow"
+    with
+        id "ddn.live.pinned-patterns::network.route"
+        title "Dispatch order"
+        endpoints
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.hub"
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.orders"
+
+
+relation "ddn.live.pinned-patterns::network.reserve" as "depends"
+    with
+        id "ddn.live.pinned-patterns::network.reserve"
+        title "Check availability"
+        endpoints
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.orders"
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.inventory"
+
+
+relation "ddn.live.pinned-patterns::network.plan" as "flow"
+    with
+        id "ddn.live.pinned-patterns::network.plan"
+        title "Production request"
+        endpoints
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.orders"
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.production"
+
+
+relation "ddn.live.pinned-patterns::network.persist" as "flow"
+    with
+        id "ddn.live.pinned-patterns::network.persist"
+        title "Store transaction"
+        endpoints
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.hub"
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.store"
+
+
+relation "ddn.live.pinned-patterns::network.publish" as "flow"
+    with
+        id "ddn.live.pinned-patterns::network.publish"
+        title "Publish outbox"
+        endpoints
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.store"
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.events"
+
+
+relation "ddn.live.pinned-patterns::network.history_projection" as "flow"
+    with
+        id "ddn.live.pinned-patterns::network.history_projection"
+        title "Build history"
+        endpoints
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.events"
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.history"
+
+
+relation "ddn.live.pinned-patterns::network.monitor" as "flow"
+    with
+        id "ddn.live.pinned-patterns::network.monitor"
+        title "Observe event"
+        endpoints
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.events"
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.audit"
+
+
+relation "ddn.live.pinned-patterns::network.document" as "note"
+    with
+        id "ddn.live.pinned-patterns::network.document"
+        title "Review design"
+        endpoints
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.note"
+            item
+                definition
+                    id "ddn.live.pinned-patterns::network.hub"
+
+
+view "circular" as "ddn@1"
+    with
+        id "circular"
+        title "Circular / two fixed pins"
+        selection
+            include
+                item
+                    id "ddn.live.pinned-patterns::network.hub"
+                item
+                    id "ddn.live.pinned-patterns::network.store"
+                item
+                    id "ddn.live.pinned-patterns::network.client"
+                item
+                    id "ddn.live.pinned-patterns::network.orders"
+                item
+                    id "ddn.live.pinned-patterns::network.inventory"
+                item
+                    id "ddn.live.pinned-patterns::network.production"
+                item
+                    id "ddn.live.pinned-patterns::network.events"
+                item
+                    id "ddn.live.pinned-patterns::network.history"
+                item
+                    id "ddn.live.pinned-patterns::network.audit"
+                item
+                    id "ddn.live.pinned-patterns::network.note"
+                item
+                    id "ddn.live.pinned-patterns::network.submit"
+                item
+                    id "ddn.live.pinned-patterns::network.route"
+                item
+                    id "ddn.live.pinned-patterns::network.reserve"
+                item
+                    id "ddn.live.pinned-patterns::network.plan"
+                item
+                    id "ddn.live.pinned-patterns::network.persist"
+                item
+                    id "ddn.live.pinned-patterns::network.publish"
+                item
+                    id "ddn.live.pinned-patterns::network.history_projection"
+                item
+                    id "ddn.live.pinned-patterns::network.monitor"
+                item
+                    id "ddn.live.pinned-patterns::network.document"
+        layout
+            algorithm "circular"
+            center "pins"
+            routing "curved"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                network.submit "1"
+                network.route "2"
+                network.reserve "3"
+                network.plan "4"
+                network.persist "5"
+                network.publish "6"
+                network.history_projection "7"
+                network.monitor "8"
+                network.document "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:circular"
+
+    use "ddn.live.pinned-patterns::network.hub" named "appearance:circular:ddn.live.pinned-patterns::network.hub"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.hub"
+            position
+                x 580
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.store" named "appearance:circular:ddn.live.pinned-patterns::network.store"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.store"
+            position
+                x 930
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.client" named "appearance:circular:ddn.live.pinned-patterns::network.client"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.client"
+
+    use "ddn.live.pinned-patterns::network.orders" named "appearance:circular:ddn.live.pinned-patterns::network.orders"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.inventory" named "appearance:circular:ddn.live.pinned-patterns::network.inventory"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.inventory"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.production" named "appearance:circular:ddn.live.pinned-patterns::network.production"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.production"
+
+    use "ddn.live.pinned-patterns::network.events" named "appearance:circular:ddn.live.pinned-patterns::network.events"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.events"
+
+    use "ddn.live.pinned-patterns::network.history" named "appearance:circular:ddn.live.pinned-patterns::network.history"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.audit" named "appearance:circular:ddn.live.pinned-patterns::network.audit"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.audit"
+
+    use "ddn.live.pinned-patterns::network.note" named "appearance:circular:ddn.live.pinned-patterns::network.note"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.note"
+            body "draft"
+
+    use "ddn.live.pinned-patterns::network.submit" named "appearance:circular:ddn.live.pinned-patterns::network.submit"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.submit"
+
+    use "ddn.live.pinned-patterns::network.route" named "appearance:circular:ddn.live.pinned-patterns::network.route"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.route"
+
+    use "ddn.live.pinned-patterns::network.reserve" named "appearance:circular:ddn.live.pinned-patterns::network.reserve"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.reserve"
+
+    use "ddn.live.pinned-patterns::network.plan" named "appearance:circular:ddn.live.pinned-patterns::network.plan"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.plan"
+
+    use "ddn.live.pinned-patterns::network.persist" named "appearance:circular:ddn.live.pinned-patterns::network.persist"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.persist"
+
+    use "ddn.live.pinned-patterns::network.publish" named "appearance:circular:ddn.live.pinned-patterns::network.publish"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.publish"
+
+    use "ddn.live.pinned-patterns::network.history_projection" named "appearance:circular:ddn.live.pinned-patterns::network.history_projection"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.history_projection"
+
+    use "ddn.live.pinned-patterns::network.monitor" named "appearance:circular:ddn.live.pinned-patterns::network.monitor"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.monitor"
+
+    use "ddn.live.pinned-patterns::network.document" named "appearance:circular:ddn.live.pinned-patterns::network.document"
+        with
+            id "appearance:circular:ddn.live.pinned-patterns::network.document"
+            body "draft"
+
+
+view "fit_grid" as "ddn@1"
+    with
+        id "fit_grid"
+        title "Fit to grid / around two pins"
+        selection
+            include
+                item
+                    id "ddn.live.pinned-patterns::network.hub"
+                item
+                    id "ddn.live.pinned-patterns::network.store"
+                item
+                    id "ddn.live.pinned-patterns::network.client"
+                item
+                    id "ddn.live.pinned-patterns::network.orders"
+                item
+                    id "ddn.live.pinned-patterns::network.inventory"
+                item
+                    id "ddn.live.pinned-patterns::network.production"
+                item
+                    id "ddn.live.pinned-patterns::network.events"
+                item
+                    id "ddn.live.pinned-patterns::network.history"
+                item
+                    id "ddn.live.pinned-patterns::network.audit"
+                item
+                    id "ddn.live.pinned-patterns::network.note"
+                item
+                    id "ddn.live.pinned-patterns::network.submit"
+                item
+                    id "ddn.live.pinned-patterns::network.route"
+                item
+                    id "ddn.live.pinned-patterns::network.reserve"
+                item
+                    id "ddn.live.pinned-patterns::network.plan"
+                item
+                    id "ddn.live.pinned-patterns::network.persist"
+                item
+                    id "ddn.live.pinned-patterns::network.publish"
+                item
+                    id "ddn.live.pinned-patterns::network.history_projection"
+                item
+                    id "ddn.live.pinned-patterns::network.monitor"
+                item
+                    id "ddn.live.pinned-patterns::network.document"
+        layout
+            algorithm "fit_grid"
+            center "pins"
+            routing "curved"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                network.submit "1"
+                network.route "2"
+                network.reserve "3"
+                network.plan "4"
+                network.persist "5"
+                network.publish "6"
+                network.history_projection "7"
+                network.monitor "8"
+                network.document "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:fit_grid"
+
+    use "ddn.live.pinned-patterns::network.hub" named "appearance:fit_grid:ddn.live.pinned-patterns::network.hub"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.hub"
+            position
+                x 580
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.store" named "appearance:fit_grid:ddn.live.pinned-patterns::network.store"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.store"
+            position
+                x 930
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.client" named "appearance:fit_grid:ddn.live.pinned-patterns::network.client"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.client"
+
+    use "ddn.live.pinned-patterns::network.orders" named "appearance:fit_grid:ddn.live.pinned-patterns::network.orders"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.inventory" named "appearance:fit_grid:ddn.live.pinned-patterns::network.inventory"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.inventory"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.production" named "appearance:fit_grid:ddn.live.pinned-patterns::network.production"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.production"
+
+    use "ddn.live.pinned-patterns::network.events" named "appearance:fit_grid:ddn.live.pinned-patterns::network.events"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.events"
+
+    use "ddn.live.pinned-patterns::network.history" named "appearance:fit_grid:ddn.live.pinned-patterns::network.history"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.audit" named "appearance:fit_grid:ddn.live.pinned-patterns::network.audit"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.audit"
+
+    use "ddn.live.pinned-patterns::network.note" named "appearance:fit_grid:ddn.live.pinned-patterns::network.note"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.note"
+            body "draft"
+
+    use "ddn.live.pinned-patterns::network.submit" named "appearance:fit_grid:ddn.live.pinned-patterns::network.submit"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.submit"
+
+    use "ddn.live.pinned-patterns::network.route" named "appearance:fit_grid:ddn.live.pinned-patterns::network.route"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.route"
+
+    use "ddn.live.pinned-patterns::network.reserve" named "appearance:fit_grid:ddn.live.pinned-patterns::network.reserve"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.reserve"
+
+    use "ddn.live.pinned-patterns::network.plan" named "appearance:fit_grid:ddn.live.pinned-patterns::network.plan"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.plan"
+
+    use "ddn.live.pinned-patterns::network.persist" named "appearance:fit_grid:ddn.live.pinned-patterns::network.persist"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.persist"
+
+    use "ddn.live.pinned-patterns::network.publish" named "appearance:fit_grid:ddn.live.pinned-patterns::network.publish"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.publish"
+
+    use "ddn.live.pinned-patterns::network.history_projection" named "appearance:fit_grid:ddn.live.pinned-patterns::network.history_projection"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.history_projection"
+
+    use "ddn.live.pinned-patterns::network.monitor" named "appearance:fit_grid:ddn.live.pinned-patterns::network.monitor"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.monitor"
+
+    use "ddn.live.pinned-patterns::network.document" named "appearance:fit_grid:ddn.live.pinned-patterns::network.document"
+        with
+            id "appearance:fit_grid:ddn.live.pinned-patterns::network.document"
+            body "draft"
+
+
+view "radial" as "ddn@1"
+    with
+        id "radial"
+        title "Radial / graph-distance rings"
+        selection
+            include
+                item
+                    id "ddn.live.pinned-patterns::network.hub"
+                item
+                    id "ddn.live.pinned-patterns::network.store"
+                item
+                    id "ddn.live.pinned-patterns::network.client"
+                item
+                    id "ddn.live.pinned-patterns::network.orders"
+                item
+                    id "ddn.live.pinned-patterns::network.inventory"
+                item
+                    id "ddn.live.pinned-patterns::network.production"
+                item
+                    id "ddn.live.pinned-patterns::network.events"
+                item
+                    id "ddn.live.pinned-patterns::network.history"
+                item
+                    id "ddn.live.pinned-patterns::network.audit"
+                item
+                    id "ddn.live.pinned-patterns::network.note"
+                item
+                    id "ddn.live.pinned-patterns::network.submit"
+                item
+                    id "ddn.live.pinned-patterns::network.route"
+                item
+                    id "ddn.live.pinned-patterns::network.reserve"
+                item
+                    id "ddn.live.pinned-patterns::network.plan"
+                item
+                    id "ddn.live.pinned-patterns::network.persist"
+                item
+                    id "ddn.live.pinned-patterns::network.publish"
+                item
+                    id "ddn.live.pinned-patterns::network.history_projection"
+                item
+                    id "ddn.live.pinned-patterns::network.monitor"
+                item
+                    id "ddn.live.pinned-patterns::network.document"
+        layout
+            algorithm "radial"
+            center "pins"
+            routing "curved"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                network.submit "1"
+                network.route "2"
+                network.reserve "3"
+                network.plan "4"
+                network.persist "5"
+                network.publish "6"
+                network.history_projection "7"
+                network.monitor "8"
+                network.document "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:radial"
+
+    use "ddn.live.pinned-patterns::network.hub" named "appearance:radial:ddn.live.pinned-patterns::network.hub"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.hub"
+            position
+                x 580
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.store" named "appearance:radial:ddn.live.pinned-patterns::network.store"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.store"
+            position
+                x 930
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.client" named "appearance:radial:ddn.live.pinned-patterns::network.client"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.client"
+
+    use "ddn.live.pinned-patterns::network.orders" named "appearance:radial:ddn.live.pinned-patterns::network.orders"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.inventory" named "appearance:radial:ddn.live.pinned-patterns::network.inventory"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.inventory"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.production" named "appearance:radial:ddn.live.pinned-patterns::network.production"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.production"
+
+    use "ddn.live.pinned-patterns::network.events" named "appearance:radial:ddn.live.pinned-patterns::network.events"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.events"
+
+    use "ddn.live.pinned-patterns::network.history" named "appearance:radial:ddn.live.pinned-patterns::network.history"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.audit" named "appearance:radial:ddn.live.pinned-patterns::network.audit"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.audit"
+
+    use "ddn.live.pinned-patterns::network.note" named "appearance:radial:ddn.live.pinned-patterns::network.note"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.note"
+            body "draft"
+
+    use "ddn.live.pinned-patterns::network.submit" named "appearance:radial:ddn.live.pinned-patterns::network.submit"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.submit"
+
+    use "ddn.live.pinned-patterns::network.route" named "appearance:radial:ddn.live.pinned-patterns::network.route"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.route"
+
+    use "ddn.live.pinned-patterns::network.reserve" named "appearance:radial:ddn.live.pinned-patterns::network.reserve"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.reserve"
+
+    use "ddn.live.pinned-patterns::network.plan" named "appearance:radial:ddn.live.pinned-patterns::network.plan"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.plan"
+
+    use "ddn.live.pinned-patterns::network.persist" named "appearance:radial:ddn.live.pinned-patterns::network.persist"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.persist"
+
+    use "ddn.live.pinned-patterns::network.publish" named "appearance:radial:ddn.live.pinned-patterns::network.publish"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.publish"
+
+    use "ddn.live.pinned-patterns::network.history_projection" named "appearance:radial:ddn.live.pinned-patterns::network.history_projection"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.history_projection"
+
+    use "ddn.live.pinned-patterns::network.monitor" named "appearance:radial:ddn.live.pinned-patterns::network.monitor"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.monitor"
+
+    use "ddn.live.pinned-patterns::network.document" named "appearance:radial:ddn.live.pinned-patterns::network.document"
+        with
+            id "appearance:radial:ddn.live.pinned-patterns::network.document"
+            body "draft"
+
+
+view "layered" as "ddn@1"
+    with
+        id "layered"
+        title "Hierarchical / directed layers"
+        selection
+            include
+                item
+                    id "ddn.live.pinned-patterns::network.hub"
+                item
+                    id "ddn.live.pinned-patterns::network.store"
+                item
+                    id "ddn.live.pinned-patterns::network.client"
+                item
+                    id "ddn.live.pinned-patterns::network.orders"
+                item
+                    id "ddn.live.pinned-patterns::network.inventory"
+                item
+                    id "ddn.live.pinned-patterns::network.production"
+                item
+                    id "ddn.live.pinned-patterns::network.events"
+                item
+                    id "ddn.live.pinned-patterns::network.history"
+                item
+                    id "ddn.live.pinned-patterns::network.audit"
+                item
+                    id "ddn.live.pinned-patterns::network.note"
+                item
+                    id "ddn.live.pinned-patterns::network.submit"
+                item
+                    id "ddn.live.pinned-patterns::network.route"
+                item
+                    id "ddn.live.pinned-patterns::network.reserve"
+                item
+                    id "ddn.live.pinned-patterns::network.plan"
+                item
+                    id "ddn.live.pinned-patterns::network.persist"
+                item
+                    id "ddn.live.pinned-patterns::network.publish"
+                item
+                    id "ddn.live.pinned-patterns::network.history_projection"
+                item
+                    id "ddn.live.pinned-patterns::network.monitor"
+                item
+                    id "ddn.live.pinned-patterns::network.document"
+        layout
+            algorithm "layered"
+            center "pins"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                network.submit "1"
+                network.route "2"
+                network.reserve "3"
+                network.plan "4"
+                network.persist "5"
+                network.publish "6"
+                network.history_projection "7"
+                network.monitor "8"
+                network.document "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:layered"
+
+    use "ddn.live.pinned-patterns::network.hub" named "appearance:layered:ddn.live.pinned-patterns::network.hub"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.hub"
+            position
+                x 580
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.store" named "appearance:layered:ddn.live.pinned-patterns::network.store"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.store"
+            position
+                x 930
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.client" named "appearance:layered:ddn.live.pinned-patterns::network.client"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.client"
+
+    use "ddn.live.pinned-patterns::network.orders" named "appearance:layered:ddn.live.pinned-patterns::network.orders"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.inventory" named "appearance:layered:ddn.live.pinned-patterns::network.inventory"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.inventory"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.production" named "appearance:layered:ddn.live.pinned-patterns::network.production"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.production"
+
+    use "ddn.live.pinned-patterns::network.events" named "appearance:layered:ddn.live.pinned-patterns::network.events"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.events"
+
+    use "ddn.live.pinned-patterns::network.history" named "appearance:layered:ddn.live.pinned-patterns::network.history"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.audit" named "appearance:layered:ddn.live.pinned-patterns::network.audit"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.audit"
+
+    use "ddn.live.pinned-patterns::network.note" named "appearance:layered:ddn.live.pinned-patterns::network.note"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.note"
+            body "draft"
+
+    use "ddn.live.pinned-patterns::network.submit" named "appearance:layered:ddn.live.pinned-patterns::network.submit"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.submit"
+
+    use "ddn.live.pinned-patterns::network.route" named "appearance:layered:ddn.live.pinned-patterns::network.route"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.route"
+
+    use "ddn.live.pinned-patterns::network.reserve" named "appearance:layered:ddn.live.pinned-patterns::network.reserve"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.reserve"
+
+    use "ddn.live.pinned-patterns::network.plan" named "appearance:layered:ddn.live.pinned-patterns::network.plan"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.plan"
+
+    use "ddn.live.pinned-patterns::network.persist" named "appearance:layered:ddn.live.pinned-patterns::network.persist"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.persist"
+
+    use "ddn.live.pinned-patterns::network.publish" named "appearance:layered:ddn.live.pinned-patterns::network.publish"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.publish"
+
+    use "ddn.live.pinned-patterns::network.history_projection" named "appearance:layered:ddn.live.pinned-patterns::network.history_projection"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.history_projection"
+
+    use "ddn.live.pinned-patterns::network.monitor" named "appearance:layered:ddn.live.pinned-patterns::network.monitor"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.monitor"
+
+    use "ddn.live.pinned-patterns::network.document" named "appearance:layered:ddn.live.pinned-patterns::network.document"
+        with
+            id "appearance:layered:ddn.live.pinned-patterns::network.document"
+            body "draft"
+
+
+view "tree" as "ddn@1"
+    with
+        id "tree"
+        title "Tree / breadth levels from fixed pins"
+        selection
+            include
+                item
+                    id "ddn.live.pinned-patterns::network.hub"
+                item
+                    id "ddn.live.pinned-patterns::network.store"
+                item
+                    id "ddn.live.pinned-patterns::network.client"
+                item
+                    id "ddn.live.pinned-patterns::network.orders"
+                item
+                    id "ddn.live.pinned-patterns::network.inventory"
+                item
+                    id "ddn.live.pinned-patterns::network.production"
+                item
+                    id "ddn.live.pinned-patterns::network.events"
+                item
+                    id "ddn.live.pinned-patterns::network.history"
+                item
+                    id "ddn.live.pinned-patterns::network.audit"
+                item
+                    id "ddn.live.pinned-patterns::network.note"
+                item
+                    id "ddn.live.pinned-patterns::network.submit"
+                item
+                    id "ddn.live.pinned-patterns::network.route"
+                item
+                    id "ddn.live.pinned-patterns::network.reserve"
+                item
+                    id "ddn.live.pinned-patterns::network.plan"
+                item
+                    id "ddn.live.pinned-patterns::network.persist"
+                item
+                    id "ddn.live.pinned-patterns::network.publish"
+                item
+                    id "ddn.live.pinned-patterns::network.history_projection"
+                item
+                    id "ddn.live.pinned-patterns::network.monitor"
+                item
+                    id "ddn.live.pinned-patterns::network.document"
+        layout
+            algorithm "spanning_tree"
+            center "pins"
+            routing "curved"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                network.submit "1"
+                network.route "2"
+                network.reserve "3"
+                network.plan "4"
+                network.persist "5"
+                network.publish "6"
+                network.history_projection "7"
+                network.monitor "8"
+                network.document "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:tree"
+
+    use "ddn.live.pinned-patterns::network.hub" named "appearance:tree:ddn.live.pinned-patterns::network.hub"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.hub"
+            position
+                x 580
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.store" named "appearance:tree:ddn.live.pinned-patterns::network.store"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.store"
+            position
+                x 930
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.client" named "appearance:tree:ddn.live.pinned-patterns::network.client"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.client"
+
+    use "ddn.live.pinned-patterns::network.orders" named "appearance:tree:ddn.live.pinned-patterns::network.orders"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.inventory" named "appearance:tree:ddn.live.pinned-patterns::network.inventory"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.inventory"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.production" named "appearance:tree:ddn.live.pinned-patterns::network.production"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.production"
+
+    use "ddn.live.pinned-patterns::network.events" named "appearance:tree:ddn.live.pinned-patterns::network.events"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.events"
+
+    use "ddn.live.pinned-patterns::network.history" named "appearance:tree:ddn.live.pinned-patterns::network.history"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.audit" named "appearance:tree:ddn.live.pinned-patterns::network.audit"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.audit"
+
+    use "ddn.live.pinned-patterns::network.note" named "appearance:tree:ddn.live.pinned-patterns::network.note"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.note"
+            body "draft"
+
+    use "ddn.live.pinned-patterns::network.submit" named "appearance:tree:ddn.live.pinned-patterns::network.submit"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.submit"
+
+    use "ddn.live.pinned-patterns::network.route" named "appearance:tree:ddn.live.pinned-patterns::network.route"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.route"
+
+    use "ddn.live.pinned-patterns::network.reserve" named "appearance:tree:ddn.live.pinned-patterns::network.reserve"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.reserve"
+
+    use "ddn.live.pinned-patterns::network.plan" named "appearance:tree:ddn.live.pinned-patterns::network.plan"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.plan"
+
+    use "ddn.live.pinned-patterns::network.persist" named "appearance:tree:ddn.live.pinned-patterns::network.persist"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.persist"
+
+    use "ddn.live.pinned-patterns::network.publish" named "appearance:tree:ddn.live.pinned-patterns::network.publish"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.publish"
+
+    use "ddn.live.pinned-patterns::network.history_projection" named "appearance:tree:ddn.live.pinned-patterns::network.history_projection"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.history_projection"
+
+    use "ddn.live.pinned-patterns::network.monitor" named "appearance:tree:ddn.live.pinned-patterns::network.monitor"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.monitor"
+
+    use "ddn.live.pinned-patterns::network.document" named "appearance:tree:ddn.live.pinned-patterns::network.document"
+        with
+            id "appearance:tree:ddn.live.pinned-patterns::network.document"
+            body "draft"
+
+
+view "organic" as "ddn@1"
+    with
+        id "organic"
+        title "Organic / movable neighbours, fixed core"
+        selection
+            include
+                item
+                    id "ddn.live.pinned-patterns::network.hub"
+                item
+                    id "ddn.live.pinned-patterns::network.store"
+                item
+                    id "ddn.live.pinned-patterns::network.client"
+                item
+                    id "ddn.live.pinned-patterns::network.orders"
+                item
+                    id "ddn.live.pinned-patterns::network.inventory"
+                item
+                    id "ddn.live.pinned-patterns::network.production"
+                item
+                    id "ddn.live.pinned-patterns::network.events"
+                item
+                    id "ddn.live.pinned-patterns::network.history"
+                item
+                    id "ddn.live.pinned-patterns::network.audit"
+                item
+                    id "ddn.live.pinned-patterns::network.note"
+                item
+                    id "ddn.live.pinned-patterns::network.submit"
+                item
+                    id "ddn.live.pinned-patterns::network.route"
+                item
+                    id "ddn.live.pinned-patterns::network.reserve"
+                item
+                    id "ddn.live.pinned-patterns::network.plan"
+                item
+                    id "ddn.live.pinned-patterns::network.persist"
+                item
+                    id "ddn.live.pinned-patterns::network.publish"
+                item
+                    id "ddn.live.pinned-patterns::network.history_projection"
+                item
+                    id "ddn.live.pinned-patterns::network.monitor"
+                item
+                    id "ddn.live.pinned-patterns::network.document"
+        layout
+            algorithm "organic"
+            center "pins"
+            routing "curved"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                network.submit "1"
+                network.route "2"
+                network.reserve "3"
+                network.plan "4"
+                network.persist "5"
+                network.publish "6"
+                network.history_projection "7"
+                network.monitor "8"
+                network.document "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:organic"
+
+    use "ddn.live.pinned-patterns::network.hub" named "appearance:organic:ddn.live.pinned-patterns::network.hub"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.hub"
+            position
+                x 580
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.store" named "appearance:organic:ddn.live.pinned-patterns::network.store"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.store"
+            position
+                x 930
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.client" named "appearance:organic:ddn.live.pinned-patterns::network.client"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.client"
+
+    use "ddn.live.pinned-patterns::network.orders" named "appearance:organic:ddn.live.pinned-patterns::network.orders"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.inventory" named "appearance:organic:ddn.live.pinned-patterns::network.inventory"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.inventory"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.production" named "appearance:organic:ddn.live.pinned-patterns::network.production"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.production"
+
+    use "ddn.live.pinned-patterns::network.events" named "appearance:organic:ddn.live.pinned-patterns::network.events"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.events"
+
+    use "ddn.live.pinned-patterns::network.history" named "appearance:organic:ddn.live.pinned-patterns::network.history"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.audit" named "appearance:organic:ddn.live.pinned-patterns::network.audit"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.audit"
+
+    use "ddn.live.pinned-patterns::network.note" named "appearance:organic:ddn.live.pinned-patterns::network.note"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.note"
+            body "draft"
+
+    use "ddn.live.pinned-patterns::network.submit" named "appearance:organic:ddn.live.pinned-patterns::network.submit"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.submit"
+
+    use "ddn.live.pinned-patterns::network.route" named "appearance:organic:ddn.live.pinned-patterns::network.route"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.route"
+
+    use "ddn.live.pinned-patterns::network.reserve" named "appearance:organic:ddn.live.pinned-patterns::network.reserve"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.reserve"
+
+    use "ddn.live.pinned-patterns::network.plan" named "appearance:organic:ddn.live.pinned-patterns::network.plan"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.plan"
+
+    use "ddn.live.pinned-patterns::network.persist" named "appearance:organic:ddn.live.pinned-patterns::network.persist"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.persist"
+
+    use "ddn.live.pinned-patterns::network.publish" named "appearance:organic:ddn.live.pinned-patterns::network.publish"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.publish"
+
+    use "ddn.live.pinned-patterns::network.history_projection" named "appearance:organic:ddn.live.pinned-patterns::network.history_projection"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.history_projection"
+
+    use "ddn.live.pinned-patterns::network.monitor" named "appearance:organic:ddn.live.pinned-patterns::network.monitor"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.monitor"
+
+    use "ddn.live.pinned-patterns::network.document" named "appearance:organic:ddn.live.pinned-patterns::network.document"
+        with
+            id "appearance:organic:ddn.live.pinned-patterns::network.document"
+            body "draft"
+
+
+view "single_pin" as "ddn@1"
+    with
+        id "single_pin"
+        title "One pin / circular neighbours"
+        selection
+            include
+                item
+                    id "ddn.live.pinned-patterns::network.hub"
+                item
+                    id "ddn.live.pinned-patterns::network.store"
+                item
+                    id "ddn.live.pinned-patterns::network.client"
+                item
+                    id "ddn.live.pinned-patterns::network.orders"
+                item
+                    id "ddn.live.pinned-patterns::network.inventory"
+                item
+                    id "ddn.live.pinned-patterns::network.production"
+                item
+                    id "ddn.live.pinned-patterns::network.events"
+                item
+                    id "ddn.live.pinned-patterns::network.history"
+                item
+                    id "ddn.live.pinned-patterns::network.audit"
+                item
+                    id "ddn.live.pinned-patterns::network.note"
+                item
+                    id "ddn.live.pinned-patterns::network.submit"
+                item
+                    id "ddn.live.pinned-patterns::network.route"
+                item
+                    id "ddn.live.pinned-patterns::network.reserve"
+                item
+                    id "ddn.live.pinned-patterns::network.plan"
+                item
+                    id "ddn.live.pinned-patterns::network.persist"
+                item
+                    id "ddn.live.pinned-patterns::network.publish"
+                item
+                    id "ddn.live.pinned-patterns::network.history_projection"
+                item
+                    id "ddn.live.pinned-patterns::network.monitor"
+                item
+                    id "ddn.live.pinned-patterns::network.document"
+        layout
+            algorithm "circular"
+            center "pins"
+            routing "curved"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                network.submit "1"
+                network.route "2"
+                network.reserve "3"
+                network.plan "4"
+                network.persist "5"
+                network.publish "6"
+                network.history_projection "7"
+                network.monitor "8"
+                network.document "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:single_pin"
+
+    use "ddn.live.pinned-patterns::network.hub" named "appearance:single_pin:ddn.live.pinned-patterns::network.hub"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.hub"
+            position
+                x 580
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.store" named "appearance:single_pin:ddn.live.pinned-patterns::network.store"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.store"
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.client" named "appearance:single_pin:ddn.live.pinned-patterns::network.client"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.client"
+
+    use "ddn.live.pinned-patterns::network.orders" named "appearance:single_pin:ddn.live.pinned-patterns::network.orders"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.inventory" named "appearance:single_pin:ddn.live.pinned-patterns::network.inventory"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.inventory"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.production" named "appearance:single_pin:ddn.live.pinned-patterns::network.production"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.production"
+
+    use "ddn.live.pinned-patterns::network.events" named "appearance:single_pin:ddn.live.pinned-patterns::network.events"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.events"
+
+    use "ddn.live.pinned-patterns::network.history" named "appearance:single_pin:ddn.live.pinned-patterns::network.history"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.audit" named "appearance:single_pin:ddn.live.pinned-patterns::network.audit"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.audit"
+
+    use "ddn.live.pinned-patterns::network.note" named "appearance:single_pin:ddn.live.pinned-patterns::network.note"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.note"
+            body "draft"
+
+    use "ddn.live.pinned-patterns::network.submit" named "appearance:single_pin:ddn.live.pinned-patterns::network.submit"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.submit"
+
+    use "ddn.live.pinned-patterns::network.route" named "appearance:single_pin:ddn.live.pinned-patterns::network.route"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.route"
+
+    use "ddn.live.pinned-patterns::network.reserve" named "appearance:single_pin:ddn.live.pinned-patterns::network.reserve"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.reserve"
+
+    use "ddn.live.pinned-patterns::network.plan" named "appearance:single_pin:ddn.live.pinned-patterns::network.plan"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.plan"
+
+    use "ddn.live.pinned-patterns::network.persist" named "appearance:single_pin:ddn.live.pinned-patterns::network.persist"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.persist"
+
+    use "ddn.live.pinned-patterns::network.publish" named "appearance:single_pin:ddn.live.pinned-patterns::network.publish"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.publish"
+
+    use "ddn.live.pinned-patterns::network.history_projection" named "appearance:single_pin:ddn.live.pinned-patterns::network.history_projection"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.history_projection"
+
+    use "ddn.live.pinned-patterns::network.monitor" named "appearance:single_pin:ddn.live.pinned-patterns::network.monitor"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.monitor"
+
+    use "ddn.live.pinned-patterns::network.document" named "appearance:single_pin:ddn.live.pinned-patterns::network.document"
+        with
+            id "appearance:single_pin:ddn.live.pinned-patterns::network.document"
+            body "draft"
+
+
+view "no_pins" as "ddn@1"
+    with
+        id "no_pins"
+        title "No pins / deterministic radial root"
+        selection
+            include
+                item
+                    id "ddn.live.pinned-patterns::network.hub"
+                item
+                    id "ddn.live.pinned-patterns::network.store"
+                item
+                    id "ddn.live.pinned-patterns::network.client"
+                item
+                    id "ddn.live.pinned-patterns::network.orders"
+                item
+                    id "ddn.live.pinned-patterns::network.inventory"
+                item
+                    id "ddn.live.pinned-patterns::network.production"
+                item
+                    id "ddn.live.pinned-patterns::network.events"
+                item
+                    id "ddn.live.pinned-patterns::network.history"
+                item
+                    id "ddn.live.pinned-patterns::network.audit"
+                item
+                    id "ddn.live.pinned-patterns::network.note"
+                item
+                    id "ddn.live.pinned-patterns::network.submit"
+                item
+                    id "ddn.live.pinned-patterns::network.route"
+                item
+                    id "ddn.live.pinned-patterns::network.reserve"
+                item
+                    id "ddn.live.pinned-patterns::network.plan"
+                item
+                    id "ddn.live.pinned-patterns::network.persist"
+                item
+                    id "ddn.live.pinned-patterns::network.publish"
+                item
+                    id "ddn.live.pinned-patterns::network.history_projection"
+                item
+                    id "ddn.live.pinned-patterns::network.monitor"
+                item
+                    id "ddn.live.pinned-patterns::network.document"
+        layout
+            algorithm "radial"
+            center "pins"
+            routing "curved"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                network.submit "1"
+                network.route "2"
+                network.reserve "3"
+                network.plan "4"
+                network.persist "5"
+                network.publish "6"
+                network.history_projection "7"
+                network.monitor "8"
+                network.document "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:no_pins"
+
+    use "ddn.live.pinned-patterns::network.hub" named "appearance:no_pins:ddn.live.pinned-patterns::network.hub"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.hub"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.store" named "appearance:no_pins:ddn.live.pinned-patterns::network.store"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.store"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.client" named "appearance:no_pins:ddn.live.pinned-patterns::network.client"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.client"
+
+    use "ddn.live.pinned-patterns::network.orders" named "appearance:no_pins:ddn.live.pinned-patterns::network.orders"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.inventory" named "appearance:no_pins:ddn.live.pinned-patterns::network.inventory"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.inventory"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.production" named "appearance:no_pins:ddn.live.pinned-patterns::network.production"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.production"
+
+    use "ddn.live.pinned-patterns::network.events" named "appearance:no_pins:ddn.live.pinned-patterns::network.events"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.events"
+
+    use "ddn.live.pinned-patterns::network.history" named "appearance:no_pins:ddn.live.pinned-patterns::network.history"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.audit" named "appearance:no_pins:ddn.live.pinned-patterns::network.audit"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.audit"
+
+    use "ddn.live.pinned-patterns::network.note" named "appearance:no_pins:ddn.live.pinned-patterns::network.note"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.note"
+            body "draft"
+
+    use "ddn.live.pinned-patterns::network.submit" named "appearance:no_pins:ddn.live.pinned-patterns::network.submit"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.submit"
+
+    use "ddn.live.pinned-patterns::network.route" named "appearance:no_pins:ddn.live.pinned-patterns::network.route"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.route"
+
+    use "ddn.live.pinned-patterns::network.reserve" named "appearance:no_pins:ddn.live.pinned-patterns::network.reserve"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.reserve"
+
+    use "ddn.live.pinned-patterns::network.plan" named "appearance:no_pins:ddn.live.pinned-patterns::network.plan"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.plan"
+
+    use "ddn.live.pinned-patterns::network.persist" named "appearance:no_pins:ddn.live.pinned-patterns::network.persist"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.persist"
+
+    use "ddn.live.pinned-patterns::network.publish" named "appearance:no_pins:ddn.live.pinned-patterns::network.publish"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.publish"
+
+    use "ddn.live.pinned-patterns::network.history_projection" named "appearance:no_pins:ddn.live.pinned-patterns::network.history_projection"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.history_projection"
+
+    use "ddn.live.pinned-patterns::network.monitor" named "appearance:no_pins:ddn.live.pinned-patterns::network.monitor"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.monitor"
+
+    use "ddn.live.pinned-patterns::network.document" named "appearance:no_pins:ddn.live.pinned-patterns::network.document"
+        with
+            id "appearance:no_pins:ddn.live.pinned-patterns::network.document"
+            body "draft"
+
+
+view "paused" as "ddn@1"
+    with
+        id "paused"
+        title "Pause placement / retain the current scene"
+        selection
+            include
+                item
+                    id "ddn.live.pinned-patterns::network.hub"
+                item
+                    id "ddn.live.pinned-patterns::network.store"
+                item
+                    id "ddn.live.pinned-patterns::network.client"
+                item
+                    id "ddn.live.pinned-patterns::network.orders"
+                item
+                    id "ddn.live.pinned-patterns::network.inventory"
+                item
+                    id "ddn.live.pinned-patterns::network.production"
+                item
+                    id "ddn.live.pinned-patterns::network.events"
+                item
+                    id "ddn.live.pinned-patterns::network.history"
+                item
+                    id "ddn.live.pinned-patterns::network.audit"
+                item
+                    id "ddn.live.pinned-patterns::network.note"
+                item
+                    id "ddn.live.pinned-patterns::network.submit"
+                item
+                    id "ddn.live.pinned-patterns::network.route"
+                item
+                    id "ddn.live.pinned-patterns::network.reserve"
+                item
+                    id "ddn.live.pinned-patterns::network.plan"
+                item
+                    id "ddn.live.pinned-patterns::network.persist"
+                item
+                    id "ddn.live.pinned-patterns::network.publish"
+                item
+                    id "ddn.live.pinned-patterns::network.history_projection"
+                item
+                    id "ddn.live.pinned-patterns::network.monitor"
+                item
+                    id "ddn.live.pinned-patterns::network.document"
+        layout
+            algorithm "circular"
+            auto_place false
+            center "pins"
+            routing "curved"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                network.submit "1"
+                network.route "2"
+                network.reserve "3"
+                network.plan "4"
+                network.persist "5"
+                network.publish "6"
+                network.history_projection "7"
+                network.monitor "8"
+                network.document "9"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:paused"
+
+    use "ddn.live.pinned-patterns::network.hub" named "appearance:paused:ddn.live.pinned-patterns::network.hub"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.hub"
+            position
+                x 580
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.store" named "appearance:paused:ddn.live.pinned-patterns::network.store"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.store"
+            position
+                x 930
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.client" named "appearance:paused:ddn.live.pinned-patterns::network.client"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.client"
+
+    use "ddn.live.pinned-patterns::network.orders" named "appearance:paused:ddn.live.pinned-patterns::network.orders"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.inventory" named "appearance:paused:ddn.live.pinned-patterns::network.inventory"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.inventory"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.production" named "appearance:paused:ddn.live.pinned-patterns::network.production"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.production"
+
+    use "ddn.live.pinned-patterns::network.events" named "appearance:paused:ddn.live.pinned-patterns::network.events"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.events"
+
+    use "ddn.live.pinned-patterns::network.history" named "appearance:paused:ddn.live.pinned-patterns::network.history"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.audit" named "appearance:paused:ddn.live.pinned-patterns::network.audit"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.audit"
+
+    use "ddn.live.pinned-patterns::network.note" named "appearance:paused:ddn.live.pinned-patterns::network.note"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.note"
+            body "draft"
+
+    use "ddn.live.pinned-patterns::network.submit" named "appearance:paused:ddn.live.pinned-patterns::network.submit"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.submit"
+
+    use "ddn.live.pinned-patterns::network.route" named "appearance:paused:ddn.live.pinned-patterns::network.route"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.route"
+
+    use "ddn.live.pinned-patterns::network.reserve" named "appearance:paused:ddn.live.pinned-patterns::network.reserve"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.reserve"
+
+    use "ddn.live.pinned-patterns::network.plan" named "appearance:paused:ddn.live.pinned-patterns::network.plan"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.plan"
+
+    use "ddn.live.pinned-patterns::network.persist" named "appearance:paused:ddn.live.pinned-patterns::network.persist"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.persist"
+
+    use "ddn.live.pinned-patterns::network.publish" named "appearance:paused:ddn.live.pinned-patterns::network.publish"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.publish"
+
+    use "ddn.live.pinned-patterns::network.history_projection" named "appearance:paused:ddn.live.pinned-patterns::network.history_projection"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.history_projection"
+
+    use "ddn.live.pinned-patterns::network.monitor" named "appearance:paused:ddn.live.pinned-patterns::network.monitor"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.monitor"
+
+    use "ddn.live.pinned-patterns::network.document" named "appearance:paused:ddn.live.pinned-patterns::network.document"
+        with
+            id "appearance:paused:ddn.live.pinned-patterns::network.document"
+            body "draft"
+
+
+view "sketch_night" as "ddn@1"
+    with
+        id "sketch_night"
+        title "Same anchored circle / hand-drawn night"
+        selection
+            include
+                item
+                    id "ddn.live.pinned-patterns::network.hub"
+                item
+                    id "ddn.live.pinned-patterns::network.store"
+                item
+                    id "ddn.live.pinned-patterns::network.client"
+                item
+                    id "ddn.live.pinned-patterns::network.orders"
+                item
+                    id "ddn.live.pinned-patterns::network.inventory"
+                item
+                    id "ddn.live.pinned-patterns::network.production"
+                item
+                    id "ddn.live.pinned-patterns::network.events"
+                item
+                    id "ddn.live.pinned-patterns::network.history"
+                item
+                    id "ddn.live.pinned-patterns::network.audit"
+                item
+                    id "ddn.live.pinned-patterns::network.note"
+                item
+                    id "ddn.live.pinned-patterns::network.submit"
+                item
+                    id "ddn.live.pinned-patterns::network.route"
+                item
+                    id "ddn.live.pinned-patterns::network.reserve"
+                item
+                    id "ddn.live.pinned-patterns::network.plan"
+                item
+                    id "ddn.live.pinned-patterns::network.persist"
+                item
+                    id "ddn.live.pinned-patterns::network.publish"
+                item
+                    id "ddn.live.pinned-patterns::network.history_projection"
+                item
+                    id "ddn.live.pinned-patterns::network.monitor"
+                item
+                    id "ddn.live.pinned-patterns::network.document"
+        style
+            look "handdrawn"
+            theme "night"
+        layout
+            algorithm "circular"
+            center "pins"
+            routing "curved"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                network.submit "1"
+                network.route "2"
+                network.reserve "3"
+                network.plan "4"
+                network.persist "5"
+                network.publish "6"
+                network.history_projection "7"
+                network.monitor "8"
+                network.document "9"
+        publication
+            id "publication:sketch_night"
+
+    use "ddn.live.pinned-patterns::network.hub" named "appearance:sketch_night:ddn.live.pinned-patterns::network.hub"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.hub"
+            position
+                x 580
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.store" named "appearance:sketch_night:ddn.live.pinned-patterns::network.store"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.store"
+            position
+                x 930
+                y 400
+            pinned true
+            size
+                width 270
+                height 170
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.pinned-patterns::network.client" named "appearance:sketch_night:ddn.live.pinned-patterns::network.client"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.client"
+
+    use "ddn.live.pinned-patterns::network.orders" named "appearance:sketch_night:ddn.live.pinned-patterns::network.orders"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.inventory" named "appearance:sketch_night:ddn.live.pinned-patterns::network.inventory"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.inventory"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.production" named "appearance:sketch_night:ddn.live.pinned-patterns::network.production"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.production"
+
+    use "ddn.live.pinned-patterns::network.events" named "appearance:sketch_night:ddn.live.pinned-patterns::network.events"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.events"
+
+    use "ddn.live.pinned-patterns::network.history" named "appearance:sketch_night:ddn.live.pinned-patterns::network.history"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.live.pinned-patterns::network.audit" named "appearance:sketch_night:ddn.live.pinned-patterns::network.audit"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.audit"
+
+    use "ddn.live.pinned-patterns::network.note" named "appearance:sketch_night:ddn.live.pinned-patterns::network.note"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.note"
+            body "draft"
+
+    use "ddn.live.pinned-patterns::network.submit" named "appearance:sketch_night:ddn.live.pinned-patterns::network.submit"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.submit"
+
+    use "ddn.live.pinned-patterns::network.route" named "appearance:sketch_night:ddn.live.pinned-patterns::network.route"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.route"
+
+    use "ddn.live.pinned-patterns::network.reserve" named "appearance:sketch_night:ddn.live.pinned-patterns::network.reserve"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.reserve"
+
+    use "ddn.live.pinned-patterns::network.plan" named "appearance:sketch_night:ddn.live.pinned-patterns::network.plan"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.plan"
+
+    use "ddn.live.pinned-patterns::network.persist" named "appearance:sketch_night:ddn.live.pinned-patterns::network.persist"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.persist"
+
+    use "ddn.live.pinned-patterns::network.publish" named "appearance:sketch_night:ddn.live.pinned-patterns::network.publish"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.publish"
+
+    use "ddn.live.pinned-patterns::network.history_projection" named "appearance:sketch_night:ddn.live.pinned-patterns::network.history_projection"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.history_projection"
+
+    use "ddn.live.pinned-patterns::network.monitor" named "appearance:sketch_night:ddn.live.pinned-patterns::network.monitor"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.monitor"
+
+    use "ddn.live.pinned-patterns::network.document" named "appearance:sketch_night:ddn.live.pinned-patterns::network.document"
+        with
+            id "appearance:sketch_night:ddn.live.pinned-patterns::network.document"
+            body "draft"

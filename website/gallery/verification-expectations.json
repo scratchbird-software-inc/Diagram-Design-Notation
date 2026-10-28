@@ -1,0 +1,11 @@
+{
+  "description": "The original BPMN draft reuses connections under different pool boundaries. Rendering preserves the authored connections; the verifier must continue to report these four errors. Every other converted gallery example must have zero semantic errors.",
+  "entries": {
+    "examples/basics/82-bpmn-complete.ddn": [
+      { "code": "DDN-BPMN-MESSAGE-POOL", "target": "ddn.examples.bpmn::proc.msg" },
+      { "code": "DDN-BPMN-SEQUENCE-POOL", "target": "ddn.examples.bpmn::proc.f4" },
+      { "code": "DDN-BPMN-SEQUENCE-POOL", "target": "ddn.examples.bpmn::proc.f5" },
+      { "code": "DDN-BPMN-SEQUENCE-POOL", "target": "ddn.examples.bpmn::proc.f7" }
+    ]
+  }
+}

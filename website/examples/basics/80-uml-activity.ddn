@@ -1,68 +1,717 @@
-ddn "0.5";
-module "ddn.examples.umlact";
+version ddn-next-1
 
-// B1-060 : UML 2.5.1 activity-diagram completeness on uml.activity@2.
-// View 1: pins + parameter sets/streaming, decision vs merge, flow final.
-// View 2: signals, time event, interruptible region, exception handler,
-// structured region, connector circles.
-// Minimal current-dialect style, no pinned layout.
+publication "publication:pins"
+    with
+        id "publication:pins"
+        title "UML activity / pins, decision and merge"
+        targets
+            item
+                target
+                    id "pins"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data fulfil {
-    object start "" { kind: "flow.start"; }
-    object take "Take order" { kind: "flow.process";
-        ports {
-            order_in { direction: in; x_pin: { set: "request"; }; }
-            order_out { direction: out; x_pin: { streaming: true; }; }
-        }
-    }
-    object dec "" { kind: "flow.decision"; }
-    object mrg "" { kind: "flow.merge"; }
-    object pack "Pack" { kind: "flow.process"; }
-    object ship "Ship" { kind: "flow.process"; }
-    object ffin "" { kind: "flow.flowfinal"; }
-    object fin "" { kind: "flow.end"; }
 
-    relation e1 "" @start -> @take.order_in { kind: "uml.flow"; }
-    relation e2 "" @take.order_out -> @dec { kind: "uml.flow"; }
-    relation e3 "in stock" @dec -> @pack { kind: "uml.flow"; x_diagram: { branch: "in stock"; }; }
-    relation e4 "backorder" @dec -> @mrg { kind: "uml.flow"; x_diagram: { branch: "backorder"; }; }
-    relation e5 "" @pack -> @mrg { kind: "uml.flow"; }
-    relation e6 "" @mrg -> @ship { kind: "uml.flow"; }
-    relation e7 "" @ship -> @ffin { kind: "uml.flow"; }
-    relation e8 "" @ship -> @fin { kind: "uml.flow"; }
-}
+publication "publication:interrupts"
+    with
+        id "publication:interrupts"
+        title "UML activity / signals, interrupts, exceptions"
+        targets
+            item
+                target
+                    id "interrupts"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data signals {
-    object start2 "" { kind: "flow.start"; }
-    object prepare "Prepare shipment" { kind: "flow.process"; }
-    object send_ship "" { kind: "flow.sendsignal"; }
-    object wait_ack "after(24h)" { kind: "flow.timeevent"; }
-    object recv_ack "" { kind: "flow.acceptsignal"; }
-    object handle_fail "Handle failure" { kind: "flow.process"; }
-    object close "Close" { kind: "flow.process"; }
-    object conn_a "A" { kind: "flow.connector"; }
-    object fin2 "" { kind: "flow.end"; }
 
-    relation s1 "" @start2 -> @prepare { kind: "uml.flow"; }
-    relation s2 "" @prepare -> @send_ship { kind: "uml.flow"; }
-    relation s3 "" @send_ship -> @wait_ack { kind: "uml.flow"; }
-    relation s4 "" @wait_ack -> @recv_ack { kind: "uml.flow"; }
-    relation s5 "" @recv_ack -> @conn_a { kind: "uml.flow"; }
-    relation s6 "" @conn_a -> @close { kind: "uml.flow"; }
-    relation s7 "" @prepare -> @handle_fail { kind: "uml.flow"; x_exception: true; }
-    relation s8 "" @handle_fail -> @close { kind: "uml.flow"; }
-    relation s9 "" @close -> @fin2 { kind: "uml.flow"; }
-    relation s10 "" @send_ship -> @fin2 { kind: "uml.flow"; x_interrupt: true; }
-}
+element "ddn.examples.umlact::fulfil.start" as "flow.start"
+    with
+        id "ddn.examples.umlact::fulfil.start"
+        title "start"
 
-view pins "UML activity / pins, decision and merge": [@fulfil] as "uml.activity@2" {
-    layout { gap: 112px; row_gap: 112px; }
-    frame struct "Iterative" { members: [@fulfil.take, @fulfil.dec, @fulfil.mrg]; x_structured: { mode: "iterative" }; }
-    publication { size: content; fit: none; }
-}
 
-view interrupts "UML activity / signals, interrupts, exceptions": [@signals] as "uml.activity@2" {
-    layout { gap: 112px; row_gap: 112px; }
-    frame danger "Interruptible" { members: [@signals.prepare, @signals.send_ship, @signals.wait_ack]; x_interruptible: true; }
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.umlact::fulfil.take.order_in" as "core::Port"
+    with
+        id "ddn.examples.umlact::fulfil.take.order_in"
+        title "order_in"
+        metadata
+            x_pin
+                set "request"
+        content
+            owner
+                id "ddn.examples.umlact::fulfil.take"
+            direction "input"
+
+
+element "ddn.examples.umlact::fulfil.take.order_out" as "core::Port"
+    with
+        id "ddn.examples.umlact::fulfil.take.order_out"
+        title "order_out"
+        metadata
+            x_pin
+                streaming true
+        content
+            owner
+                id "ddn.examples.umlact::fulfil.take"
+            direction "output"
+
+
+element "ddn.examples.umlact::fulfil.take" as "flow.process"
+    with
+        id "ddn.examples.umlact::fulfil.take"
+        title "Take order"
+        members
+            item
+                id "ddn.examples.umlact::fulfil.take.order_in"
+            item
+                id "ddn.examples.umlact::fulfil.take.order_out"
+
+
+element "ddn.examples.umlact::fulfil.dec" as "flow.decision"
+    with
+        id "ddn.examples.umlact::fulfil.dec"
+        title "dec"
+
+
+element "ddn.examples.umlact::fulfil.mrg" as "flow.merge"
+    with
+        id "ddn.examples.umlact::fulfil.mrg"
+        title "mrg"
+
+
+element "ddn.examples.umlact::fulfil.pack" as "flow.process"
+    with
+        id "ddn.examples.umlact::fulfil.pack"
+        title "Pack"
+
+
+element "ddn.examples.umlact::fulfil.ship" as "flow.process"
+    with
+        id "ddn.examples.umlact::fulfil.ship"
+        title "Ship"
+
+
+element "ddn.examples.umlact::fulfil.ffin" as "flow.flowfinal"
+    with
+        id "ddn.examples.umlact::fulfil.ffin"
+        title "ffin"
+
+
+element "ddn.examples.umlact::fulfil.fin" as "flow.end"
+    with
+        id "ddn.examples.umlact::fulfil.fin"
+        title "fin"
+
+
+relation "ddn.examples.umlact::fulfil.e1" as "uml.flow"
+    with
+        id "ddn.examples.umlact::fulfil.e1"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.start"
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.take"
+                member
+                    id "ddn.examples.umlact::fulfil.take.order_in"
+
+
+relation "ddn.examples.umlact::fulfil.e2" as "uml.flow"
+    with
+        id "ddn.examples.umlact::fulfil.e2"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.take"
+                member
+                    id "ddn.examples.umlact::fulfil.take.order_out"
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.dec"
+
+
+relation "ddn.examples.umlact::fulfil.e3" as "uml.flow"
+    with
+        id "ddn.examples.umlact::fulfil.e3"
+        title "in stock"
+        metadata
+            x_diagram
+                branch "in stock"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.dec"
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.pack"
+
+
+relation "ddn.examples.umlact::fulfil.e4" as "uml.flow"
+    with
+        id "ddn.examples.umlact::fulfil.e4"
+        title "backorder"
+        metadata
+            x_diagram
+                branch "backorder"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.dec"
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.mrg"
+
+
+relation "ddn.examples.umlact::fulfil.e5" as "uml.flow"
+    with
+        id "ddn.examples.umlact::fulfil.e5"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.pack"
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.mrg"
+
+
+relation "ddn.examples.umlact::fulfil.e6" as "uml.flow"
+    with
+        id "ddn.examples.umlact::fulfil.e6"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.mrg"
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.ship"
+
+
+relation "ddn.examples.umlact::fulfil.e7" as "uml.flow"
+    with
+        id "ddn.examples.umlact::fulfil.e7"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.ship"
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.ffin"
+
+
+relation "ddn.examples.umlact::fulfil.e8" as "uml.flow"
+    with
+        id "ddn.examples.umlact::fulfil.e8"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.ship"
+            item
+                definition
+                    id "ddn.examples.umlact::fulfil.fin"
+
+
+element "ddn.examples.umlact::signals.start2" as "flow.start"
+    with
+        id "ddn.examples.umlact::signals.start2"
+        title "start2"
+
+
+element "ddn.examples.umlact::signals.prepare" as "flow.process"
+    with
+        id "ddn.examples.umlact::signals.prepare"
+        title "Prepare shipment"
+
+
+element "ddn.examples.umlact::signals.send_ship" as "flow.sendsignal"
+    with
+        id "ddn.examples.umlact::signals.send_ship"
+        title "send_ship"
+
+
+element "ddn.examples.umlact::signals.wait_ack" as "flow.timeevent"
+    with
+        id "ddn.examples.umlact::signals.wait_ack"
+        title "after(24h)"
+
+
+element "ddn.examples.umlact::signals.recv_ack" as "flow.acceptsignal"
+    with
+        id "ddn.examples.umlact::signals.recv_ack"
+        title "recv_ack"
+
+
+element "ddn.examples.umlact::signals.handle_fail" as "flow.process"
+    with
+        id "ddn.examples.umlact::signals.handle_fail"
+        title "Handle failure"
+
+
+element "ddn.examples.umlact::signals.close" as "flow.process"
+    with
+        id "ddn.examples.umlact::signals.close"
+        title "Close"
+
+
+element "ddn.examples.umlact::signals.conn_a" as "flow.connector"
+    with
+        id "ddn.examples.umlact::signals.conn_a"
+        title "A"
+
+
+element "ddn.examples.umlact::signals.fin2" as "flow.end"
+    with
+        id "ddn.examples.umlact::signals.fin2"
+        title "fin2"
+
+
+relation "ddn.examples.umlact::signals.s1" as "uml.flow"
+    with
+        id "ddn.examples.umlact::signals.s1"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::signals.start2"
+            item
+                definition
+                    id "ddn.examples.umlact::signals.prepare"
+
+
+relation "ddn.examples.umlact::signals.s2" as "uml.flow"
+    with
+        id "ddn.examples.umlact::signals.s2"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::signals.prepare"
+            item
+                definition
+                    id "ddn.examples.umlact::signals.send_ship"
+
+
+relation "ddn.examples.umlact::signals.s3" as "uml.flow"
+    with
+        id "ddn.examples.umlact::signals.s3"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::signals.send_ship"
+            item
+                definition
+                    id "ddn.examples.umlact::signals.wait_ack"
+
+
+relation "ddn.examples.umlact::signals.s4" as "uml.flow"
+    with
+        id "ddn.examples.umlact::signals.s4"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::signals.wait_ack"
+            item
+                definition
+                    id "ddn.examples.umlact::signals.recv_ack"
+
+
+relation "ddn.examples.umlact::signals.s5" as "uml.flow"
+    with
+        id "ddn.examples.umlact::signals.s5"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::signals.recv_ack"
+            item
+                definition
+                    id "ddn.examples.umlact::signals.conn_a"
+
+
+relation "ddn.examples.umlact::signals.s6" as "uml.flow"
+    with
+        id "ddn.examples.umlact::signals.s6"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::signals.conn_a"
+            item
+                definition
+                    id "ddn.examples.umlact::signals.close"
+
+
+relation "ddn.examples.umlact::signals.s7" as "uml.flow"
+    with
+        id "ddn.examples.umlact::signals.s7"
+        title "Activity edge"
+        metadata
+            x_exception true
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::signals.prepare"
+            item
+                definition
+                    id "ddn.examples.umlact::signals.handle_fail"
+
+
+relation "ddn.examples.umlact::signals.s8" as "uml.flow"
+    with
+        id "ddn.examples.umlact::signals.s8"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::signals.handle_fail"
+            item
+                definition
+                    id "ddn.examples.umlact::signals.close"
+
+
+relation "ddn.examples.umlact::signals.s9" as "uml.flow"
+    with
+        id "ddn.examples.umlact::signals.s9"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::signals.close"
+            item
+                definition
+                    id "ddn.examples.umlact::signals.fin2"
+
+
+relation "ddn.examples.umlact::signals.s10" as "uml.flow"
+    with
+        id "ddn.examples.umlact::signals.s10"
+        title "Activity edge"
+        metadata
+            x_interrupt true
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlact::signals.send_ship"
+            item
+                definition
+                    id "ddn.examples.umlact::signals.fin2"
+
+
+view "pins" as "uml.activity@2"
+    with
+        id "pins"
+        title "UML activity / pins, decision and merge"
+        selection
+            include
+                item
+                    id "ddn.examples.umlact::fulfil.start"
+                item
+                    id "ddn.examples.umlact::fulfil.take"
+                item
+                    id "ddn.examples.umlact::fulfil.dec"
+                item
+                    id "ddn.examples.umlact::fulfil.mrg"
+                item
+                    id "ddn.examples.umlact::fulfil.pack"
+                item
+                    id "ddn.examples.umlact::fulfil.ship"
+                item
+                    id "ddn.examples.umlact::fulfil.ffin"
+                item
+                    id "ddn.examples.umlact::fulfil.fin"
+                item
+                    id "ddn.examples.umlact::fulfil.e1"
+                item
+                    id "ddn.examples.umlact::fulfil.e2"
+                item
+                    id "ddn.examples.umlact::fulfil.e3"
+                item
+                    id "ddn.examples.umlact::fulfil.e4"
+                item
+                    id "ddn.examples.umlact::fulfil.e5"
+                item
+                    id "ddn.examples.umlact::fulfil.e6"
+                item
+                    id "ddn.examples.umlact::fulfil.e7"
+                item
+                    id "ddn.examples.umlact::fulfil.e8"
+            exclude
+                item
+                    id "ddn.examples.umlact::signals.s1"
+                item
+                    id "ddn.examples.umlact::signals.s2"
+                item
+                    id "ddn.examples.umlact::signals.s3"
+                item
+                    id "ddn.examples.umlact::signals.s4"
+                item
+                    id "ddn.examples.umlact::signals.s5"
+                item
+                    id "ddn.examples.umlact::signals.s6"
+                item
+                    id "ddn.examples.umlact::signals.s7"
+                item
+                    id "ddn.examples.umlact::signals.s8"
+                item
+                    id "ddn.examples.umlact::signals.s9"
+                item
+                    id "ddn.examples.umlact::signals.s10"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.umlact::pins.struct"
+                name "Iterative"
+                members
+                    item
+                        id "ddn.examples.umlact::fulfil.take"
+                    item
+                        id "ddn.examples.umlact::fulfil.dec"
+                    item
+                        id "ddn.examples.umlact::fulfil.mrg"
+        publication
+            id "publication:pins"
+
+    use "ddn.examples.umlact::fulfil.start" named "appearance:pins:ddn.examples.umlact::fulfil.start"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.start"
+
+    use "ddn.examples.umlact::fulfil.take" named "appearance:pins:ddn.examples.umlact::fulfil.take"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.take"
+
+    use "ddn.examples.umlact::fulfil.dec" named "appearance:pins:ddn.examples.umlact::fulfil.dec"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.dec"
+
+    use "ddn.examples.umlact::fulfil.mrg" named "appearance:pins:ddn.examples.umlact::fulfil.mrg"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.mrg"
+
+    use "ddn.examples.umlact::fulfil.pack" named "appearance:pins:ddn.examples.umlact::fulfil.pack"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.pack"
+
+    use "ddn.examples.umlact::fulfil.ship" named "appearance:pins:ddn.examples.umlact::fulfil.ship"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.ship"
+
+    use "ddn.examples.umlact::fulfil.ffin" named "appearance:pins:ddn.examples.umlact::fulfil.ffin"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.ffin"
+
+    use "ddn.examples.umlact::fulfil.fin" named "appearance:pins:ddn.examples.umlact::fulfil.fin"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.fin"
+
+    use "ddn.examples.umlact::fulfil.e1" named "appearance:pins:ddn.examples.umlact::fulfil.e1"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.e1"
+
+    use "ddn.examples.umlact::fulfil.e2" named "appearance:pins:ddn.examples.umlact::fulfil.e2"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.e2"
+
+    use "ddn.examples.umlact::fulfil.e3" named "appearance:pins:ddn.examples.umlact::fulfil.e3"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.e3"
+
+    use "ddn.examples.umlact::fulfil.e4" named "appearance:pins:ddn.examples.umlact::fulfil.e4"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.e4"
+
+    use "ddn.examples.umlact::fulfil.e5" named "appearance:pins:ddn.examples.umlact::fulfil.e5"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.e5"
+
+    use "ddn.examples.umlact::fulfil.e6" named "appearance:pins:ddn.examples.umlact::fulfil.e6"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.e6"
+
+    use "ddn.examples.umlact::fulfil.e7" named "appearance:pins:ddn.examples.umlact::fulfil.e7"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.e7"
+
+    use "ddn.examples.umlact::fulfil.e8" named "appearance:pins:ddn.examples.umlact::fulfil.e8"
+        with
+            id "appearance:pins:ddn.examples.umlact::fulfil.e8"
+
+
+view "interrupts" as "uml.activity@2"
+    with
+        id "interrupts"
+        title "UML activity / signals, interrupts, exceptions"
+        selection
+            include
+                item
+                    id "ddn.examples.umlact::signals.start2"
+                item
+                    id "ddn.examples.umlact::signals.prepare"
+                item
+                    id "ddn.examples.umlact::signals.send_ship"
+                item
+                    id "ddn.examples.umlact::signals.wait_ack"
+                item
+                    id "ddn.examples.umlact::signals.recv_ack"
+                item
+                    id "ddn.examples.umlact::signals.handle_fail"
+                item
+                    id "ddn.examples.umlact::signals.close"
+                item
+                    id "ddn.examples.umlact::signals.conn_a"
+                item
+                    id "ddn.examples.umlact::signals.fin2"
+                item
+                    id "ddn.examples.umlact::signals.s1"
+                item
+                    id "ddn.examples.umlact::signals.s2"
+                item
+                    id "ddn.examples.umlact::signals.s3"
+                item
+                    id "ddn.examples.umlact::signals.s4"
+                item
+                    id "ddn.examples.umlact::signals.s5"
+                item
+                    id "ddn.examples.umlact::signals.s6"
+                item
+                    id "ddn.examples.umlact::signals.s7"
+                item
+                    id "ddn.examples.umlact::signals.s8"
+                item
+                    id "ddn.examples.umlact::signals.s9"
+                item
+                    id "ddn.examples.umlact::signals.s10"
+            exclude
+                item
+                    id "ddn.examples.umlact::fulfil.e1"
+                item
+                    id "ddn.examples.umlact::fulfil.e2"
+                item
+                    id "ddn.examples.umlact::fulfil.e3"
+                item
+                    id "ddn.examples.umlact::fulfil.e4"
+                item
+                    id "ddn.examples.umlact::fulfil.e5"
+                item
+                    id "ddn.examples.umlact::fulfil.e6"
+                item
+                    id "ddn.examples.umlact::fulfil.e7"
+                item
+                    id "ddn.examples.umlact::fulfil.e8"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.umlact::interrupts.danger"
+                name "Interruptible"
+                members
+                    item
+                        id "ddn.examples.umlact::signals.prepare"
+                    item
+                        id "ddn.examples.umlact::signals.send_ship"
+                    item
+                        id "ddn.examples.umlact::signals.wait_ack"
+        publication
+            id "publication:interrupts"
+
+    use "ddn.examples.umlact::signals.start2" named "appearance:interrupts:ddn.examples.umlact::signals.start2"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.start2"
+
+    use "ddn.examples.umlact::signals.prepare" named "appearance:interrupts:ddn.examples.umlact::signals.prepare"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.prepare"
+
+    use "ddn.examples.umlact::signals.send_ship" named "appearance:interrupts:ddn.examples.umlact::signals.send_ship"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.send_ship"
+
+    use "ddn.examples.umlact::signals.wait_ack" named "appearance:interrupts:ddn.examples.umlact::signals.wait_ack"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.wait_ack"
+
+    use "ddn.examples.umlact::signals.recv_ack" named "appearance:interrupts:ddn.examples.umlact::signals.recv_ack"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.recv_ack"
+
+    use "ddn.examples.umlact::signals.handle_fail" named "appearance:interrupts:ddn.examples.umlact::signals.handle_fail"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.handle_fail"
+
+    use "ddn.examples.umlact::signals.close" named "appearance:interrupts:ddn.examples.umlact::signals.close"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.close"
+
+    use "ddn.examples.umlact::signals.conn_a" named "appearance:interrupts:ddn.examples.umlact::signals.conn_a"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.conn_a"
+
+    use "ddn.examples.umlact::signals.fin2" named "appearance:interrupts:ddn.examples.umlact::signals.fin2"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.fin2"
+
+    use "ddn.examples.umlact::signals.s1" named "appearance:interrupts:ddn.examples.umlact::signals.s1"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.s1"
+
+    use "ddn.examples.umlact::signals.s2" named "appearance:interrupts:ddn.examples.umlact::signals.s2"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.s2"
+
+    use "ddn.examples.umlact::signals.s3" named "appearance:interrupts:ddn.examples.umlact::signals.s3"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.s3"
+
+    use "ddn.examples.umlact::signals.s4" named "appearance:interrupts:ddn.examples.umlact::signals.s4"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.s4"
+
+    use "ddn.examples.umlact::signals.s5" named "appearance:interrupts:ddn.examples.umlact::signals.s5"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.s5"
+
+    use "ddn.examples.umlact::signals.s6" named "appearance:interrupts:ddn.examples.umlact::signals.s6"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.s6"
+
+    use "ddn.examples.umlact::signals.s7" named "appearance:interrupts:ddn.examples.umlact::signals.s7"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.s7"
+
+    use "ddn.examples.umlact::signals.s8" named "appearance:interrupts:ddn.examples.umlact::signals.s8"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.s8"
+
+    use "ddn.examples.umlact::signals.s9" named "appearance:interrupts:ddn.examples.umlact::signals.s9"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.s9"
+
+    use "ddn.examples.umlact::signals.s10" named "appearance:interrupts:ddn.examples.umlact::signals.s10"
+        with
+            id "appearance:interrupts:ddn.examples.umlact::signals.s10"

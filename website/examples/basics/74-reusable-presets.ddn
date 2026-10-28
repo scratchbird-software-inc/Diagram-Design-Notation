@@ -1,84 +1,650 @@
-ddn "0.5";
-module "ddn.examples.reuse";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:reuse"
+    with
+        id "publication:reuse"
+        title "Reusable presets / customer orders"
+        targets
+            item
+                target
+                    id "reuse"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// B1-041 author-controlled reuse: named field groups, relation property sets,
-// motion presets and include-by-reference fragments. Definitions are top-level
-// templates; `use:` applications expand to exactly the handwritten inline
-// form (local properties override presets; expanded identities are as if
-// declared inline). `version: N` on a definition is documentary only.
 
-fields audited {
-    version: 1;
-    created_at { datatype: "timestamp"; }
-    updated_at { datatype: "timestamp"; }
-}
+publication "publication:traced"
+    with
+        id "publication:traced"
+        title "Reusable presets / event trace"
+        targets
+            item
+                target
+                    id "traced"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-relation_props governed {
-    enforcement: database;
-    x_owner: "data-governance";
-}
 
-preset gentle_pulse {
-    motion: pulse;
-    pulse_color: "#0E7490";
-    speed: 60;
-}
+element "ddn.examples.reuse::model.audit_log.created_at" as "field"
+    with
+        id "ddn.examples.reuse::model.audit_log.created_at"
+        title "created_at"
+        properties
+            datatype "timestamp"
+        content
+            parent
+                id "ddn.examples.reuse::model.audit_log"
+            ordinal 0
+            datatype "timestamp"
 
-preset trace_style {
-    marker: square;
-    marker_color: "#1D4ED8";
-    speed: 80;
-    rate: 2;
-}
 
-fragment audit_log {
-    table audit_log "Audit log" {
-        fields {
-            created_at { datatype: "timestamp"; }
-            updated_at { datatype: "timestamp"; }
-            event { datatype: "text"; }
-        }
-    }
-}
+element "ddn.examples.reuse::model.audit_log.updated_at" as "field"
+    with
+        id "ddn.examples.reuse::model.audit_log.updated_at"
+        title "updated_at"
+        properties
+            datatype "timestamp"
+        content
+            parent
+                id "ddn.examples.reuse::model.audit_log"
+            ordinal 1
+            datatype "timestamp"
 
-data model {
-    use: @audit_log;
-    table customer "Customer" {
-        fields {
-            use: @audited;
-            customer_id { key: primary; datatype: "uuid"; }
-            display_name "Display name";
-        }
-    }
-    table order "Order" {
-        fields {
-            use: @audited;
-            order_id { key: primary; datatype: "uuid"; }
-            customer_id { datatype: "uuid"; }
-        }
-    }
-    queue events "Order events" {}
-    // A relation property set: governed assertions without repetition.
-    ref places "places" @order.customer_id [zeromany] -> @customer.customer_id [one] { use: @governed; }
-    ref logs "logs to" @customer -> @audit_log { use: @governed; }
-    // A motion preset: B1-033 animation properties reused across relations.
-    transfers_to notifies "notifies" @order -> @events { use: @gentle_pulse; }
-}
 
-view reuse "Reusable presets / customer orders" {
-    data: [@model];
-    format: @shared.styles.technical;
-    legend { placement: bottom; }
-}
+element "ddn.examples.reuse::model.audit_log.event" as "field"
+    with
+        id "ddn.examples.reuse::model.audit_log.event"
+        title "event"
+        properties
+            datatype "text"
+        content
+            parent
+                id "ddn.examples.reuse::model.audit_log"
+            ordinal 2
+            datatype "text"
 
-view traced "Reusable presets / event trace" {
-    data: [@model];
-    format: @shared.styles.technical;
-    flow order_path "Order path" {
-        use: @trace_style;
-        steps: @model.order -> @model.customer -> @model.audit_log;
-    }
-    publication { size: content; fit: none; }
-}
+
+element "ddn.examples.reuse::model.audit_log" as "table"
+    with
+        id "ddn.examples.reuse::model.audit_log"
+        title "Audit log"
+        members
+            item
+                id "ddn.examples.reuse::model.audit_log.created_at"
+            item
+                id "ddn.examples.reuse::model.audit_log.updated_at"
+            item
+                id "ddn.examples.reuse::model.audit_log.event"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "created_at"
+                    item "timestamp"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "updated_at"
+                    item "timestamp"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "event"
+                    item "text"
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.reuse::model.customer.created_at" as "field"
+    with
+        id "ddn.examples.reuse::model.customer.created_at"
+        title "created_at"
+        properties
+            datatype "timestamp"
+        content
+            parent
+                id "ddn.examples.reuse::model.customer"
+            ordinal 0
+            datatype "timestamp"
+
+
+element "ddn.examples.reuse::model.customer.updated_at" as "field"
+    with
+        id "ddn.examples.reuse::model.customer.updated_at"
+        title "updated_at"
+        properties
+            datatype "timestamp"
+        content
+            parent
+                id "ddn.examples.reuse::model.customer"
+            ordinal 1
+            datatype "timestamp"
+
+
+element "ddn.examples.reuse::model.customer.customer_id" as "field"
+    with
+        id "ddn.examples.reuse::model.customer.customer_id"
+        title "customer_id"
+        properties
+            key "primary"
+            datatype "uuid"
+        content
+            parent
+                id "ddn.examples.reuse::model.customer"
+            ordinal 2
+            datatype "uuid"
+            key "primary"
+
+
+element "ddn.examples.reuse::model.customer.display_name" as "field"
+    with
+        id "ddn.examples.reuse::model.customer.display_name"
+        title "Display name"
+        content
+            parent
+                id "ddn.examples.reuse::model.customer"
+            ordinal 3
+
+
+element "ddn.examples.reuse::model.customer" as "table"
+    with
+        id "ddn.examples.reuse::model.customer"
+        title "Customer"
+        members
+            item
+                id "ddn.examples.reuse::model.customer.created_at"
+            item
+                id "ddn.examples.reuse::model.customer.updated_at"
+            item
+                id "ddn.examples.reuse::model.customer.customer_id"
+            item
+                id "ddn.examples.reuse::model.customer.display_name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "created_at"
+                    item "timestamp"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "updated_at"
+                    item "timestamp"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "customer_id"
+                    item "uuid"
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "Display name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.reuse::model.order.created_at" as "field"
+    with
+        id "ddn.examples.reuse::model.order.created_at"
+        title "created_at"
+        properties
+            datatype "timestamp"
+        content
+            parent
+                id "ddn.examples.reuse::model.order"
+            ordinal 0
+            datatype "timestamp"
+
+
+element "ddn.examples.reuse::model.order.updated_at" as "field"
+    with
+        id "ddn.examples.reuse::model.order.updated_at"
+        title "updated_at"
+        properties
+            datatype "timestamp"
+        content
+            parent
+                id "ddn.examples.reuse::model.order"
+            ordinal 1
+            datatype "timestamp"
+
+
+element "ddn.examples.reuse::model.order.order_id" as "field"
+    with
+        id "ddn.examples.reuse::model.order.order_id"
+        title "order_id"
+        properties
+            key "primary"
+            datatype "uuid"
+        content
+            parent
+                id "ddn.examples.reuse::model.order"
+            ordinal 2
+            datatype "uuid"
+            key "primary"
+
+
+element "ddn.examples.reuse::model.order.customer_id" as "field"
+    with
+        id "ddn.examples.reuse::model.order.customer_id"
+        title "customer_id"
+        properties
+            datatype "uuid"
+        content
+            parent
+                id "ddn.examples.reuse::model.order"
+            ordinal 3
+            datatype "uuid"
+
+
+element "ddn.examples.reuse::model.order" as "table"
+    with
+        id "ddn.examples.reuse::model.order"
+        title "Order"
+        members
+            item
+                id "ddn.examples.reuse::model.order.created_at"
+            item
+                id "ddn.examples.reuse::model.order.updated_at"
+            item
+                id "ddn.examples.reuse::model.order.order_id"
+            item
+                id "ddn.examples.reuse::model.order.customer_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "created_at"
+                    item "timestamp"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "updated_at"
+                    item "timestamp"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "order_id"
+                    item "uuid"
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "customer_id"
+                    item "uuid"
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.reuse::model.events" as "queue"
+    with
+        id "ddn.examples.reuse::model.events"
+        title "Order events"
+
+
+relation "ddn.examples.reuse::model.places" as "ref"
+    with
+        id "ddn.examples.reuse::model.places"
+        title "places"
+        properties
+            source_mark "zeromany"
+            target_mark "one"
+            enforcement "database"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.reuse::model.order"
+                member
+                    id "ddn.examples.reuse::model.order.customer_id"
+            item
+                definition
+                    id "ddn.examples.reuse::model.customer"
+                member
+                    id "ddn.examples.reuse::model.customer.customer_id"
+        notes
+            item
+                title "Additional source metadata"
+                text
+                    {
+                      "x_owner": "data-governance"
+                    }
+                format "plain"
+
+
+relation "ddn.examples.reuse::model.logs" as "ref"
+    with
+        id "ddn.examples.reuse::model.logs"
+        title "logs to"
+        properties
+            enforcement "database"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.reuse::model.customer"
+            item
+                definition
+                    id "ddn.examples.reuse::model.audit_log"
+        notes
+            item
+                title "Additional source metadata"
+                text
+                    {
+                      "x_owner": "data-governance"
+                    }
+                format "plain"
+
+
+relation "ddn.examples.reuse::model.notifies" as "flow"
+    with
+        id "ddn.examples.reuse::model.notifies"
+        title "notifies"
+        properties
+            motion "pulse"
+            pulse_color "#0E7490"
+            speed 60
+        endpoints
+            item
+                definition
+                    id "ddn.examples.reuse::model.order"
+            item
+                definition
+                    id "ddn.examples.reuse::model.events"
+
+
+view "reuse" as "ddn@1"
+    with
+        id "reuse"
+        title "Reusable presets / customer orders"
+        selection
+            include
+                item
+                    id "ddn.examples.reuse::model.audit_log"
+                item
+                    id "ddn.examples.reuse::model.customer"
+                item
+                    id "ddn.examples.reuse::model.order"
+                item
+                    id "ddn.examples.reuse::model.events"
+                item
+                    id "ddn.examples.reuse::model.places"
+                item
+                    id "ddn.examples.reuse::model.logs"
+                item
+                    id "ddn.examples.reuse::model.notifies"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            placement "bottom"
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:reuse"
+
+    use "ddn.examples.reuse::model.audit_log" named "appearance:reuse:ddn.examples.reuse::model.audit_log"
+        with
+            id "appearance:reuse:ddn.examples.reuse::model.audit_log"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.reuse::model.customer" named "appearance:reuse:ddn.examples.reuse::model.customer"
+        with
+            id "appearance:reuse:ddn.examples.reuse::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.reuse::model.order" named "appearance:reuse:ddn.examples.reuse::model.order"
+        with
+            id "appearance:reuse:ddn.examples.reuse::model.order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.reuse::model.events" named "appearance:reuse:ddn.examples.reuse::model.events"
+        with
+            id "appearance:reuse:ddn.examples.reuse::model.events"
+
+    use "ddn.examples.reuse::model.places" named "appearance:reuse:ddn.examples.reuse::model.places"
+        with
+            id "appearance:reuse:ddn.examples.reuse::model.places"
+
+    use "ddn.examples.reuse::model.logs" named "appearance:reuse:ddn.examples.reuse::model.logs"
+        with
+            id "appearance:reuse:ddn.examples.reuse::model.logs"
+
+    use "ddn.examples.reuse::model.notifies" named "appearance:reuse:ddn.examples.reuse::model.notifies"
+        with
+            id "appearance:reuse:ddn.examples.reuse::model.notifies"
+
+
+view "traced" as "ddn@1"
+    with
+        id "traced"
+        title "Reusable presets / event trace"
+        selection
+            include
+                item
+                    id "ddn.examples.reuse::model.audit_log"
+                item
+                    id "ddn.examples.reuse::model.customer"
+                item
+                    id "ddn.examples.reuse::model.order"
+                item
+                    id "ddn.examples.reuse::model.events"
+                item
+                    id "ddn.examples.reuse::model.places"
+                item
+                    id "ddn.examples.reuse::model.logs"
+                item
+                    id "ddn.examples.reuse::model.notifies"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        animation
+            steps
+                item
+                    id "ddn.examples.reuse::model.order"
+                item
+                    id "ddn.examples.reuse::model.customer"
+                item
+                    id "ddn.examples.reuse::model.audit_log"
+            marker "square"
+            marker_color "#1D4ED8"
+            speed 80
+            rate 2
+            label "Order path"
+            uid "ddn.examples.reuse::traced.order_path"
+        publication
+            id "publication:traced"
+
+    use "ddn.examples.reuse::model.audit_log" named "appearance:traced:ddn.examples.reuse::model.audit_log"
+        with
+            id "appearance:traced:ddn.examples.reuse::model.audit_log"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.reuse::model.customer" named "appearance:traced:ddn.examples.reuse::model.customer"
+        with
+            id "appearance:traced:ddn.examples.reuse::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.reuse::model.order" named "appearance:traced:ddn.examples.reuse::model.order"
+        with
+            id "appearance:traced:ddn.examples.reuse::model.order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.reuse::model.events" named "appearance:traced:ddn.examples.reuse::model.events"
+        with
+            id "appearance:traced:ddn.examples.reuse::model.events"
+
+    use "ddn.examples.reuse::model.places" named "appearance:traced:ddn.examples.reuse::model.places"
+        with
+            id "appearance:traced:ddn.examples.reuse::model.places"
+
+    use "ddn.examples.reuse::model.logs" named "appearance:traced:ddn.examples.reuse::model.logs"
+        with
+            id "appearance:traced:ddn.examples.reuse::model.logs"
+
+    use "ddn.examples.reuse::model.notifies" named "appearance:traced:ddn.examples.reuse::model.notifies"
+        with
+            id "appearance:traced:ddn.examples.reuse::model.notifies"

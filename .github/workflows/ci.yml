@@ -1,82 +1,54 @@
-name: CI
-
+name: DDN qualification
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
+  workflow_call:
+permissions:
+  contents: read
 jobs:
-  test:
+  standalone:
     runs-on: ubuntu-latest
+    env:
+      DDN_TEMP_ROOT: ${{ runner.temp }}/ddn-browser
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-
-      - name: Install workspace dev dependencies (rollup for esm-dist test)
-        run: npm ci
-
-      - name: Notation test suites
-        run: npm --prefix notation test
-
-      - name: CLI smoke test
-        run: |
-          node notation/cli/cli.js check website/examples/basics/01-customer.ddn --workspace .
-          node notation/cli/cli.js render website/examples/basics/01-customer.ddn --workspace . --out /tmp/customer.svg
-          test -s /tmp/customer.svg
-
-      - name: Registry/schema JSON sanity
-        run: |
-          python3 - <<'PY'
-          import json, pathlib
-          root = pathlib.Path('.')
-          for p in list((root/'standard').rglob('*.json')) + list((root/'website/examples').rglob('*.json')) + list((root/'designer/contracts').rglob('*.json')):
-              json.loads(p.read_text(encoding='utf-8'))
-              print('ok', p)
-          PY
-
-  browser-integration:
-    # B1-070: the root suite's browser + designer + site-crawl tests are a
-    # release gate. Each suite runs as its own step so a failure is visible
-    # per suite; `set -o pipefail` semantics apply (any failure fails the job).
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+          node-version: '24.22.1'
+      - uses: actions/cache@v4
         with:
-          node-version: 22
-          cache: npm
-
-      - name: Install workspace dev dependencies
-        run: npm ci
-
-      - name: Install pinned headless Chromium
-        run: npx playwright@1.49.1 install --with-deps chromium
-
-      - name: Verify browser discovery
-        run: |
-          node tests/browser-discovery.js
-          node -e "console.log(require('./tests/browser.js').findBrowser())"
-
-      - name: Designer tests
-        run: npm --prefix designer test
-
-      - name: Browser suite — viewer ?src= over HTTP
-        run: node tests/viewer-src-http.js
-
-      - name: Browser suite — tool worker rendering over HTTP
-        run: node tests/tool-worker-http.js
-
-      - name: Browser suite — tool host I/O over HTTP
-        run: node tests/tool-host-io-http.js
-
-      - name: Browser suite — example links over HTTP
-        run: node tests/example-links-http.js
-
-      - name: Website link crawl
-        run: node tests/website-links.js
+          path: .work/cache
+          key: ddn-linux-x64-${{ hashFiles('tooling/bootstrap/*lock.json', 'tooling/browser/package-lock.json') }}
+      - name: Bootstrap exact toolchain
+        run: node tooling/bootstrap/bootstrap.mjs
+      - name: Check contracts and standalone dependency boundary
+        run: bash tooling/run.sh check
+      - name: Unit and integration suites
+        run: bash tooling/run.sh test:ddn
+      - name: Bootstrap Chromium
+        run: node tooling/browser/bootstrap.mjs
+      - name: Install Chromium system dependencies
+        run: .work/tools/toolchain/node/bin/node .work/tools/browser/node_modules/playwright/cli.js install-deps chromium
+      - name: Build website and capture every gallery view
+        run: bash tooling/run.sh build:ddn:website
+      - name: Real-browser utility suites
+        run: bash tooling/run.sh test:ddn:browser
+      - name: Website suites
+        run: bash tooling/run.sh test:ddn:website
+      - name: Generate and validate wiki
+        run: python3 tooling/wiki/build-wiki.py
+      - name: Verify maintained site is reproducible
+        run: git diff --exit-code -- website
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ddn-qualification
+          path: .work/reports
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ddn-wiki
+          path: .work/builds/wiki
+          retention-days: 7

@@ -1,16 +1,123 @@
-ddn "0.5";
-module "ddn.usecases.views.data-flow";
-import "formats.ddn" as fmt;
-import "data/flow.ddn" as f;
+version ddn-next-1
 
-// What data enters a process and what comes out?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "11 / Data-flow diagram" {
-    data: [@f.dfd];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.row;
-    select: [@f.dfd.incoming, @f.dfd.validate, @f.dfd.accepted];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "dfd.r_input": 1, "dfd.r_output": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "11 / Data-flow diagram"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.flow::dfd.incoming" as "dataset"
+    with
+        id "ddn.usecases.flow::dfd.incoming"
+        title "Incoming orders"
+
+
+element "ddn.usecases.flow::dfd.validate" as "activity"
+    with
+        id "ddn.usecases.flow::dfd.validate"
+        title "Validate orders"
+        description "Transform and validate; no implied transaction boundary."
+
+
+element "ddn.usecases.flow::dfd.accepted" as "dataset"
+    with
+        id "ddn.usecases.flow::dfd.accepted"
+        title "Accepted orders"
+
+
+relation "ddn.usecases.flow::dfd.r_input" as "read"
+    with
+        id "ddn.usecases.flow::dfd.r_input"
+        title "read produces input for"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.flow::dfd.incoming"
+            item
+                definition
+                    id "ddn.usecases.flow::dfd.validate"
+
+
+relation "ddn.usecases.flow::dfd.r_output" as "write"
+    with
+        id "ddn.usecases.flow::dfd.r_output"
+        title "writes output to"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.flow::dfd.validate"
+            item
+                definition
+                    id "ddn.usecases.flow::dfd.accepted"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "11 / Data-flow diagram"
+        selection
+            include
+                item
+                    id "ddn.usecases.flow::dfd.incoming"
+                item
+                    id "ddn.usecases.flow::dfd.validate"
+                item
+                    id "ddn.usecases.flow::dfd.accepted"
+                item
+                    id "ddn.usecases.flow::dfd.r_input"
+                item
+                    id "ddn.usecases.flow::dfd.r_output"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                dfd.r_input "1"
+                dfd.r_output "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.flow::dfd.incoming" named "appearance:diagram:ddn.usecases.flow::dfd.incoming"
+        with
+            id "appearance:diagram:ddn.usecases.flow::dfd.incoming"
+
+    use "ddn.usecases.flow::dfd.validate" named "appearance:diagram:ddn.usecases.flow::dfd.validate"
+        with
+            id "appearance:diagram:ddn.usecases.flow::dfd.validate"
+            body "notes"
+
+    use "ddn.usecases.flow::dfd.accepted" named "appearance:diagram:ddn.usecases.flow::dfd.accepted"
+        with
+            id "appearance:diagram:ddn.usecases.flow::dfd.accepted"
+
+    use "ddn.usecases.flow::dfd.r_input" named "appearance:diagram:ddn.usecases.flow::dfd.r_input"
+        with
+            id "appearance:diagram:ddn.usecases.flow::dfd.r_input"
+
+    use "ddn.usecases.flow::dfd.r_output" named "appearance:diagram:ddn.usecases.flow::dfd.r_output"
+        with
+            id "appearance:diagram:ddn.usecases.flow::dfd.r_output"

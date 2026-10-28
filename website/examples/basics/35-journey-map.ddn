@@ -1,53 +1,629 @@
-ddn "0.5";
-module "ddn.examples.journey-map";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:returns"
+    with
+        id "publication:returns"
+        title "Returns journey / synthetic"
+        targets
+            item
+                target
+                    id "returns"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// Synthetic product-returns journey (all data invented): four phases, three lanes
-// (actions, touchpoints, opportunities) and one full-width emotions band whose
-// declared 1..5 values render as a straight-segment polyline (panels.journey@1).
-data journey {
-    note ph_receive "Receive phase" {description: "Synthetic phase goal: the customer sends the unwanted item back with minimal effort."; }
-    note ph_inspect "Inspect phase" {description: "Synthetic phase goal: the returned item is checked and triaged quickly."; }
-    note ph_decide "Decide phase" {description: "Synthetic phase goal: a fair refund-or-replace decision is made transparently."; }
-    note ph_refund "Refund phase" {description: "Synthetic phase goal: money or a replacement reaches the customer without chasing."; }
-    note act_receive "Action / receive" {description: "Synthetic: customer prints the prepaid label and drops the parcel at a corner shop."; }
-    note act_inspect "Action / inspect" {description: "Synthetic: customer waits while the warehouse scans and grades the returned item."; }
-    note act_decide "Action / decide" {description: "Synthetic: customer reads the decision email and accepts the proposed refund."; }
-    note act_refund "Action / refund" {description: "Synthetic: customer sees the refund land on the original card and archives the receipt."; }
-    note tp_receive "Touchpoint / receive" {description: "Synthetic: returns portal with order lookup and a QR code for the drop-off point."; }
-    note tp_inspect "Touchpoint / inspect" {description: "Synthetic: tracking page shows the parcel arrived and inspection has started."; }
-    note tp_decide "Touchpoint / decide" {description: "Synthetic: decision email explains the outcome with photos from the inspection."; }
-    note tp_refund "Touchpoint / refund" {description: "Synthetic: bank statement line and a closing confirmation message in the portal."; }
-    note opp_receive "Opportunity / receive" {description: "Synthetic opportunity: prefill the returns form from the order history to cut retyping."; }
-    note opp_inspect "Opportunity / inspect" {description: "Synthetic opportunity: publish typical inspection times so waiting feels predictable."; }
-    note opp_decide "Opportunity / decide" {description: "Synthetic opportunity: offer a one-click appeal path when a refund is declined."; }
-    note opp_refund "Opportunity / refund" {description: "Synthetic opportunity: instant refund to wallet instead of a five-day card settlement."; }
-    record em_receive "Emotion / receive" {x_record: {"phase": "receive", "value": 2, "description": "Synthetic: annoyed that the item failed, mildly relieved the return label was easy."}; }
-    record em_inspect "Emotion / inspect" {x_record: {"phase": "inspect", "value": 3, "description": "Synthetic: neutral while waiting, reassured by the visible tracking updates."}; }
-    record em_decide "Emotion / decide" {x_record: {"phase": "decide", "value": 4, "description": "Synthetic: pleased the decision arrived with clear evidence and no argument."}; }
-    record em_refund "Emotion / refund" {x_record: {"phase": "refund", "value": 5, "description": "Synthetic: delighted the refund landed ahead of the promised date."}; }
-}
 
-view returns "Returns journey / synthetic" {
-    data: [@journey];
-    format: @shared.styles.technical;
-    projection { kind:panels; profile:"panels.journey@1"; columns:4; panels:[
-        {id:"phase-receive",title:"RECEIVE",row:0,column:0,rowspan:1,colspan:1,items:[@journey.ph_receive]},
-        {id:"phase-inspect",title:"INSPECT",row:0,column:1,rowspan:1,colspan:1,items:[@journey.ph_inspect]},
-        {id:"phase-decide",title:"DECIDE",row:0,column:2,rowspan:1,colspan:1,items:[@journey.ph_decide]},
-        {id:"phase-refund",title:"REFUND",row:0,column:3,rowspan:1,colspan:1,items:[@journey.ph_refund]},
-        {id:"actions-receive",title:"ACTIONS",row:1,column:0,rowspan:1,colspan:1,items:[@journey.act_receive]},
-        {id:"actions-inspect",title:"ACTIONS",row:1,column:1,rowspan:1,colspan:1,items:[@journey.act_inspect]},
-        {id:"actions-decide",title:"ACTIONS",row:1,column:2,rowspan:1,colspan:1,items:[@journey.act_decide]},
-        {id:"actions-refund",title:"ACTIONS",row:1,column:3,rowspan:1,colspan:1,items:[@journey.act_refund]},
-        {id:"touchpoints-receive",title:"TOUCHPOINTS",row:2,column:0,rowspan:1,colspan:1,items:[@journey.tp_receive]},
-        {id:"touchpoints-inspect",title:"TOUCHPOINTS",row:2,column:1,rowspan:1,colspan:1,items:[@journey.tp_inspect]},
-        {id:"touchpoints-decide",title:"TOUCHPOINTS",row:2,column:2,rowspan:1,colspan:1,items:[@journey.tp_decide]},
-        {id:"touchpoints-refund",title:"TOUCHPOINTS",row:2,column:3,rowspan:1,colspan:1,items:[@journey.tp_refund]},
-        {id:"opportunities-receive",title:"OPPORTUNITIES",row:3,column:0,rowspan:1,colspan:1,items:[@journey.opp_receive]},
-        {id:"opportunities-inspect",title:"OPPORTUNITIES",row:3,column:1,rowspan:1,colspan:1,items:[@journey.opp_inspect]},
-        {id:"opportunities-decide",title:"OPPORTUNITIES",row:3,column:2,rowspan:1,colspan:1,items:[@journey.opp_decide]},
-        {id:"opportunities-refund",title:"OPPORTUNITIES",row:3,column:3,rowspan:1,colspan:1,items:[@journey.opp_refund]},
-        {id:"emotions",title:"EMOTIONS (1..5)",row:4,column:0,rowspan:1,colspan:4,items:[@journey.em_receive, @journey.em_inspect, @journey.em_decide, @journey.em_refund]}]; }
-}
+element "ddn.examples.journey-map::journey.ph_receive" as "note"
+    with
+        id "ddn.examples.journey-map::journey.ph_receive"
+        title "Receive phase"
+        description "Synthetic phase goal: the customer sends the unwanted item back with minimal effort."
+        content
+            text "Synthetic phase goal: the customer sends the unwanted item back with minimal effort."
+        draft
+            text "Synthetic phase goal: the customer sends the unwanted item back with minimal effort."
+
+
+element "ddn.examples.journey-map::journey.ph_inspect" as "note"
+    with
+        id "ddn.examples.journey-map::journey.ph_inspect"
+        title "Inspect phase"
+        description "Synthetic phase goal: the returned item is checked and triaged quickly."
+        content
+            text "Synthetic phase goal: the returned item is checked and triaged quickly."
+        draft
+            text "Synthetic phase goal: the returned item is checked and triaged quickly."
+
+
+element "ddn.examples.journey-map::journey.ph_decide" as "note"
+    with
+        id "ddn.examples.journey-map::journey.ph_decide"
+        title "Decide phase"
+        description "Synthetic phase goal: a fair refund-or-replace decision is made transparently."
+        content
+            text "Synthetic phase goal: a fair refund-or-replace decision is made transparently."
+        draft
+            text "Synthetic phase goal: a fair refund-or-replace decision is made transparently."
+
+
+element "ddn.examples.journey-map::journey.ph_refund" as "note"
+    with
+        id "ddn.examples.journey-map::journey.ph_refund"
+        title "Refund phase"
+        description "Synthetic phase goal: money or a replacement reaches the customer without chasing."
+        content
+            text "Synthetic phase goal: money or a replacement reaches the customer without chasing."
+        draft
+            text "Synthetic phase goal: money or a replacement reaches the customer without chasing."
+
+
+element "ddn.examples.journey-map::journey.act_receive" as "note"
+    with
+        id "ddn.examples.journey-map::journey.act_receive"
+        title "Action / receive"
+        description "Synthetic: customer prints the prepaid label and drops the parcel at a corner shop."
+        content
+            text "Synthetic: customer prints the prepaid label and drops the parcel at a corner shop."
+        draft
+            text "Synthetic: customer prints the prepaid label and drops the parcel at a corner shop."
+
+
+element "ddn.examples.journey-map::journey.act_inspect" as "note"
+    with
+        id "ddn.examples.journey-map::journey.act_inspect"
+        title "Action / inspect"
+        description "Synthetic: customer waits while the warehouse scans and grades the returned item."
+        content
+            text "Synthetic: customer waits while the warehouse scans and grades the returned item."
+        draft
+            text "Synthetic: customer waits while the warehouse scans and grades the returned item."
+
+
+element "ddn.examples.journey-map::journey.act_decide" as "note"
+    with
+        id "ddn.examples.journey-map::journey.act_decide"
+        title "Action / decide"
+        description "Synthetic: customer reads the decision email and accepts the proposed refund."
+        content
+            text "Synthetic: customer reads the decision email and accepts the proposed refund."
+        draft
+            text "Synthetic: customer reads the decision email and accepts the proposed refund."
+
+
+element "ddn.examples.journey-map::journey.act_refund" as "note"
+    with
+        id "ddn.examples.journey-map::journey.act_refund"
+        title "Action / refund"
+        description "Synthetic: customer sees the refund land on the original card and archives the receipt."
+        content
+            text "Synthetic: customer sees the refund land on the original card and archives the receipt."
+        draft
+            text "Synthetic: customer sees the refund land on the original card and archives the receipt."
+
+
+element "ddn.examples.journey-map::journey.tp_receive" as "note"
+    with
+        id "ddn.examples.journey-map::journey.tp_receive"
+        title "Touchpoint / receive"
+        description "Synthetic: returns portal with order lookup and a QR code for the drop-off point."
+        content
+            text "Synthetic: returns portal with order lookup and a QR code for the drop-off point."
+        draft
+            text "Synthetic: returns portal with order lookup and a QR code for the drop-off point."
+
+
+element "ddn.examples.journey-map::journey.tp_inspect" as "note"
+    with
+        id "ddn.examples.journey-map::journey.tp_inspect"
+        title "Touchpoint / inspect"
+        description "Synthetic: tracking page shows the parcel arrived and inspection has started."
+        content
+            text "Synthetic: tracking page shows the parcel arrived and inspection has started."
+        draft
+            text "Synthetic: tracking page shows the parcel arrived and inspection has started."
+
+
+element "ddn.examples.journey-map::journey.tp_decide" as "note"
+    with
+        id "ddn.examples.journey-map::journey.tp_decide"
+        title "Touchpoint / decide"
+        description "Synthetic: decision email explains the outcome with photos from the inspection."
+        content
+            text "Synthetic: decision email explains the outcome with photos from the inspection."
+        draft
+            text "Synthetic: decision email explains the outcome with photos from the inspection."
+
+
+element "ddn.examples.journey-map::journey.tp_refund" as "note"
+    with
+        id "ddn.examples.journey-map::journey.tp_refund"
+        title "Touchpoint / refund"
+        description "Synthetic: bank statement line and a closing confirmation message in the portal."
+        content
+            text "Synthetic: bank statement line and a closing confirmation message in the portal."
+        draft
+            text "Synthetic: bank statement line and a closing confirmation message in the portal."
+
+
+element "ddn.examples.journey-map::journey.opp_receive" as "note"
+    with
+        id "ddn.examples.journey-map::journey.opp_receive"
+        title "Opportunity / receive"
+        description "Synthetic opportunity: prefill the returns form from the order history to cut retyping."
+        content
+            text "Synthetic opportunity: prefill the returns form from the order history to cut retyping."
+        draft
+            text "Synthetic opportunity: prefill the returns form from the order history to cut retyping."
+
+
+element "ddn.examples.journey-map::journey.opp_inspect" as "note"
+    with
+        id "ddn.examples.journey-map::journey.opp_inspect"
+        title "Opportunity / inspect"
+        description "Synthetic opportunity: publish typical inspection times so waiting feels predictable."
+        content
+            text "Synthetic opportunity: publish typical inspection times so waiting feels predictable."
+        draft
+            text "Synthetic opportunity: publish typical inspection times so waiting feels predictable."
+
+
+element "ddn.examples.journey-map::journey.opp_decide" as "note"
+    with
+        id "ddn.examples.journey-map::journey.opp_decide"
+        title "Opportunity / decide"
+        description "Synthetic opportunity: offer a one-click appeal path when a refund is declined."
+        content
+            text "Synthetic opportunity: offer a one-click appeal path when a refund is declined."
+        draft
+            text "Synthetic opportunity: offer a one-click appeal path when a refund is declined."
+
+
+element "ddn.examples.journey-map::journey.opp_refund" as "note"
+    with
+        id "ddn.examples.journey-map::journey.opp_refund"
+        title "Opportunity / refund"
+        description "Synthetic opportunity: instant refund to wallet instead of a five-day card settlement."
+        content
+            text "Synthetic opportunity: instant refund to wallet instead of a five-day card settlement."
+        draft
+            text "Synthetic opportunity: instant refund to wallet instead of a five-day card settlement."
+
+
+element "ddn.examples.journey-map::journey.em_receive" as "record"
+    with
+        id "ddn.examples.journey-map::journey.em_receive"
+        title "Emotion / receive"
+        metadata
+            x_record
+                phase "receive"
+                value 2
+                description "Synthetic: annoyed that the item failed, mildly relieved the return label was easy."
+
+
+element "ddn.examples.journey-map::journey.em_inspect" as "record"
+    with
+        id "ddn.examples.journey-map::journey.em_inspect"
+        title "Emotion / inspect"
+        metadata
+            x_record
+                phase "inspect"
+                value 3
+                description "Synthetic: neutral while waiting, reassured by the visible tracking updates."
+
+
+element "ddn.examples.journey-map::journey.em_decide" as "record"
+    with
+        id "ddn.examples.journey-map::journey.em_decide"
+        title "Emotion / decide"
+        metadata
+            x_record
+                phase "decide"
+                value 4
+                description "Synthetic: pleased the decision arrived with clear evidence and no argument."
+
+
+element "ddn.examples.journey-map::journey.em_refund" as "record"
+    with
+        id "ddn.examples.journey-map::journey.em_refund"
+        title "Emotion / refund"
+        metadata
+            x_record
+                phase "refund"
+                value 5
+                description "Synthetic: delighted the refund landed ahead of the promised date."
+
+
+element "returns::panel::phase-receive" as "note"
+    with
+        id "returns::panel::phase-receive"
+        title "RECEIVE"
+        metadata
+            x_record
+                id "phase-receive"
+                row 0
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.ph_receive"
+
+
+element "returns::panel::phase-inspect" as "note"
+    with
+        id "returns::panel::phase-inspect"
+        title "INSPECT"
+        metadata
+            x_record
+                id "phase-inspect"
+                row 0
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.ph_inspect"
+
+
+element "returns::panel::phase-decide" as "note"
+    with
+        id "returns::panel::phase-decide"
+        title "DECIDE"
+        metadata
+            x_record
+                id "phase-decide"
+                row 0
+                column 2
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.ph_decide"
+
+
+element "returns::panel::phase-refund" as "note"
+    with
+        id "returns::panel::phase-refund"
+        title "REFUND"
+        metadata
+            x_record
+                id "phase-refund"
+                row 0
+                column 3
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.ph_refund"
+
+
+element "returns::panel::actions-receive" as "note"
+    with
+        id "returns::panel::actions-receive"
+        title "ACTIONS"
+        metadata
+            x_record
+                id "actions-receive"
+                row 1
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.act_receive"
+
+
+element "returns::panel::actions-inspect" as "note"
+    with
+        id "returns::panel::actions-inspect"
+        title "ACTIONS"
+        metadata
+            x_record
+                id "actions-inspect"
+                row 1
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.act_inspect"
+
+
+element "returns::panel::actions-decide" as "note"
+    with
+        id "returns::panel::actions-decide"
+        title "ACTIONS"
+        metadata
+            x_record
+                id "actions-decide"
+                row 1
+                column 2
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.act_decide"
+
+
+element "returns::panel::actions-refund" as "note"
+    with
+        id "returns::panel::actions-refund"
+        title "ACTIONS"
+        metadata
+            x_record
+                id "actions-refund"
+                row 1
+                column 3
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.act_refund"
+
+
+element "returns::panel::touchpoints-receive" as "note"
+    with
+        id "returns::panel::touchpoints-receive"
+        title "TOUCHPOINTS"
+        metadata
+            x_record
+                id "touchpoints-receive"
+                row 2
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.tp_receive"
+
+
+element "returns::panel::touchpoints-inspect" as "note"
+    with
+        id "returns::panel::touchpoints-inspect"
+        title "TOUCHPOINTS"
+        metadata
+            x_record
+                id "touchpoints-inspect"
+                row 2
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.tp_inspect"
+
+
+element "returns::panel::touchpoints-decide" as "note"
+    with
+        id "returns::panel::touchpoints-decide"
+        title "TOUCHPOINTS"
+        metadata
+            x_record
+                id "touchpoints-decide"
+                row 2
+                column 2
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.tp_decide"
+
+
+element "returns::panel::touchpoints-refund" as "note"
+    with
+        id "returns::panel::touchpoints-refund"
+        title "TOUCHPOINTS"
+        metadata
+            x_record
+                id "touchpoints-refund"
+                row 2
+                column 3
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.tp_refund"
+
+
+element "returns::panel::opportunities-receive" as "note"
+    with
+        id "returns::panel::opportunities-receive"
+        title "OPPORTUNITIES"
+        metadata
+            x_record
+                id "opportunities-receive"
+                row 3
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.opp_receive"
+
+
+element "returns::panel::opportunities-inspect" as "note"
+    with
+        id "returns::panel::opportunities-inspect"
+        title "OPPORTUNITIES"
+        metadata
+            x_record
+                id "opportunities-inspect"
+                row 3
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.opp_inspect"
+
+
+element "returns::panel::opportunities-decide" as "note"
+    with
+        id "returns::panel::opportunities-decide"
+        title "OPPORTUNITIES"
+        metadata
+            x_record
+                id "opportunities-decide"
+                row 3
+                column 2
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.opp_decide"
+
+
+element "returns::panel::opportunities-refund" as "note"
+    with
+        id "returns::panel::opportunities-refund"
+        title "OPPORTUNITIES"
+        metadata
+            x_record
+                id "opportunities-refund"
+                row 3
+                column 3
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.opp_refund"
+
+
+element "returns::panel::emotions" as "note"
+    with
+        id "returns::panel::emotions"
+        title "EMOTIONS (1..5)"
+        metadata
+            x_record
+                id "emotions"
+                row 4
+                column 0
+                rowspan 1
+                colspan 4
+                items
+                    item
+                        id "ddn.examples.journey-map::journey.em_receive"
+                    item
+                        id "ddn.examples.journey-map::journey.em_inspect"
+                    item
+                        id "ddn.examples.journey-map::journey.em_decide"
+                    item
+                        id "ddn.examples.journey-map::journey.em_refund"
+
+
+view "returns" as "panels.journey@1"
+    with
+        id "returns"
+        title "Returns journey / synthetic"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                columns 4
+                panels
+                    item
+                        target
+                            id "returns::panel::phase-receive"
+                        kind "text"
+                        title "RECEIVE"
+                    item
+                        target
+                            id "returns::panel::phase-inspect"
+                        kind "text"
+                        title "INSPECT"
+                    item
+                        target
+                            id "returns::panel::phase-decide"
+                        kind "text"
+                        title "DECIDE"
+                    item
+                        target
+                            id "returns::panel::phase-refund"
+                        kind "text"
+                        title "REFUND"
+                    item
+                        target
+                            id "returns::panel::actions-receive"
+                        kind "text"
+                        title "ACTIONS"
+                    item
+                        target
+                            id "returns::panel::actions-inspect"
+                        kind "text"
+                        title "ACTIONS"
+                    item
+                        target
+                            id "returns::panel::actions-decide"
+                        kind "text"
+                        title "ACTIONS"
+                    item
+                        target
+                            id "returns::panel::actions-refund"
+                        kind "text"
+                        title "ACTIONS"
+                    item
+                        target
+                            id "returns::panel::touchpoints-receive"
+                        kind "text"
+                        title "TOUCHPOINTS"
+                    item
+                        target
+                            id "returns::panel::touchpoints-inspect"
+                        kind "text"
+                        title "TOUCHPOINTS"
+                    item
+                        target
+                            id "returns::panel::touchpoints-decide"
+                        kind "text"
+                        title "TOUCHPOINTS"
+                    item
+                        target
+                            id "returns::panel::touchpoints-refund"
+                        kind "text"
+                        title "TOUCHPOINTS"
+                    item
+                        target
+                            id "returns::panel::opportunities-receive"
+                        kind "text"
+                        title "OPPORTUNITIES"
+                    item
+                        target
+                            id "returns::panel::opportunities-inspect"
+                        kind "text"
+                        title "OPPORTUNITIES"
+                    item
+                        target
+                            id "returns::panel::opportunities-decide"
+                        kind "text"
+                        title "OPPORTUNITIES"
+                    item
+                        target
+                            id "returns::panel::opportunities-refund"
+                        kind "text"
+                        title "OPPORTUNITIES"
+                    item
+                        target
+                            id "returns::panel::emotions"
+                        kind "text"
+                        title "EMOTIONS (1..5)"

@@ -1,0 +1,165 @@
+version ddn-next-1
+
+publication "publication:main"
+    with
+        id "publication:main"
+        title "Portable text properties"
+        targets
+            item
+                target
+                    id "main"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            minimum_text 10.666666666666666
+        header
+            runs
+                left
+                    text "$view_id"
+                    align "left"
+                    size 10.666666666666666
+                    lines 1
+                right
+                    text "SUPERSEDED — $date"
+                    align "right"
+                    size 10.666666666666666
+                    lines 1
+                    decoration "strike"
+                    color "#a51d2d"
+            visible true
+
+
+element "ddn.fieldguide.textprops::model.invoice" as "service"
+    with
+        id "ddn.fieldguide.textprops::model.invoice"
+        title "Invoice gateway"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "text": {
+                        "weight": 700,
+                        "variant": "small-caps"
+                      }
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.textprops::model.ledger" as "database"
+    with
+        id "ddn.fieldguide.textprops::model.ledger"
+        title "Ledger archive"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "text": {
+                        "italic": true,
+                        "color": "#1a5fb4"
+                      }
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.textprops::model.legacy" as "queue"
+    with
+        id "ddn.fieldguide.textprops::model.legacy"
+        title "Legacy export (retired)"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "text": {
+                        "decoration": "strike"
+                      }
+                    }
+                format "plain"
+
+
+relation "ddn.fieldguide.textprops::model.posts" as "flow"
+    with
+        id "ddn.fieldguide.textprops::model.posts"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.textprops::model.invoice"
+            item
+                definition
+                    id "ddn.fieldguide.textprops::model.ledger"
+
+
+relation "ddn.fieldguide.textprops::model.fed" as "flow"
+    with
+        id "ddn.fieldguide.textprops::model.fed"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.textprops::model.legacy"
+            item
+                definition
+                    id "ddn.fieldguide.textprops::model.invoice"
+
+
+view "main" as "ddn@1"
+    with
+        id "main"
+        title "Portable text properties"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.textprops::model.invoice"
+                item
+                    id "ddn.fieldguide.textprops::model.ledger"
+                item
+                    id "ddn.fieldguide.textprops::model.legacy"
+                item
+                    id "ddn.fieldguide.textprops::model.posts"
+                item
+                    id "ddn.fieldguide.textprops::model.fed"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:main"
+
+    use "ddn.fieldguide.textprops::model.invoice" named "appearance:main:ddn.fieldguide.textprops::model.invoice"
+        with
+            id "appearance:main:ddn.fieldguide.textprops::model.invoice"
+            text
+                weight 700
+                variant "small_caps"
+
+    use "ddn.fieldguide.textprops::model.ledger" named "appearance:main:ddn.fieldguide.textprops::model.ledger"
+        with
+            id "appearance:main:ddn.fieldguide.textprops::model.ledger"
+            text
+                weight 500
+                color "#1a5fb4"
+                italic true
+
+    use "ddn.fieldguide.textprops::model.legacy" named "appearance:main:ddn.fieldguide.textprops::model.legacy"
+        with
+            id "appearance:main:ddn.fieldguide.textprops::model.legacy"
+            text
+                weight 500
+                decoration "strike"
+
+    use "ddn.fieldguide.textprops::model.posts" named "appearance:main:ddn.fieldguide.textprops::model.posts"
+        with
+            id "appearance:main:ddn.fieldguide.textprops::model.posts"
+            text
+                weight 500
+
+    use "ddn.fieldguide.textprops::model.fed" named "appearance:main:ddn.fieldguide.textprops::model.fed"
+        with
+            id "appearance:main:ddn.fieldguide.textprops::model.fed"
+            text
+                weight 500

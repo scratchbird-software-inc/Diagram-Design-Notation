@@ -1,45 +1,11 @@
-# DDN standard — proposed Diagram Design Notation standard
+# Adopted DDN contracts
 
-The normative core of the project: what the language is, what the vocabulary
-means, and how the standard evolves. The runtime in `../notation/`
-implements this directory; anything here outranks the implementation.
+Current language: **ddn-next-1**. Utility API: **1.0**. The reconciled codex and adopted ABI govern this implementation; historical proposal/evidence wording in imported specification chapters does not establish new product qualification.
 
-## Current tool implementation
+- [Language reference](language/09-language-reference.md), [grammar](language/10-grammar.ebnf), [consolidated examples](language/examples/consolidated/README.md).
+- [Normalized values and defaults](codex/CONTRACT.md), [properties](codex/PROPERTIES.md), [machine schema](codex/ddn.schema.json).
+- [Core elements](codex/CORE.md), [relations](codex/RELATIONS.md), [roles and profiles](codex/PROFILES.md), [151 profile contracts](codex/profile-contracts.json).
+- [Viewer/designer/verifier specification](utilities/README.md), [core ABI](utilities/contracts/core.d.ts), [scene ABI](utilities/contracts/scene.d.ts), [browser ABI](utilities/contracts/browser.d.ts).
+- [All-profile reference](../website/reference/profiles.html), [views and workareas](../website/guide/language.html), [bounded profile coverage](../docs/DDN/PROFILE-COVERAGE.md).
 
-The reference tools are at package version 0.8.0 (alpha). Chapter 59 defines
-composable name/type/table/note sections and optional DDNN text storage; the
-[workspace guide](../website/docs/developers/workspace-guide.md) covers their
-current UI alongside shared models, multiple views and DDNA companions.
-Source dialect versions are separate from the package version. No 0.9.1 release
-is declared by these amendments. DDNN stores text; database execution is outside
-the viewer/designer.
-
-## Contents
-
-- `specification/` — the standard itself, numbered chapters `00–50`, plus the
-  **0.8 draft** chapters `51–59` (version/compatibility contract, view
-  profiles and themes, publication chrome, text fit, markings and metadata,
-  tooling/workspace conventions, viewer/designer contract, conformance
-  vectors, composable element sections and text documents). Start at `00-status-and-scope.md`.
-- `grammar/ddn.ebnf` — formal EBNF grammar of the syntactic core.
-- `schemas/` — JSON Schemas (draft 2020-12): resolved IR, scene, value,
-  extension, publication manifest, layout state, workspace, DDNN text documents.
-- `registry/` — the machine-readable vocabulary: `catalogue.json`
-  (152 object kinds, 90 relation verbs, 118 facets at 0.7.0),
-  `capabilities.json`, `data-properties.json`, `relation-constraints.json`,
-  `extensions.json`, `glyph-library.svg`, `text-metrics.json`, and
-  `profiles/catalogue.json` (150 installed versioned profiles).
-- `plates/` — SVG notation plates (kinds, facets, relationships, looks).
-- `governance/` — RFC template and versioning policy; change process lives here.
-- `submission/` — generated standards-body submission drafts for DDN and
-  DDNA (2026 draft, pre-submission; regenerate with
-  `node tools/build-submission.mjs`, drift-checked by the test suite).
-- `decisions/` — (reserved) project-level ADRs; designer ADRs live in
-  `../designer/decisions/`.
-
-## Changing the standard
-
-Language, vocabulary, or visual-meaning changes require an RFC
-(`governance/RFC-TEMPLATE.md`) and update of spec chapters, grammar, schemas,
-registry, capabilities, runtime, and tests **together**. See
-`../CONTRIBUTING.md` and `governance/VERSIONING.md`.
+The shipped browser-facing [reference](../website/reference/index.html) is generated from these contracts. See [documentation](../docs/README.md) for implemented behavior and explicit release limits. These are open DDN specifications; commercial Weaver implementation and platform specifications are excluded.

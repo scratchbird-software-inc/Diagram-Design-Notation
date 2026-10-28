@@ -1,48 +1,411 @@
-ddn "0.5";
-module "ddn.examples.object";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:objects"
+    with
+        id "publication:objects"
+        title "Synthetic snapshot / objects"
+        targets
+            item
+                target
+                    id "objects"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic object/instance snapshot for the uml.object@1 profile.
-// Classifiers Customer and Order are ordinary uml.class objects with declared
-// fields. Instances sample_customer and sample_order are kind:record objects
-// naming their classifier via x_instance; their slot fields must match the
-// classifier's field names (DDN-PJ112). One assoc link connects the two
-// instances. Slots render as the graph renderer's native field rows.
-// All data is synthetic. This is profile-level coverage, not UML conformance.
-data model {
-    object customer "Customer" { kind: "uml.class";
-        fields {
-            customer_id { datatype: "string"; }
-            name { datatype: "string"; }
-        }
-    }
-    object order "Order" { kind: "uml.class";
-        fields {
-            order_id { datatype: "string"; }
-            total { datatype: "number"; }
-        }
-    }
-    record sample_customer "sample_customer : Customer" {
-x_instance: { classifier: @model.customer; };
-        fields {
-            customer_id "C-1001";
-            name "Ada Example";
-        }
-    }
-    record sample_order "sample_order : Order" {
-x_instance: { classifier: @model.order; };
-        fields {
-            order_id "O-4711";
-            total "129.50";
-        }
-    }
-    assoc placed "Placed" @sample_customer -> @sample_order;
-}
 
-view objects "Synthetic snapshot / objects" {
-    data: [@model]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "uml.object@1"; }
-    layout { algorithm: layered; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+element "ddn.examples.object::model.customer.customer_id" as "field"
+    with
+        id "ddn.examples.object::model.customer.customer_id"
+        title "customer_id"
+        properties
+            datatype "string"
+        content
+            parent
+                id "ddn.examples.object::model.customer"
+            ordinal 0
+            datatype "string"
+
+
+element "ddn.examples.object::model.customer.name" as "field"
+    with
+        id "ddn.examples.object::model.customer.name"
+        title "name"
+        properties
+            datatype "string"
+        content
+            parent
+                id "ddn.examples.object::model.customer"
+            ordinal 1
+            datatype "string"
+
+
+element "ddn.examples.object::model.customer" as "uml.class"
+    with
+        id "ddn.examples.object::model.customer"
+        title "Customer"
+        members
+            item
+                id "ddn.examples.object::model.customer.customer_id"
+            item
+                id "ddn.examples.object::model.customer.name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item "string"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "name"
+                    item "string"
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.object::model.order.order_id" as "field"
+    with
+        id "ddn.examples.object::model.order.order_id"
+        title "order_id"
+        properties
+            datatype "string"
+        content
+            parent
+                id "ddn.examples.object::model.order"
+            ordinal 0
+            datatype "string"
+
+
+element "ddn.examples.object::model.order.total" as "field"
+    with
+        id "ddn.examples.object::model.order.total"
+        title "total"
+        properties
+            datatype "number"
+        content
+            parent
+                id "ddn.examples.object::model.order"
+            ordinal 1
+            datatype "number"
+
+
+element "ddn.examples.object::model.order" as "uml.class"
+    with
+        id "ddn.examples.object::model.order"
+        title "Order"
+        members
+            item
+                id "ddn.examples.object::model.order.order_id"
+            item
+                id "ddn.examples.object::model.order.total"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item "string"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "total"
+                    item "number"
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.object::model.sample_customer.customer_id" as "field"
+    with
+        id "ddn.examples.object::model.sample_customer.customer_id"
+        title "C-1001"
+        content
+            parent
+                id "ddn.examples.object::model.sample_customer"
+            ordinal 0
+
+
+element "ddn.examples.object::model.sample_customer.name" as "field"
+    with
+        id "ddn.examples.object::model.sample_customer.name"
+        title "Ada Example"
+        content
+            parent
+                id "ddn.examples.object::model.sample_customer"
+            ordinal 1
+
+
+element "ddn.examples.object::model.sample_customer" as "record"
+    with
+        id "ddn.examples.object::model.sample_customer"
+        title "sample_customer : Customer"
+        metadata
+            x_instance
+                classifier
+                    id "ddn.examples.object::model.customer"
+        members
+            item
+                id "ddn.examples.object::model.sample_customer.customer_id"
+            item
+                id "ddn.examples.object::model.sample_customer.name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "C-1001"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "Ada Example"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.object::model.sample_order.order_id" as "field"
+    with
+        id "ddn.examples.object::model.sample_order.order_id"
+        title "O-4711"
+        content
+            parent
+                id "ddn.examples.object::model.sample_order"
+            ordinal 0
+
+
+element "ddn.examples.object::model.sample_order.total" as "field"
+    with
+        id "ddn.examples.object::model.sample_order.total"
+        title "129.50"
+        content
+            parent
+                id "ddn.examples.object::model.sample_order"
+            ordinal 1
+
+
+element "ddn.examples.object::model.sample_order" as "record"
+    with
+        id "ddn.examples.object::model.sample_order"
+        title "sample_order : Order"
+        metadata
+            x_instance
+                classifier
+                    id "ddn.examples.object::model.order"
+        members
+            item
+                id "ddn.examples.object::model.sample_order.order_id"
+            item
+                id "ddn.examples.object::model.sample_order.total"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "O-4711"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "129.50"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.object::model.placed" as "assoc"
+    with
+        id "ddn.examples.object::model.placed"
+        title "Placed"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.object::model.sample_customer"
+            item
+                definition
+                    id "ddn.examples.object::model.sample_order"
+
+
+view "objects" as "uml.object@1"
+    with
+        id "objects"
+        title "Synthetic snapshot / objects"
+        selection
+            include
+                item
+                    id "ddn.examples.object::model.customer"
+                item
+                    id "ddn.examples.object::model.order"
+                item
+                    id "ddn.examples.object::model.sample_customer"
+                item
+                    id "ddn.examples.object::model.sample_order"
+                item
+                    id "ddn.examples.object::model.placed"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:objects"
+
+    use "ddn.examples.object::model.customer" named "appearance:objects:ddn.examples.object::model.customer"
+        with
+            id "appearance:objects:ddn.examples.object::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.object::model.order" named "appearance:objects:ddn.examples.object::model.order"
+        with
+            id "appearance:objects:ddn.examples.object::model.order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.object::model.sample_customer" named "appearance:objects:ddn.examples.object::model.sample_customer"
+        with
+            id "appearance:objects:ddn.examples.object::model.sample_customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.object::model.sample_order" named "appearance:objects:ddn.examples.object::model.sample_order"
+        with
+            id "appearance:objects:ddn.examples.object::model.sample_order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.object::model.placed" named "appearance:objects:ddn.examples.object::model.placed"
+        with
+            id "appearance:objects:ddn.examples.object::model.placed"

@@ -1,0 +1,358 @@
+version ddn-next-1
+
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "Synthetic shards and replicas / placement"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.shards::cluster.zone_a" as "zone"
+    with
+        id "ddn.fieldguide.shards::cluster.zone_a"
+        title "Zone A"
+        description "Synthetic failure zone A."
+
+
+element "ddn.fieldguide.shards::cluster.zone_b" as "zone"
+    with
+        id "ddn.fieldguide.shards::cluster.zone_b"
+        title "Zone B"
+        description "Synthetic failure zone B."
+
+
+element "ddn.fieldguide.shards::cluster.zone_c" as "zone"
+    with
+        id "ddn.fieldguide.shards::cluster.zone_c"
+        title "Zone C"
+        description "Synthetic failure zone C."
+
+
+element "ddn.fieldguide.shards::cluster.shard1" as "shard"
+    with
+        id "ddn.fieldguide.shards::cluster.shard1"
+        title "Shard 1 (hash 0-33%)"
+        description "Synthetic first key range; leader in zone A."
+
+
+element "ddn.fieldguide.shards::cluster.shard2" as "shard"
+    with
+        id "ddn.fieldguide.shards::cluster.shard2"
+        title "Shard 2 (hash 34-66%)"
+        description "Synthetic second key range; leader in zone B."
+
+
+element "ddn.fieldguide.shards::cluster.shard3" as "shard"
+    with
+        id "ddn.fieldguide.shards::cluster.shard3"
+        title "Shard 3 (hash 67-100%)"
+        description "Synthetic third key range; leader in zone C."
+
+
+element "ddn.fieldguide.shards::cluster.router" as "application"
+    with
+        id "ddn.fieldguide.shards::cluster.router"
+        title "Query router"
+        description "Synthetic router: maps key to shard, reads from replicas."
+
+
+relation "ddn.fieldguide.shards::cluster.lead1" as "assoc"
+    with
+        id "ddn.fieldguide.shards::cluster.lead1"
+        title "leads in"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard1"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.zone_a"
+
+
+relation "ddn.fieldguide.shards::cluster.lead2" as "assoc"
+    with
+        id "ddn.fieldguide.shards::cluster.lead2"
+        title "leads in"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard2"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.zone_b"
+
+
+relation "ddn.fieldguide.shards::cluster.lead3" as "assoc"
+    with
+        id "ddn.fieldguide.shards::cluster.lead3"
+        title "leads in"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard3"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.zone_c"
+
+
+relation "ddn.fieldguide.shards::cluster.repl1b" as "assoc"
+    with
+        id "ddn.fieldguide.shards::cluster.repl1b"
+        title "replica"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard1"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.zone_b"
+
+
+relation "ddn.fieldguide.shards::cluster.repl1c" as "assoc"
+    with
+        id "ddn.fieldguide.shards::cluster.repl1c"
+        title "replica"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard1"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.zone_c"
+
+
+relation "ddn.fieldguide.shards::cluster.repl2a" as "assoc"
+    with
+        id "ddn.fieldguide.shards::cluster.repl2a"
+        title "replica"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard2"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.zone_a"
+
+
+relation "ddn.fieldguide.shards::cluster.repl2c" as "assoc"
+    with
+        id "ddn.fieldguide.shards::cluster.repl2c"
+        title "replica"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard2"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.zone_c"
+
+
+relation "ddn.fieldguide.shards::cluster.repl3a" as "assoc"
+    with
+        id "ddn.fieldguide.shards::cluster.repl3a"
+        title "replica"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard3"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.zone_a"
+
+
+relation "ddn.fieldguide.shards::cluster.repl3b" as "assoc"
+    with
+        id "ddn.fieldguide.shards::cluster.repl3b"
+        title "replica"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard3"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.zone_b"
+
+
+relation "ddn.fieldguide.shards::cluster.route1" as "flow"
+    with
+        id "ddn.fieldguide.shards::cluster.route1"
+        title "routes"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.router"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard1"
+
+
+relation "ddn.fieldguide.shards::cluster.route2" as "flow"
+    with
+        id "ddn.fieldguide.shards::cluster.route2"
+        title "routes"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.router"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard2"
+
+
+relation "ddn.fieldguide.shards::cluster.route3" as "flow"
+    with
+        id "ddn.fieldguide.shards::cluster.route3"
+        title "routes"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.router"
+            item
+                definition
+                    id "ddn.fieldguide.shards::cluster.shard3"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "Synthetic shards and replicas / placement"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.shards::cluster.zone_a"
+                item
+                    id "ddn.fieldguide.shards::cluster.zone_b"
+                item
+                    id "ddn.fieldguide.shards::cluster.zone_c"
+                item
+                    id "ddn.fieldguide.shards::cluster.shard1"
+                item
+                    id "ddn.fieldguide.shards::cluster.shard2"
+                item
+                    id "ddn.fieldguide.shards::cluster.shard3"
+                item
+                    id "ddn.fieldguide.shards::cluster.router"
+                item
+                    id "ddn.fieldguide.shards::cluster.lead1"
+                item
+                    id "ddn.fieldguide.shards::cluster.lead2"
+                item
+                    id "ddn.fieldguide.shards::cluster.lead3"
+                item
+                    id "ddn.fieldguide.shards::cluster.repl1b"
+                item
+                    id "ddn.fieldguide.shards::cluster.repl1c"
+                item
+                    id "ddn.fieldguide.shards::cluster.repl2a"
+                item
+                    id "ddn.fieldguide.shards::cluster.repl2c"
+                item
+                    id "ddn.fieldguide.shards::cluster.repl3a"
+                item
+                    id "ddn.fieldguide.shards::cluster.repl3b"
+                item
+                    id "ddn.fieldguide.shards::cluster.route1"
+                item
+                    id "ddn.fieldguide.shards::cluster.route2"
+                item
+                    id "ddn.fieldguide.shards::cluster.route3"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.fieldguide.shards::cluster.zone_a" named "appearance:diagram:ddn.fieldguide.shards::cluster.zone_a"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.zone_a"
+            body "notes"
+
+    use "ddn.fieldguide.shards::cluster.zone_b" named "appearance:diagram:ddn.fieldguide.shards::cluster.zone_b"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.zone_b"
+            body "notes"
+
+    use "ddn.fieldguide.shards::cluster.zone_c" named "appearance:diagram:ddn.fieldguide.shards::cluster.zone_c"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.zone_c"
+            body "notes"
+
+    use "ddn.fieldguide.shards::cluster.shard1" named "appearance:diagram:ddn.fieldguide.shards::cluster.shard1"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.shard1"
+            body "notes"
+
+    use "ddn.fieldguide.shards::cluster.shard2" named "appearance:diagram:ddn.fieldguide.shards::cluster.shard2"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.shard2"
+            body "notes"
+
+    use "ddn.fieldguide.shards::cluster.shard3" named "appearance:diagram:ddn.fieldguide.shards::cluster.shard3"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.shard3"
+            body "notes"
+
+    use "ddn.fieldguide.shards::cluster.router" named "appearance:diagram:ddn.fieldguide.shards::cluster.router"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.router"
+            body "notes"
+
+    use "ddn.fieldguide.shards::cluster.lead1" named "appearance:diagram:ddn.fieldguide.shards::cluster.lead1"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.lead1"
+
+    use "ddn.fieldguide.shards::cluster.lead2" named "appearance:diagram:ddn.fieldguide.shards::cluster.lead2"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.lead2"
+
+    use "ddn.fieldguide.shards::cluster.lead3" named "appearance:diagram:ddn.fieldguide.shards::cluster.lead3"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.lead3"
+
+    use "ddn.fieldguide.shards::cluster.repl1b" named "appearance:diagram:ddn.fieldguide.shards::cluster.repl1b"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.repl1b"
+
+    use "ddn.fieldguide.shards::cluster.repl1c" named "appearance:diagram:ddn.fieldguide.shards::cluster.repl1c"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.repl1c"
+
+    use "ddn.fieldguide.shards::cluster.repl2a" named "appearance:diagram:ddn.fieldguide.shards::cluster.repl2a"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.repl2a"
+
+    use "ddn.fieldguide.shards::cluster.repl2c" named "appearance:diagram:ddn.fieldguide.shards::cluster.repl2c"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.repl2c"
+
+    use "ddn.fieldguide.shards::cluster.repl3a" named "appearance:diagram:ddn.fieldguide.shards::cluster.repl3a"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.repl3a"
+
+    use "ddn.fieldguide.shards::cluster.repl3b" named "appearance:diagram:ddn.fieldguide.shards::cluster.repl3b"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.repl3b"
+
+    use "ddn.fieldguide.shards::cluster.route1" named "appearance:diagram:ddn.fieldguide.shards::cluster.route1"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.route1"
+
+    use "ddn.fieldguide.shards::cluster.route2" named "appearance:diagram:ddn.fieldguide.shards::cluster.route2"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.route2"
+
+    use "ddn.fieldguide.shards::cluster.route3" named "appearance:diagram:ddn.fieldguide.shards::cluster.route3"
+        with
+            id "appearance:diagram:ddn.fieldguide.shards::cluster.route3"

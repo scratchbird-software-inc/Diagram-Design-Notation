@@ -1,0 +1,149 @@
+version ddn-next-1
+
+publication "publication:main"
+    with
+        id "publication:main"
+        title "Per-element sizing and opacity"
+        targets
+            item
+                target
+                    id "main"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.sizing::model.summary" as "note"
+    with
+        id "ddn.fieldguide.sizing::model.summary"
+        title "Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage."
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "max_width": 200
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.sizing::model.draft" as "note"
+    with
+        id "ddn.fieldguide.sizing::model.draft"
+        title "Draft hypothesis — not yet reviewed by the working group"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "opacity": 0.55
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.sizing::model.verdict" as "term"
+    with
+        id "ddn.fieldguide.sizing::model.verdict"
+        title "Proceed with the staged migration"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "text_fit": "shrink",
+                      "max_width": 240,
+                      "max_height": 64,
+                      "min_font": 11
+                    }
+                format "plain"
+
+
+relation "ddn.fieldguide.sizing::model.leads" as "assoc"
+    with
+        id "ddn.fieldguide.sizing::model.leads"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.sizing::model.summary"
+            item
+                definition
+                    id "ddn.fieldguide.sizing::model.verdict"
+
+
+relation "ddn.fieldguide.sizing::model.informs" as "assoc"
+    with
+        id "ddn.fieldguide.sizing::model.informs"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.sizing::model.draft"
+            item
+                definition
+                    id "ddn.fieldguide.sizing::model.verdict"
+
+
+view "main" as "ddn@1"
+    with
+        id "main"
+        title "Per-element sizing and opacity"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.sizing::model.summary"
+                item
+                    id "ddn.fieldguide.sizing::model.draft"
+                item
+                    id "ddn.fieldguide.sizing::model.verdict"
+                item
+                    id "ddn.fieldguide.sizing::model.leads"
+                item
+                    id "ddn.fieldguide.sizing::model.informs"
+        layout
+            center "pins"
+            quality "warn"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:main"
+
+    use "ddn.fieldguide.sizing::model.summary" named "appearance:main:ddn.fieldguide.sizing::model.summary"
+        with
+            id "appearance:main:ddn.fieldguide.sizing::model.summary"
+            body "draft"
+            text
+                max_width 200
+                min_font 10
+                fit "wrap"
+
+    use "ddn.fieldguide.sizing::model.draft" named "appearance:main:ddn.fieldguide.sizing::model.draft"
+        with
+            id "appearance:main:ddn.fieldguide.sizing::model.draft"
+            body "draft"
+            text
+                max_width 320
+                min_font 10
+                fit "wrap"
+            opacity 0.55
+
+    use "ddn.fieldguide.sizing::model.verdict" named "appearance:main:ddn.fieldguide.sizing::model.verdict"
+        with
+            id "appearance:main:ddn.fieldguide.sizing::model.verdict"
+            text
+                max_width 240
+                min_font 11
+                fit "shrink"
+                max_height 64
+
+    use "ddn.fieldguide.sizing::model.leads" named "appearance:main:ddn.fieldguide.sizing::model.leads"
+        with
+            id "appearance:main:ddn.fieldguide.sizing::model.leads"
+
+    use "ddn.fieldguide.sizing::model.informs" named "appearance:main:ddn.fieldguide.sizing::model.informs"
+        with
+            id "appearance:main:ddn.fieldguide.sizing::model.informs"

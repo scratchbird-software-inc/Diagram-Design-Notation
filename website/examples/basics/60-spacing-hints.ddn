@@ -1,28 +1,542 @@
-ddn "0.5";
-module "ddn.examples.spacing-hints";
-import "shared.ddn" as shared;
-data model {
- application orders "Order capture" {role: authoritative; }
- application ledger "Ledger posting" {role: authoritative; }
- table journal "Posted journals" {role: authoritative; fields { journal_id; period_id; } }
- dataset analytics "Margin analytics" {role: derived; }
- relation posts "Posts every approved order into the ledger for reconciliation" @orders -> @ledger { kind: flow; }
- assoc records @ledger -> @journal;
- assoc feeds @journal -> @analytics;
-}
-view tight "Spacing / tight" {
- data: [@model]; format: @shared.styles.technical; spacing: tight;
- publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
-view normal "Spacing / normal (default)" {
- data: [@model]; format: @shared.styles.technical;
- publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
-view loose "Spacing / loose" {
- data: [@model]; format: @shared.styles.technical; spacing: loose;
- publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
-view expanded "Spacing / expanded" {
- data: [@model]; format: @shared.styles.technical; spacing: expanded;
- publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+version ddn-next-1
+
+publication "publication:tight"
+    with
+        id "publication:tight"
+        title "Spacing / tight"
+        targets
+            item
+                target
+                    id "tight"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:normal"
+    with
+        id "publication:normal"
+        title "Spacing / normal (default)"
+        targets
+            item
+                target
+                    id "normal"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:loose"
+    with
+        id "publication:loose"
+        title "Spacing / loose"
+        targets
+            item
+                target
+                    id "loose"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:expanded"
+    with
+        id "publication:expanded"
+        title "Spacing / expanded"
+        targets
+            item
+                target
+                    id "expanded"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.spacing-hints::model.orders" as "application"
+    with
+        id "ddn.examples.spacing-hints::model.orders"
+        title "Order capture"
+        facets
+            authority
+                item "AUTH"
+        properties
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+
+
+element "ddn.examples.spacing-hints::model.ledger" as "application"
+    with
+        id "ddn.examples.spacing-hints::model.ledger"
+        title "Ledger posting"
+        facets
+            authority
+                item "AUTH"
+        properties
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+
+
+element "ddn.examples.spacing-hints::model.journal.journal_id" as "field"
+    with
+        id "ddn.examples.spacing-hints::model.journal.journal_id"
+        title "journal_id"
+        content
+            parent
+                id "ddn.examples.spacing-hints::model.journal"
+            ordinal 0
+
+
+element "ddn.examples.spacing-hints::model.journal.period_id" as "field"
+    with
+        id "ddn.examples.spacing-hints::model.journal.period_id"
+        title "period_id"
+        content
+            parent
+                id "ddn.examples.spacing-hints::model.journal"
+            ordinal 1
+
+
+element "ddn.examples.spacing-hints::model.journal" as "table"
+    with
+        id "ddn.examples.spacing-hints::model.journal"
+        title "Posted journals"
+        facets
+            authority
+                item "AUTH"
+        properties
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+        members
+            item
+                id "ddn.examples.spacing-hints::model.journal.journal_id"
+            item
+                id "ddn.examples.spacing-hints::model.journal.period_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "journal_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "period_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.spacing-hints::model.analytics" as "dataset"
+    with
+        id "ddn.examples.spacing-hints::model.analytics"
+        title "Margin analytics"
+        facets
+            authority
+                item "DER"
+        properties
+            role "derived"
+        metadata
+            x_record
+                layout_group "derived"
+
+
+relation "ddn.examples.spacing-hints::model.posts" as "flow"
+    with
+        id "ddn.examples.spacing-hints::model.posts"
+        title "Posts every approved order into the ledger for reconciliation"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.spacing-hints::model.orders"
+            item
+                definition
+                    id "ddn.examples.spacing-hints::model.ledger"
+
+
+relation "ddn.examples.spacing-hints::model.records" as "assoc"
+    with
+        id "ddn.examples.spacing-hints::model.records"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.spacing-hints::model.ledger"
+            item
+                definition
+                    id "ddn.examples.spacing-hints::model.journal"
+
+
+relation "ddn.examples.spacing-hints::model.feeds" as "assoc"
+    with
+        id "ddn.examples.spacing-hints::model.feeds"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.spacing-hints::model.journal"
+            item
+                definition
+                    id "ddn.examples.spacing-hints::model.analytics"
+
+
+view "tight" as "ddn@1"
+    with
+        id "tight"
+        title "Spacing / tight"
+        selection
+            include
+                item
+                    id "ddn.examples.spacing-hints::model.orders"
+                item
+                    id "ddn.examples.spacing-hints::model.ledger"
+                item
+                    id "ddn.examples.spacing-hints::model.journal"
+                item
+                    id "ddn.examples.spacing-hints::model.analytics"
+                item
+                    id "ddn.examples.spacing-hints::model.posts"
+                item
+                    id "ddn.examples.spacing-hints::model.records"
+                item
+                    id "ddn.examples.spacing-hints::model.feeds"
+        layout
+            algorithm "grid"
+            gap 52
+            row_gap 41.6
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:tight"
+
+    use "ddn.examples.spacing-hints::model.orders" named "appearance:tight:ddn.examples.spacing-hints::model.orders"
+        with
+            id "appearance:tight:ddn.examples.spacing-hints::model.orders"
+
+    use "ddn.examples.spacing-hints::model.ledger" named "appearance:tight:ddn.examples.spacing-hints::model.ledger"
+        with
+            id "appearance:tight:ddn.examples.spacing-hints::model.ledger"
+
+    use "ddn.examples.spacing-hints::model.journal" named "appearance:tight:ddn.examples.spacing-hints::model.journal"
+        with
+            id "appearance:tight:ddn.examples.spacing-hints::model.journal"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.spacing-hints::model.analytics" named "appearance:tight:ddn.examples.spacing-hints::model.analytics"
+        with
+            id "appearance:tight:ddn.examples.spacing-hints::model.analytics"
+
+    use "ddn.examples.spacing-hints::model.posts" named "appearance:tight:ddn.examples.spacing-hints::model.posts"
+        with
+            id "appearance:tight:ddn.examples.spacing-hints::model.posts"
+
+    use "ddn.examples.spacing-hints::model.records" named "appearance:tight:ddn.examples.spacing-hints::model.records"
+        with
+            id "appearance:tight:ddn.examples.spacing-hints::model.records"
+
+    use "ddn.examples.spacing-hints::model.feeds" named "appearance:tight:ddn.examples.spacing-hints::model.feeds"
+        with
+            id "appearance:tight:ddn.examples.spacing-hints::model.feeds"
+
+
+view "normal" as "ddn@1"
+    with
+        id "normal"
+        title "Spacing / normal (default)"
+        selection
+            include
+                item
+                    id "ddn.examples.spacing-hints::model.orders"
+                item
+                    id "ddn.examples.spacing-hints::model.ledger"
+                item
+                    id "ddn.examples.spacing-hints::model.journal"
+                item
+                    id "ddn.examples.spacing-hints::model.analytics"
+                item
+                    id "ddn.examples.spacing-hints::model.posts"
+                item
+                    id "ddn.examples.spacing-hints::model.records"
+                item
+                    id "ddn.examples.spacing-hints::model.feeds"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:normal"
+
+    use "ddn.examples.spacing-hints::model.orders" named "appearance:normal:ddn.examples.spacing-hints::model.orders"
+        with
+            id "appearance:normal:ddn.examples.spacing-hints::model.orders"
+
+    use "ddn.examples.spacing-hints::model.ledger" named "appearance:normal:ddn.examples.spacing-hints::model.ledger"
+        with
+            id "appearance:normal:ddn.examples.spacing-hints::model.ledger"
+
+    use "ddn.examples.spacing-hints::model.journal" named "appearance:normal:ddn.examples.spacing-hints::model.journal"
+        with
+            id "appearance:normal:ddn.examples.spacing-hints::model.journal"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.spacing-hints::model.analytics" named "appearance:normal:ddn.examples.spacing-hints::model.analytics"
+        with
+            id "appearance:normal:ddn.examples.spacing-hints::model.analytics"
+
+    use "ddn.examples.spacing-hints::model.posts" named "appearance:normal:ddn.examples.spacing-hints::model.posts"
+        with
+            id "appearance:normal:ddn.examples.spacing-hints::model.posts"
+
+    use "ddn.examples.spacing-hints::model.records" named "appearance:normal:ddn.examples.spacing-hints::model.records"
+        with
+            id "appearance:normal:ddn.examples.spacing-hints::model.records"
+
+    use "ddn.examples.spacing-hints::model.feeds" named "appearance:normal:ddn.examples.spacing-hints::model.feeds"
+        with
+            id "appearance:normal:ddn.examples.spacing-hints::model.feeds"
+
+
+view "loose" as "ddn@1"
+    with
+        id "loose"
+        title "Spacing / loose"
+        selection
+            include
+                item
+                    id "ddn.examples.spacing-hints::model.orders"
+                item
+                    id "ddn.examples.spacing-hints::model.ledger"
+                item
+                    id "ddn.examples.spacing-hints::model.journal"
+                item
+                    id "ddn.examples.spacing-hints::model.analytics"
+                item
+                    id "ddn.examples.spacing-hints::model.posts"
+                item
+                    id "ddn.examples.spacing-hints::model.records"
+                item
+                    id "ddn.examples.spacing-hints::model.feeds"
+        layout
+            algorithm "grid"
+            gap 120
+            row_gap 96
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:loose"
+
+    use "ddn.examples.spacing-hints::model.orders" named "appearance:loose:ddn.examples.spacing-hints::model.orders"
+        with
+            id "appearance:loose:ddn.examples.spacing-hints::model.orders"
+
+    use "ddn.examples.spacing-hints::model.ledger" named "appearance:loose:ddn.examples.spacing-hints::model.ledger"
+        with
+            id "appearance:loose:ddn.examples.spacing-hints::model.ledger"
+
+    use "ddn.examples.spacing-hints::model.journal" named "appearance:loose:ddn.examples.spacing-hints::model.journal"
+        with
+            id "appearance:loose:ddn.examples.spacing-hints::model.journal"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.spacing-hints::model.analytics" named "appearance:loose:ddn.examples.spacing-hints::model.analytics"
+        with
+            id "appearance:loose:ddn.examples.spacing-hints::model.analytics"
+
+    use "ddn.examples.spacing-hints::model.posts" named "appearance:loose:ddn.examples.spacing-hints::model.posts"
+        with
+            id "appearance:loose:ddn.examples.spacing-hints::model.posts"
+
+    use "ddn.examples.spacing-hints::model.records" named "appearance:loose:ddn.examples.spacing-hints::model.records"
+        with
+            id "appearance:loose:ddn.examples.spacing-hints::model.records"
+
+    use "ddn.examples.spacing-hints::model.feeds" named "appearance:loose:ddn.examples.spacing-hints::model.feeds"
+        with
+            id "appearance:loose:ddn.examples.spacing-hints::model.feeds"
+
+
+view "expanded" as "ddn@1"
+    with
+        id "expanded"
+        title "Spacing / expanded"
+        selection
+            include
+                item
+                    id "ddn.examples.spacing-hints::model.orders"
+                item
+                    id "ddn.examples.spacing-hints::model.ledger"
+                item
+                    id "ddn.examples.spacing-hints::model.journal"
+                item
+                    id "ddn.examples.spacing-hints::model.analytics"
+                item
+                    id "ddn.examples.spacing-hints::model.posts"
+                item
+                    id "ddn.examples.spacing-hints::model.records"
+                item
+                    id "ddn.examples.spacing-hints::model.feeds"
+        layout
+            algorithm "grid"
+            gap 160
+            row_gap 128
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:expanded"
+
+    use "ddn.examples.spacing-hints::model.orders" named "appearance:expanded:ddn.examples.spacing-hints::model.orders"
+        with
+            id "appearance:expanded:ddn.examples.spacing-hints::model.orders"
+
+    use "ddn.examples.spacing-hints::model.ledger" named "appearance:expanded:ddn.examples.spacing-hints::model.ledger"
+        with
+            id "appearance:expanded:ddn.examples.spacing-hints::model.ledger"
+
+    use "ddn.examples.spacing-hints::model.journal" named "appearance:expanded:ddn.examples.spacing-hints::model.journal"
+        with
+            id "appearance:expanded:ddn.examples.spacing-hints::model.journal"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.spacing-hints::model.analytics" named "appearance:expanded:ddn.examples.spacing-hints::model.analytics"
+        with
+            id "appearance:expanded:ddn.examples.spacing-hints::model.analytics"
+
+    use "ddn.examples.spacing-hints::model.posts" named "appearance:expanded:ddn.examples.spacing-hints::model.posts"
+        with
+            id "appearance:expanded:ddn.examples.spacing-hints::model.posts"
+
+    use "ddn.examples.spacing-hints::model.records" named "appearance:expanded:ddn.examples.spacing-hints::model.records"
+        with
+            id "appearance:expanded:ddn.examples.spacing-hints::model.records"
+
+    use "ddn.examples.spacing-hints::model.feeds" named "appearance:expanded:ddn.examples.spacing-hints::model.feeds"
+        with
+            id "appearance:expanded:ddn.examples.spacing-hints::model.feeds"

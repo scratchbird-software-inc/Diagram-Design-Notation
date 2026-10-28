@@ -1,0 +1,26 @@
+{
+  "contract": "ddn-next-1",
+  "sourceCommit": "422b7e5977c2c47c9e97d760e943af7d3bdc3ad9",
+  "sourceTree": "DDN standalone open-source materials",
+  "sourceFiles": 4413,
+  "publicPaths": [
+    "project/ddn",
+    "project/tests/ddn",
+    "standard",
+    "docs/DDN",
+    "website",
+    "tooling"
+  ],
+  "excluded": [
+    "commercial Weaver implementation and platform specifications",
+    "retired grammar and runtime",
+    "historical evidence snapshots and generated development outputs",
+    "superseded planning schemas and proof-of-concept profile examples"
+  ],
+  "adaptations": [
+    "standalone root build and CI",
+    "public contract paths",
+    "DDN build environment names",
+    "current public documentation and generated wiki"
+  ]
+}

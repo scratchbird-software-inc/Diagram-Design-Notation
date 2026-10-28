@@ -1,24 +1,161 @@
-ddn "0.5";
-module "ddn.examples.pyramid";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:tiers"
+    with
+        id "publication:tiers"
+        title "Support tiers / pyramid"
+        targets
+            item
+                target
+                    id "tiers"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// Synthetic support-tier pyramid (all data invented) demonstrating the
-// panels.pyramid@1 profile: four trapezoid bands stacked widest-at-bottom,
-// centered band labels, and side annotations on the annotated bands. The top
-// band declares no items, which is legal only under panels.pyramid@1.
-data tier_notes {
-    note ann_community "Community channel" {description: "Synthetic: documentation and forum deflect most questions."; }
-    note ann_standard "Standard channel" {description: "Synthetic: email channel with next-day target."; }
-    note ann_priority "Priority channel" {description: "Synthetic: named queue with four-hour target."; }
-}
 
-view tiers "Support tiers / pyramid" {
-    data: [@tier_notes];
-    format: @shared.styles.technical;
-    projection { kind:panels; profile:"panels.pyramid@1"; columns:1; panels:[
-        {id:"dedicated",title:"DEDICATED ENGINEER",row:0,column:0,rowspan:1,colspan:1},
-        {id:"priority",title:"PRIORITY SUPPORT",row:1,column:0,rowspan:1,colspan:1,items:[@tier_notes.ann_priority]},
-        {id:"standard",title:"STANDARD SUPPORT",row:2,column:0,rowspan:1,colspan:1,items:[@tier_notes.ann_standard]},
-        {id:"community",title:"COMMUNITY & SELF-SERVICE",row:3,column:0,rowspan:1,colspan:1,items:[@tier_notes.ann_community]}]; }
-}
+element "ddn.examples.pyramid::tier_notes.ann_community" as "note"
+    with
+        id "ddn.examples.pyramid::tier_notes.ann_community"
+        title "Community channel"
+        description "Synthetic: documentation and forum deflect most questions."
+        content
+            text "Synthetic: documentation and forum deflect most questions."
+        draft
+            text "Synthetic: documentation and forum deflect most questions."
+
+
+element "ddn.examples.pyramid::tier_notes.ann_standard" as "note"
+    with
+        id "ddn.examples.pyramid::tier_notes.ann_standard"
+        title "Standard channel"
+        description "Synthetic: email channel with next-day target."
+        content
+            text "Synthetic: email channel with next-day target."
+        draft
+            text "Synthetic: email channel with next-day target."
+
+
+element "ddn.examples.pyramid::tier_notes.ann_priority" as "note"
+    with
+        id "ddn.examples.pyramid::tier_notes.ann_priority"
+        title "Priority channel"
+        description "Synthetic: named queue with four-hour target."
+        content
+            text "Synthetic: named queue with four-hour target."
+        draft
+            text "Synthetic: named queue with four-hour target."
+
+
+element "tiers::panel::dedicated" as "note"
+    with
+        id "tiers::panel::dedicated"
+        title "DEDICATED ENGINEER"
+        metadata
+            x_record
+                id "dedicated"
+                row 0
+                column 0
+                rowspan 1
+                colspan 1
+                items empty list
+
+
+element "tiers::panel::priority" as "note"
+    with
+        id "tiers::panel::priority"
+        title "PRIORITY SUPPORT"
+        metadata
+            x_record
+                id "priority"
+                row 1
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.pyramid::tier_notes.ann_priority"
+
+
+element "tiers::panel::standard" as "note"
+    with
+        id "tiers::panel::standard"
+        title "STANDARD SUPPORT"
+        metadata
+            x_record
+                id "standard"
+                row 2
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.pyramid::tier_notes.ann_standard"
+
+
+element "tiers::panel::community" as "note"
+    with
+        id "tiers::panel::community"
+        title "COMMUNITY & SELF-SERVICE"
+        metadata
+            x_record
+                id "community"
+                row 3
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.pyramid::tier_notes.ann_community"
+
+
+view "tiers" as "panels.pyramid@1"
+    with
+        id "tiers"
+        title "Support tiers / pyramid"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                columns 1
+                panels
+                    item
+                        target
+                            id "tiers::panel::dedicated"
+                        kind "text"
+                        title "DEDICATED ENGINEER"
+                    item
+                        target
+                            id "tiers::panel::priority"
+                        kind "text"
+                        title "PRIORITY SUPPORT"
+                    item
+                        target
+                            id "tiers::panel::standard"
+                        kind "text"
+                        title "STANDARD SUPPORT"
+                    item
+                        target
+                            id "tiers::panel::community"
+                        kind "text"
+                        title "COMMUNITY & SELF-SERVICE"

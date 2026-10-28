@@ -1,20 +1,316 @@
-ddn "0.5";
-module "ddn.examples.publication";
-import "shared.ddn" as shared;
-data model {
- record source "Order input" {fields {order_id;amount;}}
- record validated "Accepted order" {fields {order_id;amount;}}
- relation check "Validated input" @source -> @validated {kind: flow;}
-}
-view paper "A4 / explicit minimum text" {
- data:[@model];format:@shared.styles.technical;
- layout {algorithm: layered;}
- display {fields: none;}
- legend {mode: numbers;keys: {check: 1};placement: bottom;}
- publication {size: a4;orientation: landscape;fit: reflow;margin: 8mm;minimum_text: 7pt;overflow: error;}
-}
-view screen "Content-sized / same semantic model" {
- data:[@model];format:@shared.styles.technical;
- layout {algorithm: layered;}
- publication {size: content;fit: none;overflow: error;}
-}
+version ddn-next-1
+
+publication "publication:paper"
+    with
+        id "publication:paper"
+        title "A4 / explicit minimum text"
+        targets
+            item
+                target
+                    id "paper"
+                kind "view"
+        format "svg"
+        page
+            size "a4"
+            fit "reflow"
+            orientation "landscape"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30.236220472440948
+                right 30.236220472440948
+                bottom 30.236220472440948
+                left 30.236220472440948
+            minimum_text 9.333333333333332
+
+
+publication "publication:screen"
+    with
+        id "publication:screen"
+        title "Content-sized / same semantic model"
+        targets
+            item
+                target
+                    id "screen"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.publication::model.source.order_id" as "field"
+    with
+        id "ddn.examples.publication::model.source.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.examples.publication::model.source"
+            ordinal 0
+
+
+element "ddn.examples.publication::model.source.amount" as "field"
+    with
+        id "ddn.examples.publication::model.source.amount"
+        title "amount"
+        content
+            parent
+                id "ddn.examples.publication::model.source"
+            ordinal 1
+
+
+element "ddn.examples.publication::model.source" as "record"
+    with
+        id "ddn.examples.publication::model.source"
+        title "Order input"
+        members
+            item
+                id "ddn.examples.publication::model.source.order_id"
+            item
+                id "ddn.examples.publication::model.source.amount"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "amount"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.publication::model.validated.order_id" as "field"
+    with
+        id "ddn.examples.publication::model.validated.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.examples.publication::model.validated"
+            ordinal 0
+
+
+element "ddn.examples.publication::model.validated.amount" as "field"
+    with
+        id "ddn.examples.publication::model.validated.amount"
+        title "amount"
+        content
+            parent
+                id "ddn.examples.publication::model.validated"
+            ordinal 1
+
+
+element "ddn.examples.publication::model.validated" as "record"
+    with
+        id "ddn.examples.publication::model.validated"
+        title "Accepted order"
+        members
+            item
+                id "ddn.examples.publication::model.validated.order_id"
+            item
+                id "ddn.examples.publication::model.validated.amount"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "amount"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.publication::model.check" as "flow"
+    with
+        id "ddn.examples.publication::model.check"
+        title "Validated input"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.publication::model.source"
+            item
+                definition
+                    id "ddn.examples.publication::model.validated"
+
+
+view "paper" as "ddn@1"
+    with
+        id "paper"
+        title "A4 / explicit minimum text"
+        selection
+            include
+                item
+                    id "ddn.examples.publication::model.source"
+                item
+                    id "ddn.examples.publication::model.validated"
+                item
+                    id "ddn.examples.publication::model.check"
+        layout
+            algorithm "layered"
+            gap 80
+        display
+            fields "none"
+        legend
+            mode "numbers"
+            placement "bottom"
+            width 280
+            keys
+                check "1"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:paper"
+
+    use "ddn.examples.publication::model.source" named "appearance:paper:ddn.examples.publication::model.source"
+        with
+            id "appearance:paper:ddn.examples.publication::model.source"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.publication::model.validated" named "appearance:paper:ddn.examples.publication::model.validated"
+        with
+            id "appearance:paper:ddn.examples.publication::model.validated"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.publication::model.check" named "appearance:paper:ddn.examples.publication::model.check"
+        with
+            id "appearance:paper:ddn.examples.publication::model.check"
+
+
+view "screen" as "ddn@1"
+    with
+        id "screen"
+        title "Content-sized / same semantic model"
+        selection
+            include
+                item
+                    id "ddn.examples.publication::model.source"
+                item
+                    id "ddn.examples.publication::model.validated"
+                item
+                    id "ddn.examples.publication::model.check"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:screen"
+
+    use "ddn.examples.publication::model.source" named "appearance:screen:ddn.examples.publication::model.source"
+        with
+            id "appearance:screen:ddn.examples.publication::model.source"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.publication::model.validated" named "appearance:screen:ddn.examples.publication::model.validated"
+        with
+            id "appearance:screen:ddn.examples.publication::model.validated"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.publication::model.check" named "appearance:screen:ddn.examples.publication::model.check"
+        with
+            id "appearance:screen:ddn.examples.publication::model.check"

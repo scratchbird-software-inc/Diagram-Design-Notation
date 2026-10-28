@@ -4,7 +4,7 @@ about: Something in the DDN runtime, language, or docs is wrong or unclear
 labels: bug
 ---
 
-**Component:** <!-- notation / standard / designer / examples / tooling -->
+**Component:** <!-- language / model / runtime / viewer / designer / verifier / standard / website / tooling -->
 
 **What happened?**
 
@@ -12,6 +12,6 @@ labels: bug
 
 **Minimal source reproducer** (`.ddn` snippet or command line):
 
-**Version:** <!-- e.g. 0.7.0 -->
+**Version:** <!-- ddn-next-1 and build/commit -->
 
 **Note:** do not paste sensitive model or sample data — synthetic data only.

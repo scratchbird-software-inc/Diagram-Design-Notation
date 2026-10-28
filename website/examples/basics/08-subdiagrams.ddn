@@ -1,28 +1,322 @@
-ddn "0.5";
-module "ddn.examples.subdiagrams";
-import "shared.ddn" as shared;
+version ddn-next-1
 
-data model {
-    application service "Customer service";
-    table table "Customer table" {fields { customer_id; display_name; } }
-    schema schema "crm schema";
-    relation member @table -> @schema { kind: namespace_member; }
-}
-view overview "A view can link to another view" {
-    data: [@model]; format: @shared.styles.technical;
-    select: [@model.service];
-    subdiagram storage "Storage details" { view: @detail; mode: reference; at: [480px,20px]; size: [310px,105px]; }
-}
-view detail "Storage detail" {
-    data: [@model]; format: @shared.styles.technical;
-    select: [@model.table, @model.schema];
-    display: @shared.styles.compact;
-    publication { width: 700px; height: 320px; margin: 20px; minimum_text: 7pt; overflow: warn; }
-    legend { mode: tokens; placement: none; }
-}
-view inline "An embedded view retains its own composition" {
-    data: [@model]; format: @shared.styles.technical;
-    select: [@model.service];
-    legend { mode: text; placement: none; }
-    subdiagram storage "Storage details" { view: @detail; mode: inline; at: [330px,0px]; size: [710px,426px]; }
-}
+publication "publication:overview"
+    with
+        id "publication:overview"
+        title "A view can link to another view"
+        targets
+            item
+                target
+                    id "overview"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
+
+
+publication "publication:detail"
+    with
+        id "publication:detail"
+        title "Storage detail"
+        targets
+            item
+                target
+                    id "detail"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 700
+                unit "px"
+            height
+                value 320
+                unit "px"
+            margin
+                top 20
+                right 20
+                bottom 20
+                left 20
+            minimum_text 9.333333333333332
+            overflow "report"
+
+
+publication "publication:inline"
+    with
+        id "publication:inline"
+        title "An embedded view retains its own composition"
+        targets
+            item
+                target
+                    id "inline"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
+
+
+element "ddn.examples.subdiagrams::model.service" as "application"
+    with
+        id "ddn.examples.subdiagrams::model.service"
+        title "Customer service"
+
+
+element "ddn.examples.subdiagrams::model.table.customer_id" as "field"
+    with
+        id "ddn.examples.subdiagrams::model.table.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.examples.subdiagrams::model.table"
+            ordinal 0
+
+
+element "ddn.examples.subdiagrams::model.table.display_name" as "field"
+    with
+        id "ddn.examples.subdiagrams::model.table.display_name"
+        title "display_name"
+        content
+            parent
+                id "ddn.examples.subdiagrams::model.table"
+            ordinal 1
+
+
+element "ddn.examples.subdiagrams::model.table" as "table"
+    with
+        id "ddn.examples.subdiagrams::model.table"
+        title "Customer table"
+        members
+            item
+                id "ddn.examples.subdiagrams::model.table.customer_id"
+            item
+                id "ddn.examples.subdiagrams::model.table.display_name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.subdiagrams::model.schema" as "schema"
+    with
+        id "ddn.examples.subdiagrams::model.schema"
+        title "crm schema"
+
+
+relation "ddn.examples.subdiagrams::model.member" as "namespace"
+    with
+        id "ddn.examples.subdiagrams::model.member"
+        title "member of namespace"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.subdiagrams::model.table"
+            item
+                definition
+                    id "ddn.examples.subdiagrams::model.schema"
+
+
+element "ddn.examples.subdiagrams::overview.storage" as "object"
+    with
+        id "ddn.examples.subdiagrams::overview.storage"
+        title "Storage details"
+        metadata
+            x_subdiagram
+                view "detail"
+                display "badge"
+
+
+element "ddn.examples.subdiagrams::inline.storage" as "object"
+    with
+        id "ddn.examples.subdiagrams::inline.storage"
+        title "Storage details"
+        metadata
+            x_subdiagram
+                view "detail"
+                display "inline"
+
+
+view "overview" as "ddn@1"
+    with
+        id "overview"
+        title "A view can link to another view"
+        selection
+            include
+                item
+                    id "ddn.examples.subdiagrams::model.service"
+                item
+                    id "ddn.examples.subdiagrams::overview.storage"
+            exclude
+                item
+                    id "ddn.examples.subdiagrams::model.member"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:overview"
+
+    use "ddn.examples.subdiagrams::model.service" named "appearance:overview:ddn.examples.subdiagrams::model.service"
+        with
+            id "appearance:overview:ddn.examples.subdiagrams::model.service"
+
+    use "ddn.examples.subdiagrams::overview.storage" named "appearance:overview:ddn.examples.subdiagrams::overview.storage"
+        with
+            id "appearance:overview:ddn.examples.subdiagrams::overview.storage"
+            position
+                x 480
+                y 20
+            pinned true
+            size
+                width 310
+                height 105
+
+
+view "detail" as "ddn@1"
+    with
+        id "detail"
+        title "Storage detail"
+        selection
+            include
+                item
+                    id "ddn.examples.subdiagrams::model.table"
+                item
+                    id "ddn.examples.subdiagrams::model.schema"
+                item
+                    id "ddn.examples.subdiagrams::model.member"
+        layout
+            algorithm "grid"
+            gap 80
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            mode "tokens"
+            placement "none"
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:detail"
+
+    use "ddn.examples.subdiagrams::model.table" named "appearance:detail:ddn.examples.subdiagrams::model.table"
+        with
+            id "appearance:detail:ddn.examples.subdiagrams::model.table"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.subdiagrams::model.schema" named "appearance:detail:ddn.examples.subdiagrams::model.schema"
+        with
+            id "appearance:detail:ddn.examples.subdiagrams::model.schema"
+
+    use "ddn.examples.subdiagrams::model.member" named "appearance:detail:ddn.examples.subdiagrams::model.member"
+        with
+            id "appearance:detail:ddn.examples.subdiagrams::model.member"
+
+
+view "inline" as "ddn@1"
+    with
+        id "inline"
+        title "An embedded view retains its own composition"
+        selection
+            include
+                item
+                    id "ddn.examples.subdiagrams::model.service"
+                item
+                    id "ddn.examples.subdiagrams::inline.storage"
+            exclude
+                item
+                    id "ddn.examples.subdiagrams::model.member"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            placement "none"
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:inline"
+
+    use "ddn.examples.subdiagrams::model.service" named "appearance:inline:ddn.examples.subdiagrams::model.service"
+        with
+            id "appearance:inline:ddn.examples.subdiagrams::model.service"
+
+    use "ddn.examples.subdiagrams::inline.storage" named "appearance:inline:ddn.examples.subdiagrams::inline.storage"
+        with
+            id "appearance:inline:ddn.examples.subdiagrams::inline.storage"
+            position
+                x 330
+                y 0
+            pinned true
+            size
+                width 710
+                height 426

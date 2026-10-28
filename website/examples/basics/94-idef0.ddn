@@ -1,44 +1,384 @@
-ddn "0.5";
-module "ddn.examples.idef0";
+version ddn-next-1
 
-// B1-078: a small IDEF0 A-0 decomposition. The context view is the single A0
-// activity with its four ICOM sides (input west, control north, output east,
-// mechanism south) and a reference badge into the decomposition view, which
-// shows three numbered activities, a forked labeled arrow, a tunneled arrow
-// (parenthesis at the tunneled end), and a call arrow. All data is synthetic.
-data m {
-    object a0 "Manage shop" { kind: "idef0.activity"; x_idef0: { node: "A0" };
-        ports {
-            orders { direction: in; side: west; x_icom: { type: "input" }; }
-            policy { direction: in; side: north; x_icom: { type: "control" }; }
-            service { direction: out; side: east; x_icom: { type: "output" }; }
-            staff { direction: in; side: south; x_icom: { type: "mechanism" }; }
-        }
-        x_subdiagram: { view: "detail" };
-    }
-}
-data d {
-    object a1 "Take orders" { kind: "idef0.activity"; x_idef0: { node: "A01" };
-        ports { packed { direction: out; side: east; x_icom: { type: "output" }; } }
-    }
-    object a3 "Stock shelves" { kind: "idef0.activity"; x_idef0: { node: "A03" };
-        ports { packed { direction: in; side: west; x_icom: { type: "input" }; } }
-    }
-    object a2 "Ship orders" { kind: "idef0.activity"; x_idef0: { node: "A02" };
-        ports {
-            packed { direction: in; side: west; x_icom: { type: "input" }; }
-            carrier { direction: in; side: south; x_icom: { type: "mechanism" }; }
-            shipped { direction: out; side: east; x_icom: { type: "output" }; }
-        }
-    }
-    relation f1 "packed orders" @a1.packed -> @a2.packed { kind: "idef0.flow"; }
-    relation f2 "packed orders" @a1.packed -> @a3.packed { kind: "idef0.flow"; }
-    relation f3 "returns" @a3.packed -> @a1.packed { kind: "idef0.flow"; x_tunnel: { start: true }; }
-    relation call1 "" @a2 -> @a1 { kind: "idef0.call"; x_tunnel: { end: true }; }
-}
-view context "A-0 context": [@m] as "idef0.basic@1" {
-    publication { size: content; fit: none; }
-}
-view detail "A0 decomposition": [@d] as "idef0.basic@1" {
-    publication { size: content; fit: none; }
-}
+publication "publication:context"
+    with
+        id "publication:context"
+        title "A-0 context"
+        targets
+            item
+                target
+                    id "context"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:detail"
+    with
+        id "publication:detail"
+        title "A0 decomposition"
+        targets
+            item
+                target
+                    id "detail"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.idef0::m.a0.orders" as "core::Port"
+    with
+        id "ddn.examples.idef0::m.a0.orders"
+        title "orders"
+        properties
+            side "west"
+        metadata
+            x_icom
+                type "input"
+        content
+            owner
+                id "ddn.examples.idef0::m.a0"
+            direction "input"
+
+
+element "ddn.examples.idef0::m.a0.policy" as "core::Port"
+    with
+        id "ddn.examples.idef0::m.a0.policy"
+        title "policy"
+        properties
+            side "north"
+        metadata
+            x_icom
+                type "control"
+        content
+            owner
+                id "ddn.examples.idef0::m.a0"
+            direction "input"
+
+
+element "ddn.examples.idef0::m.a0.service" as "core::Port"
+    with
+        id "ddn.examples.idef0::m.a0.service"
+        title "service"
+        properties
+            side "east"
+        metadata
+            x_icom
+                type "output"
+        content
+            owner
+                id "ddn.examples.idef0::m.a0"
+            direction "output"
+
+
+element "ddn.examples.idef0::m.a0.staff" as "core::Port"
+    with
+        id "ddn.examples.idef0::m.a0.staff"
+        title "staff"
+        properties
+            side "south"
+        metadata
+            x_icom
+                type "mechanism"
+        content
+            owner
+                id "ddn.examples.idef0::m.a0"
+            direction "input"
+
+
+element "ddn.examples.idef0::m.a0" as "idef0.activity"
+    with
+        id "ddn.examples.idef0::m.a0"
+        title "Manage shop"
+        metadata
+            x_idef0
+                node "A0"
+            x_subdiagram
+                view "detail"
+        members
+            item
+                id "ddn.examples.idef0::m.a0.orders"
+            item
+                id "ddn.examples.idef0::m.a0.policy"
+            item
+                id "ddn.examples.idef0::m.a0.service"
+            item
+                id "ddn.examples.idef0::m.a0.staff"
+
+
+element "ddn.examples.idef0::d.a1.packed" as "core::Port"
+    with
+        id "ddn.examples.idef0::d.a1.packed"
+        title "packed"
+        properties
+            side "east"
+        metadata
+            x_icom
+                type "output"
+        content
+            owner
+                id "ddn.examples.idef0::d.a1"
+            direction "output"
+
+
+element "ddn.examples.idef0::d.a1" as "idef0.activity"
+    with
+        id "ddn.examples.idef0::d.a1"
+        title "Take orders"
+        metadata
+            x_idef0
+                node "A01"
+        members
+            item
+                id "ddn.examples.idef0::d.a1.packed"
+
+
+element "ddn.examples.idef0::d.a3.packed" as "core::Port"
+    with
+        id "ddn.examples.idef0::d.a3.packed"
+        title "packed"
+        properties
+            side "west"
+        metadata
+            x_icom
+                type "input"
+        content
+            owner
+                id "ddn.examples.idef0::d.a3"
+            direction "input"
+
+
+element "ddn.examples.idef0::d.a3" as "idef0.activity"
+    with
+        id "ddn.examples.idef0::d.a3"
+        title "Stock shelves"
+        metadata
+            x_idef0
+                node "A03"
+        members
+            item
+                id "ddn.examples.idef0::d.a3.packed"
+
+
+element "ddn.examples.idef0::d.a2.packed" as "core::Port"
+    with
+        id "ddn.examples.idef0::d.a2.packed"
+        title "packed"
+        properties
+            side "west"
+        metadata
+            x_icom
+                type "input"
+        content
+            owner
+                id "ddn.examples.idef0::d.a2"
+            direction "input"
+
+
+element "ddn.examples.idef0::d.a2.carrier" as "core::Port"
+    with
+        id "ddn.examples.idef0::d.a2.carrier"
+        title "carrier"
+        properties
+            side "south"
+        metadata
+            x_icom
+                type "mechanism"
+        content
+            owner
+                id "ddn.examples.idef0::d.a2"
+            direction "input"
+
+
+element "ddn.examples.idef0::d.a2.shipped" as "core::Port"
+    with
+        id "ddn.examples.idef0::d.a2.shipped"
+        title "shipped"
+        properties
+            side "east"
+        metadata
+            x_icom
+                type "output"
+        content
+            owner
+                id "ddn.examples.idef0::d.a2"
+            direction "output"
+
+
+element "ddn.examples.idef0::d.a2" as "idef0.activity"
+    with
+        id "ddn.examples.idef0::d.a2"
+        title "Ship orders"
+        metadata
+            x_idef0
+                node "A02"
+        members
+            item
+                id "ddn.examples.idef0::d.a2.packed"
+            item
+                id "ddn.examples.idef0::d.a2.carrier"
+            item
+                id "ddn.examples.idef0::d.a2.shipped"
+
+
+relation "ddn.examples.idef0::d.f1" as "idef0.flow"
+    with
+        id "ddn.examples.idef0::d.f1"
+        title "packed orders"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.idef0::d.a1"
+                member
+                    id "ddn.examples.idef0::d.a1.packed"
+            item
+                definition
+                    id "ddn.examples.idef0::d.a2"
+                member
+                    id "ddn.examples.idef0::d.a2.packed"
+
+
+relation "ddn.examples.idef0::d.f2" as "idef0.flow"
+    with
+        id "ddn.examples.idef0::d.f2"
+        title "packed orders"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.idef0::d.a1"
+                member
+                    id "ddn.examples.idef0::d.a1.packed"
+            item
+                definition
+                    id "ddn.examples.idef0::d.a3"
+                member
+                    id "ddn.examples.idef0::d.a3.packed"
+
+
+relation "ddn.examples.idef0::d.f3" as "idef0.flow"
+    with
+        id "ddn.examples.idef0::d.f3"
+        title "returns"
+        metadata
+            x_tunnel
+                start true
+        endpoints
+            item
+                definition
+                    id "ddn.examples.idef0::d.a3"
+                member
+                    id "ddn.examples.idef0::d.a3.packed"
+            item
+                definition
+                    id "ddn.examples.idef0::d.a1"
+                member
+                    id "ddn.examples.idef0::d.a1.packed"
+
+
+relation "ddn.examples.idef0::d.call1" as "idef0.call"
+    with
+        id "ddn.examples.idef0::d.call1"
+        title "Call"
+        metadata
+            x_tunnel
+                end true
+        endpoints
+            item
+                definition
+                    id "ddn.examples.idef0::d.a2"
+            item
+                definition
+                    id "ddn.examples.idef0::d.a1"
+
+
+view "context" as "idef0.basic@1"
+    with
+        id "context"
+        title "A-0 context"
+        selection
+            include
+                item
+                    id "ddn.examples.idef0::m.a0"
+            exclude
+                item
+                    id "ddn.examples.idef0::d.f1"
+                item
+                    id "ddn.examples.idef0::d.f2"
+                item
+                    id "ddn.examples.idef0::d.f3"
+                item
+                    id "ddn.examples.idef0::d.call1"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:context"
+
+    use "ddn.examples.idef0::m.a0" named "appearance:context:ddn.examples.idef0::m.a0"
+        with
+            id "appearance:context:ddn.examples.idef0::m.a0"
+
+
+view "detail" as "idef0.basic@1"
+    with
+        id "detail"
+        title "A0 decomposition"
+        selection
+            include
+                item
+                    id "ddn.examples.idef0::d.a1"
+                item
+                    id "ddn.examples.idef0::d.a3"
+                item
+                    id "ddn.examples.idef0::d.a2"
+                item
+                    id "ddn.examples.idef0::d.f1"
+                item
+                    id "ddn.examples.idef0::d.f2"
+                item
+                    id "ddn.examples.idef0::d.f3"
+                item
+                    id "ddn.examples.idef0::d.call1"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:detail"
+
+    use "ddn.examples.idef0::d.a1" named "appearance:detail:ddn.examples.idef0::d.a1"
+        with
+            id "appearance:detail:ddn.examples.idef0::d.a1"
+
+    use "ddn.examples.idef0::d.a3" named "appearance:detail:ddn.examples.idef0::d.a3"
+        with
+            id "appearance:detail:ddn.examples.idef0::d.a3"
+
+    use "ddn.examples.idef0::d.a2" named "appearance:detail:ddn.examples.idef0::d.a2"
+        with
+            id "appearance:detail:ddn.examples.idef0::d.a2"
+
+    use "ddn.examples.idef0::d.f1" named "appearance:detail:ddn.examples.idef0::d.f1"
+        with
+            id "appearance:detail:ddn.examples.idef0::d.f1"
+
+    use "ddn.examples.idef0::d.f2" named "appearance:detail:ddn.examples.idef0::d.f2"
+        with
+            id "appearance:detail:ddn.examples.idef0::d.f2"
+
+    use "ddn.examples.idef0::d.f3" named "appearance:detail:ddn.examples.idef0::d.f3"
+        with
+            id "appearance:detail:ddn.examples.idef0::d.f3"
+
+    use "ddn.examples.idef0::d.call1" named "appearance:detail:ddn.examples.idef0::d.call1"
+        with
+            id "appearance:detail:ddn.examples.idef0::d.call1"

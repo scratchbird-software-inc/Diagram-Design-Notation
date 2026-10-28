@@ -1,63 +1,589 @@
-ddn "0.5";
-module "ddn.examples.sysmlbeh";
+version ddn-next-1
 
-// B1-065: SysML 1.6 behavioral diagrams — rebadges of the completed UML
-// machinery: use case (subjects, include), activity (streaming pins plus
-// rate/probability/continuous edge annotations), state machine (trigger
-// transitions) and sequence (message sorts). All data is synthetic.
+publication "publication:usecase"
+    with
+        id "publication:usecase"
+        title "Station use cases"
+        targets
+            item
+                target
+                    id "usecase"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data uc {
-    object station "Pump station" { kind: "uml.subject"; }
-    object op "Operator" { kind: "uml.actor"; }
-    object run "Run pump" { kind: "uml.usecase"; x_usecase: { subjects: [ @station ]; }; }
-    object log "Log flow" { kind: "uml.usecase"; x_usecase: { subjects: [ @station ]; }; }
-    relation u1 "" @op -> @run { kind: "uml.uses"; }
-    relation inc "" @log -> @run { kind: "uml.include"; }
-}
 
-data act {
-    object start "" { kind: "flow.start"; }
-    object meter "Meter flow" { kind: "flow.process";
-        ports { out { direction: out; x_pin: { streaming: true }; } }
-    }
-    object fin "" { kind: "flow.end"; }
-    relation e1 "command" @start -> @meter { kind: "uml.flow"; }
-    relation e2 "water" @meter.out -> @fin { kind: "uml.flow"; x_flow: { rate: "10 L/min"; continuous: true; probability: 0.9 }; }
-}
+publication "publication:activity"
+    with
+        id "publication:activity"
+        title "Metering activity"
+        targets
+            item
+                target
+                    id "activity"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data sm {
-    object off "Off" { kind: "state.state"; }
-    object on "On" { kind: "state.state"; }
-    object fault "Fault" { kind: "state.state"; }
-    relation t1 "" @off -> @on { kind: "transition"; x_transition: { event: "start" }; }
-    relation t2 "" @on -> @fault { kind: "transition"; x_transition: { event: "dry run"; guard: "level == 0" }; }
-    relation t3 "" @fault -> @off { kind: "transition"; x_transition: { event: "reset" }; }
-}
 
-data sq {
-    object hmi "HMI" { kind: "uml.class"; }
-    object ctrl "Controller" { kind: "uml.class"; }
-    object pump "Pump" { kind: "uml.class"; }
-    relation m1 "startPump()" @hmi -> @ctrl { kind: "uml.message"; }
-    relation m2 "engage" @ctrl -> @pump { kind: "uml.message"; }
-    relation m3 "ack" @pump -> @ctrl { kind: "uml.message"; x_message: { sort: "reply" }; }
-}
+publication "publication:states"
+    with
+        id "publication:states"
+        title "Pump states"
+        targets
+            item
+                target
+                    id "states"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view usecase "Station use cases": [@uc] as "sysml.usecase@1" {
-    frame boundary "Pump station" { scope: @uc.station; members: [@uc.run, @uc.log]; }
-    publication { size: content; fit: none; }
-}
 
-view activity "Metering activity": [@act] as "sysml.activity@1" {
-    layout { algorithm: layered; }
-    publication { size: content; fit: none; }
-}
+publication "publication:sequence"
+    with
+        id "publication:sequence"
+        title "Start sequence"
+        targets
+            item
+                target
+                    id "sequence"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view states "Pump states": [@sm] as "sysml.statemachine@1" {
-    layout { algorithm: layered; }
-    publication { size: content; fit: none; }
-}
 
-view sequence "Start sequence": [@sq] as "sysml.sequence@1" {
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.sysmlbeh::uc.station" as "uml.subject"
+    with
+        id "ddn.examples.sysmlbeh::uc.station"
+        title "Pump station"
+
+
+element "ddn.examples.sysmlbeh::uc.op" as "uml.actor"
+    with
+        id "ddn.examples.sysmlbeh::uc.op"
+        title "Operator"
+
+
+element "ddn.examples.sysmlbeh::uc.run" as "uml.usecase"
+    with
+        id "ddn.examples.sysmlbeh::uc.run"
+        title "Run pump"
+        metadata
+            x_usecase
+                subjects
+                    item
+                        id "ddn.examples.sysmlbeh::uc.station"
+
+
+element "ddn.examples.sysmlbeh::uc.log" as "uml.usecase"
+    with
+        id "ddn.examples.sysmlbeh::uc.log"
+        title "Log flow"
+        metadata
+            x_usecase
+                subjects
+                    item
+                        id "ddn.examples.sysmlbeh::uc.station"
+
+
+relation "ddn.examples.sysmlbeh::uc.u1" as "uml.uses"
+    with
+        id "ddn.examples.sysmlbeh::uc.u1"
+        title "Participates in"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::uc.op"
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::uc.run"
+
+
+relation "ddn.examples.sysmlbeh::uc.inc" as "uml.include"
+    with
+        id "ddn.examples.sysmlbeh::uc.inc"
+        title "«include»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::uc.log"
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::uc.run"
+
+
+element "ddn.examples.sysmlbeh::act.start" as "flow.start"
+    with
+        id "ddn.examples.sysmlbeh::act.start"
+        title "start"
+
+
+element "ddn.examples.sysmlbeh::act.meter.out" as "core::Port"
+    with
+        id "ddn.examples.sysmlbeh::act.meter.out"
+        title "out"
+        metadata
+            x_pin
+                streaming true
+        content
+            owner
+                id "ddn.examples.sysmlbeh::act.meter"
+            direction "output"
+
+
+element "ddn.examples.sysmlbeh::act.meter" as "flow.process"
+    with
+        id "ddn.examples.sysmlbeh::act.meter"
+        title "Meter flow"
+        members
+            item
+                id "ddn.examples.sysmlbeh::act.meter.out"
+
+
+element "ddn.examples.sysmlbeh::act.fin" as "flow.end"
+    with
+        id "ddn.examples.sysmlbeh::act.fin"
+        title "fin"
+
+
+relation "ddn.examples.sysmlbeh::act.e1" as "uml.flow"
+    with
+        id "ddn.examples.sysmlbeh::act.e1"
+        title "command"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::act.start"
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::act.meter"
+
+
+relation "ddn.examples.sysmlbeh::act.e2" as "uml.flow"
+    with
+        id "ddn.examples.sysmlbeh::act.e2"
+        title "water"
+        metadata
+            x_flow
+                rate "10 L/min"
+                continuous true
+                probability 0.9
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::act.meter"
+                member
+                    id "ddn.examples.sysmlbeh::act.meter.out"
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::act.fin"
+
+
+element "ddn.examples.sysmlbeh::sm.off" as "state.state"
+    with
+        id "ddn.examples.sysmlbeh::sm.off"
+        title "Off"
+
+
+element "ddn.examples.sysmlbeh::sm.on" as "state.state"
+    with
+        id "ddn.examples.sysmlbeh::sm.on"
+        title "On"
+
+
+element "ddn.examples.sysmlbeh::sm.fault" as "state.state"
+    with
+        id "ddn.examples.sysmlbeh::sm.fault"
+        title "Fault"
+
+
+relation "ddn.examples.sysmlbeh::sm.t1" as "state.transition"
+    with
+        id "ddn.examples.sysmlbeh::sm.t1"
+        title "Event transition"
+        metadata
+            x_transition
+                event "start"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sm.off"
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sm.on"
+
+
+relation "ddn.examples.sysmlbeh::sm.t2" as "state.transition"
+    with
+        id "ddn.examples.sysmlbeh::sm.t2"
+        title "Event transition"
+        metadata
+            x_transition
+                event "dry run"
+                guard "level == 0"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sm.on"
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sm.fault"
+
+
+relation "ddn.examples.sysmlbeh::sm.t3" as "state.transition"
+    with
+        id "ddn.examples.sysmlbeh::sm.t3"
+        title "Event transition"
+        metadata
+            x_transition
+                event "reset"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sm.fault"
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sm.off"
+
+
+element "ddn.examples.sysmlbeh::sq.hmi" as "uml.class"
+    with
+        id "ddn.examples.sysmlbeh::sq.hmi"
+        title "HMI"
+
+
+element "ddn.examples.sysmlbeh::sq.ctrl" as "uml.class"
+    with
+        id "ddn.examples.sysmlbeh::sq.ctrl"
+        title "Controller"
+
+
+element "ddn.examples.sysmlbeh::sq.pump" as "uml.class"
+    with
+        id "ddn.examples.sysmlbeh::sq.pump"
+        title "Pump"
+
+
+relation "ddn.examples.sysmlbeh::sq.m1" as "uml.message"
+    with
+        id "ddn.examples.sysmlbeh::sq.m1"
+        title "startPump()"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sq.hmi"
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sq.ctrl"
+
+
+relation "ddn.examples.sysmlbeh::sq.m2" as "uml.message"
+    with
+        id "ddn.examples.sysmlbeh::sq.m2"
+        title "engage"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sq.ctrl"
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sq.pump"
+
+
+relation "ddn.examples.sysmlbeh::sq.m3" as "uml.message"
+    with
+        id "ddn.examples.sysmlbeh::sq.m3"
+        title "ack"
+        metadata
+            x_message
+                sort "reply"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sq.pump"
+            item
+                definition
+                    id "ddn.examples.sysmlbeh::sq.ctrl"
+
+
+view "usecase" as "sysml.usecase@1"
+    with
+        id "usecase"
+        title "Station use cases"
+        selection
+            include
+                item
+                    id "ddn.examples.sysmlbeh::uc.station"
+                item
+                    id "ddn.examples.sysmlbeh::uc.op"
+                item
+                    id "ddn.examples.sysmlbeh::uc.run"
+                item
+                    id "ddn.examples.sysmlbeh::uc.log"
+                item
+                    id "ddn.examples.sysmlbeh::uc.u1"
+                item
+                    id "ddn.examples.sysmlbeh::uc.inc"
+            exclude
+                item
+                    id "ddn.examples.sysmlbeh::act.e1"
+                item
+                    id "ddn.examples.sysmlbeh::act.e2"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t1"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t2"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t3"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m1"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m2"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m3"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.sysmlbeh::usecase.boundary"
+                name "Pump station"
+                scope
+                    id "ddn.examples.sysmlbeh::uc.station"
+                members
+                    item
+                        id "ddn.examples.sysmlbeh::uc.run"
+                    item
+                        id "ddn.examples.sysmlbeh::uc.log"
+        publication
+            id "publication:usecase"
+
+    use "ddn.examples.sysmlbeh::uc.station" named "appearance:usecase:ddn.examples.sysmlbeh::uc.station"
+        with
+            id "appearance:usecase:ddn.examples.sysmlbeh::uc.station"
+
+    use "ddn.examples.sysmlbeh::uc.op" named "appearance:usecase:ddn.examples.sysmlbeh::uc.op"
+        with
+            id "appearance:usecase:ddn.examples.sysmlbeh::uc.op"
+
+    use "ddn.examples.sysmlbeh::uc.run" named "appearance:usecase:ddn.examples.sysmlbeh::uc.run"
+        with
+            id "appearance:usecase:ddn.examples.sysmlbeh::uc.run"
+
+    use "ddn.examples.sysmlbeh::uc.log" named "appearance:usecase:ddn.examples.sysmlbeh::uc.log"
+        with
+            id "appearance:usecase:ddn.examples.sysmlbeh::uc.log"
+
+    use "ddn.examples.sysmlbeh::uc.u1" named "appearance:usecase:ddn.examples.sysmlbeh::uc.u1"
+        with
+            id "appearance:usecase:ddn.examples.sysmlbeh::uc.u1"
+
+    use "ddn.examples.sysmlbeh::uc.inc" named "appearance:usecase:ddn.examples.sysmlbeh::uc.inc"
+        with
+            id "appearance:usecase:ddn.examples.sysmlbeh::uc.inc"
+
+
+view "activity" as "sysml.activity@1"
+    with
+        id "activity"
+        title "Metering activity"
+        selection
+            include
+                item
+                    id "ddn.examples.sysmlbeh::act.start"
+                item
+                    id "ddn.examples.sysmlbeh::act.meter"
+                item
+                    id "ddn.examples.sysmlbeh::act.fin"
+                item
+                    id "ddn.examples.sysmlbeh::act.e1"
+                item
+                    id "ddn.examples.sysmlbeh::act.e2"
+            exclude
+                item
+                    id "ddn.examples.sysmlbeh::uc.u1"
+                item
+                    id "ddn.examples.sysmlbeh::uc.inc"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t1"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t2"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t3"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m1"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m2"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m3"
+        layout
+            algorithm "layered"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:activity"
+
+    use "ddn.examples.sysmlbeh::act.start" named "appearance:activity:ddn.examples.sysmlbeh::act.start"
+        with
+            id "appearance:activity:ddn.examples.sysmlbeh::act.start"
+
+    use "ddn.examples.sysmlbeh::act.meter" named "appearance:activity:ddn.examples.sysmlbeh::act.meter"
+        with
+            id "appearance:activity:ddn.examples.sysmlbeh::act.meter"
+
+    use "ddn.examples.sysmlbeh::act.fin" named "appearance:activity:ddn.examples.sysmlbeh::act.fin"
+        with
+            id "appearance:activity:ddn.examples.sysmlbeh::act.fin"
+
+    use "ddn.examples.sysmlbeh::act.e1" named "appearance:activity:ddn.examples.sysmlbeh::act.e1"
+        with
+            id "appearance:activity:ddn.examples.sysmlbeh::act.e1"
+
+    use "ddn.examples.sysmlbeh::act.e2" named "appearance:activity:ddn.examples.sysmlbeh::act.e2"
+        with
+            id "appearance:activity:ddn.examples.sysmlbeh::act.e2"
+
+
+view "states" as "sysml.statemachine@1"
+    with
+        id "states"
+        title "Pump states"
+        selection
+            include
+                item
+                    id "ddn.examples.sysmlbeh::sm.off"
+                item
+                    id "ddn.examples.sysmlbeh::sm.on"
+                item
+                    id "ddn.examples.sysmlbeh::sm.fault"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t1"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t2"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t3"
+            exclude
+                item
+                    id "ddn.examples.sysmlbeh::uc.u1"
+                item
+                    id "ddn.examples.sysmlbeh::uc.inc"
+                item
+                    id "ddn.examples.sysmlbeh::act.e1"
+                item
+                    id "ddn.examples.sysmlbeh::act.e2"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m1"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m2"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m3"
+        layout
+            algorithm "layered"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:states"
+
+    use "ddn.examples.sysmlbeh::sm.off" named "appearance:states:ddn.examples.sysmlbeh::sm.off"
+        with
+            id "appearance:states:ddn.examples.sysmlbeh::sm.off"
+
+    use "ddn.examples.sysmlbeh::sm.on" named "appearance:states:ddn.examples.sysmlbeh::sm.on"
+        with
+            id "appearance:states:ddn.examples.sysmlbeh::sm.on"
+
+    use "ddn.examples.sysmlbeh::sm.fault" named "appearance:states:ddn.examples.sysmlbeh::sm.fault"
+        with
+            id "appearance:states:ddn.examples.sysmlbeh::sm.fault"
+
+    use "ddn.examples.sysmlbeh::sm.t1" named "appearance:states:ddn.examples.sysmlbeh::sm.t1"
+        with
+            id "appearance:states:ddn.examples.sysmlbeh::sm.t1"
+
+    use "ddn.examples.sysmlbeh::sm.t2" named "appearance:states:ddn.examples.sysmlbeh::sm.t2"
+        with
+            id "appearance:states:ddn.examples.sysmlbeh::sm.t2"
+
+    use "ddn.examples.sysmlbeh::sm.t3" named "appearance:states:ddn.examples.sysmlbeh::sm.t3"
+        with
+            id "appearance:states:ddn.examples.sysmlbeh::sm.t3"
+
+
+view "sequence" as "sysml.sequence@1"
+    with
+        id "sequence"
+        title "Start sequence"
+        selection
+            include
+                item
+                    id "ddn.examples.sysmlbeh::sq.hmi"
+                item
+                    id "ddn.examples.sysmlbeh::sq.ctrl"
+                item
+                    id "ddn.examples.sysmlbeh::sq.pump"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m1"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m2"
+                item
+                    id "ddn.examples.sysmlbeh::sq.m3"
+            exclude
+                item
+                    id "ddn.examples.sysmlbeh::uc.u1"
+                item
+                    id "ddn.examples.sysmlbeh::uc.inc"
+                item
+                    id "ddn.examples.sysmlbeh::act.e1"
+                item
+                    id "ddn.examples.sysmlbeh::act.e2"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t1"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t2"
+                item
+                    id "ddn.examples.sysmlbeh::sm.t3"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:sequence"
+
+    use "ddn.examples.sysmlbeh::sq.hmi" named "appearance:sequence:ddn.examples.sysmlbeh::sq.hmi"
+        with
+            id "appearance:sequence:ddn.examples.sysmlbeh::sq.hmi"
+
+    use "ddn.examples.sysmlbeh::sq.ctrl" named "appearance:sequence:ddn.examples.sysmlbeh::sq.ctrl"
+        with
+            id "appearance:sequence:ddn.examples.sysmlbeh::sq.ctrl"
+
+    use "ddn.examples.sysmlbeh::sq.pump" named "appearance:sequence:ddn.examples.sysmlbeh::sq.pump"
+        with
+            id "appearance:sequence:ddn.examples.sysmlbeh::sq.pump"
+
+    use "ddn.examples.sysmlbeh::sq.m1" named "appearance:sequence:ddn.examples.sysmlbeh::sq.m1"
+        with
+            id "appearance:sequence:ddn.examples.sysmlbeh::sq.m1"
+
+    use "ddn.examples.sysmlbeh::sq.m2" named "appearance:sequence:ddn.examples.sysmlbeh::sq.m2"
+        with
+            id "appearance:sequence:ddn.examples.sysmlbeh::sq.m2"
+
+    use "ddn.examples.sysmlbeh::sq.m3" named "appearance:sequence:ddn.examples.sysmlbeh::sq.m3"
+        with
+            id "appearance:sequence:ddn.examples.sysmlbeh::sq.m3"

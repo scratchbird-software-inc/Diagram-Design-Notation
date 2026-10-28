@@ -1,0 +1,197 @@
+DDN AI AUTHORING REFERENCE — ddn-next-1
+GPL-2.0-or-later. ScratchBird Software Inc. This document targets the implemented new DDN dialect, not the incompatible legacy dialect.
+
+TASK
+Read the entire reference before generating DDN. Return only the requested .ddn source unless the user asks for explanation. Prefer the shortest valid source; omit defaults. Use supplied facts only. Keep unknown entities name-only and incomplete information absent. Ask a concise question if missing information changes the intended meaning; do not fabricate data, relationships, domains, constraints, source URLs, assets, identities or acceptance. No invented keywords, profiles, enum values, properties or algorithms. Unlisted capabilities are unavailable. If verification is available, decode and verify with the complete profile pack, correct every error and inspect warnings; parsing alone is not verification. This document specifies authoring, not browser APIs or commercial services.
+
+MODEL
+One file set has one active workarea: the workarea of the first opened file. All views, output documents and included content belong to it. A view chooses a profile with its own symbols, roles and rules; foreign-method rules do not redefine native DDN. Definitions hold shared meaning; appearances show definitions in views. Data, presentation and views are separate. Reuse a definition with use; never redeclare it to show it twice. DDN is standalone; source declarations do not run jobs, fetch data, create users, grant permissions or implement output adapters.
+
+LEXICAL RULES
+UTF-8; LF; four spaces per level, no indentation tabs. A physical line ends a statement or table row. Indentation opens blocks; dedent closes them. Blank lines do not close blocks. No braces, brackets, semicolons, arrow syntax, YAML list markers or JSON objects in DDN structure. Full-line // comments only outside literal/data bodies; no inline comments. # is Markdown or colour text, not a comment.
+Names are case-sensitive and file-wide unique across all declarations. Titles and cells may repeat. Unquoted names may contain spaces. Quote names containing clause words (as/from/to/at/named/using), punctuation delimiters or command-like text. Either straight quote works: "text 'inside'" or 'text "inside"'. Double the enclosing quote: "He said ""yes""". Backslashes are literal. Quotes do not span physical lines. Quote dotted cells, decimal cells, colours and URLs. Do not quote a whole external reference.
+Local reference: Customer. External reference: "shared.ddn"::Customer, with include "shared.ddn". Paths resolve relative to the containing file. Forward references and finite include cycles work. External files retain their own name scopes; they do not supply another active workarea. All required files must be provided. An external reference alone does not include its file.
+
+DECLARATIONS
+These are templates, not literal source: CAPITAL words are replaceable; [part] is optional; | separates alternatives. Remove these metasyntax symbols. A title is optional and written after space-colon-space.
+version ddn-next-1
+include "PATH"
+style "PATH.css"
+workarea NAME [as METHOD]
+view NAME as PROFILE [ : TITLE]
+erd NAME [as HEADER] [ : TITLE]
+mindmap NAME [ : TITLE]
+bar NAME [ : TITLE]
+document NAME as FORMAT [ : TITLE]
+publication NAME
+element NAME as ROLE [using TEMPLATE] [from DATASET] [ : TITLE]
+use REFERENCE [named APPEARANCE] [ : TITLE]
+connect REFERENCE [at MEMBER] to REFERENCE [at MEMBER] [as RELATION] [named NAME] [ : LABEL]
+relation NAME as RELATION
+    endpoint REFERENCE [at MEMBER]
+    endpoint REFERENCE [at MEMBER]
+data NAME [from SOURCE]
+source NAME as host|file|calculation
+asset NAME as resource from "PATH"
+template NAME as ROLE
+notes NAME : TITLE
+    Literal Markdown content.
+
+Views/documents/shared declarations are at file level, not children of workarea. Workarea has settings/defaults only. To request a standalone view, declare workarea NAME, then an indented with block containing mode standalone, then exactly one file-level view/document across all included files. Its workarea follows the view bounds and is not separately accessible. Omitted mode (or mode workarea) permits the normal multi-view surface. Mode is not CSS/defaults eligible; included workarea modes do not apply. Omit workarea and version for ordinary single-file requests; defaults are DDN and ddn-next-1. Omit METHOD unless a restriction is wanted. Use exact profile IDs from PROFILES. Only erd, mindmap, bar and explicit aliases ddn::erd/ddn::mindmap/ddn::bar activate short recipes. Every other view requires explicit element roles and relation roles, including view X as ddn@1. Do not invent flowchart, sequence, pie or electrical declaration keywords.
+A diagram view is dynamic by default. For a fixed dashboard add with / surface.preset tv-hd|tv-fhd|tv-2k|tv-qhd|tv-4k|tv-8k (1280x720,1920x1080,2048x1080,2560x1440,3840x2160,7680x4320). TV recipes supply sans24 logical font, neutral light paint and proportional pixel scale; omit those defaults. Optional surface.width/height are positive pixels (both null restores dynamic); surface.scale is positive, surface.fit is contain|none, surface.padding is nonnegative logical units. Contain shrinks content to fit fixed dimensions. Preset is explicit only; other settings follow file > CSS > standard. Existing style/background/chrome properties customize appearance and branding. Do not invent page/presentation surface presets; their designer choices are unavailable in open DDN.
+
+An element declared in a view also creates its appearance. At file level it is unplaced. use creates an appearance; with below use changes only that appearance. Name appearances when a definition occurs more than once in a view; connect to the intended appearance name. Connectors need existing endpoint appearances in the view. at selects an existing field/port/member, not a new element. Binary roles remain binary; relation/endpoint syntax does not make them n-ary. A named relation may be shared at file level and placed with use. On a relation declared within a view, with / label.visible true|false, label.mode text|numbers and legend.include true|false change its local appearance; these also work below use. Omission inherits view/profile behaviour. Label visibility and legend inclusion are independent; numbers remain stable when a legend row is excluded. legend.placement none or chrome.legend off on the view hides its key. Internal mind-map relations always suppress labels/numbers/legend entries.
+Name-only entities are valid conceptual designs. element as entity creates an unnamed draft entity; it does not declare a name equal to <table>. Never invent fields merely to satisfy a picture.
+
+PROPERTIES AND DEFAULTS
+Use with below the owning declaration, followed by property lines. No file-level with.
+    with
+        style.font serif
+        style.font_size 12pt
+        background
+            color "#f5f5f5"
+        tags
+            item important
+            item customer-facing
+Top-level dotted paths and nested records are equivalent. Inside a structured record use nested keys, not dotted-key strings. Ordered collections use item VALUE, or item followed by record/list children. Explicit empty generic containers use empty list or empty record; never [] or {}. Do not put comma-separated values in a list property.
+Aliases: look=style.look; font=style.font; font-size=style.font_size; status=design.state; paper=style.paper. shadow none|offset|centre|corners|corner sets shadow.kind; other shadow fields use the record. source.* and target.* on relations mean qualifiers.source.* and qualifiers.target.*.
+On inline element declarations, position/size/body/columns go to the appearance. body is a scalar: body columns|draft|notes|title, never body.mode. Without an override, data/members display as columns, draft text as draft, text/description/meaning as notes, otherwise title. Use an explicit use block for other appearance overrides. Shared definition settings belong under element. Bare numbers use the property's units. Font sizes accept px/pt; geometry measures accept px/pt/mm/cm/in where a measure is specified. Do not append units to ordinary numeric properties.
+File settings override CSS, which overrides versioned standard defaults. Within file settings: appearance > definition > view defaults > active-workarea defaults > declaring-file defaults. An included file's inactive workarea supplies no defaults. Omit properties to inherit; explicit null is a value, not reset. Standard defaults never invent semantic facts. Defaults apply only to eligible presentation settings, not names, data, roles, status or authority.
+defaults element|relation|view|document|workarea [as EXACT_ROLE_OR_PROFILE]
+    font serif
+Defaults are allowed at file/workarea/view scope, without another with. Exact filters beat unfiltered rules; equal matches use the last rule. Prefer direct settings or defaults inside the .ddn file; CSS requires a separately provided stylesheet and registered --ddn-* properties.
+Values are typed: finite numbers, true/false, calendar-valid YYYY-MM-DD, timestamps with Z or explicit offset. null only where nullable. "" is intentional empty text. Quoting protects punctuation; numeric-only fields still parse quoted numbers numerically. In generic values, quotes preserve text such as "036", "true" or "null". In text-or-reference unions, quote a literal and leave a reference unquoted; reference-only types accept quoted names. unknown/na/auto are legal only for types that list them. Missing is not zero/false/null.
+
+ERD AND TABLES
+Minimal source:
+erd Sales
+    Customer
+    Order
+    connect Customer to Order
+
+An explicit foreign-method view uses its own roles:
+view Delivery as flow.basic@1
+    element Start as flow.start
+        with
+            content.form definition
+    element Pack as flow.process
+    element Finish as flow.end
+        with
+            content.form definition
+    connect Start to Pack as flow.next
+    connect Pack to Finish as flow.next
+
+ERD recipe uses entity and default assoc, not ownership or invented cardinality. Bare field rows use field.type.domain.key.comment. A header after erd NAME as changes that template. An explicit data block always has its own first-line header; fields is a plain list with no header. Domain/constraint cells reference existing declarations. Key words: primary,candidate,business,partition,clustering,foreign. "primary key" is not a valid key token.
+element Identifier as domain
+erd Sales as field:lt:40.type:ct:30.domain.key.comment
+    Customer
+        id.int.Identifier.primary
+        name.varchar(25)
+        email...."Contact address."
+    Order
+        fields
+            id
+            CustomerId
+    connect Customer at id to Order at CustomerId as assoc
+
+Header entry: name:alignment:percentage:minchars:maxlines. Alignment first letter r/l/c/f (right/left/centre/full), second t/m/b (top/middle/bottom). Omitted settings remain defaults: field:ct::19:6. Dot separates columns/cells; decimal percentage must be quoted: amount:rt:"12.5". a.b..d skips third cell; missing trailing cells stay empty; excess cells are errors. Quote punctuation: "a.b"."text 'quoted'".."". Every entire row is one physical line. Display wrapping grows row height up to maxlines, then ellipsis; no literal multiline table cells. Defaults: alignment lt, minchars 1, maxlines 6. Widths use default-font characters/lines. Unspecified percentages split remaining space equally; with none, equal widths. If all specified total <100, rightmost expands. If >100, reduce greatest values equally until 100, joining the next-greatest level as needed. If the table cannot fit, the viewer shows a shaded square.
+data CustomerFields
+    field.type.key
+    id.int.primary
+    name.varchar(25)
+erd Sales
+    Customer from CustomerFields
+The preceding examples are separate files, not fragments to concatenate with duplicate names. Custom column labels are legal; they are not new properties or semantic fields automatically. Compact headers define text columns. To supply numeric/boolean/date records, use typed columns and typed row lists:
+data Totals
+    with
+        columns
+            item
+                id region
+                type text
+            item
+                id value
+                type number
+        rows
+            item
+                item North
+                item 120
+            item
+                item South
+                item 95
+view Revenue as chart.basic@1
+    with
+        projection.options
+            records Totals
+            mark bar
+            x region
+            y value
+Use actual column IDs in chart mappings; never numeric strings in numeric channels. For one series the short recipe is enough:
+bar Revenue
+    North 120
+    South 95
+
+MINDMAP
+mindmap Holiday
+    Travel
+        Flights
+    Budget
+The recipe creates a root titled Holiday and parent→child assoc edges. Do not add duplicate explicit edges. Internal links attach only left/right, incoming on one side and outgoing on the opposite side, evenly spaced. At most one incoming relation per topic, including external links. Root alone may receive a non-mindmap incoming link at top/bottom; never outgoing there. Internal links have no type/name/number labels and need no legend. External relations retain their own labels/rules. Curved internal links avoid crossovers. These are defaults/rules, not properties to repeat on every topic.
+
+NOTES, DRAFTS, STATUS
+erd Design
+    Customer
+        draft fields
+            identifier
+            name
+        notes Questions : ## Questions
+            Is **name** required?
+
+            - Ask the owner.
+Raw blocks end at dedent and preserve blank lines. Consecutive text lines form a paragraph. draft, draft fields and draft table preserve literal text until explicit conversion; they do not set lifecycle status. Supported Markdown: headings # through ######, **bold**, *italic*, ++underline++, inline backticks, bullet/number lists, >quotes, fenced code, http/https/mailto links. No raw HTML execution or Markdown image/table syntax. File-level notes create a notes view; view-level notes create a text element; element-level notes attach to the element.
+status draft (default) is free form; in-progress may be incomplete; in-review must be complete and verified; accepted additionally requires actual acceptance.at and acceptance.by. Status is user-set and independent of style/body mode. AI generation must not promote or invent acceptance. Leaving draft is one-way; an authorized user can reopen accepted into in-review/in-progress. Status does not inherit from a parent. Never claim a draft's warnings are proof of complete verification.
+
+DATA SOURCES, ASSETS, TEMPLATES, OUTPUT
+source Feed as host
+    with
+        channel customers
+        update replace
+data Live from Feed
+    with
+        mapping
+            field source_name
+            type source_type
+        key source_id
+        persist reference
+erd Current
+    Customer from Live
+The host must supply the identified data. Do not invent live values or fetch/execution behaviour. from binds a body; it does not grant writeback to a source. Composite key uses an item list. Resource images/fonts must exist; asset declarations do not create files. SVG/image symbol and label options are defined in the property types.
+template Base as entity
+    with
+        parameters
+            typeface
+                type text
+                default serif
+        style.font parameter typeface
+erd Main
+    element Customer as entity using Base
+        with
+            arguments
+                typeface sans
+No interpolation or arbitrary expressions. Instance overrides template; missing required/unknown/wrong-type arguments are errors. Generated child names are instance-prefixed; quote a whole local generated name containing ::. No template cycles.
+document Report as html
+    notes Intro : Overview
+        Customer design.
+    use Main
+Documents are output views; use includes a figure, note or dataset in declaration order. No recursive document/view cycles. CSV requires exactly one dataset section. Other declared formats include pdf,html,dashboard,docx,odt,json,markdown; exporting requires a real adapter. A declaration does not implement or send output.
+publication Review
+    with
+        targets
+            item
+                target Main
+                kind view
+        format svg
+        page.size a4
+        page.orientation landscape
+
+GENERATION CHECK
+Select profile and legal roles first. Use exact relation direction and endpoint rules. Declare every referenced name, member, dataset and asset once. Keep source identity separate from labels. Supply actual typed data and required projection channels. Let layout and appearance default unless requested. Check indentation, quoting, file-wide uniqueness, references, palette/endpoint eligibility, required typed fields and profile constraints. Do not emit normalized JSON records, EL/RL IDs, E/L/R reference labels, legacy obj/view syntax or invented adapters. The following tables are the complete vocabulary; type notation is reference material, not .ddn syntax.

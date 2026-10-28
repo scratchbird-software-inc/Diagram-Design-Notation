@@ -1,70 +1,520 @@
-ddn "0.5";
-module "ddn.examples.iso-charts";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:iso_bar"
+    with
+        id "publication:iso_bar"
+        title "Synthetic tier throughput / iso bar"
+        targets
+            item
+                target
+                    id "iso_bar"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Isometric depth (B1-034): the optional ddn-iso module extrudes chart marks
-// when a view declares iso: true or a depth. `depth: "x_record.load"` binds the
-// extrusion thickness to the record payload (the chart binding idiom), so a
-// host driving ws.replaceData(...) grows/shrinks the 3D depth on refresh
-// (see examples/embed/iso-load-monitor.html). All data is synthetic.
-// Without ddn-iso.js the same views render flat with a coded diagnostic —
-// an iso:true view degrades to a visible placeholder plus DDN-E010.
 
-data capacity {
-    record web "Web tier" {x_record: { tier: "Web", value: 420, load: 26, unit: "req/s" }; }
-    record api "API tier" {x_record: { tier: "API", value: 610, load: 34, unit: "req/s" }; }
-    record db "Database tier" {x_record: { tier: "Database", value: 380, load: 18, unit: "req/s" }; }
-    record cache "Cache tier" {x_record: { tier: "Cache", value: 240, load: 12, unit: "req/s" }; }
-}
+publication "publication:iso_pie"
+    with
+        id "publication:iso_pie"
+        title "Synthetic tier share / iso pie"
+        targets
+            item
+                target
+                    id "iso_pie"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view iso_bar "Synthetic tier throughput / iso bar" {
-    data: [@capacity]; format: @shared.styles.technical;
-    projection { kind:chart; profile:"chart.basic@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:bar; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:"x_record.load"; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
 
-view iso_pie "Synthetic tier share / iso pie" {
-    data: [@capacity]; format: @shared.styles.technical;
-    projection { kind:chart; profile:"chart.basic@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:pie; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:22px; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+publication "publication:iso_donut"
+    with
+        id "publication:iso_donut"
+        title "Synthetic tier share / iso donut"
+        targets
+            item
+                target
+                    id "iso_donut"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view iso_donut "Synthetic tier share / iso donut" {
-    data: [@capacity]; format: @shared.styles.technical;
-    projection { kind:chart; profile:"chart.basic@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:donut; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:22px; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
 
-view iso_area "Synthetic tier throughput / iso area ribbon" {
-    data: [@capacity]; format: @shared.styles.technical;
-    projection { kind:chart; profile:"chart.basic@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:area; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:16px; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+publication "publication:iso_area"
+    with
+        id "publication:iso_area"
+        title "Synthetic tier throughput / iso area ribbon"
+        targets
+            item
+                target
+                    id "iso_area"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view iso_treemap "Synthetic tier throughput / iso treemap blocks" {
-    data: [@capacity]; format: @shared.styles.technical;
-    projection { kind:chart; profile:"chart.treemap@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:treemap; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:20px; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
 
-// Multi-series iso (B1-036): series:/arrangement: views plan through the quality
-// renderer (chart.quality@1), which extrudes with the same ddn-iso primitives —
-// one column per series point, each series on its own depth plane so faces never
-// z-fight. Without ddn-iso.js this view degrades exactly like the others.
-data throughput {
-    record a_q1 "Line A / Q1" {x_record: { quarter: "Q1", line: "Line A", value: 420, unit: "req/s" }; }
-    record a_q2 "Line A / Q2" {x_record: { quarter: "Q2", line: "Line A", value: 510, unit: "req/s" }; }
-    record a_q3 "Line A / Q3" {x_record: { quarter: "Q3", line: "Line A", value: 460, unit: "req/s" }; }
-    record a_q4 "Line A / Q4" {x_record: { quarter: "Q4", line: "Line A", value: 610, unit: "req/s" }; }
-    record b_q1 "Line B / Q1" {x_record: { quarter: "Q1", line: "Line B", value: 300, unit: "req/s" }; }
-    record b_q2 "Line B / Q2" {x_record: { quarter: "Q2", line: "Line B", value: 360, unit: "req/s" }; }
-    record b_q3 "Line B / Q3" {x_record: { quarter: "Q3", line: "Line B", value: 330, unit: "req/s" }; }
-    record b_q4 "Line B / Q4" {x_record: { quarter: "Q4", line: "Line B", value: 410, unit: "req/s" }; }
-}
+publication "publication:iso_treemap"
+    with
+        id "publication:iso_treemap"
+        title "Synthetic tier throughput / iso treemap blocks"
+        targets
+            item
+                target
+                    id "iso_treemap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view iso_multiseries_bar "Synthetic line throughput / iso multi-series bar" {
-    data: [@throughput]; format: @shared.styles.technical;
-    projection { kind:chart; profile:"chart.quality@1"; records:[@throughput.a_q1, @throughput.a_q2, @throughput.a_q3, @throughput.a_q4, @throughput.b_q1, @throughput.b_q2, @throughput.b_q3, @throughput.b_q4]; mark:bar; x:"x_record.quarter"; y:"x_record.value"; series:"x_record.line"; arrangement:group; unit:"req/s"; iso:true; depth:18px; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+
+publication "publication:iso_multiseries_bar"
+    with
+        id "publication:iso_multiseries_bar"
+        title "Synthetic line throughput / iso multi-series bar"
+        targets
+            item
+                target
+                    id "iso_multiseries_bar"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.iso-charts::capacity.web" as "record"
+    with
+        id "ddn.examples.iso-charts::capacity.web"
+        title "Web tier"
+        metadata
+            x_record
+                tier "Web"
+                value 420
+                load 26
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::capacity.api" as "record"
+    with
+        id "ddn.examples.iso-charts::capacity.api"
+        title "API tier"
+        metadata
+            x_record
+                tier "API"
+                value 610
+                load 34
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::capacity.db" as "record"
+    with
+        id "ddn.examples.iso-charts::capacity.db"
+        title "Database tier"
+        metadata
+            x_record
+                tier "Database"
+                value 380
+                load 18
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::capacity.cache" as "record"
+    with
+        id "ddn.examples.iso-charts::capacity.cache"
+        title "Cache tier"
+        metadata
+            x_record
+                tier "Cache"
+                value 240
+                load 12
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::throughput.a_q1" as "record"
+    with
+        id "ddn.examples.iso-charts::throughput.a_q1"
+        title "Line A / Q1"
+        metadata
+            x_record
+                quarter "Q1"
+                line "Line A"
+                value 420
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::throughput.a_q2" as "record"
+    with
+        id "ddn.examples.iso-charts::throughput.a_q2"
+        title "Line A / Q2"
+        metadata
+            x_record
+                quarter "Q2"
+                line "Line A"
+                value 510
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::throughput.a_q3" as "record"
+    with
+        id "ddn.examples.iso-charts::throughput.a_q3"
+        title "Line A / Q3"
+        metadata
+            x_record
+                quarter "Q3"
+                line "Line A"
+                value 460
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::throughput.a_q4" as "record"
+    with
+        id "ddn.examples.iso-charts::throughput.a_q4"
+        title "Line A / Q4"
+        metadata
+            x_record
+                quarter "Q4"
+                line "Line A"
+                value 610
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::throughput.b_q1" as "record"
+    with
+        id "ddn.examples.iso-charts::throughput.b_q1"
+        title "Line B / Q1"
+        metadata
+            x_record
+                quarter "Q1"
+                line "Line B"
+                value 300
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::throughput.b_q2" as "record"
+    with
+        id "ddn.examples.iso-charts::throughput.b_q2"
+        title "Line B / Q2"
+        metadata
+            x_record
+                quarter "Q2"
+                line "Line B"
+                value 360
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::throughput.b_q3" as "record"
+    with
+        id "ddn.examples.iso-charts::throughput.b_q3"
+        title "Line B / Q3"
+        metadata
+            x_record
+                quarter "Q3"
+                line "Line B"
+                value 330
+                unit "req/s"
+
+
+element "ddn.examples.iso-charts::throughput.b_q4" as "record"
+    with
+        id "ddn.examples.iso-charts::throughput.b_q4"
+        title "Line B / Q4"
+        metadata
+            x_record
+                quarter "Q4"
+                line "Line B"
+                value 410
+                unit "req/s"
+
+
+view "iso_bar" as "chart.basic@1"
+    with
+        id "iso_bar"
+        title "Synthetic tier throughput / iso bar"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.iso-charts::capacity.web"
+                    item
+                        id "ddn.examples.iso-charts::capacity.api"
+                    item
+                        id "ddn.examples.iso-charts::capacity.db"
+                    item
+                        id "ddn.examples.iso-charts::capacity.cache"
+                mark "bar"
+                x "metadata.x_record.tier"
+                y "metadata.x_record.value"
+                unit "req/s"
+                iso true
+                depth "metadata.x_record.load"
+                width 1120
+                height 640
+
+
+view "iso_pie" as "chart.basic@1"
+    with
+        id "iso_pie"
+        title "Synthetic tier share / iso pie"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.iso-charts::capacity.web"
+                    item
+                        id "ddn.examples.iso-charts::capacity.api"
+                    item
+                        id "ddn.examples.iso-charts::capacity.db"
+                    item
+                        id "ddn.examples.iso-charts::capacity.cache"
+                mark "pie"
+                x "metadata.x_record.tier"
+                y "metadata.x_record.value"
+                unit "req/s"
+                iso true
+                depth 22
+                width 1120
+                height 640
+
+
+view "iso_donut" as "chart.basic@1"
+    with
+        id "iso_donut"
+        title "Synthetic tier share / iso donut"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.iso-charts::capacity.web"
+                    item
+                        id "ddn.examples.iso-charts::capacity.api"
+                    item
+                        id "ddn.examples.iso-charts::capacity.db"
+                    item
+                        id "ddn.examples.iso-charts::capacity.cache"
+                mark "donut"
+                x "metadata.x_record.tier"
+                y "metadata.x_record.value"
+                unit "req/s"
+                iso true
+                depth 22
+                width 1120
+                height 640
+
+
+view "iso_area" as "chart.basic@1"
+    with
+        id "iso_area"
+        title "Synthetic tier throughput / iso area ribbon"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.iso-charts::capacity.web"
+                    item
+                        id "ddn.examples.iso-charts::capacity.api"
+                    item
+                        id "ddn.examples.iso-charts::capacity.db"
+                    item
+                        id "ddn.examples.iso-charts::capacity.cache"
+                mark "area"
+                x "metadata.x_record.tier"
+                y "metadata.x_record.value"
+                unit "req/s"
+                iso true
+                depth 16
+                width 1120
+                height 640
+
+
+view "iso_treemap" as "chart.treemap@1"
+    with
+        id "iso_treemap"
+        title "Synthetic tier throughput / iso treemap blocks"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.iso-charts::capacity.web"
+                    item
+                        id "ddn.examples.iso-charts::capacity.api"
+                    item
+                        id "ddn.examples.iso-charts::capacity.db"
+                    item
+                        id "ddn.examples.iso-charts::capacity.cache"
+                mark "treemap"
+                x "metadata.x_record.tier"
+                y "metadata.x_record.value"
+                unit "req/s"
+                iso true
+                depth 20
+                width 1120
+                height 640
+
+
+view "iso_multiseries_bar" as "chart.quality@1"
+    with
+        id "iso_multiseries_bar"
+        title "Synthetic line throughput / iso multi-series bar"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.iso-charts::throughput.a_q1"
+                    item
+                        id "ddn.examples.iso-charts::throughput.a_q2"
+                    item
+                        id "ddn.examples.iso-charts::throughput.a_q3"
+                    item
+                        id "ddn.examples.iso-charts::throughput.a_q4"
+                    item
+                        id "ddn.examples.iso-charts::throughput.b_q1"
+                    item
+                        id "ddn.examples.iso-charts::throughput.b_q2"
+                    item
+                        id "ddn.examples.iso-charts::throughput.b_q3"
+                    item
+                        id "ddn.examples.iso-charts::throughput.b_q4"
+                mark "bar"
+                x "metadata.x_record.quarter"
+                y "metadata.x_record.value"
+                series "metadata.x_record.line"
+                arrangement "group"
+                unit "req/s"
+                iso true
+                depth 18
+                width 1120
+                height 640

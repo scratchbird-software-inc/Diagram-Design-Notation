@@ -1,22 +1,220 @@
-ddn "0.5";
-module "ddn.examples.icons";
+version ddn-next-1
 
-// B1-082: the icon-library mechanism — default kind bindings (B1-087's
-// network-generic@1 set now wins for network kinds) plus an explicit
-// per-node x_icon override (the guest user, drawn from the original demo
-// set). Icons are simple generic glyphs; vendor packs are excluded pending
-// licensing diligence.
-// All data is synthetic.
-data m {
-    object lan "Office LAN" { kind: "network.bus"; }
-    object srv "App server" { kind: "network.server"; }
-    object rack "Data rack" { kind: "network.rack"; }
-    object guest "Guest user" { kind: "network.server"; x_icon: { library: "generic-demo@1", icon: "user" }; }
-    relation a1 "" @srv -> @lan { kind: "network.attaches"; }
-    relation a2 "" @rack -> @lan { kind: "network.attaches"; }
-    relation a3 "" @guest -> @lan { kind: "network.attaches"; }
-}
-view net "Icon network": [@m] as "network.basic@1" {
-    layout { gap: 112px; row_gap: 112px; }
-    publication { size: content; fit: none; }
-}
+asset "artwork::network-generic@1:cloud" as resource from "../../assets/icons/network-generic-1/cloud.svg"
+    with
+        id "artwork::network-generic@1:cloud"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:server" as resource from "../../assets/icons/network-generic-1/server.svg"
+    with
+        id "artwork::network-generic@1:server"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:database" as resource from "../../assets/icons/network-generic-1/database.svg"
+    with
+        id "artwork::network-generic@1:database"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::generic-demo@1:user" as resource from "../../assets/icons/generic-demo-1/user.svg"
+    with
+        id "artwork::generic-demo@1:user"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+publication "publication:net"
+    with
+        id "publication:net"
+        title "Icon network"
+        targets
+            item
+                target
+                    id "net"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.icons::m.lan" as "network.bus"
+    with
+        id "ddn.examples.icons::m.lan"
+        title "Office LAN"
+
+
+element "ddn.examples.icons::m.srv" as "network.server"
+    with
+        id "ddn.examples.icons::m.srv"
+        title "App server"
+
+
+element "ddn.examples.icons::m.rack" as "network.rack"
+    with
+        id "ddn.examples.icons::m.rack"
+        title "Data rack"
+
+
+element "ddn.examples.icons::m.guest" as "network.server"
+    with
+        id "ddn.examples.icons::m.guest"
+        title "Guest user"
+        metadata
+            x_icon
+                library "generic-demo@1"
+                icon "user"
+
+
+relation "ddn.examples.icons::m.a1" as "network.attaches"
+    with
+        id "ddn.examples.icons::m.a1"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.icons::m.srv"
+            item
+                definition
+                    id "ddn.examples.icons::m.lan"
+
+
+relation "ddn.examples.icons::m.a2" as "network.attaches"
+    with
+        id "ddn.examples.icons::m.a2"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.icons::m.rack"
+            item
+                definition
+                    id "ddn.examples.icons::m.lan"
+
+
+relation "ddn.examples.icons::m.a3" as "network.attaches"
+    with
+        id "ddn.examples.icons::m.a3"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.icons::m.guest"
+            item
+                definition
+                    id "ddn.examples.icons::m.lan"
+
+
+view "net" as "network.basic@1"
+    with
+        id "net"
+        title "Icon network"
+        selection
+            include
+                item
+                    id "ddn.examples.icons::m.lan"
+                item
+                    id "ddn.examples.icons::m.srv"
+                item
+                    id "ddn.examples.icons::m.rack"
+                item
+                    id "ddn.examples.icons::m.guest"
+                item
+                    id "ddn.examples.icons::m.a1"
+                item
+                    id "ddn.examples.icons::m.a2"
+                item
+                    id "ddn.examples.icons::m.a3"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "manual"
+            routing "straight"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:net"
+
+    use "ddn.examples.icons::m.lan" named "appearance:net:ddn.examples.icons::m.lan"
+        with
+            id "appearance:net:ddn.examples.icons::m.lan"
+            position.x 480
+            position.y 300
+            size.width 96
+            size.height 96
+            symbol
+                label "inside"
+                image
+                    id "artwork::network-generic@1:cloud"
+
+    use "ddn.examples.icons::m.srv" named "appearance:net:ddn.examples.icons::m.srv"
+        with
+            id "appearance:net:ddn.examples.icons::m.srv"
+            position.x 120
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top"
+                image
+                    id "artwork::network-generic@1:server"
+
+    use "ddn.examples.icons::m.rack" named "appearance:net:ddn.examples.icons::m.rack"
+        with
+            id "appearance:net:ddn.examples.icons::m.rack"
+            position.x 840
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top"
+                image
+                    id "artwork::network-generic@1:database"
+
+    use "ddn.examples.icons::m.guest" named "appearance:net:ddn.examples.icons::m.guest"
+        with
+            id "appearance:net:ddn.examples.icons::m.guest"
+            position.x 480
+            position.y 560
+            size.width 96
+            size.height 96
+            symbol
+                label "bottom"
+                image
+                    id "artwork::generic-demo@1:user"
+
+    use "ddn.examples.icons::m.a1" named "appearance:net:ddn.examples.icons::m.a1"
+        with
+            id "appearance:net:ddn.examples.icons::m.a1"
+            route.source_side "east"
+            route.target_side "west"
+            route.target_fraction 0.3
+
+    use "ddn.examples.icons::m.a2" named "appearance:net:ddn.examples.icons::m.a2"
+        with
+            id "appearance:net:ddn.examples.icons::m.a2"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.3
+
+    use "ddn.examples.icons::m.a3" named "appearance:net:ddn.examples.icons::m.a3"
+        with
+            id "appearance:net:ddn.examples.icons::m.a3"
+            route.source_side "north"
+            route.target_side "south"
+            route.target_fraction 0.5

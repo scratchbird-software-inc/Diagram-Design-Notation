@@ -1,23 +1,129 @@
-ddn "0.5";
-module "ddn.examples.treemap";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:treemap"
+    with
+        id "publication:treemap"
+        title "Synthetic storage by domain and table / treemap"
+        targets
+            item
+                target
+                    id "treemap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic storage dataset: six tables grouped by dotted domain paths.
-// All data is synthetic.
-records storage {
-    columns: path, value, unit;
-    label_column: path;
-    row r1: "analytics.events", 55, "GB";
-    row r2: "analytics.sessions", 25, "GB";
-    row r3: "core.orders", 40, "GB";
-    row r4: "core.customers", 20, "GB";
-    row r5: "ops.logs", 30, "GB";
-    row r6: "ops.metrics", 10, "GB";
-}
 
-view treemap "Synthetic storage by domain and table / treemap" {
-    data: [@storage]; format: @shared.styles.technical;
-    projection { kind:chart; profile:"chart.treemap@1"; records:[@storage.r1, @storage.r2, @storage.r3, @storage.r4, @storage.r5, @storage.r6]; mark:treemap; x:"x_record.path"; y:"x_record.value"; unit:"GB"; width:1120px; height:620px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+element "ddn.examples.treemap::storage.r1" as "record"
+    with
+        id "ddn.examples.treemap::storage.r1"
+        title "analytics.events"
+        metadata
+            x_record
+                path "analytics.events"
+                value 55
+                unit "GB"
+
+
+element "ddn.examples.treemap::storage.r2" as "record"
+    with
+        id "ddn.examples.treemap::storage.r2"
+        title "analytics.sessions"
+        metadata
+            x_record
+                path "analytics.sessions"
+                value 25
+                unit "GB"
+
+
+element "ddn.examples.treemap::storage.r3" as "record"
+    with
+        id "ddn.examples.treemap::storage.r3"
+        title "core.orders"
+        metadata
+            x_record
+                path "core.orders"
+                value 40
+                unit "GB"
+
+
+element "ddn.examples.treemap::storage.r4" as "record"
+    with
+        id "ddn.examples.treemap::storage.r4"
+        title "core.customers"
+        metadata
+            x_record
+                path "core.customers"
+                value 20
+                unit "GB"
+
+
+element "ddn.examples.treemap::storage.r5" as "record"
+    with
+        id "ddn.examples.treemap::storage.r5"
+        title "ops.logs"
+        metadata
+            x_record
+                path "ops.logs"
+                value 30
+                unit "GB"
+
+
+element "ddn.examples.treemap::storage.r6" as "record"
+    with
+        id "ddn.examples.treemap::storage.r6"
+        title "ops.metrics"
+        metadata
+            x_record
+                path "ops.metrics"
+                value 10
+                unit "GB"
+
+
+view "treemap" as "chart.treemap@1"
+    with
+        id "treemap"
+        title "Synthetic storage by domain and table / treemap"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.treemap::storage.r1"
+                    item
+                        id "ddn.examples.treemap::storage.r2"
+                    item
+                        id "ddn.examples.treemap::storage.r3"
+                    item
+                        id "ddn.examples.treemap::storage.r4"
+                    item
+                        id "ddn.examples.treemap::storage.r5"
+                    item
+                        id "ddn.examples.treemap::storage.r6"
+                mark "treemap"
+                x "metadata.x_record.path"
+                y "metadata.x_record.value"
+                unit "GB"
+                width 1120
+                height 620

@@ -1,29 +1,191 @@
-ddn "0.5";
-module "ddn.examples.communication";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:communication"
+    with
+        id "publication:communication"
+        title "Synthetic order flow / communication"
+        targets
+            item
+                target
+                    id "communication"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic three-party order flow for the uml.communication@1 profile.
-// Same model shape as the sequence view (41-sequence-diagram.ddn), rendered as
-// a graph: participants are nodes, uml.message relations are edges labelled
-// with their author-declared sequence number (x_message.seq). Replies
-// (x_return) are dotted under their request: reserve_stock is 2, its reply is
-// 2.1. audit_log is a self-message on checkout.
-// All data is synthetic. This is profile-level coverage, not UML conformance.
-data flow {
-    application customer_app "Customer app";
-    service checkout "Checkout";
-    service inventory "Inventory";
-    relation submit_order "Submit order" @customer_app -> @checkout { kind: "uml.message"; x_message: { seq: "1"; }; }
-    relation reserve_stock "Reserve stock" @checkout -> @inventory { kind: "uml.message"; x_message: { seq: "2"; }; }
-    relation reserve_stock_reply "Stock reserved" @inventory -> @checkout { kind: "uml.message"; x_return: true; x_message: { seq: "2.1"; }; }
-    relation audit_log "Audit log" @checkout -> @checkout { kind: "uml.message"; x_message: { seq: "3"; }; }
-    relation confirm "Confirm order" @checkout -> @customer_app { kind: "uml.message"; x_message: { seq: "4"; }; }
-}
 
-view communication "Synthetic order flow / communication" {
-    data: [@flow]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "uml.communication@1"; }
-    layout { algorithm: layered; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+element "ddn.examples.communication::flow.customer_app" as "application"
+    with
+        id "ddn.examples.communication::flow.customer_app"
+        title "Customer app"
+
+
+element "ddn.examples.communication::flow.checkout" as "service"
+    with
+        id "ddn.examples.communication::flow.checkout"
+        title "Checkout"
+
+
+element "ddn.examples.communication::flow.inventory" as "service"
+    with
+        id "ddn.examples.communication::flow.inventory"
+        title "Inventory"
+
+
+relation "ddn.examples.communication::flow.submit_order" as "uml.message"
+    with
+        id "ddn.examples.communication::flow.submit_order"
+        title "Submit order"
+        metadata
+            x_message
+                seq "1"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.communication::flow.customer_app"
+            item
+                definition
+                    id "ddn.examples.communication::flow.checkout"
+
+
+relation "ddn.examples.communication::flow.reserve_stock" as "uml.message"
+    with
+        id "ddn.examples.communication::flow.reserve_stock"
+        title "Reserve stock"
+        metadata
+            x_message
+                seq "2"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.communication::flow.checkout"
+            item
+                definition
+                    id "ddn.examples.communication::flow.inventory"
+
+
+relation "ddn.examples.communication::flow.reserve_stock_reply" as "uml.message"
+    with
+        id "ddn.examples.communication::flow.reserve_stock_reply"
+        title "Stock reserved"
+        metadata
+            x_return true
+            x_message
+                seq "2.1"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.communication::flow.inventory"
+            item
+                definition
+                    id "ddn.examples.communication::flow.checkout"
+
+
+relation "ddn.examples.communication::flow.audit_log" as "uml.message"
+    with
+        id "ddn.examples.communication::flow.audit_log"
+        title "Audit log"
+        metadata
+            x_message
+                seq "3"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.communication::flow.checkout"
+            item
+                definition
+                    id "ddn.examples.communication::flow.checkout"
+
+
+relation "ddn.examples.communication::flow.confirm" as "uml.message"
+    with
+        id "ddn.examples.communication::flow.confirm"
+        title "Confirm order"
+        metadata
+            x_message
+                seq "4"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.communication::flow.checkout"
+            item
+                definition
+                    id "ddn.examples.communication::flow.customer_app"
+
+
+view "communication" as "uml.communication@1"
+    with
+        id "communication"
+        title "Synthetic order flow / communication"
+        selection
+            include
+                item
+                    id "ddn.examples.communication::flow.customer_app"
+                item
+                    id "ddn.examples.communication::flow.checkout"
+                item
+                    id "ddn.examples.communication::flow.inventory"
+                item
+                    id "ddn.examples.communication::flow.submit_order"
+                item
+                    id "ddn.examples.communication::flow.reserve_stock"
+                item
+                    id "ddn.examples.communication::flow.reserve_stock_reply"
+                item
+                    id "ddn.examples.communication::flow.audit_log"
+                item
+                    id "ddn.examples.communication::flow.confirm"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:communication"
+
+    use "ddn.examples.communication::flow.customer_app" named "appearance:communication:ddn.examples.communication::flow.customer_app"
+        with
+            id "appearance:communication:ddn.examples.communication::flow.customer_app"
+
+    use "ddn.examples.communication::flow.checkout" named "appearance:communication:ddn.examples.communication::flow.checkout"
+        with
+            id "appearance:communication:ddn.examples.communication::flow.checkout"
+
+    use "ddn.examples.communication::flow.inventory" named "appearance:communication:ddn.examples.communication::flow.inventory"
+        with
+            id "appearance:communication:ddn.examples.communication::flow.inventory"
+
+    use "ddn.examples.communication::flow.submit_order" named "appearance:communication:ddn.examples.communication::flow.submit_order"
+        with
+            id "appearance:communication:ddn.examples.communication::flow.submit_order"
+
+    use "ddn.examples.communication::flow.reserve_stock" named "appearance:communication:ddn.examples.communication::flow.reserve_stock"
+        with
+            id "appearance:communication:ddn.examples.communication::flow.reserve_stock"
+
+    use "ddn.examples.communication::flow.reserve_stock_reply" named "appearance:communication:ddn.examples.communication::flow.reserve_stock_reply"
+        with
+            id "appearance:communication:ddn.examples.communication::flow.reserve_stock_reply"
+
+    use "ddn.examples.communication::flow.audit_log" named "appearance:communication:ddn.examples.communication::flow.audit_log"
+        with
+            id "appearance:communication:ddn.examples.communication::flow.audit_log"
+
+    use "ddn.examples.communication::flow.confirm" named "appearance:communication:ddn.examples.communication::flow.confirm"
+        with
+            id "appearance:communication:ddn.examples.communication::flow.confirm"

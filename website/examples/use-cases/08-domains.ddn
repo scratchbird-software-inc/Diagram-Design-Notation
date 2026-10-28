@@ -1,18 +1,632 @@
-ddn "0.5";
-module "ddn.usecases.views.domains";
-import "formats.ddn" as fmt;
-import "data/commerce.ddn" as c;
-import "data/domains.ddn" as d;
+version ddn-next-1
 
-// Do differently named fields share the same meaning?
-// Fixed teaching layout: coordinates belong to this view only.
-view diagram "08 / Domain discovery and binding" {
-    data: [@c.tables, @d.model, @c.domains];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.teaching;
-    select: [@c.tables.orders, @d.model.support, @c.domains.customer_id, @d.model.binding];
-    publication { width: 1730px; height: 700px; }
-    legend { keys: { "model.r_order_domain": 1, "model.r_support_candidate": 2, "model.r_binding": 3 }; }
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "08 / Domain discovery and binding"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1730
+                unit "px"
+            height
+                value 700
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-}
+
+element "ddn.usecases.commerce::tables.customer.customer_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.customer.customer_id"
+        title "customer_id"
+        properties
+            key "primary"
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.customer"
+            ordinal 0
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+            key "primary"
+
+
+element "ddn.usecases.commerce::tables.customer.display_name" as "field"
+    with
+        id "ddn.usecases.commerce::tables.customer.display_name"
+        title "display_name"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.customer"
+            ordinal 1
+
+
+element "ddn.usecases.commerce::tables.customer.status" as "field"
+    with
+        id "ddn.usecases.commerce::tables.customer.status"
+        title "status"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.customer"
+            ordinal 2
+
+
+element "ddn.usecases.commerce::tables.customer" as "table"
+    with
+        id "ddn.usecases.commerce::tables.customer"
+        title "Customer"
+        description "Authority for the customer registry, not for every customer attribute in all systems."
+        facets
+            workload
+                item "OLTP"
+            authority
+                item "AUTH"
+        properties
+            level "definition"
+            workload
+                item "oltp"
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+        members
+            item
+                id "ddn.usecases.commerce::tables.customer.customer_id"
+            item
+                id "ddn.usecases.commerce::tables.customer.display_name"
+            item
+                id "ddn.usecases.commerce::tables.customer.status"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item
+                        id "ddn.usecases.commerce::domains.customer_id"
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.commerce::tables.orders.order_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.orders.order_id"
+        title "order_id"
+        properties
+            key "primary"
+            domain
+                id "ddn.usecases.commerce::domains.order_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.orders"
+            ordinal 0
+            domain
+                id "ddn.usecases.commerce::domains.order_id"
+            key "primary"
+
+
+element "ddn.usecases.commerce::tables.orders.customer_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.orders.customer_id"
+        title "customer_id"
+        properties
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.orders"
+            ordinal 1
+            domain
+                id "ddn.usecases.commerce::domains.customer_id"
+
+
+element "ddn.usecases.commerce::tables.orders.ordered_at" as "field"
+    with
+        id "ddn.usecases.commerce::tables.orders.ordered_at"
+        title "ordered_at"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.orders"
+            ordinal 2
+
+
+element "ddn.usecases.commerce::tables.orders" as "table"
+    with
+        id "ddn.usecases.commerce::tables.orders"
+        title "Orders"
+        facets
+            workload
+                item "OLTP"
+        properties
+            level "definition"
+            workload
+                item "oltp"
+        members
+            item
+                id "ddn.usecases.commerce::tables.orders.order_id"
+            item
+                id "ddn.usecases.commerce::tables.orders.customer_id"
+            item
+                id "ddn.usecases.commerce::tables.orders.ordered_at"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item
+                        id "ddn.usecases.commerce::domains.order_id"
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "customer_id"
+                    item null
+                    item
+                        id "ddn.usecases.commerce::domains.customer_id"
+                    item null
+                    item null
+                    item null
+                item
+                    item "ordered_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.commerce::tables.line.line_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.line_id"
+        title "line_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.usecases.commerce::tables.line.order_id" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 1
+
+
+element "ddn.usecases.commerce::tables.line.sku" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.sku"
+        title "sku"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 2
+
+
+element "ddn.usecases.commerce::tables.line.quantity" as "field"
+    with
+        id "ddn.usecases.commerce::tables.line.quantity"
+        title "quantity"
+        content
+            parent
+                id "ddn.usecases.commerce::tables.line"
+            ordinal 3
+
+
+element "ddn.usecases.commerce::tables.line" as "table"
+    with
+        id "ddn.usecases.commerce::tables.line"
+        title "Order line"
+        facets
+            workload
+                item "OLTP"
+        properties
+            level "definition"
+            workload
+                item "oltp"
+        members
+            item
+                id "ddn.usecases.commerce::tables.line.line_id"
+            item
+                id "ddn.usecases.commerce::tables.line.order_id"
+            item
+                id "ddn.usecases.commerce::tables.line.sku"
+            item
+                id "ddn.usecases.commerce::tables.line.quantity"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "line_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "sku"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "quantity"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.domains::model.support.ticket_id" as "field"
+    with
+        id "ddn.usecases.domains::model.support.ticket_id"
+        title "ticket_id"
+        content
+            parent
+                id "ddn.usecases.domains::model.support"
+            ordinal 0
+
+
+element "ddn.usecases.domains::model.support.account_ref" as "field"
+    with
+        id "ddn.usecases.domains::model.support.account_ref"
+        title "account_ref"
+        content
+            parent
+                id "ddn.usecases.domains::model.support"
+            ordinal 1
+
+
+element "ddn.usecases.domains::model.support" as "table"
+    with
+        id "ddn.usecases.domains::model.support"
+        title "Support ticket"
+        members
+            item
+                id "ddn.usecases.domains::model.support.ticket_id"
+            item
+                id "ddn.usecases.domains::model.support.account_ref"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "ticket_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "account_ref"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.domains::model.binding" as "binding"
+    with
+        id "ddn.usecases.domains::model.binding"
+        title "Customer ID / SQL"
+        properties
+            platform "SQL target not selected"
+
+
+element "ddn.usecases.commerce::domains.customer_id" as "domain"
+    with
+        id "ddn.usecases.commerce::domains.customer_id"
+        title "Customer identifier"
+        content
+            meaning "Identifies a customer in the registry."
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Identifies a customer in the registry."
+                    }
+                format "plain"
+
+
+element "ddn.usecases.commerce::domains.order_id" as "domain"
+    with
+        id "ddn.usecases.commerce::domains.order_id"
+        title "Order identifier"
+        content
+            meaning "Identifies an order in the order book."
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Identifies an order in the order book."
+                    }
+                format "plain"
+
+
+relation "ddn.usecases.commerce::tables.r_line_order" as "ref"
+    with
+        id "ddn.usecases.commerce::tables.r_line_order"
+        title "references"
+        properties
+            source_mark "many"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.line"
+                member
+                    id "ddn.usecases.commerce::tables.line.order_id"
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.orders"
+                member
+                    id "ddn.usecases.commerce::tables.orders.order_id"
+
+
+relation "ddn.usecases.commerce::tables.r_order_customer" as "ref"
+    with
+        id "ddn.usecases.commerce::tables.r_order_customer"
+        title "references"
+        properties
+            source_mark "zeromany"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.orders"
+                member
+                    id "ddn.usecases.commerce::tables.orders.customer_id"
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.customer"
+                member
+                    id "ddn.usecases.commerce::tables.customer.customer_id"
+
+
+relation "ddn.usecases.domains::model.r_order_domain" as "domain"
+    with
+        id "ddn.usecases.domains::model.r_order_domain"
+        title "uses semantic domain"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::tables.orders"
+                member
+                    id "ddn.usecases.commerce::tables.orders.customer_id"
+            item
+                definition
+                    id "ddn.usecases.commerce::domains.customer_id"
+
+
+relation "ddn.usecases.domains::model.r_support_candidate" as "candidate"
+    with
+        id "ddn.usecases.domains::model.r_support_candidate"
+        title "candidate domain match"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.domains::model.support"
+                member
+                    id "ddn.usecases.domains::model.support.account_ref"
+            item
+                definition
+                    id "ddn.usecases.commerce::domains.customer_id"
+
+
+relation "ddn.usecases.domains::model.r_binding" as "binds"
+    with
+        id "ddn.usecases.domains::model.r_binding"
+        title "has representation binding"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::domains.customer_id"
+            item
+                definition
+                    id "ddn.usecases.domains::model.binding"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "08 / Domain discovery and binding"
+        selection
+            include
+                item
+                    id "ddn.usecases.commerce::tables.orders"
+                item
+                    id "ddn.usecases.domains::model.support"
+                item
+                    id "ddn.usecases.commerce::domains.customer_id"
+                item
+                    id "ddn.usecases.domains::model.binding"
+                item
+                    id "ddn.usecases.domains::model.r_order_domain"
+                item
+                    id "ddn.usecases.domains::model.r_support_candidate"
+                item
+                    id "ddn.usecases.domains::model.r_binding"
+            exclude
+                item
+                    id "ddn.usecases.commerce::tables.r_line_order"
+                item
+                    id "ddn.usecases.commerce::tables.r_order_customer"
+        layout
+            algorithm "manual"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_order_domain "1"
+                model.r_support_candidate "2"
+                model.r_binding "3"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.commerce::tables.orders" named "appearance:diagram:ddn.usecases.commerce::tables.orders"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::tables.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.domains::model.support" named "appearance:diagram:ddn.usecases.domains::model.support"
+        with
+            id "appearance:diagram:ddn.usecases.domains::model.support"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.commerce::domains.customer_id" named "appearance:diagram:ddn.usecases.commerce::domains.customer_id"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::domains.customer_id"
+            body "notes"
+
+    use "ddn.usecases.domains::model.binding" named "appearance:diagram:ddn.usecases.domains::model.binding"
+        with
+            id "appearance:diagram:ddn.usecases.domains::model.binding"
+
+    use "ddn.usecases.domains::model.r_order_domain" named "appearance:diagram:ddn.usecases.domains::model.r_order_domain"
+        with
+            id "appearance:diagram:ddn.usecases.domains::model.r_order_domain"
+
+    use "ddn.usecases.domains::model.r_support_candidate" named "appearance:diagram:ddn.usecases.domains::model.r_support_candidate"
+        with
+            id "appearance:diagram:ddn.usecases.domains::model.r_support_candidate"
+
+    use "ddn.usecases.domains::model.r_binding" named "appearance:diagram:ddn.usecases.domains::model.r_binding"
+        with
+            id "appearance:diagram:ddn.usecases.domains::model.r_binding"

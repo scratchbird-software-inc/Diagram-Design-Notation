@@ -1,35 +1,317 @@
-ddn "0.5";
-module "ddn.examples.mind-map";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:mindmap"
+    with
+        id "publication:mindmap"
+        title "Synthetic brainstorm / mind map"
+        targets
+            item
+                target
+                    id "mindmap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic meeting brainstorm for the mindmap.basic@1 profile.
-data ideas {
-    object root "Q3 launch brainstorm" { kind: object; description: "Synthetic workshop capture: what ships in Q3, in what order, and what could still sink it. Everything below is a branch of this one question."; }
-    object pricing "Pricing" { kind: object; description: "Two tiers is the working bet: free for individuals, team for groups. Annual discount only on the team tier. Usage caps instead of per-seat maths. Grandfather the beta cohort quietly."; }
-    object onboarding "Onboarding" { kind: object; description: "First-run path for a brand-new account, start to first value. Sign up with the synthetic sample workspace already loaded. Tour the catalogue before any real data. Import a small file and see the same diagram update. Invite a teammate and watch roles land. Find the undo before finding trouble. Save a first view worth sharing. Confirm the welcome checklist closes itself. Measure time to the first shared link. Note every stumble for the next sprint review."; }
-    object risks "Risks" { kind: object; description: "Scope creep on the sample tour. Performance on very large maps."; }
-    object marketing "Marketing" { kind: object; }
-    term tiers "Usage tiers";
-    term discount "Annual discount";
-    term tour "Sample data tour";
-    term creep "Scope creep";
-    assoc r1 @root -> @pricing;
-    assoc r2 @root -> @onboarding;
-    assoc r3 @root -> @risks;
-    assoc r4 @root -> @marketing;
-    assoc r5 @pricing -> @tiers;
-    assoc r6 @pricing -> @discount;
-    assoc r7 @onboarding -> @tour;
-    assoc r8 @risks -> @creep;
-}
 
-format options {
-    layout mind { gap: 112px; row_gap: 112px; algorithm: mindmap; routing: curved; root: @ideas.root; hierarchy: [assoc]; }
-}
+element "ddn.examples.mind-map::ideas.root" as "object"
+    with
+        id "ddn.examples.mind-map::ideas.root"
+        title "Q3 launch brainstorm"
+        description "Synthetic workshop capture: what ships in Q3, in what order, and what could still sink it. Everything below is a branch of this one question."
 
-view mindmap "Synthetic brainstorm / mind map" {
-    data: [@ideas]; format: @shared.styles.technical; layout: @options.mind;
-    projection { kind: graph; profile: "mindmap.basic@1"; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+
+element "ddn.examples.mind-map::ideas.pricing" as "object"
+    with
+        id "ddn.examples.mind-map::ideas.pricing"
+        title "Pricing"
+        description "Two tiers is the working bet: free for individuals, team for groups. Annual discount only on the team tier. Usage caps instead of per-seat maths. Grandfather the beta cohort quietly."
+
+
+element "ddn.examples.mind-map::ideas.onboarding" as "object"
+    with
+        id "ddn.examples.mind-map::ideas.onboarding"
+        title "Onboarding"
+        description "First-run path for a brand-new account, start to first value. Sign up with the synthetic sample workspace already loaded. Tour the catalogue before any real data. Import a small file and see the same diagram update. Invite a teammate and watch roles land. Find the undo before finding trouble. Save a first view worth sharing. Confirm the welcome checklist closes itself. Measure time to the first shared link. Note every stumble for the next sprint review."
+
+
+element "ddn.examples.mind-map::ideas.risks" as "object"
+    with
+        id "ddn.examples.mind-map::ideas.risks"
+        title "Risks"
+        description "Scope creep on the sample tour. Performance on very large maps."
+
+
+element "ddn.examples.mind-map::ideas.marketing" as "object"
+    with
+        id "ddn.examples.mind-map::ideas.marketing"
+        title "Marketing"
+
+
+element "ddn.examples.mind-map::ideas.tiers" as "term"
+    with
+        id "ddn.examples.mind-map::ideas.tiers"
+        title "Usage tiers"
+
+
+element "ddn.examples.mind-map::ideas.discount" as "term"
+    with
+        id "ddn.examples.mind-map::ideas.discount"
+        title "Annual discount"
+
+
+element "ddn.examples.mind-map::ideas.tour" as "term"
+    with
+        id "ddn.examples.mind-map::ideas.tour"
+        title "Sample data tour"
+
+
+element "ddn.examples.mind-map::ideas.creep" as "term"
+    with
+        id "ddn.examples.mind-map::ideas.creep"
+        title "Scope creep"
+
+
+relation "ddn.examples.mind-map::ideas.r1" as "assoc"
+    with
+        id "ddn.examples.mind-map::ideas.r1"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.root"
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.pricing"
+
+
+relation "ddn.examples.mind-map::ideas.r2" as "assoc"
+    with
+        id "ddn.examples.mind-map::ideas.r2"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.root"
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.onboarding"
+
+
+relation "ddn.examples.mind-map::ideas.r3" as "assoc"
+    with
+        id "ddn.examples.mind-map::ideas.r3"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.root"
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.risks"
+
+
+relation "ddn.examples.mind-map::ideas.r4" as "assoc"
+    with
+        id "ddn.examples.mind-map::ideas.r4"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.root"
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.marketing"
+
+
+relation "ddn.examples.mind-map::ideas.r5" as "assoc"
+    with
+        id "ddn.examples.mind-map::ideas.r5"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.pricing"
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.tiers"
+
+
+relation "ddn.examples.mind-map::ideas.r6" as "assoc"
+    with
+        id "ddn.examples.mind-map::ideas.r6"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.pricing"
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.discount"
+
+
+relation "ddn.examples.mind-map::ideas.r7" as "assoc"
+    with
+        id "ddn.examples.mind-map::ideas.r7"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.onboarding"
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.tour"
+
+
+relation "ddn.examples.mind-map::ideas.r8" as "assoc"
+    with
+        id "ddn.examples.mind-map::ideas.r8"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.risks"
+            item
+                definition
+                    id "ddn.examples.mind-map::ideas.creep"
+
+
+view "mindmap" as "mindmap.basic@1"
+    with
+        id "mindmap"
+        title "Synthetic brainstorm / mind map"
+        selection
+            include
+                item
+                    id "ddn.examples.mind-map::ideas.root"
+                item
+                    id "ddn.examples.mind-map::ideas.pricing"
+                item
+                    id "ddn.examples.mind-map::ideas.onboarding"
+                item
+                    id "ddn.examples.mind-map::ideas.risks"
+                item
+                    id "ddn.examples.mind-map::ideas.marketing"
+                item
+                    id "ddn.examples.mind-map::ideas.tiers"
+                item
+                    id "ddn.examples.mind-map::ideas.discount"
+                item
+                    id "ddn.examples.mind-map::ideas.tour"
+                item
+                    id "ddn.examples.mind-map::ideas.creep"
+                item
+                    id "ddn.examples.mind-map::ideas.r1"
+                item
+                    id "ddn.examples.mind-map::ideas.r2"
+                item
+                    id "ddn.examples.mind-map::ideas.r3"
+                item
+                    id "ddn.examples.mind-map::ideas.r4"
+                item
+                    id "ddn.examples.mind-map::ideas.r5"
+                item
+                    id "ddn.examples.mind-map::ideas.r6"
+                item
+                    id "ddn.examples.mind-map::ideas.r7"
+                item
+                    id "ddn.examples.mind-map::ideas.r8"
+        layout
+            algorithm "mindmap"
+            routing "curved"
+            gap 112
+            row_gap 112
+            root
+                id "ddn.examples.mind-map::ideas.root"
+            hierarchy "assoc"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:mindmap"
+
+    use "ddn.examples.mind-map::ideas.root" named "appearance:mindmap:ddn.examples.mind-map::ideas.root"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.root"
+            body "notes"
+
+    use "ddn.examples.mind-map::ideas.pricing" named "appearance:mindmap:ddn.examples.mind-map::ideas.pricing"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.pricing"
+            body "notes"
+
+    use "ddn.examples.mind-map::ideas.onboarding" named "appearance:mindmap:ddn.examples.mind-map::ideas.onboarding"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.onboarding"
+            body "notes"
+
+    use "ddn.examples.mind-map::ideas.risks" named "appearance:mindmap:ddn.examples.mind-map::ideas.risks"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.risks"
+            body "notes"
+
+    use "ddn.examples.mind-map::ideas.marketing" named "appearance:mindmap:ddn.examples.mind-map::ideas.marketing"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.marketing"
+
+    use "ddn.examples.mind-map::ideas.tiers" named "appearance:mindmap:ddn.examples.mind-map::ideas.tiers"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.tiers"
+
+    use "ddn.examples.mind-map::ideas.discount" named "appearance:mindmap:ddn.examples.mind-map::ideas.discount"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.discount"
+
+    use "ddn.examples.mind-map::ideas.tour" named "appearance:mindmap:ddn.examples.mind-map::ideas.tour"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.tour"
+
+    use "ddn.examples.mind-map::ideas.creep" named "appearance:mindmap:ddn.examples.mind-map::ideas.creep"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.creep"
+
+    use "ddn.examples.mind-map::ideas.r1" named "appearance:mindmap:ddn.examples.mind-map::ideas.r1"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.r1"
+
+    use "ddn.examples.mind-map::ideas.r2" named "appearance:mindmap:ddn.examples.mind-map::ideas.r2"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.r2"
+
+    use "ddn.examples.mind-map::ideas.r3" named "appearance:mindmap:ddn.examples.mind-map::ideas.r3"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.r3"
+
+    use "ddn.examples.mind-map::ideas.r4" named "appearance:mindmap:ddn.examples.mind-map::ideas.r4"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.r4"
+
+    use "ddn.examples.mind-map::ideas.r5" named "appearance:mindmap:ddn.examples.mind-map::ideas.r5"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.r5"
+
+    use "ddn.examples.mind-map::ideas.r6" named "appearance:mindmap:ddn.examples.mind-map::ideas.r6"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.r6"
+
+    use "ddn.examples.mind-map::ideas.r7" named "appearance:mindmap:ddn.examples.mind-map::ideas.r7"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.r7"
+
+    use "ddn.examples.mind-map::ideas.r8" named "appearance:mindmap:ddn.examples.mind-map::ideas.r8"
+        with
+            id "appearance:mindmap:ddn.examples.mind-map::ideas.r8"

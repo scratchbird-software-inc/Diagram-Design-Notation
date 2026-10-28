@@ -1,88 +1,930 @@
-ddn "0.5";
-module "ddn.examples.nested";
-import "shared.ddn" as shared;
-// Teaching example for compact authoring (phases 1–3): kind keywords act as
-// declaration keywords, field/port keywords may be omitted inside
-// fields {}/ports {} blocks, relationship keywords act as relation verbs with
-// optional [mark] brackets, `relations <kind> { … }` batches expand to one
-// relation per entry, and one-line view headers expand to canonical
-// data + projection. All forms desugar to the identical canonical
-// declarations — the verbose equivalents are shown in comments.
-data model {
- domain identifier "Customer identifier" { meaning: "Opaque identifier within the customer registry"; }
- domain postal "Postal code" {meaning:"Postal routing code, with country context required";}
- // verbose: object customer "Customer profile / nested structure" { kind: collection; … }
- collection customer "Customer profile / nested structure" {
-  fields {
-   // verbose: field customer_id {…} — explicit field/port stays valid and mixes freely
-   customer_id {domain: @identifier; datatype: "string"; key: true; nullable: false;}
-   address {shape: object; presence: optional; nullable: false;
-    fields { street; city; postal_code {datatype: "string";} }
-   }
-   contacts {shape: array; presence: optional;
-    fields {kind {datatype: "string";} value {datatype: "string";nullable: true;} }
-   }
-   delivery {shape: variant; discriminator: "method"; variants: [pickup, courier];
-    fields {method; location {presence: optional;} }
-   }
-  }
- }
- // verbose: object order "Order" { kind: table; fields { field order_id; field customer_id {…} } }
- table order "Order" {fields {order_id; customer_id {domain: @identifier;}}}
- // verbose: relation owner @order.customer_id -> @customer.customer_id {kind: ref; source_mark: one; target_mark: one; enforcement: undecided;}
- ref owner @order.customer_id [one] -> @customer.customer_id [one] {enforcement: undecided;}
- // verbose: relation address_note @customer.address.postal_code -> @postal {kind: candidate;}
- //          relation id_match @order.customer_id -> @identifier {kind: candidate;}
- relations candidate {
-  address_note @customer.address.postal_code -> @postal;
-  id_match @order.customer_id -> @identifier;
- }
-}
-view detailed "Nested fields / domains and representations" {
- data: [@model]; format: @shared.styles.technical; select: [@model.order,@model.customer,@model.postal];
- layout {algorithm: layered;}
- display {domains: show; datatypes: show; depth: 8;}
- legend {mode: numbers; keys: {owner: 7,address_note: 12};}
- publication {size: content;fit: none;overflow: error;}
-}
-view large "20px base / measured wrapping" {
- data: [@model]; format: @shared.styles.technical; select: [@model.customer];
- style {font_size: 20px;}
- display {domains: show;datatypes: show;}
- publication {size: content;fit: none;overflow: error;}
-}
-view collapsed "Hidden nested rows / preserved endpoint identities" {
- data: [@model]; format: @shared.styles.technical; select: [@model.order,@model.customer,@model.postal];
- display {depth: 0;fields: names;}
- layout {algorithm: layered;}
- publication {size: content;fit: none;overflow: error;}
-}
-// verbose: view header "One-line header / compact view declaration" {
-//   data: [@model]; projection { kind: graph; profile: "ddn@1"; }
-//   select: [@model.order,@model.customer]; … }
-view header "One-line header / compact view declaration": @model as "ddn@1" {
- format: @shared.styles.technical; select: [@model.order,@model.customer];
- publication {size: content;fit: none;overflow: error;}
-}
-// verbose:
-//   data metrics {
-//    object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }
-//    object m2 "Beta" { kind: record; x_record: { label: "Beta", value: 20, unit: "ms" }; }
-//    object m3 "Gamma" { kind: record; x_record: { label: "Gamma", value: 15, unit: "ms" }; }
-//    object m4 "Delta" { kind: record; x_record: { label: "Delta", value: 25, unit: "ms" }; }
-//    object m5 "m5" { kind: record; x_record: { label: missing, value: null, unit: "ms" }; note: "awaiting measurement"; }
-//   }
-records metrics {
- columns: label, value, unit;
- label_column: label;
- row m1: "Alpha", 10, "ms";
- row m2: "Beta", 20, "ms";
- row m3: "Gamma", 15, "ms";
- row m4: "Delta", 25, "ms";
- row m5: missing, null, "ms" { note: "awaiting measurement"; };
-}
-view metrics_chart "Order timings / keyed tabular records" {
- data: [@metrics];
- projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2, @metrics.m3, @metrics.m4]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }
- publication {size: content;fit: none;}
-}
+version ddn-next-1
+
+publication "publication:detailed"
+    with
+        id "publication:detailed"
+        title "Nested fields / domains and representations"
+        targets
+            item
+                target
+                    id "detailed"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:large"
+    with
+        id "publication:large"
+        title "20px base / measured wrapping"
+        targets
+            item
+                target
+                    id "large"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:collapsed"
+    with
+        id "publication:collapsed"
+        title "Hidden nested rows / preserved endpoint identities"
+        targets
+            item
+                target
+                    id "collapsed"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:header"
+    with
+        id "publication:header"
+        title "One-line header / compact view declaration"
+        targets
+            item
+                target
+                    id "header"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:metrics_chart"
+    with
+        id "publication:metrics_chart"
+        title "Order timings / keyed tabular records"
+        targets
+            item
+                target
+                    id "metrics_chart"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.nested::model.identifier" as "domain"
+    with
+        id "ddn.examples.nested::model.identifier"
+        title "Customer identifier"
+        content
+            meaning "Opaque identifier within the customer registry"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Opaque identifier within the customer registry"
+                    }
+                format "plain"
+
+
+element "ddn.examples.nested::model.postal" as "domain"
+    with
+        id "ddn.examples.nested::model.postal"
+        title "Postal code"
+        content
+            meaning "Postal routing code, with country context required"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Postal routing code, with country context required"
+                    }
+                format "plain"
+
+
+element "ddn.examples.nested::model.customer.customer_id" as "field"
+    with
+        id "ddn.examples.nested::model.customer.customer_id"
+        title "customer_id"
+        properties
+            domain
+                id "ddn.examples.nested::model.identifier"
+            datatype "string"
+            key "primary"
+            nullable false
+        content
+            parent
+                id "ddn.examples.nested::model.customer"
+            ordinal 0
+            datatype "string"
+            domain
+                id "ddn.examples.nested::model.identifier"
+            key "primary"
+            nullable false
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "key": true
+                    }
+                format "plain"
+
+
+element "ddn.examples.nested::model.customer.address" as "field"
+    with
+        id "ddn.examples.nested::model.customer.address"
+        title "address"
+        properties
+            shape "object"
+            presence "optional"
+            nullable false
+        content
+            parent
+                id "ddn.examples.nested::model.customer"
+            ordinal 1
+            nullable false
+
+
+element "ddn.examples.nested::model.customer.address.street" as "field"
+    with
+        id "ddn.examples.nested::model.customer.address.street"
+        title "street"
+        content
+            parent
+                id "ddn.examples.nested::model.customer.address"
+            ordinal 2
+
+
+element "ddn.examples.nested::model.customer.address.city" as "field"
+    with
+        id "ddn.examples.nested::model.customer.address.city"
+        title "city"
+        content
+            parent
+                id "ddn.examples.nested::model.customer.address"
+            ordinal 3
+
+
+element "ddn.examples.nested::model.customer.address.postal_code" as "field"
+    with
+        id "ddn.examples.nested::model.customer.address.postal_code"
+        title "postal_code"
+        properties
+            datatype "string"
+        content
+            parent
+                id "ddn.examples.nested::model.customer.address"
+            ordinal 4
+            datatype "string"
+
+
+element "ddn.examples.nested::model.customer.contacts" as "field"
+    with
+        id "ddn.examples.nested::model.customer.contacts"
+        title "contacts"
+        properties
+            shape "array"
+            presence "optional"
+        content
+            parent
+                id "ddn.examples.nested::model.customer"
+            ordinal 5
+
+
+element "ddn.examples.nested::model.customer.contacts.kind" as "field"
+    with
+        id "ddn.examples.nested::model.customer.contacts.kind"
+        title "kind"
+        properties
+            datatype "string"
+        content
+            parent
+                id "ddn.examples.nested::model.customer.contacts"
+            ordinal 6
+            datatype "string"
+
+
+element "ddn.examples.nested::model.customer.contacts.value" as "field"
+    with
+        id "ddn.examples.nested::model.customer.contacts.value"
+        title "value"
+        properties
+            datatype "string"
+            nullable true
+        content
+            parent
+                id "ddn.examples.nested::model.customer.contacts"
+            ordinal 7
+            datatype "string"
+            nullable true
+
+
+element "ddn.examples.nested::model.customer.delivery" as "field"
+    with
+        id "ddn.examples.nested::model.customer.delivery"
+        title "delivery"
+        properties
+            shape "variant"
+            variants empty list
+        content
+            parent
+                id "ddn.examples.nested::model.customer"
+            ordinal 8
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "discriminator": "method",
+                      "variants": [
+                        "pickup",
+                        "courier"
+                      ]
+                    }
+                format "plain"
+
+
+element "ddn.examples.nested::model.customer.delivery.method" as "field"
+    with
+        id "ddn.examples.nested::model.customer.delivery.method"
+        title "method"
+        content
+            parent
+                id "ddn.examples.nested::model.customer.delivery"
+            ordinal 9
+
+
+element "ddn.examples.nested::model.customer.delivery.location" as "field"
+    with
+        id "ddn.examples.nested::model.customer.delivery.location"
+        title "location"
+        properties
+            presence "optional"
+        content
+            parent
+                id "ddn.examples.nested::model.customer.delivery"
+            ordinal 10
+
+
+element "ddn.examples.nested::model.customer" as "collection"
+    with
+        id "ddn.examples.nested::model.customer"
+        title "Customer profile / nested structure"
+        members
+            item
+                id "ddn.examples.nested::model.customer.customer_id"
+            item
+                id "ddn.examples.nested::model.customer.address"
+            item
+                id "ddn.examples.nested::model.customer.address.street"
+            item
+                id "ddn.examples.nested::model.customer.address.city"
+            item
+                id "ddn.examples.nested::model.customer.address.postal_code"
+            item
+                id "ddn.examples.nested::model.customer.contacts"
+            item
+                id "ddn.examples.nested::model.customer.contacts.kind"
+            item
+                id "ddn.examples.nested::model.customer.contacts.value"
+            item
+                id "ddn.examples.nested::model.customer.delivery"
+            item
+                id "ddn.examples.nested::model.customer.delivery.method"
+            item
+                id "ddn.examples.nested::model.customer.delivery.location"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item "string"
+                    item
+                        id "ddn.examples.nested::model.identifier"
+                    item null
+                    item true
+                    item null
+                item
+                    item "address"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "street"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "city"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "postal_code"
+                    item "string"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "contacts"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "kind"
+                    item "string"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "value"
+                    item "string"
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "delivery"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "method"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "location"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.nested::model.order.order_id" as "field"
+    with
+        id "ddn.examples.nested::model.order.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.examples.nested::model.order"
+            ordinal 0
+
+
+element "ddn.examples.nested::model.order.customer_id" as "field"
+    with
+        id "ddn.examples.nested::model.order.customer_id"
+        title "customer_id"
+        properties
+            domain
+                id "ddn.examples.nested::model.identifier"
+        content
+            parent
+                id "ddn.examples.nested::model.order"
+            ordinal 1
+            domain
+                id "ddn.examples.nested::model.identifier"
+
+
+element "ddn.examples.nested::model.order" as "table"
+    with
+        id "ddn.examples.nested::model.order"
+        title "Order"
+        members
+            item
+                id "ddn.examples.nested::model.order.order_id"
+            item
+                id "ddn.examples.nested::model.order.customer_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "customer_id"
+                    item null
+                    item
+                        id "ddn.examples.nested::model.identifier"
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.nested::model.owner" as "ref"
+    with
+        id "ddn.examples.nested::model.owner"
+        title "references"
+        properties
+            source_mark "one"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.nested::model.order"
+                member
+                    id "ddn.examples.nested::model.order.customer_id"
+            item
+                definition
+                    id "ddn.examples.nested::model.customer"
+                member
+                    id "ddn.examples.nested::model.customer.customer_id"
+
+
+relation "ddn.examples.nested::model.address_note" as "candidate"
+    with
+        id "ddn.examples.nested::model.address_note"
+        title "candidate domain match"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.nested::model.customer"
+                member
+                    id "ddn.examples.nested::model.customer.address.postal_code"
+            item
+                definition
+                    id "ddn.examples.nested::model.postal"
+
+
+relation "ddn.examples.nested::model.id_match" as "candidate"
+    with
+        id "ddn.examples.nested::model.id_match"
+        title "candidate domain match"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.nested::model.order"
+                member
+                    id "ddn.examples.nested::model.order.customer_id"
+            item
+                definition
+                    id "ddn.examples.nested::model.identifier"
+
+
+element "ddn.examples.nested::metrics.m1" as "record"
+    with
+        id "ddn.examples.nested::metrics.m1"
+        title "Alpha"
+        metadata
+            x_record
+                label "Alpha"
+                value 10
+                unit "ms"
+
+
+element "ddn.examples.nested::metrics.m2" as "record"
+    with
+        id "ddn.examples.nested::metrics.m2"
+        title "Beta"
+        metadata
+            x_record
+                label "Beta"
+                value 20
+                unit "ms"
+
+
+element "ddn.examples.nested::metrics.m3" as "record"
+    with
+        id "ddn.examples.nested::metrics.m3"
+        title "Gamma"
+        metadata
+            x_record
+                label "Gamma"
+                value 15
+                unit "ms"
+
+
+element "ddn.examples.nested::metrics.m4" as "record"
+    with
+        id "ddn.examples.nested::metrics.m4"
+        title "Delta"
+        metadata
+            x_record
+                label "Delta"
+                value 25
+                unit "ms"
+
+
+element "ddn.examples.nested::metrics.m5" as "record"
+    with
+        id "ddn.examples.nested::metrics.m5"
+        title "m5"
+        metadata
+            x_record
+                label
+                    $missing true
+                value null
+                unit "ms"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "note": "awaiting measurement"
+                    }
+                format "plain"
+
+
+view "detailed" as "ddn@1"
+    with
+        id "detailed"
+        title "Nested fields / domains and representations"
+        selection
+            include
+                item
+                    id "ddn.examples.nested::model.order"
+                item
+                    id "ddn.examples.nested::model.customer"
+                item
+                    id "ddn.examples.nested::model.postal"
+                item
+                    id "ddn.examples.nested::model.owner"
+                item
+                    id "ddn.examples.nested::model.address_note"
+            exclude
+                item
+                    id "ddn.examples.nested::model.id_match"
+        layout
+            algorithm "layered"
+            gap 80
+        display
+            domains "show"
+            datatypes "show"
+            depth 8
+        legend
+            mode "numbers"
+            width 280
+            keys
+                owner "7"
+                address_note "12"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:detailed"
+
+    use "ddn.examples.nested::model.order" named "appearance:detailed:ddn.examples.nested::model.order"
+        with
+            id "appearance:detailed:ddn.examples.nested::model.order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "shown"
+                domain "shown"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.nested::model.customer" named "appearance:detailed:ddn.examples.nested::model.customer"
+        with
+            id "appearance:detailed:ddn.examples.nested::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "shown"
+                domain "shown"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.nested::model.postal" named "appearance:detailed:ddn.examples.nested::model.postal"
+        with
+            id "appearance:detailed:ddn.examples.nested::model.postal"
+            body "notes"
+
+    use "ddn.examples.nested::model.owner" named "appearance:detailed:ddn.examples.nested::model.owner"
+        with
+            id "appearance:detailed:ddn.examples.nested::model.owner"
+
+    use "ddn.examples.nested::model.address_note" named "appearance:detailed:ddn.examples.nested::model.address_note"
+        with
+            id "appearance:detailed:ddn.examples.nested::model.address_note"
+
+
+view "large" as "ddn@1"
+    with
+        id "large"
+        title "20px base / measured wrapping"
+        selection
+            include
+                item
+                    id "ddn.examples.nested::model.customer"
+            exclude
+                item
+                    id "ddn.examples.nested::model.owner"
+                item
+                    id "ddn.examples.nested::model.address_note"
+                item
+                    id "ddn.examples.nested::model.id_match"
+        style
+            font_size 20
+        layout
+            algorithm "grid"
+            gap 80
+        display
+            domains "show"
+            datatypes "show"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:large"
+
+    use "ddn.examples.nested::model.customer" named "appearance:large:ddn.examples.nested::model.customer"
+        with
+            id "appearance:large:ddn.examples.nested::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "shown"
+                domain "shown"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+
+view "collapsed" as "ddn@1"
+    with
+        id "collapsed"
+        title "Hidden nested rows / preserved endpoint identities"
+        selection
+            include
+                item
+                    id "ddn.examples.nested::model.order"
+                item
+                    id "ddn.examples.nested::model.customer"
+                item
+                    id "ddn.examples.nested::model.postal"
+                item
+                    id "ddn.examples.nested::model.owner"
+                item
+                    id "ddn.examples.nested::model.address_note"
+            exclude
+                item
+                    id "ddn.examples.nested::model.id_match"
+        layout
+            algorithm "layered"
+            gap 80
+        display
+            fields "none"
+            depth 1
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:collapsed"
+
+    use "ddn.examples.nested::model.order" named "appearance:collapsed:ddn.examples.nested::model.order"
+        with
+            id "appearance:collapsed:ddn.examples.nested::model.order"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.nested::model.customer" named "appearance:collapsed:ddn.examples.nested::model.customer"
+        with
+            id "appearance:collapsed:ddn.examples.nested::model.customer"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.nested::model.postal" named "appearance:collapsed:ddn.examples.nested::model.postal"
+        with
+            id "appearance:collapsed:ddn.examples.nested::model.postal"
+            body "notes"
+
+    use "ddn.examples.nested::model.owner" named "appearance:collapsed:ddn.examples.nested::model.owner"
+        with
+            id "appearance:collapsed:ddn.examples.nested::model.owner"
+
+    use "ddn.examples.nested::model.address_note" named "appearance:collapsed:ddn.examples.nested::model.address_note"
+        with
+            id "appearance:collapsed:ddn.examples.nested::model.address_note"
+
+
+view "header" as "ddn@1"
+    with
+        id "header"
+        title "One-line header / compact view declaration"
+        selection
+            include
+                item
+                    id "ddn.examples.nested::model.order"
+                item
+                    id "ddn.examples.nested::model.customer"
+                item
+                    id "ddn.examples.nested::model.owner"
+            exclude
+                item
+                    id "ddn.examples.nested::model.address_note"
+                item
+                    id "ddn.examples.nested::model.id_match"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:header"
+
+    use "ddn.examples.nested::model.order" named "appearance:header:ddn.examples.nested::model.order"
+        with
+            id "appearance:header:ddn.examples.nested::model.order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.nested::model.customer" named "appearance:header:ddn.examples.nested::model.customer"
+        with
+            id "appearance:header:ddn.examples.nested::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.nested::model.owner" named "appearance:header:ddn.examples.nested::model.owner"
+        with
+            id "appearance:header:ddn.examples.nested::model.owner"
+
+
+view "metrics_chart" as "chart.basic@1"
+    with
+        id "metrics_chart"
+        title "Order timings / keyed tabular records"
+        selection
+            include empty list
+            exclude
+                item
+                    id "ddn.examples.nested::model.owner"
+                item
+                    id "ddn.examples.nested::model.address_note"
+                item
+                    id "ddn.examples.nested::model.id_match"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.nested::metrics.m1"
+                    item
+                        id "ddn.examples.nested::metrics.m2"
+                    item
+                        id "ddn.examples.nested::metrics.m3"
+                    item
+                        id "ddn.examples.nested::metrics.m4"
+                mark "bar"
+                x "metadata.x_record.label"
+                y "metadata.x_record.value"
+                unit "ms"
+                width 900
+                height 560

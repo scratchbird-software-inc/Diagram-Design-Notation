@@ -1,45 +1,445 @@
-ddn "0.5";
-module "ddn.examples.empathy-scorecard";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:empathy"
+    with
+        id "publication:empathy"
+        title "Support team / empathy map"
+        targets
+            item
+                target
+                    id "empathy"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// Two synthetic studies in one file (all data invented): a support-team empathy
-// study for the canvas.empathy@1 profile and a department balanced scorecard for
-// the canvas.scorecard@1 profile.
-data research {
-    note persona "Persona" {description: "Synthetic persona: a support agent on the night shift."; }
-    note says_a "Says (1)" {description: "Synthetic: \"I spend half the shift retyping ticket details into the billing tool.\""; }
-    note says_b "Says (2)" {description: "Synthetic: \"Customers forgive an outage when we call them back before they notice.\""; }
-    note thinks "Thinks" {description: "Synthetic: worries that automation metrics reward closing tickets fast, not solving the root cause."; }
-    note does "Does" {description: "Synthetic: keeps a personal spreadsheet of workarounds and shares it with the next shift over chat."; }
-    note feels "Feels" {description: "Synthetic: proud of calm incident handling but drained by the duplicated data entry."; }
-    note fin_1 "Financial objective 1" {description: "Synthetic objective: cut cost per resolved ticket by twelve percent this year."; }
-    note fin_2 "Financial objective 2" {description: "Synthetic objective: grow renewal revenue from the existing customer base."; }
-    note cus_1 "Customer objective 1" {description: "Synthetic objective: raise first-contact resolution above seventy percent."; }
-    note cus_2 "Customer objective 2" {description: "Synthetic objective: answer every chat within ninety seconds during business hours."; }
-    note int_1 "Internal process objective 1" {description: "Synthetic objective: automate the ticket-to-billing rekeying step."; }
-    note int_2 "Internal process objective 2" {description: "Synthetic objective: publish a weekly workaround digest from the shift handover notes."; }
-    note lrn_1 "Learning & growth objective 1" {description: "Synthetic objective: certify every agent on the new incident playbook by quarter end."; }
-    note lrn_2 "Learning & growth objective 2" {description: "Synthetic objective: pair each night-shift agent with a day-shift mentor."; }
-}
 
-view empathy "Support team / empathy map" {
-    data: [@research];
-    format: @shared.styles.technical;
-    projection { kind:panels; profile:"canvas.empathy@1"; columns:2; panels:[
-        {id:"says",title:"SAYS",row:0,column:0,rowspan:1,colspan:1,items:[@research.says_a, @research.says_b]},
-        {id:"thinks",title:"THINKS",row:0,column:1,rowspan:1,colspan:1,items:[@research.thinks]},
-        {id:"persona",title:"PERSONA",row:1,column:0,rowspan:1,colspan:2,items:[@research.persona]},
-        {id:"does",title:"DOES",row:2,column:0,rowspan:1,colspan:1,items:[@research.does]},
-        {id:"feels",title:"FEELS",row:2,column:1,rowspan:1,colspan:1,items:[@research.feels]}]; }
-}
+publication "publication:scorecard"
+    with
+        id "publication:scorecard"
+        title "Department / balanced scorecard"
+        targets
+            item
+                target
+                    id "scorecard"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view scorecard "Department / balanced scorecard" {
-    data: [@research];
-    format: @shared.styles.technical;
-    projection { kind:panels; profile:"canvas.scorecard@1"; columns:2; panels:[
-        {id:"financial",title:"FINANCIAL",row:0,column:0,rowspan:1,colspan:1,items:[@research.fin_1, @research.fin_2]},
-        {id:"customer",title:"CUSTOMER",row:0,column:1,rowspan:1,colspan:1,items:[@research.cus_1, @research.cus_2]},
-        {id:"internal",title:"INTERNAL PROCESS",row:1,column:0,rowspan:1,colspan:1,items:[@research.int_1, @research.int_2]},
-        {id:"learning",title:"LEARNING & GROWTH",row:1,column:1,rowspan:1,colspan:1,items:[@research.lrn_1, @research.lrn_2]}]; }
-}
+
+element "ddn.examples.empathy-scorecard::research.persona" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.persona"
+        title "Persona"
+        description "Synthetic persona: a support agent on the night shift."
+        content
+            text "Synthetic persona: a support agent on the night shift."
+        draft
+            text "Synthetic persona: a support agent on the night shift."
+
+
+element "ddn.examples.empathy-scorecard::research.says_a" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.says_a"
+        title "Says (1)"
+        description "Synthetic: ""I spend half the shift retyping ticket details into the billing tool."""
+        content
+            text "Synthetic: ""I spend half the shift retyping ticket details into the billing tool."""
+        draft
+            text "Synthetic: ""I spend half the shift retyping ticket details into the billing tool."""
+
+
+element "ddn.examples.empathy-scorecard::research.says_b" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.says_b"
+        title "Says (2)"
+        description "Synthetic: ""Customers forgive an outage when we call them back before they notice."""
+        content
+            text "Synthetic: ""Customers forgive an outage when we call them back before they notice."""
+        draft
+            text "Synthetic: ""Customers forgive an outage when we call them back before they notice."""
+
+
+element "ddn.examples.empathy-scorecard::research.thinks" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.thinks"
+        title "Thinks"
+        description "Synthetic: worries that automation metrics reward closing tickets fast, not solving the root cause."
+        content
+            text "Synthetic: worries that automation metrics reward closing tickets fast, not solving the root cause."
+        draft
+            text "Synthetic: worries that automation metrics reward closing tickets fast, not solving the root cause."
+
+
+element "ddn.examples.empathy-scorecard::research.does" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.does"
+        title "Does"
+        description "Synthetic: keeps a personal spreadsheet of workarounds and shares it with the next shift over chat."
+        content
+            text "Synthetic: keeps a personal spreadsheet of workarounds and shares it with the next shift over chat."
+        draft
+            text "Synthetic: keeps a personal spreadsheet of workarounds and shares it with the next shift over chat."
+
+
+element "ddn.examples.empathy-scorecard::research.feels" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.feels"
+        title "Feels"
+        description "Synthetic: proud of calm incident handling but drained by the duplicated data entry."
+        content
+            text "Synthetic: proud of calm incident handling but drained by the duplicated data entry."
+        draft
+            text "Synthetic: proud of calm incident handling but drained by the duplicated data entry."
+
+
+element "ddn.examples.empathy-scorecard::research.fin_1" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.fin_1"
+        title "Financial objective 1"
+        description "Synthetic objective: cut cost per resolved ticket by twelve percent this year."
+        content
+            text "Synthetic objective: cut cost per resolved ticket by twelve percent this year."
+        draft
+            text "Synthetic objective: cut cost per resolved ticket by twelve percent this year."
+
+
+element "ddn.examples.empathy-scorecard::research.fin_2" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.fin_2"
+        title "Financial objective 2"
+        description "Synthetic objective: grow renewal revenue from the existing customer base."
+        content
+            text "Synthetic objective: grow renewal revenue from the existing customer base."
+        draft
+            text "Synthetic objective: grow renewal revenue from the existing customer base."
+
+
+element "ddn.examples.empathy-scorecard::research.cus_1" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.cus_1"
+        title "Customer objective 1"
+        description "Synthetic objective: raise first-contact resolution above seventy percent."
+        content
+            text "Synthetic objective: raise first-contact resolution above seventy percent."
+        draft
+            text "Synthetic objective: raise first-contact resolution above seventy percent."
+
+
+element "ddn.examples.empathy-scorecard::research.cus_2" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.cus_2"
+        title "Customer objective 2"
+        description "Synthetic objective: answer every chat within ninety seconds during business hours."
+        content
+            text "Synthetic objective: answer every chat within ninety seconds during business hours."
+        draft
+            text "Synthetic objective: answer every chat within ninety seconds during business hours."
+
+
+element "ddn.examples.empathy-scorecard::research.int_1" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.int_1"
+        title "Internal process objective 1"
+        description "Synthetic objective: automate the ticket-to-billing rekeying step."
+        content
+            text "Synthetic objective: automate the ticket-to-billing rekeying step."
+        draft
+            text "Synthetic objective: automate the ticket-to-billing rekeying step."
+
+
+element "ddn.examples.empathy-scorecard::research.int_2" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.int_2"
+        title "Internal process objective 2"
+        description "Synthetic objective: publish a weekly workaround digest from the shift handover notes."
+        content
+            text "Synthetic objective: publish a weekly workaround digest from the shift handover notes."
+        draft
+            text "Synthetic objective: publish a weekly workaround digest from the shift handover notes."
+
+
+element "ddn.examples.empathy-scorecard::research.lrn_1" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.lrn_1"
+        title "Learning & growth objective 1"
+        description "Synthetic objective: certify every agent on the new incident playbook by quarter end."
+        content
+            text "Synthetic objective: certify every agent on the new incident playbook by quarter end."
+        draft
+            text "Synthetic objective: certify every agent on the new incident playbook by quarter end."
+
+
+element "ddn.examples.empathy-scorecard::research.lrn_2" as "note"
+    with
+        id "ddn.examples.empathy-scorecard::research.lrn_2"
+        title "Learning & growth objective 2"
+        description "Synthetic objective: pair each night-shift agent with a day-shift mentor."
+        content
+            text "Synthetic objective: pair each night-shift agent with a day-shift mentor."
+        draft
+            text "Synthetic objective: pair each night-shift agent with a day-shift mentor."
+
+
+element "empathy::panel::says" as "note"
+    with
+        id "empathy::panel::says"
+        title "SAYS"
+        metadata
+            x_record
+                id "says"
+                row 0
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.empathy-scorecard::research.says_a"
+                    item
+                        id "ddn.examples.empathy-scorecard::research.says_b"
+
+
+element "empathy::panel::thinks" as "note"
+    with
+        id "empathy::panel::thinks"
+        title "THINKS"
+        metadata
+            x_record
+                id "thinks"
+                row 0
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.empathy-scorecard::research.thinks"
+
+
+element "empathy::panel::persona" as "note"
+    with
+        id "empathy::panel::persona"
+        title "PERSONA"
+        metadata
+            x_record
+                id "persona"
+                row 1
+                column 0
+                rowspan 1
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.empathy-scorecard::research.persona"
+
+
+element "empathy::panel::does" as "note"
+    with
+        id "empathy::panel::does"
+        title "DOES"
+        metadata
+            x_record
+                id "does"
+                row 2
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.empathy-scorecard::research.does"
+
+
+element "empathy::panel::feels" as "note"
+    with
+        id "empathy::panel::feels"
+        title "FEELS"
+        metadata
+            x_record
+                id "feels"
+                row 2
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.empathy-scorecard::research.feels"
+
+
+element "scorecard::panel::financial" as "note"
+    with
+        id "scorecard::panel::financial"
+        title "FINANCIAL"
+        metadata
+            x_record
+                id "financial"
+                row 0
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.empathy-scorecard::research.fin_1"
+                    item
+                        id "ddn.examples.empathy-scorecard::research.fin_2"
+
+
+element "scorecard::panel::customer" as "note"
+    with
+        id "scorecard::panel::customer"
+        title "CUSTOMER"
+        metadata
+            x_record
+                id "customer"
+                row 0
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.empathy-scorecard::research.cus_1"
+                    item
+                        id "ddn.examples.empathy-scorecard::research.cus_2"
+
+
+element "scorecard::panel::internal" as "note"
+    with
+        id "scorecard::panel::internal"
+        title "INTERNAL PROCESS"
+        metadata
+            x_record
+                id "internal"
+                row 1
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.empathy-scorecard::research.int_1"
+                    item
+                        id "ddn.examples.empathy-scorecard::research.int_2"
+
+
+element "scorecard::panel::learning" as "note"
+    with
+        id "scorecard::panel::learning"
+        title "LEARNING & GROWTH"
+        metadata
+            x_record
+                id "learning"
+                row 1
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.empathy-scorecard::research.lrn_1"
+                    item
+                        id "ddn.examples.empathy-scorecard::research.lrn_2"
+
+
+view "empathy" as "canvas.empathy@1"
+    with
+        id "empathy"
+        title "Support team / empathy map"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                columns 2
+                panels
+                    item
+                        target
+                            id "empathy::panel::says"
+                        kind "text"
+                        title "SAYS"
+                    item
+                        target
+                            id "empathy::panel::thinks"
+                        kind "text"
+                        title "THINKS"
+                    item
+                        target
+                            id "empathy::panel::persona"
+                        kind "text"
+                        title "PERSONA"
+                    item
+                        target
+                            id "empathy::panel::does"
+                        kind "text"
+                        title "DOES"
+                    item
+                        target
+                            id "empathy::panel::feels"
+                        kind "text"
+                        title "FEELS"
+
+
+view "scorecard" as "canvas.scorecard@1"
+    with
+        id "scorecard"
+        title "Department / balanced scorecard"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                columns 2
+                panels
+                    item
+                        target
+                            id "scorecard::panel::financial"
+                        kind "text"
+                        title "FINANCIAL"
+                    item
+                        target
+                            id "scorecard::panel::customer"
+                        kind "text"
+                        title "CUSTOMER"
+                    item
+                        target
+                            id "scorecard::panel::internal"
+                        kind "text"
+                        title "INTERNAL PROCESS"
+                    item
+                        target
+                            id "scorecard::panel::learning"
+                        kind "text"
+                        title "LEARNING & GROWTH"

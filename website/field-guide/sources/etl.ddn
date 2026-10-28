@@ -1,0 +1,341 @@
+version ddn-next-1
+
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "Synthetic ETL / sources to marts"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.etl::pipeline.shop" as "dataset"
+    with
+        id "ddn.fieldguide.etl::pipeline.shop"
+        title "Shop OLTP"
+        description "Synthetic order-taking source: orders, customers, payments."
+
+
+element "ddn.fieldguide.etl::pipeline.crm" as "dataset"
+    with
+        id "ddn.fieldguide.etl::pipeline.crm"
+        title "CRM extracts"
+        description "Synthetic nightly customer-master extract files."
+
+
+element "ddn.fieldguide.etl::pipeline.land" as "activity"
+    with
+        id "ddn.fieldguide.etl::pipeline.land"
+        title "Nightly landing"
+        description "Synthetic copy job: source-faithful, no business rules."
+
+
+element "ddn.fieldguide.etl::pipeline.raw" as "dataset"
+    with
+        id "ddn.fieldguide.etl::pipeline.raw"
+        title "Raw staging"
+        description "Synthetic landing zone: immutable copies with arrival metadata."
+
+
+element "ddn.fieldguide.etl::pipeline.conform" as "activity"
+    with
+        id "ddn.fieldguide.etl::pipeline.conform"
+        title "Conform and deduplicate"
+        description "Synthetic transform: key mapping, survivorship, type alignment."
+
+
+element "ddn.fieldguide.etl::pipeline.warehouse" as "dataset"
+    with
+        id "ddn.fieldguide.etl::pipeline.warehouse"
+        title "Integrated warehouse"
+        description "Synthetic conformed store: one customer, one order line."
+
+
+element "ddn.fieldguide.etl::pipeline.feed_sales" as "activity"
+    with
+        id "ddn.fieldguide.etl::pipeline.feed_sales"
+        title "Sales slice build"
+        description "Synthetic daily slice for order reporting."
+
+
+element "ddn.fieldguide.etl::pipeline.feed_churn" as "activity"
+    with
+        id "ddn.fieldguide.etl::pipeline.feed_churn"
+        title "Churn feature build"
+        description "Synthetic feature build for retention analysis."
+
+
+element "ddn.fieldguide.etl::pipeline.sales_mart" as "dataset"
+    with
+        id "ddn.fieldguide.etl::pipeline.sales_mart"
+        title "Sales mart"
+        description "Synthetic star for order reporting."
+
+
+element "ddn.fieldguide.etl::pipeline.churn_mart" as "dataset"
+    with
+        id "ddn.fieldguide.etl::pipeline.churn_mart"
+        title "Churn mart"
+        description "Synthetic features for retention analysis."
+
+
+relation "ddn.fieldguide.etl::pipeline.r1" as "read"
+    with
+        id "ddn.fieldguide.etl::pipeline.r1"
+        title "read produces input for"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.shop"
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.land"
+
+
+relation "ddn.fieldguide.etl::pipeline.r2" as "read"
+    with
+        id "ddn.fieldguide.etl::pipeline.r2"
+        title "read produces input for"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.crm"
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.land"
+
+
+relation "ddn.fieldguide.etl::pipeline.r3" as "write"
+    with
+        id "ddn.fieldguide.etl::pipeline.r3"
+        title "writes output to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.land"
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.raw"
+
+
+relation "ddn.fieldguide.etl::pipeline.r4" as "read"
+    with
+        id "ddn.fieldguide.etl::pipeline.r4"
+        title "read produces input for"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.raw"
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.conform"
+
+
+relation "ddn.fieldguide.etl::pipeline.r5" as "write"
+    with
+        id "ddn.fieldguide.etl::pipeline.r5"
+        title "writes output to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.conform"
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.warehouse"
+
+
+relation "ddn.fieldguide.etl::pipeline.r6" as "read"
+    with
+        id "ddn.fieldguide.etl::pipeline.r6"
+        title "read produces input for"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.warehouse"
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.feed_sales"
+
+
+relation "ddn.fieldguide.etl::pipeline.r7" as "write"
+    with
+        id "ddn.fieldguide.etl::pipeline.r7"
+        title "writes output to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.feed_sales"
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.sales_mart"
+
+
+relation "ddn.fieldguide.etl::pipeline.r8" as "read"
+    with
+        id "ddn.fieldguide.etl::pipeline.r8"
+        title "read produces input for"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.warehouse"
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.feed_churn"
+
+
+relation "ddn.fieldguide.etl::pipeline.r9" as "write"
+    with
+        id "ddn.fieldguide.etl::pipeline.r9"
+        title "writes output to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.feed_churn"
+            item
+                definition
+                    id "ddn.fieldguide.etl::pipeline.churn_mart"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "Synthetic ETL / sources to marts"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.etl::pipeline.shop"
+                item
+                    id "ddn.fieldguide.etl::pipeline.crm"
+                item
+                    id "ddn.fieldguide.etl::pipeline.land"
+                item
+                    id "ddn.fieldguide.etl::pipeline.raw"
+                item
+                    id "ddn.fieldguide.etl::pipeline.conform"
+                item
+                    id "ddn.fieldguide.etl::pipeline.warehouse"
+                item
+                    id "ddn.fieldguide.etl::pipeline.feed_sales"
+                item
+                    id "ddn.fieldguide.etl::pipeline.feed_churn"
+                item
+                    id "ddn.fieldguide.etl::pipeline.sales_mart"
+                item
+                    id "ddn.fieldguide.etl::pipeline.churn_mart"
+                item
+                    id "ddn.fieldguide.etl::pipeline.r1"
+                item
+                    id "ddn.fieldguide.etl::pipeline.r2"
+                item
+                    id "ddn.fieldguide.etl::pipeline.r3"
+                item
+                    id "ddn.fieldguide.etl::pipeline.r4"
+                item
+                    id "ddn.fieldguide.etl::pipeline.r5"
+                item
+                    id "ddn.fieldguide.etl::pipeline.r6"
+                item
+                    id "ddn.fieldguide.etl::pipeline.r7"
+                item
+                    id "ddn.fieldguide.etl::pipeline.r8"
+                item
+                    id "ddn.fieldguide.etl::pipeline.r9"
+        layout
+            algorithm "layered"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.fieldguide.etl::pipeline.shop" named "appearance:diagram:ddn.fieldguide.etl::pipeline.shop"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.shop"
+            body "notes"
+
+    use "ddn.fieldguide.etl::pipeline.crm" named "appearance:diagram:ddn.fieldguide.etl::pipeline.crm"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.crm"
+            body "notes"
+
+    use "ddn.fieldguide.etl::pipeline.land" named "appearance:diagram:ddn.fieldguide.etl::pipeline.land"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.land"
+            body "notes"
+
+    use "ddn.fieldguide.etl::pipeline.raw" named "appearance:diagram:ddn.fieldguide.etl::pipeline.raw"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.raw"
+            body "notes"
+
+    use "ddn.fieldguide.etl::pipeline.conform" named "appearance:diagram:ddn.fieldguide.etl::pipeline.conform"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.conform"
+            body "notes"
+
+    use "ddn.fieldguide.etl::pipeline.warehouse" named "appearance:diagram:ddn.fieldguide.etl::pipeline.warehouse"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.warehouse"
+            body "notes"
+
+    use "ddn.fieldguide.etl::pipeline.feed_sales" named "appearance:diagram:ddn.fieldguide.etl::pipeline.feed_sales"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.feed_sales"
+            body "notes"
+
+    use "ddn.fieldguide.etl::pipeline.feed_churn" named "appearance:diagram:ddn.fieldguide.etl::pipeline.feed_churn"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.feed_churn"
+            body "notes"
+
+    use "ddn.fieldguide.etl::pipeline.sales_mart" named "appearance:diagram:ddn.fieldguide.etl::pipeline.sales_mart"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.sales_mart"
+            body "notes"
+
+    use "ddn.fieldguide.etl::pipeline.churn_mart" named "appearance:diagram:ddn.fieldguide.etl::pipeline.churn_mart"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.churn_mart"
+            body "notes"
+
+    use "ddn.fieldguide.etl::pipeline.r1" named "appearance:diagram:ddn.fieldguide.etl::pipeline.r1"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.r1"
+
+    use "ddn.fieldguide.etl::pipeline.r2" named "appearance:diagram:ddn.fieldguide.etl::pipeline.r2"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.r2"
+
+    use "ddn.fieldguide.etl::pipeline.r3" named "appearance:diagram:ddn.fieldguide.etl::pipeline.r3"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.r3"
+
+    use "ddn.fieldguide.etl::pipeline.r4" named "appearance:diagram:ddn.fieldguide.etl::pipeline.r4"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.r4"
+
+    use "ddn.fieldguide.etl::pipeline.r5" named "appearance:diagram:ddn.fieldguide.etl::pipeline.r5"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.r5"
+
+    use "ddn.fieldguide.etl::pipeline.r6" named "appearance:diagram:ddn.fieldguide.etl::pipeline.r6"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.r6"
+
+    use "ddn.fieldguide.etl::pipeline.r7" named "appearance:diagram:ddn.fieldguide.etl::pipeline.r7"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.r7"
+
+    use "ddn.fieldguide.etl::pipeline.r8" named "appearance:diagram:ddn.fieldguide.etl::pipeline.r8"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.r8"
+
+    use "ddn.fieldguide.etl::pipeline.r9" named "appearance:diagram:ddn.fieldguide.etl::pipeline.r9"
+        with
+            id "appearance:diagram:ddn.fieldguide.etl::pipeline.r9"

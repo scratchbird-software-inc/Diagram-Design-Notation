@@ -1,27 +1,217 @@
-ddn "0.5";
-module "ddn.examples.wireframe";
+version ddn-next-1
 
-// Synthetic settings-screen mock for the wireframe.ui@1 profile. The
-// screen area is a ui.frame object; the contained controls are members of
-// a view frame scoped to it. Drawn as plain rect variants in the classic
-// look with the neutral grey palette — clean low-fi boxes, not a widget
-// toolkit. All data is synthetic.
-data m {
-    object settings "Settings" { kind: "ui.frame"; }
-    object profile_label "Profile" { kind: "ui.label"; }
-    object display_name "Display name" { kind: "ui.input"; }
-    object email_notifications "Email notifications" { kind: "ui.checkbox"; }
-    object timezone_list "Timezone" { kind: "ui.list";
-        fields { utc; berlin; tokyo; }
-    }
-    object avatar_placeholder "Avatar" { kind: "ui.image"; }
-    object save_button "Save" { kind: "ui.button"; }
-}
+publication "publication:settings"
+    with
+        id "publication:settings"
+        title "Settings screen"
+        targets
+            item
+                target
+                    id "settings"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view settings "Settings screen": [@m] as "wireframe.ui@1" {
-    select: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button];
-    style { theme: neutral; }
-    layout { algorithm: layered; direction: down; }
-    publication { size: content; fit: none; }
-    frame settings_area "Settings" { scope: @m.settings; members: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button]; }
-}
+
+element "ddn.examples.wireframe::m.settings" as "ui.frame"
+    with
+        id "ddn.examples.wireframe::m.settings"
+        title "Settings"
+
+
+element "ddn.examples.wireframe::m.profile_label" as "ui.label"
+    with
+        id "ddn.examples.wireframe::m.profile_label"
+        title "Profile"
+
+
+element "ddn.examples.wireframe::m.display_name" as "ui.input"
+    with
+        id "ddn.examples.wireframe::m.display_name"
+        title "Display name"
+
+
+element "ddn.examples.wireframe::m.email_notifications" as "ui.checkbox"
+    with
+        id "ddn.examples.wireframe::m.email_notifications"
+        title "Email notifications"
+
+
+element "ddn.examples.wireframe::m.timezone_list.utc" as "field"
+    with
+        id "ddn.examples.wireframe::m.timezone_list.utc"
+        title "utc"
+        content
+            parent
+                id "ddn.examples.wireframe::m.timezone_list"
+            ordinal 0
+
+
+element "ddn.examples.wireframe::m.timezone_list.berlin" as "field"
+    with
+        id "ddn.examples.wireframe::m.timezone_list.berlin"
+        title "berlin"
+        content
+            parent
+                id "ddn.examples.wireframe::m.timezone_list"
+            ordinal 1
+
+
+element "ddn.examples.wireframe::m.timezone_list.tokyo" as "field"
+    with
+        id "ddn.examples.wireframe::m.timezone_list.tokyo"
+        title "tokyo"
+        content
+            parent
+                id "ddn.examples.wireframe::m.timezone_list"
+            ordinal 2
+
+
+element "ddn.examples.wireframe::m.timezone_list" as "ui.list"
+    with
+        id "ddn.examples.wireframe::m.timezone_list"
+        title "Timezone"
+        members
+            item
+                id "ddn.examples.wireframe::m.timezone_list.utc"
+            item
+                id "ddn.examples.wireframe::m.timezone_list.berlin"
+            item
+                id "ddn.examples.wireframe::m.timezone_list.tokyo"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "utc"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "berlin"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "tokyo"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.wireframe::m.avatar_placeholder" as "ui.image"
+    with
+        id "ddn.examples.wireframe::m.avatar_placeholder"
+        title "Avatar"
+
+
+element "ddn.examples.wireframe::m.save_button" as "ui.button"
+    with
+        id "ddn.examples.wireframe::m.save_button"
+        title "Save"
+
+
+view "settings" as "wireframe.ui@1"
+    with
+        id "settings"
+        title "Settings screen"
+        selection
+            include
+                item
+                    id "ddn.examples.wireframe::m.profile_label"
+                item
+                    id "ddn.examples.wireframe::m.display_name"
+                item
+                    id "ddn.examples.wireframe::m.email_notifications"
+                item
+                    id "ddn.examples.wireframe::m.timezone_list"
+                item
+                    id "ddn.examples.wireframe::m.avatar_placeholder"
+                item
+                    id "ddn.examples.wireframe::m.save_button"
+        style
+            theme "neutral"
+        layout
+            algorithm "layered"
+            direction "down"
+        regions
+            item
+                id "ddn.examples.wireframe::settings.settings_area"
+                name "Settings"
+                scope
+                    id "ddn.examples.wireframe::m.settings"
+                members
+                    item
+                        id "ddn.examples.wireframe::m.profile_label"
+                    item
+                        id "ddn.examples.wireframe::m.display_name"
+                    item
+                        id "ddn.examples.wireframe::m.email_notifications"
+                    item
+                        id "ddn.examples.wireframe::m.timezone_list"
+                    item
+                        id "ddn.examples.wireframe::m.avatar_placeholder"
+                    item
+                        id "ddn.examples.wireframe::m.save_button"
+        publication
+            id "publication:settings"
+
+    use "ddn.examples.wireframe::m.profile_label" named "appearance:settings:ddn.examples.wireframe::m.profile_label"
+        with
+            id "appearance:settings:ddn.examples.wireframe::m.profile_label"
+
+    use "ddn.examples.wireframe::m.display_name" named "appearance:settings:ddn.examples.wireframe::m.display_name"
+        with
+            id "appearance:settings:ddn.examples.wireframe::m.display_name"
+
+    use "ddn.examples.wireframe::m.email_notifications" named "appearance:settings:ddn.examples.wireframe::m.email_notifications"
+        with
+            id "appearance:settings:ddn.examples.wireframe::m.email_notifications"
+
+    use "ddn.examples.wireframe::m.timezone_list" named "appearance:settings:ddn.examples.wireframe::m.timezone_list"
+        with
+            id "appearance:settings:ddn.examples.wireframe::m.timezone_list"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.wireframe::m.avatar_placeholder" named "appearance:settings:ddn.examples.wireframe::m.avatar_placeholder"
+        with
+            id "appearance:settings:ddn.examples.wireframe::m.avatar_placeholder"
+
+    use "ddn.examples.wireframe::m.save_button" named "appearance:settings:ddn.examples.wireframe::m.save_button"
+        with
+            id "appearance:settings:ddn.examples.wireframe::m.save_button"

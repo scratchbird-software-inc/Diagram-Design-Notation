@@ -1,72 +1,1548 @@
-ddn "0.5";
-module "ddn.examples.elements";
-import "shared.ddn" as shared;
+version ddn-next-1
 
-data model {
-    table customer "Customer" {maturity: draft; workload: [oltp]; fields { customer_id { key: primary; } display_name; status; } }
-    history history "Customer history" {workload: [olap]; temporal: bitemporal; fields { customer_id; valid_from; recorded_from; } }
-    collection profile "Profile document" {fields { customer_id; address { shape: object; } tags { shape: array; } } }
-    topic events "Customer events" {fields { event_id; occurred_at; payload; } }
-    activity transform "Build history";
-    procedure procedure "Reconcile customers" {fields { tenant_id; batch_id; } }
-    domain identifier "Customer identifier" { meaning: "Stable registry identity"; representation: undecided; }
-    schema schema "SQL namespace";
-    service server "Cloud SQL service" {location: cloud; }
-    cloud cloud "Cloud scope";
-    note note "Design decision" {description: "Examples illustrate intent; the data model remains independent of its look."; }
-    sample example "Synthetic rows" { mode: synthetic; columns: [@customer.customer_id, @customer.status]; rows: [["C001", "Active"], ["C002", "Suspended"]]; }
-}
+publication "publication:classic"
+    with
+        id "publication:classic"
+        title "Classic / fixed semantic notation"
+        targets
+            item
+                target
+                    id "classic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1600
+                unit "px"
+            height
+                value 1050
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view classic "Classic / fixed semantic notation" {
-    data: [@model];
-    format: @shared.styles.technical;
-    style: @shared.styles.classic;
-    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
-    legend { mode: text; placement: none; }
 
-}
+publication "publication:handDrawn"
+    with
+        id "publication:handDrawn"
+        title "Hand drawn / the same model"
+        targets
+            item
+                target
+                    id "handDrawn"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1600
+                unit "px"
+            height
+                value 1050
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view handDrawn "Hand drawn / the same model" {
-    data: [@model];
-    format: @shared.styles.technical;
-    style: @shared.styles.hand;
-    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
-    legend { mode: text; placement: none; }
 
-}
+publication "publication:neo"
+    with
+        id "publication:neo"
+        title "Neo / the same model"
+        targets
+            item
+                target
+                    id "neo"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1600
+                unit "px"
+            height
+                value 1050
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view neo "Neo / the same model" {
-    data: [@model];
-    format: @shared.styles.technical;
-    style: @shared.styles.neo;
-    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
-    legend { mode: text; placement: none; }
 
-}
+publication "publication:dark"
+    with
+        id "publication:dark"
+        title "Dark canvas / fixed contrast palette"
+        targets
+            item
+                target
+                    id "dark"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1600
+                unit "px"
+            height
+                value 1050
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view dark "Dark canvas / fixed contrast palette" {
-    data: [@model];
-    format: @shared.styles.technical;
-    style: @shared.styles.dark;
-    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
-    legend { mode: text; placement: none; }
 
-}
+publication "publication:neutral"
+    with
+        id "publication:neutral"
+        title "Neutral / print-safe symbols"
+        targets
+            item
+                target
+                    id "neutral"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1600
+                unit "px"
+            height
+                value 1050
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view neutral "Neutral / print-safe symbols" {
-    data: [@model];
-    format: @shared.styles.technical;
-    style: @shared.styles.neutral;
-    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
-    legend { mode: text; placement: none; }
 
-}
+publication "publication:forest"
+    with
+        id "publication:forest"
+        title "Forest canvas / hand-drawn treatment"
+        targets
+            item
+                target
+                    id "forest"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1600
+                unit "px"
+            height
+                value 1050
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view forest "Forest canvas / hand-drawn treatment" {
-    data: [@model];
-    format: @shared.styles.technical;
-    style: @shared.styles.forest;
-    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
-    legend { mode: text; placement: none; }
 
-}
+element "ddn.examples.elements::model.customer.customer_id" as "field"
+    with
+        id "ddn.examples.elements::model.customer.customer_id"
+        title "customer_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.examples.elements::model.customer"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.examples.elements::model.customer.display_name" as "field"
+    with
+        id "ddn.examples.elements::model.customer.display_name"
+        title "display_name"
+        content
+            parent
+                id "ddn.examples.elements::model.customer"
+            ordinal 1
+
+
+element "ddn.examples.elements::model.customer.status" as "field"
+    with
+        id "ddn.examples.elements::model.customer.status"
+        title "status"
+        content
+            parent
+                id "ddn.examples.elements::model.customer"
+            ordinal 2
+
+
+element "ddn.examples.elements::model.customer" as "table"
+    with
+        id "ddn.examples.elements::model.customer"
+        title "Customer"
+        facets
+            maturity
+                item "DRF"
+            workload
+                item "OLTP"
+        properties
+            workload
+                item "oltp"
+        members
+            item
+                id "ddn.examples.elements::model.customer.customer_id"
+            item
+                id "ddn.examples.elements::model.customer.display_name"
+            item
+                id "ddn.examples.elements::model.customer.status"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.elements::model.history.customer_id" as "field"
+    with
+        id "ddn.examples.elements::model.history.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.examples.elements::model.history"
+            ordinal 0
+
+
+element "ddn.examples.elements::model.history.valid_from" as "field"
+    with
+        id "ddn.examples.elements::model.history.valid_from"
+        title "valid_from"
+        content
+            parent
+                id "ddn.examples.elements::model.history"
+            ordinal 1
+
+
+element "ddn.examples.elements::model.history.recorded_from" as "field"
+    with
+        id "ddn.examples.elements::model.history.recorded_from"
+        title "recorded_from"
+        content
+            parent
+                id "ddn.examples.elements::model.history"
+            ordinal 2
+
+
+element "ddn.examples.elements::model.history" as "history"
+    with
+        id "ddn.examples.elements::model.history"
+        title "Customer history"
+        facets
+            workload
+                item "OLAP"
+            temporal
+                item "BT"
+        properties
+            workload
+                item "olap"
+            temporal "bitemporal"
+        members
+            item
+                id "ddn.examples.elements::model.history.customer_id"
+            item
+                id "ddn.examples.elements::model.history.valid_from"
+            item
+                id "ddn.examples.elements::model.history.recorded_from"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "valid_from"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "recorded_from"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.elements::model.profile.customer_id" as "field"
+    with
+        id "ddn.examples.elements::model.profile.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.examples.elements::model.profile"
+            ordinal 0
+
+
+element "ddn.examples.elements::model.profile.address" as "field"
+    with
+        id "ddn.examples.elements::model.profile.address"
+        title "address"
+        properties
+            shape "object"
+        content
+            parent
+                id "ddn.examples.elements::model.profile"
+            ordinal 1
+
+
+element "ddn.examples.elements::model.profile.tags" as "field"
+    with
+        id "ddn.examples.elements::model.profile.tags"
+        title "tags"
+        properties
+            shape "array"
+        content
+            parent
+                id "ddn.examples.elements::model.profile"
+            ordinal 2
+
+
+element "ddn.examples.elements::model.profile" as "collection"
+    with
+        id "ddn.examples.elements::model.profile"
+        title "Profile document"
+        members
+            item
+                id "ddn.examples.elements::model.profile.customer_id"
+            item
+                id "ddn.examples.elements::model.profile.address"
+            item
+                id "ddn.examples.elements::model.profile.tags"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "address"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "tags"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.elements::model.events.event_id" as "field"
+    with
+        id "ddn.examples.elements::model.events.event_id"
+        title "event_id"
+        content
+            parent
+                id "ddn.examples.elements::model.events"
+            ordinal 0
+
+
+element "ddn.examples.elements::model.events.occurred_at" as "field"
+    with
+        id "ddn.examples.elements::model.events.occurred_at"
+        title "occurred_at"
+        content
+            parent
+                id "ddn.examples.elements::model.events"
+            ordinal 1
+
+
+element "ddn.examples.elements::model.events.payload" as "field"
+    with
+        id "ddn.examples.elements::model.events.payload"
+        title "payload"
+        content
+            parent
+                id "ddn.examples.elements::model.events"
+            ordinal 2
+
+
+element "ddn.examples.elements::model.events" as "topic"
+    with
+        id "ddn.examples.elements::model.events"
+        title "Customer events"
+        members
+            item
+                id "ddn.examples.elements::model.events.event_id"
+            item
+                id "ddn.examples.elements::model.events.occurred_at"
+            item
+                id "ddn.examples.elements::model.events.payload"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "event_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "occurred_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "payload"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.elements::model.transform" as "activity"
+    with
+        id "ddn.examples.elements::model.transform"
+        title "Build history"
+
+
+element "ddn.examples.elements::model.procedure.tenant_id" as "field"
+    with
+        id "ddn.examples.elements::model.procedure.tenant_id"
+        title "tenant_id"
+        content
+            parent
+                id "ddn.examples.elements::model.procedure"
+            ordinal 0
+
+
+element "ddn.examples.elements::model.procedure.batch_id" as "field"
+    with
+        id "ddn.examples.elements::model.procedure.batch_id"
+        title "batch_id"
+        content
+            parent
+                id "ddn.examples.elements::model.procedure"
+            ordinal 1
+
+
+element "ddn.examples.elements::model.procedure" as "procedure"
+    with
+        id "ddn.examples.elements::model.procedure"
+        title "Reconcile customers"
+        members
+            item
+                id "ddn.examples.elements::model.procedure.tenant_id"
+            item
+                id "ddn.examples.elements::model.procedure.batch_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "tenant_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "batch_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.elements::model.identifier" as "domain"
+    with
+        id "ddn.examples.elements::model.identifier"
+        title "Customer identifier"
+        content
+            meaning "Stable registry identity"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Stable registry identity"
+                    }
+                format "plain"
+
+
+element "ddn.examples.elements::model.schema" as "schema"
+    with
+        id "ddn.examples.elements::model.schema"
+        title "SQL namespace"
+
+
+element "ddn.examples.elements::model.server" as "service"
+    with
+        id "ddn.examples.elements::model.server"
+        title "Cloud SQL service"
+        properties
+            location "cloud"
+
+
+element "ddn.examples.elements::model.cloud" as "cloud"
+    with
+        id "ddn.examples.elements::model.cloud"
+        title "Cloud scope"
+
+
+element "ddn.examples.elements::model.note" as "note"
+    with
+        id "ddn.examples.elements::model.note"
+        title "Design decision"
+        description "Examples illustrate intent; the data model remains independent of its look."
+        content
+            text "Examples illustrate intent; the data model remains independent of its look."
+        draft
+            text "Examples illustrate intent; the data model remains independent of its look."
+
+
+element "ddn.examples.elements::model.example" as "sample"
+    with
+        id "ddn.examples.elements::model.example"
+        title "Synthetic rows"
+        properties
+            mode "synthetic"
+            columns
+                item
+                    id "ddn.examples.elements::model.customer.customer_id"
+                item
+                    id "ddn.examples.elements::model.customer.status"
+            rows
+                item
+                    item "C001"
+                    item "Active"
+                item
+                    item "C002"
+                    item "Suspended"
+        data
+            columns
+                item
+                    id "column-0"
+                    label "customer_id"
+                item
+                    id "column-1"
+                    label "status"
+            rows
+                item
+                    item "C001"
+                    item "Active"
+                item
+                    item "C002"
+                    item "Suspended"
+
+
+view "classic" as "ddn@1"
+    with
+        id "classic"
+        title "Classic / fixed semantic notation"
+        selection
+            include
+                item
+                    id "ddn.examples.elements::model.customer"
+                item
+                    id "ddn.examples.elements::model.history"
+                item
+                    id "ddn.examples.elements::model.profile"
+                item
+                    id "ddn.examples.elements::model.events"
+                item
+                    id "ddn.examples.elements::model.transform"
+                item
+                    id "ddn.examples.elements::model.procedure"
+                item
+                    id "ddn.examples.elements::model.identifier"
+                item
+                    id "ddn.examples.elements::model.schema"
+                item
+                    id "ddn.examples.elements::model.server"
+                item
+                    id "ddn.examples.elements::model.cloud"
+                item
+                    id "ddn.examples.elements::model.note"
+                item
+                    id "ddn.examples.elements::model.example"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            placement "none"
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:classic"
+
+    use "ddn.examples.elements::model.customer" named "appearance:classic:ddn.examples.elements::model.customer"
+        with
+            id "appearance:classic:ddn.examples.elements::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.history" named "appearance:classic:ddn.examples.elements::model.history"
+        with
+            id "appearance:classic:ddn.examples.elements::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.profile" named "appearance:classic:ddn.examples.elements::model.profile"
+        with
+            id "appearance:classic:ddn.examples.elements::model.profile"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.events" named "appearance:classic:ddn.examples.elements::model.events"
+        with
+            id "appearance:classic:ddn.examples.elements::model.events"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.transform" named "appearance:classic:ddn.examples.elements::model.transform"
+        with
+            id "appearance:classic:ddn.examples.elements::model.transform"
+
+    use "ddn.examples.elements::model.procedure" named "appearance:classic:ddn.examples.elements::model.procedure"
+        with
+            id "appearance:classic:ddn.examples.elements::model.procedure"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.identifier" named "appearance:classic:ddn.examples.elements::model.identifier"
+        with
+            id "appearance:classic:ddn.examples.elements::model.identifier"
+            body "notes"
+
+    use "ddn.examples.elements::model.schema" named "appearance:classic:ddn.examples.elements::model.schema"
+        with
+            id "appearance:classic:ddn.examples.elements::model.schema"
+
+    use "ddn.examples.elements::model.server" named "appearance:classic:ddn.examples.elements::model.server"
+        with
+            id "appearance:classic:ddn.examples.elements::model.server"
+
+    use "ddn.examples.elements::model.cloud" named "appearance:classic:ddn.examples.elements::model.cloud"
+        with
+            id "appearance:classic:ddn.examples.elements::model.cloud"
+
+    use "ddn.examples.elements::model.note" named "appearance:classic:ddn.examples.elements::model.note"
+        with
+            id "appearance:classic:ddn.examples.elements::model.note"
+            body "draft"
+
+    use "ddn.examples.elements::model.example" named "appearance:classic:ddn.examples.elements::model.example"
+        with
+            id "appearance:classic:ddn.examples.elements::model.example"
+            body "columns"
+
+
+view "handDrawn" as "ddn@1"
+    with
+        id "handDrawn"
+        title "Hand drawn / the same model"
+        selection
+            include
+                item
+                    id "ddn.examples.elements::model.customer"
+                item
+                    id "ddn.examples.elements::model.history"
+                item
+                    id "ddn.examples.elements::model.profile"
+                item
+                    id "ddn.examples.elements::model.events"
+                item
+                    id "ddn.examples.elements::model.transform"
+                item
+                    id "ddn.examples.elements::model.procedure"
+                item
+                    id "ddn.examples.elements::model.identifier"
+                item
+                    id "ddn.examples.elements::model.schema"
+                item
+                    id "ddn.examples.elements::model.server"
+                item
+                    id "ddn.examples.elements::model.cloud"
+                item
+                    id "ddn.examples.elements::model.note"
+                item
+                    id "ddn.examples.elements::model.example"
+        style
+            look "handdrawn"
+            font "handwriting"
+            roughness 1.8
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            placement "none"
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:handDrawn"
+
+    use "ddn.examples.elements::model.customer" named "appearance:handDrawn:ddn.examples.elements::model.customer"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.history" named "appearance:handDrawn:ddn.examples.elements::model.history"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.profile" named "appearance:handDrawn:ddn.examples.elements::model.profile"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.profile"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.events" named "appearance:handDrawn:ddn.examples.elements::model.events"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.events"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.transform" named "appearance:handDrawn:ddn.examples.elements::model.transform"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.transform"
+
+    use "ddn.examples.elements::model.procedure" named "appearance:handDrawn:ddn.examples.elements::model.procedure"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.procedure"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.identifier" named "appearance:handDrawn:ddn.examples.elements::model.identifier"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.identifier"
+            body "notes"
+
+    use "ddn.examples.elements::model.schema" named "appearance:handDrawn:ddn.examples.elements::model.schema"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.schema"
+
+    use "ddn.examples.elements::model.server" named "appearance:handDrawn:ddn.examples.elements::model.server"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.server"
+
+    use "ddn.examples.elements::model.cloud" named "appearance:handDrawn:ddn.examples.elements::model.cloud"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.cloud"
+
+    use "ddn.examples.elements::model.note" named "appearance:handDrawn:ddn.examples.elements::model.note"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.note"
+            body "draft"
+
+    use "ddn.examples.elements::model.example" named "appearance:handDrawn:ddn.examples.elements::model.example"
+        with
+            id "appearance:handDrawn:ddn.examples.elements::model.example"
+            body "columns"
+
+
+view "neo" as "ddn@1"
+    with
+        id "neo"
+        title "Neo / the same model"
+        selection
+            include
+                item
+                    id "ddn.examples.elements::model.customer"
+                item
+                    id "ddn.examples.elements::model.history"
+                item
+                    id "ddn.examples.elements::model.profile"
+                item
+                    id "ddn.examples.elements::model.events"
+                item
+                    id "ddn.examples.elements::model.transform"
+                item
+                    id "ddn.examples.elements::model.procedure"
+                item
+                    id "ddn.examples.elements::model.identifier"
+                item
+                    id "ddn.examples.elements::model.schema"
+                item
+                    id "ddn.examples.elements::model.server"
+                item
+                    id "ddn.examples.elements::model.cloud"
+                item
+                    id "ddn.examples.elements::model.note"
+                item
+                    id "ddn.examples.elements::model.example"
+        style
+            look "neo"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            placement "none"
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:neo"
+
+    use "ddn.examples.elements::model.customer" named "appearance:neo:ddn.examples.elements::model.customer"
+        with
+            id "appearance:neo:ddn.examples.elements::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.history" named "appearance:neo:ddn.examples.elements::model.history"
+        with
+            id "appearance:neo:ddn.examples.elements::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.profile" named "appearance:neo:ddn.examples.elements::model.profile"
+        with
+            id "appearance:neo:ddn.examples.elements::model.profile"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.events" named "appearance:neo:ddn.examples.elements::model.events"
+        with
+            id "appearance:neo:ddn.examples.elements::model.events"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.transform" named "appearance:neo:ddn.examples.elements::model.transform"
+        with
+            id "appearance:neo:ddn.examples.elements::model.transform"
+
+    use "ddn.examples.elements::model.procedure" named "appearance:neo:ddn.examples.elements::model.procedure"
+        with
+            id "appearance:neo:ddn.examples.elements::model.procedure"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.identifier" named "appearance:neo:ddn.examples.elements::model.identifier"
+        with
+            id "appearance:neo:ddn.examples.elements::model.identifier"
+            body "notes"
+
+    use "ddn.examples.elements::model.schema" named "appearance:neo:ddn.examples.elements::model.schema"
+        with
+            id "appearance:neo:ddn.examples.elements::model.schema"
+
+    use "ddn.examples.elements::model.server" named "appearance:neo:ddn.examples.elements::model.server"
+        with
+            id "appearance:neo:ddn.examples.elements::model.server"
+
+    use "ddn.examples.elements::model.cloud" named "appearance:neo:ddn.examples.elements::model.cloud"
+        with
+            id "appearance:neo:ddn.examples.elements::model.cloud"
+
+    use "ddn.examples.elements::model.note" named "appearance:neo:ddn.examples.elements::model.note"
+        with
+            id "appearance:neo:ddn.examples.elements::model.note"
+            body "draft"
+
+    use "ddn.examples.elements::model.example" named "appearance:neo:ddn.examples.elements::model.example"
+        with
+            id "appearance:neo:ddn.examples.elements::model.example"
+            body "columns"
+
+
+view "dark" as "ddn@1"
+    with
+        id "dark"
+        title "Dark canvas / fixed contrast palette"
+        selection
+            include
+                item
+                    id "ddn.examples.elements::model.customer"
+                item
+                    id "ddn.examples.elements::model.history"
+                item
+                    id "ddn.examples.elements::model.profile"
+                item
+                    id "ddn.examples.elements::model.events"
+                item
+                    id "ddn.examples.elements::model.transform"
+                item
+                    id "ddn.examples.elements::model.procedure"
+                item
+                    id "ddn.examples.elements::model.identifier"
+                item
+                    id "ddn.examples.elements::model.schema"
+                item
+                    id "ddn.examples.elements::model.server"
+                item
+                    id "ddn.examples.elements::model.cloud"
+                item
+                    id "ddn.examples.elements::model.note"
+                item
+                    id "ddn.examples.elements::model.example"
+        style
+            theme "dark"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            placement "none"
+            width 280
+        publication
+            id "publication:dark"
+
+    use "ddn.examples.elements::model.customer" named "appearance:dark:ddn.examples.elements::model.customer"
+        with
+            id "appearance:dark:ddn.examples.elements::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.history" named "appearance:dark:ddn.examples.elements::model.history"
+        with
+            id "appearance:dark:ddn.examples.elements::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.profile" named "appearance:dark:ddn.examples.elements::model.profile"
+        with
+            id "appearance:dark:ddn.examples.elements::model.profile"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.events" named "appearance:dark:ddn.examples.elements::model.events"
+        with
+            id "appearance:dark:ddn.examples.elements::model.events"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.transform" named "appearance:dark:ddn.examples.elements::model.transform"
+        with
+            id "appearance:dark:ddn.examples.elements::model.transform"
+
+    use "ddn.examples.elements::model.procedure" named "appearance:dark:ddn.examples.elements::model.procedure"
+        with
+            id "appearance:dark:ddn.examples.elements::model.procedure"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.identifier" named "appearance:dark:ddn.examples.elements::model.identifier"
+        with
+            id "appearance:dark:ddn.examples.elements::model.identifier"
+            body "notes"
+
+    use "ddn.examples.elements::model.schema" named "appearance:dark:ddn.examples.elements::model.schema"
+        with
+            id "appearance:dark:ddn.examples.elements::model.schema"
+
+    use "ddn.examples.elements::model.server" named "appearance:dark:ddn.examples.elements::model.server"
+        with
+            id "appearance:dark:ddn.examples.elements::model.server"
+
+    use "ddn.examples.elements::model.cloud" named "appearance:dark:ddn.examples.elements::model.cloud"
+        with
+            id "appearance:dark:ddn.examples.elements::model.cloud"
+
+    use "ddn.examples.elements::model.note" named "appearance:dark:ddn.examples.elements::model.note"
+        with
+            id "appearance:dark:ddn.examples.elements::model.note"
+            body "draft"
+
+    use "ddn.examples.elements::model.example" named "appearance:dark:ddn.examples.elements::model.example"
+        with
+            id "appearance:dark:ddn.examples.elements::model.example"
+            body "columns"
+
+
+view "neutral" as "ddn@1"
+    with
+        id "neutral"
+        title "Neutral / print-safe symbols"
+        selection
+            include
+                item
+                    id "ddn.examples.elements::model.customer"
+                item
+                    id "ddn.examples.elements::model.history"
+                item
+                    id "ddn.examples.elements::model.profile"
+                item
+                    id "ddn.examples.elements::model.events"
+                item
+                    id "ddn.examples.elements::model.transform"
+                item
+                    id "ddn.examples.elements::model.procedure"
+                item
+                    id "ddn.examples.elements::model.identifier"
+                item
+                    id "ddn.examples.elements::model.schema"
+                item
+                    id "ddn.examples.elements::model.server"
+                item
+                    id "ddn.examples.elements::model.cloud"
+                item
+                    id "ddn.examples.elements::model.note"
+                item
+                    id "ddn.examples.elements::model.example"
+        style
+            theme "neutral"
+            font "mono"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            placement "none"
+            width 280
+        publication
+            id "publication:neutral"
+
+    use "ddn.examples.elements::model.customer" named "appearance:neutral:ddn.examples.elements::model.customer"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.history" named "appearance:neutral:ddn.examples.elements::model.history"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.profile" named "appearance:neutral:ddn.examples.elements::model.profile"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.profile"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.events" named "appearance:neutral:ddn.examples.elements::model.events"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.events"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.transform" named "appearance:neutral:ddn.examples.elements::model.transform"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.transform"
+
+    use "ddn.examples.elements::model.procedure" named "appearance:neutral:ddn.examples.elements::model.procedure"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.procedure"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.identifier" named "appearance:neutral:ddn.examples.elements::model.identifier"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.identifier"
+            body "notes"
+
+    use "ddn.examples.elements::model.schema" named "appearance:neutral:ddn.examples.elements::model.schema"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.schema"
+
+    use "ddn.examples.elements::model.server" named "appearance:neutral:ddn.examples.elements::model.server"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.server"
+
+    use "ddn.examples.elements::model.cloud" named "appearance:neutral:ddn.examples.elements::model.cloud"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.cloud"
+
+    use "ddn.examples.elements::model.note" named "appearance:neutral:ddn.examples.elements::model.note"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.note"
+            body "draft"
+
+    use "ddn.examples.elements::model.example" named "appearance:neutral:ddn.examples.elements::model.example"
+        with
+            id "appearance:neutral:ddn.examples.elements::model.example"
+            body "columns"
+
+
+view "forest" as "ddn@1"
+    with
+        id "forest"
+        title "Forest canvas / hand-drawn treatment"
+        selection
+            include
+                item
+                    id "ddn.examples.elements::model.customer"
+                item
+                    id "ddn.examples.elements::model.history"
+                item
+                    id "ddn.examples.elements::model.profile"
+                item
+                    id "ddn.examples.elements::model.events"
+                item
+                    id "ddn.examples.elements::model.transform"
+                item
+                    id "ddn.examples.elements::model.procedure"
+                item
+                    id "ddn.examples.elements::model.identifier"
+                item
+                    id "ddn.examples.elements::model.schema"
+                item
+                    id "ddn.examples.elements::model.server"
+                item
+                    id "ddn.examples.elements::model.cloud"
+                item
+                    id "ddn.examples.elements::model.note"
+                item
+                    id "ddn.examples.elements::model.example"
+        style
+            look "handdrawn"
+            theme "forest"
+            font "handwriting"
+            roughness 1.8
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            placement "none"
+            width 280
+        publication
+            id "publication:forest"
+
+    use "ddn.examples.elements::model.customer" named "appearance:forest:ddn.examples.elements::model.customer"
+        with
+            id "appearance:forest:ddn.examples.elements::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.history" named "appearance:forest:ddn.examples.elements::model.history"
+        with
+            id "appearance:forest:ddn.examples.elements::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.profile" named "appearance:forest:ddn.examples.elements::model.profile"
+        with
+            id "appearance:forest:ddn.examples.elements::model.profile"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.events" named "appearance:forest:ddn.examples.elements::model.events"
+        with
+            id "appearance:forest:ddn.examples.elements::model.events"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.transform" named "appearance:forest:ddn.examples.elements::model.transform"
+        with
+            id "appearance:forest:ddn.examples.elements::model.transform"
+
+    use "ddn.examples.elements::model.procedure" named "appearance:forest:ddn.examples.elements::model.procedure"
+        with
+            id "appearance:forest:ddn.examples.elements::model.procedure"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.elements::model.identifier" named "appearance:forest:ddn.examples.elements::model.identifier"
+        with
+            id "appearance:forest:ddn.examples.elements::model.identifier"
+            body "notes"
+
+    use "ddn.examples.elements::model.schema" named "appearance:forest:ddn.examples.elements::model.schema"
+        with
+            id "appearance:forest:ddn.examples.elements::model.schema"
+
+    use "ddn.examples.elements::model.server" named "appearance:forest:ddn.examples.elements::model.server"
+        with
+            id "appearance:forest:ddn.examples.elements::model.server"
+
+    use "ddn.examples.elements::model.cloud" named "appearance:forest:ddn.examples.elements::model.cloud"
+        with
+            id "appearance:forest:ddn.examples.elements::model.cloud"
+
+    use "ddn.examples.elements::model.note" named "appearance:forest:ddn.examples.elements::model.note"
+        with
+            id "appearance:forest:ddn.examples.elements::model.note"
+            body "draft"
+
+    use "ddn.examples.elements::model.example" named "appearance:forest:ddn.examples.elements::model.example"
+        with
+            id "appearance:forest:ddn.examples.elements::model.example"
+            body "columns"

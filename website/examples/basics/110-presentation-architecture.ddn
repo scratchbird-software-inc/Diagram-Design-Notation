@@ -1,42 +1,486 @@
-ddn "0.5";
-module "ddn.examples.presentation-architecture";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+asset "artwork::presentation-devices@1:team" as resource from "../../assets/icons/presentation-devices-1/team.svg"
+    with
+        id "artwork::presentation-devices@1:team"
+        media_type "image/svg+xml"
 
-// Presentation-style system overview (Visio/deck idiom, B1-101 slice 3):
-// detailed illustrations instead of stroke icons, with relations glued to
-// the artwork's declared connection anchors. The illustrations come from the
-// optional presentation-devices art pack (ddn-art-pack@1) — render with
-//   --pack standard/registry/art-packs/presentation-devices__1.json
-// Without the pack registered, each node draws an honest placeholder.
-data shop {
-    object customers "Customers" { kind: entity; x_art: { library: "presentation-devices@1", item: "team" }; }
-    object storefront "Storefront office" { kind: entity; x_art: { library: "presentation-devices@1", item: "office-building" }; }
-    object web "Web storefront" { kind: application; x_art: { library: "presentation-devices@1", item: "laptop" }; }
-    object edge "Edge firewall" { kind: application; x_art: { library: "presentation-devices@1", item: "firewall" }; }
-    object app "Application server" { kind: application; x_art: { library: "presentation-devices@1", item: "server" }; }
-    object rack "Colocation rack" { kind: entity; x_art: { library: "presentation-devices@1", item: "server-rack" }; }
-    object db "Order database" { kind: database; x_art: { library: "presentation-devices@1", item: "database" }; }
-    object backup "Backup storage" { kind: backup; x_art: { library: "presentation-devices@1", item: "storage-array" }; }
-    object plant "Fulfillment plant" { kind: entity; x_art: { library: "presentation-devices@1", item: "factory" }; }
-    object courier "Courier" { kind: entity; x_art: { library: "presentation-devices@1", item: "truck" }; }
 
-    relation f1 "visit" @customers -> @storefront { kind: assoc; }
-    relation f2 "browse & order" @customers -> @web { kind: assoc; }
-    relation f3 "https" @web -> @edge { kind: flow; }
-    relation f4 "filtered traffic" @edge -> @app { kind: flow; }
-    relation f5 "orders" @app -> @db { kind: flow; }
-    relation f6 "hosts" @rack -> @app { kind: assoc; }
-    relation f7 "nightly backup" @db -> @backup { kind: flow; }
-    relation f8 "pick lists" @app -> @plant { kind: assoc; }
-    relation f9 "parcels" @plant -> @courier { kind: assoc; }
-    relation f10 "delivery" @courier -> @customers { kind: assoc; }
-}
+asset "artwork::presentation-devices@1:office-building" as resource from "../../assets/icons/presentation-devices-1/office-building.svg"
+    with
+        id "artwork::presentation-devices@1:office-building"
+        media_type "image/svg+xml"
 
-view overview "Storefront systems — presentation overview" {
-    data: [@shop];
-    format: @shared.styles.technical;
-    projection { kind: graph; profile: "ddn@1"; }
-    layout { algorithm: layered; direction: right; gap: 130px; row_gap: 130px; }
-    publication { size: content; fit: none; }
-}
+
+asset "artwork::presentation-devices@1:laptop" as resource from "../../assets/icons/presentation-devices-1/laptop.svg"
+    with
+        id "artwork::presentation-devices@1:laptop"
+        media_type "image/svg+xml"
+
+
+asset "artwork::presentation-devices@1:firewall" as resource from "../../assets/icons/presentation-devices-1/firewall.svg"
+    with
+        id "artwork::presentation-devices@1:firewall"
+        media_type "image/svg+xml"
+
+
+asset "artwork::presentation-devices@1:server" as resource from "../../assets/icons/presentation-devices-1/server.svg"
+    with
+        id "artwork::presentation-devices@1:server"
+        media_type "image/svg+xml"
+
+
+asset "artwork::presentation-devices@1:server-rack" as resource from "../../assets/icons/presentation-devices-1/server-rack.svg"
+    with
+        id "artwork::presentation-devices@1:server-rack"
+        media_type "image/svg+xml"
+
+
+asset "artwork::presentation-devices@1:database" as resource from "../../assets/icons/presentation-devices-1/database.svg"
+    with
+        id "artwork::presentation-devices@1:database"
+        media_type "image/svg+xml"
+
+
+asset "artwork::presentation-devices@1:storage-array" as resource from "../../assets/icons/presentation-devices-1/storage-array.svg"
+    with
+        id "artwork::presentation-devices@1:storage-array"
+        media_type "image/svg+xml"
+
+
+asset "artwork::presentation-devices@1:factory" as resource from "../../assets/icons/presentation-devices-1/factory.svg"
+    with
+        id "artwork::presentation-devices@1:factory"
+        media_type "image/svg+xml"
+
+
+asset "artwork::presentation-devices@1:truck" as resource from "../../assets/icons/presentation-devices-1/truck.svg"
+    with
+        id "artwork::presentation-devices@1:truck"
+        media_type "image/svg+xml"
+
+
+publication "publication:overview"
+    with
+        id "publication:overview"
+        title "Storefront systems — presentation overview"
+        targets
+            item
+                target
+                    id "overview"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
+
+
+element "ddn.examples.presentation-architecture::shop.customers" as "entity"
+    with
+        id "ddn.examples.presentation-architecture::shop.customers"
+        title "Customers"
+        metadata
+            x_art
+                library "presentation-devices@1"
+                "item" "team"
+
+
+element "ddn.examples.presentation-architecture::shop.storefront" as "entity"
+    with
+        id "ddn.examples.presentation-architecture::shop.storefront"
+        title "Storefront office"
+        metadata
+            x_art
+                library "presentation-devices@1"
+                "item" "office-building"
+
+
+element "ddn.examples.presentation-architecture::shop.web" as "application"
+    with
+        id "ddn.examples.presentation-architecture::shop.web"
+        title "Web storefront"
+        metadata
+            x_art
+                library "presentation-devices@1"
+                "item" "laptop"
+
+
+element "ddn.examples.presentation-architecture::shop.edge" as "application"
+    with
+        id "ddn.examples.presentation-architecture::shop.edge"
+        title "Edge firewall"
+        metadata
+            x_art
+                library "presentation-devices@1"
+                "item" "firewall"
+
+
+element "ddn.examples.presentation-architecture::shop.app" as "application"
+    with
+        id "ddn.examples.presentation-architecture::shop.app"
+        title "Application server"
+        metadata
+            x_art
+                library "presentation-devices@1"
+                "item" "server"
+
+
+element "ddn.examples.presentation-architecture::shop.rack" as "entity"
+    with
+        id "ddn.examples.presentation-architecture::shop.rack"
+        title "Colocation rack"
+        metadata
+            x_art
+                library "presentation-devices@1"
+                "item" "server-rack"
+
+
+element "ddn.examples.presentation-architecture::shop.db" as "database"
+    with
+        id "ddn.examples.presentation-architecture::shop.db"
+        title "Order database"
+        metadata
+            x_art
+                library "presentation-devices@1"
+                "item" "database"
+
+
+element "ddn.examples.presentation-architecture::shop.backup" as "backup"
+    with
+        id "ddn.examples.presentation-architecture::shop.backup"
+        title "Backup storage"
+        metadata
+            x_art
+                library "presentation-devices@1"
+                "item" "storage-array"
+
+
+element "ddn.examples.presentation-architecture::shop.plant" as "entity"
+    with
+        id "ddn.examples.presentation-architecture::shop.plant"
+        title "Fulfillment plant"
+        metadata
+            x_art
+                library "presentation-devices@1"
+                "item" "factory"
+
+
+element "ddn.examples.presentation-architecture::shop.courier" as "entity"
+    with
+        id "ddn.examples.presentation-architecture::shop.courier"
+        title "Courier"
+        metadata
+            x_art
+                library "presentation-devices@1"
+                "item" "truck"
+
+
+relation "ddn.examples.presentation-architecture::shop.f1" as "assoc"
+    with
+        id "ddn.examples.presentation-architecture::shop.f1"
+        title "visit"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.customers"
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.storefront"
+
+
+relation "ddn.examples.presentation-architecture::shop.f2" as "assoc"
+    with
+        id "ddn.examples.presentation-architecture::shop.f2"
+        title "browse & order"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.customers"
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.web"
+
+
+relation "ddn.examples.presentation-architecture::shop.f3" as "flow"
+    with
+        id "ddn.examples.presentation-architecture::shop.f3"
+        title "https"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.web"
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.edge"
+
+
+relation "ddn.examples.presentation-architecture::shop.f4" as "flow"
+    with
+        id "ddn.examples.presentation-architecture::shop.f4"
+        title "filtered traffic"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.edge"
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.app"
+
+
+relation "ddn.examples.presentation-architecture::shop.f5" as "flow"
+    with
+        id "ddn.examples.presentation-architecture::shop.f5"
+        title "orders"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.app"
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.db"
+
+
+relation "ddn.examples.presentation-architecture::shop.f6" as "assoc"
+    with
+        id "ddn.examples.presentation-architecture::shop.f6"
+        title "hosts"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.rack"
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.app"
+
+
+relation "ddn.examples.presentation-architecture::shop.f7" as "flow"
+    with
+        id "ddn.examples.presentation-architecture::shop.f7"
+        title "nightly backup"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.db"
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.backup"
+
+
+relation "ddn.examples.presentation-architecture::shop.f8" as "assoc"
+    with
+        id "ddn.examples.presentation-architecture::shop.f8"
+        title "pick lists"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.app"
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.plant"
+
+
+relation "ddn.examples.presentation-architecture::shop.f9" as "assoc"
+    with
+        id "ddn.examples.presentation-architecture::shop.f9"
+        title "parcels"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.plant"
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.courier"
+
+
+relation "ddn.examples.presentation-architecture::shop.f10" as "assoc"
+    with
+        id "ddn.examples.presentation-architecture::shop.f10"
+        title "delivery"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.courier"
+            item
+                definition
+                    id "ddn.examples.presentation-architecture::shop.customers"
+
+
+view "overview" as "ddn@1"
+    with
+        id "overview"
+        title "Storefront systems — presentation overview"
+        selection
+            include
+                item
+                    id "ddn.examples.presentation-architecture::shop.customers"
+                item
+                    id "ddn.examples.presentation-architecture::shop.storefront"
+                item
+                    id "ddn.examples.presentation-architecture::shop.web"
+                item
+                    id "ddn.examples.presentation-architecture::shop.edge"
+                item
+                    id "ddn.examples.presentation-architecture::shop.app"
+                item
+                    id "ddn.examples.presentation-architecture::shop.rack"
+                item
+                    id "ddn.examples.presentation-architecture::shop.db"
+                item
+                    id "ddn.examples.presentation-architecture::shop.backup"
+                item
+                    id "ddn.examples.presentation-architecture::shop.plant"
+                item
+                    id "ddn.examples.presentation-architecture::shop.courier"
+                item
+                    id "ddn.examples.presentation-architecture::shop.f1"
+                item
+                    id "ddn.examples.presentation-architecture::shop.f2"
+                item
+                    id "ddn.examples.presentation-architecture::shop.f3"
+                item
+                    id "ddn.examples.presentation-architecture::shop.f4"
+                item
+                    id "ddn.examples.presentation-architecture::shop.f5"
+                item
+                    id "ddn.examples.presentation-architecture::shop.f6"
+                item
+                    id "ddn.examples.presentation-architecture::shop.f7"
+                item
+                    id "ddn.examples.presentation-architecture::shop.f8"
+                item
+                    id "ddn.examples.presentation-architecture::shop.f9"
+                item
+                    id "ddn.examples.presentation-architecture::shop.f10"
+        layout
+            algorithm "layered"
+            gap 130
+            row_gap 130
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:overview"
+
+    use "ddn.examples.presentation-architecture::shop.customers" named "appearance:overview:ddn.examples.presentation-architecture::shop.customers"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.customers"
+            background
+                image
+                    id "artwork::presentation-devices@1:team"
+
+    use "ddn.examples.presentation-architecture::shop.storefront" named "appearance:overview:ddn.examples.presentation-architecture::shop.storefront"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.storefront"
+            background
+                image
+                    id "artwork::presentation-devices@1:office-building"
+
+    use "ddn.examples.presentation-architecture::shop.web" named "appearance:overview:ddn.examples.presentation-architecture::shop.web"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.web"
+            background
+                image
+                    id "artwork::presentation-devices@1:laptop"
+
+    use "ddn.examples.presentation-architecture::shop.edge" named "appearance:overview:ddn.examples.presentation-architecture::shop.edge"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.edge"
+            background
+                image
+                    id "artwork::presentation-devices@1:firewall"
+
+    use "ddn.examples.presentation-architecture::shop.app" named "appearance:overview:ddn.examples.presentation-architecture::shop.app"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.app"
+            background
+                image
+                    id "artwork::presentation-devices@1:server"
+
+    use "ddn.examples.presentation-architecture::shop.rack" named "appearance:overview:ddn.examples.presentation-architecture::shop.rack"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.rack"
+            background
+                image
+                    id "artwork::presentation-devices@1:server-rack"
+
+    use "ddn.examples.presentation-architecture::shop.db" named "appearance:overview:ddn.examples.presentation-architecture::shop.db"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.db"
+            background
+                image
+                    id "artwork::presentation-devices@1:database"
+
+    use "ddn.examples.presentation-architecture::shop.backup" named "appearance:overview:ddn.examples.presentation-architecture::shop.backup"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.backup"
+            background
+                image
+                    id "artwork::presentation-devices@1:storage-array"
+
+    use "ddn.examples.presentation-architecture::shop.plant" named "appearance:overview:ddn.examples.presentation-architecture::shop.plant"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.plant"
+            background
+                image
+                    id "artwork::presentation-devices@1:factory"
+
+    use "ddn.examples.presentation-architecture::shop.courier" named "appearance:overview:ddn.examples.presentation-architecture::shop.courier"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.courier"
+            background
+                image
+                    id "artwork::presentation-devices@1:truck"
+
+    use "ddn.examples.presentation-architecture::shop.f1" named "appearance:overview:ddn.examples.presentation-architecture::shop.f1"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.f1"
+
+    use "ddn.examples.presentation-architecture::shop.f2" named "appearance:overview:ddn.examples.presentation-architecture::shop.f2"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.f2"
+
+    use "ddn.examples.presentation-architecture::shop.f3" named "appearance:overview:ddn.examples.presentation-architecture::shop.f3"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.f3"
+
+    use "ddn.examples.presentation-architecture::shop.f4" named "appearance:overview:ddn.examples.presentation-architecture::shop.f4"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.f4"
+
+    use "ddn.examples.presentation-architecture::shop.f5" named "appearance:overview:ddn.examples.presentation-architecture::shop.f5"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.f5"
+
+    use "ddn.examples.presentation-architecture::shop.f6" named "appearance:overview:ddn.examples.presentation-architecture::shop.f6"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.f6"
+
+    use "ddn.examples.presentation-architecture::shop.f7" named "appearance:overview:ddn.examples.presentation-architecture::shop.f7"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.f7"
+
+    use "ddn.examples.presentation-architecture::shop.f8" named "appearance:overview:ddn.examples.presentation-architecture::shop.f8"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.f8"
+
+    use "ddn.examples.presentation-architecture::shop.f9" named "appearance:overview:ddn.examples.presentation-architecture::shop.f9"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.f9"
+
+    use "ddn.examples.presentation-architecture::shop.f10" named "appearance:overview:ddn.examples.presentation-architecture::shop.f10"
+        with
+            id "appearance:overview:ddn.examples.presentation-architecture::shop.f10"

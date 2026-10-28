@@ -1,17 +1,262 @@
-ddn "0.6";
-module "gallery.chen_nary";
-data m {
-  object supplier "Supplier" { kind: entity; fields { supplier_id { key: primary; } } }
-  object part "Part" { kind: entity; fields { part_id { key: primary; } } }
-  object project "Project" { kind: entity; fields { project_id { key: primary; } } }
-  relation supplies "supplies" @supplier -> @part {
-    kind: assoc;
-    x_nary: { ends: [{ element: @project, role: "for", multiplicity: "(1..N)" }] };
-    x_chen: { from: { min: 0, max: "many" }, to: { min: 0, max: "many" } };
-  }
-}
-view main {
-  data: [@m];
-  projection { kind: chen; profile: "chen.nary@3"; }
-  publication { size: content; }
-}
+version ddn-next-1
+
+publication "publication:main"
+    with
+        id "publication:main"
+        title "main"
+        targets
+            item
+                target
+                    id "main"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            minimum_text 10.666666666666666
+
+
+element "gallery.chen_nary::m.supplier.supplier_id" as "field"
+    with
+        id "gallery.chen_nary::m.supplier.supplier_id"
+        title "supplier_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "gallery.chen_nary::m.supplier"
+            ordinal 0
+            key "primary"
+
+
+element "gallery.chen_nary::m.supplier" as "entity"
+    with
+        id "gallery.chen_nary::m.supplier"
+        title "Supplier"
+        members
+            item
+                id "gallery.chen_nary::m.supplier.supplier_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "supplier_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+
+
+element "gallery.chen_nary::m.part.part_id" as "field"
+    with
+        id "gallery.chen_nary::m.part.part_id"
+        title "part_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "gallery.chen_nary::m.part"
+            ordinal 0
+            key "primary"
+
+
+element "gallery.chen_nary::m.part" as "entity"
+    with
+        id "gallery.chen_nary::m.part"
+        title "Part"
+        members
+            item
+                id "gallery.chen_nary::m.part.part_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "part_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+
+
+element "gallery.chen_nary::m.project.project_id" as "field"
+    with
+        id "gallery.chen_nary::m.project.project_id"
+        title "project_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "gallery.chen_nary::m.project"
+            ordinal 0
+            key "primary"
+
+
+element "gallery.chen_nary::m.project" as "entity"
+    with
+        id "gallery.chen_nary::m.project"
+        title "Project"
+        members
+            item
+                id "gallery.chen_nary::m.project.project_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "project_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+
+
+relation "gallery.chen_nary::m.supplies" as "assoc"
+    with
+        id "gallery.chen_nary::m.supplies"
+        title "supplies"
+        metadata
+            x_nary
+                ends
+                    item
+                        element
+                            id "gallery.chen_nary::m.project"
+                        role "for"
+                        multiplicity "(1..N)"
+            x_chen
+                from
+                    min 0
+                    max "many"
+                to
+                    min 0
+                    max "many"
+        endpoints
+            item
+                definition
+                    id "gallery.chen_nary::m.supplier"
+            item
+                definition
+                    id "gallery.chen_nary::m.part"
+
+
+view "main" as "chen.nary@3"
+    with
+        id "main"
+        title "main"
+        selection
+            include
+                item
+                    id "gallery.chen_nary::m.supplier"
+                item
+                    id "gallery.chen_nary::m.part"
+                item
+                    id "gallery.chen_nary::m.project"
+                item
+                    id "gallery.chen_nary::m.supplies"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:main"
+
+    use "gallery.chen_nary::m.supplier" named "appearance:main:gallery.chen_nary::m.supplier"
+        with
+            id "appearance:main:gallery.chen_nary::m.supplier"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "gallery.chen_nary::m.part" named "appearance:main:gallery.chen_nary::m.part"
+        with
+            id "appearance:main:gallery.chen_nary::m.part"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "gallery.chen_nary::m.project" named "appearance:main:gallery.chen_nary::m.project"
+        with
+            id "appearance:main:gallery.chen_nary::m.project"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "gallery.chen_nary::m.supplies" named "appearance:main:gallery.chen_nary::m.supplies"
+        with
+            id "appearance:main:gallery.chen_nary::m.supplies"

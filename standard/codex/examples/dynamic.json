@@ -1,0 +1,30 @@
+{
+  "sources": [
+    {
+      "name": "Feed",
+      "mode": "host",
+      "channel": "customer-fields",
+      "update": "keyed"
+    }
+  ],
+  "data": [
+    {
+      "name": "Fields",
+      "source": {
+        "name": "Feed"
+      },
+      "key": [
+        "id"
+      ],
+      "persist": "reference"
+    }
+  ],
+  "views": [
+    {
+      "name": "Monitor",
+      "kind": "document",
+      "format": "dashboard",
+      "live": true
+    }
+  ]
+}

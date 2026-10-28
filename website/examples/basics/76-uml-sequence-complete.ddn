@@ -1,52 +1,490 @@
-ddn "0.5";
-module "ddn.examples.umlseq";
+version ddn-next-1
 
-// B1-056 : UML 2.5.1 sequence-diagram completeness on uml.sequence@2.
-// View 1: combined fragments, gates, replies. View 2: creation/destruction,
-// lost/found, invariants, authorable activations, time/duration constraints.
-// Minimal current-dialect style, no pinned layout.
+publication "publication:fragments"
+    with
+        id "publication:fragments"
+        title "UML sequence / fragments and gates"
+        targets
+            item
+                target
+                    id "fragments"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data ordering {
-    application customer "Customer";
-    service checkout "Checkout";
-    service payments "Payments";
 
-    relation submit "Submit order" @customer -> @checkout { kind: "uml.message"; }
-    relation charge "Charge card" @checkout -> @payments { kind: "uml.message"; x_message: { sort: synch; duration: "{0..5s}"; };
-        x_fragment: { operator: alt; operands: [
-            { guard: "card valid"; messages: [@ordering.charge, @ordering.capture]; },
-            { guard: "else"; messages: [@ordering.declined]; } ] };
-    }
-    relation capture "Capture" @payments -> @payments { kind: "uml.message"; }
-    relation declined "Declined" @checkout -> @customer { kind: "uml.message"; x_message: { sort: reply; }; }
-    relation confirm "Confirmation" @checkout -> @customer { kind: "uml.message"; x_return: true; }
-    relation notify "Notify warehouse" @checkout -> @payments { kind: "uml.message"; x_message: { sort: asynch; gate: target; };
-        x_fragment: { operator: loop; operands: [
-            { guard: "per batch"; messages: [@ordering.notify, @ordering.ack]; fragments: [
-                { operator: opt; operands: [ { guard: "stock low"; messages: [@ordering.ack]; } ] } ] } ] };
-    }
-    relation ack "Ack" @payments -> @checkout { kind: "uml.message"; }
-}
+publication "publication:states"
+    with
+        id "publication:states"
+        title "UML sequence / lifecycle and annotations"
+        targets
+            item
+                target
+                    id "states"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data lifeline {
-    application scheduler "Scheduler";
-    service agent "Agent" {        x_invariant: [ { after: @lifeline.poll; label: "idle"; } ];
-        x_activation: [ { from: @lifeline.spawn; to: @lifeline.stop; } ];
-    }
-    service audit "Audit sink";
 
-    relation spawn "Spawn" @scheduler -> @agent { kind: "uml.message"; x_message: { sort: create; }; }
-    relation poll "Poll" @agent -> @agent { kind: "uml.message"; x_message: { sort: asynch; time: "{t}"; }; }
-    relation report "Report" @agent -> @scheduler { kind: "uml.message"; x_message: { sort: synch; duration: "{1..3s}"; }; }
-    relation lostm "Metric" @audit -> @audit { kind: "uml.message"; x_message: { sort: lost; }; }
-    relation foundm "Late event" @agent -> @agent { kind: "uml.message"; x_message: { sort: found; }; }
-    relation stop "Stop" @scheduler -> @agent { kind: "uml.message"; x_message: { sort: delete; }; }
-}
+element "ddn.examples.umlseq::ordering.customer" as "application"
+    with
+        id "ddn.examples.umlseq::ordering.customer"
+        title "Customer"
 
-view fragments "UML sequence / fragments and gates": [@ordering] as "uml.sequence@2" {
-    publication { size: content; fit: none; }
-}
 
-view states "UML sequence / lifecycle and annotations": [@lifeline] as "uml.sequence@2" {
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.umlseq::ordering.checkout" as "service"
+    with
+        id "ddn.examples.umlseq::ordering.checkout"
+        title "Checkout"
+
+
+element "ddn.examples.umlseq::ordering.payments" as "service"
+    with
+        id "ddn.examples.umlseq::ordering.payments"
+        title "Payments"
+
+
+relation "ddn.examples.umlseq::ordering.submit" as "uml.message"
+    with
+        id "ddn.examples.umlseq::ordering.submit"
+        title "Submit order"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.customer"
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.checkout"
+
+
+relation "ddn.examples.umlseq::ordering.charge" as "uml.message"
+    with
+        id "ddn.examples.umlseq::ordering.charge"
+        title "Charge card"
+        metadata
+            x_message
+                sort "synch"
+                duration "{0..5s}"
+            x_fragment
+                operator "alt"
+                operands
+                    item
+                        guard "card valid"
+                        messages
+                            item
+                                id "ddn.examples.umlseq::ordering.charge"
+                            item
+                                id "ddn.examples.umlseq::ordering.capture"
+                    item
+                        guard "else"
+                        messages
+                            item
+                                id "ddn.examples.umlseq::ordering.declined"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.checkout"
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.payments"
+
+
+relation "ddn.examples.umlseq::ordering.capture" as "uml.message"
+    with
+        id "ddn.examples.umlseq::ordering.capture"
+        title "Capture"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.payments"
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.payments"
+
+
+relation "ddn.examples.umlseq::ordering.declined" as "uml.message"
+    with
+        id "ddn.examples.umlseq::ordering.declined"
+        title "Declined"
+        metadata
+            x_message
+                sort "reply"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.checkout"
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.customer"
+
+
+relation "ddn.examples.umlseq::ordering.confirm" as "uml.message"
+    with
+        id "ddn.examples.umlseq::ordering.confirm"
+        title "Confirmation"
+        metadata
+            x_return true
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.checkout"
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.customer"
+
+
+relation "ddn.examples.umlseq::ordering.notify" as "uml.message"
+    with
+        id "ddn.examples.umlseq::ordering.notify"
+        title "Notify warehouse"
+        metadata
+            x_message
+                sort "asynch"
+                gate "target"
+            x_fragment
+                operator "loop"
+                operands
+                    item
+                        guard "per batch"
+                        messages
+                            item
+                                id "ddn.examples.umlseq::ordering.notify"
+                            item
+                                id "ddn.examples.umlseq::ordering.ack"
+                        fragments
+                            item
+                                operator "opt"
+                                operands
+                                    item
+                                        guard "stock low"
+                                        messages
+                                            item
+                                                id "ddn.examples.umlseq::ordering.ack"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.checkout"
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.payments"
+
+
+relation "ddn.examples.umlseq::ordering.ack" as "uml.message"
+    with
+        id "ddn.examples.umlseq::ordering.ack"
+        title "Ack"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.payments"
+            item
+                definition
+                    id "ddn.examples.umlseq::ordering.checkout"
+
+
+element "ddn.examples.umlseq::lifeline.scheduler" as "application"
+    with
+        id "ddn.examples.umlseq::lifeline.scheduler"
+        title "Scheduler"
+
+
+element "ddn.examples.umlseq::lifeline.agent" as "service"
+    with
+        id "ddn.examples.umlseq::lifeline.agent"
+        title "Agent"
+        metadata
+            x_invariant
+                item
+                    after
+                        id "ddn.examples.umlseq::lifeline.poll"
+                    label "idle"
+            x_activation
+                item
+                    from
+                        id "ddn.examples.umlseq::lifeline.spawn"
+                    to
+                        id "ddn.examples.umlseq::lifeline.stop"
+
+
+element "ddn.examples.umlseq::lifeline.audit" as "service"
+    with
+        id "ddn.examples.umlseq::lifeline.audit"
+        title "Audit sink"
+
+
+relation "ddn.examples.umlseq::lifeline.spawn" as "uml.message"
+    with
+        id "ddn.examples.umlseq::lifeline.spawn"
+        title "Spawn"
+        metadata
+            x_message
+                sort "create"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.scheduler"
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.agent"
+
+
+relation "ddn.examples.umlseq::lifeline.poll" as "uml.message"
+    with
+        id "ddn.examples.umlseq::lifeline.poll"
+        title "Poll"
+        metadata
+            x_message
+                sort "asynch"
+                time "{t}"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.agent"
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.agent"
+
+
+relation "ddn.examples.umlseq::lifeline.report" as "uml.message"
+    with
+        id "ddn.examples.umlseq::lifeline.report"
+        title "Report"
+        metadata
+            x_message
+                sort "synch"
+                duration "{1..3s}"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.agent"
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.scheduler"
+
+
+relation "ddn.examples.umlseq::lifeline.lostm" as "uml.message"
+    with
+        id "ddn.examples.umlseq::lifeline.lostm"
+        title "Metric"
+        metadata
+            x_message
+                sort "lost"
+                gate "target"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.audit"
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.audit"
+
+
+relation "ddn.examples.umlseq::lifeline.foundm" as "uml.message"
+    with
+        id "ddn.examples.umlseq::lifeline.foundm"
+        title "Late event"
+        metadata
+            x_message
+                sort "found"
+                gate "source"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.agent"
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.agent"
+
+
+relation "ddn.examples.umlseq::lifeline.stop" as "uml.message"
+    with
+        id "ddn.examples.umlseq::lifeline.stop"
+        title "Stop"
+        metadata
+            x_message
+                sort "delete"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.scheduler"
+            item
+                definition
+                    id "ddn.examples.umlseq::lifeline.agent"
+
+
+view "fragments" as "uml.sequence@2"
+    with
+        id "fragments"
+        title "UML sequence / fragments and gates"
+        selection
+            include
+                item
+                    id "ddn.examples.umlseq::ordering.customer"
+                item
+                    id "ddn.examples.umlseq::ordering.checkout"
+                item
+                    id "ddn.examples.umlseq::ordering.payments"
+                item
+                    id "ddn.examples.umlseq::ordering.submit"
+                item
+                    id "ddn.examples.umlseq::ordering.charge"
+                item
+                    id "ddn.examples.umlseq::ordering.capture"
+                item
+                    id "ddn.examples.umlseq::ordering.declined"
+                item
+                    id "ddn.examples.umlseq::ordering.confirm"
+                item
+                    id "ddn.examples.umlseq::ordering.notify"
+                item
+                    id "ddn.examples.umlseq::ordering.ack"
+            exclude
+                item
+                    id "ddn.examples.umlseq::lifeline.spawn"
+                item
+                    id "ddn.examples.umlseq::lifeline.poll"
+                item
+                    id "ddn.examples.umlseq::lifeline.report"
+                item
+                    id "ddn.examples.umlseq::lifeline.lostm"
+                item
+                    id "ddn.examples.umlseq::lifeline.foundm"
+                item
+                    id "ddn.examples.umlseq::lifeline.stop"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:fragments"
+
+    use "ddn.examples.umlseq::ordering.customer" named "appearance:fragments:ddn.examples.umlseq::ordering.customer"
+        with
+            id "appearance:fragments:ddn.examples.umlseq::ordering.customer"
+
+    use "ddn.examples.umlseq::ordering.checkout" named "appearance:fragments:ddn.examples.umlseq::ordering.checkout"
+        with
+            id "appearance:fragments:ddn.examples.umlseq::ordering.checkout"
+
+    use "ddn.examples.umlseq::ordering.payments" named "appearance:fragments:ddn.examples.umlseq::ordering.payments"
+        with
+            id "appearance:fragments:ddn.examples.umlseq::ordering.payments"
+
+    use "ddn.examples.umlseq::ordering.submit" named "appearance:fragments:ddn.examples.umlseq::ordering.submit"
+        with
+            id "appearance:fragments:ddn.examples.umlseq::ordering.submit"
+
+    use "ddn.examples.umlseq::ordering.charge" named "appearance:fragments:ddn.examples.umlseq::ordering.charge"
+        with
+            id "appearance:fragments:ddn.examples.umlseq::ordering.charge"
+
+    use "ddn.examples.umlseq::ordering.capture" named "appearance:fragments:ddn.examples.umlseq::ordering.capture"
+        with
+            id "appearance:fragments:ddn.examples.umlseq::ordering.capture"
+
+    use "ddn.examples.umlseq::ordering.declined" named "appearance:fragments:ddn.examples.umlseq::ordering.declined"
+        with
+            id "appearance:fragments:ddn.examples.umlseq::ordering.declined"
+
+    use "ddn.examples.umlseq::ordering.confirm" named "appearance:fragments:ddn.examples.umlseq::ordering.confirm"
+        with
+            id "appearance:fragments:ddn.examples.umlseq::ordering.confirm"
+
+    use "ddn.examples.umlseq::ordering.notify" named "appearance:fragments:ddn.examples.umlseq::ordering.notify"
+        with
+            id "appearance:fragments:ddn.examples.umlseq::ordering.notify"
+
+    use "ddn.examples.umlseq::ordering.ack" named "appearance:fragments:ddn.examples.umlseq::ordering.ack"
+        with
+            id "appearance:fragments:ddn.examples.umlseq::ordering.ack"
+
+
+view "states" as "uml.sequence@2"
+    with
+        id "states"
+        title "UML sequence / lifecycle and annotations"
+        selection
+            include
+                item
+                    id "ddn.examples.umlseq::lifeline.scheduler"
+                item
+                    id "ddn.examples.umlseq::lifeline.agent"
+                item
+                    id "ddn.examples.umlseq::lifeline.audit"
+                item
+                    id "ddn.examples.umlseq::lifeline.spawn"
+                item
+                    id "ddn.examples.umlseq::lifeline.poll"
+                item
+                    id "ddn.examples.umlseq::lifeline.report"
+                item
+                    id "ddn.examples.umlseq::lifeline.lostm"
+                item
+                    id "ddn.examples.umlseq::lifeline.foundm"
+                item
+                    id "ddn.examples.umlseq::lifeline.stop"
+            exclude
+                item
+                    id "ddn.examples.umlseq::ordering.submit"
+                item
+                    id "ddn.examples.umlseq::ordering.charge"
+                item
+                    id "ddn.examples.umlseq::ordering.capture"
+                item
+                    id "ddn.examples.umlseq::ordering.declined"
+                item
+                    id "ddn.examples.umlseq::ordering.confirm"
+                item
+                    id "ddn.examples.umlseq::ordering.notify"
+                item
+                    id "ddn.examples.umlseq::ordering.ack"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:states"
+
+    use "ddn.examples.umlseq::lifeline.scheduler" named "appearance:states:ddn.examples.umlseq::lifeline.scheduler"
+        with
+            id "appearance:states:ddn.examples.umlseq::lifeline.scheduler"
+
+    use "ddn.examples.umlseq::lifeline.agent" named "appearance:states:ddn.examples.umlseq::lifeline.agent"
+        with
+            id "appearance:states:ddn.examples.umlseq::lifeline.agent"
+
+    use "ddn.examples.umlseq::lifeline.audit" named "appearance:states:ddn.examples.umlseq::lifeline.audit"
+        with
+            id "appearance:states:ddn.examples.umlseq::lifeline.audit"
+
+    use "ddn.examples.umlseq::lifeline.spawn" named "appearance:states:ddn.examples.umlseq::lifeline.spawn"
+        with
+            id "appearance:states:ddn.examples.umlseq::lifeline.spawn"
+
+    use "ddn.examples.umlseq::lifeline.poll" named "appearance:states:ddn.examples.umlseq::lifeline.poll"
+        with
+            id "appearance:states:ddn.examples.umlseq::lifeline.poll"
+
+    use "ddn.examples.umlseq::lifeline.report" named "appearance:states:ddn.examples.umlseq::lifeline.report"
+        with
+            id "appearance:states:ddn.examples.umlseq::lifeline.report"
+
+    use "ddn.examples.umlseq::lifeline.lostm" named "appearance:states:ddn.examples.umlseq::lifeline.lostm"
+        with
+            id "appearance:states:ddn.examples.umlseq::lifeline.lostm"
+
+    use "ddn.examples.umlseq::lifeline.foundm" named "appearance:states:ddn.examples.umlseq::lifeline.foundm"
+        with
+            id "appearance:states:ddn.examples.umlseq::lifeline.foundm"
+
+    use "ddn.examples.umlseq::lifeline.stop" named "appearance:states:ddn.examples.umlseq::lifeline.stop"
+        with
+            id "appearance:states:ddn.examples.umlseq::lifeline.stop"

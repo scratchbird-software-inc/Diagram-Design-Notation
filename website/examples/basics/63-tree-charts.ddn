@@ -1,48 +1,379 @@
-ddn "0.5";
-module "ddn.examples.tree-charts";
+version ddn-next-1
 
-// Synthetic product-catalogue hierarchy: region.family.item dotted paths with
-// quarterly sales values. All data is synthetic.
-records sales {
-    columns: path, sales, unit;
-    label_column: path;
-    row n1: "North.Hardware.Tools", 120, "kEUR";
-    row n2: "North.Hardware.Parts", 80, "kEUR";
-    row n3: "North.Software.Licenses", 150, "kEUR";
-    row n4: "North.Software.Support", 60, "kEUR";
-    row s1: "South.Hardware.Tools", 90, "kEUR";
-    row s2: "South.Hardware.Parts", 45, "kEUR";
-    row s3: "South.Software.Licenses", 110, "kEUR";
-    row s4: "South.Software.Support", 35, "kEUR";
-    row s5: "South.Services", 70, "kEUR";
-}
+publication "publication:tidytree"
+    with
+        id "publication:tidytree"
+        title "Sales hierarchy / tidy tree"
+        targets
+            item
+                target
+                    id "tidytree"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view tidytree "Sales hierarchy / tidy tree" {
-    data: [@sales];
-    projection { kind:chart; profile:"chart.tidytree@1"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:tidytree; x:"x_record.path"; y:"x_record.sales"; unit:"kEUR"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
 
-view radialtree "Sales hierarchy / radial tree" {
-    data: [@sales];
-    projection { kind:chart; profile:"chart.radialtree@1"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:radialtree; x:"x_record.path"; y:"x_record.sales"; unit:"kEUR"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:radialtree"
+    with
+        id "publication:radialtree"
+        title "Sales hierarchy / radial tree"
+        targets
+            item
+                target
+                    id "radialtree"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view circlepack "Sales hierarchy / circle packing" {
-    data: [@sales];
-    projection { kind:chart; profile:"chart.circlepack@1"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:circlepack; x:"x_record.path"; y:"x_record.sales"; unit:"kEUR"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
 
-view sunburst "Sales hierarchy / sunburst" {
-    data: [@sales];
-    projection { kind:chart; profile:"chart.sunburst@1"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:sunburst; x:"x_record.path"; y:"x_record.sales"; unit:"kEUR"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:circlepack"
+    with
+        id "publication:circlepack"
+        title "Sales hierarchy / circle packing"
+        targets
+            item
+                target
+                    id "circlepack"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view packedbubble "Sales by region / packed bubbles" {
-    data: [@sales];
-    projection { kind:chart; profile:"chart.packedbubble@1"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:packedbubble; x:"x_record.path"; y:"x_record.sales"; unit:"kEUR"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+
+publication "publication:sunburst"
+    with
+        id "publication:sunburst"
+        title "Sales hierarchy / sunburst"
+        targets
+            item
+                target
+                    id "sunburst"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:packedbubble"
+    with
+        id "publication:packedbubble"
+        title "Sales by region / packed bubbles"
+        targets
+            item
+                target
+                    id "packedbubble"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.tree-charts::sales.n1" as "record"
+    with
+        id "ddn.examples.tree-charts::sales.n1"
+        title "North.Hardware.Tools"
+        metadata
+            x_record
+                path "North.Hardware.Tools"
+                sales 120
+                unit "kEUR"
+
+
+element "ddn.examples.tree-charts::sales.n2" as "record"
+    with
+        id "ddn.examples.tree-charts::sales.n2"
+        title "North.Hardware.Parts"
+        metadata
+            x_record
+                path "North.Hardware.Parts"
+                sales 80
+                unit "kEUR"
+
+
+element "ddn.examples.tree-charts::sales.n3" as "record"
+    with
+        id "ddn.examples.tree-charts::sales.n3"
+        title "North.Software.Licenses"
+        metadata
+            x_record
+                path "North.Software.Licenses"
+                sales 150
+                unit "kEUR"
+
+
+element "ddn.examples.tree-charts::sales.n4" as "record"
+    with
+        id "ddn.examples.tree-charts::sales.n4"
+        title "North.Software.Support"
+        metadata
+            x_record
+                path "North.Software.Support"
+                sales 60
+                unit "kEUR"
+
+
+element "ddn.examples.tree-charts::sales.s1" as "record"
+    with
+        id "ddn.examples.tree-charts::sales.s1"
+        title "South.Hardware.Tools"
+        metadata
+            x_record
+                path "South.Hardware.Tools"
+                sales 90
+                unit "kEUR"
+
+
+element "ddn.examples.tree-charts::sales.s2" as "record"
+    with
+        id "ddn.examples.tree-charts::sales.s2"
+        title "South.Hardware.Parts"
+        metadata
+            x_record
+                path "South.Hardware.Parts"
+                sales 45
+                unit "kEUR"
+
+
+element "ddn.examples.tree-charts::sales.s3" as "record"
+    with
+        id "ddn.examples.tree-charts::sales.s3"
+        title "South.Software.Licenses"
+        metadata
+            x_record
+                path "South.Software.Licenses"
+                sales 110
+                unit "kEUR"
+
+
+element "ddn.examples.tree-charts::sales.s4" as "record"
+    with
+        id "ddn.examples.tree-charts::sales.s4"
+        title "South.Software.Support"
+        metadata
+            x_record
+                path "South.Software.Support"
+                sales 35
+                unit "kEUR"
+
+
+element "ddn.examples.tree-charts::sales.s5" as "record"
+    with
+        id "ddn.examples.tree-charts::sales.s5"
+        title "South.Services"
+        metadata
+            x_record
+                path "South.Services"
+                sales 70
+                unit "kEUR"
+
+
+view "tidytree" as "chart.tidytree@1"
+    with
+        id "tidytree"
+        title "Sales hierarchy / tidy tree"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.tree-charts::sales.n1"
+                    item
+                        id "ddn.examples.tree-charts::sales.n2"
+                    item
+                        id "ddn.examples.tree-charts::sales.n3"
+                    item
+                        id "ddn.examples.tree-charts::sales.n4"
+                    item
+                        id "ddn.examples.tree-charts::sales.s1"
+                    item
+                        id "ddn.examples.tree-charts::sales.s2"
+                    item
+                        id "ddn.examples.tree-charts::sales.s3"
+                    item
+                        id "ddn.examples.tree-charts::sales.s4"
+                    item
+                        id "ddn.examples.tree-charts::sales.s5"
+                mark "tidytree"
+                x "metadata.x_record.path"
+                y "metadata.x_record.sales"
+                unit "kEUR"
+                width 1120
+                height 620
+
+
+view "radialtree" as "chart.radialtree@1"
+    with
+        id "radialtree"
+        title "Sales hierarchy / radial tree"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.tree-charts::sales.n1"
+                    item
+                        id "ddn.examples.tree-charts::sales.n2"
+                    item
+                        id "ddn.examples.tree-charts::sales.n3"
+                    item
+                        id "ddn.examples.tree-charts::sales.n4"
+                    item
+                        id "ddn.examples.tree-charts::sales.s1"
+                    item
+                        id "ddn.examples.tree-charts::sales.s2"
+                    item
+                        id "ddn.examples.tree-charts::sales.s3"
+                    item
+                        id "ddn.examples.tree-charts::sales.s4"
+                    item
+                        id "ddn.examples.tree-charts::sales.s5"
+                mark "radialtree"
+                x "metadata.x_record.path"
+                y "metadata.x_record.sales"
+                unit "kEUR"
+                width 1120
+                height 620
+
+
+view "circlepack" as "chart.circlepack@1"
+    with
+        id "circlepack"
+        title "Sales hierarchy / circle packing"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.tree-charts::sales.n1"
+                    item
+                        id "ddn.examples.tree-charts::sales.n2"
+                    item
+                        id "ddn.examples.tree-charts::sales.n3"
+                    item
+                        id "ddn.examples.tree-charts::sales.n4"
+                    item
+                        id "ddn.examples.tree-charts::sales.s1"
+                    item
+                        id "ddn.examples.tree-charts::sales.s2"
+                    item
+                        id "ddn.examples.tree-charts::sales.s3"
+                    item
+                        id "ddn.examples.tree-charts::sales.s4"
+                    item
+                        id "ddn.examples.tree-charts::sales.s5"
+                mark "circlepack"
+                x "metadata.x_record.path"
+                y "metadata.x_record.sales"
+                unit "kEUR"
+                width 1120
+                height 620
+
+
+view "sunburst" as "chart.sunburst@1"
+    with
+        id "sunburst"
+        title "Sales hierarchy / sunburst"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.tree-charts::sales.n1"
+                    item
+                        id "ddn.examples.tree-charts::sales.n2"
+                    item
+                        id "ddn.examples.tree-charts::sales.n3"
+                    item
+                        id "ddn.examples.tree-charts::sales.n4"
+                    item
+                        id "ddn.examples.tree-charts::sales.s1"
+                    item
+                        id "ddn.examples.tree-charts::sales.s2"
+                    item
+                        id "ddn.examples.tree-charts::sales.s3"
+                    item
+                        id "ddn.examples.tree-charts::sales.s4"
+                    item
+                        id "ddn.examples.tree-charts::sales.s5"
+                mark "sunburst"
+                x "metadata.x_record.path"
+                y "metadata.x_record.sales"
+                unit "kEUR"
+                width 1120
+                height 620
+
+
+view "packedbubble" as "chart.packedbubble@1"
+    with
+        id "packedbubble"
+        title "Sales by region / packed bubbles"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.tree-charts::sales.n1"
+                    item
+                        id "ddn.examples.tree-charts::sales.n2"
+                    item
+                        id "ddn.examples.tree-charts::sales.n3"
+                    item
+                        id "ddn.examples.tree-charts::sales.n4"
+                    item
+                        id "ddn.examples.tree-charts::sales.s1"
+                    item
+                        id "ddn.examples.tree-charts::sales.s2"
+                    item
+                        id "ddn.examples.tree-charts::sales.s3"
+                    item
+                        id "ddn.examples.tree-charts::sales.s4"
+                    item
+                        id "ddn.examples.tree-charts::sales.s5"
+                mark "packedbubble"
+                x "metadata.x_record.path"
+                y "metadata.x_record.sales"
+                unit "kEUR"
+                width 1120
+                height 620

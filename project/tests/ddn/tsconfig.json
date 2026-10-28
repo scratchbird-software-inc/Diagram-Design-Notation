@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM"],
+    "types": [],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": false,
+    "noEmit": true,
+    "paths": {
+      "@ddn/types": ["../../ddn/packages/types/src/index.d.ts"],
+      "@ddn/types/*": ["../../ddn/packages/types/src/*.d.ts"]
+    }
+  },
+  "files": ["core.test.ts", "browser.test.ts"]
+}

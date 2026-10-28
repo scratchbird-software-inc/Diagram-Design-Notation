@@ -1,35 +1,264 @@
-ddn "0.5";
-module "ddn.examples.flow-trace";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:traces"
+    with
+        id "publication:traces"
+        title "Checkout / multi-hop flow traces"
+        targets
+            item
+                target
+                    id "traces"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// B1-033 flow blocks: step-traceable multi-hop motion sequences. Each flow
-// resolves its steps to the existing relations between consecutive elements
-// and renders one marker hopping the concatenated route paths; the unified
-// tool's Animation drawer steps a selected flow exactly one hop at a time.
-// Two flows over one model demonstrate the flow selector.
-data shop {
-    application client "Storefront";
-    service cart "Cart service";
-    service payment "Payment gateway";
-    table orders "Order store" {fields { order_id; total; } }
-    activity warehouse "Warehouse";
-    relation checkout "Checkout" @client -> @cart { kind: flow; }
-    relation charge "Charge card" @cart -> @payment { kind: flow; }
-    relation persist "Persist order" @cart -> @orders { kind: flow; }
-    relation fulfil "Release to fulfilment" @orders -> @warehouse { kind: flow; }
-}
 
-view traces "Checkout / multi-hop flow traces" {
-    data: [@shop];
-    format: @shared.styles.technical;
-    flow purchase "Purchase path" {
-        steps: @shop.client -> @shop.cart -> @shop.payment;
-        marker: circle; marker_color: "#B91C1C"; speed: 90;
-    }
-    flow fulfilment "Fulfilment path" {
-        steps: @shop.client -> @shop.cart -> @shop.orders -> @shop.warehouse;
-        marker: square; marker_color: "#1D4ED8"; speed: 70; rate: 2;
-    }
-    legend { placement: bottom; }
-}
+element "ddn.examples.flow-trace::shop.client" as "application"
+    with
+        id "ddn.examples.flow-trace::shop.client"
+        title "Storefront"
+
+
+element "ddn.examples.flow-trace::shop.cart" as "service"
+    with
+        id "ddn.examples.flow-trace::shop.cart"
+        title "Cart service"
+
+
+element "ddn.examples.flow-trace::shop.payment" as "service"
+    with
+        id "ddn.examples.flow-trace::shop.payment"
+        title "Payment gateway"
+
+
+element "ddn.examples.flow-trace::shop.orders.order_id" as "field"
+    with
+        id "ddn.examples.flow-trace::shop.orders.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.examples.flow-trace::shop.orders"
+            ordinal 0
+
+
+element "ddn.examples.flow-trace::shop.orders.total" as "field"
+    with
+        id "ddn.examples.flow-trace::shop.orders.total"
+        title "total"
+        content
+            parent
+                id "ddn.examples.flow-trace::shop.orders"
+            ordinal 1
+
+
+element "ddn.examples.flow-trace::shop.orders" as "table"
+    with
+        id "ddn.examples.flow-trace::shop.orders"
+        title "Order store"
+        members
+            item
+                id "ddn.examples.flow-trace::shop.orders.order_id"
+            item
+                id "ddn.examples.flow-trace::shop.orders.total"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "total"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.flow-trace::shop.warehouse" as "activity"
+    with
+        id "ddn.examples.flow-trace::shop.warehouse"
+        title "Warehouse"
+
+
+relation "ddn.examples.flow-trace::shop.checkout" as "flow"
+    with
+        id "ddn.examples.flow-trace::shop.checkout"
+        title "Checkout"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.flow-trace::shop.client"
+            item
+                definition
+                    id "ddn.examples.flow-trace::shop.cart"
+
+
+relation "ddn.examples.flow-trace::shop.charge" as "flow"
+    with
+        id "ddn.examples.flow-trace::shop.charge"
+        title "Charge card"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.flow-trace::shop.cart"
+            item
+                definition
+                    id "ddn.examples.flow-trace::shop.payment"
+
+
+relation "ddn.examples.flow-trace::shop.persist" as "flow"
+    with
+        id "ddn.examples.flow-trace::shop.persist"
+        title "Persist order"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.flow-trace::shop.cart"
+            item
+                definition
+                    id "ddn.examples.flow-trace::shop.orders"
+
+
+relation "ddn.examples.flow-trace::shop.fulfil" as "flow"
+    with
+        id "ddn.examples.flow-trace::shop.fulfil"
+        title "Release to fulfilment"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.flow-trace::shop.orders"
+            item
+                definition
+                    id "ddn.examples.flow-trace::shop.warehouse"
+
+
+view "traces" as "ddn@1"
+    with
+        id "traces"
+        title "Checkout / multi-hop flow traces"
+        selection
+            include
+                item
+                    id "ddn.examples.flow-trace::shop.client"
+                item
+                    id "ddn.examples.flow-trace::shop.cart"
+                item
+                    id "ddn.examples.flow-trace::shop.payment"
+                item
+                    id "ddn.examples.flow-trace::shop.orders"
+                item
+                    id "ddn.examples.flow-trace::shop.warehouse"
+                item
+                    id "ddn.examples.flow-trace::shop.checkout"
+                item
+                    id "ddn.examples.flow-trace::shop.charge"
+                item
+                    id "ddn.examples.flow-trace::shop.persist"
+                item
+                    id "ddn.examples.flow-trace::shop.fulfil"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            placement "bottom"
+            width 280
+        background
+            color "#f6f8fc"
+        animation
+            steps
+                item
+                    id "ddn.examples.flow-trace::shop.client"
+                item
+                    id "ddn.examples.flow-trace::shop.cart"
+                item
+                    id "ddn.examples.flow-trace::shop.payment"
+            marker "circle"
+            marker_color "#B91C1C"
+            speed 90
+            label "Purchase path"
+            uid "ddn.examples.flow-trace::traces.purchase"
+        publication
+            id "publication:traces"
+
+    use "ddn.examples.flow-trace::shop.client" named "appearance:traces:ddn.examples.flow-trace::shop.client"
+        with
+            id "appearance:traces:ddn.examples.flow-trace::shop.client"
+
+    use "ddn.examples.flow-trace::shop.cart" named "appearance:traces:ddn.examples.flow-trace::shop.cart"
+        with
+            id "appearance:traces:ddn.examples.flow-trace::shop.cart"
+
+    use "ddn.examples.flow-trace::shop.payment" named "appearance:traces:ddn.examples.flow-trace::shop.payment"
+        with
+            id "appearance:traces:ddn.examples.flow-trace::shop.payment"
+
+    use "ddn.examples.flow-trace::shop.orders" named "appearance:traces:ddn.examples.flow-trace::shop.orders"
+        with
+            id "appearance:traces:ddn.examples.flow-trace::shop.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.flow-trace::shop.warehouse" named "appearance:traces:ddn.examples.flow-trace::shop.warehouse"
+        with
+            id "appearance:traces:ddn.examples.flow-trace::shop.warehouse"
+
+    use "ddn.examples.flow-trace::shop.checkout" named "appearance:traces:ddn.examples.flow-trace::shop.checkout"
+        with
+            id "appearance:traces:ddn.examples.flow-trace::shop.checkout"
+
+    use "ddn.examples.flow-trace::shop.charge" named "appearance:traces:ddn.examples.flow-trace::shop.charge"
+        with
+            id "appearance:traces:ddn.examples.flow-trace::shop.charge"
+
+    use "ddn.examples.flow-trace::shop.persist" named "appearance:traces:ddn.examples.flow-trace::shop.persist"
+        with
+            id "appearance:traces:ddn.examples.flow-trace::shop.persist"
+
+    use "ddn.examples.flow-trace::shop.fulfil" named "appearance:traces:ddn.examples.flow-trace::shop.fulfil"
+        with
+            id "appearance:traces:ddn.examples.flow-trace::shop.fulfil"

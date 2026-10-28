@@ -1,0 +1,41 @@
+{
+  "status": "proposed implementation targets, not measured results",
+  "native_profiles": [
+    "ddn@1",
+    "mindmap.basic@1",
+    "concept.map@1",
+    "table.records@1"
+  ],
+  "gzip_bytes": {
+    "verifier": 102400,
+    "viewer": 256000,
+    "designer_increment": 153600,
+    "designer_total": 409600
+  },
+  "raw_html_bytes": {
+    "verifier": 1048576,
+    "viewer": 2097152,
+    "designer_total": 3145728
+  },
+  "timing_ms": {
+    "W1_initial_p95": 250,
+    "W2_W3_initial_p95": 1000,
+    "W1_W2_local_edit_p95": 150,
+    "W3_domain_edit_p95": 500,
+    "main_frame_work_p95": 8,
+    "max_input_long_task": 50,
+    "cancel_ack": 100,
+    "cooperative_slice_target": 4
+  },
+  "full_profile_budget": "Establish from first complete implementation; report separately; no native-size ceiling claim.",
+  "workloads": [
+    "W1",
+    "W2",
+    "W3",
+    "W4",
+    "W5",
+    "W6",
+    "W7",
+    "W8"
+  ]
+}

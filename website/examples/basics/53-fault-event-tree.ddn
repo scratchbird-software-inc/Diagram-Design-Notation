@@ -1,51 +1,368 @@
-ddn "0.5";
-module "ddn.examples.faulteventtree";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:fault"
+    with
+        id "publication:fault"
+        title "Service outage fault tree"
+        targets
+            item
+                target
+                    id "fault"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic fault tree and event tree for the fault.tree@1 / event.tree@1
-// profiles. Gates are tree.gate diamonds with a declared x_gate.type
-// (and/or); basic events are tree.event circles; tree.input edges point from
-// a gate to each of its inputs. Fault view: an OR top gate "outage" with one
-// AND gate "power_cut" (UPS failed AND grid failed) plus switch, cable and
-// operator-error events. Event view: a small OR gate "alarm" followed
-// forward to smoke-detection and sprinkler-trip outcomes. All data is
-// synthetic.
-data m {
-    object outage "OR outage" { kind: "tree.gate"; x_gate: { type: "or" }; }
-    object power_cut "AND power_cut" { kind: "tree.gate"; x_gate: { type: "and" }; }
-    object ups_failed "UPS failed" { kind: "tree.event"; }
-    object grid_failed "Grid failed" { kind: "tree.event"; }
-    object switch_failed "Switch failed" { kind: "tree.event"; }
-    object cable_cut "Cable cut" { kind: "tree.event"; }
-    object operator_error "Operator error" { kind: "tree.event"; }
 
-    relation i1 "has input" @outage -> @power_cut { kind: "tree.input"; }
-    relation i2 "has input" @outage -> @switch_failed { kind: "tree.input"; }
-    relation i3 "has input" @outage -> @cable_cut { kind: "tree.input"; }
-    relation i4 "has input" @power_cut -> @ups_failed { kind: "tree.input"; }
-    relation i5 "has input" @power_cut -> @grid_failed { kind: "tree.input"; }
+publication "publication:event"
+    with
+        id "publication:event"
+        title "Alarm event tree"
+        targets
+            item
+                target
+                    id "event"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-    object alarm "OR alarm" { kind: "tree.gate"; x_gate: { type: "or" }; }
-    object smoke_detected "Smoke detected" { kind: "tree.event"; }
-    object sprinkler_trip "Sprinkler trip" { kind: "tree.event"; }
 
-    relation e1 "has input" @alarm -> @smoke_detected { kind: "tree.input"; }
-    relation e2 "has input" @alarm -> @sprinkler_trip { kind: "tree.input"; }
-}
+element "ddn.examples.faulteventtree::m.outage" as "tree.gate"
+    with
+        id "ddn.examples.faulteventtree::m.outage"
+        title "OR outage"
+        metadata
+            x_gate
+                type "or"
 
-view fault "Service outage fault tree" {
-    data: [@m]; format: @shared.styles.technical;
-    select: [@m.outage, @m.power_cut, @m.ups_failed, @m.grid_failed, @m.switch_failed, @m.cable_cut, @m.operator_error];
-    projection { kind: graph; profile: "fault.tree@1"; }
-    layout { algorithm: tree; direction: down; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
 
-view event "Alarm event tree" {
-    data: [@m]; format: @shared.styles.technical;
-    select: [@m.alarm, @m.smoke_detected, @m.sprinkler_trip];
-    projection { kind: graph; profile: "event.tree@1"; }
-    layout { algorithm: tree; direction: down; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+element "ddn.examples.faulteventtree::m.power_cut" as "tree.gate"
+    with
+        id "ddn.examples.faulteventtree::m.power_cut"
+        title "AND power_cut"
+        metadata
+            x_gate
+                type "and"
+
+
+element "ddn.examples.faulteventtree::m.ups_failed" as "tree.event"
+    with
+        id "ddn.examples.faulteventtree::m.ups_failed"
+        title "UPS failed"
+
+
+element "ddn.examples.faulteventtree::m.grid_failed" as "tree.event"
+    with
+        id "ddn.examples.faulteventtree::m.grid_failed"
+        title "Grid failed"
+
+
+element "ddn.examples.faulteventtree::m.switch_failed" as "tree.event"
+    with
+        id "ddn.examples.faulteventtree::m.switch_failed"
+        title "Switch failed"
+
+
+element "ddn.examples.faulteventtree::m.cable_cut" as "tree.event"
+    with
+        id "ddn.examples.faulteventtree::m.cable_cut"
+        title "Cable cut"
+
+
+element "ddn.examples.faulteventtree::m.operator_error" as "tree.event"
+    with
+        id "ddn.examples.faulteventtree::m.operator_error"
+        title "Operator error"
+
+
+element "ddn.examples.faulteventtree::m.alarm" as "tree.gate"
+    with
+        id "ddn.examples.faulteventtree::m.alarm"
+        title "OR alarm"
+        metadata
+            x_gate
+                type "or"
+
+
+element "ddn.examples.faulteventtree::m.smoke_detected" as "tree.event"
+    with
+        id "ddn.examples.faulteventtree::m.smoke_detected"
+        title "Smoke detected"
+
+
+element "ddn.examples.faulteventtree::m.sprinkler_trip" as "tree.event"
+    with
+        id "ddn.examples.faulteventtree::m.sprinkler_trip"
+        title "Sprinkler trip"
+
+
+relation "ddn.examples.faulteventtree::m.i1" as "tree.input"
+    with
+        id "ddn.examples.faulteventtree::m.i1"
+        title "has input"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.outage"
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.power_cut"
+
+
+relation "ddn.examples.faulteventtree::m.i2" as "tree.input"
+    with
+        id "ddn.examples.faulteventtree::m.i2"
+        title "has input"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.outage"
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.switch_failed"
+
+
+relation "ddn.examples.faulteventtree::m.i3" as "tree.input"
+    with
+        id "ddn.examples.faulteventtree::m.i3"
+        title "has input"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.outage"
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.cable_cut"
+
+
+relation "ddn.examples.faulteventtree::m.i4" as "tree.input"
+    with
+        id "ddn.examples.faulteventtree::m.i4"
+        title "has input"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.power_cut"
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.ups_failed"
+
+
+relation "ddn.examples.faulteventtree::m.i5" as "tree.input"
+    with
+        id "ddn.examples.faulteventtree::m.i5"
+        title "has input"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.power_cut"
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.grid_failed"
+
+
+relation "ddn.examples.faulteventtree::m.e1" as "tree.input"
+    with
+        id "ddn.examples.faulteventtree::m.e1"
+        title "has input"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.alarm"
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.smoke_detected"
+
+
+relation "ddn.examples.faulteventtree::m.e2" as "tree.input"
+    with
+        id "ddn.examples.faulteventtree::m.e2"
+        title "has input"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.alarm"
+            item
+                definition
+                    id "ddn.examples.faulteventtree::m.sprinkler_trip"
+
+
+view "fault" as "fault.tree@1"
+    with
+        id "fault"
+        title "Service outage fault tree"
+        selection
+            include
+                item
+                    id "ddn.examples.faulteventtree::m.outage"
+                item
+                    id "ddn.examples.faulteventtree::m.power_cut"
+                item
+                    id "ddn.examples.faulteventtree::m.ups_failed"
+                item
+                    id "ddn.examples.faulteventtree::m.grid_failed"
+                item
+                    id "ddn.examples.faulteventtree::m.switch_failed"
+                item
+                    id "ddn.examples.faulteventtree::m.cable_cut"
+                item
+                    id "ddn.examples.faulteventtree::m.operator_error"
+                item
+                    id "ddn.examples.faulteventtree::m.i1"
+                item
+                    id "ddn.examples.faulteventtree::m.i2"
+                item
+                    id "ddn.examples.faulteventtree::m.i3"
+                item
+                    id "ddn.examples.faulteventtree::m.i4"
+                item
+                    id "ddn.examples.faulteventtree::m.i5"
+            exclude
+                item
+                    id "ddn.examples.faulteventtree::m.e1"
+                item
+                    id "ddn.examples.faulteventtree::m.e2"
+        layout
+            algorithm "tree"
+            direction "down"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:fault"
+
+    use "ddn.examples.faulteventtree::m.outage" named "appearance:fault:ddn.examples.faulteventtree::m.outage"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.outage"
+
+    use "ddn.examples.faulteventtree::m.power_cut" named "appearance:fault:ddn.examples.faulteventtree::m.power_cut"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.power_cut"
+
+    use "ddn.examples.faulteventtree::m.ups_failed" named "appearance:fault:ddn.examples.faulteventtree::m.ups_failed"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.ups_failed"
+
+    use "ddn.examples.faulteventtree::m.grid_failed" named "appearance:fault:ddn.examples.faulteventtree::m.grid_failed"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.grid_failed"
+
+    use "ddn.examples.faulteventtree::m.switch_failed" named "appearance:fault:ddn.examples.faulteventtree::m.switch_failed"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.switch_failed"
+
+    use "ddn.examples.faulteventtree::m.cable_cut" named "appearance:fault:ddn.examples.faulteventtree::m.cable_cut"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.cable_cut"
+
+    use "ddn.examples.faulteventtree::m.operator_error" named "appearance:fault:ddn.examples.faulteventtree::m.operator_error"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.operator_error"
+
+    use "ddn.examples.faulteventtree::m.i1" named "appearance:fault:ddn.examples.faulteventtree::m.i1"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.i1"
+
+    use "ddn.examples.faulteventtree::m.i2" named "appearance:fault:ddn.examples.faulteventtree::m.i2"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.i2"
+
+    use "ddn.examples.faulteventtree::m.i3" named "appearance:fault:ddn.examples.faulteventtree::m.i3"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.i3"
+
+    use "ddn.examples.faulteventtree::m.i4" named "appearance:fault:ddn.examples.faulteventtree::m.i4"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.i4"
+
+    use "ddn.examples.faulteventtree::m.i5" named "appearance:fault:ddn.examples.faulteventtree::m.i5"
+        with
+            id "appearance:fault:ddn.examples.faulteventtree::m.i5"
+
+
+view "event" as "event.tree@1"
+    with
+        id "event"
+        title "Alarm event tree"
+        selection
+            include
+                item
+                    id "ddn.examples.faulteventtree::m.alarm"
+                item
+                    id "ddn.examples.faulteventtree::m.smoke_detected"
+                item
+                    id "ddn.examples.faulteventtree::m.sprinkler_trip"
+                item
+                    id "ddn.examples.faulteventtree::m.e1"
+                item
+                    id "ddn.examples.faulteventtree::m.e2"
+            exclude
+                item
+                    id "ddn.examples.faulteventtree::m.i1"
+                item
+                    id "ddn.examples.faulteventtree::m.i2"
+                item
+                    id "ddn.examples.faulteventtree::m.i3"
+                item
+                    id "ddn.examples.faulteventtree::m.i4"
+                item
+                    id "ddn.examples.faulteventtree::m.i5"
+        layout
+            algorithm "tree"
+            direction "down"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:event"
+
+    use "ddn.examples.faulteventtree::m.alarm" named "appearance:event:ddn.examples.faulteventtree::m.alarm"
+        with
+            id "appearance:event:ddn.examples.faulteventtree::m.alarm"
+
+    use "ddn.examples.faulteventtree::m.smoke_detected" named "appearance:event:ddn.examples.faulteventtree::m.smoke_detected"
+        with
+            id "appearance:event:ddn.examples.faulteventtree::m.smoke_detected"
+
+    use "ddn.examples.faulteventtree::m.sprinkler_trip" named "appearance:event:ddn.examples.faulteventtree::m.sprinkler_trip"
+        with
+            id "appearance:event:ddn.examples.faulteventtree::m.sprinkler_trip"
+
+    use "ddn.examples.faulteventtree::m.e1" named "appearance:event:ddn.examples.faulteventtree::m.e1"
+        with
+            id "appearance:event:ddn.examples.faulteventtree::m.e1"
+
+    use "ddn.examples.faulteventtree::m.e2" named "appearance:event:ddn.examples.faulteventtree::m.e2"
+        with
+            id "appearance:event:ddn.examples.faulteventtree::m.e2"

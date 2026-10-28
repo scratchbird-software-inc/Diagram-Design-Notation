@@ -1,0 +1,18 @@
+{
+  "definitions": [
+    {
+      "role": "entity",
+      "draft": {
+        "format": "fields",
+        "text": "Key\nName\nUndecided field"
+      },
+      "notes": [
+        {
+          "name": "Rationale",
+          "title": "##Reason",
+          "text": "A paragraph\ncontinues here.\n\nNext paragraph."
+        }
+      ]
+    }
+  ]
+}

@@ -1,16 +1,86 @@
-ddn "0.5";
-module "retail.ops";
+version ddn-next-1
 
-// B1-090: operational base of the cross-file UAF traceability example —
-// the architecture container in 108-uaf-traceability.ddn names this file as
-// a base, so its module-qualified identities are addressable from the host.
-// All data is synthetic.
-data ops {
-    object deliver "Deliver order" { kind: "uaf.opactivity"; }
-    object ship "Ship goods" { kind: "uaf.opactivity"; }
-    object osvc "Order service" { kind: "uaf.servicespec"; }
-    relation m1 "" @osvc -> @deliver { kind: "uaf.mapsto"; }
-}
-view ov "Operational activities": [@ops] as "uaf.operational@1" {
-    publication { size: content; fit: none; }
-}
+publication "publication:ov"
+    with
+        id "publication:ov"
+        title "Operational activities"
+        targets
+            item
+                target
+                    id "ov"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "retail.ops::ops.deliver" as "uaf.opactivity"
+    with
+        id "retail.ops::ops.deliver"
+        title "Deliver order"
+
+
+element "retail.ops::ops.ship" as "uaf.opactivity"
+    with
+        id "retail.ops::ops.ship"
+        title "Ship goods"
+
+
+element "retail.ops::ops.osvc" as "uaf.servicespec"
+    with
+        id "retail.ops::ops.osvc"
+        title "Order service"
+
+
+relation "retail.ops::ops.m1" as "uaf.mapsto"
+    with
+        id "retail.ops::ops.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "retail.ops::ops.osvc"
+            item
+                definition
+                    id "retail.ops::ops.deliver"
+
+
+view "ov" as "uaf.operational@1"
+    with
+        id "ov"
+        title "Operational activities"
+        selection
+            include
+                item
+                    id "retail.ops::ops.deliver"
+                item
+                    id "retail.ops::ops.ship"
+                item
+                    id "retail.ops::ops.osvc"
+                item
+                    id "retail.ops::ops.m1"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:ov"
+
+    use "retail.ops::ops.deliver" named "appearance:ov:retail.ops::ops.deliver"
+        with
+            id "appearance:ov:retail.ops::ops.deliver"
+
+    use "retail.ops::ops.ship" named "appearance:ov:retail.ops::ops.ship"
+        with
+            id "appearance:ov:retail.ops::ops.ship"
+
+    use "retail.ops::ops.osvc" named "appearance:ov:retail.ops::ops.osvc"
+        with
+            id "appearance:ov:retail.ops::ops.osvc"
+
+    use "retail.ops::ops.m1" named "appearance:ov:retail.ops::ops.m1"
+        with
+            id "appearance:ov:retail.ops::ops.m1"

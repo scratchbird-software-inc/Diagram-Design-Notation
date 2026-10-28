@@ -1,57 +1,387 @@
-ddn "0.5";
-module "ddn.examples.interactionoverview";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:overview"
+    with
+        id "publication:overview"
+        title "Checkout interaction overview"
+        targets
+            item
+                target
+                    id "overview"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic checkout interaction overview for the uml.interaction_overview@1
-// profile. The `overview` view is a flowchart whose `pay` and `ship` steps
-// reference the detail views `payment_flow` and `stock_flow` declared in the
-// same file, via x_subdiagram:{view:"<local view id>"} — a plain string, not
-// a @-reference. Referenced views are not expanded inline (reference
-// semantics only). All edges are flow.next. All data is synthetic.
-// This is profile-level coverage, not UML conformance.
-data checkout {
-    object start "Start" { kind: "flow.start"; }
-    object browse "Browse catalogue" { kind: "flow.process"; }
-    object pay "Pay" { kind: "flow.process"; x_subdiagram: { view: "payment_flow" }; }
-    object ship "Ship order" { kind: "flow.process"; x_subdiagram: { view: "stock_flow" }; }
-    object end "End" { kind: "flow.end"; }
 
-    relation to_browse "to browse" @start -> @browse { kind: "flow.next"; }
-    relation to_pay "to pay" @browse -> @pay { kind: "flow.next"; }
-    relation to_ship "to ship" @pay -> @ship { kind: "flow.next"; }
-    relation to_end "to end" @ship -> @end { kind: "flow.next"; }
-}
+publication "publication:payment_flow"
+    with
+        id "publication:payment_flow"
+        title "Payment flow detail"
+        targets
+            item
+                target
+                    id "payment_flow"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-data payment {
-    object authorize "Authorize card" { kind: "flow.process"; }
-    object capture "Capture funds" { kind: "flow.process"; }
-    relation authorized "authorized" @authorize -> @capture { kind: "flow.next"; }
-}
 
-data stock {
-    object reserve "Reserve stock" { kind: "flow.process"; }
-    object dispatch "Dispatch parcel" { kind: "flow.process"; }
-    relation reserved "reserved" @reserve -> @dispatch { kind: "flow.next"; }
-}
+publication "publication:stock_flow"
+    with
+        id "publication:stock_flow"
+        title "Stock flow detail"
+        targets
+            item
+                target
+                    id "stock_flow"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view overview "Checkout interaction overview" {
-    data: [@checkout]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "uml.interaction_overview@1"; }
-    layout { algorithm: layered; direction: right; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
 
-view payment_flow "Payment flow detail" {
-    data: [@payment]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "ddn@1"; }
-    layout { algorithm: layered; direction: right; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+element "ddn.examples.interactionoverview::checkout.start" as "flow.start"
+    with
+        id "ddn.examples.interactionoverview::checkout.start"
+        title "Start"
 
-view stock_flow "Stock flow detail" {
-    data: [@stock]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "ddn@1"; }
-    layout { algorithm: layered; direction: right; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+
+element "ddn.examples.interactionoverview::checkout.browse" as "flow.process"
+    with
+        id "ddn.examples.interactionoverview::checkout.browse"
+        title "Browse catalogue"
+
+
+element "ddn.examples.interactionoverview::checkout.pay" as "flow.process"
+    with
+        id "ddn.examples.interactionoverview::checkout.pay"
+        title "Pay"
+        metadata
+            x_subdiagram
+                view "payment_flow"
+
+
+element "ddn.examples.interactionoverview::checkout.ship" as "flow.process"
+    with
+        id "ddn.examples.interactionoverview::checkout.ship"
+        title "Ship order"
+        metadata
+            x_subdiagram
+                view "stock_flow"
+
+
+element "ddn.examples.interactionoverview::checkout.end" as "flow.end"
+    with
+        id "ddn.examples.interactionoverview::checkout.end"
+        title "End"
+
+
+relation "ddn.examples.interactionoverview::checkout.to_browse" as "flow.next"
+    with
+        id "ddn.examples.interactionoverview::checkout.to_browse"
+        title "to browse"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.interactionoverview::checkout.start"
+            item
+                definition
+                    id "ddn.examples.interactionoverview::checkout.browse"
+
+
+relation "ddn.examples.interactionoverview::checkout.to_pay" as "flow.next"
+    with
+        id "ddn.examples.interactionoverview::checkout.to_pay"
+        title "to pay"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.interactionoverview::checkout.browse"
+            item
+                definition
+                    id "ddn.examples.interactionoverview::checkout.pay"
+
+
+relation "ddn.examples.interactionoverview::checkout.to_ship" as "flow.next"
+    with
+        id "ddn.examples.interactionoverview::checkout.to_ship"
+        title "to ship"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.interactionoverview::checkout.pay"
+            item
+                definition
+                    id "ddn.examples.interactionoverview::checkout.ship"
+
+
+relation "ddn.examples.interactionoverview::checkout.to_end" as "flow.next"
+    with
+        id "ddn.examples.interactionoverview::checkout.to_end"
+        title "to end"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.interactionoverview::checkout.ship"
+            item
+                definition
+                    id "ddn.examples.interactionoverview::checkout.end"
+
+
+element "ddn.examples.interactionoverview::payment.authorize" as "flow.process"
+    with
+        id "ddn.examples.interactionoverview::payment.authorize"
+        title "Authorize card"
+
+
+element "ddn.examples.interactionoverview::payment.capture" as "flow.process"
+    with
+        id "ddn.examples.interactionoverview::payment.capture"
+        title "Capture funds"
+
+
+relation "ddn.examples.interactionoverview::payment.authorized" as "flow.next"
+    with
+        id "ddn.examples.interactionoverview::payment.authorized"
+        title "authorized"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.interactionoverview::payment.authorize"
+            item
+                definition
+                    id "ddn.examples.interactionoverview::payment.capture"
+
+
+element "ddn.examples.interactionoverview::stock.reserve" as "flow.process"
+    with
+        id "ddn.examples.interactionoverview::stock.reserve"
+        title "Reserve stock"
+
+
+element "ddn.examples.interactionoverview::stock.dispatch" as "flow.process"
+    with
+        id "ddn.examples.interactionoverview::stock.dispatch"
+        title "Dispatch parcel"
+
+
+relation "ddn.examples.interactionoverview::stock.reserved" as "flow.next"
+    with
+        id "ddn.examples.interactionoverview::stock.reserved"
+        title "reserved"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.interactionoverview::stock.reserve"
+            item
+                definition
+                    id "ddn.examples.interactionoverview::stock.dispatch"
+
+
+view "overview" as "uml.interaction_overview@1"
+    with
+        id "overview"
+        title "Checkout interaction overview"
+        selection
+            include
+                item
+                    id "ddn.examples.interactionoverview::checkout.start"
+                item
+                    id "ddn.examples.interactionoverview::checkout.browse"
+                item
+                    id "ddn.examples.interactionoverview::checkout.pay"
+                item
+                    id "ddn.examples.interactionoverview::checkout.ship"
+                item
+                    id "ddn.examples.interactionoverview::checkout.end"
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_browse"
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_pay"
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_ship"
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_end"
+            exclude
+                item
+                    id "ddn.examples.interactionoverview::payment.authorized"
+                item
+                    id "ddn.examples.interactionoverview::stock.reserved"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:overview"
+
+    use "ddn.examples.interactionoverview::checkout.start" named "appearance:overview:ddn.examples.interactionoverview::checkout.start"
+        with
+            id "appearance:overview:ddn.examples.interactionoverview::checkout.start"
+
+    use "ddn.examples.interactionoverview::checkout.browse" named "appearance:overview:ddn.examples.interactionoverview::checkout.browse"
+        with
+            id "appearance:overview:ddn.examples.interactionoverview::checkout.browse"
+
+    use "ddn.examples.interactionoverview::checkout.pay" named "appearance:overview:ddn.examples.interactionoverview::checkout.pay"
+        with
+            id "appearance:overview:ddn.examples.interactionoverview::checkout.pay"
+
+    use "ddn.examples.interactionoverview::checkout.ship" named "appearance:overview:ddn.examples.interactionoverview::checkout.ship"
+        with
+            id "appearance:overview:ddn.examples.interactionoverview::checkout.ship"
+
+    use "ddn.examples.interactionoverview::checkout.end" named "appearance:overview:ddn.examples.interactionoverview::checkout.end"
+        with
+            id "appearance:overview:ddn.examples.interactionoverview::checkout.end"
+
+    use "ddn.examples.interactionoverview::checkout.to_browse" named "appearance:overview:ddn.examples.interactionoverview::checkout.to_browse"
+        with
+            id "appearance:overview:ddn.examples.interactionoverview::checkout.to_browse"
+
+    use "ddn.examples.interactionoverview::checkout.to_pay" named "appearance:overview:ddn.examples.interactionoverview::checkout.to_pay"
+        with
+            id "appearance:overview:ddn.examples.interactionoverview::checkout.to_pay"
+
+    use "ddn.examples.interactionoverview::checkout.to_ship" named "appearance:overview:ddn.examples.interactionoverview::checkout.to_ship"
+        with
+            id "appearance:overview:ddn.examples.interactionoverview::checkout.to_ship"
+
+    use "ddn.examples.interactionoverview::checkout.to_end" named "appearance:overview:ddn.examples.interactionoverview::checkout.to_end"
+        with
+            id "appearance:overview:ddn.examples.interactionoverview::checkout.to_end"
+
+
+view "payment_flow" as "ddn@1"
+    with
+        id "payment_flow"
+        title "Payment flow detail"
+        selection
+            include
+                item
+                    id "ddn.examples.interactionoverview::payment.authorize"
+                item
+                    id "ddn.examples.interactionoverview::payment.capture"
+                item
+                    id "ddn.examples.interactionoverview::payment.authorized"
+            exclude
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_browse"
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_pay"
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_ship"
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_end"
+                item
+                    id "ddn.examples.interactionoverview::stock.reserved"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:payment_flow"
+
+    use "ddn.examples.interactionoverview::payment.authorize" named "appearance:payment_flow:ddn.examples.interactionoverview::payment.authorize"
+        with
+            id "appearance:payment_flow:ddn.examples.interactionoverview::payment.authorize"
+
+    use "ddn.examples.interactionoverview::payment.capture" named "appearance:payment_flow:ddn.examples.interactionoverview::payment.capture"
+        with
+            id "appearance:payment_flow:ddn.examples.interactionoverview::payment.capture"
+
+    use "ddn.examples.interactionoverview::payment.authorized" named "appearance:payment_flow:ddn.examples.interactionoverview::payment.authorized"
+        with
+            id "appearance:payment_flow:ddn.examples.interactionoverview::payment.authorized"
+
+
+view "stock_flow" as "ddn@1"
+    with
+        id "stock_flow"
+        title "Stock flow detail"
+        selection
+            include
+                item
+                    id "ddn.examples.interactionoverview::stock.reserve"
+                item
+                    id "ddn.examples.interactionoverview::stock.dispatch"
+                item
+                    id "ddn.examples.interactionoverview::stock.reserved"
+            exclude
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_browse"
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_pay"
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_ship"
+                item
+                    id "ddn.examples.interactionoverview::checkout.to_end"
+                item
+                    id "ddn.examples.interactionoverview::payment.authorized"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:stock_flow"
+
+    use "ddn.examples.interactionoverview::stock.reserve" named "appearance:stock_flow:ddn.examples.interactionoverview::stock.reserve"
+        with
+            id "appearance:stock_flow:ddn.examples.interactionoverview::stock.reserve"
+
+    use "ddn.examples.interactionoverview::stock.dispatch" named "appearance:stock_flow:ddn.examples.interactionoverview::stock.dispatch"
+        with
+            id "appearance:stock_flow:ddn.examples.interactionoverview::stock.dispatch"
+
+    use "ddn.examples.interactionoverview::stock.reserved" named "appearance:stock_flow:ddn.examples.interactionoverview::stock.reserved"
+        with
+            id "appearance:stock_flow:ddn.examples.interactionoverview::stock.reserved"

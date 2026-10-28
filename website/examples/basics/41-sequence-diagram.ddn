@@ -1,26 +1,177 @@
-ddn "0.5";
-module "ddn.examples.sequence";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:sequence"
+    with
+        id "publication:sequence"
+        title "Synthetic order flow / sequence"
+        targets
+            item
+                target
+                    id "sequence"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic three-party order flow for the uml.sequence@1 profile.
-// Participants are lifelines in declaration order; uml.message relations are
-// numbered messages top-to-bottom in declaration order. reserve_stock_reply is
-// a dashed return (x_return); audit_log is a self-message on checkout.
-// All data is synthetic. This is profile-level coverage, not UML conformance.
-data flow {
-    application customer_app "Customer app";
-    service checkout "Checkout";
-    service inventory "Inventory";
-    relation submit_order "Submit order" @customer_app -> @checkout { kind: "uml.message"; }
-    relation reserve_stock "Reserve stock" @checkout -> @inventory { kind: "uml.message"; }
-    relation reserve_stock_reply "Stock reserved" @inventory -> @checkout { kind: "uml.message"; x_return: true; }
-    relation audit_log "Audit log" @checkout -> @checkout { kind: "uml.message"; }
-    relation confirm "Confirm order" @checkout -> @customer_app { kind: "uml.message"; }
-}
 
-view sequence "Synthetic order flow / sequence" {
-    data: [@flow]; format: @shared.styles.technical;
-    projection { kind: sequence; profile: "uml.sequence@1"; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+element "ddn.examples.sequence::flow.customer_app" as "application"
+    with
+        id "ddn.examples.sequence::flow.customer_app"
+        title "Customer app"
+
+
+element "ddn.examples.sequence::flow.checkout" as "service"
+    with
+        id "ddn.examples.sequence::flow.checkout"
+        title "Checkout"
+
+
+element "ddn.examples.sequence::flow.inventory" as "service"
+    with
+        id "ddn.examples.sequence::flow.inventory"
+        title "Inventory"
+
+
+relation "ddn.examples.sequence::flow.submit_order" as "uml.message"
+    with
+        id "ddn.examples.sequence::flow.submit_order"
+        title "Submit order"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sequence::flow.customer_app"
+            item
+                definition
+                    id "ddn.examples.sequence::flow.checkout"
+
+
+relation "ddn.examples.sequence::flow.reserve_stock" as "uml.message"
+    with
+        id "ddn.examples.sequence::flow.reserve_stock"
+        title "Reserve stock"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sequence::flow.checkout"
+            item
+                definition
+                    id "ddn.examples.sequence::flow.inventory"
+
+
+relation "ddn.examples.sequence::flow.reserve_stock_reply" as "uml.message"
+    with
+        id "ddn.examples.sequence::flow.reserve_stock_reply"
+        title "Stock reserved"
+        metadata
+            x_return true
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sequence::flow.inventory"
+            item
+                definition
+                    id "ddn.examples.sequence::flow.checkout"
+
+
+relation "ddn.examples.sequence::flow.audit_log" as "uml.message"
+    with
+        id "ddn.examples.sequence::flow.audit_log"
+        title "Audit log"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sequence::flow.checkout"
+            item
+                definition
+                    id "ddn.examples.sequence::flow.checkout"
+
+
+relation "ddn.examples.sequence::flow.confirm" as "uml.message"
+    with
+        id "ddn.examples.sequence::flow.confirm"
+        title "Confirm order"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sequence::flow.checkout"
+            item
+                definition
+                    id "ddn.examples.sequence::flow.customer_app"
+
+
+view "sequence" as "uml.sequence@1"
+    with
+        id "sequence"
+        title "Synthetic order flow / sequence"
+        selection
+            include
+                item
+                    id "ddn.examples.sequence::flow.customer_app"
+                item
+                    id "ddn.examples.sequence::flow.checkout"
+                item
+                    id "ddn.examples.sequence::flow.inventory"
+                item
+                    id "ddn.examples.sequence::flow.submit_order"
+                item
+                    id "ddn.examples.sequence::flow.reserve_stock"
+                item
+                    id "ddn.examples.sequence::flow.reserve_stock_reply"
+                item
+                    id "ddn.examples.sequence::flow.audit_log"
+                item
+                    id "ddn.examples.sequence::flow.confirm"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:sequence"
+
+    use "ddn.examples.sequence::flow.customer_app" named "appearance:sequence:ddn.examples.sequence::flow.customer_app"
+        with
+            id "appearance:sequence:ddn.examples.sequence::flow.customer_app"
+
+    use "ddn.examples.sequence::flow.checkout" named "appearance:sequence:ddn.examples.sequence::flow.checkout"
+        with
+            id "appearance:sequence:ddn.examples.sequence::flow.checkout"
+
+    use "ddn.examples.sequence::flow.inventory" named "appearance:sequence:ddn.examples.sequence::flow.inventory"
+        with
+            id "appearance:sequence:ddn.examples.sequence::flow.inventory"
+
+    use "ddn.examples.sequence::flow.submit_order" named "appearance:sequence:ddn.examples.sequence::flow.submit_order"
+        with
+            id "appearance:sequence:ddn.examples.sequence::flow.submit_order"
+
+    use "ddn.examples.sequence::flow.reserve_stock" named "appearance:sequence:ddn.examples.sequence::flow.reserve_stock"
+        with
+            id "appearance:sequence:ddn.examples.sequence::flow.reserve_stock"
+
+    use "ddn.examples.sequence::flow.reserve_stock_reply" named "appearance:sequence:ddn.examples.sequence::flow.reserve_stock_reply"
+        with
+            id "appearance:sequence:ddn.examples.sequence::flow.reserve_stock_reply"
+
+    use "ddn.examples.sequence::flow.audit_log" named "appearance:sequence:ddn.examples.sequence::flow.audit_log"
+        with
+            id "appearance:sequence:ddn.examples.sequence::flow.audit_log"
+
+    use "ddn.examples.sequence::flow.confirm" named "appearance:sequence:ddn.examples.sequence::flow.confirm"
+        with
+            id "appearance:sequence:ddn.examples.sequence::flow.confirm"

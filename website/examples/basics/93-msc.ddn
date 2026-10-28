@@ -1,30 +1,320 @@
-ddn "0.5";
-module "ddn.examples.msc";
+version ddn-next-1
 
-// B1-077: an ITU-T Z.120 message sequence chart with an HMSC reference
-// (with its actual parameter list), a guarding state invariant, a coregion,
-// a lost message, instance creation (start) and stop (delete), and reply
-// messages. All data is synthetic.
-data m {
-    object cli "Client" { kind: "uml.class"; }
-    object srv "Server" { kind: "uml.class"; x_invariant: [ { label: "authenticated"; after: @m.m1, role: "guarding" } ]; }
-    object worker "Worker" { kind: "uml.class"; }
-    object billing "Billing HMSC" { kind: "msc.hmscref"; x_subdiagram: { view: "billing" }; x_hmscref: { params: [ "shop", "amount" ] }; }
-    relation c1 "start" @cli -> @worker { kind: "uml.message"; x_message: { sort: "create" }; }
-    relation m1 "request" @cli -> @srv { kind: "uml.message"; x_fragment: { operator: "coreg"; operands: [ { messages: [ @m.m1, @m.m2 ] } ] }; }
-    relation m2 "query" @worker -> @srv { kind: "uml.message"; }
-    relation m3 "lost packet" @srv -> @srv { kind: "uml.message"; x_message: { sort: "lost" }; }
-    relation m4 "reply" @srv -> @cli { kind: "uml.message"; x_message: { sort: "reply" }; }
-    relation m5 "stop" @worker -> @worker { kind: "uml.message"; x_message: { sort: "delete" }; }
-}
-data b {
-    object a "A" { kind: "uml.class"; }
-    object bb "B" { kind: "uml.class"; }
-    relation q1 "charge" @a -> @bb { kind: "uml.message"; }
-}
-view chart "Order MSC": [@m] as "msc.basic@1" {
-    publication { size: content; fit: none; }
-}
-view billing "Billing HMSC detail": [@b] as "msc.basic@1" {
-    publication { size: content; fit: none; }
-}
+publication "publication:chart"
+    with
+        id "publication:chart"
+        title "Order MSC"
+        targets
+            item
+                target
+                    id "chart"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:billing"
+    with
+        id "publication:billing"
+        title "Billing HMSC detail"
+        targets
+            item
+                target
+                    id "billing"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.msc::m.cli" as "uml.class"
+    with
+        id "ddn.examples.msc::m.cli"
+        title "Client"
+
+
+element "ddn.examples.msc::m.srv" as "uml.class"
+    with
+        id "ddn.examples.msc::m.srv"
+        title "Server"
+        metadata
+            x_invariant
+                item
+                    label "authenticated"
+                    after
+                        id "ddn.examples.msc::m.m1"
+                    role "guarding"
+
+
+element "ddn.examples.msc::m.worker" as "uml.class"
+    with
+        id "ddn.examples.msc::m.worker"
+        title "Worker"
+
+
+element "ddn.examples.msc::m.billing" as "msc.hmscref"
+    with
+        id "ddn.examples.msc::m.billing"
+        title "Billing HMSC"
+        metadata
+            x_subdiagram
+                view "billing"
+            x_hmscref
+                params
+                    item "shop"
+                    item "amount"
+
+
+relation "ddn.examples.msc::m.c1" as "uml.message"
+    with
+        id "ddn.examples.msc::m.c1"
+        title "start"
+        metadata
+            x_message
+                sort "create"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.msc::m.cli"
+            item
+                definition
+                    id "ddn.examples.msc::m.worker"
+
+
+relation "ddn.examples.msc::m.m1" as "uml.message"
+    with
+        id "ddn.examples.msc::m.m1"
+        title "request"
+        metadata
+            x_fragment
+                operator "coreg"
+                operands
+                    item
+                        messages
+                            item
+                                id "ddn.examples.msc::m.m1"
+                            item
+                                id "ddn.examples.msc::m.m2"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.msc::m.cli"
+            item
+                definition
+                    id "ddn.examples.msc::m.srv"
+
+
+relation "ddn.examples.msc::m.m2" as "uml.message"
+    with
+        id "ddn.examples.msc::m.m2"
+        title "query"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.msc::m.worker"
+            item
+                definition
+                    id "ddn.examples.msc::m.srv"
+
+
+relation "ddn.examples.msc::m.m3" as "uml.message"
+    with
+        id "ddn.examples.msc::m.m3"
+        title "lost packet"
+        metadata
+            x_message
+                sort "lost"
+                gate "target"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.msc::m.srv"
+            item
+                definition
+                    id "ddn.examples.msc::m.srv"
+
+
+relation "ddn.examples.msc::m.m4" as "uml.message"
+    with
+        id "ddn.examples.msc::m.m4"
+        title "reply"
+        metadata
+            x_message
+                sort "reply"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.msc::m.srv"
+            item
+                definition
+                    id "ddn.examples.msc::m.cli"
+
+
+relation "ddn.examples.msc::m.m5" as "uml.message"
+    with
+        id "ddn.examples.msc::m.m5"
+        title "stop"
+        metadata
+            x_message
+                sort "delete"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.msc::m.worker"
+            item
+                definition
+                    id "ddn.examples.msc::m.worker"
+
+
+element "ddn.examples.msc::b.a" as "uml.class"
+    with
+        id "ddn.examples.msc::b.a"
+        title "A"
+
+
+element "ddn.examples.msc::b.bb" as "uml.class"
+    with
+        id "ddn.examples.msc::b.bb"
+        title "B"
+
+
+relation "ddn.examples.msc::b.q1" as "uml.message"
+    with
+        id "ddn.examples.msc::b.q1"
+        title "charge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.msc::b.a"
+            item
+                definition
+                    id "ddn.examples.msc::b.bb"
+
+
+view "chart" as "msc.basic@1"
+    with
+        id "chart"
+        title "Order MSC"
+        selection
+            include
+                item
+                    id "ddn.examples.msc::m.cli"
+                item
+                    id "ddn.examples.msc::m.srv"
+                item
+                    id "ddn.examples.msc::m.worker"
+                item
+                    id "ddn.examples.msc::m.billing"
+                item
+                    id "ddn.examples.msc::m.c1"
+                item
+                    id "ddn.examples.msc::m.m1"
+                item
+                    id "ddn.examples.msc::m.m2"
+                item
+                    id "ddn.examples.msc::m.m3"
+                item
+                    id "ddn.examples.msc::m.m4"
+                item
+                    id "ddn.examples.msc::m.m5"
+            exclude
+                item
+                    id "ddn.examples.msc::b.q1"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:chart"
+
+    use "ddn.examples.msc::m.cli" named "appearance:chart:ddn.examples.msc::m.cli"
+        with
+            id "appearance:chart:ddn.examples.msc::m.cli"
+
+    use "ddn.examples.msc::m.srv" named "appearance:chart:ddn.examples.msc::m.srv"
+        with
+            id "appearance:chart:ddn.examples.msc::m.srv"
+
+    use "ddn.examples.msc::m.worker" named "appearance:chart:ddn.examples.msc::m.worker"
+        with
+            id "appearance:chart:ddn.examples.msc::m.worker"
+
+    use "ddn.examples.msc::m.billing" named "appearance:chart:ddn.examples.msc::m.billing"
+        with
+            id "appearance:chart:ddn.examples.msc::m.billing"
+
+    use "ddn.examples.msc::m.c1" named "appearance:chart:ddn.examples.msc::m.c1"
+        with
+            id "appearance:chart:ddn.examples.msc::m.c1"
+
+    use "ddn.examples.msc::m.m1" named "appearance:chart:ddn.examples.msc::m.m1"
+        with
+            id "appearance:chart:ddn.examples.msc::m.m1"
+
+    use "ddn.examples.msc::m.m2" named "appearance:chart:ddn.examples.msc::m.m2"
+        with
+            id "appearance:chart:ddn.examples.msc::m.m2"
+
+    use "ddn.examples.msc::m.m3" named "appearance:chart:ddn.examples.msc::m.m3"
+        with
+            id "appearance:chart:ddn.examples.msc::m.m3"
+
+    use "ddn.examples.msc::m.m4" named "appearance:chart:ddn.examples.msc::m.m4"
+        with
+            id "appearance:chart:ddn.examples.msc::m.m4"
+
+    use "ddn.examples.msc::m.m5" named "appearance:chart:ddn.examples.msc::m.m5"
+        with
+            id "appearance:chart:ddn.examples.msc::m.m5"
+
+
+view "billing" as "msc.basic@1"
+    with
+        id "billing"
+        title "Billing HMSC detail"
+        selection
+            include
+                item
+                    id "ddn.examples.msc::b.a"
+                item
+                    id "ddn.examples.msc::b.bb"
+                item
+                    id "ddn.examples.msc::b.q1"
+            exclude
+                item
+                    id "ddn.examples.msc::m.c1"
+                item
+                    id "ddn.examples.msc::m.m1"
+                item
+                    id "ddn.examples.msc::m.m2"
+                item
+                    id "ddn.examples.msc::m.m3"
+                item
+                    id "ddn.examples.msc::m.m4"
+                item
+                    id "ddn.examples.msc::m.m5"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:billing"
+
+    use "ddn.examples.msc::b.a" named "appearance:billing:ddn.examples.msc::b.a"
+        with
+            id "appearance:billing:ddn.examples.msc::b.a"
+
+    use "ddn.examples.msc::b.bb" named "appearance:billing:ddn.examples.msc::b.bb"
+        with
+            id "appearance:billing:ddn.examples.msc::b.bb"
+
+    use "ddn.examples.msc::b.q1" named "appearance:billing:ddn.examples.msc::b.q1"
+        with
+            id "appearance:billing:ddn.examples.msc::b.q1"

@@ -1,23 +1,183 @@
-ddn "0.5";
-module "ddn.examples.candlestick-chart";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:candlestick"
+    with
+        id "publication:candlestick"
+        title "Synthetic trading sessions / candlestick"
+        targets
+            item
+                target
+                    id "candlestick"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic trading-week-plus dataset: eight sessions of OHLC values.
-// All data is synthetic; not financial data or advice.
-data trading {
-    record d1 "Session 2026-03-02" {x_record: {"day": "2026-03-02", "open": 50, "high": 52, "low": 49, "close": 51.5, "unit": "CAD"}; }
-    record d2 "Session 2026-03-03" {x_record: {"day": "2026-03-03", "open": 51.5, "high": 53, "low": 50.5, "close": 50.75, "unit": "CAD"}; }
-    record d3 "Session 2026-03-04" {x_record: {"day": "2026-03-04", "open": 50.75, "high": 52.5, "low": 50, "close": 52.25, "unit": "CAD"}; }
-    record d4 "Session 2026-03-05" {x_record: {"day": "2026-03-05", "open": 52.25, "high": 54, "low": 51.75, "close": 53.5, "unit": "CAD"}; }
-    record d5 "Session 2026-03-06" {x_record: {"day": "2026-03-06", "open": 53.5, "high": 54.25, "low": 52, "close": 52.5, "unit": "CAD"}; }
-    record d6 "Session 2026-03-09" {x_record: {"day": "2026-03-09", "open": 52.5, "high": 55, "low": 52.25, "close": 54.75, "unit": "CAD"}; }
-    record d7 "Session 2026-03-10" {x_record: {"day": "2026-03-10", "open": 54.75, "high": 56.5, "low": 54, "close": 55.5, "unit": "CAD"}; }
-    record d8 "Session 2026-03-11" {x_record: {"day": "2026-03-11", "open": 55.5, "high": 57, "low": 54.5, "close": 55, "unit": "CAD"}; }
-}
 
-view candlestick "Synthetic trading sessions / candlestick" {
-    data: [@trading]; format: @shared.styles.technical;
-    projection { kind:chart; profile:"chart.candlestick@1"; records:[@trading.d1, @trading.d2, @trading.d3, @trading.d4, @trading.d5, @trading.d6, @trading.d7, @trading.d8]; mark:candlestick; x:"x_record.day"; x_type:date; open:"x_record.open"; high:"x_record.high"; low:"x_record.low"; close:"x_record.close"; unit:"CAD"; width:1120px; height:620px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+element "ddn.examples.candlestick-chart::trading.d1" as "record"
+    with
+        id "ddn.examples.candlestick-chart::trading.d1"
+        title "Session 2026-03-02"
+        metadata
+            x_record
+                day "2026-03-02"
+                open 50
+                high 52
+                low 49
+                close 51.5
+                unit "CAD"
+
+
+element "ddn.examples.candlestick-chart::trading.d2" as "record"
+    with
+        id "ddn.examples.candlestick-chart::trading.d2"
+        title "Session 2026-03-03"
+        metadata
+            x_record
+                day "2026-03-03"
+                open 51.5
+                high 53
+                low 50.5
+                close 50.75
+                unit "CAD"
+
+
+element "ddn.examples.candlestick-chart::trading.d3" as "record"
+    with
+        id "ddn.examples.candlestick-chart::trading.d3"
+        title "Session 2026-03-04"
+        metadata
+            x_record
+                day "2026-03-04"
+                open 50.75
+                high 52.5
+                low 50
+                close 52.25
+                unit "CAD"
+
+
+element "ddn.examples.candlestick-chart::trading.d4" as "record"
+    with
+        id "ddn.examples.candlestick-chart::trading.d4"
+        title "Session 2026-03-05"
+        metadata
+            x_record
+                day "2026-03-05"
+                open 52.25
+                high 54
+                low 51.75
+                close 53.5
+                unit "CAD"
+
+
+element "ddn.examples.candlestick-chart::trading.d5" as "record"
+    with
+        id "ddn.examples.candlestick-chart::trading.d5"
+        title "Session 2026-03-06"
+        metadata
+            x_record
+                day "2026-03-06"
+                open 53.5
+                high 54.25
+                low 52
+                close 52.5
+                unit "CAD"
+
+
+element "ddn.examples.candlestick-chart::trading.d6" as "record"
+    with
+        id "ddn.examples.candlestick-chart::trading.d6"
+        title "Session 2026-03-09"
+        metadata
+            x_record
+                day "2026-03-09"
+                open 52.5
+                high 55
+                low 52.25
+                close 54.75
+                unit "CAD"
+
+
+element "ddn.examples.candlestick-chart::trading.d7" as "record"
+    with
+        id "ddn.examples.candlestick-chart::trading.d7"
+        title "Session 2026-03-10"
+        metadata
+            x_record
+                day "2026-03-10"
+                open 54.75
+                high 56.5
+                low 54
+                close 55.5
+                unit "CAD"
+
+
+element "ddn.examples.candlestick-chart::trading.d8" as "record"
+    with
+        id "ddn.examples.candlestick-chart::trading.d8"
+        title "Session 2026-03-11"
+        metadata
+            x_record
+                day "2026-03-11"
+                open 55.5
+                high 57
+                low 54.5
+                close 55
+                unit "CAD"
+
+
+view "candlestick" as "chart.candlestick@1"
+    with
+        id "candlestick"
+        title "Synthetic trading sessions / candlestick"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.candlestick-chart::trading.d1"
+                    item
+                        id "ddn.examples.candlestick-chart::trading.d2"
+                    item
+                        id "ddn.examples.candlestick-chart::trading.d3"
+                    item
+                        id "ddn.examples.candlestick-chart::trading.d4"
+                    item
+                        id "ddn.examples.candlestick-chart::trading.d5"
+                    item
+                        id "ddn.examples.candlestick-chart::trading.d6"
+                    item
+                        id "ddn.examples.candlestick-chart::trading.d7"
+                    item
+                        id "ddn.examples.candlestick-chart::trading.d8"
+                mark "candlestick"
+                x "metadata.x_record.day"
+                x_type "date"
+                open "metadata.x_record.open"
+                high "metadata.x_record.high"
+                low "metadata.x_record.low"
+                close "metadata.x_record.close"
+                unit "CAD"
+                width 1120
+                height 620

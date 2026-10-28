@@ -1,16 +1,288 @@
-ddn "0.5";
-module "ddn.usecases.views.documents";
-import "formats.ddn" as fmt;
-import "data/documents.ddn" as d;
+version ddn-next-1
 
-// What is embedded rather than independently stored?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "05 / Nested document structure" {
-    data: [@d.model];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.row;
-    select: [@d.model.profiles, @d.model.contacts, @d.model.contact];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "model.r_a": 1, "model.r_b": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "05 / Nested document structure"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.documents::model.profiles.customer_id" as "field"
+    with
+        id "ddn.usecases.documents::model.profiles.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.usecases.documents::model.profiles"
+            ordinal 0
+
+
+element "ddn.usecases.documents::model.profiles.contacts" as "field"
+    with
+        id "ddn.usecases.documents::model.profiles.contacts"
+        title "contacts"
+        properties
+            shape "array"
+        content
+            parent
+                id "ddn.usecases.documents::model.profiles"
+            ordinal 1
+
+
+element "ddn.usecases.documents::model.profiles" as "collection"
+    with
+        id "ddn.usecases.documents::model.profiles"
+        title "Customer profile"
+        members
+            item
+                id "ddn.usecases.documents::model.profiles.customer_id"
+            item
+                id "ddn.usecases.documents::model.profiles.contacts"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "contacts"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.documents::model.contacts" as "array"
+    with
+        id "ddn.usecases.documents::model.contacts"
+        title "Contacts array"
+        description "Embedded collection value, not an independently stored table."
+
+
+element "ddn.usecases.documents::model.contact.kind" as "field"
+    with
+        id "ddn.usecases.documents::model.contact.kind"
+        title "kind"
+        content
+            parent
+                id "ddn.usecases.documents::model.contact"
+            ordinal 0
+
+
+element "ddn.usecases.documents::model.contact.value" as "field"
+    with
+        id "ddn.usecases.documents::model.contact.value"
+        title "value"
+        content
+            parent
+                id "ddn.usecases.documents::model.contact"
+            ordinal 1
+
+
+element "ddn.usecases.documents::model.contact.preferred" as "field"
+    with
+        id "ddn.usecases.documents::model.contact.preferred"
+        title "preferred"
+        properties
+            presence "optional"
+            nullable false
+        content
+            parent
+                id "ddn.usecases.documents::model.contact"
+            ordinal 2
+            nullable false
+
+
+element "ddn.usecases.documents::model.contact" as "document"
+    with
+        id "ddn.usecases.documents::model.contact"
+        title "Contact item"
+        members
+            item
+                id "ddn.usecases.documents::model.contact.kind"
+            item
+                id "ddn.usecases.documents::model.contact.value"
+            item
+                id "ddn.usecases.documents::model.contact.preferred"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "kind"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "value"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "preferred"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.usecases.documents::model.r_a" as "emb"
+    with
+        id "ddn.usecases.documents::model.r_a"
+        title "embeds"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.documents::model.profiles"
+            item
+                definition
+                    id "ddn.usecases.documents::model.contacts"
+
+
+relation "ddn.usecases.documents::model.r_b" as "mem"
+    with
+        id "ddn.usecases.documents::model.r_b"
+        title "item shape"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.documents::model.contacts"
+            item
+                definition
+                    id "ddn.usecases.documents::model.contact"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "05 / Nested document structure"
+        selection
+            include
+                item
+                    id "ddn.usecases.documents::model.profiles"
+                item
+                    id "ddn.usecases.documents::model.contacts"
+                item
+                    id "ddn.usecases.documents::model.contact"
+                item
+                    id "ddn.usecases.documents::model.r_a"
+                item
+                    id "ddn.usecases.documents::model.r_b"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_a "1"
+                model.r_b "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.documents::model.profiles" named "appearance:diagram:ddn.usecases.documents::model.profiles"
+        with
+            id "appearance:diagram:ddn.usecases.documents::model.profiles"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.documents::model.contacts" named "appearance:diagram:ddn.usecases.documents::model.contacts"
+        with
+            id "appearance:diagram:ddn.usecases.documents::model.contacts"
+            body "notes"
+
+    use "ddn.usecases.documents::model.contact" named "appearance:diagram:ddn.usecases.documents::model.contact"
+        with
+            id "appearance:diagram:ddn.usecases.documents::model.contact"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.documents::model.r_a" named "appearance:diagram:ddn.usecases.documents::model.r_a"
+        with
+            id "appearance:diagram:ddn.usecases.documents::model.r_a"
+
+    use "ddn.usecases.documents::model.r_b" named "appearance:diagram:ddn.usecases.documents::model.r_b"
+        with
+            id "appearance:diagram:ddn.usecases.documents::model.r_b"

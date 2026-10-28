@@ -1,38 +1,164 @@
-ddn "0.5";
-module "ddn.examples.data-refresh";
+version ddn-next-1
 
-// Data refresh (B1-006, keyed transactional contract B1-029): a host page
-// swaps the records of the `metrics` data block with
-// ws.replaceData("metrics", [...]) and re-renders — the model, views and
-// layout structure stay untouched. Records match by their `key` field (the
-// declaration id), so reordered payloads never corrupt identities. Replacing
-// with the same values re-renders every view byte-identical; replacing with
-// new values moves only the chart marks. The chart below binds records
-// explicitly (explicit membership), so added records are reported via
-// DDN-W015 addedRecordsNotVisible instead of appearing silently, and removing
-// a bound record is rejected transactionally; the dependency graph selects
-// the whole block (selector membership) and picks up additions automatically.
-// See examples/embed/data-refresh.html.
-//
-//   ws.replaceData("metrics", rows);   // rows: plain objects, optional key,
-//   const r = ws.renderSync({entry, view: "latency_chart"});  // same fields
-//   host.innerHTML = r.svg;            // as the first record
+publication "publication:latency_chart"
+    with
+        id "publication:latency_chart"
+        title "Latency / chart"
+        targets
+            item
+                target
+                    id "latency_chart"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data metrics {
-    record m1 "Alpha" {x_record: { label: "Alpha", value: 10, unit: "ms" }; }
-    record m2 "Beta" {x_record: { label: "Beta", value: 20, unit: "ms" }; }
-    record m3 "Gamma" {x_record: { label: "Gamma", value: 15, unit: "ms" }; }
-    relation trend "Alpha drives Beta" @m1 -> @m2 { kind: flow; }
-    relation feed "Beta feeds Gamma" @m2 -> @m3 { kind: flow; }
-}
 
-view latency_chart "Latency / chart" {
-    data: [@metrics];
-    projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2, @metrics.m3]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:dependency_graph"
+    with
+        id "publication:dependency_graph"
+        title "Latency / dependency graph"
+        targets
+            item
+                target
+                    id "dependency_graph"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view dependency_graph "Latency / dependency graph" {
-    data: [@metrics];
-    publication { size: content; fit: none; }
-}
+
+element "ddn.examples.data-refresh::metrics.m1" as "record"
+    with
+        id "ddn.examples.data-refresh::metrics.m1"
+        title "Alpha"
+        metadata
+            x_record
+                label "Alpha"
+                value 10
+                unit "ms"
+
+
+element "ddn.examples.data-refresh::metrics.m2" as "record"
+    with
+        id "ddn.examples.data-refresh::metrics.m2"
+        title "Beta"
+        metadata
+            x_record
+                label "Beta"
+                value 20
+                unit "ms"
+
+
+element "ddn.examples.data-refresh::metrics.m3" as "record"
+    with
+        id "ddn.examples.data-refresh::metrics.m3"
+        title "Gamma"
+        metadata
+            x_record
+                label "Gamma"
+                value 15
+                unit "ms"
+
+
+relation "ddn.examples.data-refresh::metrics.trend" as "flow"
+    with
+        id "ddn.examples.data-refresh::metrics.trend"
+        title "Alpha drives Beta"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.data-refresh::metrics.m1"
+            item
+                definition
+                    id "ddn.examples.data-refresh::metrics.m2"
+
+
+relation "ddn.examples.data-refresh::metrics.feed" as "flow"
+    with
+        id "ddn.examples.data-refresh::metrics.feed"
+        title "Beta feeds Gamma"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.data-refresh::metrics.m2"
+            item
+                definition
+                    id "ddn.examples.data-refresh::metrics.m3"
+
+
+view "latency_chart" as "chart.basic@1"
+    with
+        id "latency_chart"
+        title "Latency / chart"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.data-refresh::metrics.m1"
+                    item
+                        id "ddn.examples.data-refresh::metrics.m2"
+                    item
+                        id "ddn.examples.data-refresh::metrics.m3"
+                mark "bar"
+                x "metadata.x_record.label"
+                y "metadata.x_record.value"
+                unit "ms"
+                width 900
+                height 560
+
+
+view "dependency_graph" as "ddn@1"
+    with
+        id "dependency_graph"
+        title "Latency / dependency graph"
+        selection
+            include
+                item
+                    id "ddn.examples.data-refresh::metrics.m1"
+                item
+                    id "ddn.examples.data-refresh::metrics.m2"
+                item
+                    id "ddn.examples.data-refresh::metrics.m3"
+                item
+                    id "ddn.examples.data-refresh::metrics.trend"
+                item
+                    id "ddn.examples.data-refresh::metrics.feed"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:dependency_graph"
+
+    use "ddn.examples.data-refresh::metrics.m1" named "appearance:dependency_graph:ddn.examples.data-refresh::metrics.m1"
+        with
+            id "appearance:dependency_graph:ddn.examples.data-refresh::metrics.m1"
+
+    use "ddn.examples.data-refresh::metrics.m2" named "appearance:dependency_graph:ddn.examples.data-refresh::metrics.m2"
+        with
+            id "appearance:dependency_graph:ddn.examples.data-refresh::metrics.m2"
+
+    use "ddn.examples.data-refresh::metrics.m3" named "appearance:dependency_graph:ddn.examples.data-refresh::metrics.m3"
+        with
+            id "appearance:dependency_graph:ddn.examples.data-refresh::metrics.m3"
+
+    use "ddn.examples.data-refresh::metrics.trend" named "appearance:dependency_graph:ddn.examples.data-refresh::metrics.trend"
+        with
+            id "appearance:dependency_graph:ddn.examples.data-refresh::metrics.trend"
+
+    use "ddn.examples.data-refresh::metrics.feed" named "appearance:dependency_graph:ddn.examples.data-refresh::metrics.feed"
+        with
+            id "appearance:dependency_graph:ddn.examples.data-refresh::metrics.feed"

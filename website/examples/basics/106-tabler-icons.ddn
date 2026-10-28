@@ -1,29 +1,501 @@
-ddn "0.5";
-module "ddn.examples.tabler";
+version ddn-next-1
 
-// B1-088: the tabler-infra@1 icon pack — a curated infrastructure selection
-// from tabler-icons (MIT, license text and attribution in the pack
-// manifest; full set not vendored). Icons bind per node via x_icon.
-// All data is synthetic.
-data m {
-    object wan "WAN" { kind: "network.bus"; }
-    object rtr "Core router" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "router" }; }
-    object sw "Distribution switch" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "network" }; }
-    object srv "App server" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "server" }; }
-    object db "Database" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "database" }; }
-    object mon "Operator workstation" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "device-desktop" }; }
-    object lap "Field laptop" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "device-laptop" }; }
-    object sec "Secrets vault" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "shield-lock" }; }
-    object api "Public API" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "api" }; }
-    relation a1 "" @rtr -> @wan { kind: "network.attaches"; }
-    relation a2 "" @sw -> @wan { kind: "network.attaches"; }
-    relation a3 "" @srv -> @wan { kind: "network.attaches"; }
-    relation a4 "" @db -> @wan { kind: "network.attaches"; }
-    relation a5 "" @mon -> @wan { kind: "network.attaches"; }
-    relation a6 "" @lap -> @wan { kind: "network.attaches"; }
-    relation a7 "" @sec -> @wan { kind: "network.attaches"; }
-    relation a8 "" @api -> @wan { kind: "network.attaches"; }
-}
-view net "Tabler pack": [@m] as "network.basic@1" {
-    publication { size: content; fit: none; }
-}
+asset "artwork::network-generic@1:cloud" as resource from "../../assets/icons/network-generic-1/cloud.svg"
+    with
+        id "artwork::network-generic@1:cloud"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::tabler-infra@1:router" as resource from "../../assets/icons/tabler-infra-1/router.svg"
+    with
+        id "artwork::tabler-infra@1:router"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::tabler-infra@1:network" as resource from "../../assets/icons/tabler-infra-1/network.svg"
+    with
+        id "artwork::tabler-infra@1:network"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::tabler-infra@1:server" as resource from "../../assets/icons/tabler-infra-1/server.svg"
+    with
+        id "artwork::tabler-infra@1:server"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::tabler-infra@1:database" as resource from "../../assets/icons/tabler-infra-1/database.svg"
+    with
+        id "artwork::tabler-infra@1:database"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::tabler-infra@1:device-desktop" as resource from "../../assets/icons/tabler-infra-1/device-desktop.svg"
+    with
+        id "artwork::tabler-infra@1:device-desktop"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::tabler-infra@1:device-laptop" as resource from "../../assets/icons/tabler-infra-1/device-laptop.svg"
+    with
+        id "artwork::tabler-infra@1:device-laptop"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::tabler-infra@1:shield-lock" as resource from "../../assets/icons/tabler-infra-1/shield-lock.svg"
+    with
+        id "artwork::tabler-infra@1:shield-lock"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::tabler-infra@1:api" as resource from "../../assets/icons/tabler-infra-1/api.svg"
+    with
+        id "artwork::tabler-infra@1:api"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+publication "publication:net"
+    with
+        id "publication:net"
+        title "Tabler pack"
+        targets
+            item
+                target
+                    id "net"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.tabler::m.wan" as "network.bus"
+    with
+        id "ddn.examples.tabler::m.wan"
+        title "WAN"
+
+
+element "ddn.examples.tabler::m.rtr" as "network.server"
+    with
+        id "ddn.examples.tabler::m.rtr"
+        title "Core router"
+        metadata
+            x_icon
+                library "tabler-infra@1"
+                icon "router"
+
+
+element "ddn.examples.tabler::m.sw" as "network.server"
+    with
+        id "ddn.examples.tabler::m.sw"
+        title "Distribution switch"
+        metadata
+            x_icon
+                library "tabler-infra@1"
+                icon "network"
+
+
+element "ddn.examples.tabler::m.srv" as "network.server"
+    with
+        id "ddn.examples.tabler::m.srv"
+        title "App server"
+        metadata
+            x_icon
+                library "tabler-infra@1"
+                icon "server"
+
+
+element "ddn.examples.tabler::m.db" as "network.server"
+    with
+        id "ddn.examples.tabler::m.db"
+        title "Database"
+        metadata
+            x_icon
+                library "tabler-infra@1"
+                icon "database"
+
+
+element "ddn.examples.tabler::m.mon" as "network.server"
+    with
+        id "ddn.examples.tabler::m.mon"
+        title "Operator workstation"
+        metadata
+            x_icon
+                library "tabler-infra@1"
+                icon "device-desktop"
+
+
+element "ddn.examples.tabler::m.lap" as "network.server"
+    with
+        id "ddn.examples.tabler::m.lap"
+        title "Field laptop"
+        metadata
+            x_icon
+                library "tabler-infra@1"
+                icon "device-laptop"
+
+
+element "ddn.examples.tabler::m.sec" as "network.server"
+    with
+        id "ddn.examples.tabler::m.sec"
+        title "Secrets vault"
+        metadata
+            x_icon
+                library "tabler-infra@1"
+                icon "shield-lock"
+
+
+element "ddn.examples.tabler::m.api" as "network.server"
+    with
+        id "ddn.examples.tabler::m.api"
+        title "Public API"
+        metadata
+            x_icon
+                library "tabler-infra@1"
+                icon "api"
+
+
+relation "ddn.examples.tabler::m.a1" as "network.attaches"
+    with
+        id "ddn.examples.tabler::m.a1"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.tabler::m.rtr"
+            item
+                definition
+                    id "ddn.examples.tabler::m.wan"
+
+
+relation "ddn.examples.tabler::m.a2" as "network.attaches"
+    with
+        id "ddn.examples.tabler::m.a2"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.tabler::m.sw"
+            item
+                definition
+                    id "ddn.examples.tabler::m.wan"
+
+
+relation "ddn.examples.tabler::m.a3" as "network.attaches"
+    with
+        id "ddn.examples.tabler::m.a3"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.tabler::m.srv"
+            item
+                definition
+                    id "ddn.examples.tabler::m.wan"
+
+
+relation "ddn.examples.tabler::m.a4" as "network.attaches"
+    with
+        id "ddn.examples.tabler::m.a4"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.tabler::m.db"
+            item
+                definition
+                    id "ddn.examples.tabler::m.wan"
+
+
+relation "ddn.examples.tabler::m.a5" as "network.attaches"
+    with
+        id "ddn.examples.tabler::m.a5"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.tabler::m.mon"
+            item
+                definition
+                    id "ddn.examples.tabler::m.wan"
+
+
+relation "ddn.examples.tabler::m.a6" as "network.attaches"
+    with
+        id "ddn.examples.tabler::m.a6"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.tabler::m.lap"
+            item
+                definition
+                    id "ddn.examples.tabler::m.wan"
+
+
+relation "ddn.examples.tabler::m.a7" as "network.attaches"
+    with
+        id "ddn.examples.tabler::m.a7"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.tabler::m.sec"
+            item
+                definition
+                    id "ddn.examples.tabler::m.wan"
+
+
+relation "ddn.examples.tabler::m.a8" as "network.attaches"
+    with
+        id "ddn.examples.tabler::m.a8"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.tabler::m.api"
+            item
+                definition
+                    id "ddn.examples.tabler::m.wan"
+
+
+view "net" as "network.basic@1"
+    with
+        id "net"
+        title "Tabler pack"
+        selection
+            include
+                item
+                    id "ddn.examples.tabler::m.wan"
+                item
+                    id "ddn.examples.tabler::m.rtr"
+                item
+                    id "ddn.examples.tabler::m.sw"
+                item
+                    id "ddn.examples.tabler::m.srv"
+                item
+                    id "ddn.examples.tabler::m.db"
+                item
+                    id "ddn.examples.tabler::m.mon"
+                item
+                    id "ddn.examples.tabler::m.lap"
+                item
+                    id "ddn.examples.tabler::m.sec"
+                item
+                    id "ddn.examples.tabler::m.api"
+                item
+                    id "ddn.examples.tabler::m.a1"
+                item
+                    id "ddn.examples.tabler::m.a2"
+                item
+                    id "ddn.examples.tabler::m.a3"
+                item
+                    id "ddn.examples.tabler::m.a4"
+                item
+                    id "ddn.examples.tabler::m.a5"
+                item
+                    id "ddn.examples.tabler::m.a6"
+                item
+                    id "ddn.examples.tabler::m.a7"
+                item
+                    id "ddn.examples.tabler::m.a8"
+        layout
+            center "pins"
+            algorithm "manual"
+            routing "straight"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:net"
+
+    use "ddn.examples.tabler::m.wan" named "appearance:net:ddn.examples.tabler::m.wan"
+        with
+            id "appearance:net:ddn.examples.tabler::m.wan"
+            position.x 500
+            position.y 370
+            size.width 96
+            size.height 96
+            symbol
+                label "inside"
+                image
+                    id "artwork::network-generic@1:cloud"
+
+    use "ddn.examples.tabler::m.rtr" named "appearance:net:ddn.examples.tabler::m.rtr"
+        with
+            id "appearance:net:ddn.examples.tabler::m.rtr"
+            position.x 140
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top-left"
+                image
+                    id "artwork::tabler-infra@1:router"
+
+    use "ddn.examples.tabler::m.sw" named "appearance:net:ddn.examples.tabler::m.sw"
+        with
+            id "appearance:net:ddn.examples.tabler::m.sw"
+            position.x 500
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top"
+                image
+                    id "artwork::tabler-infra@1:network"
+
+    use "ddn.examples.tabler::m.srv" named "appearance:net:ddn.examples.tabler::m.srv"
+        with
+            id "appearance:net:ddn.examples.tabler::m.srv"
+            position.x 860
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top-right"
+                image
+                    id "artwork::tabler-infra@1:server"
+
+    use "ddn.examples.tabler::m.db" named "appearance:net:ddn.examples.tabler::m.db"
+        with
+            id "appearance:net:ddn.examples.tabler::m.db"
+            position.x 140
+            position.y 370
+            size.width 96
+            size.height 96
+            symbol
+                label "left"
+                image
+                    id "artwork::tabler-infra@1:database"
+
+    use "ddn.examples.tabler::m.mon" named "appearance:net:ddn.examples.tabler::m.mon"
+        with
+            id "appearance:net:ddn.examples.tabler::m.mon"
+            position.x 860
+            position.y 370
+            size.width 96
+            size.height 96
+            symbol
+                label "right"
+                image
+                    id "artwork::tabler-infra@1:device-desktop"
+
+    use "ddn.examples.tabler::m.lap" named "appearance:net:ddn.examples.tabler::m.lap"
+        with
+            id "appearance:net:ddn.examples.tabler::m.lap"
+            position.x 140
+            position.y 640
+            size.width 96
+            size.height 96
+            symbol
+                label "bottom-left"
+                image
+                    id "artwork::tabler-infra@1:device-laptop"
+
+    use "ddn.examples.tabler::m.sec" named "appearance:net:ddn.examples.tabler::m.sec"
+        with
+            id "appearance:net:ddn.examples.tabler::m.sec"
+            position.x 500
+            position.y 640
+            size.width 96
+            size.height 96
+            symbol
+                label "bottom"
+                image
+                    id "artwork::tabler-infra@1:shield-lock"
+
+    use "ddn.examples.tabler::m.api" named "appearance:net:ddn.examples.tabler::m.api"
+        with
+            id "appearance:net:ddn.examples.tabler::m.api"
+            position.x 860
+            position.y 640
+            size.width 96
+            size.height 96
+            symbol
+                label "bottom-right"
+                image
+                    id "artwork::tabler-infra@1:api"
+
+    use "ddn.examples.tabler::m.a1" named "appearance:net:ddn.examples.tabler::m.a1"
+        with
+            id "appearance:net:ddn.examples.tabler::m.a1"
+            route.source_side "east"
+            route.target_side "west"
+            route.target_fraction 0.2
+
+    use "ddn.examples.tabler::m.a2" named "appearance:net:ddn.examples.tabler::m.a2"
+        with
+            id "appearance:net:ddn.examples.tabler::m.a2"
+            route.source_side "south"
+            route.target_side "north"
+            route.target_fraction 0.5
+
+    use "ddn.examples.tabler::m.a3" named "appearance:net:ddn.examples.tabler::m.a3"
+        with
+            id "appearance:net:ddn.examples.tabler::m.a3"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.2
+
+    use "ddn.examples.tabler::m.a4" named "appearance:net:ddn.examples.tabler::m.a4"
+        with
+            id "appearance:net:ddn.examples.tabler::m.a4"
+            route.source_side "east"
+            route.target_side "west"
+            route.target_fraction 0.5
+
+    use "ddn.examples.tabler::m.a5" named "appearance:net:ddn.examples.tabler::m.a5"
+        with
+            id "appearance:net:ddn.examples.tabler::m.a5"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.5
+
+    use "ddn.examples.tabler::m.a6" named "appearance:net:ddn.examples.tabler::m.a6"
+        with
+            id "appearance:net:ddn.examples.tabler::m.a6"
+            route.source_side "east"
+            route.target_side "west"
+            route.target_fraction 0.8
+
+    use "ddn.examples.tabler::m.a7" named "appearance:net:ddn.examples.tabler::m.a7"
+        with
+            id "appearance:net:ddn.examples.tabler::m.a7"
+            route.source_side "north"
+            route.target_side "south"
+            route.target_fraction 0.5
+
+    use "ddn.examples.tabler::m.a8" named "appearance:net:ddn.examples.tabler::m.a8"
+        with
+            id "appearance:net:ddn.examples.tabler::m.a8"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.8

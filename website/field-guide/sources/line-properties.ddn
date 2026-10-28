@@ -1,0 +1,164 @@
+version ddn-next-1
+
+publication "publication:main"
+    with
+        id "publication:main"
+        title "Portable stroke and line properties"
+        targets
+            item
+                target
+                    id "main"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.lineprops::model.invoice" as "service"
+    with
+        id "ddn.fieldguide.lineprops::model.invoice"
+        title "Invoice gateway"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "fill": "#fff7ed",
+                      "stroke": {
+                        "color": "#c2410c",
+                        "weight": 3,
+                        "dash": "dashed"
+                      }
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.lineprops::model.ledger" as "database"
+    with
+        id "ddn.fieldguide.lineprops::model.ledger"
+        title "Ledger archive"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "fill": "#eff6ff",
+                      "stroke": {
+                        "color": "#1d4ed8",
+                        "weight": 2
+                      }
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.lineprops::model.legacy" as "queue"
+    with
+        id "ddn.fieldguide.lineprops::model.legacy"
+        title "Legacy export (retired)"
+
+
+relation "ddn.fieldguide.lineprops::model.posts" as "flow"
+    with
+        id "ddn.fieldguide.lineprops::model.posts"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.lineprops::model.invoice"
+            item
+                definition
+                    id "ddn.fieldguide.lineprops::model.ledger"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "line": {
+                        "color": "#1d4ed8",
+                        "weight": 2.5,
+                        "dash": "dotted"
+                      }
+                    }
+                format "plain"
+
+
+relation "ddn.fieldguide.lineprops::model.fed" as "flow"
+    with
+        id "ddn.fieldguide.lineprops::model.fed"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.lineprops::model.legacy"
+            item
+                definition
+                    id "ddn.fieldguide.lineprops::model.invoice"
+
+
+view "main" as "ddn@1"
+    with
+        id "main"
+        title "Portable stroke and line properties"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.lineprops::model.invoice"
+                item
+                    id "ddn.fieldguide.lineprops::model.ledger"
+                item
+                    id "ddn.fieldguide.lineprops::model.legacy"
+                item
+                    id "ddn.fieldguide.lineprops::model.posts"
+                item
+                    id "ddn.fieldguide.lineprops::model.fed"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:main"
+
+    use "ddn.fieldguide.lineprops::model.invoice" named "appearance:main:ddn.fieldguide.lineprops::model.invoice"
+        with
+            id "appearance:main:ddn.fieldguide.lineprops::model.invoice"
+            background
+                color "#fff7ed"
+            stroke
+                color "#c2410c"
+                dash "dashed"
+                weight 3
+            border
+                color "#c2410c"
+                width 3
+                style "dashed"
+
+    use "ddn.fieldguide.lineprops::model.ledger" named "appearance:main:ddn.fieldguide.lineprops::model.ledger"
+        with
+            id "appearance:main:ddn.fieldguide.lineprops::model.ledger"
+            background
+                color "#eff6ff"
+            stroke
+                color "#1d4ed8"
+                weight 2
+            border
+                color "#1d4ed8"
+                width 2
+
+    use "ddn.fieldguide.lineprops::model.legacy" named "appearance:main:ddn.fieldguide.lineprops::model.legacy"
+        with
+            id "appearance:main:ddn.fieldguide.lineprops::model.legacy"
+
+    use "ddn.fieldguide.lineprops::model.posts" named "appearance:main:ddn.fieldguide.lineprops::model.posts"
+        with
+            id "appearance:main:ddn.fieldguide.lineprops::model.posts"
+            stroke
+                color "#1d4ed8"
+                dash "dotted"
+                weight 2.5
+
+    use "ddn.fieldguide.lineprops::model.fed" named "appearance:main:ddn.fieldguide.lineprops::model.fed"
+        with
+            id "appearance:main:ddn.fieldguide.lineprops::model.fed"

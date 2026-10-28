@@ -1,56 +1,668 @@
-ddn "0.5";
-module "ddn.examples.canvas-pack-a";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:bmc"
+    with
+        id "publication:bmc"
+        title "Coffee cart / business model canvas"
+        targets
+            item
+                target
+                    id "bmc"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// Synthetic coffee-cart business (all data invented) for the canvas.bmc@1 and canvas.lean@1 profiles.
-data canvas {
-    note bmc_kp "Key partners" {description: "Synthetic: the bean roaster cooperative and the cart maintenance contractor."; }
-    note bmc_ka "Key activities" {description: "Synthetic: brewing and serving drinks, daily cart setup, and stock ordering."; }
-    note bmc_kr "Key resources" {description: "Synthetic: the cart, the espresso machine, and the two trained baristas."; }
-    note bmc_vp "Value propositions" {description: "Synthetic: a fast specialty coffee at the commuter corner before the first train."; }
-    note bmc_cr "Customer relationships" {description: "Synthetic: remembered orders and a stamp-card loyalty scheme."; }
-    note bmc_ch "Channels" {description: "Synthetic: the physical cart plus pre-orders through a simple chat channel."; }
-    note bmc_cs "Customer segments" {description: "Synthetic: morning commuters and nearby office workers on breaks."; }
-    note bmc_cost "Cost structure" {description: "Synthetic: beans and milk, pitch rent, machine servicing, and wages."; }
-    note bmc_rev "Revenue streams" {description: "Synthetic: per-cup sales and pre-paid weekly commuter bundles."; }
-    note lean_problem "Problem" {description: "Synthetic: commuters queue too long at the station kiosk and miss their train."; }
-    note lean_solution "Solution" {description: "Synthetic: a compact cart with pre-order pickup that serves a coffee in under a minute."; }
-    note lean_keymetrics "Key metrics" {description: "Synthetic: cups served per morning hour and pre-order pickup rate."; }
-    note lean_uvp "Unique value proposition" {description: "Synthetic: specialty coffee faster than the station kiosk, right on the platform path."; }
-    note lean_unfair "Unfair advantage" {description: "Synthetic: an exclusive pitch licence for the busiest commuter corner."; }
-    note lean_channels "Channels" {description: "Synthetic: the cart itself and the pre-order chat channel."; }
-    note lean_segments "Customer segments" {description: "Synthetic: daily commuters and nearby office workers."; }
-    note lean_cost "Cost structure" {description: "Synthetic: supplies, pitch licence, servicing, and staffing."; }
-    note lean_revenue "Revenue streams" {description: "Synthetic: walk-up sales and weekly subscription bundles."; }
-}
 
-view bmc "Coffee cart / business model canvas" {
-    data: [@canvas];
-    format: @shared.styles.technical;
-    projection { kind:panels; profile:"canvas.bmc@1"; columns:10; panels:[
-        {id:"kp",title:"KEY PARTNERS",row:0,column:0,rowspan:2,colspan:2,items:[@canvas.bmc_kp]},
-        {id:"ka",title:"KEY ACTIVITIES",row:0,column:2,rowspan:1,colspan:2,items:[@canvas.bmc_ka]},
-        {id:"kr",title:"KEY RESOURCES",row:1,column:2,rowspan:1,colspan:2,items:[@canvas.bmc_kr]},
-        {id:"vp",title:"VALUE PROPOSITIONS",row:0,column:4,rowspan:2,colspan:2,items:[@canvas.bmc_vp]},
-        {id:"cr",title:"CUSTOMER RELATIONSHIPS",row:0,column:6,rowspan:1,colspan:2,items:[@canvas.bmc_cr]},
-        {id:"ch",title:"CHANNELS",row:1,column:6,rowspan:1,colspan:2,items:[@canvas.bmc_ch]},
-        {id:"cs",title:"CUSTOMER SEGMENTS",row:0,column:8,rowspan:2,colspan:2,items:[@canvas.bmc_cs]},
-        {id:"cost",title:"COST STRUCTURE",row:2,column:0,rowspan:1,colspan:5,items:[@canvas.bmc_cost]},
-        {id:"rev",title:"REVENUE STREAMS",row:2,column:5,rowspan:1,colspan:5,items:[@canvas.bmc_rev]}]; }
-}
+publication "publication:lean"
+    with
+        id "publication:lean"
+        title "Coffee cart / lean canvas"
+        targets
+            item
+                target
+                    id "lean"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view lean "Coffee cart / lean canvas" {
-    data: [@canvas];
-    format: @shared.styles.technical;
-    projection { kind:panels; profile:"canvas.lean@1"; columns:10; panels:[
-        {id:"problem",title:"PROBLEM",row:0,column:0,rowspan:2,colspan:2,items:[@canvas.lean_problem]},
-        {id:"solution",title:"SOLUTION",row:0,column:2,rowspan:1,colspan:2,items:[@canvas.lean_solution]},
-        {id:"keymetrics",title:"KEY METRICS",row:1,column:2,rowspan:1,colspan:2,items:[@canvas.lean_keymetrics]},
-        {id:"uvp",title:"UNIQUE VALUE PROPOSITION",row:0,column:4,rowspan:2,colspan:2,items:[@canvas.lean_uvp]},
-        {id:"unfair",title:"UNFAIR ADVANTAGE",row:0,column:6,rowspan:1,colspan:2,items:[@canvas.lean_unfair]},
-        {id:"channels",title:"CHANNELS",row:1,column:6,rowspan:1,colspan:2,items:[@canvas.lean_channels]},
-        {id:"segments",title:"CUSTOMER SEGMENTS",row:0,column:8,rowspan:2,colspan:2,items:[@canvas.lean_segments]},
-        {id:"cost",title:"COST STRUCTURE",row:2,column:0,rowspan:1,colspan:5,items:[@canvas.lean_cost]},
-        {id:"revenue",title:"REVENUE STREAMS",row:2,column:5,rowspan:1,colspan:5,items:[@canvas.lean_revenue]}]; }
-}
+
+element "ddn.examples.canvas-pack-a::canvas.bmc_kp" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.bmc_kp"
+        title "Key partners"
+        description "Synthetic: the bean roaster cooperative and the cart maintenance contractor."
+        content
+            text "Synthetic: the bean roaster cooperative and the cart maintenance contractor."
+        draft
+            text "Synthetic: the bean roaster cooperative and the cart maintenance contractor."
+
+
+element "ddn.examples.canvas-pack-a::canvas.bmc_ka" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.bmc_ka"
+        title "Key activities"
+        description "Synthetic: brewing and serving drinks, daily cart setup, and stock ordering."
+        content
+            text "Synthetic: brewing and serving drinks, daily cart setup, and stock ordering."
+        draft
+            text "Synthetic: brewing and serving drinks, daily cart setup, and stock ordering."
+
+
+element "ddn.examples.canvas-pack-a::canvas.bmc_kr" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.bmc_kr"
+        title "Key resources"
+        description "Synthetic: the cart, the espresso machine, and the two trained baristas."
+        content
+            text "Synthetic: the cart, the espresso machine, and the two trained baristas."
+        draft
+            text "Synthetic: the cart, the espresso machine, and the two trained baristas."
+
+
+element "ddn.examples.canvas-pack-a::canvas.bmc_vp" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.bmc_vp"
+        title "Value propositions"
+        description "Synthetic: a fast specialty coffee at the commuter corner before the first train."
+        content
+            text "Synthetic: a fast specialty coffee at the commuter corner before the first train."
+        draft
+            text "Synthetic: a fast specialty coffee at the commuter corner before the first train."
+
+
+element "ddn.examples.canvas-pack-a::canvas.bmc_cr" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.bmc_cr"
+        title "Customer relationships"
+        description "Synthetic: remembered orders and a stamp-card loyalty scheme."
+        content
+            text "Synthetic: remembered orders and a stamp-card loyalty scheme."
+        draft
+            text "Synthetic: remembered orders and a stamp-card loyalty scheme."
+
+
+element "ddn.examples.canvas-pack-a::canvas.bmc_ch" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.bmc_ch"
+        title "Channels"
+        description "Synthetic: the physical cart plus pre-orders through a simple chat channel."
+        content
+            text "Synthetic: the physical cart plus pre-orders through a simple chat channel."
+        draft
+            text "Synthetic: the physical cart plus pre-orders through a simple chat channel."
+
+
+element "ddn.examples.canvas-pack-a::canvas.bmc_cs" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.bmc_cs"
+        title "Customer segments"
+        description "Synthetic: morning commuters and nearby office workers on breaks."
+        content
+            text "Synthetic: morning commuters and nearby office workers on breaks."
+        draft
+            text "Synthetic: morning commuters and nearby office workers on breaks."
+
+
+element "ddn.examples.canvas-pack-a::canvas.bmc_cost" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.bmc_cost"
+        title "Cost structure"
+        description "Synthetic: beans and milk, pitch rent, machine servicing, and wages."
+        content
+            text "Synthetic: beans and milk, pitch rent, machine servicing, and wages."
+        draft
+            text "Synthetic: beans and milk, pitch rent, machine servicing, and wages."
+
+
+element "ddn.examples.canvas-pack-a::canvas.bmc_rev" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.bmc_rev"
+        title "Revenue streams"
+        description "Synthetic: per-cup sales and pre-paid weekly commuter bundles."
+        content
+            text "Synthetic: per-cup sales and pre-paid weekly commuter bundles."
+        draft
+            text "Synthetic: per-cup sales and pre-paid weekly commuter bundles."
+
+
+element "ddn.examples.canvas-pack-a::canvas.lean_problem" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.lean_problem"
+        title "Problem"
+        description "Synthetic: commuters queue too long at the station kiosk and miss their train."
+        content
+            text "Synthetic: commuters queue too long at the station kiosk and miss their train."
+        draft
+            text "Synthetic: commuters queue too long at the station kiosk and miss their train."
+
+
+element "ddn.examples.canvas-pack-a::canvas.lean_solution" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.lean_solution"
+        title "Solution"
+        description "Synthetic: a compact cart with pre-order pickup that serves a coffee in under a minute."
+        content
+            text "Synthetic: a compact cart with pre-order pickup that serves a coffee in under a minute."
+        draft
+            text "Synthetic: a compact cart with pre-order pickup that serves a coffee in under a minute."
+
+
+element "ddn.examples.canvas-pack-a::canvas.lean_keymetrics" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.lean_keymetrics"
+        title "Key metrics"
+        description "Synthetic: cups served per morning hour and pre-order pickup rate."
+        content
+            text "Synthetic: cups served per morning hour and pre-order pickup rate."
+        draft
+            text "Synthetic: cups served per morning hour and pre-order pickup rate."
+
+
+element "ddn.examples.canvas-pack-a::canvas.lean_uvp" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.lean_uvp"
+        title "Unique value proposition"
+        description "Synthetic: specialty coffee faster than the station kiosk, right on the platform path."
+        content
+            text "Synthetic: specialty coffee faster than the station kiosk, right on the platform path."
+        draft
+            text "Synthetic: specialty coffee faster than the station kiosk, right on the platform path."
+
+
+element "ddn.examples.canvas-pack-a::canvas.lean_unfair" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.lean_unfair"
+        title "Unfair advantage"
+        description "Synthetic: an exclusive pitch licence for the busiest commuter corner."
+        content
+            text "Synthetic: an exclusive pitch licence for the busiest commuter corner."
+        draft
+            text "Synthetic: an exclusive pitch licence for the busiest commuter corner."
+
+
+element "ddn.examples.canvas-pack-a::canvas.lean_channels" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.lean_channels"
+        title "Channels"
+        description "Synthetic: the cart itself and the pre-order chat channel."
+        content
+            text "Synthetic: the cart itself and the pre-order chat channel."
+        draft
+            text "Synthetic: the cart itself and the pre-order chat channel."
+
+
+element "ddn.examples.canvas-pack-a::canvas.lean_segments" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.lean_segments"
+        title "Customer segments"
+        description "Synthetic: daily commuters and nearby office workers."
+        content
+            text "Synthetic: daily commuters and nearby office workers."
+        draft
+            text "Synthetic: daily commuters and nearby office workers."
+
+
+element "ddn.examples.canvas-pack-a::canvas.lean_cost" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.lean_cost"
+        title "Cost structure"
+        description "Synthetic: supplies, pitch licence, servicing, and staffing."
+        content
+            text "Synthetic: supplies, pitch licence, servicing, and staffing."
+        draft
+            text "Synthetic: supplies, pitch licence, servicing, and staffing."
+
+
+element "ddn.examples.canvas-pack-a::canvas.lean_revenue" as "note"
+    with
+        id "ddn.examples.canvas-pack-a::canvas.lean_revenue"
+        title "Revenue streams"
+        description "Synthetic: walk-up sales and weekly subscription bundles."
+        content
+            text "Synthetic: walk-up sales and weekly subscription bundles."
+        draft
+            text "Synthetic: walk-up sales and weekly subscription bundles."
+
+
+element "bmc::panel::kp" as "note"
+    with
+        id "bmc::panel::kp"
+        title "KEY PARTNERS"
+        metadata
+            x_record
+                id "kp"
+                row 0
+                column 0
+                rowspan 2
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.bmc_kp"
+
+
+element "bmc::panel::ka" as "note"
+    with
+        id "bmc::panel::ka"
+        title "KEY ACTIVITIES"
+        metadata
+            x_record
+                id "ka"
+                row 0
+                column 2
+                rowspan 1
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.bmc_ka"
+
+
+element "bmc::panel::kr" as "note"
+    with
+        id "bmc::panel::kr"
+        title "KEY RESOURCES"
+        metadata
+            x_record
+                id "kr"
+                row 1
+                column 2
+                rowspan 1
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.bmc_kr"
+
+
+element "bmc::panel::vp" as "note"
+    with
+        id "bmc::panel::vp"
+        title "VALUE PROPOSITIONS"
+        metadata
+            x_record
+                id "vp"
+                row 0
+                column 4
+                rowspan 2
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.bmc_vp"
+
+
+element "bmc::panel::cr" as "note"
+    with
+        id "bmc::panel::cr"
+        title "CUSTOMER RELATIONSHIPS"
+        metadata
+            x_record
+                id "cr"
+                row 0
+                column 6
+                rowspan 1
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.bmc_cr"
+
+
+element "bmc::panel::ch" as "note"
+    with
+        id "bmc::panel::ch"
+        title "CHANNELS"
+        metadata
+            x_record
+                id "ch"
+                row 1
+                column 6
+                rowspan 1
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.bmc_ch"
+
+
+element "bmc::panel::cs" as "note"
+    with
+        id "bmc::panel::cs"
+        title "CUSTOMER SEGMENTS"
+        metadata
+            x_record
+                id "cs"
+                row 0
+                column 8
+                rowspan 2
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.bmc_cs"
+
+
+element "bmc::panel::cost" as "note"
+    with
+        id "bmc::panel::cost"
+        title "COST STRUCTURE"
+        metadata
+            x_record
+                id "cost"
+                row 2
+                column 0
+                rowspan 1
+                colspan 5
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.bmc_cost"
+
+
+element "bmc::panel::rev" as "note"
+    with
+        id "bmc::panel::rev"
+        title "REVENUE STREAMS"
+        metadata
+            x_record
+                id "rev"
+                row 2
+                column 5
+                rowspan 1
+                colspan 5
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.bmc_rev"
+
+
+element "lean::panel::problem" as "note"
+    with
+        id "lean::panel::problem"
+        title "PROBLEM"
+        metadata
+            x_record
+                id "problem"
+                row 0
+                column 0
+                rowspan 2
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.lean_problem"
+
+
+element "lean::panel::solution" as "note"
+    with
+        id "lean::panel::solution"
+        title "SOLUTION"
+        metadata
+            x_record
+                id "solution"
+                row 0
+                column 2
+                rowspan 1
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.lean_solution"
+
+
+element "lean::panel::keymetrics" as "note"
+    with
+        id "lean::panel::keymetrics"
+        title "KEY METRICS"
+        metadata
+            x_record
+                id "keymetrics"
+                row 1
+                column 2
+                rowspan 1
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.lean_keymetrics"
+
+
+element "lean::panel::uvp" as "note"
+    with
+        id "lean::panel::uvp"
+        title "UNIQUE VALUE PROPOSITION"
+        metadata
+            x_record
+                id "uvp"
+                row 0
+                column 4
+                rowspan 2
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.lean_uvp"
+
+
+element "lean::panel::unfair" as "note"
+    with
+        id "lean::panel::unfair"
+        title "UNFAIR ADVANTAGE"
+        metadata
+            x_record
+                id "unfair"
+                row 0
+                column 6
+                rowspan 1
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.lean_unfair"
+
+
+element "lean::panel::channels" as "note"
+    with
+        id "lean::panel::channels"
+        title "CHANNELS"
+        metadata
+            x_record
+                id "channels"
+                row 1
+                column 6
+                rowspan 1
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.lean_channels"
+
+
+element "lean::panel::segments" as "note"
+    with
+        id "lean::panel::segments"
+        title "CUSTOMER SEGMENTS"
+        metadata
+            x_record
+                id "segments"
+                row 0
+                column 8
+                rowspan 2
+                colspan 2
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.lean_segments"
+
+
+element "lean::panel::cost" as "note"
+    with
+        id "lean::panel::cost"
+        title "COST STRUCTURE"
+        metadata
+            x_record
+                id "cost"
+                row 2
+                column 0
+                rowspan 1
+                colspan 5
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.lean_cost"
+
+
+element "lean::panel::revenue" as "note"
+    with
+        id "lean::panel::revenue"
+        title "REVENUE STREAMS"
+        metadata
+            x_record
+                id "revenue"
+                row 2
+                column 5
+                rowspan 1
+                colspan 5
+                items
+                    item
+                        id "ddn.examples.canvas-pack-a::canvas.lean_revenue"
+
+
+view "bmc" as "canvas.bmc@1"
+    with
+        id "bmc"
+        title "Coffee cart / business model canvas"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                columns 10
+                panels
+                    item
+                        target
+                            id "bmc::panel::kp"
+                        kind "text"
+                        title "KEY PARTNERS"
+                    item
+                        target
+                            id "bmc::panel::ka"
+                        kind "text"
+                        title "KEY ACTIVITIES"
+                    item
+                        target
+                            id "bmc::panel::kr"
+                        kind "text"
+                        title "KEY RESOURCES"
+                    item
+                        target
+                            id "bmc::panel::vp"
+                        kind "text"
+                        title "VALUE PROPOSITIONS"
+                    item
+                        target
+                            id "bmc::panel::cr"
+                        kind "text"
+                        title "CUSTOMER RELATIONSHIPS"
+                    item
+                        target
+                            id "bmc::panel::ch"
+                        kind "text"
+                        title "CHANNELS"
+                    item
+                        target
+                            id "bmc::panel::cs"
+                        kind "text"
+                        title "CUSTOMER SEGMENTS"
+                    item
+                        target
+                            id "bmc::panel::cost"
+                        kind "text"
+                        title "COST STRUCTURE"
+                    item
+                        target
+                            id "bmc::panel::rev"
+                        kind "text"
+                        title "REVENUE STREAMS"
+
+
+view "lean" as "canvas.lean@1"
+    with
+        id "lean"
+        title "Coffee cart / lean canvas"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                columns 10
+                panels
+                    item
+                        target
+                            id "lean::panel::problem"
+                        kind "text"
+                        title "PROBLEM"
+                    item
+                        target
+                            id "lean::panel::solution"
+                        kind "text"
+                        title "SOLUTION"
+                    item
+                        target
+                            id "lean::panel::keymetrics"
+                        kind "text"
+                        title "KEY METRICS"
+                    item
+                        target
+                            id "lean::panel::uvp"
+                        kind "text"
+                        title "UNIQUE VALUE PROPOSITION"
+                    item
+                        target
+                            id "lean::panel::unfair"
+                        kind "text"
+                        title "UNFAIR ADVANTAGE"
+                    item
+                        target
+                            id "lean::panel::channels"
+                        kind "text"
+                        title "CHANNELS"
+                    item
+                        target
+                            id "lean::panel::segments"
+                        kind "text"
+                        title "CUSTOMER SEGMENTS"
+                    item
+                        target
+                            id "lean::panel::cost"
+                        kind "text"
+                        title "COST STRUCTURE"
+                    item
+                        target
+                            id "lean::panel::revenue"
+                        kind "text"
+                        title "REVENUE STREAMS"

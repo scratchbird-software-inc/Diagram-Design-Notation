@@ -1,24 +1,279 @@
-ddn "0.5";
-module "ddn.examples.temporal";
-import "shared.ddn" as shared;
+version ddn-next-1
 
-data model {
-    history history "Customer status history" {
-temporal: bitemporal; workload: [olap];
-        time: { valid: "business effective date", recorded: "warehouse knowledge date", retention: undecided };
-        fields { customer_id; status; valid_from; recorded_from; }
-    }
-    sample example "Late-arriving fact / synthetic example" {
-        mode: synthetic;
-        columns: [@history.customer_id, @history.status, @history.valid_from, @history.recorded_from];
-        rows: [["C001", "Active", "2026-03-01", "2026-03-05"], ["C002", "Suspended", "2026-03-02", "2026-03-02"]];
-    }
-    recovery recovery "Operational restore plan" {description: "PITR is a restore capability, not the business-valid time axis."; }
-    relation illustration @example -> @history { kind: illustrates; }
-}
-view temporal "Two time axes / not the same as recovery" {
-    data: [@model]; format: @shared.styles.technical;
-    publication { width: 1480px; height: 800px; }
-    legend { mode: numbers; keys: { "illustration": 2 }; }
+publication "publication:temporal"
+    with
+        id "publication:temporal"
+        title "Two time axes / not the same as recovery"
+        targets
+            item
+                target
+                    id "temporal"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1480
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-}
+
+element "ddn.examples.temporal::model.history.customer_id" as "field"
+    with
+        id "ddn.examples.temporal::model.history.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.examples.temporal::model.history"
+            ordinal 0
+
+
+element "ddn.examples.temporal::model.history.status" as "field"
+    with
+        id "ddn.examples.temporal::model.history.status"
+        title "status"
+        content
+            parent
+                id "ddn.examples.temporal::model.history"
+            ordinal 1
+
+
+element "ddn.examples.temporal::model.history.valid_from" as "field"
+    with
+        id "ddn.examples.temporal::model.history.valid_from"
+        title "valid_from"
+        content
+            parent
+                id "ddn.examples.temporal::model.history"
+            ordinal 2
+
+
+element "ddn.examples.temporal::model.history.recorded_from" as "field"
+    with
+        id "ddn.examples.temporal::model.history.recorded_from"
+        title "recorded_from"
+        content
+            parent
+                id "ddn.examples.temporal::model.history"
+            ordinal 3
+
+
+element "ddn.examples.temporal::model.history" as "history"
+    with
+        id "ddn.examples.temporal::model.history"
+        title "Customer status history"
+        facets
+            workload
+                item "OLAP"
+            temporal
+                item "BT"
+        properties
+            temporal "bitemporal"
+            workload
+                item "olap"
+            time empty record
+        members
+            item
+                id "ddn.examples.temporal::model.history.customer_id"
+            item
+                id "ddn.examples.temporal::model.history.status"
+            item
+                id "ddn.examples.temporal::model.history.valid_from"
+            item
+                id "ddn.examples.temporal::model.history.recorded_from"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "valid_from"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "recorded_from"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "time": {
+                        "valid": "business effective date",
+                        "recorded": "warehouse knowledge date",
+                        "retention": null
+                      }
+                    }
+                format "plain"
+
+
+element "ddn.examples.temporal::model.example" as "sample"
+    with
+        id "ddn.examples.temporal::model.example"
+        title "Late-arriving fact / synthetic example"
+        properties
+            mode "synthetic"
+            columns
+                item
+                    id "ddn.examples.temporal::model.history.customer_id"
+                item
+                    id "ddn.examples.temporal::model.history.status"
+                item
+                    id "ddn.examples.temporal::model.history.valid_from"
+                item
+                    id "ddn.examples.temporal::model.history.recorded_from"
+            rows
+                item
+                    item "C001"
+                    item "Active"
+                    item "2026-03-01"
+                    item "2026-03-05"
+                item
+                    item "C002"
+                    item "Suspended"
+                    item "2026-03-02"
+                    item "2026-03-02"
+        data
+            columns
+                item
+                    id "column-0"
+                    label "customer_id"
+                item
+                    id "column-1"
+                    label "status"
+                item
+                    id "column-2"
+                    label "valid_from"
+                item
+                    id "column-3"
+                    label "recorded_from"
+            rows
+                item
+                    item "C001"
+                    item "Active"
+                    item "2026-03-01"
+                    item "2026-03-05"
+                item
+                    item "C002"
+                    item "Suspended"
+                    item "2026-03-02"
+                    item "2026-03-02"
+
+
+element "ddn.examples.temporal::model.recovery" as "recovery"
+    with
+        id "ddn.examples.temporal::model.recovery"
+        title "Operational restore plan"
+        description "PITR is a restore capability, not the business-valid time axis."
+
+
+relation "ddn.examples.temporal::model.illustration" as "example"
+    with
+        id "ddn.examples.temporal::model.illustration"
+        title "illustrates"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.temporal::model.example"
+            item
+                definition
+                    id "ddn.examples.temporal::model.history"
+
+
+view "temporal" as "ddn@1"
+    with
+        id "temporal"
+        title "Two time axes / not the same as recovery"
+        selection
+            include
+                item
+                    id "ddn.examples.temporal::model.history"
+                item
+                    id "ddn.examples.temporal::model.example"
+                item
+                    id "ddn.examples.temporal::model.recovery"
+                item
+                    id "ddn.examples.temporal::model.illustration"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            mode "numbers"
+            width 280
+            keys
+                illustration "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:temporal"
+
+    use "ddn.examples.temporal::model.history" named "appearance:temporal:ddn.examples.temporal::model.history"
+        with
+            id "appearance:temporal:ddn.examples.temporal::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.temporal::model.example" named "appearance:temporal:ddn.examples.temporal::model.example"
+        with
+            id "appearance:temporal:ddn.examples.temporal::model.example"
+            body "columns"
+
+    use "ddn.examples.temporal::model.recovery" named "appearance:temporal:ddn.examples.temporal::model.recovery"
+        with
+            id "appearance:temporal:ddn.examples.temporal::model.recovery"
+            body "notes"
+
+    use "ddn.examples.temporal::model.illustration" named "appearance:temporal:ddn.examples.temporal::model.illustration"
+        with
+            id "appearance:temporal:ddn.examples.temporal::model.illustration"

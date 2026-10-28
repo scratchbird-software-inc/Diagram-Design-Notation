@@ -1,32 +1,242 @@
-ddn "0.5";
-module "ddn.examples.familytree";
+version ddn-next-1
 
-// Fictional three-generation family for the family.tree@1 profile.
-// Partnerships join through small family.union nodes: alex and miriam via
-// union_am, sam and jo via union_sj. family.parent_of edges run from a
-// union down to a child, so the layered downward layout stacks the
-// generations — grandparents' union at the top, the child generation
-// below, the grandchild at the bottom. Persons carry optional x_birth
-// (and one x_death) years. All persons and dates are fictional.
-data m {
-    object alex "Alex" { kind: "family.person"; x_birth: 1948; x_death: 2019; }
-    object miriam "Miriam" { kind: "family.person"; x_birth: 1951; }
-    object union_am { kind: "family.union"; }
-    object sam "Sam" { kind: "family.person"; x_birth: 1976; }
-    object jo "Jo" { kind: "family.person"; x_birth: 1978; }
-    object union_sj { kind: "family.union"; }
-    object robin "Robin" { kind: "family.person"; x_birth: 2005; }
+publication "publication:family"
+    with
+        id "publication:family"
+        title "Three generations"
+        targets
+            item
+                target
+                    id "family"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-    relation partner_alex "partner of" @alex -> @union_am { kind: "family.partner_of"; }
-    relation partner_miriam "partner of" @miriam -> @union_am { kind: "family.partner_of"; }
-    relation partner_sam "partner of" @sam -> @union_sj { kind: "family.partner_of"; }
-    relation partner_jo "partner of" @jo -> @union_sj { kind: "family.partner_of"; }
-    relation child_sam "parent of" @union_am -> @sam { kind: "family.parent_of"; }
-    relation child_robin "parent of" @union_sj -> @robin { kind: "family.parent_of"; }
-}
 
-view family "Three generations": [@m] as "family.tree@1" {
-    select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.familytree::m.alex" as "family.person"
+    with
+        id "ddn.examples.familytree::m.alex"
+        title "Alex"
+        metadata
+            x_birth 1948
+            x_death 2019
+
+
+element "ddn.examples.familytree::m.miriam" as "family.person"
+    with
+        id "ddn.examples.familytree::m.miriam"
+        title "Miriam"
+        metadata
+            x_birth 1951
+
+
+element "ddn.examples.familytree::m.union_am" as "family.union"
+    with
+        id "ddn.examples.familytree::m.union_am"
+        title "union_am"
+
+
+element "ddn.examples.familytree::m.sam" as "family.person"
+    with
+        id "ddn.examples.familytree::m.sam"
+        title "Sam"
+        metadata
+            x_birth 1976
+
+
+element "ddn.examples.familytree::m.jo" as "family.person"
+    with
+        id "ddn.examples.familytree::m.jo"
+        title "Jo"
+        metadata
+            x_birth 1978
+
+
+element "ddn.examples.familytree::m.union_sj" as "family.union"
+    with
+        id "ddn.examples.familytree::m.union_sj"
+        title "union_sj"
+
+
+element "ddn.examples.familytree::m.robin" as "family.person"
+    with
+        id "ddn.examples.familytree::m.robin"
+        title "Robin"
+        metadata
+            x_birth 2005
+
+
+relation "ddn.examples.familytree::m.partner_alex" as "family.partner_of"
+    with
+        id "ddn.examples.familytree::m.partner_alex"
+        title "partner of"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.familytree::m.alex"
+            item
+                definition
+                    id "ddn.examples.familytree::m.union_am"
+
+
+relation "ddn.examples.familytree::m.partner_miriam" as "family.partner_of"
+    with
+        id "ddn.examples.familytree::m.partner_miriam"
+        title "partner of"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.familytree::m.miriam"
+            item
+                definition
+                    id "ddn.examples.familytree::m.union_am"
+
+
+relation "ddn.examples.familytree::m.partner_sam" as "family.partner_of"
+    with
+        id "ddn.examples.familytree::m.partner_sam"
+        title "partner of"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.familytree::m.sam"
+            item
+                definition
+                    id "ddn.examples.familytree::m.union_sj"
+
+
+relation "ddn.examples.familytree::m.partner_jo" as "family.partner_of"
+    with
+        id "ddn.examples.familytree::m.partner_jo"
+        title "partner of"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.familytree::m.jo"
+            item
+                definition
+                    id "ddn.examples.familytree::m.union_sj"
+
+
+relation "ddn.examples.familytree::m.child_sam" as "family.parent_of"
+    with
+        id "ddn.examples.familytree::m.child_sam"
+        title "parent of"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.familytree::m.union_am"
+            item
+                definition
+                    id "ddn.examples.familytree::m.sam"
+
+
+relation "ddn.examples.familytree::m.child_robin" as "family.parent_of"
+    with
+        id "ddn.examples.familytree::m.child_robin"
+        title "parent of"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.familytree::m.union_sj"
+            item
+                definition
+                    id "ddn.examples.familytree::m.robin"
+
+
+view "family" as "family.tree@1"
+    with
+        id "family"
+        title "Three generations"
+        selection
+            include
+                item
+                    id "ddn.examples.familytree::m.alex"
+                item
+                    id "ddn.examples.familytree::m.miriam"
+                item
+                    id "ddn.examples.familytree::m.union_am"
+                item
+                    id "ddn.examples.familytree::m.sam"
+                item
+                    id "ddn.examples.familytree::m.jo"
+                item
+                    id "ddn.examples.familytree::m.union_sj"
+                item
+                    id "ddn.examples.familytree::m.robin"
+                item
+                    id "ddn.examples.familytree::m.partner_alex"
+                item
+                    id "ddn.examples.familytree::m.partner_miriam"
+                item
+                    id "ddn.examples.familytree::m.partner_sam"
+                item
+                    id "ddn.examples.familytree::m.partner_jo"
+                item
+                    id "ddn.examples.familytree::m.child_sam"
+                item
+                    id "ddn.examples.familytree::m.child_robin"
+        layout
+            algorithm "layered"
+            direction "down"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:family"
+
+    use "ddn.examples.familytree::m.alex" named "appearance:family:ddn.examples.familytree::m.alex"
+        with
+            id "appearance:family:ddn.examples.familytree::m.alex"
+
+    use "ddn.examples.familytree::m.miriam" named "appearance:family:ddn.examples.familytree::m.miriam"
+        with
+            id "appearance:family:ddn.examples.familytree::m.miriam"
+
+    use "ddn.examples.familytree::m.union_am" named "appearance:family:ddn.examples.familytree::m.union_am"
+        with
+            id "appearance:family:ddn.examples.familytree::m.union_am"
+
+    use "ddn.examples.familytree::m.sam" named "appearance:family:ddn.examples.familytree::m.sam"
+        with
+            id "appearance:family:ddn.examples.familytree::m.sam"
+
+    use "ddn.examples.familytree::m.jo" named "appearance:family:ddn.examples.familytree::m.jo"
+        with
+            id "appearance:family:ddn.examples.familytree::m.jo"
+
+    use "ddn.examples.familytree::m.union_sj" named "appearance:family:ddn.examples.familytree::m.union_sj"
+        with
+            id "appearance:family:ddn.examples.familytree::m.union_sj"
+
+    use "ddn.examples.familytree::m.robin" named "appearance:family:ddn.examples.familytree::m.robin"
+        with
+            id "appearance:family:ddn.examples.familytree::m.robin"
+
+    use "ddn.examples.familytree::m.partner_alex" named "appearance:family:ddn.examples.familytree::m.partner_alex"
+        with
+            id "appearance:family:ddn.examples.familytree::m.partner_alex"
+
+    use "ddn.examples.familytree::m.partner_miriam" named "appearance:family:ddn.examples.familytree::m.partner_miriam"
+        with
+            id "appearance:family:ddn.examples.familytree::m.partner_miriam"
+
+    use "ddn.examples.familytree::m.partner_sam" named "appearance:family:ddn.examples.familytree::m.partner_sam"
+        with
+            id "appearance:family:ddn.examples.familytree::m.partner_sam"
+
+    use "ddn.examples.familytree::m.partner_jo" named "appearance:family:ddn.examples.familytree::m.partner_jo"
+        with
+            id "appearance:family:ddn.examples.familytree::m.partner_jo"
+
+    use "ddn.examples.familytree::m.child_sam" named "appearance:family:ddn.examples.familytree::m.child_sam"
+        with
+            id "appearance:family:ddn.examples.familytree::m.child_sam"
+
+    use "ddn.examples.familytree::m.child_robin" named "appearance:family:ddn.examples.familytree::m.child_robin"
+        with
+            id "appearance:family:ddn.examples.familytree::m.child_robin"

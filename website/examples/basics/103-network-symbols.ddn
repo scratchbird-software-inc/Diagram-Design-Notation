@@ -1,35 +1,586 @@
-ddn "0.5";
-module "ddn.examples.networksymbols";
+version ddn-next-1
 
-// B1-087: the network-generic@1 icon library — generic infrastructure
-// glyphs (no vendor packs; licensing diligence pending). The library binds
-// by default to the network.* kinds (bus→cloud, switch→switch,
-// server→server, rack→database); everything else binds per node via
-// x_icon. Common-practice rendering — compliance against the standard
-// pending document review. All data is synthetic.
-data m {
-    object wan "Internet" { kind: "network.bus"; }
-    object fw "Edge firewall" { kind: "network.server"; x_icon: { library: "network-generic@1", icon: "firewall" }; }
-    object lb "Load balancer" { kind: "network.server"; x_icon: { library: "network-generic@1", icon: "load-balancer" }; }
-    object rtr "Core router" { kind: "network.server"; x_icon: { library: "network-generic@1", icon: "router" }; }
-    object sw "Access switch" { kind: "network.switch"; }
-    object app "App server" { kind: "network.server"; }
-    object db "Database" { kind: "network.rack"; }
-    object ap "Wi-Fi AP" { kind: "network.server"; x_icon: { library: "network-generic@1", icon: "wifi-ap" }; }
-    object ws "Workstation" { kind: "network.server"; x_icon: { library: "network-generic@1", icon: "workstation" }; }
-    object prn "Printer" { kind: "network.server"; x_icon: { library: "network-generic@1", icon: "printer" }; }
-    object lan "Site LAN" { kind: "network.bus"; }
-    relation a1 "" @fw -> @wan { kind: "network.attaches"; }
-    relation a2 "" @rtr -> @wan { kind: "network.attaches"; }
-    relation a3 "" @rtr -> @lan { kind: "network.attaches"; }
-    relation a4 "" @lb -> @lan { kind: "network.attaches"; }
-    relation a5 "" @sw -> @lan { kind: "network.attaches"; }
-    relation a6 "" @app -> @lan { kind: "network.attaches"; }
-    relation a7 "" @db -> @lan { kind: "network.attaches"; }
-    relation a8 "" @ap -> @lan { kind: "network.attaches"; }
-    relation a9 "" @ws -> @lan { kind: "network.attaches"; }
-    relation a10 "" @prn -> @lan { kind: "network.attaches"; }
-}
-view net "Network symbol library": [@m] as "network.basic@1" {
-    publication { size: content; fit: none; }
-}
+asset "artwork::network-generic@1:cloud" as resource from "../../assets/icons/network-generic-1/cloud.svg"
+    with
+        id "artwork::network-generic@1:cloud"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:firewall" as resource from "../../assets/icons/network-generic-1/firewall.svg"
+    with
+        id "artwork::network-generic@1:firewall"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:load-balancer" as resource from "../../assets/icons/network-generic-1/load-balancer.svg"
+    with
+        id "artwork::network-generic@1:load-balancer"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:router" as resource from "../../assets/icons/network-generic-1/router.svg"
+    with
+        id "artwork::network-generic@1:router"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:switch" as resource from "../../assets/icons/network-generic-1/switch.svg"
+    with
+        id "artwork::network-generic@1:switch"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:server" as resource from "../../assets/icons/network-generic-1/server.svg"
+    with
+        id "artwork::network-generic@1:server"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:database" as resource from "../../assets/icons/network-generic-1/database.svg"
+    with
+        id "artwork::network-generic@1:database"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:wifi-ap" as resource from "../../assets/icons/network-generic-1/wifi-ap.svg"
+    with
+        id "artwork::network-generic@1:wifi-ap"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:workstation" as resource from "../../assets/icons/network-generic-1/workstation.svg"
+    with
+        id "artwork::network-generic@1:workstation"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::network-generic@1:printer" as resource from "../../assets/icons/network-generic-1/printer.svg"
+    with
+        id "artwork::network-generic@1:printer"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+publication "publication:net"
+    with
+        id "publication:net"
+        title "Network symbol library"
+        targets
+            item
+                target
+                    id "net"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.networksymbols::m.wan" as "network.bus"
+    with
+        id "ddn.examples.networksymbols::m.wan"
+        title "Internet"
+
+
+element "ddn.examples.networksymbols::m.fw" as "network.server"
+    with
+        id "ddn.examples.networksymbols::m.fw"
+        title "Edge firewall"
+        metadata
+            x_icon
+                library "network-generic@1"
+                icon "firewall"
+
+
+element "ddn.examples.networksymbols::m.lb" as "network.server"
+    with
+        id "ddn.examples.networksymbols::m.lb"
+        title "Load balancer"
+        metadata
+            x_icon
+                library "network-generic@1"
+                icon "load-balancer"
+
+
+element "ddn.examples.networksymbols::m.rtr" as "network.server"
+    with
+        id "ddn.examples.networksymbols::m.rtr"
+        title "Core router"
+        metadata
+            x_icon
+                library "network-generic@1"
+                icon "router"
+
+
+element "ddn.examples.networksymbols::m.sw" as "network.switch"
+    with
+        id "ddn.examples.networksymbols::m.sw"
+        title "Access switch"
+
+
+element "ddn.examples.networksymbols::m.app" as "network.server"
+    with
+        id "ddn.examples.networksymbols::m.app"
+        title "App server"
+
+
+element "ddn.examples.networksymbols::m.db" as "network.rack"
+    with
+        id "ddn.examples.networksymbols::m.db"
+        title "Database"
+
+
+element "ddn.examples.networksymbols::m.ap" as "network.server"
+    with
+        id "ddn.examples.networksymbols::m.ap"
+        title "Wi-Fi AP"
+        metadata
+            x_icon
+                library "network-generic@1"
+                icon "wifi-ap"
+
+
+element "ddn.examples.networksymbols::m.ws" as "network.server"
+    with
+        id "ddn.examples.networksymbols::m.ws"
+        title "Workstation"
+        metadata
+            x_icon
+                library "network-generic@1"
+                icon "workstation"
+
+
+element "ddn.examples.networksymbols::m.prn" as "network.server"
+    with
+        id "ddn.examples.networksymbols::m.prn"
+        title "Printer"
+        metadata
+            x_icon
+                library "network-generic@1"
+                icon "printer"
+
+
+element "ddn.examples.networksymbols::m.lan" as "network.bus"
+    with
+        id "ddn.examples.networksymbols::m.lan"
+        title "Site LAN"
+
+
+relation "ddn.examples.networksymbols::m.a1" as "network.attaches"
+    with
+        id "ddn.examples.networksymbols::m.a1"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.fw"
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.wan"
+
+
+relation "ddn.examples.networksymbols::m.a2" as "network.attaches"
+    with
+        id "ddn.examples.networksymbols::m.a2"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.rtr"
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.wan"
+
+
+relation "ddn.examples.networksymbols::m.a3" as "network.attaches"
+    with
+        id "ddn.examples.networksymbols::m.a3"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.rtr"
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.lan"
+
+
+relation "ddn.examples.networksymbols::m.a4" as "network.attaches"
+    with
+        id "ddn.examples.networksymbols::m.a4"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.lb"
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.lan"
+
+
+relation "ddn.examples.networksymbols::m.a5" as "network.attaches"
+    with
+        id "ddn.examples.networksymbols::m.a5"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.sw"
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.lan"
+
+
+relation "ddn.examples.networksymbols::m.a6" as "network.attaches"
+    with
+        id "ddn.examples.networksymbols::m.a6"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.app"
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.lan"
+
+
+relation "ddn.examples.networksymbols::m.a7" as "network.attaches"
+    with
+        id "ddn.examples.networksymbols::m.a7"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.db"
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.lan"
+
+
+relation "ddn.examples.networksymbols::m.a8" as "network.attaches"
+    with
+        id "ddn.examples.networksymbols::m.a8"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.ap"
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.lan"
+
+
+relation "ddn.examples.networksymbols::m.a9" as "network.attaches"
+    with
+        id "ddn.examples.networksymbols::m.a9"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.ws"
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.lan"
+
+
+relation "ddn.examples.networksymbols::m.a10" as "network.attaches"
+    with
+        id "ddn.examples.networksymbols::m.a10"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.prn"
+            item
+                definition
+                    id "ddn.examples.networksymbols::m.lan"
+
+
+view "net" as "network.basic@1"
+    with
+        id "net"
+        title "Network symbol library"
+        selection
+            include
+                item
+                    id "ddn.examples.networksymbols::m.wan"
+                item
+                    id "ddn.examples.networksymbols::m.fw"
+                item
+                    id "ddn.examples.networksymbols::m.lb"
+                item
+                    id "ddn.examples.networksymbols::m.rtr"
+                item
+                    id "ddn.examples.networksymbols::m.sw"
+                item
+                    id "ddn.examples.networksymbols::m.app"
+                item
+                    id "ddn.examples.networksymbols::m.db"
+                item
+                    id "ddn.examples.networksymbols::m.ap"
+                item
+                    id "ddn.examples.networksymbols::m.ws"
+                item
+                    id "ddn.examples.networksymbols::m.prn"
+                item
+                    id "ddn.examples.networksymbols::m.lan"
+                item
+                    id "ddn.examples.networksymbols::m.a1"
+                item
+                    id "ddn.examples.networksymbols::m.a2"
+                item
+                    id "ddn.examples.networksymbols::m.a3"
+                item
+                    id "ddn.examples.networksymbols::m.a4"
+                item
+                    id "ddn.examples.networksymbols::m.a5"
+                item
+                    id "ddn.examples.networksymbols::m.a6"
+                item
+                    id "ddn.examples.networksymbols::m.a7"
+                item
+                    id "ddn.examples.networksymbols::m.a8"
+                item
+                    id "ddn.examples.networksymbols::m.a9"
+                item
+                    id "ddn.examples.networksymbols::m.a10"
+        layout
+            center "pins"
+            algorithm "manual"
+            routing "straight"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:net"
+
+    use "ddn.examples.networksymbols::m.wan" named "appearance:net:ddn.examples.networksymbols::m.wan"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.wan"
+            position.x 500
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top"
+                image
+                    id "artwork::network-generic@1:cloud"
+
+    use "ddn.examples.networksymbols::m.fw" named "appearance:net:ddn.examples.networksymbols::m.fw"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.fw"
+            position.x 100
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top"
+                image
+                    id "artwork::network-generic@1:firewall"
+
+    use "ddn.examples.networksymbols::m.lb" named "appearance:net:ddn.examples.networksymbols::m.lb"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.lb"
+            position.x 100
+            position.y 300
+            size.width 96
+            size.height 96
+            symbol
+                label "left"
+                image
+                    id "artwork::network-generic@1:load-balancer"
+
+    use "ddn.examples.networksymbols::m.rtr" named "appearance:net:ddn.examples.networksymbols::m.rtr"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.rtr"
+            position.x 900
+            position.y 100
+            size.width 96
+            size.height 96
+            symbol
+                label "top"
+                image
+                    id "artwork::network-generic@1:router"
+
+    use "ddn.examples.networksymbols::m.sw" named "appearance:net:ddn.examples.networksymbols::m.sw"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.sw"
+            position.x 100
+            position.y 500
+            size.width 96
+            size.height 96
+            symbol
+                label "left"
+                image
+                    id "artwork::network-generic@1:switch"
+
+    use "ddn.examples.networksymbols::m.app" named "appearance:net:ddn.examples.networksymbols::m.app"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.app"
+            position.x 100
+            position.y 700
+            size.width 96
+            size.height 96
+            symbol
+                label "left"
+                image
+                    id "artwork::network-generic@1:server"
+
+    use "ddn.examples.networksymbols::m.db" named "appearance:net:ddn.examples.networksymbols::m.db"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.db"
+            position.x 900
+            position.y 300
+            size.width 96
+            size.height 96
+            symbol
+                label "right"
+                image
+                    id "artwork::network-generic@1:database"
+
+    use "ddn.examples.networksymbols::m.ap" named "appearance:net:ddn.examples.networksymbols::m.ap"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.ap"
+            position.x 900
+            position.y 500
+            size.width 96
+            size.height 96
+            symbol
+                label "right"
+                image
+                    id "artwork::network-generic@1:wifi-ap"
+
+    use "ddn.examples.networksymbols::m.ws" named "appearance:net:ddn.examples.networksymbols::m.ws"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.ws"
+            position.x 900
+            position.y 700
+            size.width 96
+            size.height 96
+            symbol
+                label "right"
+                image
+                    id "artwork::network-generic@1:workstation"
+
+    use "ddn.examples.networksymbols::m.prn" named "appearance:net:ddn.examples.networksymbols::m.prn"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.prn"
+            position.x 500
+            position.y 700
+            size.width 96
+            size.height 96
+            symbol
+                label "bottom"
+                image
+                    id "artwork::network-generic@1:printer"
+
+    use "ddn.examples.networksymbols::m.lan" named "appearance:net:ddn.examples.networksymbols::m.lan"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.lan"
+            position.x 500
+            position.y 400
+            size.width 96
+            size.height 96
+            symbol
+                label "inside"
+                image
+                    id "artwork::network-generic@1:cloud"
+
+    use "ddn.examples.networksymbols::m.a1" named "appearance:net:ddn.examples.networksymbols::m.a1"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.a1"
+            route.source_side "east"
+            route.target_side "west"
+            route.target_fraction 0.5
+
+    use "ddn.examples.networksymbols::m.a2" named "appearance:net:ddn.examples.networksymbols::m.a2"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.a2"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.5
+
+    use "ddn.examples.networksymbols::m.a3" named "appearance:net:ddn.examples.networksymbols::m.a3"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.a3"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.1
+
+    use "ddn.examples.networksymbols::m.a4" named "appearance:net:ddn.examples.networksymbols::m.a4"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.a4"
+            route.source_side "east"
+            route.target_side "west"
+            route.target_fraction 0.2
+
+    use "ddn.examples.networksymbols::m.a5" named "appearance:net:ddn.examples.networksymbols::m.a5"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.a5"
+            route.source_side "east"
+            route.target_side "west"
+            route.target_fraction 0.5
+
+    use "ddn.examples.networksymbols::m.a6" named "appearance:net:ddn.examples.networksymbols::m.a6"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.a6"
+            route.source_side "east"
+            route.target_side "west"
+            route.target_fraction 0.8
+
+    use "ddn.examples.networksymbols::m.a7" named "appearance:net:ddn.examples.networksymbols::m.a7"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.a7"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.3
+
+    use "ddn.examples.networksymbols::m.a8" named "appearance:net:ddn.examples.networksymbols::m.a8"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.a8"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.6
+
+    use "ddn.examples.networksymbols::m.a9" named "appearance:net:ddn.examples.networksymbols::m.a9"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.a9"
+            route.source_side "west"
+            route.target_side "east"
+            route.target_fraction 0.85
+
+    use "ddn.examples.networksymbols::m.a10" named "appearance:net:ddn.examples.networksymbols::m.a10"
+        with
+            id "appearance:net:ddn.examples.networksymbols::m.a10"
+            route.source_side "north"
+            route.target_side "south"
+            route.target_fraction 0.5

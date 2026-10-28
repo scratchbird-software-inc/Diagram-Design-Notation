@@ -1,33 +1,278 @@
-ddn "0.5";
-module "ddn.examples.org-chart";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:org"
+    with
+        id "publication:org"
+        title "Synthetic organisation / org chart"
+        targets
+            item
+                target
+                    id "org"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic 8-person organisation for the org.tree@1 profile. All people are fictional.
-data people {
-    object ceo "A. Rivera — CEO" { kind: "analysis.role"; }
-    object vp_eng "B. Okafor — VP Engineering" { kind: "analysis.role"; }
-    object vp_fin "C. Novak — VP Finance" { kind: "analysis.role"; }
-    object vp_ops "D. Sato — VP Operations" { kind: "analysis.role"; }
-    object lead_plat "E. Mbeki — Platform lead" { kind: "analysis.role"; }
-    object lead_qa "F. Costa — QA lead" { kind: "analysis.role"; }
-    object lead_ar "G. Lund — AR lead" { kind: "analysis.role"; }
-    object lead_fleet "H. Petit — Fleet lead" { kind: "analysis.role"; }
-    reports_to r1 @ceo -> @vp_eng;
-    reports_to r2 @ceo -> @vp_fin;
-    reports_to r3 @ceo -> @vp_ops;
-    reports_to r4 @vp_eng -> @lead_plat;
-    reports_to r5 @vp_eng -> @lead_qa;
-    reports_to r6 @vp_fin -> @lead_ar;
-    reports_to r7 @vp_ops -> @lead_fleet;
-}
 
-format options {
-    layout org { gap: 112px; row_gap: 112px; algorithm: tree; direction: down; root: @people.ceo; hierarchy: [reports_to]; }
-}
+element "ddn.examples.org-chart::people.ceo" as "analysis.role"
+    with
+        id "ddn.examples.org-chart::people.ceo"
+        title "A. Rivera — CEO"
 
-view org "Synthetic organisation / org chart" {
-    data: [@people]; format: @shared.styles.technical; layout: @options.org;
-    projection { kind: graph; profile: "org.tree@1"; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+
+element "ddn.examples.org-chart::people.vp_eng" as "analysis.role"
+    with
+        id "ddn.examples.org-chart::people.vp_eng"
+        title "B. Okafor — VP Engineering"
+
+
+element "ddn.examples.org-chart::people.vp_fin" as "analysis.role"
+    with
+        id "ddn.examples.org-chart::people.vp_fin"
+        title "C. Novak — VP Finance"
+
+
+element "ddn.examples.org-chart::people.vp_ops" as "analysis.role"
+    with
+        id "ddn.examples.org-chart::people.vp_ops"
+        title "D. Sato — VP Operations"
+
+
+element "ddn.examples.org-chart::people.lead_plat" as "analysis.role"
+    with
+        id "ddn.examples.org-chart::people.lead_plat"
+        title "E. Mbeki — Platform lead"
+
+
+element "ddn.examples.org-chart::people.lead_qa" as "analysis.role"
+    with
+        id "ddn.examples.org-chart::people.lead_qa"
+        title "F. Costa — QA lead"
+
+
+element "ddn.examples.org-chart::people.lead_ar" as "analysis.role"
+    with
+        id "ddn.examples.org-chart::people.lead_ar"
+        title "G. Lund — AR lead"
+
+
+element "ddn.examples.org-chart::people.lead_fleet" as "analysis.role"
+    with
+        id "ddn.examples.org-chart::people.lead_fleet"
+        title "H. Petit — Fleet lead"
+
+
+relation "ddn.examples.org-chart::people.r1" as "reports_to"
+    with
+        id "ddn.examples.org-chart::people.r1"
+        title "has direct report"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.org-chart::people.ceo"
+            item
+                definition
+                    id "ddn.examples.org-chart::people.vp_eng"
+
+
+relation "ddn.examples.org-chart::people.r2" as "reports_to"
+    with
+        id "ddn.examples.org-chart::people.r2"
+        title "has direct report"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.org-chart::people.ceo"
+            item
+                definition
+                    id "ddn.examples.org-chart::people.vp_fin"
+
+
+relation "ddn.examples.org-chart::people.r3" as "reports_to"
+    with
+        id "ddn.examples.org-chart::people.r3"
+        title "has direct report"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.org-chart::people.ceo"
+            item
+                definition
+                    id "ddn.examples.org-chart::people.vp_ops"
+
+
+relation "ddn.examples.org-chart::people.r4" as "reports_to"
+    with
+        id "ddn.examples.org-chart::people.r4"
+        title "has direct report"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.org-chart::people.vp_eng"
+            item
+                definition
+                    id "ddn.examples.org-chart::people.lead_plat"
+
+
+relation "ddn.examples.org-chart::people.r5" as "reports_to"
+    with
+        id "ddn.examples.org-chart::people.r5"
+        title "has direct report"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.org-chart::people.vp_eng"
+            item
+                definition
+                    id "ddn.examples.org-chart::people.lead_qa"
+
+
+relation "ddn.examples.org-chart::people.r6" as "reports_to"
+    with
+        id "ddn.examples.org-chart::people.r6"
+        title "has direct report"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.org-chart::people.vp_fin"
+            item
+                definition
+                    id "ddn.examples.org-chart::people.lead_ar"
+
+
+relation "ddn.examples.org-chart::people.r7" as "reports_to"
+    with
+        id "ddn.examples.org-chart::people.r7"
+        title "has direct report"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.org-chart::people.vp_ops"
+            item
+                definition
+                    id "ddn.examples.org-chart::people.lead_fleet"
+
+
+view "org" as "org.tree@1"
+    with
+        id "org"
+        title "Synthetic organisation / org chart"
+        selection
+            include
+                item
+                    id "ddn.examples.org-chart::people.ceo"
+                item
+                    id "ddn.examples.org-chart::people.vp_eng"
+                item
+                    id "ddn.examples.org-chart::people.vp_fin"
+                item
+                    id "ddn.examples.org-chart::people.vp_ops"
+                item
+                    id "ddn.examples.org-chart::people.lead_plat"
+                item
+                    id "ddn.examples.org-chart::people.lead_qa"
+                item
+                    id "ddn.examples.org-chart::people.lead_ar"
+                item
+                    id "ddn.examples.org-chart::people.lead_fleet"
+                item
+                    id "ddn.examples.org-chart::people.r1"
+                item
+                    id "ddn.examples.org-chart::people.r2"
+                item
+                    id "ddn.examples.org-chart::people.r3"
+                item
+                    id "ddn.examples.org-chart::people.r4"
+                item
+                    id "ddn.examples.org-chart::people.r5"
+                item
+                    id "ddn.examples.org-chart::people.r6"
+                item
+                    id "ddn.examples.org-chart::people.r7"
+        layout
+            algorithm "tree"
+            direction "down"
+            gap 112
+            row_gap 112
+            root
+                id "ddn.examples.org-chart::people.ceo"
+            hierarchy "reports_to"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:org"
+
+    use "ddn.examples.org-chart::people.ceo" named "appearance:org:ddn.examples.org-chart::people.ceo"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.ceo"
+
+    use "ddn.examples.org-chart::people.vp_eng" named "appearance:org:ddn.examples.org-chart::people.vp_eng"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.vp_eng"
+
+    use "ddn.examples.org-chart::people.vp_fin" named "appearance:org:ddn.examples.org-chart::people.vp_fin"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.vp_fin"
+
+    use "ddn.examples.org-chart::people.vp_ops" named "appearance:org:ddn.examples.org-chart::people.vp_ops"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.vp_ops"
+
+    use "ddn.examples.org-chart::people.lead_plat" named "appearance:org:ddn.examples.org-chart::people.lead_plat"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.lead_plat"
+
+    use "ddn.examples.org-chart::people.lead_qa" named "appearance:org:ddn.examples.org-chart::people.lead_qa"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.lead_qa"
+
+    use "ddn.examples.org-chart::people.lead_ar" named "appearance:org:ddn.examples.org-chart::people.lead_ar"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.lead_ar"
+
+    use "ddn.examples.org-chart::people.lead_fleet" named "appearance:org:ddn.examples.org-chart::people.lead_fleet"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.lead_fleet"
+
+    use "ddn.examples.org-chart::people.r1" named "appearance:org:ddn.examples.org-chart::people.r1"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.r1"
+
+    use "ddn.examples.org-chart::people.r2" named "appearance:org:ddn.examples.org-chart::people.r2"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.r2"
+
+    use "ddn.examples.org-chart::people.r3" named "appearance:org:ddn.examples.org-chart::people.r3"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.r3"
+
+    use "ddn.examples.org-chart::people.r4" named "appearance:org:ddn.examples.org-chart::people.r4"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.r4"
+
+    use "ddn.examples.org-chart::people.r5" named "appearance:org:ddn.examples.org-chart::people.r5"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.r5"
+
+    use "ddn.examples.org-chart::people.r6" named "appearance:org:ddn.examples.org-chart::people.r6"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.r6"
+
+    use "ddn.examples.org-chart::people.r7" named "appearance:org:ddn.examples.org-chart::people.r7"
+        with
+            id "appearance:org:ddn.examples.org-chart::people.r7"

@@ -1,0 +1,55 @@
+{
+  "definitions": [
+    {
+      "name": "Customer",
+      "role": "entity"
+    },
+    {
+      "name": "Order",
+      "role": "entity"
+    },
+    {
+      "name": "Orders",
+      "category": "relation",
+      "role": "assoc",
+      "endpoints": [
+        {
+          "definition": {
+            "name": "Customer"
+          }
+        },
+        {
+          "definition": {
+            "name": "Order"
+          }
+        }
+      ],
+      "qualifiers": {
+        "source": {
+          "cardinality": 1
+        },
+        "target": {
+          "cardinality": "many"
+        }
+      }
+    }
+  ],
+  "views": [
+    {
+      "name": "Sales",
+      "selection": {
+        "include": [
+          {
+            "name": "Customer"
+          },
+          {
+            "name": "Order"
+          },
+          {
+            "name": "Orders"
+          }
+        ]
+      }
+    }
+  ]
+}

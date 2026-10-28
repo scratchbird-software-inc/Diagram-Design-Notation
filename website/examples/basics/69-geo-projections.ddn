@@ -1,34 +1,215 @@
-ddn "0.5";
-module "ddn.examples.geo-projections";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+asset "assets/geo/world-110m.json" as resource from "../../assets/geo/world-110m.json"
+    with
+        id "geography::assets/geo/world-110m.json"
+        media_type "application/geo+json"
 
-// One world outline rendered through every projection method ddn-geo ships,
-// with the 10° graticule on. Data: the registered world-110m asset.
-data geo {
-    record note "Projection comparison" {x_record: {"plate": "world outline, four methods"}; }
-}
 
-view mercator "World outline / mercator" {
-    data: [@geo]; select: [@geo.note]; format: @shared.styles.technical;
-    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:mercator; graticule:true; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+publication "publication:mercator"
+    with
+        id "publication:mercator"
+        title "World outline / mercator"
+        targets
+            item
+                target
+                    id "mercator"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view equirectangular "World outline / equirectangular" {
-    data: [@geo]; select: [@geo.note]; format: @shared.styles.technical;
-    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:equirectangular; graticule:true; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
 
-view albers "World outline / albers" {
-    data: [@geo]; select: [@geo.note]; format: @shared.styles.technical;
-    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:albers; graticule:true; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+publication "publication:equirectangular"
+    with
+        id "publication:equirectangular"
+        title "World outline / equirectangular"
+        targets
+            item
+                target
+                    id "equirectangular"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view equalearth "World outline / equal-earth" {
-    data: [@geo]; select: [@geo.note]; format: @shared.styles.technical;
-    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:equalEarth; graticule:true; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+
+publication "publication:albers"
+    with
+        id "publication:albers"
+        title "World outline / albers"
+        targets
+            item
+                target
+                    id "albers"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:equalearth"
+    with
+        id "publication:equalearth"
+        title "World outline / equal-earth"
+        targets
+            item
+                target
+                    id "equalearth"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.geo-projections::geo.note" as "record"
+    with
+        id "ddn.examples.geo-projections::geo.note"
+        title "Projection comparison"
+        metadata
+            x_record
+                plate "world outline, four methods"
+
+
+view "mercator" as "geo.outline@1"
+    with
+        id "mercator"
+        title "World outline / mercator"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                mark "outline"
+                geography "assets/geo/world-110m.json"
+                method "mercator"
+                graticule true
+                width 1120
+                height 640
+
+
+view "equirectangular" as "geo.outline@1"
+    with
+        id "equirectangular"
+        title "World outline / equirectangular"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                mark "outline"
+                geography "assets/geo/world-110m.json"
+                method "equirectangular"
+                graticule true
+                width 1120
+                height 640
+
+
+view "albers" as "geo.outline@1"
+    with
+        id "albers"
+        title "World outline / albers"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                mark "outline"
+                geography "assets/geo/world-110m.json"
+                method "albers"
+                graticule true
+                width 1120
+                height 640
+
+
+view "equalearth" as "geo.outline@1"
+    with
+        id "equalearth"
+        title "World outline / equal-earth"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                mark "outline"
+                geography "assets/geo/world-110m.json"
+                method "equalEarth"
+                graticule true
+                width 1120
+                height 640

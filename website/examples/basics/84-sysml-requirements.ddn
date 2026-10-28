@@ -1,48 +1,476 @@
-ddn "0.5";
-module "ddn.examples.sysmlreq";
+version ddn-next-1
 
-// B1-065: SysML 1.6 requirements and package diagrams — requirements with
-// id/text compartments, a test case, the seven requirement dependencies
-// («deriveReqt», «satisfy», «verify», «refine», «trace», «copy», «master»),
-// composition containment, «allocate», and a package view with import/merge.
-// All data is synthetic.
+publication "publication:requirements"
+    with
+        id "publication:requirements"
+        title "Pump requirements"
+        targets
+            item
+                target
+                    id "requirements"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data reqs {
-    object perf "Pump performance" { kind: "req.requirement"; x_diagram: { code: "R-1"; text: "The pump shall sustain 40 L/min at 2 bar outlet pressure." }; }
-    object resp "Response time" { kind: "req.requirement"; x_diagram: { code: "R-1.1"; text: "The pump shall reach rated flow within 500 ms of start." }; }
-    object safe "Safety" { kind: "req.requirement"; x_diagram: { code: "R-2"; text: "The pump shall shut down on reservoir empty." }; }
-    object safeMaster "Safety (master)" { kind: "req.requirement"; x_diagram: { code: "PLANT-9"; text: "Plant equipment shall shut down on dry-run detection." }; }
-    object tc "Rated-flow test" { kind: "sysml.testcase"; }
-    object pump "Pump" { kind: "sysml.block"; }
-    object ctrl "Pump controller" { kind: "sysml.block"; }
 
-    relation derive "" @resp -> @perf { kind: "sysml.derive"; }
-    relation satisfy "" @pump -> @perf { kind: "sysml.satisfy"; }
-    relation satisfy2 "" @ctrl -> @resp { kind: "sysml.satisfy"; }
-    relation verify "" @tc -> @perf { kind: "sysml.verify"; }
-    relation refine "" @ctrl -> @resp { kind: "sysml.refine"; }
-    relation trace "" @safe -> @perf { kind: "sysml.trace"; }
-    relation copy "" @safe -> @safeMaster { kind: "sysml.copy"; }
-    relation master "" @safe -> @safeMaster { kind: "sysml.master"; }
-    relation contains "" @perf -> @resp { kind: "sysml.composition"; }
-    relation alloc "" @tc -> @pump { kind: "sysml.allocate"; }
-}
+publication "publication:packages"
+    with
+        id "publication:packages"
+        title "Model packages"
+        targets
+            item
+                target
+                    id "packages"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data pkgs {
-    object plant "Plant model" { kind: "uml.package"; }
-    object pumps "Pump library" { kind: "uml.package"; }
-    object safety "Safety library" { kind: "uml.package"; }
-    relation imp "" @plant -> @pumps { kind: "uml.import"; }
-    relation mrg "" @pumps -> @safety { kind: "uml.merge"; }
-    relation acc "" @plant -> @safety { kind: "uml.access"; }
-}
 
-view requirements "Pump requirements": [@reqs] as "sysml.requirements@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.sysmlreq::reqs.perf" as "req.requirement"
+    with
+        id "ddn.examples.sysmlreq::reqs.perf"
+        title "Pump performance"
+        metadata
+            x_diagram
+                code "R-1"
+                text "The pump shall sustain 40 L/min at 2 bar outlet pressure."
 
-view packages "Model packages": [@pkgs] as "sysml.package@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
-    publication { size: content; fit: none; }
-}
+
+element "ddn.examples.sysmlreq::reqs.resp" as "req.requirement"
+    with
+        id "ddn.examples.sysmlreq::reqs.resp"
+        title "Response time"
+        metadata
+            x_diagram
+                code "R-1.1"
+                text "The pump shall reach rated flow within 500 ms of start."
+
+
+element "ddn.examples.sysmlreq::reqs.safe" as "req.requirement"
+    with
+        id "ddn.examples.sysmlreq::reqs.safe"
+        title "Safety"
+        metadata
+            x_diagram
+                code "R-2"
+                text "The pump shall shut down on reservoir empty."
+
+
+element "ddn.examples.sysmlreq::reqs.safeMaster" as "req.requirement"
+    with
+        id "ddn.examples.sysmlreq::reqs.safeMaster"
+        title "Safety (master)"
+        metadata
+            x_diagram
+                code "PLANT-9"
+                text "Plant equipment shall shut down on dry-run detection."
+
+
+element "ddn.examples.sysmlreq::reqs.tc" as "sysml.testcase"
+    with
+        id "ddn.examples.sysmlreq::reqs.tc"
+        title "Rated-flow test"
+
+
+element "ddn.examples.sysmlreq::reqs.pump" as "sysml.block"
+    with
+        id "ddn.examples.sysmlreq::reqs.pump"
+        title "Pump"
+
+
+element "ddn.examples.sysmlreq::reqs.ctrl" as "sysml.block"
+    with
+        id "ddn.examples.sysmlreq::reqs.ctrl"
+        title "Pump controller"
+
+
+relation "ddn.examples.sysmlreq::reqs.derive" as "sysml.derive"
+    with
+        id "ddn.examples.sysmlreq::reqs.derive"
+        title "«deriveReqt»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.resp"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.perf"
+
+
+relation "ddn.examples.sysmlreq::reqs.satisfy" as "sysml.satisfy"
+    with
+        id "ddn.examples.sysmlreq::reqs.satisfy"
+        title "«satisfy»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.pump"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.perf"
+
+
+relation "ddn.examples.sysmlreq::reqs.satisfy2" as "sysml.satisfy"
+    with
+        id "ddn.examples.sysmlreq::reqs.satisfy2"
+        title "«satisfy»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.ctrl"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.resp"
+
+
+relation "ddn.examples.sysmlreq::reqs.verify" as "sysml.verify"
+    with
+        id "ddn.examples.sysmlreq::reqs.verify"
+        title "«verify»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.tc"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.perf"
+
+
+relation "ddn.examples.sysmlreq::reqs.refine" as "sysml.refine"
+    with
+        id "ddn.examples.sysmlreq::reqs.refine"
+        title "«refine»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.ctrl"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.resp"
+
+
+relation "ddn.examples.sysmlreq::reqs.trace" as "sysml.trace"
+    with
+        id "ddn.examples.sysmlreq::reqs.trace"
+        title "«trace»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.safe"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.perf"
+
+
+relation "ddn.examples.sysmlreq::reqs.copy" as "sysml.copy"
+    with
+        id "ddn.examples.sysmlreq::reqs.copy"
+        title "«copy»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.safe"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.safeMaster"
+
+
+relation "ddn.examples.sysmlreq::reqs.master" as "sysml.master"
+    with
+        id "ddn.examples.sysmlreq::reqs.master"
+        title "«master»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.safe"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.safeMaster"
+
+
+relation "ddn.examples.sysmlreq::reqs.contains" as "sysml.composition"
+    with
+        id "ddn.examples.sysmlreq::reqs.contains"
+        title "Composition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.perf"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.resp"
+
+
+relation "ddn.examples.sysmlreq::reqs.alloc" as "sysml.allocate"
+    with
+        id "ddn.examples.sysmlreq::reqs.alloc"
+        title "«allocate»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.tc"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::reqs.pump"
+
+
+element "ddn.examples.sysmlreq::pkgs.plant" as "uml.package"
+    with
+        id "ddn.examples.sysmlreq::pkgs.plant"
+        title "Plant model"
+
+
+element "ddn.examples.sysmlreq::pkgs.pumps" as "uml.package"
+    with
+        id "ddn.examples.sysmlreq::pkgs.pumps"
+        title "Pump library"
+
+
+element "ddn.examples.sysmlreq::pkgs.safety" as "uml.package"
+    with
+        id "ddn.examples.sysmlreq::pkgs.safety"
+        title "Safety library"
+
+
+relation "ddn.examples.sysmlreq::pkgs.imp" as "uml.import"
+    with
+        id "ddn.examples.sysmlreq::pkgs.imp"
+        title "«import»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::pkgs.plant"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::pkgs.pumps"
+
+
+relation "ddn.examples.sysmlreq::pkgs.mrg" as "uml.merge"
+    with
+        id "ddn.examples.sysmlreq::pkgs.mrg"
+        title "«merge»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::pkgs.pumps"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::pkgs.safety"
+
+
+relation "ddn.examples.sysmlreq::pkgs.acc" as "uml.access"
+    with
+        id "ddn.examples.sysmlreq::pkgs.acc"
+        title "«access»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlreq::pkgs.plant"
+            item
+                definition
+                    id "ddn.examples.sysmlreq::pkgs.safety"
+
+
+view "requirements" as "sysml.requirements@1"
+    with
+        id "requirements"
+        title "Pump requirements"
+        selection
+            include
+                item
+                    id "ddn.examples.sysmlreq::reqs.perf"
+                item
+                    id "ddn.examples.sysmlreq::reqs.resp"
+                item
+                    id "ddn.examples.sysmlreq::reqs.safe"
+                item
+                    id "ddn.examples.sysmlreq::reqs.safeMaster"
+                item
+                    id "ddn.examples.sysmlreq::reqs.tc"
+                item
+                    id "ddn.examples.sysmlreq::reqs.pump"
+                item
+                    id "ddn.examples.sysmlreq::reqs.ctrl"
+                item
+                    id "ddn.examples.sysmlreq::reqs.derive"
+                item
+                    id "ddn.examples.sysmlreq::reqs.satisfy"
+                item
+                    id "ddn.examples.sysmlreq::reqs.satisfy2"
+                item
+                    id "ddn.examples.sysmlreq::reqs.verify"
+                item
+                    id "ddn.examples.sysmlreq::reqs.refine"
+                item
+                    id "ddn.examples.sysmlreq::reqs.trace"
+                item
+                    id "ddn.examples.sysmlreq::reqs.copy"
+                item
+                    id "ddn.examples.sysmlreq::reqs.master"
+                item
+                    id "ddn.examples.sysmlreq::reqs.contains"
+                item
+                    id "ddn.examples.sysmlreq::reqs.alloc"
+            exclude
+                item
+                    id "ddn.examples.sysmlreq::pkgs.imp"
+                item
+                    id "ddn.examples.sysmlreq::pkgs.mrg"
+                item
+                    id "ddn.examples.sysmlreq::pkgs.acc"
+        layout
+            algorithm "layered"
+            direction "down"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:requirements"
+
+    use "ddn.examples.sysmlreq::reqs.perf" named "appearance:requirements:ddn.examples.sysmlreq::reqs.perf"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.perf"
+
+    use "ddn.examples.sysmlreq::reqs.resp" named "appearance:requirements:ddn.examples.sysmlreq::reqs.resp"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.resp"
+
+    use "ddn.examples.sysmlreq::reqs.safe" named "appearance:requirements:ddn.examples.sysmlreq::reqs.safe"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.safe"
+
+    use "ddn.examples.sysmlreq::reqs.safeMaster" named "appearance:requirements:ddn.examples.sysmlreq::reqs.safeMaster"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.safeMaster"
+
+    use "ddn.examples.sysmlreq::reqs.tc" named "appearance:requirements:ddn.examples.sysmlreq::reqs.tc"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.tc"
+
+    use "ddn.examples.sysmlreq::reqs.pump" named "appearance:requirements:ddn.examples.sysmlreq::reqs.pump"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.pump"
+
+    use "ddn.examples.sysmlreq::reqs.ctrl" named "appearance:requirements:ddn.examples.sysmlreq::reqs.ctrl"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.ctrl"
+
+    use "ddn.examples.sysmlreq::reqs.derive" named "appearance:requirements:ddn.examples.sysmlreq::reqs.derive"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.derive"
+
+    use "ddn.examples.sysmlreq::reqs.satisfy" named "appearance:requirements:ddn.examples.sysmlreq::reqs.satisfy"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.satisfy"
+
+    use "ddn.examples.sysmlreq::reqs.satisfy2" named "appearance:requirements:ddn.examples.sysmlreq::reqs.satisfy2"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.satisfy2"
+
+    use "ddn.examples.sysmlreq::reqs.verify" named "appearance:requirements:ddn.examples.sysmlreq::reqs.verify"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.verify"
+
+    use "ddn.examples.sysmlreq::reqs.refine" named "appearance:requirements:ddn.examples.sysmlreq::reqs.refine"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.refine"
+
+    use "ddn.examples.sysmlreq::reqs.trace" named "appearance:requirements:ddn.examples.sysmlreq::reqs.trace"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.trace"
+
+    use "ddn.examples.sysmlreq::reqs.copy" named "appearance:requirements:ddn.examples.sysmlreq::reqs.copy"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.copy"
+
+    use "ddn.examples.sysmlreq::reqs.master" named "appearance:requirements:ddn.examples.sysmlreq::reqs.master"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.master"
+
+    use "ddn.examples.sysmlreq::reqs.contains" named "appearance:requirements:ddn.examples.sysmlreq::reqs.contains"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.contains"
+
+    use "ddn.examples.sysmlreq::reqs.alloc" named "appearance:requirements:ddn.examples.sysmlreq::reqs.alloc"
+        with
+            id "appearance:requirements:ddn.examples.sysmlreq::reqs.alloc"
+
+
+view "packages" as "sysml.package@1"
+    with
+        id "packages"
+        title "Model packages"
+        selection
+            include
+                item
+                    id "ddn.examples.sysmlreq::pkgs.plant"
+                item
+                    id "ddn.examples.sysmlreq::pkgs.pumps"
+                item
+                    id "ddn.examples.sysmlreq::pkgs.safety"
+                item
+                    id "ddn.examples.sysmlreq::pkgs.imp"
+                item
+                    id "ddn.examples.sysmlreq::pkgs.mrg"
+                item
+                    id "ddn.examples.sysmlreq::pkgs.acc"
+            exclude
+                item
+                    id "ddn.examples.sysmlreq::reqs.derive"
+                item
+                    id "ddn.examples.sysmlreq::reqs.satisfy"
+                item
+                    id "ddn.examples.sysmlreq::reqs.satisfy2"
+                item
+                    id "ddn.examples.sysmlreq::reqs.verify"
+                item
+                    id "ddn.examples.sysmlreq::reqs.refine"
+                item
+                    id "ddn.examples.sysmlreq::reqs.trace"
+                item
+                    id "ddn.examples.sysmlreq::reqs.copy"
+                item
+                    id "ddn.examples.sysmlreq::reqs.master"
+                item
+                    id "ddn.examples.sysmlreq::reqs.contains"
+                item
+                    id "ddn.examples.sysmlreq::reqs.alloc"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:packages"
+
+    use "ddn.examples.sysmlreq::pkgs.plant" named "appearance:packages:ddn.examples.sysmlreq::pkgs.plant"
+        with
+            id "appearance:packages:ddn.examples.sysmlreq::pkgs.plant"
+
+    use "ddn.examples.sysmlreq::pkgs.pumps" named "appearance:packages:ddn.examples.sysmlreq::pkgs.pumps"
+        with
+            id "appearance:packages:ddn.examples.sysmlreq::pkgs.pumps"
+
+    use "ddn.examples.sysmlreq::pkgs.safety" named "appearance:packages:ddn.examples.sysmlreq::pkgs.safety"
+        with
+            id "appearance:packages:ddn.examples.sysmlreq::pkgs.safety"
+
+    use "ddn.examples.sysmlreq::pkgs.imp" named "appearance:packages:ddn.examples.sysmlreq::pkgs.imp"
+        with
+            id "appearance:packages:ddn.examples.sysmlreq::pkgs.imp"
+
+    use "ddn.examples.sysmlreq::pkgs.mrg" named "appearance:packages:ddn.examples.sysmlreq::pkgs.mrg"
+        with
+            id "appearance:packages:ddn.examples.sysmlreq::pkgs.mrg"
+
+    use "ddn.examples.sysmlreq::pkgs.acc" named "appearance:packages:ddn.examples.sysmlreq::pkgs.acc"
+        with
+            id "appearance:packages:ddn.examples.sysmlreq::pkgs.acc"

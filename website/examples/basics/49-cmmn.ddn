@@ -1,30 +1,158 @@
-ddn "0.5";
-module "ddn.examples.cmmn";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:case"
+    with
+        id "publication:case"
+        title "Claim handling"
+        targets
+            item
+                target
+                    id "case"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic CMMN-style case diagram for the cmmn.basic@1 profile.
-// A stage is a cmmn.stage object plus a view frame whose scope resolves to it
-// and whose members are the stage's plan items. Sentries are cmmn.sentry
-// diamonds declared as members of the stage frame, typed by
-// x_sentry:{on:"entry"|"exit"}. Milestones are rounded cmmn.milestone nodes;
-// tasks reuse analysis.task; ordering uses analysis.precedes. All data is
-// synthetic. This is profile-level coverage, not CMMN conformance.
-data claim {
-    object review "Review" { kind: "cmmn.stage"; }
-    object gather_documents "Gather documents" { kind: "analysis.task"; }
-    object assess_claim "Assess claim" { kind: "analysis.task"; }
-    object docs_received "Docs received?" { kind: "cmmn.sentry"; x_sentry: { "on": "entry" }; }
-    object claim_decided "Claim decided" { kind: "cmmn.milestone"; }
 
-    relation order "order" @gather_documents -> @assess_claim { kind: "analysis.precedes"; }
-    assoc done "done" @assess_claim -> @claim_decided;
-}
+element "ddn.examples.cmmn::claim.review" as "cmmn.stage"
+    with
+        id "ddn.examples.cmmn::claim.review"
+        title "Review"
 
-view case "Claim handling" {
-    data: [@claim]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "cmmn.basic@1"; }
-    layout { algorithm: layered; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-    frame review_frame "Review" { scope: @claim.review; members: [@claim.gather_documents, @claim.assess_claim, @claim.docs_received]; }
-}
+
+element "ddn.examples.cmmn::claim.gather_documents" as "analysis.task"
+    with
+        id "ddn.examples.cmmn::claim.gather_documents"
+        title "Gather documents"
+
+
+element "ddn.examples.cmmn::claim.assess_claim" as "analysis.task"
+    with
+        id "ddn.examples.cmmn::claim.assess_claim"
+        title "Assess claim"
+
+
+element "ddn.examples.cmmn::claim.docs_received" as "cmmn.sentry"
+    with
+        id "ddn.examples.cmmn::claim.docs_received"
+        title "Docs received?"
+        metadata
+            x_sentry
+                on "entry"
+
+
+element "ddn.examples.cmmn::claim.claim_decided" as "cmmn.milestone"
+    with
+        id "ddn.examples.cmmn::claim.claim_decided"
+        title "Claim decided"
+
+
+relation "ddn.examples.cmmn::claim.order" as "analysis.precedes"
+    with
+        id "ddn.examples.cmmn::claim.order"
+        title "order"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.cmmn::claim.gather_documents"
+            item
+                definition
+                    id "ddn.examples.cmmn::claim.assess_claim"
+
+
+relation "ddn.examples.cmmn::claim.done" as "assoc"
+    with
+        id "ddn.examples.cmmn::claim.done"
+        title "done"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.cmmn::claim.assess_claim"
+            item
+                definition
+                    id "ddn.examples.cmmn::claim.claim_decided"
+
+
+view "case" as "cmmn.basic@1"
+    with
+        id "case"
+        title "Claim handling"
+        selection
+            include
+                item
+                    id "ddn.examples.cmmn::claim.review"
+                item
+                    id "ddn.examples.cmmn::claim.gather_documents"
+                item
+                    id "ddn.examples.cmmn::claim.assess_claim"
+                item
+                    id "ddn.examples.cmmn::claim.docs_received"
+                item
+                    id "ddn.examples.cmmn::claim.claim_decided"
+                item
+                    id "ddn.examples.cmmn::claim.order"
+                item
+                    id "ddn.examples.cmmn::claim.done"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.cmmn::case.review_frame"
+                name "Review"
+                scope
+                    id "ddn.examples.cmmn::claim.review"
+                members
+                    item
+                        id "ddn.examples.cmmn::claim.gather_documents"
+                    item
+                        id "ddn.examples.cmmn::claim.assess_claim"
+                    item
+                        id "ddn.examples.cmmn::claim.docs_received"
+        publication
+            id "publication:case"
+
+    use "ddn.examples.cmmn::claim.review" named "appearance:case:ddn.examples.cmmn::claim.review"
+        with
+            id "appearance:case:ddn.examples.cmmn::claim.review"
+
+    use "ddn.examples.cmmn::claim.gather_documents" named "appearance:case:ddn.examples.cmmn::claim.gather_documents"
+        with
+            id "appearance:case:ddn.examples.cmmn::claim.gather_documents"
+
+    use "ddn.examples.cmmn::claim.assess_claim" named "appearance:case:ddn.examples.cmmn::claim.assess_claim"
+        with
+            id "appearance:case:ddn.examples.cmmn::claim.assess_claim"
+
+    use "ddn.examples.cmmn::claim.docs_received" named "appearance:case:ddn.examples.cmmn::claim.docs_received"
+        with
+            id "appearance:case:ddn.examples.cmmn::claim.docs_received"
+
+    use "ddn.examples.cmmn::claim.claim_decided" named "appearance:case:ddn.examples.cmmn::claim.claim_decided"
+        with
+            id "appearance:case:ddn.examples.cmmn::claim.claim_decided"
+
+    use "ddn.examples.cmmn::claim.order" named "appearance:case:ddn.examples.cmmn::claim.order"
+        with
+            id "appearance:case:ddn.examples.cmmn::claim.order"
+
+    use "ddn.examples.cmmn::claim.done" named "appearance:case:ddn.examples.cmmn::claim.done"
+        with
+            id "appearance:case:ddn.examples.cmmn::claim.done"

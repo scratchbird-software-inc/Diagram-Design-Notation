@@ -1,0 +1,3926 @@
+{
+  "contract": "ddn-next-1",
+  "description": "Base role contours and default relation endpoint marks produced by the new presentation module. These omit instance metadata, compartments and optional illustrations; the complete profile example supplies those contexts.",
+  "symbols": {
+    "object": {
+      "file": "assets/symbols/object.svg",
+      "role": "object",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "16447c44ff7def50089d93e401a9bd82eb6ded80da9610cfd48cde8a36ed5dc0"
+    },
+    "entity": {
+      "file": "assets/symbols/entity.svg",
+      "role": "entity",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "059cb0237f362922099abf4705c68a6c6361dee94f22f816dc28b0dfffd9ae9d"
+    },
+    "rel": {
+      "file": "assets/symbols/rel.svg",
+      "role": "rel",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "ef627139a6acce0236196664d4ed9c2445db7efe1694219719dd2218505a5b55"
+    },
+    "domain": {
+      "file": "assets/symbols/domain.svg",
+      "role": "domain",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "b38dcc2b062e7228c353bb7f6a301cb78b6ffcbe84b16634e2b73bb2a863c3fe"
+    },
+    "term": {
+      "file": "assets/symbols/term.svg",
+      "role": "term",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "54b38faf21c9f589ba60d5b785ecdd568ffc367262cc7b3c15410f4532824298"
+    },
+    "enumeration": {
+      "file": "assets/symbols/enumeration.svg",
+      "role": "enumeration",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "6f845eb494f9e4e32c7fdae58d1a251e72a7734bfdadbaa71a0d5cfb4f660ad7"
+    },
+    "rule": {
+      "file": "assets/symbols/rule.svg",
+      "role": "rule",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "cddf8e36322395acf8c2dd4c8e3375c9a61fe0697075ebd844851963bc6b2386"
+    },
+    "unit": {
+      "file": "assets/symbols/unit.svg",
+      "role": "unit",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "f68ca79b75425e34de2e693d50eb42222db18fdb9fa6b526b3e8a87d69fd8075"
+    },
+    "aggregate": {
+      "file": "assets/symbols/aggregate.svg",
+      "role": "aggregate",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "e3e6641aa7f88acbd986221eaeaa2637cb46efc14c55b67904ca15031e5c447a"
+    },
+    "context": {
+      "file": "assets/symbols/context.svg",
+      "role": "context",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "b99c14f7d76215b79065020cb0303e96dc5801b71845474d57c305ea4e57c59d"
+    },
+    "binding": {
+      "file": "assets/symbols/binding.svg",
+      "role": "binding",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "4bdd7b503916cd7df1e6e3b6d7539782c8266a5cf54a88d940b8401666f8bf62"
+    },
+    "identity": {
+      "file": "assets/symbols/identity.svg",
+      "role": "identity",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "bb6faa51b641989591eca3b8e0364ff5e7173108d55a41c03cdebc89f9aecbe8"
+    },
+    "table": {
+      "file": "assets/symbols/table.svg",
+      "role": "table",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "09c088dd14d0c79293e4b539ccdf66ae542c177e8bcdd4ef0587eae7b88b5a77"
+    },
+    "view": {
+      "file": "assets/symbols/view.svg",
+      "role": "view",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "218fc8a313762bd835345676eb8d15100c5b96c59792a9276218886798be60cc"
+    },
+    "materialized_view": {
+      "file": "assets/symbols/materialized-view.svg",
+      "role": "materialized_view",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "fe61364556df889d47d113cc727f14115a463cc7b61d08f12c4de9660c475569"
+    },
+    "foreign_table": {
+      "file": "assets/symbols/foreign-table.svg",
+      "role": "foreign_table",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "db41014bcfab5ba13d59f722eae18f674496d8ee23ad3454cd8015a7df2d7743"
+    },
+    "function": {
+      "file": "assets/symbols/function.svg",
+      "role": "function",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "b58bb3ad66e10a57f013ecb6d81d700b979db417885923bd0be09dfec11f2a47"
+    },
+    "procedure": {
+      "file": "assets/symbols/procedure.svg",
+      "role": "procedure",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "e7866f1d8cacee2ab5dc86f33165eca9e87ad1e39ab2ee7190fa8b68a761bc6f"
+    },
+    "trigger": {
+      "file": "assets/symbols/trigger.svg",
+      "role": "trigger",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "f75abb65a2f161485ff3365a857b525bde76134790653aee8a82fb1b6b53b873"
+    },
+    "sequence": {
+      "file": "assets/symbols/sequence.svg",
+      "role": "sequence",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "aa683545725edc014d4d778728b64382f6995aa91963d51392f9ddf892afe9e7"
+    },
+    "sql_domain": {
+      "file": "assets/symbols/sql-domain.svg",
+      "role": "sql_domain",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "2a7beb22cd2b49410f6f8a099cce3aa62c10098913f575fd4948ccca82359700"
+    },
+    "sql_type": {
+      "file": "assets/symbols/sql-type.svg",
+      "role": "sql_type",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "09be4c6c72048e486ba6899d4a078aa06af35aaf94a0663cc5e32382127a1aae"
+    },
+    "constraint": {
+      "file": "assets/symbols/constraint.svg",
+      "role": "constraint",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "d208340186c90e9a964a025b547afb78571d7778b87acd0d6fe5aaa4d1aca5ac"
+    },
+    "index": {
+      "file": "assets/symbols/index.svg",
+      "role": "index",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "90ba15e4165ce7fa63301251041d1066962031b398512c14a9b1a2800d5dcec3"
+    },
+    "synonym": {
+      "file": "assets/symbols/synonym.svg",
+      "role": "synonym",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "132ddce89e850ea56082dc856acd390d25ec93a74b59cb171cdcb5ca74fc7830"
+    },
+    "opr": {
+      "file": "assets/symbols/opr.svg",
+      "role": "opr",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "2760f807089ac7c2baf294eb6cb6fa7aadf1260aa9f4ae7ccacabfa9e5e79dd0"
+    },
+    "pkg": {
+      "file": "assets/symbols/pkg.svg",
+      "role": "pkg",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "762e053b64f5ed8c4afa2d57e2de98173342c21301d5f1cb8b1d8c6587c6f7e7"
+    },
+    "ext": {
+      "file": "assets/symbols/ext.svg",
+      "role": "ext",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "67dc8766c5c592a641b86e683e3baa374602f6f535c41fdf00b876b8989d6421"
+    },
+    "qry": {
+      "file": "assets/symbols/qry.svg",
+      "role": "qry",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "a42e8868f9c4086f3eed7f369da32dc9408d5ba4a1f8190e07005f78098c9c6d"
+    },
+    "pol": {
+      "file": "assets/symbols/pol.svg",
+      "role": "pol",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "a154d6381446aad7467c62606bfdce034d16d5d767f99561a526d87ca61016b0"
+    },
+    "pub": {
+      "file": "assets/symbols/pub.svg",
+      "role": "pub",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "201d2c82fa452a9942b1e72ebdc07dfd5e9f45b50c7aa0fd5c1f62f6e522bbbc"
+    },
+    "sub": {
+      "file": "assets/symbols/sub.svg",
+      "role": "sub",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "1379536807b4d5b148cbb8135fb4c5bb06f14b4e81bc381259c670559f63a557"
+    },
+    "dataset": {
+      "file": "assets/symbols/dataset.svg",
+      "role": "dataset",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "0bee67ccfc31100db217d945cbcc1aca8b30879b71eb39316a1de56b067be2fc"
+    },
+    "record": {
+      "file": "assets/symbols/record.svg",
+      "role": "record",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "e37667d23fd208cf31ecb474e0a5ddd7c99fd664bb25ec21bc04714a6708e48b"
+    },
+    "field": {
+      "file": "assets/symbols/field.svg",
+      "role": "field",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "8a2365e7498750771aa6cdcf779b38e15d15f8a5910da3ed22635c3bf22d9af0"
+    },
+    "collection": {
+      "file": "assets/symbols/collection.svg",
+      "role": "collection",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "54c621b627c1dcaf7a4142ec9763c754fb6032791ba67272d2a6240b74e27cab"
+    },
+    "document": {
+      "file": "assets/symbols/document.svg",
+      "role": "document",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "ea811b9bfc988bdec8ffa3a8f4f0d76645195d7fd3b347acab16ae3e6715e34a"
+    },
+    "array": {
+      "file": "assets/symbols/array.svg",
+      "role": "array",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "d70e8a82706078a7404520979cfa41bffdf41e3ded3d89ad6a47f2e49e34b1ec"
+    },
+    "map": {
+      "file": "assets/symbols/map.svg",
+      "role": "map",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "8f8266ea4c6b6190e0df9b6a0024823fabec2aab32d3e17416c2fb2bc35d95d8"
+    },
+    "set": {
+      "file": "assets/symbols/set.svg",
+      "role": "set",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "71c31f7e8a4a1f65e93827e7ebe39ac97ea2a8cc46b2002e3971ea99d077c63a"
+    },
+    "variant": {
+      "file": "assets/symbols/variant.svg",
+      "role": "variant",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "e51abfebb3c1e42c83606c7269ef99811b01dbb3f05ea1a8c8e488c6dfe60be8"
+    },
+    "graph": {
+      "file": "assets/symbols/graph.svg",
+      "role": "graph",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "2e06977dd5811c9631a70034f903ccb554fb8ff00b3a3f9284f7f2b22f4f8172"
+    },
+    "graph_node": {
+      "file": "assets/symbols/graph-node.svg",
+      "role": "graph_node",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "5a5a22c5e030803b7178f5834ca1ae8d9210bc193e94c5778c41eabb2db7bec4"
+    },
+    "graph_edge": {
+      "file": "assets/symbols/graph-edge.svg",
+      "role": "graph_edge",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "68302839dc3218ea6fe372ee69797abd886cca160e3d5d5e3c06e03bdc55dd4a"
+    },
+    "key_value": {
+      "file": "assets/symbols/key-value.svg",
+      "role": "key_value",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "d47ed4e2315f2cdfaf6701b753253b1115aee0d44d6340f7b701b24eea5e6bfa"
+    },
+    "wide_column": {
+      "file": "assets/symbols/wide-column.svg",
+      "role": "wide_column",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "89abb9bdb208aec90abfa3064c71efd40197bed9b8021e9a17d002cf82463376"
+    },
+    "time_series": {
+      "file": "assets/symbols/time-series.svg",
+      "role": "time_series",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "80b16119d1f952d5f5342134c833dadedbdddaf4988e861d0284f0989e74a2fd"
+    },
+    "file": {
+      "file": "assets/symbols/file.svg",
+      "role": "file",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "b4be0452cfcbd67ba54760416455df0499c8d13fe0e0faedeff1e83b2cfa189b"
+    },
+    "file_set": {
+      "file": "assets/symbols/file-set.svg",
+      "role": "file_set",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "202ef317cf2acdb2a6522b1ac89d122829f6c2e6e9cd7922a025982aebd143f3"
+    },
+    "bucket": {
+      "file": "assets/symbols/bucket.svg",
+      "role": "bucket",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "39d42da8b193b15131c9a2a61bcb234f0faa857c3a9249601ec64924cc1aeb4b"
+    },
+    "manifest": {
+      "file": "assets/symbols/manifest.svg",
+      "role": "manifest",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "4c238ab5a3ea69421548b19e4c9a4e69756b5a1dd16971d1eda95a21d4447665"
+    },
+    "search_index": {
+      "file": "assets/symbols/search-index.svg",
+      "role": "search_index",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "be718656a9cb9bf51473817575e4be82d212243492db8f2e5ad569df7a833001"
+    },
+    "vector": {
+      "file": "assets/symbols/vector.svg",
+      "role": "vector",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "362e5a4cb3dcf3fb7ee35c4f47e3946d86e1176ba6a9bf73f89c62a930abf937"
+    },
+    "blob": {
+      "file": "assets/symbols/blob.svg",
+      "role": "blob",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "d48ebeb28de2e29a4c538db91d12d6f997df8b5c6fc70b0e397c45942708cc29"
+    },
+    "tensor": {
+      "file": "assets/symbols/tensor.svg",
+      "role": "tensor",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "9ee9850dad97fd52ad74a3f8418c9e0e09cd5de8bb984464266c110c58042e4a"
+    },
+    "rdf": {
+      "file": "assets/symbols/rdf.svg",
+      "role": "rdf",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "e2cf0bb0ad8cd398562d2ad511eeac5efb1bc1fd355f8e71f66d6b3ca2b1454f"
+    },
+    "fact": {
+      "file": "assets/symbols/fact.svg",
+      "role": "fact",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "1d1745b226d36f402d804526a76eeb0215bc206a914293cd2c0d3fbdc945243e"
+    },
+    "dimension": {
+      "file": "assets/symbols/dimension.svg",
+      "role": "dimension",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "c11244cf357174f24506922429bf47677cbbc066cb3f3ed35ee7034f1cd32630"
+    },
+    "bridge": {
+      "file": "assets/symbols/bridge.svg",
+      "role": "bridge",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "640891a36369e06a8cb16a296b1626c7e6bcd94234428c4762418c67e6df8699"
+    },
+    "cube": {
+      "file": "assets/symbols/cube.svg",
+      "role": "cube",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "9ac4a150a23d298d8bdf851e7ec948356a217110f840d4c586f6547ae5953f22"
+    },
+    "semantic_model": {
+      "file": "assets/symbols/semantic-model.svg",
+      "role": "semantic_model",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "a995b46af668fe64c6d37bb2a9384aafc15a5011dc89d40e5fbf77cac2dd64de"
+    },
+    "metric": {
+      "file": "assets/symbols/metric.svg",
+      "role": "metric",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "20afb097ffd7ceb29aca8dea450d6ac864ee16b8e609b14a088e9872ef46b4b2"
+    },
+    "report": {
+      "file": "assets/symbols/report.svg",
+      "role": "report",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "ecee4ccbbba772cc41b56c042e3e6d20c1c72a1e2c350bcb01e30fc3ad2b8146"
+    },
+    "dashboard": {
+      "file": "assets/symbols/dashboard.svg",
+      "role": "dashboard",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "35a5ed21497fa5d920f15cc1958bf1de86291cc8f399508e0828db39d493aef0"
+    },
+    "data_product": {
+      "file": "assets/symbols/data-product.svg",
+      "role": "data_product",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "5e7df006a08316eb2ea78f8a6316ee99080252d08e61cdb7d4320a1ed3ed41d1"
+    },
+    "feature": {
+      "file": "assets/symbols/feature.svg",
+      "role": "feature",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "34414b5e31ca9006b4134f4e795e8b0c828aed41190f5c5d7c9e15d74499d8ab"
+    },
+    "model_artifact": {
+      "file": "assets/symbols/model-artifact.svg",
+      "role": "model_artifact",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "0177ebe30ffba2c73731acfd21d239d74e54f8a6ac81e9a530eb6a60a530d2d7"
+    },
+    "export": {
+      "file": "assets/symbols/export.svg",
+      "role": "export",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "204f193a61a34e8642b48880a6f2cf18b593c1e44c375024c7774d45f384417c"
+    },
+    "api": {
+      "file": "assets/symbols/api.svg",
+      "role": "api",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "bedf0756f2559afa62d8341e2679fba28a1081fb2e448c3fa9a167c06e844a38"
+    },
+    "endpoint": {
+      "file": "assets/symbols/endpoint.svg",
+      "role": "endpoint",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "faa44d1ac608f51732eb63fe4e2e73c6d2e5a12cdaa68b4f3cb0174d67e5c89a"
+    },
+    "topic": {
+      "file": "assets/symbols/topic.svg",
+      "role": "topic",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "1ab4074b2beeaae634883754a8da75fdce93bb8bb03bb0a184a7b96e25db2b97"
+    },
+    "queue": {
+      "file": "assets/symbols/queue.svg",
+      "role": "queue",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "e6ce242453451a3c7b28ba412d92d326485e0056699ae6e6ba3e0d923a9d4631"
+    },
+    "message": {
+      "file": "assets/symbols/message.svg",
+      "role": "message",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "dfa8f4ec60ed414aec4afa82e3e6da95def2d52d6faba5da7a0ff636eac849c8"
+    },
+    "command": {
+      "file": "assets/symbols/command.svg",
+      "role": "command",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "bae958491e5fd113905297e175048e1d10fbfc1ee16bf751d3a3ace566947da3"
+    },
+    "consumer_group": {
+      "file": "assets/symbols/consumer-group.svg",
+      "role": "consumer_group",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "179a7d3c5bd0b542dc3bac3358808e9ec3a6ae2f39c971dcc2ca5522c4521432"
+    },
+    "subscription": {
+      "file": "assets/symbols/subscription.svg",
+      "role": "subscription",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "6dec8a7246e77941f3cb3d5247b2cc5909c900c70fc6db03c39c99de861c924e"
+    },
+    "schema_registry": {
+      "file": "assets/symbols/schema-registry.svg",
+      "role": "schema_registry",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "2026a68ec6c019a76ccbb6e14711153d8e4540b1d649ff855af9e68f47e1c048"
+    },
+    "connector": {
+      "file": "assets/symbols/connector.svg",
+      "role": "connector",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "66e4f0f26d7dec418edddccf3543205e71f11402a87efad67029b83de18fc3cd"
+    },
+    "webhook": {
+      "file": "assets/symbols/webhook.svg",
+      "role": "webhook",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "642b56746edfabe8574979cd4938067aca3f4cb3104d46762f4dba3d05c63a0e"
+    },
+    "federation": {
+      "file": "assets/symbols/federation.svg",
+      "role": "federation",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "2772c7dfdad72eb7a2643dff3c914cb13cab9b85716a31613a7b7b17f873a68c"
+    },
+    "activity": {
+      "file": "assets/symbols/activity.svg",
+      "role": "activity",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "17bfb054e4dd6679331ab74403178ee7da7207cfff9b91786f20557a3dac4ce6"
+    },
+    "pipeline": {
+      "file": "assets/symbols/pipeline.svg",
+      "role": "pipeline",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "9c7f74b034136b30b367c41dfccd6da8c580382bdaa57cfed32d1dfb146230ce"
+    },
+    "job": {
+      "file": "assets/symbols/job.svg",
+      "role": "job",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "066817c3ed86373d60bc6b1aeb506115de83e732c3fa82c72d85d7e1f4789b26"
+    },
+    "run": {
+      "file": "assets/symbols/run.svg",
+      "role": "run",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "c5cfeb3e4880d11acba7e8fcd89ad6269e3e2428d8f7c48d28d6d0c63f9713ba"
+    },
+    "schedule": {
+      "file": "assets/symbols/schedule.svg",
+      "role": "schedule",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "e22981ea99df6a39e73ebbcd9807cefcb7b89e4c6dbd0af502715b301f332af1"
+    },
+    "application": {
+      "file": "assets/symbols/application.svg",
+      "role": "application",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "2acb09260aad48b0423b3a86ed494ab713953200d8e6ae75ef8c6870ddef9945"
+    },
+    "query_operation": {
+      "file": "assets/symbols/query-operation.svg",
+      "role": "query_operation",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "144433d6eb04256bc4dc0eb6a8613e3e290ac530787473def78010f5b0f7dac6"
+    },
+    "write_operation": {
+      "file": "assets/symbols/write-operation.svg",
+      "role": "write_operation",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "b5d81b7ec5a9e56975b92436c08dc3e889c36979ceaa54bdac083518cc711a7f"
+    },
+    "checkpoint": {
+      "file": "assets/symbols/checkpoint.svg",
+      "role": "checkpoint",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "ccfe03d5e619513212805970ad71d752f21452997430406c27a9c5edccc65527"
+    },
+    "test": {
+      "file": "assets/symbols/test.svg",
+      "role": "test",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "0fd8bf0c45e422ee603128da023ae7ca33e422b77b75dcd1f7767538e1431790"
+    },
+    "manual_activity": {
+      "file": "assets/symbols/manual-activity.svg",
+      "role": "manual_activity",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "d799a7a58ec87a08bfbc42a0e0d8286296cec7d20503e4f92a6575ac87c993f1"
+    },
+    "gateway": {
+      "file": "assets/symbols/gateway.svg",
+      "role": "gateway",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "39dba5e8ff26d287591e3fa7aa2f2e22ee7a85fd2d37fb842e9b8f7053f519e4"
+    },
+    "catalog": {
+      "file": "assets/symbols/catalog.svg",
+      "role": "catalog",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "aa3450ed7568549633517e6f1c1fb0983bbb0952b7fbad49bfe8fde52c648452"
+    },
+    "database": {
+      "file": "assets/symbols/database.svg",
+      "role": "database",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "ad5ba942170a99b3510d7919cb7a224d3460447e180011dbce694cd59a62cfe3"
+    },
+    "schema": {
+      "file": "assets/symbols/schema.svg",
+      "role": "schema",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "d2e285917bc51faab87ab657e20d6b43c8ccfe6928ba9c64d67eed3e310a56f6"
+    },
+    "keyspace": {
+      "file": "assets/symbols/keyspace.svg",
+      "role": "keyspace",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "ceb236b3d2bfb21667c67cecbb48aeb1c8a8701b97936f7c750d7b852ff14834"
+    },
+    "namespace": {
+      "file": "assets/symbols/namespace.svg",
+      "role": "namespace",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "b0e202277db3a4d6a193eccbed7106d5494a87e7df5084d732c6c10476ce9e2d"
+    },
+    "workspace": {
+      "file": "assets/symbols/workspace.svg",
+      "role": "workspace",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "415622c93803b5069e24d70d78d49181b7855c806756b2b97bc00a876bbf3b41"
+    },
+    "folder": {
+      "file": "assets/symbols/folder.svg",
+      "role": "folder",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "5395b688ca5a748f208c290db3dd51033b204ceacd0cd8cd2e4f1d27db71ae06"
+    },
+    "registry": {
+      "file": "assets/symbols/registry.svg",
+      "role": "registry",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "c8a481e104806e23fd7d3f650a093629be654a5809e30afd43123c6396ce3aeb"
+    },
+    "cloud": {
+      "file": "assets/symbols/cloud.svg",
+      "role": "cloud",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "055eeded05ffcf75cdd4dbef322dc759265280ea79eaf9f2cd1d0b7344c0d708"
+    },
+    "cloud_account": {
+      "file": "assets/symbols/cloud-account.svg",
+      "role": "cloud_account",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "c69552219bad268977473d545fefb75dfde276d2b73c181d46b892046082308e"
+    },
+    "region": {
+      "file": "assets/symbols/region.svg",
+      "role": "region",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "9c5217ed2f03fb6aa33eb1eccf10e35b3639d40a30ec93edfacc5de8091c1a89"
+    },
+    "zone": {
+      "file": "assets/symbols/zone.svg",
+      "role": "zone",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "86f1f5b70b54ec4bf6df177beb8d6d8dccc0225d2d1d9c1a592ec4c2ca732ac1"
+    },
+    "site": {
+      "file": "assets/symbols/site.svg",
+      "role": "site",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "846bec4f6ef1aeabd8274b15089bb89f9ab7d4901928f787b9b9c75f2a0759e0"
+    },
+    "network": {
+      "file": "assets/symbols/network.svg",
+      "role": "network",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "01011feadd03bac66fa0c150199d8695d17ef47075202ee3b1d63a82598322ab"
+    },
+    "cluster": {
+      "file": "assets/symbols/cluster.svg",
+      "role": "cluster",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "afb57e822954df24e0da0023c7ce85cd5e922423bd765e735c10a9a584fd82a8"
+    },
+    "service": {
+      "file": "assets/symbols/service.svg",
+      "role": "service",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "ec36a0cb8945af59bb67ea340272384861362e19ec72f93caf32ee31f9f9a063"
+    },
+    "host": {
+      "file": "assets/symbols/host.svg",
+      "role": "host",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "3e806f224e1663d1512da3ff70b4d5c3224601708180273d97447b94c6376b71"
+    },
+    "container": {
+      "file": "assets/symbols/container.svg",
+      "role": "container",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "63c12bf59ad09af2d4ee61156d198ef9d7a7cd378b0834da2d763586a39097d3"
+    },
+    "volume": {
+      "file": "assets/symbols/volume.svg",
+      "role": "volume",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "520399f5999be6ab36e00e7661768831045cbca0f73c253dde4779b06c2af4be"
+    },
+    "device": {
+      "file": "assets/symbols/device.svg",
+      "role": "device",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "ce28c2590d7e0aa13fdb1959be5d3cafabfa9c406017c4b792ddcd6dcb53dfe8"
+    },
+    "environment": {
+      "file": "assets/symbols/environment.svg",
+      "role": "environment",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "390754d13cf487620de8e1a5543212e550c276c0f4ef2df048c0fe7887a544e6"
+    },
+    "security_zone": {
+      "file": "assets/symbols/security-zone.svg",
+      "role": "security_zone",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "7dd7ea7f6ae33ddbcce45cf70af3269bdce015e3ef45a00ca14e6b27e7417cfd"
+    },
+    "partition_rule": {
+      "file": "assets/symbols/partition-rule.svg",
+      "role": "partition_rule",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "0c031d9f0292787edfae50407394df376491c555fea1503201223a8059b0f0fe"
+    },
+    "partition": {
+      "file": "assets/symbols/partition.svg",
+      "role": "partition",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "ba52fc1c2ad2c364b652cb1006bfc8d55782945ba0f3615cc9a6a6e6471b0026"
+    },
+    "shard": {
+      "file": "assets/symbols/shard.svg",
+      "role": "shard",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "3c1a3a7a641bec8d7d9d7d4393d03879ac300ad38127a9424ea2924738246f42"
+    },
+    "placement": {
+      "file": "assets/symbols/placement.svg",
+      "role": "placement",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "5ee1c6e4ab6cd78d8564bdc75b0800dfa18910ea8026aa401b7d9f4f6cf43e1a"
+    },
+    "replica": {
+      "file": "assets/symbols/replica.svg",
+      "role": "replica",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "41724fed03c9b27de40eab603a74b724b987537ae4cea5bd23e4be533174f24d"
+    },
+    "replica_set": {
+      "file": "assets/symbols/replica-set.svg",
+      "role": "replica_set",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "d3dfbc55242c24dca2d40e7f956cf7e3a49f3dab7d8c3e5216da9c17ef128994"
+    },
+    "colocation": {
+      "file": "assets/symbols/colocation.svg",
+      "role": "colocation",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "5447e2dae24740e5c28fa4309e243921e674286d57c8856cb7e19ad56d40857d"
+    },
+    "cache": {
+      "file": "assets/symbols/cache.svg",
+      "role": "cache",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "cd485c8d574e25ab30fe1ffb0c85669f9c54e714e0fb03fce55e544e5c8f6472"
+    },
+    "log": {
+      "file": "assets/symbols/log.svg",
+      "role": "log",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "9bb45ae95d364ab99b21adffd2b36d037b8a398c580d253bc8d6297ff82ab51a"
+    },
+    "router": {
+      "file": "assets/symbols/router.svg",
+      "role": "router",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "283a2116d7d7fc14912ab85badb24fff27aa329e4d72e96533402b646b3a92db"
+    },
+    "snapshot": {
+      "file": "assets/symbols/snapshot.svg",
+      "role": "snapshot",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "3a659c15e097a441e46964b87b63ad9d188ea8816696ef5752ac2a43040ab9f3"
+    },
+    "backup": {
+      "file": "assets/symbols/backup.svg",
+      "role": "backup",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "cb2fbed8acd6539a0e3a3c5583c5afc89470cf351012854c499cdfc32699c507"
+    },
+    "archive": {
+      "file": "assets/symbols/archive.svg",
+      "role": "archive",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "bf9d82c65c8c91a7bd5d439e48c9bd12792fb59b2ce50a06c5aee5bc568713cd"
+    },
+    "timeline": {
+      "file": "assets/symbols/timeline.svg",
+      "role": "timeline",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "828c59d4a2aad77fa79be953096df50993e539138c0fbe88df898f187ee98836"
+    },
+    "recovery": {
+      "file": "assets/symbols/recovery.svg",
+      "role": "recovery",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "27d6a1018bd1262775ec08e9e756d021f233aac6c053151cf5bc99e373989f9e"
+    },
+    "window": {
+      "file": "assets/symbols/window.svg",
+      "role": "window",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "e905eb8a4dc81a6b1b6eb0292a91418171540ea0d33349b1f49c0118037937e8"
+    },
+    "history": {
+      "file": "assets/symbols/history.svg",
+      "role": "history",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "0655802e543357a693a6a285aa58aa0938a42210d1e388893be3aa25916d63ce"
+    },
+    "retention": {
+      "file": "assets/symbols/retention.svg",
+      "role": "retention",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "3bbc7ae3a72e67de48ab7bb15c6fb72e7ccd36ad64c2f94c3fdcd9abbd1c01b3"
+    },
+    "organization": {
+      "file": "assets/symbols/organization.svg",
+      "role": "organization",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "905149c6f79ae9ef3cc47253d11d4162379215c4510bff92a9d7ae068dd19889"
+    },
+    "team": {
+      "file": "assets/symbols/team.svg",
+      "role": "team",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "f64e7eccba0833c9a43dafc5b0a48509c936f3d9ed5502e50ab5842625e23145"
+    },
+    "role": {
+      "file": "assets/symbols/role.svg",
+      "role": "role",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "370d4bada5a5100a7bf49f4a6ac088a239c84855c7dbcbf181fce7e5b7227300"
+    },
+    "dct": {
+      "file": "assets/symbols/dct.svg",
+      "role": "dct",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "7d38d1b65ad5d5216b1a2a71a8553db010294d4b2c5772845226342973af4a8e"
+    },
+    "gpo": {
+      "file": "assets/symbols/gpo.svg",
+      "role": "gpo",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "0abb32b63961b370b4cdddb04fde173125c532e9296a860f18df545407654ece"
+    },
+    "qlr": {
+      "file": "assets/symbols/qlr.svg",
+      "role": "qlr",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "84a4bb0ceb837fd1c65c4a32a9f381671b665f6f0811591ab6cabf7f4008964e"
+    },
+    "slo": {
+      "file": "assets/symbols/slo.svg",
+      "role": "slo",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "023ca651e91c55d25339fad0df21bc5bc3146346e8b78dc8217d1a2b3c7d7486"
+    },
+    "entl": {
+      "file": "assets/symbols/entl.svg",
+      "role": "entl",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "d697ad1a22d61cb3eb4b53bbd4c8f437181765e0998b22384cea4374e8b911df"
+    },
+    "cls": {
+      "file": "assets/symbols/cls.svg",
+      "role": "cls",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "a5c794fd3cb8cc081745b568d84e8113d7d21c5a884e653ca69e3364d796dc0c"
+    },
+    "prv": {
+      "file": "assets/symbols/prv.svg",
+      "role": "prv",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "5fd044b304d72414af2190ea22185af364bbaf2486e3f9a75c31d030dce700e7"
+    },
+    "dcl": {
+      "file": "assets/symbols/dcl.svg",
+      "role": "dcl",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "e7a52e3aa52ef98bbdcd6a8c15beceddc008fb5139069e75f2bfc7613712a559"
+    },
+    "note": {
+      "file": "assets/symbols/note.svg",
+      "role": "note",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "52cb318c47ff0d437d0c7902e4a0ea7519867dba267d85a4c5876d282724f6c9"
+    },
+    "sample": {
+      "file": "assets/symbols/sample.svg",
+      "role": "sample",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "073cdf3a9d045a14242351f1c07b65bed1a91ff8f770fe1f8197c808226290d3"
+    },
+    "fixture": {
+      "file": "assets/symbols/fixture.svg",
+      "role": "fixture",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "9669b9a6a5d2e716869b84b8d47a0223ed614262825c2ff864aa29ea91a819e1"
+    },
+    "decision": {
+      "file": "assets/symbols/decision.svg",
+      "role": "decision",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "f886b329e19fc80115702ec43541970949bc2b853c1fc9a172db71bd3114624c"
+    },
+    "issue": {
+      "file": "assets/symbols/issue.svg",
+      "role": "issue",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "156cbf6732e0fe8a781c76caa73dadbf82d6e29465f2116005172edca46ac06b"
+    },
+    "observation": {
+      "file": "assets/symbols/observation.svg",
+      "role": "observation",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "4897a0e5f004c34c4057254f5bdcf9e32b6192a9e6f0e6ee0739d5a1c03263b0"
+    },
+    "change": {
+      "file": "assets/symbols/change.svg",
+      "role": "change",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "6132845b5a8f6af763f269d62aab7061301dca7f5f307b0a973a6244d04dedff"
+    },
+    "saved_view": {
+      "file": "assets/symbols/saved-view.svg",
+      "role": "saved_view",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "998e74ad9ad11429850a8848247f883b6c96adacc241be27ed1da38a85ced6f7"
+    },
+    "extension": {
+      "file": "assets/symbols/extension.svg",
+      "role": "extension",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "36038999931383e02becd3b120dccbfe952b3621b51c420d547767aad2c815dc"
+    },
+    "note.sticky": {
+      "file": "assets/symbols/note-sticky.svg",
+      "role": "note.sticky",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "0fc4a955cc3cb0ca4c6ffb2eac0478817e7a585df861ae5b000420d430b0bb39"
+    },
+    "flow.start": {
+      "file": "assets/symbols/flow-start.svg",
+      "role": "flow.start",
+      "category": "element",
+      "profile": "flow.basic@1",
+      "sha256": "b851f63d5f675ea7f4a265c62aa581409b00adbf2c975604bc4362325afc8248"
+    },
+    "flow.end": {
+      "file": "assets/symbols/flow-end.svg",
+      "role": "flow.end",
+      "category": "element",
+      "profile": "flow.basic@1",
+      "sha256": "ce15c2c01cb617692d7664fc2829b98ff97780dad2466d736dbbd5d3a4a533a8"
+    },
+    "flow.process": {
+      "file": "assets/symbols/flow-process.svg",
+      "role": "flow.process",
+      "category": "element",
+      "profile": "flow.basic@1",
+      "sha256": "82b8c2167b462736b21fe1bce9a36b3765f0c0c74096a71432a0134cc74423d8"
+    },
+    "flow.decision": {
+      "file": "assets/symbols/flow-decision.svg",
+      "role": "flow.decision",
+      "category": "element",
+      "profile": "flow.basic@1",
+      "sha256": "ed51a266a8182024f315f4a82c4a2003cea21af373aacd377467148d80529d9e"
+    },
+    "flow.io": {
+      "file": "assets/symbols/flow-io.svg",
+      "role": "flow.io",
+      "category": "element",
+      "profile": "flow.basic@1",
+      "sha256": "9edc298159f2cb57b26e9def68a5b475172abfbd714cfb0844d55dde21cbed25"
+    },
+    "flow.document": {
+      "file": "assets/symbols/flow-document.svg",
+      "role": "flow.document",
+      "category": "element",
+      "profile": "flow.basic@1",
+      "sha256": "2b2cb8e4dfde8e0a944997184f041836c7bac9a6d06d58030bedcafe127d9018"
+    },
+    "flow.subprocess": {
+      "file": "assets/symbols/flow-subprocess.svg",
+      "role": "flow.subprocess",
+      "category": "element",
+      "profile": "flow.basic@1",
+      "sha256": "3368cc262d33281015242ad56733b2fc7b688be617f42fab86a9ecedafb865ef"
+    },
+    "dfd.process": {
+      "file": "assets/symbols/dfd-process.svg",
+      "role": "dfd.process",
+      "category": "element",
+      "profile": "dfd.gane_sarson@1",
+      "sha256": "d1b8f9249cce82630ac0e094ab79b7c3a82878f9c65498f06a391757575faa41"
+    },
+    "dfd.store": {
+      "file": "assets/symbols/dfd-store.svg",
+      "role": "dfd.store",
+      "category": "element",
+      "profile": "dfd.gane_sarson@1",
+      "sha256": "dc1fbb1d181101eeef2a0c049a9e69f8bd4485208932d51fbfa81b97447a4279"
+    },
+    "dfd.external": {
+      "file": "assets/symbols/dfd-external.svg",
+      "role": "dfd.external",
+      "category": "element",
+      "profile": "dfd.gane_sarson@1",
+      "sha256": "95173807076408b1f0460667beca71626736f408f02cb34a74b175d2414c83ab"
+    },
+    "uml.class": {
+      "file": "assets/symbols/uml-class.svg",
+      "role": "uml.class",
+      "category": "element",
+      "profile": "uml.structure@1",
+      "sha256": "eb28434ede3a2103245570e0063942e274a72378175bd2e97028353bf42bb6fa"
+    },
+    "uml.interface": {
+      "file": "assets/symbols/uml-interface.svg",
+      "role": "uml.interface",
+      "category": "element",
+      "profile": "uml.structure@1",
+      "sha256": "dfe9965f5ca79573b693be476fc945434383ed02bca119cd5d6084a8850d2a93"
+    },
+    "uml.enumeration": {
+      "file": "assets/symbols/uml-enumeration.svg",
+      "role": "uml.enumeration",
+      "category": "element",
+      "profile": "uml.structure@2",
+      "sha256": "a8c014ea3915c17b2b7414a888af84c2306da0ff576ec04014d7509516371184"
+    },
+    "uml.package": {
+      "file": "assets/symbols/uml-package.svg",
+      "role": "uml.package",
+      "category": "element",
+      "profile": "uml.structure@1",
+      "sha256": "f42f791fc4595644409ac70511459863cedab3a7a073473b35d5d19e1e16a0d4"
+    },
+    "uml.component": {
+      "file": "assets/symbols/uml-component.svg",
+      "role": "uml.component",
+      "category": "element",
+      "profile": "uml.structure@1",
+      "sha256": "6c3139104bf3f56eeb0ac26f818299cdd86e7b4fa52a2add8f94cf90aa86376d"
+    },
+    "uml.node": {
+      "file": "assets/symbols/uml-node.svg",
+      "role": "uml.node",
+      "category": "element",
+      "profile": "uml.deployment@1",
+      "sha256": "fa88a0287eed491807b4519dc62e81b283da069675fbf9863c0989098f6c41df"
+    },
+    "uml.device": {
+      "file": "assets/symbols/uml-device.svg",
+      "role": "uml.device",
+      "category": "element",
+      "profile": "uml.deployment@1",
+      "sha256": "5dc085c34981d580f516713f8c03f385197331f2a4e252ee573df755b692c15c"
+    },
+    "uml.executionenv": {
+      "file": "assets/symbols/uml-executionenv.svg",
+      "role": "uml.executionenv",
+      "category": "element",
+      "profile": "uml.deployment@1",
+      "sha256": "ac3cdc5454a711a1a70367109d35520a535695c3d8fbefe7cae9c7a5faf24260"
+    },
+    "uml.artifact": {
+      "file": "assets/symbols/uml-artifact.svg",
+      "role": "uml.artifact",
+      "category": "element",
+      "profile": "uml.deployment@1",
+      "sha256": "f5374cea7a045dd6089d3ff78f2fb000e0e7b731129b1be9fafd786a79f11e9d"
+    },
+    "uml.collaboration": {
+      "file": "assets/symbols/uml-collaboration.svg",
+      "role": "uml.collaboration",
+      "category": "element",
+      "profile": "uml.composite@1",
+      "sha256": "af4e29dd625c121534f6c90d3bf8f836ef6d664d42e63f61efbadc2a7d77c393"
+    },
+    "uml.metaclass": {
+      "file": "assets/symbols/uml-metaclass.svg",
+      "role": "uml.metaclass",
+      "category": "element",
+      "profile": "uml.profile@1",
+      "sha256": "0719dfab1dbfdf4532f5c6f48756038b0aea82e77341aa6bcd0738c0ab457975"
+    },
+    "uml.stereotype": {
+      "file": "assets/symbols/uml-stereotype.svg",
+      "role": "uml.stereotype",
+      "category": "element",
+      "profile": "uml.profile@1",
+      "sha256": "2a3d9cec433760bc19402c9c37038542b993ed6c17da16e18ee3bea78cbcd769"
+    },
+    "uml.actor": {
+      "file": "assets/symbols/uml-actor.svg",
+      "role": "uml.actor",
+      "category": "element",
+      "profile": "uml.usecase@1",
+      "sha256": "caac8049703513621ecbf93f8ba6d533d50f30f820865ff12f2803c5a377e44c"
+    },
+    "uml.usecase": {
+      "file": "assets/symbols/uml-usecase.svg",
+      "role": "uml.usecase",
+      "category": "element",
+      "profile": "uml.usecase@1",
+      "sha256": "30970c38a63da87ab16a3dab1ab596f26938b56e44219457070dc4b791b30b0a"
+    },
+    "req.requirement": {
+      "file": "assets/symbols/req-requirement.svg",
+      "role": "req.requirement",
+      "category": "element",
+      "profile": "requirements.basic@1",
+      "sha256": "5cb6faa01ccecbbd7d4d6023ede367a33e1c00ff1bb0aa97835882590c276674"
+    },
+    "req.test": {
+      "file": "assets/symbols/req-test.svg",
+      "role": "req.test",
+      "category": "element",
+      "profile": "requirements.basic@1",
+      "sha256": "932898d02433ac0e5d16fe32e3f668c2c0a88661de0d6ccc8cc65289a40d6df3"
+    },
+    "req.implementation": {
+      "file": "assets/symbols/req-implementation.svg",
+      "role": "req.implementation",
+      "category": "element",
+      "profile": "requirements.basic@1",
+      "sha256": "9011d9e58d73758b0fe86c0fbf2b33255fa76a05584cfe9c826f76b8ec9b59de"
+    },
+    "analysis.role": {
+      "file": "assets/symbols/analysis-role.svg",
+      "role": "analysis.role",
+      "category": "element",
+      "profile": "matrix.raci@1",
+      "sha256": "4d203e10443f7b2f32ae31fd2f9132b4a0e7440c1b35e6a2613e7ffe8ca2d287"
+    },
+    "analysis.task": {
+      "file": "assets/symbols/analysis-task.svg",
+      "role": "analysis.task",
+      "category": "element",
+      "profile": "matrix.raci@1",
+      "sha256": "0087ef74e97549b39336cbc145677ad5d07a5936c960ab240b9d8447c4b3703f"
+    },
+    "chen.entity": {
+      "file": "assets/symbols/chen-entity.svg",
+      "role": "chen.entity",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "163c7d719058709034a3809ff8867dbd4600620c2d312c613a68c8758474870b"
+    },
+    "chen.attribute": {
+      "file": "assets/symbols/chen-attribute.svg",
+      "role": "chen.attribute",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "6b7d0a37da54b3f5640b00886f22206e0e1946b291acf7bcdb6e81a500518185"
+    },
+    "chen.association": {
+      "file": "assets/symbols/chen-association.svg",
+      "role": "chen.association",
+      "category": "element",
+      "profile": "ddn@1",
+      "sha256": "795511e04bd218332190a1d166504861efb57a73deb2c6cb54fbd7e0a6e4bfe2"
+    },
+    "quality.effect": {
+      "file": "assets/symbols/quality-effect.svg",
+      "role": "quality.effect",
+      "category": "element",
+      "profile": "fishbone.basic@1",
+      "sha256": "030fb6bd248d19d2b18c90621ff94da2871b5150422ae04ed169106c38024994"
+    },
+    "quality.category": {
+      "file": "assets/symbols/quality-category.svg",
+      "role": "quality.category",
+      "category": "element",
+      "profile": "fishbone.basic@1",
+      "sha256": "0d443dcb89e907c9c949cf17a729d57ed4cc93919ea811ad83eacfd7d3a40d02"
+    },
+    "quality.cause": {
+      "file": "assets/symbols/quality-cause.svg",
+      "role": "quality.cause",
+      "category": "element",
+      "profile": "fishbone.basic@1",
+      "sha256": "0aca92511ab3566c63454f8ff704cc9837fbfbf856d38c99e27fe4d7ecf90fd2"
+    },
+    "state.initial": {
+      "file": "assets/symbols/state-initial.svg",
+      "role": "state.initial",
+      "category": "element",
+      "profile": "state.flat@1",
+      "sha256": "cc479e058afbe9fa2c611520e94fecdcd3c3cf5d4c9784f70045d04026035976"
+    },
+    "state.state": {
+      "file": "assets/symbols/state-state.svg",
+      "role": "state.state",
+      "category": "element",
+      "profile": "state.flat@1",
+      "sha256": "a57d26704f75f8a03e0b0e7a7582b45a1c6671a1e2e93705b2f1d2306c2488f4"
+    },
+    "state.final": {
+      "file": "assets/symbols/state-final.svg",
+      "role": "state.final",
+      "category": "element",
+      "profile": "state.flat@1",
+      "sha256": "5a8f59513b3f6ea62b0fa468b8aee0a3bc451406589e2e2c1bf53226e5a09050"
+    },
+    "state.history_shallow": {
+      "file": "assets/symbols/state-history-shallow.svg",
+      "role": "state.history_shallow",
+      "category": "element",
+      "profile": "uml.statemachine@1",
+      "sha256": "1efea23bd0a56e1858e0b4c351139ddc9c3fd487e1476e2db87893a2ad056c20"
+    },
+    "state.history_deep": {
+      "file": "assets/symbols/state-history-deep.svg",
+      "role": "state.history_deep",
+      "category": "element",
+      "profile": "uml.statemachine@1",
+      "sha256": "f505fe3ee9f1a37e30a611613f06eb2a98427c39e16c6d401566ce367917c717"
+    },
+    "state.junction": {
+      "file": "assets/symbols/state-junction.svg",
+      "role": "state.junction",
+      "category": "element",
+      "profile": "uml.statemachine@1",
+      "sha256": "dbfa3f79eeea4d1e101a2e2ba18887f18b2135bfde88dd43616ee697196ab0df"
+    },
+    "state.choice": {
+      "file": "assets/symbols/state-choice.svg",
+      "role": "state.choice",
+      "category": "element",
+      "profile": "uml.statemachine@1",
+      "sha256": "8b5ab079eb95b98fec37103855e43595280a5e4e0a7907c996b04a3a8d2a1261"
+    },
+    "state.entrypoint": {
+      "file": "assets/symbols/state-entrypoint.svg",
+      "role": "state.entrypoint",
+      "category": "element",
+      "profile": "uml.statemachine@1",
+      "sha256": "1a69ff5f79b3661b6e20f3e2916f244fc51f7ae918e9a4ae97e8f8b6e4c0094f"
+    },
+    "state.exitpoint": {
+      "file": "assets/symbols/state-exitpoint.svg",
+      "role": "state.exitpoint",
+      "category": "element",
+      "profile": "uml.statemachine@1",
+      "sha256": "3718670fc6865b3afcfee7701bb62311742d1e1c64e86e0cc87ac575421142dc"
+    },
+    "state.forkjoin": {
+      "file": "assets/symbols/state-forkjoin.svg",
+      "role": "state.forkjoin",
+      "category": "element",
+      "profile": "uml.statemachine@1",
+      "sha256": "eee4bcd1fccf255994fa93ecc6dc51ac826738ea9d89af4761f3ddad7412ab56"
+    },
+    "state.terminate": {
+      "file": "assets/symbols/state-terminate.svg",
+      "role": "state.terminate",
+      "category": "element",
+      "profile": "uml.statemachine@1",
+      "sha256": "2da280cb8006215e14880a9a1a176f84e00c7618692021cfdaad760fd41902c6"
+    },
+    "rule.row": {
+      "file": "assets/symbols/rule-row.svg",
+      "role": "rule.row",
+      "category": "element",
+      "profile": "decision.rules@1",
+      "sha256": "ac94f58dbcd5bfd7a64c69cd1642580af905b2a079581cb56f0aa50623eb2ac8"
+    },
+    "uml.subject": {
+      "file": "assets/symbols/uml-subject.svg",
+      "role": "uml.subject",
+      "category": "element",
+      "profile": "uml.usecase@2",
+      "sha256": "381c8b2bdf61202ef5a093ada5f4e2743f0a834d208e8bcfb9cd1a6f085a0ce2"
+    },
+    "flow.connector": {
+      "file": "assets/symbols/flow-connector.svg",
+      "role": "flow.connector",
+      "category": "element",
+      "profile": "flow.documented@2",
+      "sha256": "dd4c08d5fa1d336fbd37a8fab308de8f2ace552c3fd4d0057bd0e1286e65c70b"
+    },
+    "flow.offpage": {
+      "file": "assets/symbols/flow-offpage.svg",
+      "role": "flow.offpage",
+      "category": "element",
+      "profile": "flow.documented@2",
+      "sha256": "6e4ad064da804d560397f1608012779879a9a4836c73fc8bbd4aafa76aea6f81"
+    },
+    "flow.annotation": {
+      "file": "assets/symbols/flow-annotation.svg",
+      "role": "flow.annotation",
+      "category": "element",
+      "profile": "flow.documented@2",
+      "sha256": "eb430d34bef2fe16bf6112a82b11ce43b553f4682c068df3ab952c736eb8e4b8"
+    },
+    "flow.storage": {
+      "file": "assets/symbols/flow-storage.svg",
+      "role": "flow.storage",
+      "category": "element",
+      "profile": "flow.documented@2",
+      "sha256": "0bee3104460a0e1ed0fea656befeb868954ce5ef9030cc643ad9223dc8c9b747"
+    },
+    "flow.forkjoin": {
+      "file": "assets/symbols/flow-forkjoin.svg",
+      "role": "flow.forkjoin",
+      "category": "element",
+      "profile": "uml.activity@1",
+      "sha256": "a3c68859b7799b73170d3dccb54324d2de91e4ef5b70347f6d6da54d65b4bee3"
+    },
+    "flow.objectnode": {
+      "file": "assets/symbols/flow-objectnode.svg",
+      "role": "flow.objectnode",
+      "category": "element",
+      "profile": "uml.activity@1",
+      "sha256": "a55e495e983c6785ac8ef177c673c01273d8a0fcf8b9b7b29e2b99278543abd2"
+    },
+    "flow.merge": {
+      "file": "assets/symbols/flow-merge.svg",
+      "role": "flow.merge",
+      "category": "element",
+      "profile": "uml.activity@2",
+      "sha256": "5af93a6daf8a37cce9dbde90c151fdef2599abc239ce02bd4548ad04b13d4690"
+    },
+    "flow.sendsignal": {
+      "file": "assets/symbols/flow-sendsignal.svg",
+      "role": "flow.sendsignal",
+      "category": "element",
+      "profile": "uml.activity@2",
+      "sha256": "9321f926bca47dfdaec3da77013bacba39a75926bb4b7b5a5162799b59a6214f"
+    },
+    "flow.acceptsignal": {
+      "file": "assets/symbols/flow-acceptsignal.svg",
+      "role": "flow.acceptsignal",
+      "category": "element",
+      "profile": "uml.activity@2",
+      "sha256": "4a4a89721d64263cda060211e15fdc9c9139e969ed3f949cfb10f3bead16dc06"
+    },
+    "flow.timeevent": {
+      "file": "assets/symbols/flow-timeevent.svg",
+      "role": "flow.timeevent",
+      "category": "element",
+      "profile": "uml.activity@2",
+      "sha256": "b5b10a43a5748b583a403444ea364faac6df52ba4ea80788ac1809b42d09cf21"
+    },
+    "flow.flowfinal": {
+      "file": "assets/symbols/flow-flowfinal.svg",
+      "role": "flow.flowfinal",
+      "category": "element",
+      "profile": "uml.activity@2",
+      "sha256": "747da21605b85dda6e6bb561023e53ae237ea249c0c467d24e67fb33bb1fc44c"
+    },
+    "c4.person": {
+      "file": "assets/symbols/c4-person.svg",
+      "role": "c4.person",
+      "category": "element",
+      "profile": "c4.context@1",
+      "sha256": "c6c0ecf4a4f8fc658c6b921364a2a572bea176ab774e3996d7ee8ea9663abb16"
+    },
+    "c4.system": {
+      "file": "assets/symbols/c4-system.svg",
+      "role": "c4.system",
+      "category": "element",
+      "profile": "c4.context@1",
+      "sha256": "4890a8141dbd83cb12a0d0a85760a274c48137a479c60584649a057a04520640"
+    },
+    "c4.container": {
+      "file": "assets/symbols/c4-container.svg",
+      "role": "c4.container",
+      "category": "element",
+      "profile": "c4.container@1",
+      "sha256": "c92f13bcdfb8c51914376344263ba6e995ecbbc1c634085708df4c8539370d26"
+    },
+    "c4.store": {
+      "file": "assets/symbols/c4-store.svg",
+      "role": "c4.store",
+      "category": "element",
+      "profile": "c4.container@1",
+      "sha256": "c29c74c8e2f49200fd578e981d11400502faf23a1fe91803c8ce9b8874080803"
+    },
+    "c4.queue": {
+      "file": "assets/symbols/c4-queue.svg",
+      "role": "c4.queue",
+      "category": "element",
+      "profile": "c4.container@1",
+      "sha256": "15fe17097fca2a95ca619aaea0e87644b92bdae34d43728c6c4ce712b52e0ab5"
+    },
+    "c4.component": {
+      "file": "assets/symbols/c4-component.svg",
+      "role": "c4.component",
+      "category": "element",
+      "profile": "c4.component@1",
+      "sha256": "375f6aa563d4ddfabae44c2d0f1609652b135c74b28c53dee2369fa44fc59fbd"
+    },
+    "epk.event": {
+      "file": "assets/symbols/epk-event.svg",
+      "role": "epk.event",
+      "category": "element",
+      "profile": "epc.basic@1",
+      "sha256": "d9f80d644366684fef8020bdd6041c08f32347847da2ebd1d9a656137e0898ca"
+    },
+    "epk.function": {
+      "file": "assets/symbols/epk-function.svg",
+      "role": "epk.function",
+      "category": "element",
+      "profile": "epc.basic@1",
+      "sha256": "4cf570283c198589d9ce150b741ea35c7d464dea119fe4056ddb3f0bc3c3f30d"
+    },
+    "epk.connector": {
+      "file": "assets/symbols/epk-connector.svg",
+      "role": "epk.connector",
+      "category": "element",
+      "profile": "epc.basic@1",
+      "sha256": "389b55fd40aa0b102ba85b0510c5cc3626a088707e9a6cab95ab7f25ae61c9df"
+    },
+    "flow.gateway": {
+      "file": "assets/symbols/flow-gateway.svg",
+      "role": "flow.gateway",
+      "category": "element",
+      "profile": "bpmn.basic@1",
+      "sha256": "cf6afb6284a9a78713dfbf44dd2e4e2b68b6edd66fa6afa537a5082460add521"
+    },
+    "flow.intermediate": {
+      "file": "assets/symbols/flow-intermediate.svg",
+      "role": "flow.intermediate",
+      "category": "element",
+      "profile": "bpmn.process@1",
+      "sha256": "5690620434e03c19fae720987a3ed7ce66c25fb37c1dd7f4d776760430fe627e"
+    },
+    "flow.dataobject": {
+      "file": "assets/symbols/flow-dataobject.svg",
+      "role": "flow.dataobject",
+      "category": "element",
+      "profile": "bpmn.process@1",
+      "sha256": "d74046dfdd93ee08b68bb5c8c3c868f379d7428442a836bac2ce05e01c2e7e16"
+    },
+    "flow.datainput": {
+      "file": "assets/symbols/flow-datainput.svg",
+      "role": "flow.datainput",
+      "category": "element",
+      "profile": "bpmn.process@1",
+      "sha256": "bd78ca007f7811a2b8c84e0017a2771a2d3adbd944cfe6a4df9c2987f9fff70b"
+    },
+    "flow.dataoutput": {
+      "file": "assets/symbols/flow-dataoutput.svg",
+      "role": "flow.dataoutput",
+      "category": "element",
+      "profile": "bpmn.process@1",
+      "sha256": "914aba03c01d8272aca9300a9e69ec628153d977bf1fd7ad636c3b03e629df7d"
+    },
+    "flow.datastore": {
+      "file": "assets/symbols/flow-datastore.svg",
+      "role": "flow.datastore",
+      "category": "element",
+      "profile": "bpmn.process@1",
+      "sha256": "96555e0cea864eb25fdfbd08eaf1766d4d0f4565cb5bb2c631665b532752c8a3"
+    },
+    "flow.group": {
+      "file": "assets/symbols/flow-group.svg",
+      "role": "flow.group",
+      "category": "element",
+      "profile": "bpmn.process@1",
+      "sha256": "87ccb6c1e5c8af2f50329dae4dddaddef1705b8d10599e9932eb06f1807186a3"
+    },
+    "flow.choreotask": {
+      "file": "assets/symbols/flow-choreotask.svg",
+      "role": "flow.choreotask",
+      "category": "element",
+      "profile": "bpmn.choreography@1",
+      "sha256": "f3fe5141e609f85964d261fc36362654369b4b0265cf653e587ce8f019354e0e"
+    },
+    "flow.conversation": {
+      "file": "assets/symbols/flow-conversation.svg",
+      "role": "flow.conversation",
+      "category": "element",
+      "profile": "bpmn.conversation@1",
+      "sha256": "19cea86a406c6e5eb710337f493a36aa5353fed03721525644b6ffe5cb884986"
+    },
+    "flow.subconversation": {
+      "file": "assets/symbols/flow-subconversation.svg",
+      "role": "flow.subconversation",
+      "category": "element",
+      "profile": "bpmn.conversation@1",
+      "sha256": "732c4afeaece02eedbbed7cce990c0e93058a81b7a6cd03ba800708bd27ca165"
+    },
+    "flow.callconversation": {
+      "file": "assets/symbols/flow-callconversation.svg",
+      "role": "flow.callconversation",
+      "category": "element",
+      "profile": "bpmn.conversation@1",
+      "sha256": "98492edda4c449bac0d122c77bca026eccf4557e03b9e0de8fbdda312f4a3c82"
+    },
+    "cmmn.stage": {
+      "file": "assets/symbols/cmmn-stage.svg",
+      "role": "cmmn.stage",
+      "category": "element",
+      "profile": "cmmn.basic@1",
+      "sha256": "dc1d87409ff0eebf4c01682fe20a38801faaca47abdfe53635464880a29e898f"
+    },
+    "cmmn.milestone": {
+      "file": "assets/symbols/cmmn-milestone.svg",
+      "role": "cmmn.milestone",
+      "category": "element",
+      "profile": "cmmn.basic@1",
+      "sha256": "8cf54443667faf304c31b7d5edbc19a7615caa2b757991f18982df12731d7528"
+    },
+    "cmmn.sentry": {
+      "file": "assets/symbols/cmmn-sentry.svg",
+      "role": "cmmn.sentry",
+      "category": "element",
+      "profile": "cmmn.basic@1",
+      "sha256": "efcb2e3f51929ffa823a762f72ffce5eaff7d4e5f84b65d155a2f88df5bd43c4"
+    },
+    "cmmn.caseplan": {
+      "file": "assets/symbols/cmmn-caseplan.svg",
+      "role": "cmmn.caseplan",
+      "category": "element",
+      "profile": "cmmn.complete@1",
+      "sha256": "91947cf3c5e0c9e11fd08e353f57fcc04f0406588cf64c9ddc8f8d84f4a32495"
+    },
+    "cmmn.task": {
+      "file": "assets/symbols/cmmn-task.svg",
+      "role": "cmmn.task",
+      "category": "element",
+      "profile": "cmmn.complete@1",
+      "sha256": "432311e96ab1be9f601c15ae7509504a4d19203d96cfdc462d89a8e9cae3d3cb"
+    },
+    "cmmn.humantask": {
+      "file": "assets/symbols/cmmn-humantask.svg",
+      "role": "cmmn.humantask",
+      "category": "element",
+      "profile": "cmmn.complete@1",
+      "sha256": "bb976f1d66e00a853396a4559ab7fdf385e5652447e61575577af4e677617c73"
+    },
+    "cmmn.processtask": {
+      "file": "assets/symbols/cmmn-processtask.svg",
+      "role": "cmmn.processtask",
+      "category": "element",
+      "profile": "cmmn.complete@1",
+      "sha256": "5d87062893efb956da242b55579b49552e75e060bc2a3b2dfba2a1fc906c6ee8"
+    },
+    "cmmn.decisiontask": {
+      "file": "assets/symbols/cmmn-decisiontask.svg",
+      "role": "cmmn.decisiontask",
+      "category": "element",
+      "profile": "cmmn.complete@1",
+      "sha256": "b1360d12ad4a3dc15b756fc3c15b7eed79ca14fffd79a430bfb98cf295559d53"
+    },
+    "cmmn.timerevent": {
+      "file": "assets/symbols/cmmn-timerevent.svg",
+      "role": "cmmn.timerevent",
+      "category": "element",
+      "profile": "cmmn.complete@1",
+      "sha256": "f3f4246fb588333c9c7c7c7ae80ba82826e0922ef57f6037d7eea010f4a3612c"
+    },
+    "cmmn.userevent": {
+      "file": "assets/symbols/cmmn-userevent.svg",
+      "role": "cmmn.userevent",
+      "category": "element",
+      "profile": "cmmn.complete@1",
+      "sha256": "edde4b50bc75c95a6581ef1b9ff73c2c2264b7a1510e6e02bde1f6c7ba897c1a"
+    },
+    "cmmn.casefile": {
+      "file": "assets/symbols/cmmn-casefile.svg",
+      "role": "cmmn.casefile",
+      "category": "element",
+      "profile": "cmmn.complete@1",
+      "sha256": "7a5d79c34251915a0292da041331fef0006929ea8bc6652961eb6a51d5b70ed2"
+    },
+    "sysml.block": {
+      "file": "assets/symbols/sysml-block.svg",
+      "role": "sysml.block",
+      "category": "element",
+      "profile": "sysml.bdd@1",
+      "sha256": "8c56e136ab066ab6ce3808b69532c783d972df8fa6dd2308f1bd63d82d2212e2"
+    },
+    "sysml.constraint": {
+      "file": "assets/symbols/sysml-constraint.svg",
+      "role": "sysml.constraint",
+      "category": "element",
+      "profile": "sysml.bdd@1",
+      "sha256": "571b145fac383f90c38eff7b624c6fcc9ae946772c1d9133a1718f30b7656099"
+    },
+    "archi.business_actor": {
+      "file": "assets/symbols/archi-business-actor.svg",
+      "role": "archi.business_actor",
+      "category": "element",
+      "profile": "archimate.basic@1",
+      "sha256": "8e65854756d1a26976cd260e744b5e50223f42aeab1709c36fbb1246c4a79988"
+    },
+    "archi.business_role": {
+      "file": "assets/symbols/archi-business-role.svg",
+      "role": "archi.business_role",
+      "category": "element",
+      "profile": "archimate.basic@1",
+      "sha256": "b82d7005e014226ae0e47e0ae49f13f105c699168801345b4ef3983498bfc07f"
+    },
+    "archi.business_process": {
+      "file": "assets/symbols/archi-business-process.svg",
+      "role": "archi.business_process",
+      "category": "element",
+      "profile": "archimate.basic@1",
+      "sha256": "a80cc5d2e3ebb103f82fed587c312d4d937e135d719dac425ed7ea6eef06424d"
+    },
+    "archi.business_service": {
+      "file": "assets/symbols/archi-business-service.svg",
+      "role": "archi.business_service",
+      "category": "element",
+      "profile": "archimate.basic@1",
+      "sha256": "2ceea1981883a728209b8caae03fc7c1ad26af43aab1a253890902684cfcf462"
+    },
+    "archi.business_interface": {
+      "file": "assets/symbols/archi-business-interface.svg",
+      "role": "archi.business_interface",
+      "category": "element",
+      "profile": "archimate.basic@1",
+      "sha256": "003e2b3423c259b3634f9111909d981fdc7661a7699e84c80e94a76e7524ee90"
+    },
+    "archi.application_component": {
+      "file": "assets/symbols/archi-application-component.svg",
+      "role": "archi.application_component",
+      "category": "element",
+      "profile": "archimate.basic@1",
+      "sha256": "44809e8d5ec5d0d757175c8415e441200cb61b9aa88fc2b5999105e54a8072aa"
+    },
+    "archi.application_service": {
+      "file": "assets/symbols/archi-application-service.svg",
+      "role": "archi.application_service",
+      "category": "element",
+      "profile": "archimate.basic@1",
+      "sha256": "9f2a0ae3741c08336e7285ae5a006071b5e94d954fae674ac1bebabf66d4a99f"
+    },
+    "archi.technology_node": {
+      "file": "assets/symbols/archi-technology-node.svg",
+      "role": "archi.technology_node",
+      "category": "element",
+      "profile": "archimate.basic@1",
+      "sha256": "e089d1ec875d5d0d0dc31b146f2bb82c87ddf2d467accd200aaf1dd93adfb53c"
+    },
+    "archi.technology_service": {
+      "file": "assets/symbols/archi-technology-service.svg",
+      "role": "archi.technology_service",
+      "category": "element",
+      "profile": "archimate.basic@1",
+      "sha256": "f958b84802ffbbee47b339713357235c19612c844336f61ab083a05edc8ec427"
+    },
+    "tree.gate": {
+      "file": "assets/symbols/tree-gate.svg",
+      "role": "tree.gate",
+      "category": "element",
+      "profile": "fault.tree@1",
+      "sha256": "0edd09bda5f366bd315b036bf05ea9e737e49d1524cfa1e681319e730aad2aa1"
+    },
+    "tree.event": {
+      "file": "assets/symbols/tree-event.svg",
+      "role": "tree.event",
+      "category": "element",
+      "profile": "fault.tree@1",
+      "sha256": "986be4a67a3e3d4a6782b886555235839fa3c75d19b24a926183d7c420047a85"
+    },
+    "network.bus": {
+      "file": "assets/symbols/network-bus.svg",
+      "role": "network.bus",
+      "category": "element",
+      "profile": "network.basic@1",
+      "sha256": "66145607f0a3b66c6f3b863b14eb5c5be0a5aeefc882ae448190d4a19f00e568"
+    },
+    "network.switch": {
+      "file": "assets/symbols/network-switch.svg",
+      "role": "network.switch",
+      "category": "element",
+      "profile": "network.basic@1",
+      "sha256": "c3a46866289396728e301783e9e94e5eb3ed6fdf7e846ca9dacc8bbccb43b93d"
+    },
+    "network.server": {
+      "file": "assets/symbols/network-server.svg",
+      "role": "network.server",
+      "category": "element",
+      "profile": "network.basic@1",
+      "sha256": "ba4d562556c1c25d66665599a525f260d5c478a6c1828b9d5409470bb52cc127"
+    },
+    "network.rack": {
+      "file": "assets/symbols/network-rack.svg",
+      "role": "network.rack",
+      "category": "element",
+      "profile": "network.rack@1",
+      "sha256": "9c50e46ed5382ea2f1257249af13b173c434f16b15842dd38fec0e4bc97774dc"
+    },
+    "ui.frame": {
+      "file": "assets/symbols/ui-frame.svg",
+      "role": "ui.frame",
+      "category": "element",
+      "profile": "wireframe.ui@1",
+      "sha256": "67eda1240219e3fbe96026ce971e227d47fceb5019847be92b9e72f0f07dfa10"
+    },
+    "ui.label": {
+      "file": "assets/symbols/ui-label.svg",
+      "role": "ui.label",
+      "category": "element",
+      "profile": "wireframe.ui@1",
+      "sha256": "88e75e52e689df814727e250b894d8df663c3c089a32b559e28bfa1442972b72"
+    },
+    "ui.input": {
+      "file": "assets/symbols/ui-input.svg",
+      "role": "ui.input",
+      "category": "element",
+      "profile": "wireframe.ui@1",
+      "sha256": "c7987f72e22838acbac764bfa855678847f4c1d21c4536ad79a4cc00aaabc819"
+    },
+    "ui.button": {
+      "file": "assets/symbols/ui-button.svg",
+      "role": "ui.button",
+      "category": "element",
+      "profile": "wireframe.ui@1",
+      "sha256": "64c050fcac4c11240241327e001fc01dd468dffb04580b49fedad455fe0c9f0f"
+    },
+    "ui.image": {
+      "file": "assets/symbols/ui-image.svg",
+      "role": "ui.image",
+      "category": "element",
+      "profile": "wireframe.ui@1",
+      "sha256": "15023c8edd92741129448e38b0177ac88e72ca2bfed80c226e116750c5e711be"
+    },
+    "ui.checkbox": {
+      "file": "assets/symbols/ui-checkbox.svg",
+      "role": "ui.checkbox",
+      "category": "element",
+      "profile": "wireframe.ui@1",
+      "sha256": "e1c7b0abf6b6956caa4337ddf4e836cb27f28b9e4698a65984c43b74b2a5439a"
+    },
+    "ui.list": {
+      "file": "assets/symbols/ui-list.svg",
+      "role": "ui.list",
+      "category": "element",
+      "profile": "wireframe.ui@1",
+      "sha256": "9f0f5b88675b1e9548a5334d602ae6c9a9508ab2a0ea3cd0c326bfd0241cb192"
+    },
+    "family.person": {
+      "file": "assets/symbols/family-person.svg",
+      "role": "family.person",
+      "category": "element",
+      "profile": "family.tree@1",
+      "sha256": "ae6c3887f051339d2ae3da8b94d073dfa9ab8e65a2e250c6d1d5260573f8e434"
+    },
+    "family.union": {
+      "file": "assets/symbols/family-union.svg",
+      "role": "family.union",
+      "category": "element",
+      "profile": "family.tree@1",
+      "sha256": "957d84911742ccce3480ac261e38be39c4719e8e00f0309370e2fa1272c67dff"
+    },
+    "sysml.testcase": {
+      "file": "assets/symbols/sysml-testcase.svg",
+      "role": "sysml.testcase",
+      "category": "element",
+      "profile": "sysml.requirements@1",
+      "sha256": "82900fbee25544ec2fa412601cf027c1665d3bc4f37da537d1e89794fe5556f2"
+    },
+    "sysml.valuetype": {
+      "file": "assets/symbols/sysml-valuetype.svg",
+      "role": "sysml.valuetype",
+      "category": "element",
+      "profile": "sysml.bdd@2",
+      "sha256": "fa0121bd029d54100240c5aa0ee6c6e1899665f955761d9f982a1afcd02b1478"
+    },
+    "sysml.interfaceblock": {
+      "file": "assets/symbols/sysml-interfaceblock.svg",
+      "role": "sysml.interfaceblock",
+      "category": "element",
+      "profile": "sysml.bdd@2",
+      "sha256": "6d0e0c10d53623c17cd457513fe0a5b6bfb92ee679d82f7060e3ac7db020ba3e"
+    },
+    "sysml.flowspec": {
+      "file": "assets/symbols/sysml-flowspec.svg",
+      "role": "sysml.flowspec",
+      "category": "element",
+      "profile": "sysml.bdd@2",
+      "sha256": "f595f9e08b1792a982830456be7e103d0cf0465e2997e5f8b6ea595dad64ad78"
+    },
+    "dmn.decision": {
+      "file": "assets/symbols/dmn-decision.svg",
+      "role": "dmn.decision",
+      "category": "element",
+      "profile": "dmn.drd@1",
+      "sha256": "9ff590cea8c567557cf04cd3d2999e8e4e02a82afa58deff402c7e29ac581736"
+    },
+    "dmn.bkm": {
+      "file": "assets/symbols/dmn-bkm.svg",
+      "role": "dmn.bkm",
+      "category": "element",
+      "profile": "dmn.drd@1",
+      "sha256": "2ba6bca8109bb56a811134e5ad3375cc8a2eaadf48c3646fe68a6768213c8f71"
+    },
+    "dmn.inputdata": {
+      "file": "assets/symbols/dmn-inputdata.svg",
+      "role": "dmn.inputdata",
+      "category": "element",
+      "profile": "dmn.drd@1",
+      "sha256": "ff6254911acd7bc19096196ba03d0693feceb0fcb1ccf53bc457a1e7c2de50ea"
+    },
+    "dmn.knowledgesource": {
+      "file": "assets/symbols/dmn-knowledgesource.svg",
+      "role": "dmn.knowledgesource",
+      "category": "element",
+      "profile": "dmn.drd@1",
+      "sha256": "8501bc3bd12d39a2c570b1a61f352ecb3fa90a8eee406f9f67c9c0fd20708c0d"
+    },
+    "dmn.decisionservice": {
+      "file": "assets/symbols/dmn-decisionservice.svg",
+      "role": "dmn.decisionservice",
+      "category": "element",
+      "profile": "dmn.drd@1",
+      "sha256": "432bda9c8c55ba14c893da5e12a6fcb71ceebc313cea61176bafb81dd96acff0"
+    },
+    "soaml.participant": {
+      "file": "assets/symbols/soaml-participant.svg",
+      "role": "soaml.participant",
+      "category": "element",
+      "profile": "soaml.services@1",
+      "sha256": "64c6e0e56cd13aba76d1b0e91a4c5d47f3c6439a23a6064f981348d1a6bf599c"
+    },
+    "soaml.agent": {
+      "file": "assets/symbols/soaml-agent.svg",
+      "role": "soaml.agent",
+      "category": "element",
+      "profile": "soaml.services@1",
+      "sha256": "9384abf945a3404561708d85074ed82bb74c12ffb3eec319882b069a9f68c0d6"
+    },
+    "soaml.serviceinterface": {
+      "file": "assets/symbols/soaml-serviceinterface.svg",
+      "role": "soaml.serviceinterface",
+      "category": "element",
+      "profile": "soaml.services@1",
+      "sha256": "1b76df7e41881d366afcf9d9b949efef1e534ab6e9d884e96350c142f9d80fc7"
+    },
+    "soaml.servicecontract": {
+      "file": "assets/symbols/soaml-servicecontract.svg",
+      "role": "soaml.servicecontract",
+      "category": "element",
+      "profile": "soaml.services@1",
+      "sha256": "d8dde29c06e6fb0b7e025c5a64b1787df9f6ef135ffbccae45cf72831152def5"
+    },
+    "soaml.capability": {
+      "file": "assets/symbols/soaml-capability.svg",
+      "role": "soaml.capability",
+      "category": "element",
+      "profile": "soaml.services@1",
+      "sha256": "2f08c8ce7e7b489acb26694c7c6afe4ee22a6b2e3f9683c15e37867d64e3f487"
+    },
+    "soaml.message": {
+      "file": "assets/symbols/soaml-message.svg",
+      "role": "soaml.message",
+      "category": "element",
+      "profile": "soaml.services@1",
+      "sha256": "a50d52ea3505b3e9a26d6df98f1a977016668ee79ace754447c62e2c31a1cd30"
+    },
+    "soaml.milestone": {
+      "file": "assets/symbols/soaml-milestone.svg",
+      "role": "soaml.milestone",
+      "category": "element",
+      "profile": "soaml.services@1",
+      "sha256": "5d4af0966f5d04145862e0d24e71f9ac4d8dd8119e8e659df3455b91bb927af1"
+    },
+    "uaf.capability": {
+      "file": "assets/symbols/uaf-capability.svg",
+      "role": "uaf.capability",
+      "category": "element",
+      "profile": "uaf.strategic@1",
+      "sha256": "7d9c09a2ed588348b564a173075984b9943516bc0797510acb607a68fb6d5eb0"
+    },
+    "uaf.enterprisegoal": {
+      "file": "assets/symbols/uaf-enterprisegoal.svg",
+      "role": "uaf.enterprisegoal",
+      "category": "element",
+      "profile": "uaf.strategic@1",
+      "sha256": "1410f3038dc991edc5ebe88797f536d0babe2808b835b4f18e8af90606c9c67a"
+    },
+    "uaf.enterprisevision": {
+      "file": "assets/symbols/uaf-enterprisevision.svg",
+      "role": "uaf.enterprisevision",
+      "category": "element",
+      "profile": "uaf.strategic@1",
+      "sha256": "2435e25770c421aaacbb1e4b6f4e18d6cee67e0ec1bd98ea366a19db24bbb810"
+    },
+    "uaf.strategicphase": {
+      "file": "assets/symbols/uaf-strategicphase.svg",
+      "role": "uaf.strategicphase",
+      "category": "element",
+      "profile": "uaf.strategic@1",
+      "sha256": "60f5124e0abd97fb99a69d9a128c93370a8cef953973176e15c1089c9dbe7856"
+    },
+    "uaf.opperformer": {
+      "file": "assets/symbols/uaf-opperformer.svg",
+      "role": "uaf.opperformer",
+      "category": "element",
+      "profile": "uaf.operational@1",
+      "sha256": "b29124f3a695c04bed6e33a961dae8e4594cadfce050c25a39c0b943bb51f9e5"
+    },
+    "uaf.opactivity": {
+      "file": "assets/symbols/uaf-opactivity.svg",
+      "role": "uaf.opactivity",
+      "category": "element",
+      "profile": "uaf.operational@1",
+      "sha256": "0e51d4391151febfe0a6ebc1b0e270d1e9878defe405c31b37af382831fa6fc2"
+    },
+    "uaf.opnode": {
+      "file": "assets/symbols/uaf-opnode.svg",
+      "role": "uaf.opnode",
+      "category": "element",
+      "profile": "uaf.operational@1",
+      "sha256": "5716827a8b2b422768ff3adde7976a843d6785304fb16991c63fe392481ad4b1"
+    },
+    "uaf.opexchange": {
+      "file": "assets/symbols/uaf-opexchange.svg",
+      "role": "uaf.opexchange",
+      "category": "element",
+      "profile": "uaf.operational@1",
+      "sha256": "efa69fa16d90a021328be9c430383605793367dadbdbeb167bb76bf2c80cceb6"
+    },
+    "uaf.servicespec": {
+      "file": "assets/symbols/uaf-servicespec.svg",
+      "role": "uaf.servicespec",
+      "category": "element",
+      "profile": "uaf.services@1",
+      "sha256": "c9c2d9dc72f638198ad03dcc5a43a4b953d80d82bc6e2e3784ec3d8174be3803"
+    },
+    "uaf.servicefunction": {
+      "file": "assets/symbols/uaf-servicefunction.svg",
+      "role": "uaf.servicefunction",
+      "category": "element",
+      "profile": "uaf.services@1",
+      "sha256": "9d3e52afcc8718a2e3ff80fc173dae20626c31378582c48e96defb5bcdac1310"
+    },
+    "uaf.servicepolicy": {
+      "file": "assets/symbols/uaf-servicepolicy.svg",
+      "role": "uaf.servicepolicy",
+      "category": "element",
+      "profile": "uaf.services@1",
+      "sha256": "f061f2d15fade1bec5aa5fe22d4e14bd670cafd3713e9aad49922785489e13d9"
+    },
+    "uaf.system": {
+      "file": "assets/symbols/uaf-system.svg",
+      "role": "uaf.system",
+      "category": "element",
+      "profile": "uaf.systems@1",
+      "sha256": "a42a68554ff492e6d42ed7afdb33cebed07b537da4bc195681807f57fffb85d8"
+    },
+    "uaf.systemfunction": {
+      "file": "assets/symbols/uaf-systemfunction.svg",
+      "role": "uaf.systemfunction",
+      "category": "element",
+      "profile": "uaf.systems@1",
+      "sha256": "b3c0aa5da4e568fbabf74547b4ba9bb0e20be5e9e45fd59a06318883ca67351e"
+    },
+    "uaf.implementer": {
+      "file": "assets/symbols/uaf-implementer.svg",
+      "role": "uaf.implementer",
+      "category": "element",
+      "profile": "uaf.systems@1",
+      "sha256": "7448863665c60eef7fcb9a49f16b450e2cfe5308755474dd529615317c0b638d"
+    },
+    "uaf.person": {
+      "file": "assets/symbols/uaf-person.svg",
+      "role": "uaf.person",
+      "category": "element",
+      "profile": "uaf.personnel@1",
+      "sha256": "6ff8572729f31dc65dd5a30e470e7bb52a3346e5d9c39e2b5628ed0b86ecff61"
+    },
+    "uaf.organization": {
+      "file": "assets/symbols/uaf-organization.svg",
+      "role": "uaf.organization",
+      "category": "element",
+      "profile": "uaf.personnel@1",
+      "sha256": "a246c02a8ac1b9a129ffcb68ddf6001f78cad0c09774ffcfc4b11e5133cd162b"
+    },
+    "uaf.post": {
+      "file": "assets/symbols/uaf-post.svg",
+      "role": "uaf.post",
+      "category": "element",
+      "profile": "uaf.personnel@1",
+      "sha256": "d147617ad80bcb9ca92f3581faab920ac8594f33e46a2eb8ffc0dbcaa90f0303"
+    },
+    "uaf.responsibility": {
+      "file": "assets/symbols/uaf-responsibility.svg",
+      "role": "uaf.responsibility",
+      "category": "element",
+      "profile": "uaf.personnel@1",
+      "sha256": "f9f89614b07a2bf15a967ca60b755c8ee6126013085689e7077af2f384a6d978"
+    },
+    "uaf.resourceperformer": {
+      "file": "assets/symbols/uaf-resourceperformer.svg",
+      "role": "uaf.resourceperformer",
+      "category": "element",
+      "profile": "uaf.resources@1",
+      "sha256": "dba98f6a3c8405cece517d466db1fa7cb928e0d15df3e019f2a8ee51077b1fa5"
+    },
+    "uaf.resource": {
+      "file": "assets/symbols/uaf-resource.svg",
+      "role": "uaf.resource",
+      "category": "element",
+      "profile": "uaf.resources@1",
+      "sha256": "996804d28849bfb5b9b493bba8c993616acc449e2c35016dc91cd07ecb4e334f"
+    },
+    "uaf.resourcefunction": {
+      "file": "assets/symbols/uaf-resourcefunction.svg",
+      "role": "uaf.resourcefunction",
+      "category": "element",
+      "profile": "uaf.resources@1",
+      "sha256": "5df36851b8c6b730034e39b1a206f38f98db0276bccf1ef76ee343dc4869c7c6"
+    },
+    "uaf.technology": {
+      "file": "assets/symbols/uaf-technology.svg",
+      "role": "uaf.technology",
+      "category": "element",
+      "profile": "uaf.resources@1",
+      "sha256": "c1544f911a4478100cecd88be0614ca2fdb43b91a0fad3b03b97b8af386e27ea"
+    },
+    "uaf.securityelement": {
+      "file": "assets/symbols/uaf-securityelement.svg",
+      "role": "uaf.securityelement",
+      "category": "element",
+      "profile": "uaf.security@1",
+      "sha256": "9a296b296d273d703fec24be25c590744119f06aac96e865a8c7d6bce81019b5"
+    },
+    "uaf.securitycontrol": {
+      "file": "assets/symbols/uaf-securitycontrol.svg",
+      "role": "uaf.securitycontrol",
+      "category": "element",
+      "profile": "uaf.security@1",
+      "sha256": "235ff30e3ce4f3c066c7983139944c9f9cfe9b0e445b2d7416bac266075d3456"
+    },
+    "uaf.threat": {
+      "file": "assets/symbols/uaf-threat.svg",
+      "role": "uaf.threat",
+      "category": "element",
+      "profile": "uaf.security@1",
+      "sha256": "74ae59699bb64004f5195d85a0beab88f1f0f8e88d73a5b98ed26586080a5e42"
+    },
+    "uaf.asset": {
+      "file": "assets/symbols/uaf-asset.svg",
+      "role": "uaf.asset",
+      "category": "element",
+      "profile": "uaf.security@1",
+      "sha256": "8c1a0872a3d48cd92b6acb9dd25502d10ce490ac3e35b3d8054e6941f29ac394"
+    },
+    "uaf.project": {
+      "file": "assets/symbols/uaf-project.svg",
+      "role": "uaf.project",
+      "category": "element",
+      "profile": "uaf.projects@1",
+      "sha256": "3b116cda6801b8524a306382b3f185b2c523351b19178dd4dfa01e224be932d2"
+    },
+    "uaf.projectmilestone": {
+      "file": "assets/symbols/uaf-projectmilestone.svg",
+      "role": "uaf.projectmilestone",
+      "category": "element",
+      "profile": "uaf.projects@1",
+      "sha256": "4b28bd3b8074170ea4e4cf7b202b3d4567e81251b16e21fc6633887e8fc4ae18"
+    },
+    "uaf.workpackage": {
+      "file": "assets/symbols/uaf-workpackage.svg",
+      "role": "uaf.workpackage",
+      "category": "element",
+      "profile": "uaf.projects@1",
+      "sha256": "ee1affb2d470b7467d1fd3581f3ef7cbb4ff2b05bf2b6abea4cc3bc502440f4c"
+    },
+    "uaf.standard": {
+      "file": "assets/symbols/uaf-standard.svg",
+      "role": "uaf.standard",
+      "category": "element",
+      "profile": "uaf.standards@1",
+      "sha256": "f8204b2bef59deeb9bd51f985f48206bdbdc5db99dee295605a84e3dcf9514ee"
+    },
+    "uaf.standardcollection": {
+      "file": "assets/symbols/uaf-standardcollection.svg",
+      "role": "uaf.standardcollection",
+      "category": "element",
+      "profile": "uaf.standards@1",
+      "sha256": "e5fa5b21b863b30887357d6fa6c566647e90b9978af455c2166094c28eaf86aa"
+    },
+    "uaf.protocol": {
+      "file": "assets/symbols/uaf-protocol.svg",
+      "role": "uaf.protocol",
+      "category": "element",
+      "profile": "uaf.standards@1",
+      "sha256": "180bfa61825a48b3ae062d1dce1381fe6af653ea1ad6a4bc3aa5d087a958ab07"
+    },
+    "uaf.actualresource": {
+      "file": "assets/symbols/uaf-actualresource.svg",
+      "role": "uaf.actualresource",
+      "category": "element",
+      "profile": "uaf.actualresources@1",
+      "sha256": "0915ffcc7033474c6e053475e731d6303e5756243dad206fe1b16b8f8cd6904b"
+    },
+    "uaf.actualorganization": {
+      "file": "assets/symbols/uaf-actualorganization.svg",
+      "role": "uaf.actualorganization",
+      "category": "element",
+      "profile": "uaf.actualresources@1",
+      "sha256": "78e307036ba00162144e551405b31e45ab8cda392b86b5db25b0e0067aafffe7"
+    },
+    "uaf.actualperson": {
+      "file": "assets/symbols/uaf-actualperson.svg",
+      "role": "uaf.actualperson",
+      "category": "element",
+      "profile": "uaf.actualresources@1",
+      "sha256": "40ce7b1c1708e0803b970e6405626fd3c9863b60d05b0cd7ebd05be42a971b30"
+    },
+    "uaf.dictionaryentry": {
+      "file": "assets/symbols/uaf-dictionaryentry.svg",
+      "role": "uaf.dictionaryentry",
+      "category": "element",
+      "profile": "uaf.dictionary@1",
+      "sha256": "13353a476e3e91539a06cbc311b705041a30da8aeaa5a2e723b18432261a10a3"
+    },
+    "uaf.archdesc": {
+      "file": "assets/symbols/uaf-archdesc.svg",
+      "role": "uaf.archdesc",
+      "category": "element",
+      "profile": "uaf.summary@1",
+      "sha256": "648074873eddb4f00e4d85e8f2d7a91c7bd73da922eaf2415122d291de316058"
+    },
+    "uaf.viewpoint": {
+      "file": "assets/symbols/uaf-viewpoint.svg",
+      "role": "uaf.viewpoint",
+      "category": "element",
+      "profile": "uaf.summary@1",
+      "sha256": "641abed86c585102d28273feab221d3fd273d75e8adaa9a98f8947a74d8af08c"
+    },
+    "uaf.modelref": {
+      "file": "assets/symbols/uaf-modelref.svg",
+      "role": "uaf.modelref",
+      "category": "element",
+      "profile": "uaf.summary@1",
+      "sha256": "13de98eed2efa9e071843949febe9c7cbf794923463f7526be8bba4519ee2257"
+    },
+    "flow.manualinput": {
+      "file": "assets/symbols/flow-manualinput.svg",
+      "role": "flow.manualinput",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "ff9f35f555a578a32c6d9a7451f49a34d3494fd947ab10a3e0b7d853e0092c61"
+    },
+    "flow.manualop": {
+      "file": "assets/symbols/flow-manualop.svg",
+      "role": "flow.manualop",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "de685b7cce4e4dda56b7bf2a71e63380cf50cd291ce1d59992741a7c37b681aa"
+    },
+    "flow.preparation": {
+      "file": "assets/symbols/flow-preparation.svg",
+      "role": "flow.preparation",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "4cdb7c9f190436e2aee1b0c9b547b9a28d00353428ad85d2a5b19ee892c316f1"
+    },
+    "flow.display": {
+      "file": "assets/symbols/flow-display.svg",
+      "role": "flow.display",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "7f4cc768768a047830b2d1318228dca7516392146898d1627e417976b9a3063f"
+    },
+    "flow.delay": {
+      "file": "assets/symbols/flow-delay.svg",
+      "role": "flow.delay",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "bd49aeb6e92ee70d7f093cb294435ef2831150c63c7853dc2f88dc93cbe02986"
+    },
+    "flow.loopstart": {
+      "file": "assets/symbols/flow-loopstart.svg",
+      "role": "flow.loopstart",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "cf21f55ecd19bfb0e173b3eff1259f5b955c9c6d73f99c482907d21cfbcc7527"
+    },
+    "flow.loopend": {
+      "file": "assets/symbols/flow-loopend.svg",
+      "role": "flow.loopend",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "8ffdff8da5f7e0e7a82a6531f8c8dc28023930ea6470938e236514bd7ec6c10c"
+    },
+    "flow.isomerge": {
+      "file": "assets/symbols/flow-isomerge.svg",
+      "role": "flow.isomerge",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "af2481f38ae13b1c3e21b00772dcf6d690fcc547c928791d889bef7c041fce33"
+    },
+    "flow.isoextract": {
+      "file": "assets/symbols/flow-isoextract.svg",
+      "role": "flow.isoextract",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "56c19ae16be519248cf05f0c07c8fb74506dd573d816c2d6a556efb1fc0d4008"
+    },
+    "flow.card": {
+      "file": "assets/symbols/flow-card.svg",
+      "role": "flow.card",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "fa308b4a8c47d7e5347934c7b1e4cb90b4378a2e39e4c5f7780c4212c2ddde6a"
+    },
+    "flow.collate": {
+      "file": "assets/symbols/flow-collate.svg",
+      "role": "flow.collate",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "f240df695a601ab8226bcedda81756f12abcc35a8bab412504f041fb89edcde1"
+    },
+    "flow.sort": {
+      "file": "assets/symbols/flow-sort.svg",
+      "role": "flow.sort",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "27ed2a31f758fe395cf173cefa2672989230400e76efdcec36ababd50984a52d"
+    },
+    "flow.parallelmode": {
+      "file": "assets/symbols/flow-parallelmode.svg",
+      "role": "flow.parallelmode",
+      "category": "element",
+      "profile": "flow.iso5807@1",
+      "sha256": "92f18430ebda0b0f04e0883c50d5fc903b1530d50983b3b1ac2514b55f3ca4a7"
+    },
+    "epk.orgunit": {
+      "file": "assets/symbols/epk-orgunit.svg",
+      "role": "epk.orgunit",
+      "category": "element",
+      "profile": "epc.complete@1",
+      "sha256": "06b6e348f492e162ea5821f931368a1cbd56d2c5c287974183ca6366033a6dc2"
+    },
+    "epk.role": {
+      "file": "assets/symbols/epk-role.svg",
+      "role": "epk.role",
+      "category": "element",
+      "profile": "epc.complete@1",
+      "sha256": "50fb7d23b3a5395cc7639069771b4bcfa863912923f4ebda44d9f75cab5bb24e"
+    },
+    "epk.infoobject": {
+      "file": "assets/symbols/epk-infoobject.svg",
+      "role": "epk.infoobject",
+      "category": "element",
+      "profile": "epc.complete@1",
+      "sha256": "280f1f6b149371318f3f2c3507b1f372e38051edf7a45ed2b8b64dd45287f5fa"
+    },
+    "epk.processlink": {
+      "file": "assets/symbols/epk-processlink.svg",
+      "role": "epk.processlink",
+      "category": "element",
+      "profile": "epc.complete@1",
+      "sha256": "24a319c126fd8279bea60c55b745f19d1023052c8a6a8e3b7fa00714bdefdcaa"
+    },
+    "msc.hmscref": {
+      "file": "assets/symbols/msc-hmscref.svg",
+      "role": "msc.hmscref",
+      "category": "element",
+      "profile": "msc.basic@1",
+      "sha256": "94cf52acb0ee0f9fa7d851aadd0917e375eac789a7312b87790beeb66c90afa2"
+    },
+    "idef0.activity": {
+      "file": "assets/symbols/idef0-activity.svg",
+      "role": "idef0.activity",
+      "category": "element",
+      "profile": "idef0.basic@1",
+      "sha256": "1d3a2595bff25cbe6584220b63eafc522b5ef2ca83a53e273df20d6dc1cf17b2"
+    },
+    "petri.place": {
+      "file": "assets/symbols/petri-place.svg",
+      "role": "petri.place",
+      "category": "element",
+      "profile": "petri.basic@1",
+      "sha256": "8f947f9d6aceb865dbd29d0ce905f218133445e17bfcb360a6a9eea6abd4e50e"
+    },
+    "petri.transition": {
+      "file": "assets/symbols/petri-transition.svg",
+      "role": "petri.transition",
+      "category": "element",
+      "profile": "petri.basic@1",
+      "sha256": "a6fed4574107c3f4513a951dc4c0faf69e39197026d1530667af27dc799f866f"
+    },
+    "orm.entitytype": {
+      "file": "assets/symbols/orm-entitytype.svg",
+      "role": "orm.entitytype",
+      "category": "element",
+      "profile": "orm.basic@1",
+      "sha256": "eaf8d36a8fd88dad63f05214dd88ee061b4ed4e6ca4be250842cbc9471f3b603"
+    },
+    "orm.valuetype": {
+      "file": "assets/symbols/orm-valuetype.svg",
+      "role": "orm.valuetype",
+      "category": "element",
+      "profile": "orm.basic@1",
+      "sha256": "967afce5b4b6596a617dc252fe7d65cab11d2a20660f81e71ba5014a7957ee09"
+    },
+    "orm.facttype": {
+      "file": "assets/symbols/orm-facttype.svg",
+      "role": "orm.facttype",
+      "category": "element",
+      "profile": "orm.basic@1",
+      "sha256": "11dccc6eedaa219ab51e7a580e7d64b752af837e89d2ce7c147671f261518234"
+    },
+    "vsm.process": {
+      "file": "assets/symbols/vsm-process.svg",
+      "role": "vsm.process",
+      "category": "element",
+      "profile": "vsm.basic@1",
+      "sha256": "75b3688f1cf3da0ee35bbb0d51d4179dfae073ae054e1fc47d566c4b4c65ccc0"
+    },
+    "vsm.customer": {
+      "file": "assets/symbols/vsm-customer.svg",
+      "role": "vsm.customer",
+      "category": "element",
+      "profile": "vsm.basic@1",
+      "sha256": "330d4ea64e74276fd3f81a08f6641edddea61e24cf48361f57827712f10c8823"
+    },
+    "vsm.control": {
+      "file": "assets/symbols/vsm-control.svg",
+      "role": "vsm.control",
+      "category": "element",
+      "profile": "vsm.basic@1",
+      "sha256": "e1be494dd92ccc61f1616c8052ca65395460b67329a8fa7ed079f76ac5d8d04c"
+    },
+    "vsm.inventory": {
+      "file": "assets/symbols/vsm-inventory.svg",
+      "role": "vsm.inventory",
+      "category": "element",
+      "profile": "vsm.basic@1",
+      "sha256": "8171484dc9e79b302d7ea1e0a8d65cb640792d4e20e9242a9f73c6ddbf64b098"
+    },
+    "vsm.supermarket": {
+      "file": "assets/symbols/vsm-supermarket.svg",
+      "role": "vsm.supermarket",
+      "category": "element",
+      "profile": "vsm.basic@1",
+      "sha256": "b2b0f31e94e1d37e4ba55429c3b7e4353d64287d66e1ac588d7e21bf61fce2ea"
+    },
+    "vsm.kaizen": {
+      "file": "assets/symbols/vsm-kaizen.svg",
+      "role": "vsm.kaizen",
+      "category": "element",
+      "profile": "vsm.basic@1",
+      "sha256": "800557640022e498a7ec9727275b72b7a5d8a07d959a8c73f98646f5b818bfe5"
+    },
+    "vsm.operator": {
+      "file": "assets/symbols/vsm-operator.svg",
+      "role": "vsm.operator",
+      "category": "element",
+      "profile": "vsm.basic@1",
+      "sha256": "49e9327fa84630df5535e29f34a14be439bd295c8912b7eadb1a927b21e1c66c"
+    },
+    "sdl.block": {
+      "file": "assets/symbols/sdl-block.svg",
+      "role": "sdl.block",
+      "category": "element",
+      "profile": "sdl.basic@1",
+      "sha256": "bd762bcc7777dfa73b90694addf44bdd9b45a0a0e32275ce128c04417e482cf1"
+    },
+    "sdl.agent": {
+      "file": "assets/symbols/sdl-agent.svg",
+      "role": "sdl.agent",
+      "category": "element",
+      "profile": "sdl.basic@1",
+      "sha256": "5027dc720cad22b3df63d5d7823bcae38c98f87d362e35697d62a6d76a38a2ee"
+    },
+    "sdl.signal": {
+      "file": "assets/symbols/sdl-signal.svg",
+      "role": "sdl.signal",
+      "category": "element",
+      "profile": "sdl.basic@1",
+      "sha256": "004e92afabbcd5a7c76d9a6242067bcbe72f3c333884ea7c7e85e96ca85b3162"
+    },
+    "sdl.signalset": {
+      "file": "assets/symbols/sdl-signalset.svg",
+      "role": "sdl.signalset",
+      "category": "element",
+      "profile": "sdl.basic@1",
+      "sha256": "4859548fc9c59e06f12c73b468adc38c57f40733fe587a1541dab3fea7b664d5"
+    },
+    "sdl.input": {
+      "file": "assets/symbols/sdl-input.svg",
+      "role": "sdl.input",
+      "category": "element",
+      "profile": "sdl.process@1",
+      "sha256": "e2a862b03772403adaf4a53c1223a4ebf7cacaf10010d657692bd5305bb70bb3"
+    },
+    "sdl.output": {
+      "file": "assets/symbols/sdl-output.svg",
+      "role": "sdl.output",
+      "category": "element",
+      "profile": "sdl.process@1",
+      "sha256": "66f21ced3a431fef352db0f56265e2a75ed6d800247455ed38208fd1f4d0100c"
+    },
+    "sdl.task": {
+      "file": "assets/symbols/sdl-task.svg",
+      "role": "sdl.task",
+      "category": "element",
+      "profile": "sdl.process@1",
+      "sha256": "cca7527937c2f80d50788b9e2f5da49ac3cce9ad0ebf40a8f8acc2b594b7b3f1"
+    },
+    "sdl.save": {
+      "file": "assets/symbols/sdl-save.svg",
+      "role": "sdl.save",
+      "category": "element",
+      "profile": "sdl.process@1",
+      "sha256": "8aae859cae7c2f157269d13b3343e8046f557c44ee4ffa58c3384a174e7489d8"
+    },
+    "sdl.create": {
+      "file": "assets/symbols/sdl-create.svg",
+      "role": "sdl.create",
+      "category": "element",
+      "profile": "sdl.process@1",
+      "sha256": "593d5e16c4cb975c4209558fc1a4eee899d2e29a5c947b53103e0a3c75ea1fc3"
+    },
+    "sdl.procedure": {
+      "file": "assets/symbols/sdl-procedure.svg",
+      "role": "sdl.procedure",
+      "category": "element",
+      "profile": "sdl.process@1",
+      "sha256": "870d46806f493cd3b63adaec020e838053ae38470b26a4b8ef1032d9711d7b9e"
+    },
+    "sdl.timer": {
+      "file": "assets/symbols/sdl-timer.svg",
+      "role": "sdl.timer",
+      "category": "element",
+      "profile": "sdl.process@1",
+      "sha256": "454bc60625165ee55c4a11ee9702710af2caa7fc42e3b90be1ef966e5ced0d92"
+    },
+    "sdl.set": {
+      "file": "assets/symbols/sdl-set.svg",
+      "role": "sdl.set",
+      "category": "element",
+      "profile": "sdl.process@1",
+      "sha256": "61709db5b2305ebe1e4ea479d0b83c08ca113d2cc63b8ca4d8ea33304c973c20"
+    },
+    "sdl.reset": {
+      "file": "assets/symbols/sdl-reset.svg",
+      "role": "sdl.reset",
+      "category": "element",
+      "profile": "sdl.process@1",
+      "sha256": "60e39ff38c38b15c23e30c303ced432e0e220e317b29aeb2d5c9873551ce488e"
+    },
+    "fbd.block": {
+      "file": "assets/symbols/fbd-block.svg",
+      "role": "fbd.block",
+      "category": "element",
+      "profile": "fbd.basic@1",
+      "sha256": "494eaec1d5414056b194aa9073550142c1c01ec73bba8b284d09b47316baa863"
+    },
+    "fbd.variable": {
+      "file": "assets/symbols/fbd-variable.svg",
+      "role": "fbd.variable",
+      "category": "element",
+      "profile": "fbd.basic@1",
+      "sha256": "9083615127ebeb1291c6196e28cfdae553e332aff24871285bc3b1cca63cfc3e"
+    },
+    "ladder.contact": {
+      "file": "assets/symbols/ladder-contact.svg",
+      "role": "ladder.contact",
+      "category": "element",
+      "profile": "ladder.basic@1",
+      "sha256": "b98c8670df1890c27452cdc8b1b6b048837913f35945d4e2d387556440c43c1f"
+    },
+    "ladder.coil": {
+      "file": "assets/symbols/ladder-coil.svg",
+      "role": "ladder.coil",
+      "category": "element",
+      "profile": "ladder.basic@1",
+      "sha256": "4dfceba20b30aabbf40a67316adde1462a63aee7723c83d4b9ec276d030fd2e4"
+    },
+    "ladder.label": {
+      "file": "assets/symbols/ladder-label.svg",
+      "role": "ladder.label",
+      "category": "element",
+      "profile": "ladder.basic@1",
+      "sha256": "a294241e21b796fe39e2b4fc352a6875339245726aea3332648a1bda7b6e6967"
+    },
+    "ladder.jump": {
+      "file": "assets/symbols/ladder-jump.svg",
+      "role": "ladder.jump",
+      "category": "element",
+      "profile": "ladder.basic@1",
+      "sha256": "b98924c742e700c472bb105db623b84cbf7f40b21bf7c6c84933254d20c62540"
+    },
+    "ladder.return": {
+      "file": "assets/symbols/ladder-return.svg",
+      "role": "ladder.return",
+      "category": "element",
+      "profile": "ladder.basic@1",
+      "sha256": "dbb834591930118617d58bd1ac33af30fce3e13d2e914dca6de22ea8b7afe2e9"
+    },
+    "relation::assoc": {
+      "file": "assets/symbols/relation-assoc.svg",
+      "role": "assoc",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "adc84f195cf2167a4ad95b029379136d3ceb32328536790a9501ac63eae65164"
+    },
+    "relation::ref": {
+      "file": "assets/symbols/relation-ref.svg",
+      "role": "ref",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "61d83e15cc4daf050d39d1190c6c1b11a033548a8ba87546e76d3a19ea5c9c1f"
+    },
+    "relation::emb": {
+      "file": "assets/symbols/relation-emb.svg",
+      "role": "emb",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "b71be0ff925c8cf3c7eb5697ce3804dfb4bc2f0556160d35799c13e642ef0b38"
+    },
+    "relation::mem": {
+      "file": "assets/symbols/relation-mem.svg",
+      "role": "mem",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c04364c6a82d0910e7c87b07466d4e7fd7a51309d9f9bdd0f5cb73cfe1a54811"
+    },
+    "relation::subtype": {
+      "file": "assets/symbols/relation-subtype.svg",
+      "role": "subtype",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c0d96bdf5db98b65a430873b0cc3d2138d5f2216ba37ab9f454703461284a757"
+    },
+    "relation::part": {
+      "file": "assets/symbols/relation-part.svg",
+      "role": "part",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "5b76f56b6ea96eb598b89f38b2e923873f7b9882cfd9eaf4f7bbffad007725dc"
+    },
+    "relation::edge": {
+      "file": "assets/symbols/relation-edge.svg",
+      "role": "edge",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "4578522ccf5f8684b93fcf5e2e864c4ee126e6094362c084da502f4c84959a73"
+    },
+    "relation::ident": {
+      "file": "assets/symbols/relation-ident.svg",
+      "role": "ident",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "7646a7f2ef8810298e28ca754888c802104fc0b8e8f5ac255e8cd6f286c9b549"
+    },
+    "relation::same": {
+      "file": "assets/symbols/relation-same.svg",
+      "role": "same",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "67bbdddc55654639fe9174e85478ec8ce021816ec3b5cb3b0e5df6c2953194f2"
+    },
+    "relation::flow": {
+      "file": "assets/symbols/relation-flow.svg",
+      "role": "flow",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c3e2045dff08413babde0e7f7be77b442f8fe44f9614bd8dde63e7743329e605"
+    },
+    "relation::read": {
+      "file": "assets/symbols/relation-read.svg",
+      "role": "read",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "38e903a587679837e0578a818b3b5b50ad2d6d0a7484b1a0841be1fad86f8ba7"
+    },
+    "relation::write": {
+      "file": "assets/symbols/relation-write.svg",
+      "role": "write",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "1ecab8c0e80acddc53ff55d340cb5248cfed9ad7db8642341dc6328d3c674fba"
+    },
+    "relation::replicate": {
+      "file": "assets/symbols/relation-replicate.svg",
+      "role": "replicate",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "b028b45cf5f820f799dc1e55ff0c1075fb5d145f750016deb715f87cf20e7c75"
+    },
+    "relation::capture": {
+      "file": "assets/symbols/relation-capture.svg",
+      "role": "capture",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "9a7f3266f31749ea2c89a31ce539ace479ef6da5933fdfbb60c373cb92e1676e"
+    },
+    "relation::publish": {
+      "file": "assets/symbols/relation-publish.svg",
+      "role": "publish",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "47c547725fd5c39ff1e014cdec977c0d7873f3664a3a0ae11a476ae26c3de2da"
+    },
+    "relation::deliver": {
+      "file": "assets/symbols/relation-deliver.svg",
+      "role": "deliver",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "5643aadb85298ec7f27d60a0de00667c56d589c1fdbf2e29441861fb43d8c007"
+    },
+    "relation::extract": {
+      "file": "assets/symbols/relation-extract.svg",
+      "role": "extract",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "7a3ff54a510b105880c7f453d6114662efb3df5644fc46b49b6d2243693d4df0"
+    },
+    "relation::load": {
+      "file": "assets/symbols/relation-load.svg",
+      "role": "load",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "25b59d00cdb44f3adf0f78a48f6a223aaf8d7ab21b8ce6a8a7c10bd4fab08690"
+    },
+    "relation::sync": {
+      "file": "assets/symbols/relation-sync.svg",
+      "role": "sync",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "e209aa82ab1461a3b164d4630e66de334d96e70ccee43b4f61beb3bf2513822b"
+    },
+    "relation::snapshot": {
+      "file": "assets/symbols/relation-snapshot.svg",
+      "role": "snapshot",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "9e931bc996e2ea180f3cf63d7edf8d45a3890ff07873a6ad04a4e01f4d4d2486"
+    },
+    "relation::export": {
+      "file": "assets/symbols/relation-export.svg",
+      "role": "export",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c4b71a339d019d64b92425b232a7c7b80661fc01bc3b963290c61228bf5b06cf"
+    },
+    "relation::import": {
+      "file": "assets/symbols/relation-import.svg",
+      "role": "import",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "927877b3373d1703409b26e81b11bb78e1f8cd324a263837e5e160b9f696977c"
+    },
+    "relation::invalidate": {
+      "file": "assets/symbols/relation-invalidate.svg",
+      "role": "invalidate",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "126bee1757cce19573a38e25c9a78d9b8ac4adec286177c6402a3e3041b4b353"
+    },
+    "relation::delete": {
+      "file": "assets/symbols/relation-delete.svg",
+      "role": "delete",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "d0d4adb717ef4a2075fba2928d422eb1690be90bfb768ce845e8fe600007438d"
+    },
+    "relation::replay": {
+      "file": "assets/symbols/relation-replay.svg",
+      "role": "replay",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "1ff6a6aa8e9f3343628db416316b29624e54e9b9d600f020cd98548884d203cc"
+    },
+    "relation::restore": {
+      "file": "assets/symbols/relation-restore.svg",
+      "role": "restore",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "b2d5ca647050b05190513f558278efc3316d86d87564f6deb2a06f8198f74392"
+    },
+    "relation::reject": {
+      "file": "assets/symbols/relation-reject.svg",
+      "role": "reject",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "aaccf3a3d193986dede1d2091d9fb73d63d42d3be972d29c20ce1bb49ecff087"
+    },
+    "relation::depends": {
+      "file": "assets/symbols/relation-depends.svg",
+      "role": "depends",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "5ea15c807008bdbec17598fc4202a613f22c8b03ea00a973cfd9911e61912006"
+    },
+    "relation::calls": {
+      "file": "assets/symbols/relation-calls.svg",
+      "role": "calls",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "61dc4cdc50a1c32d1c54ca9898df5a4dddef638776b071cfc8d08087d97e4704"
+    },
+    "relation::queries": {
+      "file": "assets/symbols/relation-queries.svg",
+      "role": "queries",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "f7d02fd82eb74c719af16b07c530261da3a8e66a916d03432b6ff60806b8a42f"
+    },
+    "relation::refresh": {
+      "file": "assets/symbols/relation-refresh.svg",
+      "role": "refresh",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c0171876e7ee02a538bade3d2985a50f593ef0dc4cc75ba88681c7c99f9462d7"
+    },
+    "relation::lookup": {
+      "file": "assets/symbols/relation-lookup.svg",
+      "role": "lookup",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "f3bbd06e36943b14e98b3ccc275884bbb7b16267cc0511d70092fe6782caf98b"
+    },
+    "relation::uses": {
+      "file": "assets/symbols/relation-uses.svg",
+      "role": "uses",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "f5a5343ba877532b208bd908220c94cc6a485ccbe036e3647ad2da1772e477ed"
+    },
+    "relation::aliases": {
+      "file": "assets/symbols/relation-aliases.svg",
+      "role": "aliases",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "1b5b8be964f173ec6296be1e23389010fe2921de2033563ef1784b77eda6243c"
+    },
+    "relation::enforces": {
+      "file": "assets/symbols/relation-enforces.svg",
+      "role": "enforces",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "0d384dd6b73e2e64d3113f73788fcb09e4126db8733834bb9ca6aff037916c20"
+    },
+    "relation::represents": {
+      "file": "assets/symbols/relation-represents.svg",
+      "role": "represents",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "717367d946f21815b79803ca7e3fc401bba1408cc9fddec2ba610d7ee7df7e7c"
+    },
+    "relation::instance": {
+      "file": "assets/symbols/relation-instance.svg",
+      "role": "instance",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "8df5ab0c55bfc854d5ba25e03a39764ffd19728a497c0d9a97ca072a29c8039a"
+    },
+    "relation::domain": {
+      "file": "assets/symbols/relation-domain.svg",
+      "role": "domain",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "7104c702b2f416769814010ec53827f45a976d7a3961d5c6d8d4d2bd5d67633a"
+    },
+    "relation::candidate": {
+      "file": "assets/symbols/relation-candidate.svg",
+      "role": "candidate",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "578a3cfad461be4105f4c62631e3e06adb8d597345ee6f75774e38adadc7ac47"
+    },
+    "relation::binds": {
+      "file": "assets/symbols/relation-binds.svg",
+      "role": "binds",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "e2a6f53c9e554f7bed1e1a98dee145f48438f15599d502aafce7ba6829cab196"
+    },
+    "relation::placed": {
+      "file": "assets/symbols/relation-placed.svg",
+      "role": "placed",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "1c9c9c7e57d25f44878e5c78d53c6aeb1e14d98a2046cb1b56bc0c7a5bcc90de"
+    },
+    "relation::namespace": {
+      "file": "assets/symbols/relation-namespace.svg",
+      "role": "namespace",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "cf7880375b8b9b86e06d1e116f0695c6758920bbbb7def4acdcf90ce754c1b5c"
+    },
+    "relation::realizes": {
+      "file": "assets/symbols/relation-realizes.svg",
+      "role": "realizes",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "0d29a48650eb3131c02b2199f240894512ced92fc7498d7f177deb4a8dbc0541"
+    },
+    "relation::copyof": {
+      "file": "assets/symbols/relation-copyof.svg",
+      "role": "copyof",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "43aa7bf63ea79f75566c81514589b8c605421ba43ee2794d38bfca6695e61479"
+    },
+    "relation::coloc": {
+      "file": "assets/symbols/relation-coloc.svg",
+      "role": "coloc",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "81a2d15932bab7be17092f41a566fdae80e813dd0001f555b714ca11265aab2e"
+    },
+    "relation::implements": {
+      "file": "assets/symbols/relation-implements.svg",
+      "role": "implements",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "ab8a0dea524f72e88c8660f3ae186831f911f68ca25ee484b344b78b19a5d2f3"
+    },
+    "relation::exposes": {
+      "file": "assets/symbols/relation-exposes.svg",
+      "role": "exposes",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "a3604d67338e545a1335c72054dec96e23cda1e581539d7ef87937e0d9724d08"
+    },
+    "relation::version": {
+      "file": "assets/symbols/relation-version.svg",
+      "role": "version",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "a5e34c71ae568663513b427e421609b385641c42579730a414818c919a67707a"
+    },
+    "relation::supersedes": {
+      "file": "assets/symbols/relation-supersedes.svg",
+      "role": "supersedes",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "fdb123fbf5580dbbc900b6cdc8d6a5d6f6c5ba551c2282bbbb07696ca95cbe65"
+    },
+    "relation::compat": {
+      "file": "assets/symbols/relation-compat.svg",
+      "role": "compat",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "d3fdabd9466f72231993e8ff639673f3969c9f26a62e8dceb6346e70b64f739e"
+    },
+    "relation::bindfield": {
+      "file": "assets/symbols/relation-bindfield.svg",
+      "role": "bindfield",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "3ff7677b00215ecbde1bda654a91e065bbfb93ea1a5843da3e3d09dd156e97cc"
+    },
+    "relation::trigger": {
+      "file": "assets/symbols/relation-trigger.svg",
+      "role": "trigger",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "ba14e656e9c5a20227a2f78623b88964472671d4cae00a08043ad21c28b4a698"
+    },
+    "relation::schedule": {
+      "file": "assets/symbols/relation-schedule.svg",
+      "role": "schedule",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "49182e7c292c4ead1b5d51b45cfb5bfdcc5298a501ae9bf141b4620cfbdbf4da"
+    },
+    "relation::invoke": {
+      "file": "assets/symbols/relation-invoke.svg",
+      "role": "invoke",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "d5397040f798a69de0331955d23758cfa4a7ee45deb925d2c569a29fe881505b"
+    },
+    "relation::precede": {
+      "file": "assets/symbols/relation-precede.svg",
+      "role": "precede",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "0b180946c35b42cae80687766dab57059cb03abbb3bda5cb12fd6097b7d39dc2"
+    },
+    "relation::gate": {
+      "file": "assets/symbols/relation-gate.svg",
+      "role": "gate",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "37c3f2c6fbd609e31eaef396203bbfe6877ff7583fc35b6b68f58e5c69a1c5d8"
+    },
+    "relation::retry": {
+      "file": "assets/symbols/relation-retry.svg",
+      "role": "retry",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "cac536db759df6ab73295ce748217eda208547327699126e3066f7fb09d1cceb"
+    },
+    "relation::ack": {
+      "file": "assets/symbols/relation-ack.svg",
+      "role": "ack",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "131495aeef9f5216ec7b27ca92616c90fd1c98cfa20e2894da93fc8f21d02680"
+    },
+    "relation::cancel": {
+      "file": "assets/symbols/relation-cancel.svg",
+      "role": "cancel",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "b641de977a61f6f000ad9ee41154eb057f854af4581e0d428b9688e4373ec897"
+    },
+    "relation::failover": {
+      "file": "assets/symbols/relation-failover.svg",
+      "role": "failover",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c974a0328f6367e2929f573a91a26e569a1084ec9d189a18f8dd11ab5af8e8a4"
+    },
+    "relation::derives": {
+      "file": "assets/symbols/relation-derives.svg",
+      "role": "derives",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "7bf0c67d6eed1749b2d84250fe5d75d5e71f97335e8b3089960f223e4eb09449"
+    },
+    "relation::generates": {
+      "file": "assets/symbols/relation-generates.svg",
+      "role": "generates",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "923f46646e158eb6dc345772b9af7eff54628d384d1234dee8fdf61d17e9c7ee"
+    },
+    "relation::consumed": {
+      "file": "assets/symbols/relation-consumed.svg",
+      "role": "consumed",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "d4adc07c75bc7398cc59d233881ecda73537994cabf8e565677efe3747edaa8b"
+    },
+    "relation::aggregates": {
+      "file": "assets/symbols/relation-aggregates.svg",
+      "role": "aggregates",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "8bf54ef09f05a1c13c4ad19fab16b401b66ccaa391074ee83f6e529a7a2db2b6"
+    },
+    "relation::joins": {
+      "file": "assets/symbols/relation-joins.svg",
+      "role": "joins",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "75d98bf6d49492f4df32fe6dbdea287cb2b537a245fce91b93aca781208bbc85"
+    },
+    "relation::filters": {
+      "file": "assets/symbols/relation-filters.svg",
+      "role": "filters",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "2f14e076041031b18d7c9715d01cae90810ef526fe3da912939cc90adf19eb8c"
+    },
+    "relation::masks": {
+      "file": "assets/symbols/relation-masks.svg",
+      "role": "masks",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "1eb87644655edac5334dc9d353a8c2da0d776fa8de7d726be42861862634ea5f"
+    },
+    "relation::train": {
+      "file": "assets/symbols/relation-train.svg",
+      "role": "train",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "ac725d83dda64660c953715b8b5331a9c1fd6edbbad225467ab3d02476c5a09b"
+    },
+    "relation::feature": {
+      "file": "assets/symbols/relation-feature.svg",
+      "role": "feature",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "aeb19327468e7b4c16f73def615d7b212c97a2b1d6b55e04eaf342d11e2bc8ba"
+    },
+    "relation::report": {
+      "file": "assets/symbols/relation-report.svg",
+      "role": "report",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "3d64c0c52ded4c1cc98662e467e1145753c3796c29e00ca4c8c7a9da4418e395"
+    },
+    "relation::owns": {
+      "file": "assets/symbols/relation-owns.svg",
+      "role": "owns",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "58271133ed117165dda155ccea0c46d99a65a633edbda646268744b0433675e8"
+    },
+    "relation::steward": {
+      "file": "assets/symbols/relation-steward.svg",
+      "role": "steward",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "3c868105dbef0ee78eed8c37a3730de51be0cb2506e67ab8d1b43d7de319f8ec"
+    },
+    "relation::operate": {
+      "file": "assets/symbols/relation-operate.svg",
+      "role": "operate",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "504f197aba5c699e79ae66665f1745138c426977acca1e50cc1ff942ee843dd1"
+    },
+    "relation::policy": {
+      "file": "assets/symbols/relation-policy.svg",
+      "role": "policy",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "cc833b59e29d46a5e46962f2f27c46fc4e4b654937925b55745c911d55b68bf3"
+    },
+    "relation::contract": {
+      "file": "assets/symbols/relation-contract.svg",
+      "role": "contract",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "20abb257fdbeb79730fb72aa286a46fce1a7978fc2321ac1c23d0af27df13535"
+    },
+    "relation::grant": {
+      "file": "assets/symbols/relation-grant.svg",
+      "role": "grant",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "43685267fd0973b15cb2496554e233d3161267a7e43fe2c84b7c0900fe84d8cf"
+    },
+    "relation::class": {
+      "file": "assets/symbols/relation-class.svg",
+      "role": "class",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "15258b1273daf041dbd6255d93e0f7fdf641d5a16642c46be4e74233b482a0e7"
+    },
+    "relation::resides": {
+      "file": "assets/symbols/relation-resides.svg",
+      "role": "resides",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "03885386d15674e36d0cfb6442bdae96a75f6d0471415682ff7cd443c289b71c"
+    },
+    "relation::retain": {
+      "file": "assets/symbols/relation-retain.svg",
+      "role": "retain",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "8a6b777910550e9d7d9f821897809e16078e42ce481bc6973e9ed61fdb847502"
+    },
+    "relation::hold": {
+      "file": "assets/symbols/relation-hold.svg",
+      "role": "hold",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "d2e22c5927f14cfbfdcd5cd39320fa1c1061b151cb276e80536b7470730d2dcd"
+    },
+    "relation::quality": {
+      "file": "assets/symbols/relation-quality.svg",
+      "role": "quality",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "1f3e36e6cd2c1a6f1c89d526c1e9e246eae4074ca03726cc5cdae99f120e2430"
+    },
+    "relation::slo": {
+      "file": "assets/symbols/relation-slo.svg",
+      "role": "slo",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "bbe4cc49a965a4198988f5f73345a2fe1be24831bf00e97f37f1201c7edba959"
+    },
+    "relation::consent": {
+      "file": "assets/symbols/relation-consent.svg",
+      "role": "consent",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "928ae51d6fc1fe838a24a1391d4001661b08d3c04f9ae02c90f70896db190255"
+    },
+    "relation::note": {
+      "file": "assets/symbols/relation-note.svg",
+      "role": "note",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "5369186f79e82128ca555882c35077e6b3b28b06c4fc02b3ab6a590cd4f6db12"
+    },
+    "relation::example": {
+      "file": "assets/symbols/relation-example.svg",
+      "role": "example",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "635e69eb4e24b0c9a39476d9e780b11d7eabac4f9bdc718666044c132525c009"
+    },
+    "relation::evidence": {
+      "file": "assets/symbols/relation-evidence.svg",
+      "role": "evidence",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "812fa714fbb2e5126a9d49d2e7dda29c7880279a04910acdc0579dd967ba432a"
+    },
+    "relation::decision": {
+      "file": "assets/symbols/relation-decision.svg",
+      "role": "decision",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "9b5f0a4fd5b2629ef03f5b03ae98aa7cb236b61052d8f39f4199542a990f710d"
+    },
+    "relation::issue": {
+      "file": "assets/symbols/relation-issue.svg",
+      "role": "issue",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "028f414551354c8a177b99f4cca073df9382e191f04d2394c0bd46db2c0de102"
+    },
+    "relation::test": {
+      "file": "assets/symbols/relation-test.svg",
+      "role": "test",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "3a6b1e8cb210a1d89a74ecef9004591418d9e6efb19cd418b3e36d57cee4d6b1"
+    },
+    "relation::appear": {
+      "file": "assets/symbols/relation-appear.svg",
+      "role": "appear",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "ec2657b77727892de490df9fd3cd3d69d53861c0352adaa48cf20a189454aa0b"
+    },
+    "relation::reports_to": {
+      "file": "assets/symbols/relation-reports-to.svg",
+      "role": "reports_to",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "e4e4eadbfe3fa631f51b95a2d58855175b81a8dd7bd54507b58304e594f8782a"
+    },
+    "relation::flow.next": {
+      "file": "assets/symbols/relation-flow-next.svg",
+      "role": "flow.next",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "7a0da664fa9672c706ce3e50827ea1c9c38765b7bc838c76a7a548268a438558"
+    },
+    "relation::dfd.data": {
+      "file": "assets/symbols/relation-dfd-data.svg",
+      "role": "dfd.data",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "6b1b7b5709f5847495702eee2b7f4df93133001cef8846836f1dfe4b1be34efc"
+    },
+    "relation::uml.association": {
+      "file": "assets/symbols/relation-uml-association.svg",
+      "role": "uml.association",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "62bd0d793818925c05ee04d2ee8b1bb5dbe87d7b9724066aff9b0a5ea23dbfb2"
+    },
+    "relation::uml.generalization": {
+      "file": "assets/symbols/relation-uml-generalization.svg",
+      "role": "uml.generalization",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "fc54226a7b12eadc8d85b440e26aaae8a1803b52ecdf0fe87705d788fbd81d80"
+    },
+    "relation::uml.realization": {
+      "file": "assets/symbols/relation-uml-realization.svg",
+      "role": "uml.realization",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "eba49b3fd733baf2abd93632c9680da25f37ad0ab99052725ec611a2dcfdb49e"
+    },
+    "relation::uml.provided": {
+      "file": "assets/symbols/relation-uml-provided.svg",
+      "role": "uml.provided",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "75a8994b925b83aea56a9878ffd8a568c93e055fdd575ab81b985b81840d4268"
+    },
+    "relation::uml.required": {
+      "file": "assets/symbols/relation-uml-required.svg",
+      "role": "uml.required",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "e667b2ec516f4955a3cc9214ad3326c0ccd770061287bd3e7eeee76713e3c1bf"
+    },
+    "relation::uml.deploy": {
+      "file": "assets/symbols/relation-uml-deploy.svg",
+      "role": "uml.deploy",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "0c2f9fb5301b928d1ce8aae77572ba2e8a4f4aa44b16c6bbade48503e48f24b2"
+    },
+    "relation::uml.manifest": {
+      "file": "assets/symbols/relation-uml-manifest.svg",
+      "role": "uml.manifest",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "df57e25273291d149886a29ad4e87d90648dd81b15a32833878617898b10692e"
+    },
+    "relation::uml.commpath": {
+      "file": "assets/symbols/relation-uml-commpath.svg",
+      "role": "uml.commpath",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "cbe129084f2e3d2291b406e6a731ae738ccd8d123418e890d00b7a88acb51cab"
+    },
+    "relation::uml.assembly": {
+      "file": "assets/symbols/relation-uml-assembly.svg",
+      "role": "uml.assembly",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "32802d6c70095f82c3be205450d12dc2f7ddef3b3c2c9c74f3a6dc0ff5e3fa6a"
+    },
+    "relation::uml.delegation": {
+      "file": "assets/symbols/relation-uml-delegation.svg",
+      "role": "uml.delegation",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "d9a0f14c105bf7fa34f07a431f4329862c9d88e954e6b613fd986dbb365a37f4"
+    },
+    "relation::uml.connector": {
+      "file": "assets/symbols/relation-uml-connector.svg",
+      "role": "uml.connector",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "cc37012a0611606e304c803951ea76cb4cf8bb16d5b3f62d39b448828620cf8f"
+    },
+    "relation::uml.link": {
+      "file": "assets/symbols/relation-uml-link.svg",
+      "role": "uml.link",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "0d0125615f1d59a04c0a84cb0196fb8ae309b93f12596f15fec33a70abb2f929"
+    },
+    "relation::uml.import": {
+      "file": "assets/symbols/relation-uml-import.svg",
+      "role": "uml.import",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "a37d57be394db82747f5551a4ac85938cffc7e9b4533fc788c33d888b4a6b0c5"
+    },
+    "relation::uml.access": {
+      "file": "assets/symbols/relation-uml-access.svg",
+      "role": "uml.access",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c3c95e064b947fffcb75493ae728bff87c0b6b7d2de5b3a8eed7a1c8a0d15e1b"
+    },
+    "relation::uml.merge": {
+      "file": "assets/symbols/relation-uml-merge.svg",
+      "role": "uml.merge",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "8e2b29db8f62ca661a5805ecfdd0ca8fa9e5745c502ccc2cc2c084789323a706"
+    },
+    "relation::uml.extension": {
+      "file": "assets/symbols/relation-uml-extension.svg",
+      "role": "uml.extension",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "f4814ef7519117f454e71803246dd5a47e0dcbe4dfa0732f09d656f338f50196"
+    },
+    "relation::uml.application": {
+      "file": "assets/symbols/relation-uml-application.svg",
+      "role": "uml.application",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "f7765e35597f9c78c0593d6800ba2f7aab9c9810d4fd78cec735149a7d1c5e57"
+    },
+    "relation::uml.dependency": {
+      "file": "assets/symbols/relation-uml-dependency.svg",
+      "role": "uml.dependency",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "3b3d4859e5ebcb4af54ff8642f0f69485a5dc0d7348f943cded0b736347ab9e8"
+    },
+    "relation::uml.uses": {
+      "file": "assets/symbols/relation-uml-uses.svg",
+      "role": "uml.uses",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "464c9df5fc567e475867b7f8198f9427276801d6f32191737f67bd7687e17562"
+    },
+    "relation::uml.include": {
+      "file": "assets/symbols/relation-uml-include.svg",
+      "role": "uml.include",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c24efb01b76831acff007f93c158bb16ca2d57d5089bc86e75088e2df722ab29"
+    },
+    "relation::uml.extend": {
+      "file": "assets/symbols/relation-uml-extend.svg",
+      "role": "uml.extend",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "fe8557c1ecdd64e07df163a4ca2f462866e5fe5e2fb37f4d02f67e8d3fa28194"
+    },
+    "relation::req.satisfies": {
+      "file": "assets/symbols/relation-req-satisfies.svg",
+      "role": "req.satisfies",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "b902a29844bb65c3735761a6c1114fd27e8e74e31b28943115c39c3796a07a71"
+    },
+    "relation::req.verifies": {
+      "file": "assets/symbols/relation-req-verifies.svg",
+      "role": "req.verifies",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "0f1091f73beaea7794c1da4ced7286b421ed82430e3a7b335ea09f1e34b793d2"
+    },
+    "relation::req.derives": {
+      "file": "assets/symbols/relation-req-derives.svg",
+      "role": "req.derives",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "05ac6cc00a7b63093d57af531a14b2d5db617eec8c50421f5aef11358b7f7029"
+    },
+    "relation::analysis.assignment": {
+      "file": "assets/symbols/relation-analysis-assignment.svg",
+      "role": "analysis.assignment",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "0c04785060dd61e9144116771e1357459665e8252d5179b2d5b80ad5b74d0579"
+    },
+    "relation::analysis.access": {
+      "file": "assets/symbols/relation-analysis-access.svg",
+      "role": "analysis.access",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "e8f3f9f02d7e58b287d1bea0e0defba987b688df1a12c831c0aee66b7d20629f"
+    },
+    "relation::analysis.precedes": {
+      "file": "assets/symbols/relation-analysis-precedes.svg",
+      "role": "analysis.precedes",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "fb45bda87d0c1c03569270d5f77589cfe0ab99c5423c18defc7ed5abbf9ee7b2"
+    },
+    "relation::cmmn.dependency": {
+      "file": "assets/symbols/relation-cmmn-dependency.svg",
+      "role": "cmmn.dependency",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "e8212f47a4d0745c5b200658aeb1a32a77e64887e40d7724f3b87a9f6e9bb68e"
+    },
+    "relation::cmmn.sentryref": {
+      "file": "assets/symbols/relation-cmmn-sentryref.svg",
+      "role": "cmmn.sentryref",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "56ac326d1291fa6378fc740968e46c076c593be8e716f62a68c38dc86656fdf0"
+    },
+    "relation::quality.cause": {
+      "file": "assets/symbols/relation-quality-cause.svg",
+      "role": "quality.cause",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "9c95e58ae5da6559319101a38cc0c5363684939268a24b1fa6322c1e5ae255da"
+    },
+    "relation::state.transition": {
+      "file": "assets/symbols/relation-state-transition.svg",
+      "role": "state.transition",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "8c620c6041cbeb91ac12085fae0b34e59159eabbbce4607b62bdd5e37c9e0331"
+    },
+    "relation::flow.annotation": {
+      "file": "assets/symbols/relation-flow-annotation.svg",
+      "role": "flow.annotation",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "eecb6a1cd07e9f91879ac8ef16b0e0c4258f16c34712a8d12cf3f084d0dfa147"
+    },
+    "relation::flow.continues": {
+      "file": "assets/symbols/relation-flow-continues.svg",
+      "role": "flow.continues",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "cc55917536dc401715774dab3c890bb6e1e5c6a6fb6ffe8c0c7c2008eac6d431"
+    },
+    "relation::c4.rel": {
+      "file": "assets/symbols/relation-c4-rel.svg",
+      "role": "c4.rel",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "50d2d7e444c49c7caf53bf6f7c0f3301e4d1ae21f99c8ff6ee866fe8d77ce7bf"
+    },
+    "relation::analysis.decomposes": {
+      "file": "assets/symbols/relation-analysis-decomposes.svg",
+      "role": "analysis.decomposes",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "99ad3ee92265762997b0211ab34a4e21d2d4cc00da3f1342770fa434261ef0ee"
+    },
+    "relation::epk.next": {
+      "file": "assets/symbols/relation-epk-next.svg",
+      "role": "epk.next",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "2169145cd742a0e86a49cbc993412550d6f5688958b1750253d62e3a7bf66c3d"
+    },
+    "relation::uml.message": {
+      "file": "assets/symbols/relation-uml-message.svg",
+      "role": "uml.message",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "882906dd1ef67d546823cd1a546f2ede6d5a0014bc2f63f3b13ebe7eba6c4054"
+    },
+    "relation::uml.flow": {
+      "file": "assets/symbols/relation-uml-flow.svg",
+      "role": "uml.flow",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "b8998f4bfc412851885c150a47cb21f80ae4d89ef356a8c67785edfe4260d80c"
+    },
+    "relation::bpmn.messageflow": {
+      "file": "assets/symbols/relation-bpmn-messageflow.svg",
+      "role": "bpmn.messageflow",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "4dc3cf89b3aeae658c5a60a5b9027704f738123566faab82a31a54d03aeaf2f4"
+    },
+    "relation::bpmn.association": {
+      "file": "assets/symbols/relation-bpmn-association.svg",
+      "role": "bpmn.association",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "fdd88f3bf5929e07111cd2ef172c602a3e28becf10844b4922855927a10ecaf7"
+    },
+    "relation::bpmn.conversationlink": {
+      "file": "assets/symbols/relation-bpmn-conversationlink.svg",
+      "role": "bpmn.conversationlink",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "8169fd39404bd8f3a383fa282c49857f54d3339d608a5d7b14dd01c5ceeffe18"
+    },
+    "relation::sysml.flow": {
+      "file": "assets/symbols/relation-sysml-flow.svg",
+      "role": "sysml.flow",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "fc07820210a65492a877bab1905ba92b97e27978b5675bd82e841dec49a4c0b6"
+    },
+    "relation::archi.rel": {
+      "file": "assets/symbols/relation-archi-rel.svg",
+      "role": "archi.rel",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "0a57bc86752bc54b2cad80a160486e90568dff8ff483fdb2f9a0a449f8a2437f"
+    },
+    "relation::tree.input": {
+      "file": "assets/symbols/relation-tree-input.svg",
+      "role": "tree.input",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "fae613a6102e01b1fd2f10d86d9282c0613d5e6b22f071b8eb8a82250195fb65"
+    },
+    "relation::network.attaches": {
+      "file": "assets/symbols/relation-network-attaches.svg",
+      "role": "network.attaches",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "416955de96714d58adaff286529c94494c88cb02589231d0608ccb11f999a0a3"
+    },
+    "relation::family.partner_of": {
+      "file": "assets/symbols/relation-family-partner-of.svg",
+      "role": "family.partner_of",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "4775c4d794b4249b8cb08a493834f7c407dba4d281cf2f0fdd6784d24e41889c"
+    },
+    "relation::family.parent_of": {
+      "file": "assets/symbols/relation-family-parent-of.svg",
+      "role": "family.parent_of",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "be339b17e82e8917d9b3fd3bc16b2183e814907b6eb6caf5f0fe3880ddfd5201"
+    },
+    "relation::sysml.derive": {
+      "file": "assets/symbols/relation-sysml-derive.svg",
+      "role": "sysml.derive",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "8f46e8c9618272c385a6855ce21ab77a0e83ca81bdecda86241bf3fcedf72d54"
+    },
+    "relation::sysml.satisfy": {
+      "file": "assets/symbols/relation-sysml-satisfy.svg",
+      "role": "sysml.satisfy",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "be06c7af950fb5f3983e03610c51aa02db7b7e7de408b607db31338029904e7b"
+    },
+    "relation::sysml.verify": {
+      "file": "assets/symbols/relation-sysml-verify.svg",
+      "role": "sysml.verify",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "6450f100ba0eb0356c2cda998f65a4142792eb604809e06aed2dffa9a527e62a"
+    },
+    "relation::sysml.refine": {
+      "file": "assets/symbols/relation-sysml-refine.svg",
+      "role": "sysml.refine",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "70d70d7aa252570e45080d8ee5be80560c63d3033adeb31f2c29eee348b98f50"
+    },
+    "relation::sysml.trace": {
+      "file": "assets/symbols/relation-sysml-trace.svg",
+      "role": "sysml.trace",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "d88d4de4d7f9c72bf65de73c38b08364b03d9704dd95ee39c0a16fe996bac520"
+    },
+    "relation::sysml.copy": {
+      "file": "assets/symbols/relation-sysml-copy.svg",
+      "role": "sysml.copy",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "67798f058a987a8b5d3d166b60cbe5f53bb8917a12b9c5463522c3728bc6cb17"
+    },
+    "relation::sysml.master": {
+      "file": "assets/symbols/relation-sysml-master.svg",
+      "role": "sysml.master",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "ac96b45ab5be9f056954c238af098bec9afcf9466e088b372b24b6d6e6311eb9"
+    },
+    "relation::sysml.allocate": {
+      "file": "assets/symbols/relation-sysml-allocate.svg",
+      "role": "sysml.allocate",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "e7f1e229c4a3eb2a714e52b4769a4cbd02e42eb047e8c5de41721466ffe8269f"
+    },
+    "relation::sysml.composition": {
+      "file": "assets/symbols/relation-sysml-composition.svg",
+      "role": "sysml.composition",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "ec97de1cb4ad2610bd3cdca0e436339471368b63ff5fe99c49e567e1448bef4e"
+    },
+    "relation::dmn.inforeq": {
+      "file": "assets/symbols/relation-dmn-inforeq.svg",
+      "role": "dmn.inforeq",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "e6ce4fb4f272c0ecf4ed238e9dd1544306ad37c856a8276cb8df1a2105d0593b"
+    },
+    "relation::dmn.knowledgereq": {
+      "file": "assets/symbols/relation-dmn-knowledgereq.svg",
+      "role": "dmn.knowledgereq",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "26af1e252611bf1455477a253399e1c2ed54be6186048bee302822f9eb3cc956"
+    },
+    "relation::dmn.authorityreq": {
+      "file": "assets/symbols/relation-dmn-authorityreq.svg",
+      "role": "dmn.authorityreq",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "9228299ec8462cb181a5d81d094df016fbeac0ec676377e382f06f1c00c2dcb1"
+    },
+    "relation::uaf.capabilitydependency": {
+      "file": "assets/symbols/relation-uaf-capabilitydependency.svg",
+      "role": "uaf.capabilitydependency",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "6a20a7ea056dcd21c6648972727ebb62dce49eff6799b2c35d5ab91dc2dc83fd"
+    },
+    "relation::uaf.exhibits": {
+      "file": "assets/symbols/relation-uaf-exhibits.svg",
+      "role": "uaf.exhibits",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "d881dc815287838937a23fe16f08a5722d8bc325e61f5f9c4b67aa6e7a3c4a6d"
+    },
+    "relation::uaf.mapsto": {
+      "file": "assets/symbols/relation-uaf-mapsto.svg",
+      "role": "uaf.mapsto",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "9be3cc760f811b85c9326672a4603a13b77d231fbaaa126c5d96746000c0d696"
+    },
+    "relation::uaf.satisfiescapability": {
+      "file": "assets/symbols/relation-uaf-satisfiescapability.svg",
+      "role": "uaf.satisfiescapability",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "262304272228ff34099a00661692f571d5da1876ae3b47284ab469c71cf48fc1"
+    },
+    "relation::uaf.performs": {
+      "file": "assets/symbols/relation-uaf-performs.svg",
+      "role": "uaf.performs",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c3d939b93bea597e1d4b4e906ed4704e9274584e7d5f8744e76fd31615c8fd80"
+    },
+    "relation::uaf.assignedto": {
+      "file": "assets/symbols/relation-uaf-assignedto.svg",
+      "role": "uaf.assignedto",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "f9413d65fd417d3448911bdf28cb29f8253b22e42edf4ebb611f1d85bf23f2fd"
+    },
+    "relation::uaf.complieswith": {
+      "file": "assets/symbols/relation-uaf-complieswith.svg",
+      "role": "uaf.complieswith",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "9d834d488741541871e510fb22e3f0798609381aa2a6db8414910f7b71f3c0ed"
+    },
+    "relation::uaf.mitigates": {
+      "file": "assets/symbols/relation-uaf-mitigates.svg",
+      "role": "uaf.mitigates",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "ed531bead5ba69f787843b2ddab075d35b19aa6e167871f0f62d1aa10dfaef64"
+    },
+    "relation::uaf.milestonedependency": {
+      "file": "assets/symbols/relation-uaf-milestonedependency.svg",
+      "role": "uaf.milestonedependency",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "a530108af27c49cb5d393825104498baf36ec18e33f2f5ee458d415374ec1f80"
+    },
+    "relation::uaf.forecast": {
+      "file": "assets/symbols/relation-uaf-forecast.svg",
+      "role": "uaf.forecast",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "52c0c95eea850de2ca33e46b620f2100b56072d3dd1b8ac04a5f68cdd8459267"
+    },
+    "relation::uaf.supports": {
+      "file": "assets/symbols/relation-uaf-supports.svg",
+      "role": "uaf.supports",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "731e5e554cc39b772f6870aa6cb0f6f6fbe2999b021826ea1a88aa3395abadb9"
+    },
+    "relation::uaf.owns": {
+      "file": "assets/symbols/relation-uaf-owns.svg",
+      "role": "uaf.owns",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "58e98ae73ff8ee7a285fb711bea800f8e90cbbe23b8be6a0fb93736c8af69846"
+    },
+    "relation::epk.infoflow": {
+      "file": "assets/symbols/relation-epk-infoflow.svg",
+      "role": "epk.infoflow",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "df17439afcf64fcd8bb1a9eea3e3b7416d32545c6bf05e21930a8850fec145a1"
+    },
+    "relation::epk.assigned": {
+      "file": "assets/symbols/relation-epk-assigned.svg",
+      "role": "epk.assigned",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "7d5153a42b7edc9dd3e1843420d16cc766284776b8cbc53005fc440943b068e4"
+    },
+    "relation::epk.links": {
+      "file": "assets/symbols/relation-epk-links.svg",
+      "role": "epk.links",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "a4caf0a6e53e795e7d4d6c600441ed886498813ce41c021fd20f217e1ddcc191"
+    },
+    "relation::idef0.flow": {
+      "file": "assets/symbols/relation-idef0-flow.svg",
+      "role": "idef0.flow",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "a0da680caff312091b1788912580c88536e65548f8ec42bcb524b0689069c731"
+    },
+    "relation::idef0.call": {
+      "file": "assets/symbols/relation-idef0-call.svg",
+      "role": "idef0.call",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "8e4840f8908d3dc9500a53ec021bd4066efdf6d5a7ad33db3df537bf2bffa065"
+    },
+    "relation::petri.arc": {
+      "file": "assets/symbols/relation-petri-arc.svg",
+      "role": "petri.arc",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "f6e761e51ac4eed3ec6affe41db1ded58e643eaa77b280ab8c9d3c9ef49f435e"
+    },
+    "relation::petri.inhibitor": {
+      "file": "assets/symbols/relation-petri-inhibitor.svg",
+      "role": "petri.inhibitor",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "9c827ea22f0fa90d7eea2ca3d1c2b5d6a40290605053a0dd099a6f7b56287376"
+    },
+    "relation::petri.testarc": {
+      "file": "assets/symbols/relation-petri-testarc.svg",
+      "role": "petri.testarc",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "6e8014be637005d56114586bbf03303a3486f335e021ecd4e22c5c9b1fe966e1"
+    },
+    "relation::orm.plays": {
+      "file": "assets/symbols/relation-orm-plays.svg",
+      "role": "orm.plays",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "421fd61050625b83c971d3e119151c3604da43ebd4169504074be2a0daf47fb1"
+    },
+    "relation::orm.subset": {
+      "file": "assets/symbols/relation-orm-subset.svg",
+      "role": "orm.subset",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "1480863a1f7b1270671efd744a42518699a576ac87a6c5c11a571f65296cdfce"
+    },
+    "relation::orm.equality": {
+      "file": "assets/symbols/relation-orm-equality.svg",
+      "role": "orm.equality",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c16c167ac6709dbf8929cfc936296311f1493782d57a77d55ac198485c47c0e1"
+    },
+    "relation::orm.exclusion": {
+      "file": "assets/symbols/relation-orm-exclusion.svg",
+      "role": "orm.exclusion",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "2b917132a28eeb1c99190c260968ca3b80d1d5785a133e9dee7a4ca2b10f932c"
+    },
+    "relation::vsm.material": {
+      "file": "assets/symbols/relation-vsm-material.svg",
+      "role": "vsm.material",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "d5cf66c43a5891b294dd184078ff10bb98be4c81f0d2060dbcd848cdf7508be7"
+    },
+    "relation::vsm.push": {
+      "file": "assets/symbols/relation-vsm-push.svg",
+      "role": "vsm.push",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "a3cb2b512962497f83552831febd036d978ff946187bf06eca30997d722db9bc"
+    },
+    "relation::vsm.pull": {
+      "file": "assets/symbols/relation-vsm-pull.svg",
+      "role": "vsm.pull",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "eb32bd7409caadd6b1a15f04bbdfb49cd693981cc6b1609462cbbbb82bdb8170"
+    },
+    "relation::vsm.einfo": {
+      "file": "assets/symbols/relation-vsm-einfo.svg",
+      "role": "vsm.einfo",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "bc6a027b57883747e9a5e82c9cc67b9d184b795e96325555e968d59da6ec7636"
+    },
+    "relation::vsm.minfo": {
+      "file": "assets/symbols/relation-vsm-minfo.svg",
+      "role": "vsm.minfo",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "e19ce2224a34cc073d8c37b3879fe6540e8c9f8f423d7cd81f3184d49a7f569f"
+    },
+    "relation::sdl.channel": {
+      "file": "assets/symbols/relation-sdl-channel.svg",
+      "role": "sdl.channel",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "9e11fa2e9c31e1429d656f80dd88cdf9340c8eecb4ea78fa5ae7ebdefeea493b"
+    },
+    "relation::sdl.links": {
+      "file": "assets/symbols/relation-sdl-links.svg",
+      "role": "sdl.links",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "a3a90e9efb7df875fb743b33bd38d85aeaa60dfd7c23d1c55a76560d8a88e727"
+    },
+    "relation::fbd.wire": {
+      "file": "assets/symbols/relation-fbd-wire.svg",
+      "role": "fbd.wire",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "c4834fc71e396035f77359468c233906a884cc6d497b0e320821a9118945f0f6"
+    },
+    "relation::ladder.series": {
+      "file": "assets/symbols/relation-ladder-series.svg",
+      "role": "ladder.series",
+      "category": "relation",
+      "profile": "ddn@1",
+      "sha256": "200877e5f53e6b5c840f6e7a4a68fbaf19d39fe9bd51919a1f24ba840a3d601e"
+    }
+  }
+}

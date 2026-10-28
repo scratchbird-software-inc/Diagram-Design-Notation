@@ -1,0 +1,10 @@
+data CustomerFields
+    field.type.domain.key
+    Key.int..primary key
+    name.varchar(25)
+    email..EmailAddress
+
+erd Sales
+    Customer from CustomerFields
+    Order
+    connect Customer to Order

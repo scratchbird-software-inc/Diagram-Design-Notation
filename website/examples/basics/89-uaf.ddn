@@ -1,126 +1,2384 @@
-ddn "0.5";
-module "ddn.examples.uaf";
+version ddn-next-1
 
-// B1-072/UAF 1.2 — one view per domain of the UAF grid, showing the
-// domain vocabulary and stereotyped verbs. Matrix/timeline viewpoints of the
-// grid reuse the existing matrix/timeline projections (see the grid doc in
-// specification chapter 47). All data is synthetic.
+publication "publication:strategic"
+    with
+        id "publication:strategic"
+        title "St — Strategic"
+        targets
+            item
+                target
+                    id "strategic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data st {
-    object cap "Customer self-service" { kind: "uaf.capability"; }
-    object cap2 "Online retail" { kind: "uaf.capability"; }
-    object goal "Grow digital sales" { kind: "uaf.enterprisegoal"; }
-    object vision "Vision 2030" { kind: "uaf.enterprisevision"; }
-    object phase "Phase 2" { kind: "uaf.strategicphase"; }
-    relation d1 "" @cap -> @cap2 { kind: "uaf.capabilitydependency"; }
-    relation s1 "" @cap -> @goal { kind: "uaf.supports"; }
-    relation m1 "" @vision -> @cap { kind: "uaf.mapsto"; }
-}
-data op {
-    object desk "Order desk" { kind: "uaf.opperformer"; }
-    object hub "Fulfillment hub" { kind: "uaf.opnode"; }
-    object act "Take order" { kind: "uaf.opactivity"; }
-    object act2 "Pick items" { kind: "uaf.opactivity"; }
-    object ex "Order details" { kind: "uaf.opexchange"; }
-    relation p1 "" @desk -> @act { kind: "uaf.performs"; }
-    relation p2 "" @hub -> @act2 { kind: "uaf.performs"; }
-    relation m1 "" @act -> @ex { kind: "uaf.mapsto"; }
-    relation n1 "" @act -> @act2 { kind: "uml.flow"; }
-}
-data svc {
-    object spec "Billing service" { kind: "uaf.servicespec"; }
-    object fn "Compute charge" { kind: "uaf.servicefunction"; }
-    object pol "Refund policy" { kind: "uaf.servicepolicy"; }
-    object svcCap "Billing capability" { kind: "uaf.capability"; }
-    relation e1 "" @spec -> @svcCap { kind: "uaf.exhibits"; }
-    relation m1 "" @fn -> @spec { kind: "uaf.mapsto"; }
-    relation c1 "" @spec -> @pol { kind: "uaf.complieswith"; }
-}
-data sys {
-    object shop "Shop system" { kind: "uaf.system"; }
-    object sfn "Handle checkout" { kind: "uaf.systemfunction"; }
-    object impl "Commerce platform" { kind: "uaf.implementer"; }
-    relation p1 "" @impl -> @sfn { kind: "uaf.performs"; }
-    relation m1 "" @shop -> @sfn { kind: "uaf.mapsto"; }
-    relation s1 "" @sfn -> @shop { kind: "uaf.mapsto"; }
-}
-data per {
-    object alice "Alice" { kind: "uaf.person"; }
-    object retail "Retail org" { kind: "uaf.organization"; }
-    object mgr "Store manager" { kind: "uaf.post"; }
-    object resp "Daily reconciliation" { kind: "uaf.responsibility"; }
-    relation a1 "" @alice -> @mgr { kind: "uaf.assignedto"; }
-    relation o1 "" @retail -> @mgr { kind: "uaf.owns"; }
-    relation a2 "" @mgr -> @resp { kind: "uaf.assignedto"; }
-}
-data res {
-    object wh "Main warehouse" { kind: "uaf.resourceperformer"; }
-    object shelf "Shelving" { kind: "uaf.resource"; }
-    object rfn "Store stock" { kind: "uaf.resourcefunction"; }
-    object wms "Warehouse software" { kind: "uaf.technology"; }
-    relation p1 "" @wh -> @rfn { kind: "uaf.performs"; }
-    relation m1 "" @shelf -> @rfn { kind: "uaf.mapsto"; }
-    relation f1 "" @wms -> @wh { kind: "uaf.forecast"; }
-}
-data sec {
-    object zone "Customer zone" { kind: "uaf.securityelement"; }
-    object tls "TLS everywhere" { kind: "uaf.securitycontrol"; }
-    object fraud "Card fraud" { kind: "uaf.threat"; }
-    object data "Customer data" { kind: "uaf.asset"; }
-    relation m1 "" @tls -> @fraud { kind: "uaf.mitigates"; }
-    relation m2 "" @tls -> @data { kind: "uaf.mapsto"; }
-    relation m3 "" @zone -> @tls { kind: "uaf.mapsto"; }
-}
-data prj {
-    object p1 "Webshop rebuild" { kind: "uaf.project"; }
-    object ms1 "Beta launch" { kind: "uaf.projectmilestone"; }
-    object ms2 "General availability" { kind: "uaf.projectmilestone"; }
-    object wp "Payments work" { kind: "uaf.workpackage"; }
-    relation d1 "" @ms1 -> @ms2 { kind: "uaf.milestonedependency"; }
-    relation m1 "" @wp -> @ms1 { kind: "uaf.mapsto"; }
-    relation m2 "" @p1 -> @ms2 { kind: "uaf.mapsto"; }
-}
-data std {
-    object pci "PCI DSS" { kind: "uaf.standard"; }
-    object col "Retail standards" { kind: "uaf.standardcollection"; }
-    object proto "TLS 1.3" { kind: "uaf.protocol"; }
-    object shop2 "Shop system" { kind: "uaf.system"; }
-    relation c1 "" @shop2 -> @pci { kind: "uaf.complieswith"; }
-    relation m1 "" @col -> @pci { kind: "uaf.mapsto"; }
-    relation f1 "" @pci -> @proto { kind: "uaf.forecast"; }
-}
-data ar {
-    object w1 "Warehouse 7" { kind: "uaf.actualresource"; }
-    object acme "Acme Retail SE" { kind: "uaf.actualorganization"; }
-    object bob "Bob" { kind: "uaf.actualperson"; }
-    relation a1 "" @bob -> @acme { kind: "uaf.assignedto"; }
-    relation o1 "" @acme -> @w1 { kind: "uaf.owns"; }
-    relation m1 "" @w1 -> @acme { kind: "uaf.mapsto"; }
-}
-data dict {
-    object e1 "Capability" { kind: "uaf.dictionaryentry"; }
-    object e2 "Operational activity" { kind: "uaf.dictionaryentry"; }
-    object e3 "Service specification" { kind: "uaf.dictionaryentry"; }
-    relation m1 "" @e1 -> @e2 { kind: "uaf.mapsto"; }
-    relation m2 "" @e2 -> @e3 { kind: "uaf.mapsto"; }
-}
-data sum {
-    object ad "Retail architecture" { kind: "uaf.archdesc"; }
-    object vp "Strategic viewpoint" { kind: "uaf.viewpoint"; }
-    object mr "Capability model" { kind: "uaf.modelref"; }
-    relation m1 "" @vp -> @ad { kind: "uaf.mapsto"; }
-    relation m2 "" @ad -> @mr { kind: "uaf.mapsto"; }
-}
 
-view strategic "St — Strategic" { data: [@st]; projection { profile: "uaf.strategic@1"; } publication { size: content; fit: none; } }
-view operational "Op — Operational" { layout { gap: 112px; row_gap: 112px; } data: [@op]; projection { profile: "uaf.operational@1"; } publication { size: content; fit: none; } }
-view services "Svc — Services" { data: [@svc]; projection { profile: "uaf.services@1"; } publication { size: content; fit: none; } }
-view systems "Sys — Systems" { data: [@sys]; projection { profile: "uaf.systems@1"; } publication { size: content; fit: none; } }
-view personnel "Pr — Personnel" { data: [@per]; projection { profile: "uaf.personnel@1"; } publication { size: content; fit: none; } }
-view resources "Rs — Resources" { data: [@res]; projection { profile: "uaf.resources@1"; } publication { size: content; fit: none; } }
-view security "Sec — Security" { data: [@sec]; projection { profile: "uaf.security@1"; } publication { size: content; fit: none; } }
-view projects "Pj — Projects" { data: [@prj]; projection { profile: "uaf.projects@1"; } publication { size: content; fit: none; } }
-view standards "Std — Standards" { data: [@std]; projection { profile: "uaf.standards@1"; } publication { size: content; fit: none; } }
-view actualresources "AR — Actual resources" { data: [@ar]; projection { profile: "uaf.actualresources@1"; } publication { size: content; fit: none; } }
-view dictionary "Dct — Dictionary" { data: [@dict]; projection { profile: "uaf.dictionary@1"; } publication { size: content; fit: none; } }
-view summary "S&O — Summary and overview" { data: [@sum]; projection { profile: "uaf.summary@1"; } frame ov1 "OV-1 style high-level pictogram frame" { scope: @sum.ad; members: [@sum.vp, @sum.mr]; } publication { size: content; fit: none; } }
+publication "publication:operational"
+    with
+        id "publication:operational"
+        title "Op — Operational"
+        targets
+            item
+                target
+                    id "operational"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:services"
+    with
+        id "publication:services"
+        title "Svc — Services"
+        targets
+            item
+                target
+                    id "services"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:systems"
+    with
+        id "publication:systems"
+        title "Sys — Systems"
+        targets
+            item
+                target
+                    id "systems"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:personnel"
+    with
+        id "publication:personnel"
+        title "Pr — Personnel"
+        targets
+            item
+                target
+                    id "personnel"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:resources"
+    with
+        id "publication:resources"
+        title "Rs — Resources"
+        targets
+            item
+                target
+                    id "resources"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:security"
+    with
+        id "publication:security"
+        title "Sec — Security"
+        targets
+            item
+                target
+                    id "security"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:projects"
+    with
+        id "publication:projects"
+        title "Pj — Projects"
+        targets
+            item
+                target
+                    id "projects"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:standards"
+    with
+        id "publication:standards"
+        title "Std — Standards"
+        targets
+            item
+                target
+                    id "standards"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:actualresources"
+    with
+        id "publication:actualresources"
+        title "AR — Actual resources"
+        targets
+            item
+                target
+                    id "actualresources"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:dictionary"
+    with
+        id "publication:dictionary"
+        title "Dct — Dictionary"
+        targets
+            item
+                target
+                    id "dictionary"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:summary"
+    with
+        id "publication:summary"
+        title "S&O — Summary and overview"
+        targets
+            item
+                target
+                    id "summary"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.uaf::st.cap" as "uaf.capability"
+    with
+        id "ddn.examples.uaf::st.cap"
+        title "Customer self-service"
+
+
+element "ddn.examples.uaf::st.cap2" as "uaf.capability"
+    with
+        id "ddn.examples.uaf::st.cap2"
+        title "Online retail"
+
+
+element "ddn.examples.uaf::st.goal" as "uaf.enterprisegoal"
+    with
+        id "ddn.examples.uaf::st.goal"
+        title "Grow digital sales"
+
+
+element "ddn.examples.uaf::st.vision" as "uaf.enterprisevision"
+    with
+        id "ddn.examples.uaf::st.vision"
+        title "Vision 2030"
+
+
+element "ddn.examples.uaf::st.phase" as "uaf.strategicphase"
+    with
+        id "ddn.examples.uaf::st.phase"
+        title "Phase 2"
+
+
+relation "ddn.examples.uaf::st.d1" as "uaf.capabilitydependency"
+    with
+        id "ddn.examples.uaf::st.d1"
+        title "«capabilityDependency»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::st.cap"
+            item
+                definition
+                    id "ddn.examples.uaf::st.cap2"
+
+
+relation "ddn.examples.uaf::st.s1" as "uaf.supports"
+    with
+        id "ddn.examples.uaf::st.s1"
+        title "«supports»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::st.cap"
+            item
+                definition
+                    id "ddn.examples.uaf::st.goal"
+
+
+relation "ddn.examples.uaf::st.m1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::st.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::st.vision"
+            item
+                definition
+                    id "ddn.examples.uaf::st.cap"
+
+
+element "ddn.examples.uaf::op.desk" as "uaf.opperformer"
+    with
+        id "ddn.examples.uaf::op.desk"
+        title "Order desk"
+
+
+element "ddn.examples.uaf::op.hub" as "uaf.opnode"
+    with
+        id "ddn.examples.uaf::op.hub"
+        title "Fulfillment hub"
+
+
+element "ddn.examples.uaf::op.act" as "uaf.opactivity"
+    with
+        id "ddn.examples.uaf::op.act"
+        title "Take order"
+
+
+element "ddn.examples.uaf::op.act2" as "uaf.opactivity"
+    with
+        id "ddn.examples.uaf::op.act2"
+        title "Pick items"
+
+
+element "ddn.examples.uaf::op.ex" as "uaf.opexchange"
+    with
+        id "ddn.examples.uaf::op.ex"
+        title "Order details"
+
+
+relation "ddn.examples.uaf::op.p1" as "uaf.performs"
+    with
+        id "ddn.examples.uaf::op.p1"
+        title "«performs»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::op.desk"
+            item
+                definition
+                    id "ddn.examples.uaf::op.act"
+
+
+relation "ddn.examples.uaf::op.p2" as "uaf.performs"
+    with
+        id "ddn.examples.uaf::op.p2"
+        title "«performs»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::op.hub"
+            item
+                definition
+                    id "ddn.examples.uaf::op.act2"
+
+
+relation "ddn.examples.uaf::op.m1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::op.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::op.act"
+            item
+                definition
+                    id "ddn.examples.uaf::op.ex"
+
+
+relation "ddn.examples.uaf::op.n1" as "uml.flow"
+    with
+        id "ddn.examples.uaf::op.n1"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::op.act"
+            item
+                definition
+                    id "ddn.examples.uaf::op.act2"
+
+
+element "ddn.examples.uaf::svc.spec" as "uaf.servicespec"
+    with
+        id "ddn.examples.uaf::svc.spec"
+        title "Billing service"
+
+
+element "ddn.examples.uaf::svc.fn" as "uaf.servicefunction"
+    with
+        id "ddn.examples.uaf::svc.fn"
+        title "Compute charge"
+
+
+element "ddn.examples.uaf::svc.pol" as "uaf.servicepolicy"
+    with
+        id "ddn.examples.uaf::svc.pol"
+        title "Refund policy"
+
+
+element "ddn.examples.uaf::svc.svcCap" as "uaf.capability"
+    with
+        id "ddn.examples.uaf::svc.svcCap"
+        title "Billing capability"
+
+
+relation "ddn.examples.uaf::svc.e1" as "uaf.exhibits"
+    with
+        id "ddn.examples.uaf::svc.e1"
+        title "«exhibits»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::svc.spec"
+            item
+                definition
+                    id "ddn.examples.uaf::svc.svcCap"
+
+
+relation "ddn.examples.uaf::svc.m1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::svc.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::svc.fn"
+            item
+                definition
+                    id "ddn.examples.uaf::svc.spec"
+
+
+relation "ddn.examples.uaf::svc.c1" as "uaf.complieswith"
+    with
+        id "ddn.examples.uaf::svc.c1"
+        title "«compliesWith»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::svc.spec"
+            item
+                definition
+                    id "ddn.examples.uaf::svc.pol"
+
+
+element "ddn.examples.uaf::sys.shop" as "uaf.system"
+    with
+        id "ddn.examples.uaf::sys.shop"
+        title "Shop system"
+
+
+element "ddn.examples.uaf::sys.sfn" as "uaf.systemfunction"
+    with
+        id "ddn.examples.uaf::sys.sfn"
+        title "Handle checkout"
+
+
+element "ddn.examples.uaf::sys.impl" as "uaf.implementer"
+    with
+        id "ddn.examples.uaf::sys.impl"
+        title "Commerce platform"
+
+
+relation "ddn.examples.uaf::sys.p1" as "uaf.performs"
+    with
+        id "ddn.examples.uaf::sys.p1"
+        title "«performs»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::sys.impl"
+            item
+                definition
+                    id "ddn.examples.uaf::sys.sfn"
+
+
+relation "ddn.examples.uaf::sys.m1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::sys.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::sys.shop"
+            item
+                definition
+                    id "ddn.examples.uaf::sys.sfn"
+
+
+relation "ddn.examples.uaf::sys.s1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::sys.s1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::sys.sfn"
+            item
+                definition
+                    id "ddn.examples.uaf::sys.shop"
+
+
+element "ddn.examples.uaf::per.alice" as "uaf.person"
+    with
+        id "ddn.examples.uaf::per.alice"
+        title "Alice"
+
+
+element "ddn.examples.uaf::per.retail" as "uaf.organization"
+    with
+        id "ddn.examples.uaf::per.retail"
+        title "Retail org"
+
+
+element "ddn.examples.uaf::per.mgr" as "uaf.post"
+    with
+        id "ddn.examples.uaf::per.mgr"
+        title "Store manager"
+
+
+element "ddn.examples.uaf::per.resp" as "uaf.responsibility"
+    with
+        id "ddn.examples.uaf::per.resp"
+        title "Daily reconciliation"
+
+
+relation "ddn.examples.uaf::per.a1" as "uaf.assignedto"
+    with
+        id "ddn.examples.uaf::per.a1"
+        title "«assignedTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::per.alice"
+            item
+                definition
+                    id "ddn.examples.uaf::per.mgr"
+
+
+relation "ddn.examples.uaf::per.o1" as "uaf.owns"
+    with
+        id "ddn.examples.uaf::per.o1"
+        title "«owns»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::per.retail"
+            item
+                definition
+                    id "ddn.examples.uaf::per.mgr"
+
+
+relation "ddn.examples.uaf::per.a2" as "uaf.assignedto"
+    with
+        id "ddn.examples.uaf::per.a2"
+        title "«assignedTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::per.mgr"
+            item
+                definition
+                    id "ddn.examples.uaf::per.resp"
+
+
+element "ddn.examples.uaf::res.wh" as "uaf.resourceperformer"
+    with
+        id "ddn.examples.uaf::res.wh"
+        title "Main warehouse"
+
+
+element "ddn.examples.uaf::res.shelf" as "uaf.resource"
+    with
+        id "ddn.examples.uaf::res.shelf"
+        title "Shelving"
+
+
+element "ddn.examples.uaf::res.rfn" as "uaf.resourcefunction"
+    with
+        id "ddn.examples.uaf::res.rfn"
+        title "Store stock"
+
+
+element "ddn.examples.uaf::res.wms" as "uaf.technology"
+    with
+        id "ddn.examples.uaf::res.wms"
+        title "Warehouse software"
+
+
+relation "ddn.examples.uaf::res.p1" as "uaf.performs"
+    with
+        id "ddn.examples.uaf::res.p1"
+        title "«performs»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::res.wh"
+            item
+                definition
+                    id "ddn.examples.uaf::res.rfn"
+
+
+relation "ddn.examples.uaf::res.m1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::res.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::res.shelf"
+            item
+                definition
+                    id "ddn.examples.uaf::res.rfn"
+
+
+relation "ddn.examples.uaf::res.f1" as "uaf.forecast"
+    with
+        id "ddn.examples.uaf::res.f1"
+        title "«forecast»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::res.wms"
+            item
+                definition
+                    id "ddn.examples.uaf::res.wh"
+
+
+element "ddn.examples.uaf::sec.zone" as "uaf.securityelement"
+    with
+        id "ddn.examples.uaf::sec.zone"
+        title "Customer zone"
+
+
+element "ddn.examples.uaf::sec.tls" as "uaf.securitycontrol"
+    with
+        id "ddn.examples.uaf::sec.tls"
+        title "TLS everywhere"
+
+
+element "ddn.examples.uaf::sec.fraud" as "uaf.threat"
+    with
+        id "ddn.examples.uaf::sec.fraud"
+        title "Card fraud"
+
+
+element "ddn.examples.uaf::sec.data" as "uaf.asset"
+    with
+        id "ddn.examples.uaf::sec.data"
+        title "Customer data"
+
+
+relation "ddn.examples.uaf::sec.m1" as "uaf.mitigates"
+    with
+        id "ddn.examples.uaf::sec.m1"
+        title "«mitigates»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::sec.tls"
+            item
+                definition
+                    id "ddn.examples.uaf::sec.fraud"
+
+
+relation "ddn.examples.uaf::sec.m2" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::sec.m2"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::sec.tls"
+            item
+                definition
+                    id "ddn.examples.uaf::sec.data"
+
+
+relation "ddn.examples.uaf::sec.m3" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::sec.m3"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::sec.zone"
+            item
+                definition
+                    id "ddn.examples.uaf::sec.tls"
+
+
+element "ddn.examples.uaf::prj.p1" as "uaf.project"
+    with
+        id "ddn.examples.uaf::prj.p1"
+        title "Webshop rebuild"
+
+
+element "ddn.examples.uaf::prj.ms1" as "uaf.projectmilestone"
+    with
+        id "ddn.examples.uaf::prj.ms1"
+        title "Beta launch"
+
+
+element "ddn.examples.uaf::prj.ms2" as "uaf.projectmilestone"
+    with
+        id "ddn.examples.uaf::prj.ms2"
+        title "General availability"
+
+
+element "ddn.examples.uaf::prj.wp" as "uaf.workpackage"
+    with
+        id "ddn.examples.uaf::prj.wp"
+        title "Payments work"
+
+
+relation "ddn.examples.uaf::prj.d1" as "uaf.milestonedependency"
+    with
+        id "ddn.examples.uaf::prj.d1"
+        title "«milestoneDependency»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::prj.ms1"
+            item
+                definition
+                    id "ddn.examples.uaf::prj.ms2"
+
+
+relation "ddn.examples.uaf::prj.m1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::prj.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::prj.wp"
+            item
+                definition
+                    id "ddn.examples.uaf::prj.ms1"
+
+
+relation "ddn.examples.uaf::prj.m2" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::prj.m2"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::prj.p1"
+            item
+                definition
+                    id "ddn.examples.uaf::prj.ms2"
+
+
+element "ddn.examples.uaf::std.pci" as "uaf.standard"
+    with
+        id "ddn.examples.uaf::std.pci"
+        title "PCI DSS"
+
+
+element "ddn.examples.uaf::std.col" as "uaf.standardcollection"
+    with
+        id "ddn.examples.uaf::std.col"
+        title "Retail standards"
+
+
+element "ddn.examples.uaf::std.proto" as "uaf.protocol"
+    with
+        id "ddn.examples.uaf::std.proto"
+        title "TLS 1.3"
+
+
+element "ddn.examples.uaf::std.shop2" as "uaf.system"
+    with
+        id "ddn.examples.uaf::std.shop2"
+        title "Shop system"
+
+
+relation "ddn.examples.uaf::std.c1" as "uaf.complieswith"
+    with
+        id "ddn.examples.uaf::std.c1"
+        title "«compliesWith»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::std.shop2"
+            item
+                definition
+                    id "ddn.examples.uaf::std.pci"
+
+
+relation "ddn.examples.uaf::std.m1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::std.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::std.col"
+            item
+                definition
+                    id "ddn.examples.uaf::std.pci"
+
+
+relation "ddn.examples.uaf::std.f1" as "uaf.forecast"
+    with
+        id "ddn.examples.uaf::std.f1"
+        title "«forecast»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::std.pci"
+            item
+                definition
+                    id "ddn.examples.uaf::std.proto"
+
+
+element "ddn.examples.uaf::ar.w1" as "uaf.actualresource"
+    with
+        id "ddn.examples.uaf::ar.w1"
+        title "Warehouse 7"
+
+
+element "ddn.examples.uaf::ar.acme" as "uaf.actualorganization"
+    with
+        id "ddn.examples.uaf::ar.acme"
+        title "Acme Retail SE"
+
+
+element "ddn.examples.uaf::ar.bob" as "uaf.actualperson"
+    with
+        id "ddn.examples.uaf::ar.bob"
+        title "Bob"
+
+
+relation "ddn.examples.uaf::ar.a1" as "uaf.assignedto"
+    with
+        id "ddn.examples.uaf::ar.a1"
+        title "«assignedTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::ar.bob"
+            item
+                definition
+                    id "ddn.examples.uaf::ar.acme"
+
+
+relation "ddn.examples.uaf::ar.o1" as "uaf.owns"
+    with
+        id "ddn.examples.uaf::ar.o1"
+        title "«owns»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::ar.acme"
+            item
+                definition
+                    id "ddn.examples.uaf::ar.w1"
+
+
+relation "ddn.examples.uaf::ar.m1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::ar.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::ar.w1"
+            item
+                definition
+                    id "ddn.examples.uaf::ar.acme"
+
+
+element "ddn.examples.uaf::dict.e1" as "uaf.dictionaryentry"
+    with
+        id "ddn.examples.uaf::dict.e1"
+        title "Capability"
+
+
+element "ddn.examples.uaf::dict.e2" as "uaf.dictionaryentry"
+    with
+        id "ddn.examples.uaf::dict.e2"
+        title "Operational activity"
+
+
+element "ddn.examples.uaf::dict.e3" as "uaf.dictionaryentry"
+    with
+        id "ddn.examples.uaf::dict.e3"
+        title "Service specification"
+
+
+relation "ddn.examples.uaf::dict.m1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::dict.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::dict.e1"
+            item
+                definition
+                    id "ddn.examples.uaf::dict.e2"
+
+
+relation "ddn.examples.uaf::dict.m2" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::dict.m2"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::dict.e2"
+            item
+                definition
+                    id "ddn.examples.uaf::dict.e3"
+
+
+element "ddn.examples.uaf::sum.ad" as "uaf.archdesc"
+    with
+        id "ddn.examples.uaf::sum.ad"
+        title "Retail architecture"
+
+
+element "ddn.examples.uaf::sum.vp" as "uaf.viewpoint"
+    with
+        id "ddn.examples.uaf::sum.vp"
+        title "Strategic viewpoint"
+
+
+element "ddn.examples.uaf::sum.mr" as "uaf.modelref"
+    with
+        id "ddn.examples.uaf::sum.mr"
+        title "Capability model"
+
+
+relation "ddn.examples.uaf::sum.m1" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::sum.m1"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::sum.vp"
+            item
+                definition
+                    id "ddn.examples.uaf::sum.ad"
+
+
+relation "ddn.examples.uaf::sum.m2" as "uaf.mapsto"
+    with
+        id "ddn.examples.uaf::sum.m2"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.uaf::sum.ad"
+            item
+                definition
+                    id "ddn.examples.uaf::sum.mr"
+
+
+view "strategic" as "uaf.strategic@1"
+    with
+        id "strategic"
+        title "St — Strategic"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::st.cap"
+                item
+                    id "ddn.examples.uaf::st.cap2"
+                item
+                    id "ddn.examples.uaf::st.goal"
+                item
+                    id "ddn.examples.uaf::st.vision"
+                item
+                    id "ddn.examples.uaf::st.phase"
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+            exclude
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:strategic"
+
+    use "ddn.examples.uaf::st.cap" named "appearance:strategic:ddn.examples.uaf::st.cap"
+        with
+            id "appearance:strategic:ddn.examples.uaf::st.cap"
+
+    use "ddn.examples.uaf::st.cap2" named "appearance:strategic:ddn.examples.uaf::st.cap2"
+        with
+            id "appearance:strategic:ddn.examples.uaf::st.cap2"
+
+    use "ddn.examples.uaf::st.goal" named "appearance:strategic:ddn.examples.uaf::st.goal"
+        with
+            id "appearance:strategic:ddn.examples.uaf::st.goal"
+
+    use "ddn.examples.uaf::st.vision" named "appearance:strategic:ddn.examples.uaf::st.vision"
+        with
+            id "appearance:strategic:ddn.examples.uaf::st.vision"
+
+    use "ddn.examples.uaf::st.phase" named "appearance:strategic:ddn.examples.uaf::st.phase"
+        with
+            id "appearance:strategic:ddn.examples.uaf::st.phase"
+
+    use "ddn.examples.uaf::st.d1" named "appearance:strategic:ddn.examples.uaf::st.d1"
+        with
+            id "appearance:strategic:ddn.examples.uaf::st.d1"
+
+    use "ddn.examples.uaf::st.s1" named "appearance:strategic:ddn.examples.uaf::st.s1"
+        with
+            id "appearance:strategic:ddn.examples.uaf::st.s1"
+
+    use "ddn.examples.uaf::st.m1" named "appearance:strategic:ddn.examples.uaf::st.m1"
+        with
+            id "appearance:strategic:ddn.examples.uaf::st.m1"
+
+
+view "operational" as "uaf.operational@1"
+    with
+        id "operational"
+        title "Op — Operational"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::op.desk"
+                item
+                    id "ddn.examples.uaf::op.hub"
+                item
+                    id "ddn.examples.uaf::op.act"
+                item
+                    id "ddn.examples.uaf::op.act2"
+                item
+                    id "ddn.examples.uaf::op.ex"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:operational"
+
+    use "ddn.examples.uaf::op.desk" named "appearance:operational:ddn.examples.uaf::op.desk"
+        with
+            id "appearance:operational:ddn.examples.uaf::op.desk"
+
+    use "ddn.examples.uaf::op.hub" named "appearance:operational:ddn.examples.uaf::op.hub"
+        with
+            id "appearance:operational:ddn.examples.uaf::op.hub"
+
+    use "ddn.examples.uaf::op.act" named "appearance:operational:ddn.examples.uaf::op.act"
+        with
+            id "appearance:operational:ddn.examples.uaf::op.act"
+
+    use "ddn.examples.uaf::op.act2" named "appearance:operational:ddn.examples.uaf::op.act2"
+        with
+            id "appearance:operational:ddn.examples.uaf::op.act2"
+
+    use "ddn.examples.uaf::op.ex" named "appearance:operational:ddn.examples.uaf::op.ex"
+        with
+            id "appearance:operational:ddn.examples.uaf::op.ex"
+
+    use "ddn.examples.uaf::op.p1" named "appearance:operational:ddn.examples.uaf::op.p1"
+        with
+            id "appearance:operational:ddn.examples.uaf::op.p1"
+
+    use "ddn.examples.uaf::op.p2" named "appearance:operational:ddn.examples.uaf::op.p2"
+        with
+            id "appearance:operational:ddn.examples.uaf::op.p2"
+
+    use "ddn.examples.uaf::op.m1" named "appearance:operational:ddn.examples.uaf::op.m1"
+        with
+            id "appearance:operational:ddn.examples.uaf::op.m1"
+
+    use "ddn.examples.uaf::op.n1" named "appearance:operational:ddn.examples.uaf::op.n1"
+        with
+            id "appearance:operational:ddn.examples.uaf::op.n1"
+
+
+view "services" as "uaf.services@1"
+    with
+        id "services"
+        title "Svc — Services"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::svc.spec"
+                item
+                    id "ddn.examples.uaf::svc.fn"
+                item
+                    id "ddn.examples.uaf::svc.pol"
+                item
+                    id "ddn.examples.uaf::svc.svcCap"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:services"
+
+    use "ddn.examples.uaf::svc.spec" named "appearance:services:ddn.examples.uaf::svc.spec"
+        with
+            id "appearance:services:ddn.examples.uaf::svc.spec"
+
+    use "ddn.examples.uaf::svc.fn" named "appearance:services:ddn.examples.uaf::svc.fn"
+        with
+            id "appearance:services:ddn.examples.uaf::svc.fn"
+
+    use "ddn.examples.uaf::svc.pol" named "appearance:services:ddn.examples.uaf::svc.pol"
+        with
+            id "appearance:services:ddn.examples.uaf::svc.pol"
+
+    use "ddn.examples.uaf::svc.svcCap" named "appearance:services:ddn.examples.uaf::svc.svcCap"
+        with
+            id "appearance:services:ddn.examples.uaf::svc.svcCap"
+
+    use "ddn.examples.uaf::svc.e1" named "appearance:services:ddn.examples.uaf::svc.e1"
+        with
+            id "appearance:services:ddn.examples.uaf::svc.e1"
+
+    use "ddn.examples.uaf::svc.m1" named "appearance:services:ddn.examples.uaf::svc.m1"
+        with
+            id "appearance:services:ddn.examples.uaf::svc.m1"
+
+    use "ddn.examples.uaf::svc.c1" named "appearance:services:ddn.examples.uaf::svc.c1"
+        with
+            id "appearance:services:ddn.examples.uaf::svc.c1"
+
+
+view "systems" as "uaf.systems@1"
+    with
+        id "systems"
+        title "Sys — Systems"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::sys.shop"
+                item
+                    id "ddn.examples.uaf::sys.sfn"
+                item
+                    id "ddn.examples.uaf::sys.impl"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:systems"
+
+    use "ddn.examples.uaf::sys.shop" named "appearance:systems:ddn.examples.uaf::sys.shop"
+        with
+            id "appearance:systems:ddn.examples.uaf::sys.shop"
+
+    use "ddn.examples.uaf::sys.sfn" named "appearance:systems:ddn.examples.uaf::sys.sfn"
+        with
+            id "appearance:systems:ddn.examples.uaf::sys.sfn"
+
+    use "ddn.examples.uaf::sys.impl" named "appearance:systems:ddn.examples.uaf::sys.impl"
+        with
+            id "appearance:systems:ddn.examples.uaf::sys.impl"
+
+    use "ddn.examples.uaf::sys.p1" named "appearance:systems:ddn.examples.uaf::sys.p1"
+        with
+            id "appearance:systems:ddn.examples.uaf::sys.p1"
+
+    use "ddn.examples.uaf::sys.m1" named "appearance:systems:ddn.examples.uaf::sys.m1"
+        with
+            id "appearance:systems:ddn.examples.uaf::sys.m1"
+
+    use "ddn.examples.uaf::sys.s1" named "appearance:systems:ddn.examples.uaf::sys.s1"
+        with
+            id "appearance:systems:ddn.examples.uaf::sys.s1"
+
+
+view "personnel" as "uaf.personnel@1"
+    with
+        id "personnel"
+        title "Pr — Personnel"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::per.alice"
+                item
+                    id "ddn.examples.uaf::per.retail"
+                item
+                    id "ddn.examples.uaf::per.mgr"
+                item
+                    id "ddn.examples.uaf::per.resp"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:personnel"
+
+    use "ddn.examples.uaf::per.alice" named "appearance:personnel:ddn.examples.uaf::per.alice"
+        with
+            id "appearance:personnel:ddn.examples.uaf::per.alice"
+
+    use "ddn.examples.uaf::per.retail" named "appearance:personnel:ddn.examples.uaf::per.retail"
+        with
+            id "appearance:personnel:ddn.examples.uaf::per.retail"
+
+    use "ddn.examples.uaf::per.mgr" named "appearance:personnel:ddn.examples.uaf::per.mgr"
+        with
+            id "appearance:personnel:ddn.examples.uaf::per.mgr"
+
+    use "ddn.examples.uaf::per.resp" named "appearance:personnel:ddn.examples.uaf::per.resp"
+        with
+            id "appearance:personnel:ddn.examples.uaf::per.resp"
+
+    use "ddn.examples.uaf::per.a1" named "appearance:personnel:ddn.examples.uaf::per.a1"
+        with
+            id "appearance:personnel:ddn.examples.uaf::per.a1"
+
+    use "ddn.examples.uaf::per.o1" named "appearance:personnel:ddn.examples.uaf::per.o1"
+        with
+            id "appearance:personnel:ddn.examples.uaf::per.o1"
+
+    use "ddn.examples.uaf::per.a2" named "appearance:personnel:ddn.examples.uaf::per.a2"
+        with
+            id "appearance:personnel:ddn.examples.uaf::per.a2"
+
+
+view "resources" as "uaf.resources@1"
+    with
+        id "resources"
+        title "Rs — Resources"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::res.wh"
+                item
+                    id "ddn.examples.uaf::res.shelf"
+                item
+                    id "ddn.examples.uaf::res.rfn"
+                item
+                    id "ddn.examples.uaf::res.wms"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:resources"
+
+    use "ddn.examples.uaf::res.wh" named "appearance:resources:ddn.examples.uaf::res.wh"
+        with
+            id "appearance:resources:ddn.examples.uaf::res.wh"
+
+    use "ddn.examples.uaf::res.shelf" named "appearance:resources:ddn.examples.uaf::res.shelf"
+        with
+            id "appearance:resources:ddn.examples.uaf::res.shelf"
+
+    use "ddn.examples.uaf::res.rfn" named "appearance:resources:ddn.examples.uaf::res.rfn"
+        with
+            id "appearance:resources:ddn.examples.uaf::res.rfn"
+
+    use "ddn.examples.uaf::res.wms" named "appearance:resources:ddn.examples.uaf::res.wms"
+        with
+            id "appearance:resources:ddn.examples.uaf::res.wms"
+
+    use "ddn.examples.uaf::res.p1" named "appearance:resources:ddn.examples.uaf::res.p1"
+        with
+            id "appearance:resources:ddn.examples.uaf::res.p1"
+
+    use "ddn.examples.uaf::res.m1" named "appearance:resources:ddn.examples.uaf::res.m1"
+        with
+            id "appearance:resources:ddn.examples.uaf::res.m1"
+
+    use "ddn.examples.uaf::res.f1" named "appearance:resources:ddn.examples.uaf::res.f1"
+        with
+            id "appearance:resources:ddn.examples.uaf::res.f1"
+
+
+view "security" as "uaf.security@1"
+    with
+        id "security"
+        title "Sec — Security"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::sec.zone"
+                item
+                    id "ddn.examples.uaf::sec.tls"
+                item
+                    id "ddn.examples.uaf::sec.fraud"
+                item
+                    id "ddn.examples.uaf::sec.data"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:security"
+
+    use "ddn.examples.uaf::sec.zone" named "appearance:security:ddn.examples.uaf::sec.zone"
+        with
+            id "appearance:security:ddn.examples.uaf::sec.zone"
+
+    use "ddn.examples.uaf::sec.tls" named "appearance:security:ddn.examples.uaf::sec.tls"
+        with
+            id "appearance:security:ddn.examples.uaf::sec.tls"
+
+    use "ddn.examples.uaf::sec.fraud" named "appearance:security:ddn.examples.uaf::sec.fraud"
+        with
+            id "appearance:security:ddn.examples.uaf::sec.fraud"
+
+    use "ddn.examples.uaf::sec.data" named "appearance:security:ddn.examples.uaf::sec.data"
+        with
+            id "appearance:security:ddn.examples.uaf::sec.data"
+
+    use "ddn.examples.uaf::sec.m1" named "appearance:security:ddn.examples.uaf::sec.m1"
+        with
+            id "appearance:security:ddn.examples.uaf::sec.m1"
+
+    use "ddn.examples.uaf::sec.m2" named "appearance:security:ddn.examples.uaf::sec.m2"
+        with
+            id "appearance:security:ddn.examples.uaf::sec.m2"
+
+    use "ddn.examples.uaf::sec.m3" named "appearance:security:ddn.examples.uaf::sec.m3"
+        with
+            id "appearance:security:ddn.examples.uaf::sec.m3"
+
+
+view "projects" as "uaf.projects@1"
+    with
+        id "projects"
+        title "Pj — Projects"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::prj.p1"
+                item
+                    id "ddn.examples.uaf::prj.ms1"
+                item
+                    id "ddn.examples.uaf::prj.ms2"
+                item
+                    id "ddn.examples.uaf::prj.wp"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:projects"
+
+    use "ddn.examples.uaf::prj.p1" named "appearance:projects:ddn.examples.uaf::prj.p1"
+        with
+            id "appearance:projects:ddn.examples.uaf::prj.p1"
+
+    use "ddn.examples.uaf::prj.ms1" named "appearance:projects:ddn.examples.uaf::prj.ms1"
+        with
+            id "appearance:projects:ddn.examples.uaf::prj.ms1"
+
+    use "ddn.examples.uaf::prj.ms2" named "appearance:projects:ddn.examples.uaf::prj.ms2"
+        with
+            id "appearance:projects:ddn.examples.uaf::prj.ms2"
+
+    use "ddn.examples.uaf::prj.wp" named "appearance:projects:ddn.examples.uaf::prj.wp"
+        with
+            id "appearance:projects:ddn.examples.uaf::prj.wp"
+
+    use "ddn.examples.uaf::prj.d1" named "appearance:projects:ddn.examples.uaf::prj.d1"
+        with
+            id "appearance:projects:ddn.examples.uaf::prj.d1"
+
+    use "ddn.examples.uaf::prj.m1" named "appearance:projects:ddn.examples.uaf::prj.m1"
+        with
+            id "appearance:projects:ddn.examples.uaf::prj.m1"
+
+    use "ddn.examples.uaf::prj.m2" named "appearance:projects:ddn.examples.uaf::prj.m2"
+        with
+            id "appearance:projects:ddn.examples.uaf::prj.m2"
+
+
+view "standards" as "uaf.standards@1"
+    with
+        id "standards"
+        title "Std — Standards"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::std.pci"
+                item
+                    id "ddn.examples.uaf::std.col"
+                item
+                    id "ddn.examples.uaf::std.proto"
+                item
+                    id "ddn.examples.uaf::std.shop2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:standards"
+
+    use "ddn.examples.uaf::std.pci" named "appearance:standards:ddn.examples.uaf::std.pci"
+        with
+            id "appearance:standards:ddn.examples.uaf::std.pci"
+
+    use "ddn.examples.uaf::std.col" named "appearance:standards:ddn.examples.uaf::std.col"
+        with
+            id "appearance:standards:ddn.examples.uaf::std.col"
+
+    use "ddn.examples.uaf::std.proto" named "appearance:standards:ddn.examples.uaf::std.proto"
+        with
+            id "appearance:standards:ddn.examples.uaf::std.proto"
+
+    use "ddn.examples.uaf::std.shop2" named "appearance:standards:ddn.examples.uaf::std.shop2"
+        with
+            id "appearance:standards:ddn.examples.uaf::std.shop2"
+
+    use "ddn.examples.uaf::std.c1" named "appearance:standards:ddn.examples.uaf::std.c1"
+        with
+            id "appearance:standards:ddn.examples.uaf::std.c1"
+
+    use "ddn.examples.uaf::std.m1" named "appearance:standards:ddn.examples.uaf::std.m1"
+        with
+            id "appearance:standards:ddn.examples.uaf::std.m1"
+
+    use "ddn.examples.uaf::std.f1" named "appearance:standards:ddn.examples.uaf::std.f1"
+        with
+            id "appearance:standards:ddn.examples.uaf::std.f1"
+
+
+view "actualresources" as "uaf.actualresources@1"
+    with
+        id "actualresources"
+        title "AR — Actual resources"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::ar.w1"
+                item
+                    id "ddn.examples.uaf::ar.acme"
+                item
+                    id "ddn.examples.uaf::ar.bob"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:actualresources"
+
+    use "ddn.examples.uaf::ar.w1" named "appearance:actualresources:ddn.examples.uaf::ar.w1"
+        with
+            id "appearance:actualresources:ddn.examples.uaf::ar.w1"
+
+    use "ddn.examples.uaf::ar.acme" named "appearance:actualresources:ddn.examples.uaf::ar.acme"
+        with
+            id "appearance:actualresources:ddn.examples.uaf::ar.acme"
+
+    use "ddn.examples.uaf::ar.bob" named "appearance:actualresources:ddn.examples.uaf::ar.bob"
+        with
+            id "appearance:actualresources:ddn.examples.uaf::ar.bob"
+
+    use "ddn.examples.uaf::ar.a1" named "appearance:actualresources:ddn.examples.uaf::ar.a1"
+        with
+            id "appearance:actualresources:ddn.examples.uaf::ar.a1"
+
+    use "ddn.examples.uaf::ar.o1" named "appearance:actualresources:ddn.examples.uaf::ar.o1"
+        with
+            id "appearance:actualresources:ddn.examples.uaf::ar.o1"
+
+    use "ddn.examples.uaf::ar.m1" named "appearance:actualresources:ddn.examples.uaf::ar.m1"
+        with
+            id "appearance:actualresources:ddn.examples.uaf::ar.m1"
+
+
+view "dictionary" as "uaf.dictionary@1"
+    with
+        id "dictionary"
+        title "Dct — Dictionary"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::dict.e1"
+                item
+                    id "ddn.examples.uaf::dict.e2"
+                item
+                    id "ddn.examples.uaf::dict.e3"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:dictionary"
+
+    use "ddn.examples.uaf::dict.e1" named "appearance:dictionary:ddn.examples.uaf::dict.e1"
+        with
+            id "appearance:dictionary:ddn.examples.uaf::dict.e1"
+
+    use "ddn.examples.uaf::dict.e2" named "appearance:dictionary:ddn.examples.uaf::dict.e2"
+        with
+            id "appearance:dictionary:ddn.examples.uaf::dict.e2"
+
+    use "ddn.examples.uaf::dict.e3" named "appearance:dictionary:ddn.examples.uaf::dict.e3"
+        with
+            id "appearance:dictionary:ddn.examples.uaf::dict.e3"
+
+    use "ddn.examples.uaf::dict.m1" named "appearance:dictionary:ddn.examples.uaf::dict.m1"
+        with
+            id "appearance:dictionary:ddn.examples.uaf::dict.m1"
+
+    use "ddn.examples.uaf::dict.m2" named "appearance:dictionary:ddn.examples.uaf::dict.m2"
+        with
+            id "appearance:dictionary:ddn.examples.uaf::dict.m2"
+
+
+view "summary" as "uaf.summary@1"
+    with
+        id "summary"
+        title "S&O — Summary and overview"
+        selection
+            include
+                item
+                    id "ddn.examples.uaf::sum.ad"
+                item
+                    id "ddn.examples.uaf::sum.vp"
+                item
+                    id "ddn.examples.uaf::sum.mr"
+                item
+                    id "ddn.examples.uaf::sum.m1"
+                item
+                    id "ddn.examples.uaf::sum.m2"
+            exclude
+                item
+                    id "ddn.examples.uaf::st.d1"
+                item
+                    id "ddn.examples.uaf::st.s1"
+                item
+                    id "ddn.examples.uaf::st.m1"
+                item
+                    id "ddn.examples.uaf::op.p1"
+                item
+                    id "ddn.examples.uaf::op.p2"
+                item
+                    id "ddn.examples.uaf::op.m1"
+                item
+                    id "ddn.examples.uaf::op.n1"
+                item
+                    id "ddn.examples.uaf::svc.e1"
+                item
+                    id "ddn.examples.uaf::svc.m1"
+                item
+                    id "ddn.examples.uaf::svc.c1"
+                item
+                    id "ddn.examples.uaf::sys.p1"
+                item
+                    id "ddn.examples.uaf::sys.m1"
+                item
+                    id "ddn.examples.uaf::sys.s1"
+                item
+                    id "ddn.examples.uaf::per.a1"
+                item
+                    id "ddn.examples.uaf::per.o1"
+                item
+                    id "ddn.examples.uaf::per.a2"
+                item
+                    id "ddn.examples.uaf::res.p1"
+                item
+                    id "ddn.examples.uaf::res.m1"
+                item
+                    id "ddn.examples.uaf::res.f1"
+                item
+                    id "ddn.examples.uaf::sec.m1"
+                item
+                    id "ddn.examples.uaf::sec.m2"
+                item
+                    id "ddn.examples.uaf::sec.m3"
+                item
+                    id "ddn.examples.uaf::prj.d1"
+                item
+                    id "ddn.examples.uaf::prj.m1"
+                item
+                    id "ddn.examples.uaf::prj.m2"
+                item
+                    id "ddn.examples.uaf::std.c1"
+                item
+                    id "ddn.examples.uaf::std.m1"
+                item
+                    id "ddn.examples.uaf::std.f1"
+                item
+                    id "ddn.examples.uaf::ar.a1"
+                item
+                    id "ddn.examples.uaf::ar.o1"
+                item
+                    id "ddn.examples.uaf::ar.m1"
+                item
+                    id "ddn.examples.uaf::dict.m1"
+                item
+                    id "ddn.examples.uaf::dict.m2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.uaf::summary.ov1"
+                name "OV-1 style high-level pictogram frame"
+                scope
+                    id "ddn.examples.uaf::sum.ad"
+                members
+                    item
+                        id "ddn.examples.uaf::sum.vp"
+                    item
+                        id "ddn.examples.uaf::sum.mr"
+        publication
+            id "publication:summary"
+
+    use "ddn.examples.uaf::sum.ad" named "appearance:summary:ddn.examples.uaf::sum.ad"
+        with
+            id "appearance:summary:ddn.examples.uaf::sum.ad"
+
+    use "ddn.examples.uaf::sum.vp" named "appearance:summary:ddn.examples.uaf::sum.vp"
+        with
+            id "appearance:summary:ddn.examples.uaf::sum.vp"
+
+    use "ddn.examples.uaf::sum.mr" named "appearance:summary:ddn.examples.uaf::sum.mr"
+        with
+            id "appearance:summary:ddn.examples.uaf::sum.mr"
+
+    use "ddn.examples.uaf::sum.m1" named "appearance:summary:ddn.examples.uaf::sum.m1"
+        with
+            id "appearance:summary:ddn.examples.uaf::sum.m1"
+
+    use "ddn.examples.uaf::sum.m2" named "appearance:summary:ddn.examples.uaf::sum.m2"
+        with
+            id "appearance:summary:ddn.examples.uaf::sum.m2"

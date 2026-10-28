@@ -1,54 +1,638 @@
-ddn "0.5";
-module "ddn.examples.umlcomp";
+version ddn-next-1
 
-// B1-059 : UML 2.5.1 component + composite structure on uml.composite@1.
-// View 1: ports, assembly ball-and-socket, delegation, parts. View 2: plain
-// connectors with role names + multiplicity, collaboration occurrence.
-// Minimal current-dialect style, no pinned layout.
+publication "publication:components"
+    with
+        id "publication:components"
+        title "UML component / ports and assembly"
+        targets
+            item
+                target
+                    id "components"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data shop {
-    object storefront "Storefront" { kind: "uml.component";
-        ports { web { direction: in; } orders_if { direction: out; } }
-        fields { cart { x_part: { classifier: "Cart"; multiplicity: "1" }; } }
-    }
-    object warehouse "Warehouse" { kind: "uml.component";
-        ports { orders_in { direction: in; } }
-        fields { stock { x_part: { classifier: "Stock"; multiplicity: "0..*" }; } }
-    }
-    object accounts "Accounts" { kind: "uml.interface"; }
 
-    relation assembly "" @storefront.orders_if -> @warehouse.orders_in { kind: "uml.assembly"; }
-    relation delegate "" @storefront.web -> @storefront.cart { kind: "uml.delegation"; }
-    relation billing "" @storefront -> @accounts { kind: "uml.provided"; }
-}
+publication "publication:structures"
+    with
+        id "publication:structures"
+        title "UML composite structure / parts and connectors"
+        targets
+            item
+                target
+                    id "structures"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data structure {
-    object order "Order" { kind: "uml.class";
-        fields {
-            customer { x_part: { classifier: "Customer"; multiplicity: "1" }; }
-            lines { x_part: { classifier: "OrderLine"; multiplicity: "1..*" }; }
-        }
-    }
-    object fulfil "Fulfilment" { kind: "uml.class";
-        fields { picking { x_part: { classifier: "Picking" }; } }
-    }
-    object planning "Release planning" { kind: "uml.collaboration";
-        fields {
-            planner { x_part: { classifier: "Planner" }; }
-            builder { x_part: { classifier: "Builder" }; }
-        }
-    }
 
-    relation c1 "" @order.customer -> @fulfil.picking { kind: "uml.connector";
-        x_endlabels: { source: { role: "buyer"; multiplicity: "1"; }; target: { role: "picking"; multiplicity: "0..1"; }; };
-    }
-}
+element "ddn.examples.umlcomp::shop.storefront.cart" as "field"
+    with
+        id "ddn.examples.umlcomp::shop.storefront.cart"
+        title "cart"
+        metadata
+            x_part
+                classifier "declared-classifier:Cart"
+                multiplicity "1"
+        content
+            parent
+                id "ddn.examples.umlcomp::shop.storefront"
+            ordinal 0
 
-view components "UML component / ports and assembly": [@shop] as "uml.composite@1" {
-    layout { gap: 112px; row_gap: 112px; }
-    publication { size: content; fit: none; }
-}
 
-view structures "UML composite structure / parts and connectors": [@structure] as "uml.composite@1" {
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.umlcomp::shop.storefront.web" as "core::Port"
+    with
+        id "ddn.examples.umlcomp::shop.storefront.web"
+        title "web"
+        content
+            owner
+                id "ddn.examples.umlcomp::shop.storefront"
+            direction "input"
+
+
+element "ddn.examples.umlcomp::shop.storefront.orders_if" as "core::Port"
+    with
+        id "ddn.examples.umlcomp::shop.storefront.orders_if"
+        title "orders_if"
+        content
+            owner
+                id "ddn.examples.umlcomp::shop.storefront"
+            direction "output"
+
+
+element "ddn.examples.umlcomp::shop.storefront" as "uml.component"
+    with
+        id "ddn.examples.umlcomp::shop.storefront"
+        title "Storefront"
+        members
+            item
+                id "ddn.examples.umlcomp::shop.storefront.cart"
+            item
+                id "ddn.examples.umlcomp::shop.storefront.web"
+            item
+                id "ddn.examples.umlcomp::shop.storefront.orders_if"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "cart"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlcomp::shop.warehouse.stock" as "field"
+    with
+        id "ddn.examples.umlcomp::shop.warehouse.stock"
+        title "stock"
+        metadata
+            x_part
+                classifier "declared-classifier:Stock"
+                multiplicity "0..*"
+        content
+            parent
+                id "ddn.examples.umlcomp::shop.warehouse"
+            ordinal 0
+
+
+element "ddn.examples.umlcomp::shop.warehouse.orders_in" as "core::Port"
+    with
+        id "ddn.examples.umlcomp::shop.warehouse.orders_in"
+        title "orders_in"
+        content
+            owner
+                id "ddn.examples.umlcomp::shop.warehouse"
+            direction "input"
+
+
+element "ddn.examples.umlcomp::shop.warehouse" as "uml.component"
+    with
+        id "ddn.examples.umlcomp::shop.warehouse"
+        title "Warehouse"
+        members
+            item
+                id "ddn.examples.umlcomp::shop.warehouse.stock"
+            item
+                id "ddn.examples.umlcomp::shop.warehouse.orders_in"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "stock"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlcomp::shop.accounts" as "uml.interface"
+    with
+        id "ddn.examples.umlcomp::shop.accounts"
+        title "Accounts"
+
+
+relation "ddn.examples.umlcomp::shop.assembly" as "uml.assembly"
+    with
+        id "ddn.examples.umlcomp::shop.assembly"
+        title "Assembly connector"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlcomp::shop.storefront"
+                member
+                    id "ddn.examples.umlcomp::shop.storefront.orders_if"
+            item
+                definition
+                    id "ddn.examples.umlcomp::shop.warehouse"
+                member
+                    id "ddn.examples.umlcomp::shop.warehouse.orders_in"
+
+
+relation "ddn.examples.umlcomp::shop.delegate" as "uml.delegation"
+    with
+        id "ddn.examples.umlcomp::shop.delegate"
+        title "Delegation connector"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlcomp::shop.storefront"
+                member
+                    id "ddn.examples.umlcomp::shop.storefront.web"
+            item
+                definition
+                    id "ddn.examples.umlcomp::shop.storefront"
+                member
+                    id "ddn.examples.umlcomp::shop.storefront.cart"
+
+
+relation "ddn.examples.umlcomp::shop.billing" as "uml.provided"
+    with
+        id "ddn.examples.umlcomp::shop.billing"
+        title "Provided interface"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlcomp::shop.storefront"
+            item
+                definition
+                    id "ddn.examples.umlcomp::shop.accounts"
+
+
+element "declared-classifier:Cart" as "uml.class"
+    with
+        id "declared-classifier:Cart"
+        title "Cart"
+
+
+element "declared-classifier:Stock" as "uml.class"
+    with
+        id "declared-classifier:Stock"
+        title "Stock"
+
+
+element "ddn.examples.umlcomp::structure.order.customer" as "field"
+    with
+        id "ddn.examples.umlcomp::structure.order.customer"
+        title "customer"
+        metadata
+            x_part
+                classifier "declared-classifier:Customer"
+                multiplicity "1"
+        content
+            parent
+                id "ddn.examples.umlcomp::structure.order"
+            ordinal 0
+
+
+element "ddn.examples.umlcomp::structure.order.lines" as "field"
+    with
+        id "ddn.examples.umlcomp::structure.order.lines"
+        title "lines"
+        metadata
+            x_part
+                classifier "declared-classifier:OrderLine"
+                multiplicity "1..*"
+        content
+            parent
+                id "ddn.examples.umlcomp::structure.order"
+            ordinal 1
+
+
+element "ddn.examples.umlcomp::structure.order" as "uml.class"
+    with
+        id "ddn.examples.umlcomp::structure.order"
+        title "Order"
+        members
+            item
+                id "ddn.examples.umlcomp::structure.order.customer"
+            item
+                id "ddn.examples.umlcomp::structure.order.lines"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "lines"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlcomp::structure.fulfil.picking" as "field"
+    with
+        id "ddn.examples.umlcomp::structure.fulfil.picking"
+        title "picking"
+        metadata
+            x_part
+                classifier "declared-classifier:Picking"
+        content
+            parent
+                id "ddn.examples.umlcomp::structure.fulfil"
+            ordinal 0
+
+
+element "ddn.examples.umlcomp::structure.fulfil" as "uml.class"
+    with
+        id "ddn.examples.umlcomp::structure.fulfil"
+        title "Fulfilment"
+        members
+            item
+                id "ddn.examples.umlcomp::structure.fulfil.picking"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "picking"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.umlcomp::structure.planning.planner" as "field"
+    with
+        id "ddn.examples.umlcomp::structure.planning.planner"
+        title "planner"
+        metadata
+            x_part
+                classifier "declared-classifier:Planner"
+        content
+            parent
+                id "ddn.examples.umlcomp::structure.planning"
+            ordinal 0
+
+
+element "ddn.examples.umlcomp::structure.planning.builder" as "field"
+    with
+        id "ddn.examples.umlcomp::structure.planning.builder"
+        title "builder"
+        metadata
+            x_part
+                classifier "declared-classifier:Builder"
+        content
+            parent
+                id "ddn.examples.umlcomp::structure.planning"
+            ordinal 1
+
+
+element "ddn.examples.umlcomp::structure.planning" as "uml.collaboration"
+    with
+        id "ddn.examples.umlcomp::structure.planning"
+        title "Release planning"
+        members
+            item
+                id "ddn.examples.umlcomp::structure.planning.planner"
+            item
+                id "ddn.examples.umlcomp::structure.planning.builder"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "planner"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "builder"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.umlcomp::structure.c1" as "uml.connector"
+    with
+        id "ddn.examples.umlcomp::structure.c1"
+        title "Connector"
+        metadata
+            x_endlabels
+                source
+                    role "buyer"
+                    multiplicity "1"
+                target
+                    role "picking"
+                    multiplicity "0..1"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.umlcomp::structure.order"
+                member
+                    id "ddn.examples.umlcomp::structure.order.customer"
+            item
+                definition
+                    id "ddn.examples.umlcomp::structure.fulfil"
+                member
+                    id "ddn.examples.umlcomp::structure.fulfil.picking"
+
+
+element "declared-classifier:Customer" as "uml.class"
+    with
+        id "declared-classifier:Customer"
+        title "Customer"
+
+
+element "declared-classifier:OrderLine" as "uml.class"
+    with
+        id "declared-classifier:OrderLine"
+        title "OrderLine"
+
+
+element "declared-classifier:Picking" as "uml.class"
+    with
+        id "declared-classifier:Picking"
+        title "Picking"
+
+
+element "declared-classifier:Planner" as "uml.class"
+    with
+        id "declared-classifier:Planner"
+        title "Planner"
+
+
+element "declared-classifier:Builder" as "uml.class"
+    with
+        id "declared-classifier:Builder"
+        title "Builder"
+
+
+view "components" as "uml.composite@1"
+    with
+        id "components"
+        title "UML component / ports and assembly"
+        selection
+            include
+                item
+                    id "ddn.examples.umlcomp::shop.storefront"
+                item
+                    id "ddn.examples.umlcomp::shop.warehouse"
+                item
+                    id "ddn.examples.umlcomp::shop.accounts"
+                item
+                    id "ddn.examples.umlcomp::shop.assembly"
+                item
+                    id "ddn.examples.umlcomp::shop.delegate"
+                item
+                    id "ddn.examples.umlcomp::shop.billing"
+            exclude
+                item
+                    id "ddn.examples.umlcomp::structure.c1"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:components"
+
+    use "ddn.examples.umlcomp::shop.storefront" named "appearance:components:ddn.examples.umlcomp::shop.storefront"
+        with
+            id "appearance:components:ddn.examples.umlcomp::shop.storefront"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlcomp::shop.warehouse" named "appearance:components:ddn.examples.umlcomp::shop.warehouse"
+        with
+            id "appearance:components:ddn.examples.umlcomp::shop.warehouse"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlcomp::shop.accounts" named "appearance:components:ddn.examples.umlcomp::shop.accounts"
+        with
+            id "appearance:components:ddn.examples.umlcomp::shop.accounts"
+
+    use "ddn.examples.umlcomp::shop.assembly" named "appearance:components:ddn.examples.umlcomp::shop.assembly"
+        with
+            id "appearance:components:ddn.examples.umlcomp::shop.assembly"
+
+    use "ddn.examples.umlcomp::shop.delegate" named "appearance:components:ddn.examples.umlcomp::shop.delegate"
+        with
+            id "appearance:components:ddn.examples.umlcomp::shop.delegate"
+
+    use "ddn.examples.umlcomp::shop.billing" named "appearance:components:ddn.examples.umlcomp::shop.billing"
+        with
+            id "appearance:components:ddn.examples.umlcomp::shop.billing"
+
+
+view "structures" as "uml.composite@1"
+    with
+        id "structures"
+        title "UML composite structure / parts and connectors"
+        selection
+            include
+                item
+                    id "ddn.examples.umlcomp::structure.order"
+                item
+                    id "ddn.examples.umlcomp::structure.fulfil"
+                item
+                    id "ddn.examples.umlcomp::structure.planning"
+                item
+                    id "ddn.examples.umlcomp::structure.c1"
+            exclude
+                item
+                    id "ddn.examples.umlcomp::shop.assembly"
+                item
+                    id "ddn.examples.umlcomp::shop.delegate"
+                item
+                    id "ddn.examples.umlcomp::shop.billing"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:structures"
+
+    use "ddn.examples.umlcomp::structure.order" named "appearance:structures:ddn.examples.umlcomp::structure.order"
+        with
+            id "appearance:structures:ddn.examples.umlcomp::structure.order"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlcomp::structure.fulfil" named "appearance:structures:ddn.examples.umlcomp::structure.fulfil"
+        with
+            id "appearance:structures:ddn.examples.umlcomp::structure.fulfil"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlcomp::structure.planning" named "appearance:structures:ddn.examples.umlcomp::structure.planning"
+        with
+            id "appearance:structures:ddn.examples.umlcomp::structure.planning"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.umlcomp::structure.c1" named "appearance:structures:ddn.examples.umlcomp::structure.c1"
+        with
+            id "appearance:structures:ddn.examples.umlcomp::structure.c1"

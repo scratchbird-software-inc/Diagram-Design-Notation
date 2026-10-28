@@ -1,38 +1,5 @@
-# Dependencies / environments
+.work/
 node_modules/
 __pycache__/
-.venv/
-venv/
-
-# OS / editor noise
+*.pyc
 .DS_Store
-Thumbs.db
-*.swp
-.idea/
-.vscode/
-
-# Logs and local reports
-*.log
-core-report.json
-notation/tests/core-report.json
-notation/tests/use-cases-report.json
-notation/tests/validation/
-/release/*
-!/release/validation/
-/release/validation/*
-!/release/validation/sdk-build.json
-
-# Internal-only AI authoring reference (not part of the public repo)
-AI-REFERENCE.md
-
-# Generated render/build output (notation/dist is deliberately committed)
-site/
-packages/
-*.zip
-
-# Browser-test downloads and artifacts
-tests/downloaded*
-tests/history/
-playwright-report/
-notation/validation/
-website/examples/use-cases/validation-report.json

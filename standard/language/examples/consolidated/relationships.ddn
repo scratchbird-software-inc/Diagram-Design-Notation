@@ -1,0 +1,12 @@
+erd Relations
+    Customer
+        fields
+            Key
+    Order
+        fields
+            Key
+            CustomerKey
+    connect Customer at Key to Order at CustomerKey as assoc named CustomerOrders : Places
+        with
+            source.cardinality 1
+            target.cardinality many

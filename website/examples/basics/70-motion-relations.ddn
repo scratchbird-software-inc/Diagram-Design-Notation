@@ -1,27 +1,372 @@
-ddn "0.5";
-module "ddn.examples.motion";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:animated"
+    with
+        id "publication:animated"
+        title "Order pipeline / motion showcase"
+        targets
+            item
+                target
+                    id "animated"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// B1-033 motion showcase: declarative SMIL animation on graph relations.
-// - orders -> queue: single travelling marker (defaults: circle, 8px, 60px/s)
-// - queue -> worker: staggered particle stream (rate: 6) — traffic-style flow
-// - worker -> ledger: pulse variant (edge stroke colour/opacity, no marker)
-// The exported SVG animates autonomously; the unified tool's Animation drawer
-// starts/stops, steps one hop, and re-times playback. --no-motion renders the
-// same diagram static for print.
-data pipeline {
-    topic orders "Order intake" {fields { order_id; placed_at; } }
-    queue queue "Dispatch queue" {fields { order_id; priority; } }
-    activity worker "Fulfilment worker";
-    table ledger "Fulfilled orders" {fields { order_id; fulfilled_at; } }
-    relation submit "Orders submitted" @orders -> @queue { kind: flow; motion: flow; }
-    relation dispatch "Dispatch stream" @queue -> @worker { kind: flow; motion: flow; marker: square; marker_size: 10; rate: 6; speed: 140; marker_color: "#B45309"; }
-    relation record "Record fulfilment" @worker -> @ledger { kind: flow; motion: pulse; pulse_color: "#0E7490"; }
-}
 
-view animated "Order pipeline / motion showcase" {
-    data: [@pipeline];
-    format: @shared.styles.technical;
-    legend { placement: bottom; }
-}
+element "ddn.examples.motion::pipeline.orders.order_id" as "field"
+    with
+        id "ddn.examples.motion::pipeline.orders.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.examples.motion::pipeline.orders"
+            ordinal 0
+
+
+element "ddn.examples.motion::pipeline.orders.placed_at" as "field"
+    with
+        id "ddn.examples.motion::pipeline.orders.placed_at"
+        title "placed_at"
+        content
+            parent
+                id "ddn.examples.motion::pipeline.orders"
+            ordinal 1
+
+
+element "ddn.examples.motion::pipeline.orders" as "topic"
+    with
+        id "ddn.examples.motion::pipeline.orders"
+        title "Order intake"
+        members
+            item
+                id "ddn.examples.motion::pipeline.orders.order_id"
+            item
+                id "ddn.examples.motion::pipeline.orders.placed_at"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "placed_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.motion::pipeline.queue.order_id" as "field"
+    with
+        id "ddn.examples.motion::pipeline.queue.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.examples.motion::pipeline.queue"
+            ordinal 0
+
+
+element "ddn.examples.motion::pipeline.queue.priority" as "field"
+    with
+        id "ddn.examples.motion::pipeline.queue.priority"
+        title "priority"
+        content
+            parent
+                id "ddn.examples.motion::pipeline.queue"
+            ordinal 1
+
+
+element "ddn.examples.motion::pipeline.queue" as "queue"
+    with
+        id "ddn.examples.motion::pipeline.queue"
+        title "Dispatch queue"
+        members
+            item
+                id "ddn.examples.motion::pipeline.queue.order_id"
+            item
+                id "ddn.examples.motion::pipeline.queue.priority"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "priority"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.motion::pipeline.worker" as "activity"
+    with
+        id "ddn.examples.motion::pipeline.worker"
+        title "Fulfilment worker"
+
+
+element "ddn.examples.motion::pipeline.ledger.order_id" as "field"
+    with
+        id "ddn.examples.motion::pipeline.ledger.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.examples.motion::pipeline.ledger"
+            ordinal 0
+
+
+element "ddn.examples.motion::pipeline.ledger.fulfilled_at" as "field"
+    with
+        id "ddn.examples.motion::pipeline.ledger.fulfilled_at"
+        title "fulfilled_at"
+        content
+            parent
+                id "ddn.examples.motion::pipeline.ledger"
+            ordinal 1
+
+
+element "ddn.examples.motion::pipeline.ledger" as "table"
+    with
+        id "ddn.examples.motion::pipeline.ledger"
+        title "Fulfilled orders"
+        members
+            item
+                id "ddn.examples.motion::pipeline.ledger.order_id"
+            item
+                id "ddn.examples.motion::pipeline.ledger.fulfilled_at"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "fulfilled_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.motion::pipeline.submit" as "flow"
+    with
+        id "ddn.examples.motion::pipeline.submit"
+        title "Orders submitted"
+        properties
+            motion "flow"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.motion::pipeline.orders"
+            item
+                definition
+                    id "ddn.examples.motion::pipeline.queue"
+
+
+relation "ddn.examples.motion::pipeline.dispatch" as "flow"
+    with
+        id "ddn.examples.motion::pipeline.dispatch"
+        title "Dispatch stream"
+        properties
+            motion "flow"
+            marker "square"
+            marker_size 10
+            rate 6
+            speed 140
+            marker_color "#B45309"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.motion::pipeline.queue"
+            item
+                definition
+                    id "ddn.examples.motion::pipeline.worker"
+
+
+relation "ddn.examples.motion::pipeline.record" as "flow"
+    with
+        id "ddn.examples.motion::pipeline.record"
+        title "Record fulfilment"
+        properties
+            motion "pulse"
+            pulse_color "#0E7490"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.motion::pipeline.worker"
+            item
+                definition
+                    id "ddn.examples.motion::pipeline.ledger"
+
+
+view "animated" as "ddn@1"
+    with
+        id "animated"
+        title "Order pipeline / motion showcase"
+        selection
+            include
+                item
+                    id "ddn.examples.motion::pipeline.orders"
+                item
+                    id "ddn.examples.motion::pipeline.queue"
+                item
+                    id "ddn.examples.motion::pipeline.worker"
+                item
+                    id "ddn.examples.motion::pipeline.ledger"
+                item
+                    id "ddn.examples.motion::pipeline.submit"
+                item
+                    id "ddn.examples.motion::pipeline.dispatch"
+                item
+                    id "ddn.examples.motion::pipeline.record"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            placement "bottom"
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:animated"
+
+    use "ddn.examples.motion::pipeline.orders" named "appearance:animated:ddn.examples.motion::pipeline.orders"
+        with
+            id "appearance:animated:ddn.examples.motion::pipeline.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.motion::pipeline.queue" named "appearance:animated:ddn.examples.motion::pipeline.queue"
+        with
+            id "appearance:animated:ddn.examples.motion::pipeline.queue"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.motion::pipeline.worker" named "appearance:animated:ddn.examples.motion::pipeline.worker"
+        with
+            id "appearance:animated:ddn.examples.motion::pipeline.worker"
+
+    use "ddn.examples.motion::pipeline.ledger" named "appearance:animated:ddn.examples.motion::pipeline.ledger"
+        with
+            id "appearance:animated:ddn.examples.motion::pipeline.ledger"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.motion::pipeline.submit" named "appearance:animated:ddn.examples.motion::pipeline.submit"
+        with
+            id "appearance:animated:ddn.examples.motion::pipeline.submit"
+
+    use "ddn.examples.motion::pipeline.dispatch" named "appearance:animated:ddn.examples.motion::pipeline.dispatch"
+        with
+            id "appearance:animated:ddn.examples.motion::pipeline.dispatch"
+
+    use "ddn.examples.motion::pipeline.record" named "appearance:animated:ddn.examples.motion::pipeline.record"
+        with
+            id "appearance:animated:ddn.examples.motion::pipeline.record"

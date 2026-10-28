@@ -1,17 +1,436 @@
-ddn "0.5";
-module "ddn.examples.documents";
-import "shared.ddn" as shared;
+version ddn-next-1
 
-data model {
-    collection profiles "Customer profiles" {fields { customer_id; address; status { presence: optional; nullable: true; } } }
-    document address "Embedded address" {fields { street; city; postal_code; } }
-    array contacts "Contact array" {fields { kind; value; } }
-    sample example "Absent is not null" { mode: synthetic; columns: [@profiles.customer_id, @profiles.status]; rows: [["C001", null], ["C002", missing]]; }
-    relation nested @profiles -> @address { kind: embeds; }
-    relation repeated @profiles -> @contacts { kind: embeds; }
-}
-view documents "Document structure / presence versus null" {
-    data: [@model]; format: @shared.styles.technical;
-    legend { mode: numbers; keys: { "nested": 1, "repeated": 2 }; }
+publication "publication:documents"
+    with
+        id "publication:documents"
+        title "Document structure / presence versus null"
+        targets
+            item
+                target
+                    id "documents"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-}
+
+element "ddn.examples.documents::model.profiles.customer_id" as "field"
+    with
+        id "ddn.examples.documents::model.profiles.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.examples.documents::model.profiles"
+            ordinal 0
+
+
+element "ddn.examples.documents::model.profiles.address" as "field"
+    with
+        id "ddn.examples.documents::model.profiles.address"
+        title "address"
+        content
+            parent
+                id "ddn.examples.documents::model.profiles"
+            ordinal 1
+
+
+element "ddn.examples.documents::model.profiles.status" as "field"
+    with
+        id "ddn.examples.documents::model.profiles.status"
+        title "status"
+        properties
+            presence "optional"
+            nullable true
+        content
+            parent
+                id "ddn.examples.documents::model.profiles"
+            ordinal 2
+            nullable true
+
+
+element "ddn.examples.documents::model.profiles" as "collection"
+    with
+        id "ddn.examples.documents::model.profiles"
+        title "Customer profiles"
+        members
+            item
+                id "ddn.examples.documents::model.profiles.customer_id"
+            item
+                id "ddn.examples.documents::model.profiles.address"
+            item
+                id "ddn.examples.documents::model.profiles.status"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "address"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.documents::model.address.street" as "field"
+    with
+        id "ddn.examples.documents::model.address.street"
+        title "street"
+        content
+            parent
+                id "ddn.examples.documents::model.address"
+            ordinal 0
+
+
+element "ddn.examples.documents::model.address.city" as "field"
+    with
+        id "ddn.examples.documents::model.address.city"
+        title "city"
+        content
+            parent
+                id "ddn.examples.documents::model.address"
+            ordinal 1
+
+
+element "ddn.examples.documents::model.address.postal_code" as "field"
+    with
+        id "ddn.examples.documents::model.address.postal_code"
+        title "postal_code"
+        content
+            parent
+                id "ddn.examples.documents::model.address"
+            ordinal 2
+
+
+element "ddn.examples.documents::model.address" as "document"
+    with
+        id "ddn.examples.documents::model.address"
+        title "Embedded address"
+        members
+            item
+                id "ddn.examples.documents::model.address.street"
+            item
+                id "ddn.examples.documents::model.address.city"
+            item
+                id "ddn.examples.documents::model.address.postal_code"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "street"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "city"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "postal_code"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.documents::model.contacts.kind" as "field"
+    with
+        id "ddn.examples.documents::model.contacts.kind"
+        title "kind"
+        content
+            parent
+                id "ddn.examples.documents::model.contacts"
+            ordinal 0
+
+
+element "ddn.examples.documents::model.contacts.value" as "field"
+    with
+        id "ddn.examples.documents::model.contacts.value"
+        title "value"
+        content
+            parent
+                id "ddn.examples.documents::model.contacts"
+            ordinal 1
+
+
+element "ddn.examples.documents::model.contacts" as "array"
+    with
+        id "ddn.examples.documents::model.contacts"
+        title "Contact array"
+        members
+            item
+                id "ddn.examples.documents::model.contacts.kind"
+            item
+                id "ddn.examples.documents::model.contacts.value"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "kind"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "value"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.documents::model.example" as "sample"
+    with
+        id "ddn.examples.documents::model.example"
+        title "Absent is not null"
+        properties
+            mode "synthetic"
+            columns
+                item
+                    id "ddn.examples.documents::model.profiles.customer_id"
+                item
+                    id "ddn.examples.documents::model.profiles.status"
+            rows
+                item
+                    item "C001"
+                item
+                    item "C002"
+                    item
+                        $missing true
+        data
+            columns
+                item
+                    id "column-0"
+                    label "customer_id"
+                item
+                    id "column-1"
+                    label "status"
+            rows
+                item
+                    item "C001"
+                    item null
+                item
+                    item "C002"
+                    item
+                        $missing true
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "rows": [
+                        [
+                          "C001",
+                          null
+                        ],
+                        [
+                          "C002",
+                          {
+                            "$missing": true
+                          }
+                        ]
+                      ]
+                    }
+                format "plain"
+
+
+relation "ddn.examples.documents::model.nested" as "emb"
+    with
+        id "ddn.examples.documents::model.nested"
+        title "embeds"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.documents::model.profiles"
+            item
+                definition
+                    id "ddn.examples.documents::model.address"
+
+
+relation "ddn.examples.documents::model.repeated" as "emb"
+    with
+        id "ddn.examples.documents::model.repeated"
+        title "embeds"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.documents::model.profiles"
+            item
+                definition
+                    id "ddn.examples.documents::model.contacts"
+
+
+view "documents" as "ddn@1"
+    with
+        id "documents"
+        title "Document structure / presence versus null"
+        selection
+            include
+                item
+                    id "ddn.examples.documents::model.profiles"
+                item
+                    id "ddn.examples.documents::model.address"
+                item
+                    id "ddn.examples.documents::model.contacts"
+                item
+                    id "ddn.examples.documents::model.example"
+                item
+                    id "ddn.examples.documents::model.nested"
+                item
+                    id "ddn.examples.documents::model.repeated"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            mode "numbers"
+            width 280
+            keys
+                nested "1"
+                repeated "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:documents"
+
+    use "ddn.examples.documents::model.profiles" named "appearance:documents:ddn.examples.documents::model.profiles"
+        with
+            id "appearance:documents:ddn.examples.documents::model.profiles"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.documents::model.address" named "appearance:documents:ddn.examples.documents::model.address"
+        with
+            id "appearance:documents:ddn.examples.documents::model.address"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.documents::model.contacts" named "appearance:documents:ddn.examples.documents::model.contacts"
+        with
+            id "appearance:documents:ddn.examples.documents::model.contacts"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.documents::model.example" named "appearance:documents:ddn.examples.documents::model.example"
+        with
+            id "appearance:documents:ddn.examples.documents::model.example"
+            body "columns"
+
+    use "ddn.examples.documents::model.nested" named "appearance:documents:ddn.examples.documents::model.nested"
+        with
+            id "appearance:documents:ddn.examples.documents::model.nested"
+
+    use "ddn.examples.documents::model.repeated" named "appearance:documents:ddn.examples.documents::model.repeated"
+        with
+            id "appearance:documents:ddn.examples.documents::model.repeated"

@@ -1,82 +1,1441 @@
-ddn "0.5";
-module "ddn.gallery.layouts";
+version ddn-next-1
 
-// Gallery layout sheet. A small holding-company hierarchy rendered once per
-// placement algorithm accepted by the runtime (native grid/manual/layered/
-// tree/mindmap/grouped/ladder plus the pattern-based fit_grid/circular/
-// radial/spanning_tree/organic).
-data model {
-    context holding "Meridian Holdings" {role: group; }
-    application energy "Meridian Energy" {role: core; }
-    application freight "Meridian Freight" {role: core; }
-    application media "Meridian Media" {role: support; }
-    object wind "Wind operations" { kind: process; role: core; }
-    object solar "Solar operations" { kind: process; role: core; }
-    assoc own_e @holding -> @energy;
-    assoc own_f @holding -> @freight;
-    assoc own_m @holding -> @media;
-    assoc split_w @energy -> @wind;
-    assoc split_s @energy -> @solar;
-}
+publication "publication:grid"
+    with
+        id "publication:grid"
+        title "Layouts / grid"
+        targets
+            item
+                target
+                    id "grid"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-format gallery {
-    style standard;
-    display readable { fields: none; badges: none; maturity: none; }
-    publication screen { size: content; fit: none; }
-    legend key { width: 260px; }
-}
 
-view grid "Layouts / grid" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { gap: 112px; row_gap: 112px; algorithm: grid; columns: 3; }
-}
-view manual "Layouts / manual (pinned)" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: manual; }
-    place @model.holding { at: [400px,0px]; }
-    place @model.energy { at: [0px,240px]; }
-    place @model.freight { at: [400px,240px]; }
-    place @model.media { at: [800px,240px]; }
-    place @model.wind { at: [0px,480px]; }
-    place @model.solar { at: [400px,480px]; }
-}
-view layered "Layouts / layered" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: right; }
-}
-view tree "Layouts / tree" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { gap: 112px; row_gap: 112px; algorithm: tree; root: @model.holding; hierarchy: [assoc]; }
-}
-view mindmap "Layouts / mindmap" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: mindmap; root: @model.holding; hierarchy: [assoc]; routing: curved; }
-}
-view grouped "Layouts / grouped" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: grouped; group_by: role; columns: 2; }
-}
-view fit_grid "Layouts / fit_grid" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: fit_grid; }
-}
-view circular "Layouts / circular" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: circular; }
-}
-view radial "Layouts / radial" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: radial; root: @model.holding; }
-}
-view spanning_tree "Layouts / spanning_tree" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { gap: 112px; row_gap: 112px; algorithm: spanning_tree; root: @model.holding; }
-}
-view organic "Layouts / organic" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: organic; }
-}
-view ladder "Layouts / ladder" {
-    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: ladder; }
-}
+publication "publication:manual"
+    with
+        id "publication:manual"
+        title "Layouts / manual (pinned)"
+        targets
+            item
+                target
+                    id "manual"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:layered"
+    with
+        id "publication:layered"
+        title "Layouts / layered"
+        targets
+            item
+                target
+                    id "layered"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:tree"
+    with
+        id "publication:tree"
+        title "Layouts / tree"
+        targets
+            item
+                target
+                    id "tree"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:mindmap"
+    with
+        id "publication:mindmap"
+        title "Layouts / mindmap"
+        targets
+            item
+                target
+                    id "mindmap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:grouped"
+    with
+        id "publication:grouped"
+        title "Layouts / grouped"
+        targets
+            item
+                target
+                    id "grouped"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:fit_grid"
+    with
+        id "publication:fit_grid"
+        title "Layouts / fit_grid"
+        targets
+            item
+                target
+                    id "fit_grid"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:circular"
+    with
+        id "publication:circular"
+        title "Layouts / circular"
+        targets
+            item
+                target
+                    id "circular"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:radial"
+    with
+        id "publication:radial"
+        title "Layouts / radial"
+        targets
+            item
+                target
+                    id "radial"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:spanning_tree"
+    with
+        id "publication:spanning_tree"
+        title "Layouts / spanning_tree"
+        targets
+            item
+                target
+                    id "spanning_tree"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:organic"
+    with
+        id "publication:organic"
+        title "Layouts / organic"
+        targets
+            item
+                target
+                    id "organic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:ladder"
+    with
+        id "publication:ladder"
+        title "Layouts / ladder"
+        targets
+            item
+                target
+                    id "ladder"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.gallery.layouts::model.holding" as "context"
+    with
+        id "ddn.gallery.layouts::model.holding"
+        title "Meridian Holdings"
+        metadata
+            x_record
+                layout_group "group"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "role": "group"
+                    }
+                format "plain"
+
+
+element "ddn.gallery.layouts::model.energy" as "application"
+    with
+        id "ddn.gallery.layouts::model.energy"
+        title "Meridian Energy"
+        metadata
+            x_record
+                layout_group "core"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "role": "core"
+                    }
+                format "plain"
+
+
+element "ddn.gallery.layouts::model.freight" as "application"
+    with
+        id "ddn.gallery.layouts::model.freight"
+        title "Meridian Freight"
+        metadata
+            x_record
+                layout_group "core"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "role": "core"
+                    }
+                format "plain"
+
+
+element "ddn.gallery.layouts::model.media" as "application"
+    with
+        id "ddn.gallery.layouts::model.media"
+        title "Meridian Media"
+        metadata
+            x_record
+                layout_group "support"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "role": "support"
+                    }
+                format "plain"
+
+
+element "ddn.gallery.layouts::model.wind" as "flow.process"
+    with
+        id "ddn.gallery.layouts::model.wind"
+        title "Wind operations"
+        metadata
+            x_record
+                layout_group "core"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "role": "core"
+                    }
+                format "plain"
+
+
+element "ddn.gallery.layouts::model.solar" as "flow.process"
+    with
+        id "ddn.gallery.layouts::model.solar"
+        title "Solar operations"
+        metadata
+            x_record
+                layout_group "core"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "role": "core"
+                    }
+                format "plain"
+
+
+relation "ddn.gallery.layouts::model.own_e" as "assoc"
+    with
+        id "ddn.gallery.layouts::model.own_e"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.layouts::model.holding"
+            item
+                definition
+                    id "ddn.gallery.layouts::model.energy"
+
+
+relation "ddn.gallery.layouts::model.own_f" as "assoc"
+    with
+        id "ddn.gallery.layouts::model.own_f"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.layouts::model.holding"
+            item
+                definition
+                    id "ddn.gallery.layouts::model.freight"
+
+
+relation "ddn.gallery.layouts::model.own_m" as "assoc"
+    with
+        id "ddn.gallery.layouts::model.own_m"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.layouts::model.holding"
+            item
+                definition
+                    id "ddn.gallery.layouts::model.media"
+
+
+relation "ddn.gallery.layouts::model.split_w" as "assoc"
+    with
+        id "ddn.gallery.layouts::model.split_w"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.layouts::model.energy"
+            item
+                definition
+                    id "ddn.gallery.layouts::model.wind"
+
+
+relation "ddn.gallery.layouts::model.split_s" as "assoc"
+    with
+        id "ddn.gallery.layouts::model.split_s"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.layouts::model.energy"
+            item
+                definition
+                    id "ddn.gallery.layouts::model.solar"
+
+
+view "grid" as "ddn@1"
+    with
+        id "grid"
+        title "Layouts / grid"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "grid"
+            gap 112
+            row_gap 112
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:grid"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:grid:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:grid:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:grid:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:grid:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:grid:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:grid:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:grid:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:grid:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:grid:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:grid:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:grid:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:grid:ddn.gallery.layouts::model.split_s"
+
+
+view "manual" as "ddn@1"
+    with
+        id "manual"
+        title "Layouts / manual (pinned)"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "manual"
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:manual"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:manual:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.holding"
+            position
+                x 400
+                y 0
+            pinned true
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:manual:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.energy"
+            position
+                x 0
+                y 240
+            pinned true
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:manual:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.freight"
+            position
+                x 400
+                y 240
+            pinned true
+
+    use "ddn.gallery.layouts::model.media" named "appearance:manual:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.media"
+            position
+                x 800
+                y 240
+            pinned true
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:manual:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.wind"
+            position
+                x 0
+                y 480
+            pinned true
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:manual:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.solar"
+            position
+                x 400
+                y 480
+            pinned true
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:manual:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:manual:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:manual:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:manual:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:manual:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:manual:ddn.gallery.layouts::model.split_s"
+
+
+view "layered" as "ddn@1"
+    with
+        id "layered"
+        title "Layouts / layered"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:layered"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:layered:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:layered:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:layered:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:layered:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:layered:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:layered:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:layered:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:layered:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:layered:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:layered:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:layered:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:layered:ddn.gallery.layouts::model.split_s"
+
+
+view "tree" as "ddn@1"
+    with
+        id "tree"
+        title "Layouts / tree"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "tree"
+            gap 112
+            row_gap 112
+            root
+                id "ddn.gallery.layouts::model.holding"
+            hierarchy "assoc"
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:tree"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:tree:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:tree:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:tree:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:tree:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:tree:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:tree:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:tree:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:tree:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:tree:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:tree:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:tree:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:tree:ddn.gallery.layouts::model.split_s"
+
+
+view "mindmap" as "ddn@1"
+    with
+        id "mindmap"
+        title "Layouts / mindmap"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "mindmap"
+            routing "curved"
+            root
+                id "ddn.gallery.layouts::model.holding"
+            hierarchy "assoc"
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:mindmap"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:mindmap:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:mindmap:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:mindmap:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:mindmap:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:mindmap:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:mindmap:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:mindmap:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:mindmap:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:mindmap:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:mindmap:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:mindmap:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:mindmap:ddn.gallery.layouts::model.split_s"
+
+
+view "grouped" as "ddn@1"
+    with
+        id "grouped"
+        title "Layouts / grouped"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "grouped"
+            columns 2
+            group_by "role"
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:grouped"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:grouped:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:grouped:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:grouped:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:grouped:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:grouped:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:grouped:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:grouped:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:grouped:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:grouped:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:grouped:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:grouped:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:grouped:ddn.gallery.layouts::model.split_s"
+
+
+view "fit_grid" as "ddn@1"
+    with
+        id "fit_grid"
+        title "Layouts / fit_grid"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "fit_grid"
+            center "pins"
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:fit_grid"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:fit_grid:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:fit_grid:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:fit_grid:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:fit_grid:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:fit_grid:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:fit_grid:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:fit_grid:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:fit_grid:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:fit_grid:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:fit_grid:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:fit_grid:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:fit_grid:ddn.gallery.layouts::model.split_s"
+
+
+view "circular" as "ddn@1"
+    with
+        id "circular"
+        title "Layouts / circular"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "circular"
+            center "pins"
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:circular"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:circular:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:circular:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:circular:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:circular:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:circular:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:circular:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:circular:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:circular:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:circular:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:circular:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:circular:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:circular:ddn.gallery.layouts::model.split_s"
+
+
+view "radial" as "ddn@1"
+    with
+        id "radial"
+        title "Layouts / radial"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "radial"
+            center "pins"
+            root
+                id "ddn.gallery.layouts::model.holding"
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:radial"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:radial:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:radial:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:radial:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:radial:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:radial:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:radial:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:radial:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:radial:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:radial:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:radial:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:radial:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:radial:ddn.gallery.layouts::model.split_s"
+
+
+view "spanning_tree" as "ddn@1"
+    with
+        id "spanning_tree"
+        title "Layouts / spanning_tree"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "spanning_tree"
+            center "pins"
+            gap 112
+            row_gap 112
+            root
+                id "ddn.gallery.layouts::model.holding"
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:spanning_tree"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:spanning_tree:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:spanning_tree:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:spanning_tree:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:spanning_tree:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:spanning_tree:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:spanning_tree:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:spanning_tree:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:spanning_tree:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:spanning_tree:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:spanning_tree:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:spanning_tree:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:spanning_tree:ddn.gallery.layouts::model.split_s"
+
+
+view "organic" as "ddn@1"
+    with
+        id "organic"
+        title "Layouts / organic"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "organic"
+            center "pins"
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:organic"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:organic:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:organic:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:organic:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:organic:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:organic:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:organic:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:organic:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:organic:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:organic:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:organic:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:organic:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:organic:ddn.gallery.layouts::model.split_s"
+
+
+view "ladder" as "ddn@1"
+    with
+        id "ladder"
+        title "Layouts / ladder"
+        selection
+            include
+                item
+                    id "ddn.gallery.layouts::model.holding"
+                item
+                    id "ddn.gallery.layouts::model.energy"
+                item
+                    id "ddn.gallery.layouts::model.freight"
+                item
+                    id "ddn.gallery.layouts::model.media"
+                item
+                    id "ddn.gallery.layouts::model.wind"
+                item
+                    id "ddn.gallery.layouts::model.solar"
+                item
+                    id "ddn.gallery.layouts::model.own_e"
+                item
+                    id "ddn.gallery.layouts::model.own_f"
+                item
+                    id "ddn.gallery.layouts::model.own_m"
+                item
+                    id "ddn.gallery.layouts::model.split_w"
+                item
+                    id "ddn.gallery.layouts::model.split_s"
+        layout
+            algorithm "ladder"
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:ladder"
+
+    use "ddn.gallery.layouts::model.holding" named "appearance:ladder:ddn.gallery.layouts::model.holding"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.holding"
+
+    use "ddn.gallery.layouts::model.energy" named "appearance:ladder:ddn.gallery.layouts::model.energy"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.energy"
+
+    use "ddn.gallery.layouts::model.freight" named "appearance:ladder:ddn.gallery.layouts::model.freight"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.freight"
+
+    use "ddn.gallery.layouts::model.media" named "appearance:ladder:ddn.gallery.layouts::model.media"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.media"
+
+    use "ddn.gallery.layouts::model.wind" named "appearance:ladder:ddn.gallery.layouts::model.wind"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.wind"
+
+    use "ddn.gallery.layouts::model.solar" named "appearance:ladder:ddn.gallery.layouts::model.solar"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.solar"
+
+    use "ddn.gallery.layouts::model.own_e" named "appearance:ladder:ddn.gallery.layouts::model.own_e"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.own_e"
+
+    use "ddn.gallery.layouts::model.own_f" named "appearance:ladder:ddn.gallery.layouts::model.own_f"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.own_f"
+
+    use "ddn.gallery.layouts::model.own_m" named "appearance:ladder:ddn.gallery.layouts::model.own_m"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.own_m"
+
+    use "ddn.gallery.layouts::model.split_w" named "appearance:ladder:ddn.gallery.layouts::model.split_w"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.split_w"
+
+    use "ddn.gallery.layouts::model.split_s" named "appearance:ladder:ddn.gallery.layouts::model.split_s"
+        with
+            id "appearance:ladder:ddn.gallery.layouts::model.split_s"

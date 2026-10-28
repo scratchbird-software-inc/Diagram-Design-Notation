@@ -1,16 +1,123 @@
-ddn "0.5";
-module "ddn.usecases.views.governance";
-import "formats.ddn" as fmt;
-import "data/governance.ddn" as g;
+version ddn-next-1
 
-// Which contract applies, and who stewards it?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "17 / Data products and contracts" {
-    data: [@g.model];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.row;
-    select: [@g.model.product, @g.model.contract, @g.model.team];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "model.r_contract": 1, "model.r_owner": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "17 / Data products and contracts"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.governance::model.product" as "data_product"
+    with
+        id "ddn.usecases.governance::model.product"
+        title "Customer data product"
+
+
+element "ddn.usecases.governance::model.contract" as "dct"
+    with
+        id "ddn.usecases.governance::model.contract"
+        title "Customer export contract"
+
+
+element "ddn.usecases.governance::model.team" as "team"
+    with
+        id "ddn.usecases.governance::model.team"
+        title "Customer data team"
+
+
+relation "ddn.usecases.governance::model.r_contract" as "contract"
+    with
+        id "ddn.usecases.governance::model.r_contract"
+        title "conforms to contract"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.governance::model.product"
+            item
+                definition
+                    id "ddn.usecases.governance::model.contract"
+
+
+relation "ddn.usecases.governance::model.r_owner" as "steward"
+    with
+        id "ddn.usecases.governance::model.r_owner"
+        title "stewarded by"
+        properties
+            scope "contract stewardship"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.governance::model.contract"
+            item
+                definition
+                    id "ddn.usecases.governance::model.team"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "17 / Data products and contracts"
+        selection
+            include
+                item
+                    id "ddn.usecases.governance::model.product"
+                item
+                    id "ddn.usecases.governance::model.contract"
+                item
+                    id "ddn.usecases.governance::model.team"
+                item
+                    id "ddn.usecases.governance::model.r_contract"
+                item
+                    id "ddn.usecases.governance::model.r_owner"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_contract "1"
+                model.r_owner "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.governance::model.product" named "appearance:diagram:ddn.usecases.governance::model.product"
+        with
+            id "appearance:diagram:ddn.usecases.governance::model.product"
+
+    use "ddn.usecases.governance::model.contract" named "appearance:diagram:ddn.usecases.governance::model.contract"
+        with
+            id "appearance:diagram:ddn.usecases.governance::model.contract"
+
+    use "ddn.usecases.governance::model.team" named "appearance:diagram:ddn.usecases.governance::model.team"
+        with
+            id "appearance:diagram:ddn.usecases.governance::model.team"
+
+    use "ddn.usecases.governance::model.r_contract" named "appearance:diagram:ddn.usecases.governance::model.r_contract"
+        with
+            id "appearance:diagram:ddn.usecases.governance::model.r_contract"
+
+    use "ddn.usecases.governance::model.r_owner" named "appearance:diagram:ddn.usecases.governance::model.r_owner"
+        with
+            id "appearance:diagram:ddn.usecases.governance::model.r_owner"

@@ -1,40 +1,280 @@
-ddn "0.5";
-module "ddn.examples.bpmn";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:collaboration"
+    with
+        id "publication:collaboration"
+        title "Buyer / seller collaboration"
+        targets
+            item
+                target
+                    id "collaboration"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic BPMN-style collaboration for the bpmn.basic@1 profile.
-// Two pools (buyer, seller) are view frames with x_pool:true. Sequence flow
-// inside each pool uses uml.flow (RT-105); start/end events carry
-// x_event:{type:...}; the gateway carries x_gateway:{type:"exclusive"} and
-// renders with an "X" name marker. One dashed bpmn.messageflow crosses the
-// pools from request_quote to prepare_quote. All data is synthetic.
-// This is profile-level coverage, not BPMN conformance.
-data quote {
-    object start "Start" { kind: "flow.start"; x_event: { "type": "none" }; }
-    object request_quote "Request quote" { kind: "flow.process"; }
-    object decide "Quote acceptable?" { kind: "flow.gateway"; x_gateway: { "type": "exclusive" }; }
-    object failed "Quote rejected" { kind: "flow.end"; x_event: { "type": "error" }; }
 
-    object receive "Request received" { kind: "flow.start"; x_event: { "type": "message" }; }
-    object prepare_quote "Prepare quote" { kind: "flow.process"; }
-    object sent "Quote sent" { kind: "flow.end"; x_event: { "type": "message" }; }
+element "ddn.examples.bpmn::quote.start" as "flow.start"
+    with
+        id "ddn.examples.bpmn::quote.start"
+        title "Start"
+        metadata
+            x_event
+                type "none"
 
-    relation begin "begin" @start -> @request_quote { kind: "uml.flow"; }
-    relation review "review" @request_quote -> @decide { kind: "uml.flow"; }
-    relation reject "reject" @decide -> @failed { kind: "uml.flow"; }
 
-    relation intake "intake" @receive -> @prepare_quote { kind: "uml.flow"; }
-    relation deliver "deliver" @prepare_quote -> @sent { kind: "uml.flow"; }
+element "ddn.examples.bpmn::quote.request_quote" as "flow.process"
+    with
+        id "ddn.examples.bpmn::quote.request_quote"
+        title "Request quote"
 
-    relation request "quote request" @request_quote -> @prepare_quote { kind: "bpmn.messageflow"; }
-}
 
-view collaboration "Buyer / seller collaboration" {
-    data: [@quote]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "bpmn.basic@1"; }
-    layout { algorithm: layered; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-    frame buyer "Buyer" { x_pool: true; members: [@quote.start, @quote.request_quote, @quote.decide, @quote.failed]; }
-    frame seller "Seller" { x_pool: true; members: [@quote.receive, @quote.prepare_quote, @quote.sent]; }
-}
+element "ddn.examples.bpmn::quote.decide" as "flow.gateway"
+    with
+        id "ddn.examples.bpmn::quote.decide"
+        title "Quote acceptable?"
+        metadata
+            x_gateway
+                type "exclusive"
+
+
+element "ddn.examples.bpmn::quote.failed" as "flow.end"
+    with
+        id "ddn.examples.bpmn::quote.failed"
+        title "Quote rejected"
+        metadata
+            x_event
+                type "error"
+
+
+element "ddn.examples.bpmn::quote.receive" as "flow.start"
+    with
+        id "ddn.examples.bpmn::quote.receive"
+        title "Request received"
+        metadata
+            x_event
+                type "message"
+
+
+element "ddn.examples.bpmn::quote.prepare_quote" as "flow.process"
+    with
+        id "ddn.examples.bpmn::quote.prepare_quote"
+        title "Prepare quote"
+
+
+element "ddn.examples.bpmn::quote.sent" as "flow.end"
+    with
+        id "ddn.examples.bpmn::quote.sent"
+        title "Quote sent"
+        metadata
+            x_event
+                type "message"
+
+
+relation "ddn.examples.bpmn::quote.begin" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::quote.begin"
+        title "begin"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.start"
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.request_quote"
+
+
+relation "ddn.examples.bpmn::quote.review" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::quote.review"
+        title "review"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.request_quote"
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.decide"
+
+
+relation "ddn.examples.bpmn::quote.reject" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::quote.reject"
+        title "reject"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.decide"
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.failed"
+
+
+relation "ddn.examples.bpmn::quote.intake" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::quote.intake"
+        title "intake"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.receive"
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.prepare_quote"
+
+
+relation "ddn.examples.bpmn::quote.deliver" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::quote.deliver"
+        title "deliver"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.prepare_quote"
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.sent"
+
+
+relation "ddn.examples.bpmn::quote.request" as "bpmn.messageflow"
+    with
+        id "ddn.examples.bpmn::quote.request"
+        title "quote request"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.request_quote"
+            item
+                definition
+                    id "ddn.examples.bpmn::quote.prepare_quote"
+
+
+view "collaboration" as "bpmn.basic@1"
+    with
+        id "collaboration"
+        title "Buyer / seller collaboration"
+        selection
+            include
+                item
+                    id "ddn.examples.bpmn::quote.start"
+                item
+                    id "ddn.examples.bpmn::quote.request_quote"
+                item
+                    id "ddn.examples.bpmn::quote.decide"
+                item
+                    id "ddn.examples.bpmn::quote.failed"
+                item
+                    id "ddn.examples.bpmn::quote.receive"
+                item
+                    id "ddn.examples.bpmn::quote.prepare_quote"
+                item
+                    id "ddn.examples.bpmn::quote.sent"
+                item
+                    id "ddn.examples.bpmn::quote.begin"
+                item
+                    id "ddn.examples.bpmn::quote.review"
+                item
+                    id "ddn.examples.bpmn::quote.reject"
+                item
+                    id "ddn.examples.bpmn::quote.intake"
+                item
+                    id "ddn.examples.bpmn::quote.deliver"
+                item
+                    id "ddn.examples.bpmn::quote.request"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.bpmn::collaboration.buyer"
+                name "Buyer"
+                members
+                    item
+                        id "ddn.examples.bpmn::quote.start"
+                    item
+                        id "ddn.examples.bpmn::quote.request_quote"
+                    item
+                        id "ddn.examples.bpmn::quote.decide"
+                    item
+                        id "ddn.examples.bpmn::quote.failed"
+            item
+                id "ddn.examples.bpmn::collaboration.seller"
+                name "Seller"
+                members
+                    item
+                        id "ddn.examples.bpmn::quote.receive"
+                    item
+                        id "ddn.examples.bpmn::quote.prepare_quote"
+                    item
+                        id "ddn.examples.bpmn::quote.sent"
+        publication
+            id "publication:collaboration"
+
+    use "ddn.examples.bpmn::quote.start" named "appearance:collaboration:ddn.examples.bpmn::quote.start"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.start"
+
+    use "ddn.examples.bpmn::quote.request_quote" named "appearance:collaboration:ddn.examples.bpmn::quote.request_quote"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.request_quote"
+
+    use "ddn.examples.bpmn::quote.decide" named "appearance:collaboration:ddn.examples.bpmn::quote.decide"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.decide"
+
+    use "ddn.examples.bpmn::quote.failed" named "appearance:collaboration:ddn.examples.bpmn::quote.failed"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.failed"
+
+    use "ddn.examples.bpmn::quote.receive" named "appearance:collaboration:ddn.examples.bpmn::quote.receive"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.receive"
+
+    use "ddn.examples.bpmn::quote.prepare_quote" named "appearance:collaboration:ddn.examples.bpmn::quote.prepare_quote"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.prepare_quote"
+
+    use "ddn.examples.bpmn::quote.sent" named "appearance:collaboration:ddn.examples.bpmn::quote.sent"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.sent"
+
+    use "ddn.examples.bpmn::quote.begin" named "appearance:collaboration:ddn.examples.bpmn::quote.begin"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.begin"
+
+    use "ddn.examples.bpmn::quote.review" named "appearance:collaboration:ddn.examples.bpmn::quote.review"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.review"
+
+    use "ddn.examples.bpmn::quote.reject" named "appearance:collaboration:ddn.examples.bpmn::quote.reject"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.reject"
+
+    use "ddn.examples.bpmn::quote.intake" named "appearance:collaboration:ddn.examples.bpmn::quote.intake"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.intake"
+
+    use "ddn.examples.bpmn::quote.deliver" named "appearance:collaboration:ddn.examples.bpmn::quote.deliver"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.deliver"
+
+    use "ddn.examples.bpmn::quote.request" named "appearance:collaboration:ddn.examples.bpmn::quote.request"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::quote.request"

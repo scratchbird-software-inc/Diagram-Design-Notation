@@ -1,0 +1,41 @@
+PROJECTION RULES
+These rules narrow the property schemas. A schema accepting a value does not make it valid for every profile/mark. Use the exact profile ID; there is no chart.bar@1, chart.line@1 or electrical profile. Bar/line/area/point/pie/donut use chart.basic@1 with mark. A profile does not gain another method's permissions by reusing its renderer.
+
+Records: chart/timeline/geo data projections bind explicit projection.options.records to declared data or definitions. Data columns supply row keys; definition records merge metadata.x_record. Channel values are field/property paths, not expressions. Numeric strings are not numbers. References must resolve; filters that remove every row from nonempty input are invalid. Omitted semantic facts are unknown, never inferred. A draft permits incompleteness, not invalid references, types or combinations.
+
+CHART OPTIONS
+Names below are projection.options children. Common: width,height,records,mark,x,y,x_type,unit,aggregate,filter,order,missing. Add only the options listed for the actual mark:
+bar: series,series_missing,arrangement,baseline,transform,layers,error
+line: series,series_missing,arrangement,transform,layers,error,trend
+area: series,series_missing,arrangement,baseline,transform,layers,error
+point: series,series_missing,transform,layers,size,error,trend
+pie: none
+donut: inner_radius
+radar: series
+funnel: none
+gauge: target
+candlestick: open,high,low,close
+histogram: bin_count,bins,normalize,outside,step
+density,qq,quantiledot,dotplot,beeswarm,violin,wordcloud: none
+boxplot: quartiles,whiskers
+topk: k,others
+treemap,tidytree,radialtree,circlepack,sunburst,packedbubble: depth
+heatmap,parallelcoords: series
+densityheatmap: bin_count
+calendar: iso
+sankey,arc,force,edgebundle: target
+Additionally bar/area/pie/donut/treemap permit iso,depth. With iso true, depth is a finite number 0..2000 or a field path whose every value lies in that range. Ordinary layers containing point permit size; layers containing line/point permit trend. Do not use geographic marks outline/symbol/choropleth in a chart.
+
+Chart input: ordinary marks bind x and numeric y. Direct histogram/density/qq/quantiledot consume numeric x samples, reject y/series, require >=2 samples. densityheatmap requires numeric x/y and x_type number; point uses numeric x. Bar/pie/donut/radar/funnel use category x; line/area x may be category,number,date. Date channels use valid ISO dates or zoned timestamps. Unknown/missing channels require the specified missing policy; do not supply fabricated zeros. Record unit, when present, must equal declared unit.
+Aggregation other than none is supported only by bar,pie,donut,topk; count cannot declare a physical unit. Bar/area baseline must be 0. Pie/donut/radar/funnel/hierarchy measures are nonnegative; pie/donut totals must be positive. Wordcloud/link-chart weights are positive. log requires y>0; sqrt requires y>=0. Percent arrangement requires nonnegative values and positive totals per category. Error low/high fields must bracket y.
+Series: heatmap/parallelcoords require unique category-series pairs. Radar, series_missing error, and stack/percent without explicit series_missing zero require a value at every category-series intersection. Layers use identity transformation and only bar/line/area/point; if series is bound, supply one layer per series in series order; all layer y values finite.
+Gauge: exactly one row, y and optional numeric target in 0..100. Candlestick: finite open/high/low/close with low<=open,close<=high. Calendar: one measurement per distinct valid UTC day. Radar: >=3 categories. Funnel: >=2 stages. Density/qq: nonconstant samples for defined estimates. Densityheatmap: nonzero range on both axes. Violin: >=2 distinct observations per group. Boxplot/violin: <=40 categories; direct boxplot uses quartiles linear and whiskers iqr or 1.5 (R7/Tukey); do not use other schema-admitted methods.
+Hierarchy marks: x contains unique dotted leaf paths, <=3 nonempty segments; a supplied leaf cannot also be another supplied leaf's parent. Link marks: x is a nonempty source string, target names the target-field path (default field target), y is weight; source!=target. <=200 nodes; <=1000 links (edgebundle <=500). Sankey is acyclic. Edgebundle endpoint paths <=3 levels. Heatmap <=60 categories and60 series; parallelcoords 2..24 axes, complete/nonconstant values for meaningful scaling; wordcloud <=120 unique words. topk k=1..100. chart.quality@1 <=20 series and200 category-series coordinates.
+Direct histogram: bin_count 2..100 or auto; bins may be integer2..100 or object count/min/max/step, not a boundary array. Finite min<max; positive step must divide the domain into2..100 bins and agree with explicit count. out-of-domain samples follow outside error/clip/drop. densityheatmap bin_count2..60 or auto.
+Transform operations are separate from direct marks. If transform is histogram/pareto/waterfall/boxplot, permitted options are common minus aggregate, plus transform and: histogram bins,normalize,outside; pareto none; waterfall step,baseline; boxplot quartiles,whiskers. Mark must be bar (boxplot transform: boxplot). All consume explicit numeric y; all except histogram also need explicit scalar x. histogram transform bins is2..101 strictly increasing finite boundaries; outside error rejects excluded samples, drop must not exclude all. Pareto measurements>=0 with positive finite total. Waterfall step names a field containing delta/subtotal/total; starting baseline defaults0, declared subtotal/total must equal the running total. Boxplot transform uses quartiles linear, whiskers iqr|minmax|1.5 and<=40 categories. Do not combine operation transforms with series/layers or unrelated mark options.
+
+
+RUNTIME NARROWING OUTSIDE CHARTS
+Profile-specific endpoint exceptions: uaf.strategic@1 excludes flow.offpage as source of uaf.complieswith/uaf.forecast/uaf.mapsto/uaf.satisfiescapability/uaf.supports and as target of uaf.assignedto/uaf.forecast/uaf.owns/uaf.supports. uaf.operational@1 excludes uaf.resourcefunction/uaf.servicefunction/uaf.systemfunction at both ends of uml.flow. Mindmap's expanded element/relation sets admit external context; an external edge must touch a selected mindmap topic and still obey its single-incoming/root rules.
+Matrix heatmap encoding.mode is numeric|categorical|threshold (not profile prose's informal category/bands). numeric/threshold require increasing finite bounds and values inside them; explicit band boundaries2..13 strictly increasing finite numbers. Storymap task references must resolve to selected analysis.task; same story cannot be used twice. Panel IDs come from target definition metadata.x_record.id, otherwise its name/id; a view-inclusion panel gets an occurrence identity instead. Required canvas IDs must therefore be authored on record panels. Geo geography is an explicitly supplied asset: no auto-download or invented geography files.
+Electrical is symbol presentation, not a new electrical semantic profile. Select existing roles/profile and available image assets; do not invent electrical keywords or bundled asset paths. symbol.mode auto|image suppresses the card when symbol.image resolves. symbol.mode text gives an unboxed transparent note. symbol.label supports none,inside,top,bottom,left,right,top-left,top-right,bottom-left,bottom-right. Explicit image mode without a resolvable asset is invalid. intrinsic_size width/height on an asset makes dimensions deterministic. Existing electrical-common@1 artwork hides captions by default; other images default to bottom captions. These facilities do not validate or simulate circuits.

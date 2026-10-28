@@ -1,36 +1,479 @@
-ddn "0.5";
-module "ddn.gallery.spacing";
+version ddn-next-1
 
-// Gallery spacing sheet. One library-lending graph rendered at each spacing
-// level (tight, normal, loose, expanded).
-data model {
-    object member "Library member" { kind: actor; }
-    application catalogue "Catalogue search";
-    table loans "Loans register" {fields { loan_id; due_date; } }
-    object notices "Overdue notices" { kind: process; }
-    assoc searches @member -> @catalogue;
-    assoc borrows "borrows a copy recorded in the loans register" @member -> @loans;
-    assoc flags "flags overdue loans for the notice run" @loans -> @notices;
-}
+publication "publication:tight"
+    with
+        id "publication:tight"
+        title "Spacing / tight"
+        targets
+            item
+                target
+                    id "tight"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-format gallery {
-    style standard;
-    layout flow_right { gap: 112px; row_gap: 112px;  algorithm: layered; }
-    display readable { badges: none; maturity: none; }
-    publication screen { size: content; fit: none; }
-    legend key { width: 260px; }
-    bundle common { style: @standard; layout: @flow_right; display: @readable; publication: @screen; legend: @key; }
-}
 
-view tight "Spacing / tight" {
-    data: [@model]; format: @gallery.common; spacing: tight;
-}
-view normal "Spacing / normal" {
-    data: [@model]; format: @gallery.common; spacing: normal;
-}
-view loose "Spacing / loose" {
-    data: [@model]; format: @gallery.common; spacing: loose;
-}
-view expanded "Spacing / expanded" {
-    data: [@model]; format: @gallery.common; spacing: expanded;
-}
+publication "publication:normal"
+    with
+        id "publication:normal"
+        title "Spacing / normal"
+        targets
+            item
+                target
+                    id "normal"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:loose"
+    with
+        id "publication:loose"
+        title "Spacing / loose"
+        targets
+            item
+                target
+                    id "loose"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:expanded"
+    with
+        id "publication:expanded"
+        title "Spacing / expanded"
+        targets
+            item
+                target
+                    id "expanded"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.gallery.spacing::model.member" as "uml.actor"
+    with
+        id "ddn.gallery.spacing::model.member"
+        title "Library member"
+
+
+element "ddn.gallery.spacing::model.catalogue" as "application"
+    with
+        id "ddn.gallery.spacing::model.catalogue"
+        title "Catalogue search"
+
+
+element "ddn.gallery.spacing::model.loans.loan_id" as "field"
+    with
+        id "ddn.gallery.spacing::model.loans.loan_id"
+        title "loan_id"
+        content
+            parent
+                id "ddn.gallery.spacing::model.loans"
+            ordinal 0
+
+
+element "ddn.gallery.spacing::model.loans.due_date" as "field"
+    with
+        id "ddn.gallery.spacing::model.loans.due_date"
+        title "due_date"
+        content
+            parent
+                id "ddn.gallery.spacing::model.loans"
+            ordinal 1
+
+
+element "ddn.gallery.spacing::model.loans" as "table"
+    with
+        id "ddn.gallery.spacing::model.loans"
+        title "Loans register"
+        members
+            item
+                id "ddn.gallery.spacing::model.loans.loan_id"
+            item
+                id "ddn.gallery.spacing::model.loans.due_date"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "loan_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "due_date"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.gallery.spacing::model.notices" as "flow.process"
+    with
+        id "ddn.gallery.spacing::model.notices"
+        title "Overdue notices"
+
+
+relation "ddn.gallery.spacing::model.searches" as "assoc"
+    with
+        id "ddn.gallery.spacing::model.searches"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.spacing::model.member"
+            item
+                definition
+                    id "ddn.gallery.spacing::model.catalogue"
+
+
+relation "ddn.gallery.spacing::model.borrows" as "assoc"
+    with
+        id "ddn.gallery.spacing::model.borrows"
+        title "borrows a copy recorded in the loans register"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.spacing::model.member"
+            item
+                definition
+                    id "ddn.gallery.spacing::model.loans"
+
+
+relation "ddn.gallery.spacing::model.flags" as "assoc"
+    with
+        id "ddn.gallery.spacing::model.flags"
+        title "flags overdue loans for the notice run"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.spacing::model.loans"
+            item
+                definition
+                    id "ddn.gallery.spacing::model.notices"
+
+
+view "tight" as "ddn@1"
+    with
+        id "tight"
+        title "Spacing / tight"
+        selection
+            include
+                item
+                    id "ddn.gallery.spacing::model.member"
+                item
+                    id "ddn.gallery.spacing::model.catalogue"
+                item
+                    id "ddn.gallery.spacing::model.loans"
+                item
+                    id "ddn.gallery.spacing::model.notices"
+                item
+                    id "ddn.gallery.spacing::model.searches"
+                item
+                    id "ddn.gallery.spacing::model.borrows"
+                item
+                    id "ddn.gallery.spacing::model.flags"
+        layout
+            algorithm "layered"
+            gap 72.8
+            row_gap 72.8
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:tight"
+
+    use "ddn.gallery.spacing::model.member" named "appearance:tight:ddn.gallery.spacing::model.member"
+        with
+            id "appearance:tight:ddn.gallery.spacing::model.member"
+
+    use "ddn.gallery.spacing::model.catalogue" named "appearance:tight:ddn.gallery.spacing::model.catalogue"
+        with
+            id "appearance:tight:ddn.gallery.spacing::model.catalogue"
+
+    use "ddn.gallery.spacing::model.loans" named "appearance:tight:ddn.gallery.spacing::model.loans"
+        with
+            id "appearance:tight:ddn.gallery.spacing::model.loans"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.spacing::model.notices" named "appearance:tight:ddn.gallery.spacing::model.notices"
+        with
+            id "appearance:tight:ddn.gallery.spacing::model.notices"
+
+    use "ddn.gallery.spacing::model.searches" named "appearance:tight:ddn.gallery.spacing::model.searches"
+        with
+            id "appearance:tight:ddn.gallery.spacing::model.searches"
+
+    use "ddn.gallery.spacing::model.borrows" named "appearance:tight:ddn.gallery.spacing::model.borrows"
+        with
+            id "appearance:tight:ddn.gallery.spacing::model.borrows"
+
+    use "ddn.gallery.spacing::model.flags" named "appearance:tight:ddn.gallery.spacing::model.flags"
+        with
+            id "appearance:tight:ddn.gallery.spacing::model.flags"
+
+
+view "normal" as "ddn@1"
+    with
+        id "normal"
+        title "Spacing / normal"
+        selection
+            include
+                item
+                    id "ddn.gallery.spacing::model.member"
+                item
+                    id "ddn.gallery.spacing::model.catalogue"
+                item
+                    id "ddn.gallery.spacing::model.loans"
+                item
+                    id "ddn.gallery.spacing::model.notices"
+                item
+                    id "ddn.gallery.spacing::model.searches"
+                item
+                    id "ddn.gallery.spacing::model.borrows"
+                item
+                    id "ddn.gallery.spacing::model.flags"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:normal"
+
+    use "ddn.gallery.spacing::model.member" named "appearance:normal:ddn.gallery.spacing::model.member"
+        with
+            id "appearance:normal:ddn.gallery.spacing::model.member"
+
+    use "ddn.gallery.spacing::model.catalogue" named "appearance:normal:ddn.gallery.spacing::model.catalogue"
+        with
+            id "appearance:normal:ddn.gallery.spacing::model.catalogue"
+
+    use "ddn.gallery.spacing::model.loans" named "appearance:normal:ddn.gallery.spacing::model.loans"
+        with
+            id "appearance:normal:ddn.gallery.spacing::model.loans"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.spacing::model.notices" named "appearance:normal:ddn.gallery.spacing::model.notices"
+        with
+            id "appearance:normal:ddn.gallery.spacing::model.notices"
+
+    use "ddn.gallery.spacing::model.searches" named "appearance:normal:ddn.gallery.spacing::model.searches"
+        with
+            id "appearance:normal:ddn.gallery.spacing::model.searches"
+
+    use "ddn.gallery.spacing::model.borrows" named "appearance:normal:ddn.gallery.spacing::model.borrows"
+        with
+            id "appearance:normal:ddn.gallery.spacing::model.borrows"
+
+    use "ddn.gallery.spacing::model.flags" named "appearance:normal:ddn.gallery.spacing::model.flags"
+        with
+            id "appearance:normal:ddn.gallery.spacing::model.flags"
+
+
+view "loose" as "ddn@1"
+    with
+        id "loose"
+        title "Spacing / loose"
+        selection
+            include
+                item
+                    id "ddn.gallery.spacing::model.member"
+                item
+                    id "ddn.gallery.spacing::model.catalogue"
+                item
+                    id "ddn.gallery.spacing::model.loans"
+                item
+                    id "ddn.gallery.spacing::model.notices"
+                item
+                    id "ddn.gallery.spacing::model.searches"
+                item
+                    id "ddn.gallery.spacing::model.borrows"
+                item
+                    id "ddn.gallery.spacing::model.flags"
+        layout
+            algorithm "layered"
+            gap 168
+            row_gap 168
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:loose"
+
+    use "ddn.gallery.spacing::model.member" named "appearance:loose:ddn.gallery.spacing::model.member"
+        with
+            id "appearance:loose:ddn.gallery.spacing::model.member"
+
+    use "ddn.gallery.spacing::model.catalogue" named "appearance:loose:ddn.gallery.spacing::model.catalogue"
+        with
+            id "appearance:loose:ddn.gallery.spacing::model.catalogue"
+
+    use "ddn.gallery.spacing::model.loans" named "appearance:loose:ddn.gallery.spacing::model.loans"
+        with
+            id "appearance:loose:ddn.gallery.spacing::model.loans"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.spacing::model.notices" named "appearance:loose:ddn.gallery.spacing::model.notices"
+        with
+            id "appearance:loose:ddn.gallery.spacing::model.notices"
+
+    use "ddn.gallery.spacing::model.searches" named "appearance:loose:ddn.gallery.spacing::model.searches"
+        with
+            id "appearance:loose:ddn.gallery.spacing::model.searches"
+
+    use "ddn.gallery.spacing::model.borrows" named "appearance:loose:ddn.gallery.spacing::model.borrows"
+        with
+            id "appearance:loose:ddn.gallery.spacing::model.borrows"
+
+    use "ddn.gallery.spacing::model.flags" named "appearance:loose:ddn.gallery.spacing::model.flags"
+        with
+            id "appearance:loose:ddn.gallery.spacing::model.flags"
+
+
+view "expanded" as "ddn@1"
+    with
+        id "expanded"
+        title "Spacing / expanded"
+        selection
+            include
+                item
+                    id "ddn.gallery.spacing::model.member"
+                item
+                    id "ddn.gallery.spacing::model.catalogue"
+                item
+                    id "ddn.gallery.spacing::model.loans"
+                item
+                    id "ddn.gallery.spacing::model.notices"
+                item
+                    id "ddn.gallery.spacing::model.searches"
+                item
+                    id "ddn.gallery.spacing::model.borrows"
+                item
+                    id "ddn.gallery.spacing::model.flags"
+        layout
+            algorithm "layered"
+            gap 224
+            row_gap 224
+        display
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:expanded"
+
+    use "ddn.gallery.spacing::model.member" named "appearance:expanded:ddn.gallery.spacing::model.member"
+        with
+            id "appearance:expanded:ddn.gallery.spacing::model.member"
+
+    use "ddn.gallery.spacing::model.catalogue" named "appearance:expanded:ddn.gallery.spacing::model.catalogue"
+        with
+            id "appearance:expanded:ddn.gallery.spacing::model.catalogue"
+
+    use "ddn.gallery.spacing::model.loans" named "appearance:expanded:ddn.gallery.spacing::model.loans"
+        with
+            id "appearance:expanded:ddn.gallery.spacing::model.loans"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.gallery.spacing::model.notices" named "appearance:expanded:ddn.gallery.spacing::model.notices"
+        with
+            id "appearance:expanded:ddn.gallery.spacing::model.notices"
+
+    use "ddn.gallery.spacing::model.searches" named "appearance:expanded:ddn.gallery.spacing::model.searches"
+        with
+            id "appearance:expanded:ddn.gallery.spacing::model.searches"
+
+    use "ddn.gallery.spacing::model.borrows" named "appearance:expanded:ddn.gallery.spacing::model.borrows"
+        with
+            id "appearance:expanded:ddn.gallery.spacing::model.borrows"
+
+    use "ddn.gallery.spacing::model.flags" named "appearance:expanded:ddn.gallery.spacing::model.flags"
+        with
+            id "appearance:expanded:ddn.gallery.spacing::model.flags"

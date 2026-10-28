@@ -1,0 +1,27 @@
+{
+  "includes": [
+    "shared.ddn"
+  ],
+  "definitions": [
+    {
+      "name": "Customer",
+      "role": "entity"
+    }
+  ],
+  "views": [
+    {
+      "name": "Sales",
+      "selection": {
+        "include": [
+          {
+            "name": "Customer"
+          },
+          {
+            "file": "shared.ddn",
+            "name": "Customer"
+          }
+        ]
+      }
+    }
+  ]
+}

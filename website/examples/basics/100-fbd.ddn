@@ -1,36 +1,331 @@
-ddn "0.5";
-module "ddn.examples.fbd";
+version ddn-next-1
 
-// B1-084: an IEC 61131-3 FBD motor-control diagram — a TON timer and an AND
-// block with name/type headers, typed pins (BOOL/TIME), a negation bubble on
-// the STOP input, and a feedback wire from the timer output back into the
-// AND input. All data is synthetic.
-data m {
-    object start_btn "START" { kind: "fbd.variable"; }
-    object stop_btn "STOP" { kind: "fbd.variable"; }
-    object t1 "T1" { kind: "fbd.block"; datatype: "TON";
-        ports {
-            in1 { direction: in; x_fbd: { type: "BOOL" }; }
-            pt { direction: in; x_fbd: { type: "TIME" }; }
-            q { direction: out; x_fbd: { type: "BOOL" }; }
-            et { direction: out; x_fbd: { type: "TIME" }; }
-        }
-    }
-    object a1 "A1" { kind: "fbd.block"; datatype: "AND";
-        ports {
-            ina { direction: in; x_fbd: { type: "BOOL" }; }
-            inb { direction: in; x_fbd: { type: "BOOL", negated: true }; }
-            out1 { direction: out; x_fbd: { type: "BOOL" }; }
-        }
-    }
-    object motor "MOTOR" { kind: "fbd.variable"; }
-    relation w1 "" @start_btn -> @a1.ina { kind: "fbd.wire"; }
-    relation w2 "" @stop_btn -> @a1.inb { kind: "fbd.wire"; }
-    relation w3 "" @a1.out1 -> @t1.in1 { kind: "fbd.wire"; }
-    relation w4 "" @t1.q -> @motor { kind: "fbd.wire"; }
-    relation fb "" @t1.q -> @a1.ina { kind: "fbd.wire"; }
-}
-view d "Motor control FBD": [@m] as "fbd.basic@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
-    publication { size: content; fit: none; }
-}
+publication "publication:d"
+    with
+        id "publication:d"
+        title "Motor control FBD"
+        targets
+            item
+                target
+                    id "d"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.fbd::m.start_btn" as "fbd.variable"
+    with
+        id "ddn.examples.fbd::m.start_btn"
+        title "START"
+
+
+element "ddn.examples.fbd::m.stop_btn" as "fbd.variable"
+    with
+        id "ddn.examples.fbd::m.stop_btn"
+        title "STOP"
+
+
+element "ddn.examples.fbd::m.t1.in1" as "core::Port"
+    with
+        id "ddn.examples.fbd::m.t1.in1"
+        title "in1"
+        metadata
+            x_fbd
+                type "BOOL"
+        content
+            owner
+                id "ddn.examples.fbd::m.t1"
+            direction "input"
+
+
+element "ddn.examples.fbd::m.t1.pt" as "core::Port"
+    with
+        id "ddn.examples.fbd::m.t1.pt"
+        title "pt"
+        metadata
+            x_fbd
+                type "TIME"
+        content
+            owner
+                id "ddn.examples.fbd::m.t1"
+            direction "input"
+
+
+element "ddn.examples.fbd::m.t1.q" as "core::Port"
+    with
+        id "ddn.examples.fbd::m.t1.q"
+        title "q"
+        metadata
+            x_fbd
+                type "BOOL"
+        content
+            owner
+                id "ddn.examples.fbd::m.t1"
+            direction "output"
+
+
+element "ddn.examples.fbd::m.t1.et" as "core::Port"
+    with
+        id "ddn.examples.fbd::m.t1.et"
+        title "et"
+        metadata
+            x_fbd
+                type "TIME"
+        content
+            owner
+                id "ddn.examples.fbd::m.t1"
+            direction "output"
+
+
+element "ddn.examples.fbd::m.t1" as "fbd.block"
+    with
+        id "ddn.examples.fbd::m.t1"
+        title "T1"
+        members
+            item
+                id "ddn.examples.fbd::m.t1.in1"
+            item
+                id "ddn.examples.fbd::m.t1.pt"
+            item
+                id "ddn.examples.fbd::m.t1.q"
+            item
+                id "ddn.examples.fbd::m.t1.et"
+        metadata
+            x_record
+                block_type "TON"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "datatype": "TON"
+                    }
+                format "plain"
+
+
+element "ddn.examples.fbd::m.a1.ina" as "core::Port"
+    with
+        id "ddn.examples.fbd::m.a1.ina"
+        title "ina"
+        metadata
+            x_fbd
+                type "BOOL"
+        content
+            owner
+                id "ddn.examples.fbd::m.a1"
+            direction "input"
+
+
+element "ddn.examples.fbd::m.a1.inb" as "core::Port"
+    with
+        id "ddn.examples.fbd::m.a1.inb"
+        title "inb"
+        metadata
+            x_fbd
+                type "BOOL"
+                negated true
+        content
+            owner
+                id "ddn.examples.fbd::m.a1"
+            direction "input"
+
+
+element "ddn.examples.fbd::m.a1.out1" as "core::Port"
+    with
+        id "ddn.examples.fbd::m.a1.out1"
+        title "out1"
+        metadata
+            x_fbd
+                type "BOOL"
+        content
+            owner
+                id "ddn.examples.fbd::m.a1"
+            direction "output"
+
+
+element "ddn.examples.fbd::m.a1" as "fbd.block"
+    with
+        id "ddn.examples.fbd::m.a1"
+        title "A1"
+        members
+            item
+                id "ddn.examples.fbd::m.a1.ina"
+            item
+                id "ddn.examples.fbd::m.a1.inb"
+            item
+                id "ddn.examples.fbd::m.a1.out1"
+        metadata
+            x_record
+                block_type "AND"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "datatype": "AND"
+                    }
+                format "plain"
+
+
+element "ddn.examples.fbd::m.motor" as "fbd.variable"
+    with
+        id "ddn.examples.fbd::m.motor"
+        title "MOTOR"
+
+
+relation "ddn.examples.fbd::m.w1" as "fbd.wire"
+    with
+        id "ddn.examples.fbd::m.w1"
+        title "Wire"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.fbd::m.start_btn"
+            item
+                definition
+                    id "ddn.examples.fbd::m.a1"
+                member
+                    id "ddn.examples.fbd::m.a1.ina"
+
+
+relation "ddn.examples.fbd::m.w2" as "fbd.wire"
+    with
+        id "ddn.examples.fbd::m.w2"
+        title "Wire"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.fbd::m.stop_btn"
+            item
+                definition
+                    id "ddn.examples.fbd::m.a1"
+                member
+                    id "ddn.examples.fbd::m.a1.inb"
+
+
+relation "ddn.examples.fbd::m.w3" as "fbd.wire"
+    with
+        id "ddn.examples.fbd::m.w3"
+        title "Wire"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.fbd::m.a1"
+                member
+                    id "ddn.examples.fbd::m.a1.out1"
+            item
+                definition
+                    id "ddn.examples.fbd::m.t1"
+                member
+                    id "ddn.examples.fbd::m.t1.in1"
+
+
+relation "ddn.examples.fbd::m.w4" as "fbd.wire"
+    with
+        id "ddn.examples.fbd::m.w4"
+        title "Wire"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.fbd::m.t1"
+                member
+                    id "ddn.examples.fbd::m.t1.q"
+            item
+                definition
+                    id "ddn.examples.fbd::m.motor"
+
+
+relation "ddn.examples.fbd::m.fb" as "fbd.wire"
+    with
+        id "ddn.examples.fbd::m.fb"
+        title "Wire"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.fbd::m.t1"
+                member
+                    id "ddn.examples.fbd::m.t1.q"
+            item
+                definition
+                    id "ddn.examples.fbd::m.a1"
+                member
+                    id "ddn.examples.fbd::m.a1.ina"
+
+
+view "d" as "fbd.basic@1"
+    with
+        id "d"
+        title "Motor control FBD"
+        selection
+            include
+                item
+                    id "ddn.examples.fbd::m.start_btn"
+                item
+                    id "ddn.examples.fbd::m.stop_btn"
+                item
+                    id "ddn.examples.fbd::m.t1"
+                item
+                    id "ddn.examples.fbd::m.a1"
+                item
+                    id "ddn.examples.fbd::m.motor"
+                item
+                    id "ddn.examples.fbd::m.w1"
+                item
+                    id "ddn.examples.fbd::m.w2"
+                item
+                    id "ddn.examples.fbd::m.w3"
+                item
+                    id "ddn.examples.fbd::m.w4"
+                item
+                    id "ddn.examples.fbd::m.fb"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:d"
+
+    use "ddn.examples.fbd::m.start_btn" named "appearance:d:ddn.examples.fbd::m.start_btn"
+        with
+            id "appearance:d:ddn.examples.fbd::m.start_btn"
+
+    use "ddn.examples.fbd::m.stop_btn" named "appearance:d:ddn.examples.fbd::m.stop_btn"
+        with
+            id "appearance:d:ddn.examples.fbd::m.stop_btn"
+
+    use "ddn.examples.fbd::m.t1" named "appearance:d:ddn.examples.fbd::m.t1"
+        with
+            id "appearance:d:ddn.examples.fbd::m.t1"
+
+    use "ddn.examples.fbd::m.a1" named "appearance:d:ddn.examples.fbd::m.a1"
+        with
+            id "appearance:d:ddn.examples.fbd::m.a1"
+
+    use "ddn.examples.fbd::m.motor" named "appearance:d:ddn.examples.fbd::m.motor"
+        with
+            id "appearance:d:ddn.examples.fbd::m.motor"
+
+    use "ddn.examples.fbd::m.w1" named "appearance:d:ddn.examples.fbd::m.w1"
+        with
+            id "appearance:d:ddn.examples.fbd::m.w1"
+
+    use "ddn.examples.fbd::m.w2" named "appearance:d:ddn.examples.fbd::m.w2"
+        with
+            id "appearance:d:ddn.examples.fbd::m.w2"
+
+    use "ddn.examples.fbd::m.w3" named "appearance:d:ddn.examples.fbd::m.w3"
+        with
+            id "appearance:d:ddn.examples.fbd::m.w3"
+
+    use "ddn.examples.fbd::m.w4" named "appearance:d:ddn.examples.fbd::m.w4"
+        with
+            id "appearance:d:ddn.examples.fbd::m.w4"
+
+    use "ddn.examples.fbd::m.fb" named "appearance:d:ddn.examples.fbd::m.fb"
+        with
+            id "appearance:d:ddn.examples.fbd::m.fb"

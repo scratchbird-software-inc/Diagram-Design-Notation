@@ -1,30 +1,321 @@
-ddn "0.5";
-module "ddn.examples.whiteboard-workshop";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:workshop"
+    with
+        id "publication:workshop"
+        title "Synthetic workshop wall"
+        targets
+            item
+                target
+                    id "workshop"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// Synthetic workshop wall (all content invented): sticky notes in every
-// sticky colour, push-pins and tape decorations, and string relations between
-// pinned notes — the collaborative whiteboard idiom (B1-101).
-data wall {
-    sticky goal "Goal" { description: "What does a good Q3 look like? Agree it before we plan it."; x_sticky: { colour: yellow, pin: true }; }
-    sticky customers "Customers" { description: "New accounts stall at the sample tour. Onboarding emails arrive too late to help."; x_sticky: { colour: pink, pin: true }; }
-    sticky tour "Sample tour" { description: "Keep it to five steps. Load synthetic data first, real import second."; x_sticky: { colour: blue, tape: true }; }
-    sticky pricing "Pricing" { description: "Free tier is fine. Team tier needs the annual discount story."; x_sticky: { colour: green, pin: true }; }
-    sticky risk "Risks" { description: "Scope creep on the tour. Performance on very large maps. Holiday freeze."; x_sticky: { colour: orange, tape: true }; }
-    sticky actions "Next steps" { description: "Robin drafts the tour. Sam prices the discount. Review Friday."; x_sticky: { colour: purple, pin: true }; }
-    relation s1 @goal -> @customers { kind: assoc; }
-    relation s2 @customers -> @tour { kind: assoc; }
-    relation s3 @tour -> @pricing { kind: assoc; }
-    relation s4 @risk -> @tour { kind: assoc; }
-    relation s5 @actions -> @tour { kind: assoc; }
-}
 
-view workshop "Synthetic workshop wall" {
-    data: [@wall];
-    format: @shared.styles.technical;
-    projection { kind: graph; profile: "ddn@1"; }
-    layout { algorithm: grid; gap: 120px; routing: string; }
-    display { kind: none; }
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.whiteboard-workshop::wall.goal" as "note.sticky"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.goal"
+        title "Goal"
+        description "What does a good Q3 look like? Agree it before we plan it."
+        metadata
+            x_sticky
+                colour "yellow"
+                pin true
+        content
+            text "What does a good Q3 look like? Agree it before we plan it."
+        draft
+            text "What does a good Q3 look like? Agree it before we plan it."
+
+
+element "ddn.examples.whiteboard-workshop::wall.customers" as "note.sticky"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.customers"
+        title "Customers"
+        description "New accounts stall at the sample tour. Onboarding emails arrive too late to help."
+        metadata
+            x_sticky
+                colour "pink"
+                pin true
+        content
+            text "New accounts stall at the sample tour. Onboarding emails arrive too late to help."
+        draft
+            text "New accounts stall at the sample tour. Onboarding emails arrive too late to help."
+
+
+element "ddn.examples.whiteboard-workshop::wall.tour" as "note.sticky"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.tour"
+        title "Sample tour"
+        description "Keep it to five steps. Load synthetic data first, real import second."
+        metadata
+            x_sticky
+                colour "blue"
+                tape true
+        content
+            text "Keep it to five steps. Load synthetic data first, real import second."
+        draft
+            text "Keep it to five steps. Load synthetic data first, real import second."
+
+
+element "ddn.examples.whiteboard-workshop::wall.pricing" as "note.sticky"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.pricing"
+        title "Pricing"
+        description "Free tier is fine. Team tier needs the annual discount story."
+        metadata
+            x_sticky
+                colour "green"
+                pin true
+        content
+            text "Free tier is fine. Team tier needs the annual discount story."
+        draft
+            text "Free tier is fine. Team tier needs the annual discount story."
+
+
+element "ddn.examples.whiteboard-workshop::wall.risk" as "note.sticky"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.risk"
+        title "Risks"
+        description "Scope creep on the tour. Performance on very large maps. Holiday freeze."
+        metadata
+            x_sticky
+                colour "orange"
+                tape true
+        content
+            text "Scope creep on the tour. Performance on very large maps. Holiday freeze."
+        draft
+            text "Scope creep on the tour. Performance on very large maps. Holiday freeze."
+
+
+element "ddn.examples.whiteboard-workshop::wall.actions" as "note.sticky"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.actions"
+        title "Next steps"
+        description "Robin drafts the tour. Sam prices the discount. Review Friday."
+        metadata
+            x_sticky
+                colour "purple"
+                pin true
+        content
+            text "Robin drafts the tour. Sam prices the discount. Review Friday."
+        draft
+            text "Robin drafts the tour. Sam prices the discount. Review Friday."
+
+
+relation "ddn.examples.whiteboard-workshop::wall.s1" as "assoc"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.s1"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.whiteboard-workshop::wall.goal"
+            item
+                definition
+                    id "ddn.examples.whiteboard-workshop::wall.customers"
+
+
+relation "ddn.examples.whiteboard-workshop::wall.s2" as "assoc"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.s2"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.whiteboard-workshop::wall.customers"
+            item
+                definition
+                    id "ddn.examples.whiteboard-workshop::wall.tour"
+
+
+relation "ddn.examples.whiteboard-workshop::wall.s3" as "assoc"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.s3"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.whiteboard-workshop::wall.tour"
+            item
+                definition
+                    id "ddn.examples.whiteboard-workshop::wall.pricing"
+
+
+relation "ddn.examples.whiteboard-workshop::wall.s4" as "assoc"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.s4"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.whiteboard-workshop::wall.risk"
+            item
+                definition
+                    id "ddn.examples.whiteboard-workshop::wall.tour"
+
+
+relation "ddn.examples.whiteboard-workshop::wall.s5" as "assoc"
+    with
+        id "ddn.examples.whiteboard-workshop::wall.s5"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.whiteboard-workshop::wall.actions"
+            item
+                definition
+                    id "ddn.examples.whiteboard-workshop::wall.tour"
+
+
+view "workshop" as "ddn@1"
+    with
+        id "workshop"
+        title "Synthetic workshop wall"
+        selection
+            include
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.goal"
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.customers"
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.tour"
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.pricing"
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.risk"
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.actions"
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.s1"
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.s2"
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.s3"
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.s4"
+                item
+                    id "ddn.examples.whiteboard-workshop::wall.s5"
+        layout
+            algorithm "grid"
+            routing "string"
+            gap 120
+        display
+            kind "none"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:workshop"
+
+    use "ddn.examples.whiteboard-workshop::wall.goal" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.goal"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.goal"
+            body "draft"
+            background
+                color "#fff59d"
+            decorations
+                item
+                    kind "push-pin"
+                    color "#b91c1c"
+                    position "ct"
+
+    use "ddn.examples.whiteboard-workshop::wall.customers" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.customers"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.customers"
+            body "draft"
+            background
+                color "#fce4ec"
+            decorations
+                item
+                    kind "push-pin"
+                    color "#b91c1c"
+                    position "ct"
+
+    use "ddn.examples.whiteboard-workshop::wall.tour" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.tour"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.tour"
+            body "draft"
+            background
+                color "#dbeafe"
+            decorations
+                item
+                    kind "tape"
+                    position "ct"
+                    size 48
+                    color "#e4c788"
+                    opacity 0.65
+
+    use "ddn.examples.whiteboard-workshop::wall.pricing" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.pricing"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.pricing"
+            body "draft"
+            background
+                color "#dcfce7"
+            decorations
+                item
+                    kind "push-pin"
+                    color "#b91c1c"
+                    position "ct"
+
+    use "ddn.examples.whiteboard-workshop::wall.risk" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.risk"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.risk"
+            body "draft"
+            background
+                color "#ffedd5"
+            decorations
+                item
+                    kind "tape"
+                    position "ct"
+                    size 48
+                    color "#e4c788"
+                    opacity 0.65
+
+    use "ddn.examples.whiteboard-workshop::wall.actions" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.actions"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.actions"
+            body "draft"
+            background
+                color "#ede9fe"
+            decorations
+                item
+                    kind "push-pin"
+                    color "#b91c1c"
+                    position "ct"
+
+    use "ddn.examples.whiteboard-workshop::wall.s1" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.s1"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.s1"
+
+    use "ddn.examples.whiteboard-workshop::wall.s2" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.s2"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.s2"
+
+    use "ddn.examples.whiteboard-workshop::wall.s3" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.s3"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.s3"
+
+    use "ddn.examples.whiteboard-workshop::wall.s4" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.s4"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.s4"
+
+    use "ddn.examples.whiteboard-workshop::wall.s5" named "appearance:workshop:ddn.examples.whiteboard-workshop::wall.s5"
+        with
+            id "appearance:workshop:ddn.examples.whiteboard-workshop::wall.s5"

@@ -1,96 +1,1599 @@
-ddn "0.5";
-module "ddn.gallery.routing";
+version ddn-next-1
 
-// Gallery routing sheet. The same publication pipeline graph rendered in every
-// routing mode (orthogonal, straight, curved-bezier, curved-rounded) crossed
-// with every look (classic, handDrawn, neo).
-data model {
-    object manuscript "Manuscript intake" { kind: process; }
-    object review "Peer review" { kind: process; }
-    object edit "Copy editing" { kind: process; }
-    object typeset "Typesetting" { kind: process; }
-    table archive "Digital archive";
-    assoc submit @manuscript -> @review;
-    assoc revise "returns for revision" @review -> @manuscript;
-    assoc accept @review -> @edit;
-    assoc compose @edit -> @typeset;
-    assoc publish @typeset -> @archive;
-    assoc reference @edit -> @archive;
-}
+publication "publication:orthogonal_classic"
+    with
+        id "publication:orthogonal_classic"
+        title "Routing / orthogonal × classic"
+        targets
+            item
+                target
+                    id "orthogonal_classic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data model_straight {
-    object manuscript "Manuscript intake" { kind: process; }
-    object review "Peer review" { kind: process; }
-    object edit "Copy editing" { kind: process; }
-    object typeset "Typesetting" { kind: process; }
-    table archive "Digital archive";
-    assoc submit @manuscript -> @review;
-    assoc revise "returns for revision" @review -> @manuscript;
-    assoc accept @review -> @edit;
-    assoc compose @edit -> @typeset;
-    assoc publish @typeset -> @archive;
-}
 
-format gallery {
-    layout flow_right { algorithm: layered; gap: 150px; row_gap: 130px; }
-    display readable { fields: none; badges: none; maturity: none; }
-    publication screen { size: content; fit: none; }
-    legend key { width: 260px; }
-}
+publication "publication:straight_classic"
+    with
+        id "publication:straight_classic"
+        title "Routing / straight × classic"
+        targets
+            item
+                target
+                    id "straight_classic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view orthogonal_classic "Routing / orthogonal × classic" {
-    data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: orthogonal; gap: 150px; row_gap: 130px; }
-}
-view straight_classic "Routing / straight × classic" {
-    data: [@model_straight]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: straight; gap: 260px; row_gap: 240px; }
-}
-view curved_classic "Routing / curved bezier × classic" {
-    data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: curved; curve: bezier; curve_tension: 0.5; gap: 150px; row_gap: 130px; }
-}
-view rounded_classic "Routing / rounded × classic" {
-    data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: curved; curve: rounded; curve_radius: 32px; gap: 150px; row_gap: 130px; }
-}
-view orthogonal_handdrawn "Routing / orthogonal × handDrawn" {
-    data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: orthogonal; gap: 150px; row_gap: 130px; }
-    style { look: handDrawn; }
-}
-view straight_handdrawn "Routing / straight × handDrawn" {
-    data: [@model_straight]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: straight; gap: 260px; row_gap: 240px; }
-    style { look: handDrawn; }
-}
-view curved_handdrawn "Routing / curved bezier × handDrawn" {
-    data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: curved; curve: bezier; curve_tension: 0.5; gap: 150px; row_gap: 130px; }
-    style { look: handDrawn; }
-}
-view rounded_handdrawn "Routing / rounded × handDrawn" {
-    data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: curved; curve: rounded; curve_radius: 32px; gap: 150px; row_gap: 130px; }
-    style { look: handDrawn; }
-}
-view orthogonal_neo "Routing / orthogonal × neo" {
-    data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: orthogonal; gap: 150px; row_gap: 130px; }
-    style { look: neo; }
-}
-view straight_neo "Routing / straight × neo" {
-    data: [@model_straight]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: straight; gap: 260px; row_gap: 240px; }
-    style { look: neo; }
-}
-view curved_neo "Routing / curved bezier × neo" {
-    data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: curved; curve: bezier; curve_tension: 0.5; gap: 150px; row_gap: 130px; }
-    style { look: neo; }
-}
-view rounded_neo "Routing / rounded × neo" {
-    data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; routing: curved; curve: rounded; curve_radius: 32px; gap: 150px; row_gap: 130px; }
-    style { look: neo; }
-}
+
+publication "publication:curved_classic"
+    with
+        id "publication:curved_classic"
+        title "Routing / curved bezier × classic"
+        targets
+            item
+                target
+                    id "curved_classic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:rounded_classic"
+    with
+        id "publication:rounded_classic"
+        title "Routing / rounded × classic"
+        targets
+            item
+                target
+                    id "rounded_classic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:orthogonal_handdrawn"
+    with
+        id "publication:orthogonal_handdrawn"
+        title "Routing / orthogonal × handDrawn"
+        targets
+            item
+                target
+                    id "orthogonal_handdrawn"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:straight_handdrawn"
+    with
+        id "publication:straight_handdrawn"
+        title "Routing / straight × handDrawn"
+        targets
+            item
+                target
+                    id "straight_handdrawn"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:curved_handdrawn"
+    with
+        id "publication:curved_handdrawn"
+        title "Routing / curved bezier × handDrawn"
+        targets
+            item
+                target
+                    id "curved_handdrawn"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:rounded_handdrawn"
+    with
+        id "publication:rounded_handdrawn"
+        title "Routing / rounded × handDrawn"
+        targets
+            item
+                target
+                    id "rounded_handdrawn"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:orthogonal_neo"
+    with
+        id "publication:orthogonal_neo"
+        title "Routing / orthogonal × neo"
+        targets
+            item
+                target
+                    id "orthogonal_neo"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:straight_neo"
+    with
+        id "publication:straight_neo"
+        title "Routing / straight × neo"
+        targets
+            item
+                target
+                    id "straight_neo"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:curved_neo"
+    with
+        id "publication:curved_neo"
+        title "Routing / curved bezier × neo"
+        targets
+            item
+                target
+                    id "curved_neo"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:rounded_neo"
+    with
+        id "publication:rounded_neo"
+        title "Routing / rounded × neo"
+        targets
+            item
+                target
+                    id "rounded_neo"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.gallery.routing::model.manuscript" as "flow.process"
+    with
+        id "ddn.gallery.routing::model.manuscript"
+        title "Manuscript intake"
+
+
+element "ddn.gallery.routing::model.review" as "flow.process"
+    with
+        id "ddn.gallery.routing::model.review"
+        title "Peer review"
+
+
+element "ddn.gallery.routing::model.edit" as "flow.process"
+    with
+        id "ddn.gallery.routing::model.edit"
+        title "Copy editing"
+
+
+element "ddn.gallery.routing::model.typeset" as "flow.process"
+    with
+        id "ddn.gallery.routing::model.typeset"
+        title "Typesetting"
+
+
+element "ddn.gallery.routing::model.archive" as "table"
+    with
+        id "ddn.gallery.routing::model.archive"
+        title "Digital archive"
+
+
+relation "ddn.gallery.routing::model.submit" as "assoc"
+    with
+        id "ddn.gallery.routing::model.submit"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model.manuscript"
+            item
+                definition
+                    id "ddn.gallery.routing::model.review"
+
+
+relation "ddn.gallery.routing::model.revise" as "assoc"
+    with
+        id "ddn.gallery.routing::model.revise"
+        title "returns for revision"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model.review"
+            item
+                definition
+                    id "ddn.gallery.routing::model.manuscript"
+
+
+relation "ddn.gallery.routing::model.accept" as "assoc"
+    with
+        id "ddn.gallery.routing::model.accept"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model.review"
+            item
+                definition
+                    id "ddn.gallery.routing::model.edit"
+
+
+relation "ddn.gallery.routing::model.compose" as "assoc"
+    with
+        id "ddn.gallery.routing::model.compose"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model.edit"
+            item
+                definition
+                    id "ddn.gallery.routing::model.typeset"
+
+
+relation "ddn.gallery.routing::model.publish" as "assoc"
+    with
+        id "ddn.gallery.routing::model.publish"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model.typeset"
+            item
+                definition
+                    id "ddn.gallery.routing::model.archive"
+
+
+relation "ddn.gallery.routing::model.reference" as "assoc"
+    with
+        id "ddn.gallery.routing::model.reference"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model.edit"
+            item
+                definition
+                    id "ddn.gallery.routing::model.archive"
+
+
+element "ddn.gallery.routing::model_straight.manuscript" as "flow.process"
+    with
+        id "ddn.gallery.routing::model_straight.manuscript"
+        title "Manuscript intake"
+
+
+element "ddn.gallery.routing::model_straight.review" as "flow.process"
+    with
+        id "ddn.gallery.routing::model_straight.review"
+        title "Peer review"
+
+
+element "ddn.gallery.routing::model_straight.edit" as "flow.process"
+    with
+        id "ddn.gallery.routing::model_straight.edit"
+        title "Copy editing"
+
+
+element "ddn.gallery.routing::model_straight.typeset" as "flow.process"
+    with
+        id "ddn.gallery.routing::model_straight.typeset"
+        title "Typesetting"
+
+
+element "ddn.gallery.routing::model_straight.archive" as "table"
+    with
+        id "ddn.gallery.routing::model_straight.archive"
+        title "Digital archive"
+
+
+relation "ddn.gallery.routing::model_straight.submit" as "assoc"
+    with
+        id "ddn.gallery.routing::model_straight.submit"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model_straight.manuscript"
+            item
+                definition
+                    id "ddn.gallery.routing::model_straight.review"
+
+
+relation "ddn.gallery.routing::model_straight.revise" as "assoc"
+    with
+        id "ddn.gallery.routing::model_straight.revise"
+        title "returns for revision"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model_straight.review"
+            item
+                definition
+                    id "ddn.gallery.routing::model_straight.manuscript"
+
+
+relation "ddn.gallery.routing::model_straight.accept" as "assoc"
+    with
+        id "ddn.gallery.routing::model_straight.accept"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model_straight.review"
+            item
+                definition
+                    id "ddn.gallery.routing::model_straight.edit"
+
+
+relation "ddn.gallery.routing::model_straight.compose" as "assoc"
+    with
+        id "ddn.gallery.routing::model_straight.compose"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model_straight.edit"
+            item
+                definition
+                    id "ddn.gallery.routing::model_straight.typeset"
+
+
+relation "ddn.gallery.routing::model_straight.publish" as "assoc"
+    with
+        id "ddn.gallery.routing::model_straight.publish"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.gallery.routing::model_straight.typeset"
+            item
+                definition
+                    id "ddn.gallery.routing::model_straight.archive"
+
+
+view "orthogonal_classic" as "ddn@1"
+    with
+        id "orthogonal_classic"
+        title "Routing / orthogonal × classic"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model.manuscript"
+                item
+                    id "ddn.gallery.routing::model.review"
+                item
+                    id "ddn.gallery.routing::model.edit"
+                item
+                    id "ddn.gallery.routing::model.typeset"
+                item
+                    id "ddn.gallery.routing::model.archive"
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+            exclude
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+        layout
+            algorithm "layered"
+            gap 150
+            row_gap 130
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:orthogonal_classic"
+
+    use "ddn.gallery.routing::model.manuscript" named "appearance:orthogonal_classic:ddn.gallery.routing::model.manuscript"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.manuscript"
+
+    use "ddn.gallery.routing::model.review" named "appearance:orthogonal_classic:ddn.gallery.routing::model.review"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.review"
+
+    use "ddn.gallery.routing::model.edit" named "appearance:orthogonal_classic:ddn.gallery.routing::model.edit"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.edit"
+
+    use "ddn.gallery.routing::model.typeset" named "appearance:orthogonal_classic:ddn.gallery.routing::model.typeset"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.typeset"
+
+    use "ddn.gallery.routing::model.archive" named "appearance:orthogonal_classic:ddn.gallery.routing::model.archive"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.archive"
+
+    use "ddn.gallery.routing::model.submit" named "appearance:orthogonal_classic:ddn.gallery.routing::model.submit"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.submit"
+
+    use "ddn.gallery.routing::model.revise" named "appearance:orthogonal_classic:ddn.gallery.routing::model.revise"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.revise"
+
+    use "ddn.gallery.routing::model.accept" named "appearance:orthogonal_classic:ddn.gallery.routing::model.accept"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.accept"
+
+    use "ddn.gallery.routing::model.compose" named "appearance:orthogonal_classic:ddn.gallery.routing::model.compose"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.compose"
+
+    use "ddn.gallery.routing::model.publish" named "appearance:orthogonal_classic:ddn.gallery.routing::model.publish"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.publish"
+
+    use "ddn.gallery.routing::model.reference" named "appearance:orthogonal_classic:ddn.gallery.routing::model.reference"
+        with
+            id "appearance:orthogonal_classic:ddn.gallery.routing::model.reference"
+
+
+view "straight_classic" as "ddn@1"
+    with
+        id "straight_classic"
+        title "Routing / straight × classic"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model_straight.manuscript"
+                item
+                    id "ddn.gallery.routing::model_straight.review"
+                item
+                    id "ddn.gallery.routing::model_straight.edit"
+                item
+                    id "ddn.gallery.routing::model_straight.typeset"
+                item
+                    id "ddn.gallery.routing::model_straight.archive"
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+            exclude
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+        layout
+            algorithm "layered"
+            routing "straight"
+            gap 260
+            row_gap 240
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:straight_classic"
+
+    use "ddn.gallery.routing::model_straight.manuscript" named "appearance:straight_classic:ddn.gallery.routing::model_straight.manuscript"
+        with
+            id "appearance:straight_classic:ddn.gallery.routing::model_straight.manuscript"
+
+    use "ddn.gallery.routing::model_straight.review" named "appearance:straight_classic:ddn.gallery.routing::model_straight.review"
+        with
+            id "appearance:straight_classic:ddn.gallery.routing::model_straight.review"
+
+    use "ddn.gallery.routing::model_straight.edit" named "appearance:straight_classic:ddn.gallery.routing::model_straight.edit"
+        with
+            id "appearance:straight_classic:ddn.gallery.routing::model_straight.edit"
+
+    use "ddn.gallery.routing::model_straight.typeset" named "appearance:straight_classic:ddn.gallery.routing::model_straight.typeset"
+        with
+            id "appearance:straight_classic:ddn.gallery.routing::model_straight.typeset"
+
+    use "ddn.gallery.routing::model_straight.archive" named "appearance:straight_classic:ddn.gallery.routing::model_straight.archive"
+        with
+            id "appearance:straight_classic:ddn.gallery.routing::model_straight.archive"
+
+    use "ddn.gallery.routing::model_straight.submit" named "appearance:straight_classic:ddn.gallery.routing::model_straight.submit"
+        with
+            id "appearance:straight_classic:ddn.gallery.routing::model_straight.submit"
+
+    use "ddn.gallery.routing::model_straight.revise" named "appearance:straight_classic:ddn.gallery.routing::model_straight.revise"
+        with
+            id "appearance:straight_classic:ddn.gallery.routing::model_straight.revise"
+
+    use "ddn.gallery.routing::model_straight.accept" named "appearance:straight_classic:ddn.gallery.routing::model_straight.accept"
+        with
+            id "appearance:straight_classic:ddn.gallery.routing::model_straight.accept"
+
+    use "ddn.gallery.routing::model_straight.compose" named "appearance:straight_classic:ddn.gallery.routing::model_straight.compose"
+        with
+            id "appearance:straight_classic:ddn.gallery.routing::model_straight.compose"
+
+    use "ddn.gallery.routing::model_straight.publish" named "appearance:straight_classic:ddn.gallery.routing::model_straight.publish"
+        with
+            id "appearance:straight_classic:ddn.gallery.routing::model_straight.publish"
+
+
+view "curved_classic" as "ddn@1"
+    with
+        id "curved_classic"
+        title "Routing / curved bezier × classic"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model.manuscript"
+                item
+                    id "ddn.gallery.routing::model.review"
+                item
+                    id "ddn.gallery.routing::model.edit"
+                item
+                    id "ddn.gallery.routing::model.typeset"
+                item
+                    id "ddn.gallery.routing::model.archive"
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+            exclude
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+        layout
+            algorithm "layered"
+            routing "curved"
+            gap 150
+            row_gap 130
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:curved_classic"
+
+    use "ddn.gallery.routing::model.manuscript" named "appearance:curved_classic:ddn.gallery.routing::model.manuscript"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.manuscript"
+
+    use "ddn.gallery.routing::model.review" named "appearance:curved_classic:ddn.gallery.routing::model.review"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.review"
+
+    use "ddn.gallery.routing::model.edit" named "appearance:curved_classic:ddn.gallery.routing::model.edit"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.edit"
+
+    use "ddn.gallery.routing::model.typeset" named "appearance:curved_classic:ddn.gallery.routing::model.typeset"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.typeset"
+
+    use "ddn.gallery.routing::model.archive" named "appearance:curved_classic:ddn.gallery.routing::model.archive"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.archive"
+
+    use "ddn.gallery.routing::model.submit" named "appearance:curved_classic:ddn.gallery.routing::model.submit"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.submit"
+
+    use "ddn.gallery.routing::model.revise" named "appearance:curved_classic:ddn.gallery.routing::model.revise"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.revise"
+
+    use "ddn.gallery.routing::model.accept" named "appearance:curved_classic:ddn.gallery.routing::model.accept"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.accept"
+
+    use "ddn.gallery.routing::model.compose" named "appearance:curved_classic:ddn.gallery.routing::model.compose"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.compose"
+
+    use "ddn.gallery.routing::model.publish" named "appearance:curved_classic:ddn.gallery.routing::model.publish"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.publish"
+
+    use "ddn.gallery.routing::model.reference" named "appearance:curved_classic:ddn.gallery.routing::model.reference"
+        with
+            id "appearance:curved_classic:ddn.gallery.routing::model.reference"
+
+
+view "rounded_classic" as "ddn@1"
+    with
+        id "rounded_classic"
+        title "Routing / rounded × classic"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model.manuscript"
+                item
+                    id "ddn.gallery.routing::model.review"
+                item
+                    id "ddn.gallery.routing::model.edit"
+                item
+                    id "ddn.gallery.routing::model.typeset"
+                item
+                    id "ddn.gallery.routing::model.archive"
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+            exclude
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+        layout
+            algorithm "layered"
+            routing "curved"
+            curve "rounded"
+            gap 150
+            row_gap 130
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:rounded_classic"
+
+    use "ddn.gallery.routing::model.manuscript" named "appearance:rounded_classic:ddn.gallery.routing::model.manuscript"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.manuscript"
+
+    use "ddn.gallery.routing::model.review" named "appearance:rounded_classic:ddn.gallery.routing::model.review"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.review"
+
+    use "ddn.gallery.routing::model.edit" named "appearance:rounded_classic:ddn.gallery.routing::model.edit"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.edit"
+
+    use "ddn.gallery.routing::model.typeset" named "appearance:rounded_classic:ddn.gallery.routing::model.typeset"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.typeset"
+
+    use "ddn.gallery.routing::model.archive" named "appearance:rounded_classic:ddn.gallery.routing::model.archive"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.archive"
+
+    use "ddn.gallery.routing::model.submit" named "appearance:rounded_classic:ddn.gallery.routing::model.submit"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.submit"
+
+    use "ddn.gallery.routing::model.revise" named "appearance:rounded_classic:ddn.gallery.routing::model.revise"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.revise"
+
+    use "ddn.gallery.routing::model.accept" named "appearance:rounded_classic:ddn.gallery.routing::model.accept"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.accept"
+
+    use "ddn.gallery.routing::model.compose" named "appearance:rounded_classic:ddn.gallery.routing::model.compose"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.compose"
+
+    use "ddn.gallery.routing::model.publish" named "appearance:rounded_classic:ddn.gallery.routing::model.publish"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.publish"
+
+    use "ddn.gallery.routing::model.reference" named "appearance:rounded_classic:ddn.gallery.routing::model.reference"
+        with
+            id "appearance:rounded_classic:ddn.gallery.routing::model.reference"
+
+
+view "orthogonal_handdrawn" as "ddn@1"
+    with
+        id "orthogonal_handdrawn"
+        title "Routing / orthogonal × handDrawn"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model.manuscript"
+                item
+                    id "ddn.gallery.routing::model.review"
+                item
+                    id "ddn.gallery.routing::model.edit"
+                item
+                    id "ddn.gallery.routing::model.typeset"
+                item
+                    id "ddn.gallery.routing::model.archive"
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+            exclude
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+        style
+            look "handdrawn"
+        layout
+            algorithm "layered"
+            gap 150
+            row_gap 130
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:orthogonal_handdrawn"
+
+    use "ddn.gallery.routing::model.manuscript" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.manuscript"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.manuscript"
+
+    use "ddn.gallery.routing::model.review" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.review"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.review"
+
+    use "ddn.gallery.routing::model.edit" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.edit"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.edit"
+
+    use "ddn.gallery.routing::model.typeset" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.typeset"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.typeset"
+
+    use "ddn.gallery.routing::model.archive" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.archive"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.archive"
+
+    use "ddn.gallery.routing::model.submit" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.submit"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.submit"
+
+    use "ddn.gallery.routing::model.revise" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.revise"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.revise"
+
+    use "ddn.gallery.routing::model.accept" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.accept"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.accept"
+
+    use "ddn.gallery.routing::model.compose" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.compose"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.compose"
+
+    use "ddn.gallery.routing::model.publish" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.publish"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.publish"
+
+    use "ddn.gallery.routing::model.reference" named "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.reference"
+        with
+            id "appearance:orthogonal_handdrawn:ddn.gallery.routing::model.reference"
+
+
+view "straight_handdrawn" as "ddn@1"
+    with
+        id "straight_handdrawn"
+        title "Routing / straight × handDrawn"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model_straight.manuscript"
+                item
+                    id "ddn.gallery.routing::model_straight.review"
+                item
+                    id "ddn.gallery.routing::model_straight.edit"
+                item
+                    id "ddn.gallery.routing::model_straight.typeset"
+                item
+                    id "ddn.gallery.routing::model_straight.archive"
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+            exclude
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+        style
+            look "handdrawn"
+        layout
+            algorithm "layered"
+            routing "straight"
+            gap 260
+            row_gap 240
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:straight_handdrawn"
+
+    use "ddn.gallery.routing::model_straight.manuscript" named "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.manuscript"
+        with
+            id "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.manuscript"
+
+    use "ddn.gallery.routing::model_straight.review" named "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.review"
+        with
+            id "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.review"
+
+    use "ddn.gallery.routing::model_straight.edit" named "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.edit"
+        with
+            id "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.edit"
+
+    use "ddn.gallery.routing::model_straight.typeset" named "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.typeset"
+        with
+            id "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.typeset"
+
+    use "ddn.gallery.routing::model_straight.archive" named "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.archive"
+        with
+            id "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.archive"
+
+    use "ddn.gallery.routing::model_straight.submit" named "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.submit"
+        with
+            id "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.submit"
+
+    use "ddn.gallery.routing::model_straight.revise" named "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.revise"
+        with
+            id "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.revise"
+
+    use "ddn.gallery.routing::model_straight.accept" named "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.accept"
+        with
+            id "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.accept"
+
+    use "ddn.gallery.routing::model_straight.compose" named "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.compose"
+        with
+            id "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.compose"
+
+    use "ddn.gallery.routing::model_straight.publish" named "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.publish"
+        with
+            id "appearance:straight_handdrawn:ddn.gallery.routing::model_straight.publish"
+
+
+view "curved_handdrawn" as "ddn@1"
+    with
+        id "curved_handdrawn"
+        title "Routing / curved bezier × handDrawn"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model.manuscript"
+                item
+                    id "ddn.gallery.routing::model.review"
+                item
+                    id "ddn.gallery.routing::model.edit"
+                item
+                    id "ddn.gallery.routing::model.typeset"
+                item
+                    id "ddn.gallery.routing::model.archive"
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+            exclude
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+        style
+            look "handdrawn"
+        layout
+            algorithm "layered"
+            routing "curved"
+            gap 150
+            row_gap 130
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:curved_handdrawn"
+
+    use "ddn.gallery.routing::model.manuscript" named "appearance:curved_handdrawn:ddn.gallery.routing::model.manuscript"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.manuscript"
+
+    use "ddn.gallery.routing::model.review" named "appearance:curved_handdrawn:ddn.gallery.routing::model.review"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.review"
+
+    use "ddn.gallery.routing::model.edit" named "appearance:curved_handdrawn:ddn.gallery.routing::model.edit"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.edit"
+
+    use "ddn.gallery.routing::model.typeset" named "appearance:curved_handdrawn:ddn.gallery.routing::model.typeset"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.typeset"
+
+    use "ddn.gallery.routing::model.archive" named "appearance:curved_handdrawn:ddn.gallery.routing::model.archive"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.archive"
+
+    use "ddn.gallery.routing::model.submit" named "appearance:curved_handdrawn:ddn.gallery.routing::model.submit"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.submit"
+
+    use "ddn.gallery.routing::model.revise" named "appearance:curved_handdrawn:ddn.gallery.routing::model.revise"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.revise"
+
+    use "ddn.gallery.routing::model.accept" named "appearance:curved_handdrawn:ddn.gallery.routing::model.accept"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.accept"
+
+    use "ddn.gallery.routing::model.compose" named "appearance:curved_handdrawn:ddn.gallery.routing::model.compose"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.compose"
+
+    use "ddn.gallery.routing::model.publish" named "appearance:curved_handdrawn:ddn.gallery.routing::model.publish"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.publish"
+
+    use "ddn.gallery.routing::model.reference" named "appearance:curved_handdrawn:ddn.gallery.routing::model.reference"
+        with
+            id "appearance:curved_handdrawn:ddn.gallery.routing::model.reference"
+
+
+view "rounded_handdrawn" as "ddn@1"
+    with
+        id "rounded_handdrawn"
+        title "Routing / rounded × handDrawn"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model.manuscript"
+                item
+                    id "ddn.gallery.routing::model.review"
+                item
+                    id "ddn.gallery.routing::model.edit"
+                item
+                    id "ddn.gallery.routing::model.typeset"
+                item
+                    id "ddn.gallery.routing::model.archive"
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+            exclude
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+        style
+            look "handdrawn"
+        layout
+            algorithm "layered"
+            routing "curved"
+            curve "rounded"
+            gap 150
+            row_gap 130
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:rounded_handdrawn"
+
+    use "ddn.gallery.routing::model.manuscript" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.manuscript"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.manuscript"
+
+    use "ddn.gallery.routing::model.review" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.review"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.review"
+
+    use "ddn.gallery.routing::model.edit" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.edit"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.edit"
+
+    use "ddn.gallery.routing::model.typeset" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.typeset"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.typeset"
+
+    use "ddn.gallery.routing::model.archive" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.archive"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.archive"
+
+    use "ddn.gallery.routing::model.submit" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.submit"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.submit"
+
+    use "ddn.gallery.routing::model.revise" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.revise"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.revise"
+
+    use "ddn.gallery.routing::model.accept" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.accept"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.accept"
+
+    use "ddn.gallery.routing::model.compose" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.compose"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.compose"
+
+    use "ddn.gallery.routing::model.publish" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.publish"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.publish"
+
+    use "ddn.gallery.routing::model.reference" named "appearance:rounded_handdrawn:ddn.gallery.routing::model.reference"
+        with
+            id "appearance:rounded_handdrawn:ddn.gallery.routing::model.reference"
+
+
+view "orthogonal_neo" as "ddn@1"
+    with
+        id "orthogonal_neo"
+        title "Routing / orthogonal × neo"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model.manuscript"
+                item
+                    id "ddn.gallery.routing::model.review"
+                item
+                    id "ddn.gallery.routing::model.edit"
+                item
+                    id "ddn.gallery.routing::model.typeset"
+                item
+                    id "ddn.gallery.routing::model.archive"
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+            exclude
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+        style
+            look "neo"
+        layout
+            algorithm "layered"
+            gap 150
+            row_gap 130
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:orthogonal_neo"
+
+    use "ddn.gallery.routing::model.manuscript" named "appearance:orthogonal_neo:ddn.gallery.routing::model.manuscript"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.manuscript"
+
+    use "ddn.gallery.routing::model.review" named "appearance:orthogonal_neo:ddn.gallery.routing::model.review"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.review"
+
+    use "ddn.gallery.routing::model.edit" named "appearance:orthogonal_neo:ddn.gallery.routing::model.edit"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.edit"
+
+    use "ddn.gallery.routing::model.typeset" named "appearance:orthogonal_neo:ddn.gallery.routing::model.typeset"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.typeset"
+
+    use "ddn.gallery.routing::model.archive" named "appearance:orthogonal_neo:ddn.gallery.routing::model.archive"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.archive"
+
+    use "ddn.gallery.routing::model.submit" named "appearance:orthogonal_neo:ddn.gallery.routing::model.submit"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.submit"
+
+    use "ddn.gallery.routing::model.revise" named "appearance:orthogonal_neo:ddn.gallery.routing::model.revise"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.revise"
+
+    use "ddn.gallery.routing::model.accept" named "appearance:orthogonal_neo:ddn.gallery.routing::model.accept"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.accept"
+
+    use "ddn.gallery.routing::model.compose" named "appearance:orthogonal_neo:ddn.gallery.routing::model.compose"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.compose"
+
+    use "ddn.gallery.routing::model.publish" named "appearance:orthogonal_neo:ddn.gallery.routing::model.publish"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.publish"
+
+    use "ddn.gallery.routing::model.reference" named "appearance:orthogonal_neo:ddn.gallery.routing::model.reference"
+        with
+            id "appearance:orthogonal_neo:ddn.gallery.routing::model.reference"
+
+
+view "straight_neo" as "ddn@1"
+    with
+        id "straight_neo"
+        title "Routing / straight × neo"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model_straight.manuscript"
+                item
+                    id "ddn.gallery.routing::model_straight.review"
+                item
+                    id "ddn.gallery.routing::model_straight.edit"
+                item
+                    id "ddn.gallery.routing::model_straight.typeset"
+                item
+                    id "ddn.gallery.routing::model_straight.archive"
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+            exclude
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+        style
+            look "neo"
+        layout
+            algorithm "layered"
+            routing "straight"
+            gap 260
+            row_gap 240
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:straight_neo"
+
+    use "ddn.gallery.routing::model_straight.manuscript" named "appearance:straight_neo:ddn.gallery.routing::model_straight.manuscript"
+        with
+            id "appearance:straight_neo:ddn.gallery.routing::model_straight.manuscript"
+
+    use "ddn.gallery.routing::model_straight.review" named "appearance:straight_neo:ddn.gallery.routing::model_straight.review"
+        with
+            id "appearance:straight_neo:ddn.gallery.routing::model_straight.review"
+
+    use "ddn.gallery.routing::model_straight.edit" named "appearance:straight_neo:ddn.gallery.routing::model_straight.edit"
+        with
+            id "appearance:straight_neo:ddn.gallery.routing::model_straight.edit"
+
+    use "ddn.gallery.routing::model_straight.typeset" named "appearance:straight_neo:ddn.gallery.routing::model_straight.typeset"
+        with
+            id "appearance:straight_neo:ddn.gallery.routing::model_straight.typeset"
+
+    use "ddn.gallery.routing::model_straight.archive" named "appearance:straight_neo:ddn.gallery.routing::model_straight.archive"
+        with
+            id "appearance:straight_neo:ddn.gallery.routing::model_straight.archive"
+
+    use "ddn.gallery.routing::model_straight.submit" named "appearance:straight_neo:ddn.gallery.routing::model_straight.submit"
+        with
+            id "appearance:straight_neo:ddn.gallery.routing::model_straight.submit"
+
+    use "ddn.gallery.routing::model_straight.revise" named "appearance:straight_neo:ddn.gallery.routing::model_straight.revise"
+        with
+            id "appearance:straight_neo:ddn.gallery.routing::model_straight.revise"
+
+    use "ddn.gallery.routing::model_straight.accept" named "appearance:straight_neo:ddn.gallery.routing::model_straight.accept"
+        with
+            id "appearance:straight_neo:ddn.gallery.routing::model_straight.accept"
+
+    use "ddn.gallery.routing::model_straight.compose" named "appearance:straight_neo:ddn.gallery.routing::model_straight.compose"
+        with
+            id "appearance:straight_neo:ddn.gallery.routing::model_straight.compose"
+
+    use "ddn.gallery.routing::model_straight.publish" named "appearance:straight_neo:ddn.gallery.routing::model_straight.publish"
+        with
+            id "appearance:straight_neo:ddn.gallery.routing::model_straight.publish"
+
+
+view "curved_neo" as "ddn@1"
+    with
+        id "curved_neo"
+        title "Routing / curved bezier × neo"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model.manuscript"
+                item
+                    id "ddn.gallery.routing::model.review"
+                item
+                    id "ddn.gallery.routing::model.edit"
+                item
+                    id "ddn.gallery.routing::model.typeset"
+                item
+                    id "ddn.gallery.routing::model.archive"
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+            exclude
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+        style
+            look "neo"
+        layout
+            algorithm "layered"
+            routing "curved"
+            gap 150
+            row_gap 130
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:curved_neo"
+
+    use "ddn.gallery.routing::model.manuscript" named "appearance:curved_neo:ddn.gallery.routing::model.manuscript"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.manuscript"
+
+    use "ddn.gallery.routing::model.review" named "appearance:curved_neo:ddn.gallery.routing::model.review"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.review"
+
+    use "ddn.gallery.routing::model.edit" named "appearance:curved_neo:ddn.gallery.routing::model.edit"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.edit"
+
+    use "ddn.gallery.routing::model.typeset" named "appearance:curved_neo:ddn.gallery.routing::model.typeset"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.typeset"
+
+    use "ddn.gallery.routing::model.archive" named "appearance:curved_neo:ddn.gallery.routing::model.archive"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.archive"
+
+    use "ddn.gallery.routing::model.submit" named "appearance:curved_neo:ddn.gallery.routing::model.submit"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.submit"
+
+    use "ddn.gallery.routing::model.revise" named "appearance:curved_neo:ddn.gallery.routing::model.revise"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.revise"
+
+    use "ddn.gallery.routing::model.accept" named "appearance:curved_neo:ddn.gallery.routing::model.accept"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.accept"
+
+    use "ddn.gallery.routing::model.compose" named "appearance:curved_neo:ddn.gallery.routing::model.compose"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.compose"
+
+    use "ddn.gallery.routing::model.publish" named "appearance:curved_neo:ddn.gallery.routing::model.publish"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.publish"
+
+    use "ddn.gallery.routing::model.reference" named "appearance:curved_neo:ddn.gallery.routing::model.reference"
+        with
+            id "appearance:curved_neo:ddn.gallery.routing::model.reference"
+
+
+view "rounded_neo" as "ddn@1"
+    with
+        id "rounded_neo"
+        title "Routing / rounded × neo"
+        selection
+            include
+                item
+                    id "ddn.gallery.routing::model.manuscript"
+                item
+                    id "ddn.gallery.routing::model.review"
+                item
+                    id "ddn.gallery.routing::model.edit"
+                item
+                    id "ddn.gallery.routing::model.typeset"
+                item
+                    id "ddn.gallery.routing::model.archive"
+                item
+                    id "ddn.gallery.routing::model.submit"
+                item
+                    id "ddn.gallery.routing::model.revise"
+                item
+                    id "ddn.gallery.routing::model.accept"
+                item
+                    id "ddn.gallery.routing::model.compose"
+                item
+                    id "ddn.gallery.routing::model.publish"
+                item
+                    id "ddn.gallery.routing::model.reference"
+            exclude
+                item
+                    id "ddn.gallery.routing::model_straight.submit"
+                item
+                    id "ddn.gallery.routing::model_straight.revise"
+                item
+                    id "ddn.gallery.routing::model_straight.accept"
+                item
+                    id "ddn.gallery.routing::model_straight.compose"
+                item
+                    id "ddn.gallery.routing::model_straight.publish"
+        style
+            look "neo"
+        layout
+            algorithm "layered"
+            routing "curved"
+            curve "rounded"
+            gap 150
+            row_gap 130
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            width 260
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:rounded_neo"
+
+    use "ddn.gallery.routing::model.manuscript" named "appearance:rounded_neo:ddn.gallery.routing::model.manuscript"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.manuscript"
+
+    use "ddn.gallery.routing::model.review" named "appearance:rounded_neo:ddn.gallery.routing::model.review"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.review"
+
+    use "ddn.gallery.routing::model.edit" named "appearance:rounded_neo:ddn.gallery.routing::model.edit"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.edit"
+
+    use "ddn.gallery.routing::model.typeset" named "appearance:rounded_neo:ddn.gallery.routing::model.typeset"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.typeset"
+
+    use "ddn.gallery.routing::model.archive" named "appearance:rounded_neo:ddn.gallery.routing::model.archive"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.archive"
+
+    use "ddn.gallery.routing::model.submit" named "appearance:rounded_neo:ddn.gallery.routing::model.submit"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.submit"
+
+    use "ddn.gallery.routing::model.revise" named "appearance:rounded_neo:ddn.gallery.routing::model.revise"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.revise"
+
+    use "ddn.gallery.routing::model.accept" named "appearance:rounded_neo:ddn.gallery.routing::model.accept"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.accept"
+
+    use "ddn.gallery.routing::model.compose" named "appearance:rounded_neo:ddn.gallery.routing::model.compose"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.compose"
+
+    use "ddn.gallery.routing::model.publish" named "appearance:rounded_neo:ddn.gallery.routing::model.publish"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.publish"
+
+    use "ddn.gallery.routing::model.reference" named "appearance:rounded_neo:ddn.gallery.routing::model.reference"
+        with
+            id "appearance:rounded_neo:ddn.gallery.routing::model.reference"

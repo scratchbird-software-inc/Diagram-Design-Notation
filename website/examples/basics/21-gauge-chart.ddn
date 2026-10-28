@@ -1,16 +1,65 @@
-ddn "0.5";
-module "ddn.examples.gauge-chart";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:gauge"
+    with
+        id "publication:gauge"
+        title "Synthetic SLA attainment / gauge"
+        targets
+            item
+                target
+                    id "gauge"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic SLA dataset: one KPI record for the gauge dial.
-// All data is synthetic.
-data sla {
-    record q1 "SLA attainment" {x_record: {"kpi": "SLA attainment", "value": 87, "unit": "%"}; }
-}
 
-view gauge "Synthetic SLA attainment / gauge" {
-    data: [@sla]; format: @shared.styles.technical;
-    projection { kind:chart; profile:"chart.gauge@1"; records:[@sla.q1]; mark:gauge; x:"x_record.kpi"; y:"x_record.value"; unit:"%"; target:95; width:1120px; height:620px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+element "ddn.examples.gauge-chart::sla.q1" as "record"
+    with
+        id "ddn.examples.gauge-chart::sla.q1"
+        title "SLA attainment"
+        metadata
+            x_record
+                kpi "SLA attainment"
+                value 87
+                unit "%"
+
+
+view "gauge" as "chart.gauge@1"
+    with
+        id "gauge"
+        title "Synthetic SLA attainment / gauge"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.gauge-chart::sla.q1"
+                mark "gauge"
+                x "metadata.x_record.kpi"
+                y "metadata.x_record.value"
+                unit "%"
+                target 95
+                width 1120
+                height 620

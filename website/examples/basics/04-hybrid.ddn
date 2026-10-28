@@ -1,36 +1,463 @@
-ddn "0.5";
-module "ddn.examples.hybrid";
-import "shared.ddn" as shared;
+version ddn-next-1
 
-data model {
-    table orders "Orders definition" {level: definition; distribution: hash; fields { tenant_id; order_id; } }
-    shard shard "Tenant shard A" {level: fragment; }
-    replica primary "Orders / primary copy" {level: instance; role: primary; location: local; }
-    replica follower "Orders / follower copy" {level: instance; role: follower; location: cloud; }
-    service local "Local database service" {location: local; }
-    service cloud "Cloud database service" {location: cloud; }
-    schema schema "sales schema";
-    relation fragment @orders -> @shard { kind: partitioned_into; }
-    realizes copy1 @primary -> @shard;
-    realizes copy2 @follower -> @shard;
-    relation on_local @primary -> @local { kind: placed_on; }
-    relation on_cloud @follower -> @cloud { kind: placed_on; }
-    relation replica_stream @primary -> @follower { kind: replicates_to; delivery: undecided; }
-    relation member @orders -> @schema { kind: namespace_member; }
-}
-view deployment "Hybrid deployment / fragments are not copies" {
-    layout { gap: 112px; row_gap: 112px; }
-    data: [@model]; format: @shared.styles.technical;
-    display: @shared.styles.compact;
-    select: [@model.orders, @model.shard, @model.primary, @model.follower, @model.local, @model.cloud];
-    publication { width: 1550px; height: 1050px; }
-    legend { mode: numbers; width: 300px; keys: { "fragment": 1, "copy1": 2, "copy2": 3, "on_local": 4, "on_cloud": 5, "replica_stream": 6 }; }
+publication "publication:deployment"
+    with
+        id "publication:deployment"
+        title "Hybrid deployment / fragments are not copies"
+        targets
+            item
+                target
+                    id "deployment"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1550
+                unit "px"
+            height
+                value 1050
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-    frame local_scope "ON-PREMISES" { members: [@model.primary, @model.local]; }
-    frame cloud_scope "CLOUD" { members: [@model.follower, @model.cloud]; }
-}
-view namespaces "Namespace / the same data, a different concern" {
-    data: [@model]; format: @shared.styles.technical;
-    select: [@model.orders, @model.schema];
 
-}
+publication "publication:namespaces"
+    with
+        id "publication:namespaces"
+        title "Namespace / the same data, a different concern"
+        targets
+            item
+                target
+                    id "namespaces"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
+
+
+element "ddn.examples.hybrid::model.orders.tenant_id" as "field"
+    with
+        id "ddn.examples.hybrid::model.orders.tenant_id"
+        title "tenant_id"
+        content
+            parent
+                id "ddn.examples.hybrid::model.orders"
+            ordinal 0
+
+
+element "ddn.examples.hybrid::model.orders.order_id" as "field"
+    with
+        id "ddn.examples.hybrid::model.orders.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.examples.hybrid::model.orders"
+            ordinal 1
+
+
+element "ddn.examples.hybrid::model.orders" as "table"
+    with
+        id "ddn.examples.hybrid::model.orders"
+        title "Orders definition"
+        properties
+            level "definition"
+            distribution "hash"
+        members
+            item
+                id "ddn.examples.hybrid::model.orders.tenant_id"
+            item
+                id "ddn.examples.hybrid::model.orders.order_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "tenant_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.hybrid::model.shard" as "shard"
+    with
+        id "ddn.examples.hybrid::model.shard"
+        title "Tenant shard A"
+        properties
+            level "fragment"
+
+
+element "ddn.examples.hybrid::model.primary" as "replica"
+    with
+        id "ddn.examples.hybrid::model.primary"
+        title "Orders / primary copy"
+        facets
+            distribution
+                item "PRIMARY"
+        properties
+            level "instance"
+            role "primary"
+            location "local"
+        metadata
+            x_record
+                layout_group "primary"
+
+
+element "ddn.examples.hybrid::model.follower" as "replica"
+    with
+        id "ddn.examples.hybrid::model.follower"
+        title "Orders / follower copy"
+        properties
+            level "instance"
+            role "follower"
+            location "cloud"
+        metadata
+            x_record
+                layout_group "follower"
+
+
+element "ddn.examples.hybrid::model.local" as "service"
+    with
+        id "ddn.examples.hybrid::model.local"
+        title "Local database service"
+        properties
+            location "local"
+
+
+element "ddn.examples.hybrid::model.cloud" as "service"
+    with
+        id "ddn.examples.hybrid::model.cloud"
+        title "Cloud database service"
+        properties
+            location "cloud"
+
+
+element "ddn.examples.hybrid::model.schema" as "schema"
+    with
+        id "ddn.examples.hybrid::model.schema"
+        title "sales schema"
+
+
+relation "ddn.examples.hybrid::model.fragment" as "part"
+    with
+        id "ddn.examples.hybrid::model.fragment"
+        title "partitioned into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hybrid::model.orders"
+            item
+                definition
+                    id "ddn.examples.hybrid::model.shard"
+
+
+relation "ddn.examples.hybrid::model.copy1" as "realizes"
+    with
+        id "ddn.examples.hybrid::model.copy1"
+        title "realizes partition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hybrid::model.primary"
+            item
+                definition
+                    id "ddn.examples.hybrid::model.shard"
+
+
+relation "ddn.examples.hybrid::model.copy2" as "realizes"
+    with
+        id "ddn.examples.hybrid::model.copy2"
+        title "realizes partition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hybrid::model.follower"
+            item
+                definition
+                    id "ddn.examples.hybrid::model.shard"
+
+
+relation "ddn.examples.hybrid::model.on_local" as "placed"
+    with
+        id "ddn.examples.hybrid::model.on_local"
+        title "placed on"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hybrid::model.primary"
+            item
+                definition
+                    id "ddn.examples.hybrid::model.local"
+
+
+relation "ddn.examples.hybrid::model.on_cloud" as "placed"
+    with
+        id "ddn.examples.hybrid::model.on_cloud"
+        title "placed on"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hybrid::model.follower"
+            item
+                definition
+                    id "ddn.examples.hybrid::model.cloud"
+
+
+relation "ddn.examples.hybrid::model.replica_stream" as "replicate"
+    with
+        id "ddn.examples.hybrid::model.replica_stream"
+        title "replicates to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hybrid::model.primary"
+            item
+                definition
+                    id "ddn.examples.hybrid::model.follower"
+
+
+relation "ddn.examples.hybrid::model.member" as "namespace"
+    with
+        id "ddn.examples.hybrid::model.member"
+        title "member of namespace"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hybrid::model.orders"
+            item
+                definition
+                    id "ddn.examples.hybrid::model.schema"
+
+
+view "deployment" as "ddn@1"
+    with
+        id "deployment"
+        title "Hybrid deployment / fragments are not copies"
+        selection
+            include
+                item
+                    id "ddn.examples.hybrid::model.orders"
+                item
+                    id "ddn.examples.hybrid::model.shard"
+                item
+                    id "ddn.examples.hybrid::model.primary"
+                item
+                    id "ddn.examples.hybrid::model.follower"
+                item
+                    id "ddn.examples.hybrid::model.local"
+                item
+                    id "ddn.examples.hybrid::model.cloud"
+                item
+                    id "ddn.examples.hybrid::model.fragment"
+                item
+                    id "ddn.examples.hybrid::model.copy1"
+                item
+                    id "ddn.examples.hybrid::model.copy2"
+                item
+                    id "ddn.examples.hybrid::model.on_local"
+                item
+                    id "ddn.examples.hybrid::model.on_cloud"
+                item
+                    id "ddn.examples.hybrid::model.replica_stream"
+            exclude
+                item
+                    id "ddn.examples.hybrid::model.member"
+        layout
+            algorithm "grid"
+            gap 112
+            row_gap 112
+        display
+            fields "none"
+            maturity "none"
+            badges "none"
+        legend
+            mode "numbers"
+            width 300
+            keys
+                fragment "1"
+                copy1 "2"
+                copy2 "3"
+                on_local "4"
+                on_cloud "5"
+                replica_stream "6"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.hybrid::deployment.local_scope"
+                name "ON-PREMISES"
+                members
+                    item
+                        id "ddn.examples.hybrid::model.primary"
+                    item
+                        id "ddn.examples.hybrid::model.local"
+            item
+                id "ddn.examples.hybrid::deployment.cloud_scope"
+                name "CLOUD"
+                members
+                    item
+                        id "ddn.examples.hybrid::model.follower"
+                    item
+                        id "ddn.examples.hybrid::model.cloud"
+        publication
+            id "publication:deployment"
+
+    use "ddn.examples.hybrid::model.orders" named "appearance:deployment:ddn.examples.hybrid::model.orders"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.orders"
+            body "title"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.hybrid::model.shard" named "appearance:deployment:ddn.examples.hybrid::model.shard"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.shard"
+
+    use "ddn.examples.hybrid::model.primary" named "appearance:deployment:ddn.examples.hybrid::model.primary"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.primary"
+
+    use "ddn.examples.hybrid::model.follower" named "appearance:deployment:ddn.examples.hybrid::model.follower"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.follower"
+
+    use "ddn.examples.hybrid::model.local" named "appearance:deployment:ddn.examples.hybrid::model.local"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.local"
+
+    use "ddn.examples.hybrid::model.cloud" named "appearance:deployment:ddn.examples.hybrid::model.cloud"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.cloud"
+
+    use "ddn.examples.hybrid::model.fragment" named "appearance:deployment:ddn.examples.hybrid::model.fragment"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.fragment"
+
+    use "ddn.examples.hybrid::model.copy1" named "appearance:deployment:ddn.examples.hybrid::model.copy1"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.copy1"
+
+    use "ddn.examples.hybrid::model.copy2" named "appearance:deployment:ddn.examples.hybrid::model.copy2"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.copy2"
+
+    use "ddn.examples.hybrid::model.on_local" named "appearance:deployment:ddn.examples.hybrid::model.on_local"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.on_local"
+
+    use "ddn.examples.hybrid::model.on_cloud" named "appearance:deployment:ddn.examples.hybrid::model.on_cloud"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.on_cloud"
+
+    use "ddn.examples.hybrid::model.replica_stream" named "appearance:deployment:ddn.examples.hybrid::model.replica_stream"
+        with
+            id "appearance:deployment:ddn.examples.hybrid::model.replica_stream"
+
+
+view "namespaces" as "ddn@1"
+    with
+        id "namespaces"
+        title "Namespace / the same data, a different concern"
+        selection
+            include
+                item
+                    id "ddn.examples.hybrid::model.orders"
+                item
+                    id "ddn.examples.hybrid::model.schema"
+                item
+                    id "ddn.examples.hybrid::model.member"
+            exclude
+                item
+                    id "ddn.examples.hybrid::model.fragment"
+                item
+                    id "ddn.examples.hybrid::model.copy1"
+                item
+                    id "ddn.examples.hybrid::model.copy2"
+                item
+                    id "ddn.examples.hybrid::model.on_local"
+                item
+                    id "ddn.examples.hybrid::model.on_cloud"
+                item
+                    id "ddn.examples.hybrid::model.replica_stream"
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:namespaces"
+
+    use "ddn.examples.hybrid::model.orders" named "appearance:namespaces:ddn.examples.hybrid::model.orders"
+        with
+            id "appearance:namespaces:ddn.examples.hybrid::model.orders"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.hybrid::model.schema" named "appearance:namespaces:ddn.examples.hybrid::model.schema"
+        with
+            id "appearance:namespaces:ddn.examples.hybrid::model.schema"
+
+    use "ddn.examples.hybrid::model.member" named "appearance:namespaces:ddn.examples.hybrid::model.member"
+        with
+            id "appearance:namespaces:ddn.examples.hybrid::model.member"

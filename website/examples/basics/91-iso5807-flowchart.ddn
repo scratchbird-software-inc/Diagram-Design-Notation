@@ -1,46 +1,498 @@
-ddn "0.5";
-module "ddn.examples.iso5807";
+version ddn-next-1
 
-// B1-075: the full ISO 5807 (1985) flowchart symbol set on flow.iso5807@1 —
-// the flow.basic@1 vocabulary plus manual input, manual operation,
-// preparation, display, delay, loop start/end, merge, extract, card,
-// collate, sort and parallel mode. All data is synthetic.
+publication "publication:chart"
+    with
+        id "publication:chart"
+        title "ISO 5807 warehouse flow"
+        targets
+            item
+                target
+                    id "chart"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data m {
-    object start "" { kind: "flow.start"; }
-    object manual "Enter shelf counts" { kind: "flow.manualinput"; }
-    object prep "Load picking rules" { kind: "flow.preparation"; }
-    object op "Pick by hand" { kind: "flow.manualop"; }
-    object disp "Show tote ID" { kind: "flow.display"; }
-    object wait "Cure time" { kind: "flow.delay"; }
-    object loopstart "For each tote" { kind: "flow.loopstart"; }
-    object card "Read card" { kind: "flow.card"; }
-    object coll "Collate lines" { kind: "flow.collate"; }
-    object sort "Sort by bin" { kind: "flow.sort"; }
-    object mrg "" { kind: "flow.isomerge"; }
-    object xtr "" { kind: "flow.isoextract"; }
-    object par "Parallel packing" { kind: "flow.parallelmode"; }
-    object loopend "Next tote" { kind: "flow.loopend"; }
-    object fin "" { kind: "flow.end"; }
 
-    relation f1 "" @start -> @manual { kind: "flow.next"; }
-    relation f2 "" @manual -> @prep { kind: "flow.next"; }
-    relation f3 "" @prep -> @op { kind: "flow.next"; }
-    relation f4 "" @op -> @disp { kind: "flow.next"; }
-    relation f5 "" @disp -> @wait { kind: "flow.next"; }
-    relation f6 "" @wait -> @loopstart { kind: "flow.next"; }
-    relation f7 "" @loopstart -> @card { kind: "flow.next"; }
-    relation f8 "" @card -> @coll { kind: "flow.next"; }
-    relation f9 "" @coll -> @sort { kind: "flow.next"; }
-    relation f10 "" @sort -> @mrg { kind: "flow.next"; }
-    relation f11 "" @mrg -> @xtr { kind: "flow.next"; }
-    relation f12 "" @xtr -> @par { kind: "flow.next"; }
-    relation f13 "" @par -> @loopend { kind: "flow.next"; }
-    relation f14 "" @loopend -> @loopstart { kind: "flow.next"; }
-    relation f15 "" @loopend -> @fin { kind: "flow.next"; }
-}
+element "ddn.examples.iso5807::m.start" as "flow.start"
+    with
+        id "ddn.examples.iso5807::m.start"
+        title "start"
 
-view chart "ISO 5807 warehouse flow": [@m] as "flow.iso5807@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; direction: down; }
-    publication { size: content; fit: none; }
-}
+
+element "ddn.examples.iso5807::m.manual" as "flow.manualinput"
+    with
+        id "ddn.examples.iso5807::m.manual"
+        title "Enter shelf counts"
+
+
+element "ddn.examples.iso5807::m.prep" as "flow.preparation"
+    with
+        id "ddn.examples.iso5807::m.prep"
+        title "Load picking rules"
+
+
+element "ddn.examples.iso5807::m.op" as "flow.manualop"
+    with
+        id "ddn.examples.iso5807::m.op"
+        title "Pick by hand"
+
+
+element "ddn.examples.iso5807::m.disp" as "flow.display"
+    with
+        id "ddn.examples.iso5807::m.disp"
+        title "Show tote ID"
+
+
+element "ddn.examples.iso5807::m.wait" as "flow.delay"
+    with
+        id "ddn.examples.iso5807::m.wait"
+        title "Cure time"
+
+
+element "ddn.examples.iso5807::m.loopstart" as "flow.loopstart"
+    with
+        id "ddn.examples.iso5807::m.loopstart"
+        title "For each tote"
+
+
+element "ddn.examples.iso5807::m.card" as "flow.card"
+    with
+        id "ddn.examples.iso5807::m.card"
+        title "Read card"
+
+
+element "ddn.examples.iso5807::m.coll" as "flow.collate"
+    with
+        id "ddn.examples.iso5807::m.coll"
+        title "Collate lines"
+
+
+element "ddn.examples.iso5807::m.sort" as "flow.sort"
+    with
+        id "ddn.examples.iso5807::m.sort"
+        title "Sort by bin"
+
+
+element "ddn.examples.iso5807::m.mrg" as "flow.isomerge"
+    with
+        id "ddn.examples.iso5807::m.mrg"
+        title "mrg"
+
+
+element "ddn.examples.iso5807::m.xtr" as "flow.isoextract"
+    with
+        id "ddn.examples.iso5807::m.xtr"
+        title "xtr"
+
+
+element "ddn.examples.iso5807::m.par" as "flow.parallelmode"
+    with
+        id "ddn.examples.iso5807::m.par"
+        title "Parallel packing"
+
+
+element "ddn.examples.iso5807::m.loopend" as "flow.loopend"
+    with
+        id "ddn.examples.iso5807::m.loopend"
+        title "Next tote"
+
+
+element "ddn.examples.iso5807::m.fin" as "flow.end"
+    with
+        id "ddn.examples.iso5807::m.fin"
+        title "fin"
+
+
+relation "ddn.examples.iso5807::m.f1" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f1"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.start"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.manual"
+
+
+relation "ddn.examples.iso5807::m.f2" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f2"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.manual"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.prep"
+
+
+relation "ddn.examples.iso5807::m.f3" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f3"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.prep"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.op"
+
+
+relation "ddn.examples.iso5807::m.f4" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f4"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.op"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.disp"
+
+
+relation "ddn.examples.iso5807::m.f5" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f5"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.disp"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.wait"
+
+
+relation "ddn.examples.iso5807::m.f6" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f6"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.wait"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.loopstart"
+
+
+relation "ddn.examples.iso5807::m.f7" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f7"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.loopstart"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.card"
+
+
+relation "ddn.examples.iso5807::m.f8" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f8"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.card"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.coll"
+
+
+relation "ddn.examples.iso5807::m.f9" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f9"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.coll"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.sort"
+
+
+relation "ddn.examples.iso5807::m.f10" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f10"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.sort"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.mrg"
+
+
+relation "ddn.examples.iso5807::m.f11" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f11"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.mrg"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.xtr"
+
+
+relation "ddn.examples.iso5807::m.f12" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f12"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.xtr"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.par"
+
+
+relation "ddn.examples.iso5807::m.f13" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f13"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.par"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.loopend"
+
+
+relation "ddn.examples.iso5807::m.f14" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f14"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.loopend"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.loopstart"
+
+
+relation "ddn.examples.iso5807::m.f15" as "flow.next"
+    with
+        id "ddn.examples.iso5807::m.f15"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.iso5807::m.loopend"
+            item
+                definition
+                    id "ddn.examples.iso5807::m.fin"
+
+
+view "chart" as "flow.iso5807@1"
+    with
+        id "chart"
+        title "ISO 5807 warehouse flow"
+        selection
+            include
+                item
+                    id "ddn.examples.iso5807::m.start"
+                item
+                    id "ddn.examples.iso5807::m.manual"
+                item
+                    id "ddn.examples.iso5807::m.prep"
+                item
+                    id "ddn.examples.iso5807::m.op"
+                item
+                    id "ddn.examples.iso5807::m.disp"
+                item
+                    id "ddn.examples.iso5807::m.wait"
+                item
+                    id "ddn.examples.iso5807::m.loopstart"
+                item
+                    id "ddn.examples.iso5807::m.card"
+                item
+                    id "ddn.examples.iso5807::m.coll"
+                item
+                    id "ddn.examples.iso5807::m.sort"
+                item
+                    id "ddn.examples.iso5807::m.mrg"
+                item
+                    id "ddn.examples.iso5807::m.xtr"
+                item
+                    id "ddn.examples.iso5807::m.par"
+                item
+                    id "ddn.examples.iso5807::m.loopend"
+                item
+                    id "ddn.examples.iso5807::m.fin"
+                item
+                    id "ddn.examples.iso5807::m.f1"
+                item
+                    id "ddn.examples.iso5807::m.f2"
+                item
+                    id "ddn.examples.iso5807::m.f3"
+                item
+                    id "ddn.examples.iso5807::m.f4"
+                item
+                    id "ddn.examples.iso5807::m.f5"
+                item
+                    id "ddn.examples.iso5807::m.f6"
+                item
+                    id "ddn.examples.iso5807::m.f7"
+                item
+                    id "ddn.examples.iso5807::m.f8"
+                item
+                    id "ddn.examples.iso5807::m.f9"
+                item
+                    id "ddn.examples.iso5807::m.f10"
+                item
+                    id "ddn.examples.iso5807::m.f11"
+                item
+                    id "ddn.examples.iso5807::m.f12"
+                item
+                    id "ddn.examples.iso5807::m.f13"
+                item
+                    id "ddn.examples.iso5807::m.f14"
+                item
+                    id "ddn.examples.iso5807::m.f15"
+        layout
+            algorithm "layered"
+            direction "down"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:chart"
+
+    use "ddn.examples.iso5807::m.start" named "appearance:chart:ddn.examples.iso5807::m.start"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.start"
+
+    use "ddn.examples.iso5807::m.manual" named "appearance:chart:ddn.examples.iso5807::m.manual"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.manual"
+
+    use "ddn.examples.iso5807::m.prep" named "appearance:chart:ddn.examples.iso5807::m.prep"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.prep"
+
+    use "ddn.examples.iso5807::m.op" named "appearance:chart:ddn.examples.iso5807::m.op"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.op"
+
+    use "ddn.examples.iso5807::m.disp" named "appearance:chart:ddn.examples.iso5807::m.disp"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.disp"
+
+    use "ddn.examples.iso5807::m.wait" named "appearance:chart:ddn.examples.iso5807::m.wait"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.wait"
+
+    use "ddn.examples.iso5807::m.loopstart" named "appearance:chart:ddn.examples.iso5807::m.loopstart"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.loopstart"
+
+    use "ddn.examples.iso5807::m.card" named "appearance:chart:ddn.examples.iso5807::m.card"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.card"
+
+    use "ddn.examples.iso5807::m.coll" named "appearance:chart:ddn.examples.iso5807::m.coll"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.coll"
+
+    use "ddn.examples.iso5807::m.sort" named "appearance:chart:ddn.examples.iso5807::m.sort"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.sort"
+
+    use "ddn.examples.iso5807::m.mrg" named "appearance:chart:ddn.examples.iso5807::m.mrg"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.mrg"
+
+    use "ddn.examples.iso5807::m.xtr" named "appearance:chart:ddn.examples.iso5807::m.xtr"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.xtr"
+
+    use "ddn.examples.iso5807::m.par" named "appearance:chart:ddn.examples.iso5807::m.par"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.par"
+
+    use "ddn.examples.iso5807::m.loopend" named "appearance:chart:ddn.examples.iso5807::m.loopend"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.loopend"
+
+    use "ddn.examples.iso5807::m.fin" named "appearance:chart:ddn.examples.iso5807::m.fin"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.fin"
+
+    use "ddn.examples.iso5807::m.f1" named "appearance:chart:ddn.examples.iso5807::m.f1"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f1"
+
+    use "ddn.examples.iso5807::m.f2" named "appearance:chart:ddn.examples.iso5807::m.f2"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f2"
+
+    use "ddn.examples.iso5807::m.f3" named "appearance:chart:ddn.examples.iso5807::m.f3"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f3"
+
+    use "ddn.examples.iso5807::m.f4" named "appearance:chart:ddn.examples.iso5807::m.f4"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f4"
+
+    use "ddn.examples.iso5807::m.f5" named "appearance:chart:ddn.examples.iso5807::m.f5"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f5"
+
+    use "ddn.examples.iso5807::m.f6" named "appearance:chart:ddn.examples.iso5807::m.f6"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f6"
+
+    use "ddn.examples.iso5807::m.f7" named "appearance:chart:ddn.examples.iso5807::m.f7"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f7"
+
+    use "ddn.examples.iso5807::m.f8" named "appearance:chart:ddn.examples.iso5807::m.f8"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f8"
+
+    use "ddn.examples.iso5807::m.f9" named "appearance:chart:ddn.examples.iso5807::m.f9"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f9"
+
+    use "ddn.examples.iso5807::m.f10" named "appearance:chart:ddn.examples.iso5807::m.f10"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f10"
+
+    use "ddn.examples.iso5807::m.f11" named "appearance:chart:ddn.examples.iso5807::m.f11"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f11"
+
+    use "ddn.examples.iso5807::m.f12" named "appearance:chart:ddn.examples.iso5807::m.f12"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f12"
+
+    use "ddn.examples.iso5807::m.f13" named "appearance:chart:ddn.examples.iso5807::m.f13"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f13"
+
+    use "ddn.examples.iso5807::m.f14" named "appearance:chart:ddn.examples.iso5807::m.f14"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f14"
+
+    use "ddn.examples.iso5807::m.f15" named "appearance:chart:ddn.examples.iso5807::m.f15"
+        with
+            id "appearance:chart:ddn.examples.iso5807::m.f15"

@@ -1,91 +1,1215 @@
-ddn "0.5";
-module "ddn.examples.distribution-charts";
+version ddn-next-1
 
-// Synthetic latency sample: 30 response-time observations across three
-// services. All data is synthetic; not a measurement of any real system.
-data latency {
-    record a1 "alpha #1" {x_record: {"service": "alpha", "ms": 42, "unit": "ms"}; }
-    record a2 "alpha #2" {x_record: {"service": "alpha", "ms": 45, "unit": "ms"}; }
-    record a3 "alpha #3" {x_record: {"service": "alpha", "ms": 47, "unit": "ms"}; }
-    record a4 "alpha #4" {x_record: {"service": "alpha", "ms": 48, "unit": "ms"}; }
-    record a5 "alpha #5" {x_record: {"service": "alpha", "ms": 50, "unit": "ms"}; }
-    record a6 "alpha #6" {x_record: {"service": "alpha", "ms": 51, "unit": "ms"}; }
-    record a7 "alpha #7" {x_record: {"service": "alpha", "ms": 53, "unit": "ms"}; }
-    record a8 "alpha #8" {x_record: {"service": "alpha", "ms": 55, "unit": "ms"}; }
-    record a9 "alpha #9" {x_record: {"service": "alpha", "ms": 58, "unit": "ms"}; }
-    record a10 "alpha #10" {x_record: {"service": "alpha", "ms": 96, "unit": "ms"}; }
-    record b1 "beta #1" {x_record: {"service": "beta", "ms": 61, "unit": "ms"}; }
-    record b2 "beta #2" {x_record: {"service": "beta", "ms": 63, "unit": "ms"}; }
-    record b3 "beta #3" {x_record: {"service": "beta", "ms": 64, "unit": "ms"}; }
-    record b4 "beta #4" {x_record: {"service": "beta", "ms": 66, "unit": "ms"}; }
-    record b5 "beta #5" {x_record: {"service": "beta", "ms": 68, "unit": "ms"}; }
-    record b6 "beta #6" {x_record: {"service": "beta", "ms": 69, "unit": "ms"}; }
-    record b7 "beta #7" {x_record: {"service": "beta", "ms": 71, "unit": "ms"}; }
-    record b8 "beta #8" {x_record: {"service": "beta", "ms": 74, "unit": "ms"}; }
-    record b9 "beta #9" {x_record: {"service": "beta", "ms": 79, "unit": "ms"}; }
-    record b10 "beta #10" {x_record: {"service": "beta", "ms": 85, "unit": "ms"}; }
-    record c1 "gamma #1" {x_record: {"service": "gamma", "ms": 30, "unit": "ms"}; }
-    record c2 "gamma #2" {x_record: {"service": "gamma", "ms": 33, "unit": "ms"}; }
-    record c3 "gamma #3" {x_record: {"service": "gamma", "ms": 52, "unit": "ms"}; }
-    record c4 "gamma #4" {x_record: {"service": "gamma", "ms": 55, "unit": "ms"}; }
-    record c5 "gamma #5" {x_record: {"service": "gamma", "ms": 72, "unit": "ms"}; }
-    record c6 "gamma #6" {x_record: {"service": "gamma", "ms": 90, "unit": "ms"}; }
-    record c7 "gamma #7" {x_record: {"service": "gamma", "ms": 94, "unit": "ms"}; }
-    record c8 "gamma #8" {x_record: {"service": "gamma", "ms": 118, "unit": "ms"}; }
-    record c9 "gamma #9" {x_record: {"service": "gamma", "ms": 121, "unit": "ms"}; }
-    record c10 "gamma #10" {x_record: {"service": "gamma", "ms": 150, "unit": "ms"}; }
-}
+publication "publication:histogram"
+    with
+        id "publication:histogram"
+        title "Response times / histogram"
+        targets
+            item
+                target
+                    id "histogram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view histogram "Response times / histogram" {
-    data: [@latency];
-    projection { kind:chart; profile:"chart.histogram@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:histogram; x:"x_record.ms"; x_type:number; bin_count:8; unit:"ms"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
 
-view density "Response times / probability density" {
-    data: [@latency];
-    projection { kind:chart; profile:"chart.density@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:density; x:"x_record.ms"; x_type:number; unit:"ms"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:density"
+    with
+        id "publication:density"
+        title "Response times / probability density"
+        targets
+            item
+                target
+                    id "density"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view qq "Response times / normal Q-Q" {
-    data: [@latency];
-    projection { kind:chart; profile:"chart.qq@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:qq; x:"x_record.ms"; x_type:number; unit:"ms"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
 
-view quantiledot "Response times / quantile dotplot" {
-    data: [@latency];
-    projection { kind:chart; profile:"chart.quantiledot@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:quantiledot; x:"x_record.ms"; x_type:number; unit:"ms"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:qq"
+    with
+        id "publication:qq"
+        title "Response times / normal Q-Q"
+        targets
+            item
+                target
+                    id "qq"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view dotplot "Response times by service / dot plot" {
-    data: [@latency];
-    projection { kind:chart; profile:"chart.dotplot@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:dotplot; x:"x_record.service"; y:"x_record.ms"; unit:"ms"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
 
-view boxplot "Response times by service / box plot" {
-    data: [@latency];
-    projection { kind:chart; profile:"chart.boxplot@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:boxplot; x:"x_record.service"; y:"x_record.ms"; unit:"ms"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:quantiledot"
+    with
+        id "publication:quantiledot"
+        title "Response times / quantile dotplot"
+        targets
+            item
+                target
+                    id "quantiledot"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view violin "Response times by service / violin" {
-    data: [@latency];
-    projection { kind:chart; profile:"chart.violin@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:violin; x:"x_record.service"; y:"x_record.ms"; unit:"ms"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
 
-view beeswarm "Response times by service / beeswarm" {
-    data: [@latency];
-    projection { kind:chart; profile:"chart.beeswarm@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:beeswarm; x:"x_record.service"; y:"x_record.ms"; unit:"ms"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:dotplot"
+    with
+        id "publication:dotplot"
+        title "Response times by service / dot plot"
+        targets
+            item
+                target
+                    id "dotplot"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view topk "Slowest services / top-K" {
-    data: [@latency];
-    projection { kind:chart; profile:"chart.topk@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:topk; x:"x_record.service"; y:"x_record.ms"; aggregate:mean; k:2; unit:"ms"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+
+publication "publication:boxplot"
+    with
+        id "publication:boxplot"
+        title "Response times by service / box plot"
+        targets
+            item
+                target
+                    id "boxplot"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:violin"
+    with
+        id "publication:violin"
+        title "Response times by service / violin"
+        targets
+            item
+                target
+                    id "violin"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:beeswarm"
+    with
+        id "publication:beeswarm"
+        title "Response times by service / beeswarm"
+        targets
+            item
+                target
+                    id "beeswarm"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:topk"
+    with
+        id "publication:topk"
+        title "Slowest services / top-K"
+        targets
+            item
+                target
+                    id "topk"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.distribution-charts::latency.a1" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.a1"
+        title "alpha #1"
+        metadata
+            x_record
+                service "alpha"
+                ms 42
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.a2" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.a2"
+        title "alpha #2"
+        metadata
+            x_record
+                service "alpha"
+                ms 45
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.a3" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.a3"
+        title "alpha #3"
+        metadata
+            x_record
+                service "alpha"
+                ms 47
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.a4" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.a4"
+        title "alpha #4"
+        metadata
+            x_record
+                service "alpha"
+                ms 48
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.a5" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.a5"
+        title "alpha #5"
+        metadata
+            x_record
+                service "alpha"
+                ms 50
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.a6" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.a6"
+        title "alpha #6"
+        metadata
+            x_record
+                service "alpha"
+                ms 51
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.a7" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.a7"
+        title "alpha #7"
+        metadata
+            x_record
+                service "alpha"
+                ms 53
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.a8" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.a8"
+        title "alpha #8"
+        metadata
+            x_record
+                service "alpha"
+                ms 55
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.a9" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.a9"
+        title "alpha #9"
+        metadata
+            x_record
+                service "alpha"
+                ms 58
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.a10" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.a10"
+        title "alpha #10"
+        metadata
+            x_record
+                service "alpha"
+                ms 96
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.b1" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.b1"
+        title "beta #1"
+        metadata
+            x_record
+                service "beta"
+                ms 61
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.b2" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.b2"
+        title "beta #2"
+        metadata
+            x_record
+                service "beta"
+                ms 63
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.b3" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.b3"
+        title "beta #3"
+        metadata
+            x_record
+                service "beta"
+                ms 64
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.b4" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.b4"
+        title "beta #4"
+        metadata
+            x_record
+                service "beta"
+                ms 66
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.b5" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.b5"
+        title "beta #5"
+        metadata
+            x_record
+                service "beta"
+                ms 68
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.b6" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.b6"
+        title "beta #6"
+        metadata
+            x_record
+                service "beta"
+                ms 69
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.b7" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.b7"
+        title "beta #7"
+        metadata
+            x_record
+                service "beta"
+                ms 71
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.b8" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.b8"
+        title "beta #8"
+        metadata
+            x_record
+                service "beta"
+                ms 74
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.b9" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.b9"
+        title "beta #9"
+        metadata
+            x_record
+                service "beta"
+                ms 79
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.b10" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.b10"
+        title "beta #10"
+        metadata
+            x_record
+                service "beta"
+                ms 85
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.c1" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.c1"
+        title "gamma #1"
+        metadata
+            x_record
+                service "gamma"
+                ms 30
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.c2" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.c2"
+        title "gamma #2"
+        metadata
+            x_record
+                service "gamma"
+                ms 33
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.c3" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.c3"
+        title "gamma #3"
+        metadata
+            x_record
+                service "gamma"
+                ms 52
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.c4" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.c4"
+        title "gamma #4"
+        metadata
+            x_record
+                service "gamma"
+                ms 55
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.c5" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.c5"
+        title "gamma #5"
+        metadata
+            x_record
+                service "gamma"
+                ms 72
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.c6" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.c6"
+        title "gamma #6"
+        metadata
+            x_record
+                service "gamma"
+                ms 90
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.c7" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.c7"
+        title "gamma #7"
+        metadata
+            x_record
+                service "gamma"
+                ms 94
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.c8" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.c8"
+        title "gamma #8"
+        metadata
+            x_record
+                service "gamma"
+                ms 118
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.c9" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.c9"
+        title "gamma #9"
+        metadata
+            x_record
+                service "gamma"
+                ms 121
+                unit "ms"
+
+
+element "ddn.examples.distribution-charts::latency.c10" as "record"
+    with
+        id "ddn.examples.distribution-charts::latency.c10"
+        title "gamma #10"
+        metadata
+            x_record
+                service "gamma"
+                ms 150
+                unit "ms"
+
+
+view "histogram" as "chart.histogram@1"
+    with
+        id "histogram"
+        title "Response times / histogram"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.distribution-charts::latency.a1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c10"
+                mark "histogram"
+                x "metadata.x_record.ms"
+                x_type "number"
+                bin_count 8
+                unit "ms"
+                width 1120
+                height 620
+
+
+view "density" as "chart.density@1"
+    with
+        id "density"
+        title "Response times / probability density"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.distribution-charts::latency.a1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c10"
+                mark "density"
+                x "metadata.x_record.ms"
+                x_type "number"
+                unit "ms"
+                width 1120
+                height 620
+
+
+view "qq" as "chart.qq@1"
+    with
+        id "qq"
+        title "Response times / normal Q-Q"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.distribution-charts::latency.a1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c10"
+                mark "qq"
+                x "metadata.x_record.ms"
+                x_type "number"
+                unit "ms"
+                width 1120
+                height 620
+
+
+view "quantiledot" as "chart.quantiledot@1"
+    with
+        id "quantiledot"
+        title "Response times / quantile dotplot"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.distribution-charts::latency.a1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c10"
+                mark "quantiledot"
+                x "metadata.x_record.ms"
+                x_type "number"
+                unit "ms"
+                width 1120
+                height 620
+
+
+view "dotplot" as "chart.dotplot@1"
+    with
+        id "dotplot"
+        title "Response times by service / dot plot"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.distribution-charts::latency.a1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c10"
+                mark "dotplot"
+                x "metadata.x_record.service"
+                y "metadata.x_record.ms"
+                unit "ms"
+                width 1120
+                height 620
+
+
+view "boxplot" as "chart.boxplot@1"
+    with
+        id "boxplot"
+        title "Response times by service / box plot"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.distribution-charts::latency.a1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c10"
+                mark "boxplot"
+                x "metadata.x_record.service"
+                y "metadata.x_record.ms"
+                unit "ms"
+                width 1120
+                height 620
+
+
+view "violin" as "chart.violin@1"
+    with
+        id "violin"
+        title "Response times by service / violin"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.distribution-charts::latency.a1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c10"
+                mark "violin"
+                x "metadata.x_record.service"
+                y "metadata.x_record.ms"
+                unit "ms"
+                width 1120
+                height 620
+
+
+view "beeswarm" as "chart.beeswarm@1"
+    with
+        id "beeswarm"
+        title "Response times by service / beeswarm"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.distribution-charts::latency.a1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c10"
+                mark "beeswarm"
+                x "metadata.x_record.service"
+                y "metadata.x_record.ms"
+                unit "ms"
+                width 1120
+                height 620
+
+
+view "topk" as "chart.topk@1"
+    with
+        id "topk"
+        title "Slowest services / top-K"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.distribution-charts::latency.a1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.a10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.b10"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c1"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c2"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c3"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c4"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c5"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c6"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c7"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c8"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c9"
+                    item
+                        id "ddn.examples.distribution-charts::latency.c10"
+                mark "topk"
+                x "metadata.x_record.service"
+                y "metadata.x_record.ms"
+                aggregate "average"
+                k 2
+                unit "ms"
+                width 1120
+                height 620

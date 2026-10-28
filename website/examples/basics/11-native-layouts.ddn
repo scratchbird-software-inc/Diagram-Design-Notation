@@ -1,44 +1,966 @@
-ddn "0.5";
-module "ddn.examples.native-layouts";
-import "shared.ddn" as shared;
-data model {
- context enterprise "Meridian Works" {role: authoritative; }
- application finance "Finance" {role: authoritative; }
- application plant "Plant operations" {role: authoritative; }
- table journal "Posted journals" {role: authoritative; fields { journal_id; period_id; } }
- table stock "Stock movements" {role: authoritative; fields { movement_id; lot_id; } }
- dataset analytics "Warehouse projection" {role: derived; }
- assoc f1 @enterprise -> @finance;
- assoc f2 @enterprise -> @plant;
- assoc f3 @finance -> @journal;
- assoc f4 @plant -> @stock;
- assoc f5 @plant -> @analytics;
-}
-format options {
- layout grid { gap: 112px; row_gap: 112px; algorithm: grid; columns: 3; }
- layout layered { gap: 112px; row_gap: 112px; algorithm: layered; direction: right; }
- layout tree { algorithm: tree; root: @model.enterprise; hierarchy: [assoc]; }
- layout mindmap { gap: 112px; row_gap: 112px; algorithm: mindmap; routing: curved; root: @model.enterprise; hierarchy: [assoc]; }
- layout groups { gap: 112px; row_gap: 112px; algorithm: grouped; group_by: role; columns: 2; }
- legend keys { mode: numbers; keys: { f1: 1, f2: 2, f3: 3, f4: 4, f5: 5 }; width: 330px; }
-}
-view grid "Native grid / no coordinates" {
- data: [@model]; format: @shared.styles.technical; layout: @options.grid; legend: @options.keys;
- publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
-view layered "Native layered / no coordinates" {
- data: [@model]; format: @shared.styles.technical; layout: @options.layered; legend: @options.keys;
- publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
-view tree "Native tree / no coordinates" {
- data: [@model]; format: @shared.styles.technical; layout: @options.tree; legend: @options.keys;
- publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
-view mindmap "Native mind-map / no coordinates" {
- data: [@model]; format: @shared.styles.technical; layout: @options.mindmap; legend: @options.keys;
- publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
-view grouped "Native grouped / no coordinates" {
- data: [@model]; format: @shared.styles.technical; layout: @options.groups; legend: @options.keys;
- publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+version ddn-next-1
+
+publication "publication:grid"
+    with
+        id "publication:grid"
+        title "Native grid / no coordinates"
+        targets
+            item
+                target
+                    id "grid"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:layered"
+    with
+        id "publication:layered"
+        title "Native layered / no coordinates"
+        targets
+            item
+                target
+                    id "layered"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:tree"
+    with
+        id "publication:tree"
+        title "Native tree / no coordinates"
+        targets
+            item
+                target
+                    id "tree"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:mindmap"
+    with
+        id "publication:mindmap"
+        title "Native mind-map / no coordinates"
+        targets
+            item
+                target
+                    id "mindmap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:grouped"
+    with
+        id "publication:grouped"
+        title "Native grouped / no coordinates"
+        targets
+            item
+                target
+                    id "grouped"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.native-layouts::model.enterprise" as "context"
+    with
+        id "ddn.examples.native-layouts::model.enterprise"
+        title "Meridian Works"
+        facets
+            authority
+                item "AUTH"
+        properties
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+
+
+element "ddn.examples.native-layouts::model.finance" as "application"
+    with
+        id "ddn.examples.native-layouts::model.finance"
+        title "Finance"
+        facets
+            authority
+                item "AUTH"
+        properties
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+
+
+element "ddn.examples.native-layouts::model.plant" as "application"
+    with
+        id "ddn.examples.native-layouts::model.plant"
+        title "Plant operations"
+        facets
+            authority
+                item "AUTH"
+        properties
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+
+
+element "ddn.examples.native-layouts::model.journal.journal_id" as "field"
+    with
+        id "ddn.examples.native-layouts::model.journal.journal_id"
+        title "journal_id"
+        content
+            parent
+                id "ddn.examples.native-layouts::model.journal"
+            ordinal 0
+
+
+element "ddn.examples.native-layouts::model.journal.period_id" as "field"
+    with
+        id "ddn.examples.native-layouts::model.journal.period_id"
+        title "period_id"
+        content
+            parent
+                id "ddn.examples.native-layouts::model.journal"
+            ordinal 1
+
+
+element "ddn.examples.native-layouts::model.journal" as "table"
+    with
+        id "ddn.examples.native-layouts::model.journal"
+        title "Posted journals"
+        facets
+            authority
+                item "AUTH"
+        properties
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+        members
+            item
+                id "ddn.examples.native-layouts::model.journal.journal_id"
+            item
+                id "ddn.examples.native-layouts::model.journal.period_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "journal_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "period_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.native-layouts::model.stock.movement_id" as "field"
+    with
+        id "ddn.examples.native-layouts::model.stock.movement_id"
+        title "movement_id"
+        content
+            parent
+                id "ddn.examples.native-layouts::model.stock"
+            ordinal 0
+
+
+element "ddn.examples.native-layouts::model.stock.lot_id" as "field"
+    with
+        id "ddn.examples.native-layouts::model.stock.lot_id"
+        title "lot_id"
+        content
+            parent
+                id "ddn.examples.native-layouts::model.stock"
+            ordinal 1
+
+
+element "ddn.examples.native-layouts::model.stock" as "table"
+    with
+        id "ddn.examples.native-layouts::model.stock"
+        title "Stock movements"
+        facets
+            authority
+                item "AUTH"
+        properties
+            role "authoritative"
+        metadata
+            x_record
+                layout_group "authoritative"
+        members
+            item
+                id "ddn.examples.native-layouts::model.stock.movement_id"
+            item
+                id "ddn.examples.native-layouts::model.stock.lot_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "movement_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "lot_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.native-layouts::model.analytics" as "dataset"
+    with
+        id "ddn.examples.native-layouts::model.analytics"
+        title "Warehouse projection"
+        facets
+            authority
+                item "DER"
+        properties
+            role "derived"
+        metadata
+            x_record
+                layout_group "derived"
+
+
+relation "ddn.examples.native-layouts::model.f1" as "assoc"
+    with
+        id "ddn.examples.native-layouts::model.f1"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.native-layouts::model.enterprise"
+            item
+                definition
+                    id "ddn.examples.native-layouts::model.finance"
+
+
+relation "ddn.examples.native-layouts::model.f2" as "assoc"
+    with
+        id "ddn.examples.native-layouts::model.f2"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.native-layouts::model.enterprise"
+            item
+                definition
+                    id "ddn.examples.native-layouts::model.plant"
+
+
+relation "ddn.examples.native-layouts::model.f3" as "assoc"
+    with
+        id "ddn.examples.native-layouts::model.f3"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.native-layouts::model.finance"
+            item
+                definition
+                    id "ddn.examples.native-layouts::model.journal"
+
+
+relation "ddn.examples.native-layouts::model.f4" as "assoc"
+    with
+        id "ddn.examples.native-layouts::model.f4"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.native-layouts::model.plant"
+            item
+                definition
+                    id "ddn.examples.native-layouts::model.stock"
+
+
+relation "ddn.examples.native-layouts::model.f5" as "assoc"
+    with
+        id "ddn.examples.native-layouts::model.f5"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.native-layouts::model.plant"
+            item
+                definition
+                    id "ddn.examples.native-layouts::model.analytics"
+
+
+view "grid" as "ddn@1"
+    with
+        id "grid"
+        title "Native grid / no coordinates"
+        selection
+            include
+                item
+                    id "ddn.examples.native-layouts::model.enterprise"
+                item
+                    id "ddn.examples.native-layouts::model.finance"
+                item
+                    id "ddn.examples.native-layouts::model.plant"
+                item
+                    id "ddn.examples.native-layouts::model.journal"
+                item
+                    id "ddn.examples.native-layouts::model.stock"
+                item
+                    id "ddn.examples.native-layouts::model.analytics"
+                item
+                    id "ddn.examples.native-layouts::model.f1"
+                item
+                    id "ddn.examples.native-layouts::model.f2"
+                item
+                    id "ddn.examples.native-layouts::model.f3"
+                item
+                    id "ddn.examples.native-layouts::model.f4"
+                item
+                    id "ddn.examples.native-layouts::model.f5"
+        layout
+            algorithm "grid"
+            gap 112
+            row_gap 112
+        legend
+            mode "numbers"
+            width 330
+            keys
+                f1 "1"
+                f2 "2"
+                f3 "3"
+                f4 "4"
+                f5 "5"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:grid"
+
+    use "ddn.examples.native-layouts::model.enterprise" named "appearance:grid:ddn.examples.native-layouts::model.enterprise"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.enterprise"
+
+    use "ddn.examples.native-layouts::model.finance" named "appearance:grid:ddn.examples.native-layouts::model.finance"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.finance"
+
+    use "ddn.examples.native-layouts::model.plant" named "appearance:grid:ddn.examples.native-layouts::model.plant"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.plant"
+
+    use "ddn.examples.native-layouts::model.journal" named "appearance:grid:ddn.examples.native-layouts::model.journal"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.journal"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.native-layouts::model.stock" named "appearance:grid:ddn.examples.native-layouts::model.stock"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.stock"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.native-layouts::model.analytics" named "appearance:grid:ddn.examples.native-layouts::model.analytics"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.analytics"
+
+    use "ddn.examples.native-layouts::model.f1" named "appearance:grid:ddn.examples.native-layouts::model.f1"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.f1"
+
+    use "ddn.examples.native-layouts::model.f2" named "appearance:grid:ddn.examples.native-layouts::model.f2"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.f2"
+
+    use "ddn.examples.native-layouts::model.f3" named "appearance:grid:ddn.examples.native-layouts::model.f3"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.f3"
+
+    use "ddn.examples.native-layouts::model.f4" named "appearance:grid:ddn.examples.native-layouts::model.f4"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.f4"
+
+    use "ddn.examples.native-layouts::model.f5" named "appearance:grid:ddn.examples.native-layouts::model.f5"
+        with
+            id "appearance:grid:ddn.examples.native-layouts::model.f5"
+
+
+view "layered" as "ddn@1"
+    with
+        id "layered"
+        title "Native layered / no coordinates"
+        selection
+            include
+                item
+                    id "ddn.examples.native-layouts::model.enterprise"
+                item
+                    id "ddn.examples.native-layouts::model.finance"
+                item
+                    id "ddn.examples.native-layouts::model.plant"
+                item
+                    id "ddn.examples.native-layouts::model.journal"
+                item
+                    id "ddn.examples.native-layouts::model.stock"
+                item
+                    id "ddn.examples.native-layouts::model.analytics"
+                item
+                    id "ddn.examples.native-layouts::model.f1"
+                item
+                    id "ddn.examples.native-layouts::model.f2"
+                item
+                    id "ddn.examples.native-layouts::model.f3"
+                item
+                    id "ddn.examples.native-layouts::model.f4"
+                item
+                    id "ddn.examples.native-layouts::model.f5"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        legend
+            mode "numbers"
+            width 330
+            keys
+                f1 "1"
+                f2 "2"
+                f3 "3"
+                f4 "4"
+                f5 "5"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:layered"
+
+    use "ddn.examples.native-layouts::model.enterprise" named "appearance:layered:ddn.examples.native-layouts::model.enterprise"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.enterprise"
+
+    use "ddn.examples.native-layouts::model.finance" named "appearance:layered:ddn.examples.native-layouts::model.finance"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.finance"
+
+    use "ddn.examples.native-layouts::model.plant" named "appearance:layered:ddn.examples.native-layouts::model.plant"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.plant"
+
+    use "ddn.examples.native-layouts::model.journal" named "appearance:layered:ddn.examples.native-layouts::model.journal"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.journal"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.native-layouts::model.stock" named "appearance:layered:ddn.examples.native-layouts::model.stock"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.stock"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.native-layouts::model.analytics" named "appearance:layered:ddn.examples.native-layouts::model.analytics"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.analytics"
+
+    use "ddn.examples.native-layouts::model.f1" named "appearance:layered:ddn.examples.native-layouts::model.f1"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.f1"
+
+    use "ddn.examples.native-layouts::model.f2" named "appearance:layered:ddn.examples.native-layouts::model.f2"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.f2"
+
+    use "ddn.examples.native-layouts::model.f3" named "appearance:layered:ddn.examples.native-layouts::model.f3"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.f3"
+
+    use "ddn.examples.native-layouts::model.f4" named "appearance:layered:ddn.examples.native-layouts::model.f4"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.f4"
+
+    use "ddn.examples.native-layouts::model.f5" named "appearance:layered:ddn.examples.native-layouts::model.f5"
+        with
+            id "appearance:layered:ddn.examples.native-layouts::model.f5"
+
+
+view "tree" as "ddn@1"
+    with
+        id "tree"
+        title "Native tree / no coordinates"
+        selection
+            include
+                item
+                    id "ddn.examples.native-layouts::model.enterprise"
+                item
+                    id "ddn.examples.native-layouts::model.finance"
+                item
+                    id "ddn.examples.native-layouts::model.plant"
+                item
+                    id "ddn.examples.native-layouts::model.journal"
+                item
+                    id "ddn.examples.native-layouts::model.stock"
+                item
+                    id "ddn.examples.native-layouts::model.analytics"
+                item
+                    id "ddn.examples.native-layouts::model.f1"
+                item
+                    id "ddn.examples.native-layouts::model.f2"
+                item
+                    id "ddn.examples.native-layouts::model.f3"
+                item
+                    id "ddn.examples.native-layouts::model.f4"
+                item
+                    id "ddn.examples.native-layouts::model.f5"
+        layout
+            algorithm "tree"
+            root
+                id "ddn.examples.native-layouts::model.enterprise"
+            hierarchy "assoc"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                f1 "1"
+                f2 "2"
+                f3 "3"
+                f4 "4"
+                f5 "5"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:tree"
+
+    use "ddn.examples.native-layouts::model.enterprise" named "appearance:tree:ddn.examples.native-layouts::model.enterprise"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.enterprise"
+
+    use "ddn.examples.native-layouts::model.finance" named "appearance:tree:ddn.examples.native-layouts::model.finance"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.finance"
+
+    use "ddn.examples.native-layouts::model.plant" named "appearance:tree:ddn.examples.native-layouts::model.plant"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.plant"
+
+    use "ddn.examples.native-layouts::model.journal" named "appearance:tree:ddn.examples.native-layouts::model.journal"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.journal"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.native-layouts::model.stock" named "appearance:tree:ddn.examples.native-layouts::model.stock"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.stock"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.native-layouts::model.analytics" named "appearance:tree:ddn.examples.native-layouts::model.analytics"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.analytics"
+
+    use "ddn.examples.native-layouts::model.f1" named "appearance:tree:ddn.examples.native-layouts::model.f1"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.f1"
+
+    use "ddn.examples.native-layouts::model.f2" named "appearance:tree:ddn.examples.native-layouts::model.f2"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.f2"
+
+    use "ddn.examples.native-layouts::model.f3" named "appearance:tree:ddn.examples.native-layouts::model.f3"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.f3"
+
+    use "ddn.examples.native-layouts::model.f4" named "appearance:tree:ddn.examples.native-layouts::model.f4"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.f4"
+
+    use "ddn.examples.native-layouts::model.f5" named "appearance:tree:ddn.examples.native-layouts::model.f5"
+        with
+            id "appearance:tree:ddn.examples.native-layouts::model.f5"
+
+
+view "mindmap" as "ddn@1"
+    with
+        id "mindmap"
+        title "Native mind-map / no coordinates"
+        selection
+            include
+                item
+                    id "ddn.examples.native-layouts::model.enterprise"
+                item
+                    id "ddn.examples.native-layouts::model.finance"
+                item
+                    id "ddn.examples.native-layouts::model.plant"
+                item
+                    id "ddn.examples.native-layouts::model.journal"
+                item
+                    id "ddn.examples.native-layouts::model.stock"
+                item
+                    id "ddn.examples.native-layouts::model.analytics"
+                item
+                    id "ddn.examples.native-layouts::model.f1"
+                item
+                    id "ddn.examples.native-layouts::model.f2"
+                item
+                    id "ddn.examples.native-layouts::model.f3"
+                item
+                    id "ddn.examples.native-layouts::model.f4"
+                item
+                    id "ddn.examples.native-layouts::model.f5"
+        layout
+            algorithm "mindmap"
+            routing "curved"
+            gap 112
+            row_gap 112
+            root
+                id "ddn.examples.native-layouts::model.enterprise"
+            hierarchy "assoc"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                f1 "1"
+                f2 "2"
+                f3 "3"
+                f4 "4"
+                f5 "5"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:mindmap"
+
+    use "ddn.examples.native-layouts::model.enterprise" named "appearance:mindmap:ddn.examples.native-layouts::model.enterprise"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.enterprise"
+
+    use "ddn.examples.native-layouts::model.finance" named "appearance:mindmap:ddn.examples.native-layouts::model.finance"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.finance"
+
+    use "ddn.examples.native-layouts::model.plant" named "appearance:mindmap:ddn.examples.native-layouts::model.plant"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.plant"
+
+    use "ddn.examples.native-layouts::model.journal" named "appearance:mindmap:ddn.examples.native-layouts::model.journal"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.journal"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.native-layouts::model.stock" named "appearance:mindmap:ddn.examples.native-layouts::model.stock"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.stock"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.native-layouts::model.analytics" named "appearance:mindmap:ddn.examples.native-layouts::model.analytics"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.analytics"
+
+    use "ddn.examples.native-layouts::model.f1" named "appearance:mindmap:ddn.examples.native-layouts::model.f1"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.f1"
+
+    use "ddn.examples.native-layouts::model.f2" named "appearance:mindmap:ddn.examples.native-layouts::model.f2"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.f2"
+
+    use "ddn.examples.native-layouts::model.f3" named "appearance:mindmap:ddn.examples.native-layouts::model.f3"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.f3"
+
+    use "ddn.examples.native-layouts::model.f4" named "appearance:mindmap:ddn.examples.native-layouts::model.f4"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.f4"
+
+    use "ddn.examples.native-layouts::model.f5" named "appearance:mindmap:ddn.examples.native-layouts::model.f5"
+        with
+            id "appearance:mindmap:ddn.examples.native-layouts::model.f5"
+
+
+view "grouped" as "ddn@1"
+    with
+        id "grouped"
+        title "Native grouped / no coordinates"
+        selection
+            include
+                item
+                    id "ddn.examples.native-layouts::model.enterprise"
+                item
+                    id "ddn.examples.native-layouts::model.finance"
+                item
+                    id "ddn.examples.native-layouts::model.plant"
+                item
+                    id "ddn.examples.native-layouts::model.journal"
+                item
+                    id "ddn.examples.native-layouts::model.stock"
+                item
+                    id "ddn.examples.native-layouts::model.analytics"
+                item
+                    id "ddn.examples.native-layouts::model.f1"
+                item
+                    id "ddn.examples.native-layouts::model.f2"
+                item
+                    id "ddn.examples.native-layouts::model.f3"
+                item
+                    id "ddn.examples.native-layouts::model.f4"
+                item
+                    id "ddn.examples.native-layouts::model.f5"
+        layout
+            algorithm "grouped"
+            gap 112
+            row_gap 112
+            columns 2
+            group_by "role"
+        legend
+            mode "numbers"
+            width 330
+            keys
+                f1 "1"
+                f2 "2"
+                f3 "3"
+                f4 "4"
+                f5 "5"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:grouped"
+
+    use "ddn.examples.native-layouts::model.enterprise" named "appearance:grouped:ddn.examples.native-layouts::model.enterprise"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.enterprise"
+
+    use "ddn.examples.native-layouts::model.finance" named "appearance:grouped:ddn.examples.native-layouts::model.finance"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.finance"
+
+    use "ddn.examples.native-layouts::model.plant" named "appearance:grouped:ddn.examples.native-layouts::model.plant"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.plant"
+
+    use "ddn.examples.native-layouts::model.journal" named "appearance:grouped:ddn.examples.native-layouts::model.journal"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.journal"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.native-layouts::model.stock" named "appearance:grouped:ddn.examples.native-layouts::model.stock"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.stock"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.native-layouts::model.analytics" named "appearance:grouped:ddn.examples.native-layouts::model.analytics"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.analytics"
+
+    use "ddn.examples.native-layouts::model.f1" named "appearance:grouped:ddn.examples.native-layouts::model.f1"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.f1"
+
+    use "ddn.examples.native-layouts::model.f2" named "appearance:grouped:ddn.examples.native-layouts::model.f2"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.f2"
+
+    use "ddn.examples.native-layouts::model.f3" named "appearance:grouped:ddn.examples.native-layouts::model.f3"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.f3"
+
+    use "ddn.examples.native-layouts::model.f4" named "appearance:grouped:ddn.examples.native-layouts::model.f4"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.f4"
+
+    use "ddn.examples.native-layouts::model.f5" named "appearance:grouped:ddn.examples.native-layouts::model.f5"
+        with
+            id "appearance:grouped:ddn.examples.native-layouts::model.f5"

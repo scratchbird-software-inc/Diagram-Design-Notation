@@ -1,16 +1,271 @@
-ddn "0.5";
-module "ddn.usecases.views.migration";
-import "formats.ddn" as fmt;
-import "data/migration.ddn" as m;
+version ddn-next-1
 
-// How will the old representation become the new one?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "20 / Migration and target design" {
-    data: [@m.model];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.row;
-    select: [@m.model.legacy, @m.model.convert, @m.model.target];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "model.r_extract": 1, "model.r_load": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "20 / Migration and target design"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.migration::model.legacy.id" as "field"
+    with
+        id "ddn.usecases.migration::model.legacy.id"
+        title "id"
+        content
+            parent
+                id "ddn.usecases.migration::model.legacy"
+            ordinal 0
+
+
+element "ddn.usecases.migration::model.legacy.full_name" as "field"
+    with
+        id "ddn.usecases.migration::model.legacy.full_name"
+        title "full_name"
+        content
+            parent
+                id "ddn.usecases.migration::model.legacy"
+            ordinal 1
+
+
+element "ddn.usecases.migration::model.legacy" as "table"
+    with
+        id "ddn.usecases.migration::model.legacy"
+        title "Customer / legacy"
+        facets
+            maturity
+                item "DEP"
+        properties
+            level "instance"
+        members
+            item
+                id "ddn.usecases.migration::model.legacy.id"
+            item
+                id "ddn.usecases.migration::model.legacy.full_name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "full_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.migration::model.convert" as "activity"
+    with
+        id "ddn.usecases.migration::model.convert"
+        title "Map and reconcile"
+
+
+element "ddn.usecases.migration::model.target.customer_id" as "field"
+    with
+        id "ddn.usecases.migration::model.target.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.usecases.migration::model.target"
+            ordinal 0
+
+
+element "ddn.usecases.migration::model.target.display_name" as "field"
+    with
+        id "ddn.usecases.migration::model.target.display_name"
+        title "display_name"
+        content
+            parent
+                id "ddn.usecases.migration::model.target"
+            ordinal 1
+
+
+element "ddn.usecases.migration::model.target" as "table"
+    with
+        id "ddn.usecases.migration::model.target"
+        title "Customer / target"
+        facets
+            maturity
+                item "DRF"
+        properties
+            level "instance"
+        members
+            item
+                id "ddn.usecases.migration::model.target.customer_id"
+            item
+                id "ddn.usecases.migration::model.target.display_name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.usecases.migration::model.r_extract" as "extract"
+    with
+        id "ddn.usecases.migration::model.r_extract"
+        title "extracts into"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.migration::model.legacy"
+            item
+                definition
+                    id "ddn.usecases.migration::model.convert"
+
+
+relation "ddn.usecases.migration::model.r_load" as "load"
+    with
+        id "ddn.usecases.migration::model.r_load"
+        title "loads into"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.migration::model.convert"
+            item
+                definition
+                    id "ddn.usecases.migration::model.target"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "20 / Migration and target design"
+        selection
+            include
+                item
+                    id "ddn.usecases.migration::model.legacy"
+                item
+                    id "ddn.usecases.migration::model.convert"
+                item
+                    id "ddn.usecases.migration::model.target"
+                item
+                    id "ddn.usecases.migration::model.r_extract"
+                item
+                    id "ddn.usecases.migration::model.r_load"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_extract "1"
+                model.r_load "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.migration::model.legacy" named "appearance:diagram:ddn.usecases.migration::model.legacy"
+        with
+            id "appearance:diagram:ddn.usecases.migration::model.legacy"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.migration::model.convert" named "appearance:diagram:ddn.usecases.migration::model.convert"
+        with
+            id "appearance:diagram:ddn.usecases.migration::model.convert"
+
+    use "ddn.usecases.migration::model.target" named "appearance:diagram:ddn.usecases.migration::model.target"
+        with
+            id "appearance:diagram:ddn.usecases.migration::model.target"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.migration::model.r_extract" named "appearance:diagram:ddn.usecases.migration::model.r_extract"
+        with
+            id "appearance:diagram:ddn.usecases.migration::model.r_extract"
+
+    use "ddn.usecases.migration::model.r_load" named "appearance:diagram:ddn.usecases.migration::model.r_load"
+        with
+            id "appearance:diagram:ddn.usecases.migration::model.r_load"

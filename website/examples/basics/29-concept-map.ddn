@@ -1,29 +1,201 @@
-ddn "0.5";
-module "ddn.examples.concept-map";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:concepts"
+    with
+        id "publication:concepts"
+        title "Synthetic order-to-cash concepts / concept map"
+        targets
+            item
+                target
+                    id "concepts"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic order-to-cash domain concepts for the concept.map@1 profile.
-// Every relation carries an explicit author-written label — verb defaults are rejected (DDN-PJ104).
-data domain {
-    entity order "Order";
-    entity invoice "Invoice";
-    entity payment "Payment";
-    entity ledger "Ledger";
-    entity shipment "Shipment";
-    assoc r1 "bills" @order -> @invoice;
-    assoc r2 "settles" @payment -> @invoice;
-    assoc r3 "posts to" @invoice -> @ledger;
-    assoc r4 "fulfilled by" @order -> @shipment;
-    assoc r5 "books freight to" @shipment -> @ledger;
-}
 
-format options {
-    layout cmap { algorithm: layered; routing: curved; }
-}
+element "ddn.examples.concept-map::domain.order" as "entity"
+    with
+        id "ddn.examples.concept-map::domain.order"
+        title "Order"
 
-view concepts "Synthetic order-to-cash concepts / concept map" {
-    data: [@domain]; format: @shared.styles.technical; layout: @options.cmap; spacing: loose;
-    projection { kind: graph; profile: "concept.map@1"; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+
+element "ddn.examples.concept-map::domain.invoice" as "entity"
+    with
+        id "ddn.examples.concept-map::domain.invoice"
+        title "Invoice"
+
+
+element "ddn.examples.concept-map::domain.payment" as "entity"
+    with
+        id "ddn.examples.concept-map::domain.payment"
+        title "Payment"
+
+
+element "ddn.examples.concept-map::domain.ledger" as "entity"
+    with
+        id "ddn.examples.concept-map::domain.ledger"
+        title "Ledger"
+
+
+element "ddn.examples.concept-map::domain.shipment" as "entity"
+    with
+        id "ddn.examples.concept-map::domain.shipment"
+        title "Shipment"
+
+
+relation "ddn.examples.concept-map::domain.r1" as "assoc"
+    with
+        id "ddn.examples.concept-map::domain.r1"
+        title "bills"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.concept-map::domain.order"
+            item
+                definition
+                    id "ddn.examples.concept-map::domain.invoice"
+
+
+relation "ddn.examples.concept-map::domain.r2" as "assoc"
+    with
+        id "ddn.examples.concept-map::domain.r2"
+        title "settles"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.concept-map::domain.payment"
+            item
+                definition
+                    id "ddn.examples.concept-map::domain.invoice"
+
+
+relation "ddn.examples.concept-map::domain.r3" as "assoc"
+    with
+        id "ddn.examples.concept-map::domain.r3"
+        title "posts to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.concept-map::domain.invoice"
+            item
+                definition
+                    id "ddn.examples.concept-map::domain.ledger"
+
+
+relation "ddn.examples.concept-map::domain.r4" as "assoc"
+    with
+        id "ddn.examples.concept-map::domain.r4"
+        title "fulfilled by"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.concept-map::domain.order"
+            item
+                definition
+                    id "ddn.examples.concept-map::domain.shipment"
+
+
+relation "ddn.examples.concept-map::domain.r5" as "assoc"
+    with
+        id "ddn.examples.concept-map::domain.r5"
+        title "books freight to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.concept-map::domain.shipment"
+            item
+                definition
+                    id "ddn.examples.concept-map::domain.ledger"
+
+
+view "concepts" as "concept.map@1"
+    with
+        id "concepts"
+        title "Synthetic order-to-cash concepts / concept map"
+        selection
+            include
+                item
+                    id "ddn.examples.concept-map::domain.order"
+                item
+                    id "ddn.examples.concept-map::domain.invoice"
+                item
+                    id "ddn.examples.concept-map::domain.payment"
+                item
+                    id "ddn.examples.concept-map::domain.ledger"
+                item
+                    id "ddn.examples.concept-map::domain.shipment"
+                item
+                    id "ddn.examples.concept-map::domain.r1"
+                item
+                    id "ddn.examples.concept-map::domain.r2"
+                item
+                    id "ddn.examples.concept-map::domain.r3"
+                item
+                    id "ddn.examples.concept-map::domain.r4"
+                item
+                    id "ddn.examples.concept-map::domain.r5"
+        layout
+            algorithm "layered"
+            routing "curved"
+            gap 96
+            row_gap 96
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:concepts"
+
+    use "ddn.examples.concept-map::domain.order" named "appearance:concepts:ddn.examples.concept-map::domain.order"
+        with
+            id "appearance:concepts:ddn.examples.concept-map::domain.order"
+
+    use "ddn.examples.concept-map::domain.invoice" named "appearance:concepts:ddn.examples.concept-map::domain.invoice"
+        with
+            id "appearance:concepts:ddn.examples.concept-map::domain.invoice"
+
+    use "ddn.examples.concept-map::domain.payment" named "appearance:concepts:ddn.examples.concept-map::domain.payment"
+        with
+            id "appearance:concepts:ddn.examples.concept-map::domain.payment"
+
+    use "ddn.examples.concept-map::domain.ledger" named "appearance:concepts:ddn.examples.concept-map::domain.ledger"
+        with
+            id "appearance:concepts:ddn.examples.concept-map::domain.ledger"
+
+    use "ddn.examples.concept-map::domain.shipment" named "appearance:concepts:ddn.examples.concept-map::domain.shipment"
+        with
+            id "appearance:concepts:ddn.examples.concept-map::domain.shipment"
+
+    use "ddn.examples.concept-map::domain.r1" named "appearance:concepts:ddn.examples.concept-map::domain.r1"
+        with
+            id "appearance:concepts:ddn.examples.concept-map::domain.r1"
+
+    use "ddn.examples.concept-map::domain.r2" named "appearance:concepts:ddn.examples.concept-map::domain.r2"
+        with
+            id "appearance:concepts:ddn.examples.concept-map::domain.r2"
+
+    use "ddn.examples.concept-map::domain.r3" named "appearance:concepts:ddn.examples.concept-map::domain.r3"
+        with
+            id "appearance:concepts:ddn.examples.concept-map::domain.r3"
+
+    use "ddn.examples.concept-map::domain.r4" named "appearance:concepts:ddn.examples.concept-map::domain.r4"
+        with
+            id "appearance:concepts:ddn.examples.concept-map::domain.r4"
+
+    use "ddn.examples.concept-map::domain.r5" named "appearance:concepts:ddn.examples.concept-map::domain.r5"
+        with
+            id "appearance:concepts:ddn.examples.concept-map::domain.r5"

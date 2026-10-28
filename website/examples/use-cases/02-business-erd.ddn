@@ -1,16 +1,127 @@
-ddn "0.5";
-module "ddn.usecases.views.business-erd";
-import "formats.ddn" as fmt;
-import "data/commerce.ddn" as c;
+version ddn-next-1
 
-// What does one customer relate to?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "02 / Business concepts" {
-    data: [@c.concepts];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.row;
-    select: [@c.concepts.customer, @c.concepts.order, @c.concepts.shipment];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "concepts.r_places": 1, "concepts.r_ships": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "02 / Business concepts"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.commerce::concepts.customer" as "entity"
+    with
+        id "ddn.usecases.commerce::concepts.customer"
+        title "Customer"
+
+
+element "ddn.usecases.commerce::concepts.order" as "entity"
+    with
+        id "ddn.usecases.commerce::concepts.order"
+        title "Order"
+
+
+element "ddn.usecases.commerce::concepts.shipment" as "entity"
+    with
+        id "ddn.usecases.commerce::concepts.shipment"
+        title "Shipment"
+
+
+relation "ddn.usecases.commerce::concepts.r_places" as "assoc"
+    with
+        id "ddn.usecases.commerce::concepts.r_places"
+        title "places"
+        properties
+            source_mark "one"
+            target_mark "zeromany"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::concepts.customer"
+            item
+                definition
+                    id "ddn.usecases.commerce::concepts.order"
+
+
+relation "ddn.usecases.commerce::concepts.r_ships" as "assoc"
+    with
+        id "ddn.usecases.commerce::concepts.r_ships"
+        title "fulfilled by"
+        properties
+            source_mark "one"
+            target_mark "zeromany"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.commerce::concepts.order"
+            item
+                definition
+                    id "ddn.usecases.commerce::concepts.shipment"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "02 / Business concepts"
+        selection
+            include
+                item
+                    id "ddn.usecases.commerce::concepts.customer"
+                item
+                    id "ddn.usecases.commerce::concepts.order"
+                item
+                    id "ddn.usecases.commerce::concepts.shipment"
+                item
+                    id "ddn.usecases.commerce::concepts.r_places"
+                item
+                    id "ddn.usecases.commerce::concepts.r_ships"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                concepts.r_places "1"
+                concepts.r_ships "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.commerce::concepts.customer" named "appearance:diagram:ddn.usecases.commerce::concepts.customer"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::concepts.customer"
+
+    use "ddn.usecases.commerce::concepts.order" named "appearance:diagram:ddn.usecases.commerce::concepts.order"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::concepts.order"
+
+    use "ddn.usecases.commerce::concepts.shipment" named "appearance:diagram:ddn.usecases.commerce::concepts.shipment"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::concepts.shipment"
+
+    use "ddn.usecases.commerce::concepts.r_places" named "appearance:diagram:ddn.usecases.commerce::concepts.r_places"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::concepts.r_places"
+
+    use "ddn.usecases.commerce::concepts.r_ships" named "appearance:diagram:ddn.usecases.commerce::concepts.r_ships"
+        with
+            id "appearance:diagram:ddn.usecases.commerce::concepts.r_ships"

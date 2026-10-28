@@ -1,46 +1,349 @@
-ddn "0.6";
-module "examples.publication.chrome";
-format shared {
-    publication filing {
-        size: letter;
-        margin: 18mm;
-        minimum_text: 6pt;
-        embedding_scale: 2;
-        header {
-            left { text: "$title"; size: 9pt; }
-            right { text: "$date"; size: 9pt; }
-        }
-        footer {
-            center { text: "FIG. $figure"; size: 10pt; font: serif; }
-            right { text: "Page $page"; size: 8pt; }
-        }
-        border { style: single; weight: 1pt; inset: 6mm; }
-    }
-}
-data model {
-    object start "Start" { kind: "flow.start"; numeral: 100; }
-    object read "Read sensor" { kind: "flow.process"; numeral: 102; }
-    object decide "Threshold exceeded?" { kind: "flow.decision"; numeral: 104; }
-    object stop "Stop" { kind: "flow.end"; numeral: 106; }
-    relation f1 @start -> @read { kind: "flow.next"; }
-    relation f2 @read -> @decide { kind: "flow.next"; }
-    relation f3 "yes" @decide -> @stop { kind: "flow.next"; }
-    relation f4 "no" @decide -> @stop { kind: "flow.next"; }
-}
-view fig1 "Sensor monitor" {
-    layout { gap: 112px; row_gap: 112px; }
-    data: [@model];
-    kind: patent-figure;
-    publication: @shared.filing;
-}
-view fig2 "Sensor monitor (detail)" {
-    layout { gap: 112px; row_gap: 112px; }
-    data: [@model];
-    kind: patent-figure;
-    publication: @shared.filing;
-    select: [@model.read, @model.decide, @model.stop];
-}
-publication_set figures "Patent figures" {
-    publication: @shared.filing;
-    figures: [@fig1, @fig2];
-}
+version ddn-next-1
+
+publication "publication:fig1"
+    with
+        id "publication:fig1"
+        title "Sensor monitor"
+        targets
+            item
+                target
+                    id "fig1"
+                kind "view"
+        format "svg"
+        page
+            size "letter"
+            margin
+                top 68.03149606299213
+                right 68.03149606299213
+                bottom 68.03149606299213
+                left 68.03149606299213
+            minimum_text 8
+        header
+            runs
+                left
+                    text "$title"
+                    align "left"
+                    size 12
+                    lines 1
+                right
+                    text "$date"
+                    align "right"
+                    size 12
+                    lines 1
+            visible true
+        footer
+            runs
+                center
+                    text "FIG. $figure"
+                    align "center"
+                    font "serif"
+                    size 13.333333333333332
+                    lines 1
+                right
+                    text "Page $page"
+                    align "right"
+                    size 10.666666666666666
+                    lines 1
+            visible true
+        border
+            width 1
+            style "solid"
+            color "#475569"
+
+
+publication "publication:fig2"
+    with
+        id "publication:fig2"
+        title "Sensor monitor (detail)"
+        targets
+            item
+                target
+                    id "fig2"
+                kind "view"
+        format "svg"
+        page
+            size "letter"
+            margin
+                top 68.03149606299213
+                right 68.03149606299213
+                bottom 68.03149606299213
+                left 68.03149606299213
+            minimum_text 8
+        header
+            runs
+                left
+                    text "$title"
+                    align "left"
+                    size 12
+                    lines 1
+                right
+                    text "$date"
+                    align "right"
+                    size 12
+                    lines 1
+            visible true
+        footer
+            runs
+                center
+                    text "FIG. $figure"
+                    align "center"
+                    font "serif"
+                    size 13.333333333333332
+                    lines 1
+                right
+                    text "Page $page"
+                    align "right"
+                    size 10.666666666666666
+                    lines 1
+            visible true
+        border
+            width 1
+            style "solid"
+            color "#475569"
+
+
+element "examples.publication.chrome::model.start" as "flow.start"
+    with
+        id "examples.publication.chrome::model.start"
+        title "Start"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 100
+                    }
+                format "plain"
+
+
+element "examples.publication.chrome::model.read" as "flow.process"
+    with
+        id "examples.publication.chrome::model.read"
+        title "Read sensor"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 102
+                    }
+                format "plain"
+
+
+element "examples.publication.chrome::model.decide" as "flow.decision"
+    with
+        id "examples.publication.chrome::model.decide"
+        title "Threshold exceeded?"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 104
+                    }
+                format "plain"
+
+
+element "examples.publication.chrome::model.stop" as "flow.end"
+    with
+        id "examples.publication.chrome::model.stop"
+        title "Stop"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 106
+                    }
+                format "plain"
+
+
+relation "examples.publication.chrome::model.f1" as "flow.next"
+    with
+        id "examples.publication.chrome::model.f1"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "examples.publication.chrome::model.start"
+            item
+                definition
+                    id "examples.publication.chrome::model.read"
+
+
+relation "examples.publication.chrome::model.f2" as "flow.next"
+    with
+        id "examples.publication.chrome::model.f2"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "examples.publication.chrome::model.read"
+            item
+                definition
+                    id "examples.publication.chrome::model.decide"
+
+
+relation "examples.publication.chrome::model.f3" as "flow.next"
+    with
+        id "examples.publication.chrome::model.f3"
+        title "yes"
+        endpoints
+            item
+                definition
+                    id "examples.publication.chrome::model.decide"
+            item
+                definition
+                    id "examples.publication.chrome::model.stop"
+
+
+relation "examples.publication.chrome::model.f4" as "flow.next"
+    with
+        id "examples.publication.chrome::model.f4"
+        title "no"
+        endpoints
+            item
+                definition
+                    id "examples.publication.chrome::model.decide"
+            item
+                definition
+                    id "examples.publication.chrome::model.stop"
+
+
+view "fig1" as "ddn@1"
+    with
+        id "fig1"
+        title "Sensor monitor"
+        selection
+            include
+                item
+                    id "examples.publication.chrome::model.start"
+                item
+                    id "examples.publication.chrome::model.read"
+                item
+                    id "examples.publication.chrome::model.decide"
+                item
+                    id "examples.publication.chrome::model.stop"
+                item
+                    id "examples.publication.chrome::model.f1"
+                item
+                    id "examples.publication.chrome::model.f2"
+                item
+                    id "examples.publication.chrome::model.f3"
+                item
+                    id "examples.publication.chrome::model.f4"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#ffffff"
+        style
+            theme "neutral"
+        publication
+            id "publication:fig1"
+
+    use "examples.publication.chrome::model.start" named "appearance:fig1:examples.publication.chrome::model.start"
+        with
+            id "appearance:fig1:examples.publication.chrome::model.start"
+            marks
+                item "100"
+
+    use "examples.publication.chrome::model.read" named "appearance:fig1:examples.publication.chrome::model.read"
+        with
+            id "appearance:fig1:examples.publication.chrome::model.read"
+            marks
+                item "102"
+
+    use "examples.publication.chrome::model.decide" named "appearance:fig1:examples.publication.chrome::model.decide"
+        with
+            id "appearance:fig1:examples.publication.chrome::model.decide"
+            marks
+                item "104"
+
+    use "examples.publication.chrome::model.stop" named "appearance:fig1:examples.publication.chrome::model.stop"
+        with
+            id "appearance:fig1:examples.publication.chrome::model.stop"
+            marks
+                item "106"
+
+    use "examples.publication.chrome::model.f1" named "appearance:fig1:examples.publication.chrome::model.f1"
+        with
+            id "appearance:fig1:examples.publication.chrome::model.f1"
+
+    use "examples.publication.chrome::model.f2" named "appearance:fig1:examples.publication.chrome::model.f2"
+        with
+            id "appearance:fig1:examples.publication.chrome::model.f2"
+
+    use "examples.publication.chrome::model.f3" named "appearance:fig1:examples.publication.chrome::model.f3"
+        with
+            id "appearance:fig1:examples.publication.chrome::model.f3"
+
+    use "examples.publication.chrome::model.f4" named "appearance:fig1:examples.publication.chrome::model.f4"
+        with
+            id "appearance:fig1:examples.publication.chrome::model.f4"
+
+
+view "fig2" as "ddn@1"
+    with
+        id "fig2"
+        title "Sensor monitor (detail)"
+        selection
+            include
+                item
+                    id "examples.publication.chrome::model.read"
+                item
+                    id "examples.publication.chrome::model.decide"
+                item
+                    id "examples.publication.chrome::model.stop"
+                item
+                    id "examples.publication.chrome::model.f2"
+                item
+                    id "examples.publication.chrome::model.f3"
+                item
+                    id "examples.publication.chrome::model.f4"
+            exclude
+                item
+                    id "examples.publication.chrome::model.f1"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#ffffff"
+        style
+            theme "neutral"
+        publication
+            id "publication:fig2"
+
+    use "examples.publication.chrome::model.read" named "appearance:fig2:examples.publication.chrome::model.read"
+        with
+            id "appearance:fig2:examples.publication.chrome::model.read"
+            marks
+                item "102"
+
+    use "examples.publication.chrome::model.decide" named "appearance:fig2:examples.publication.chrome::model.decide"
+        with
+            id "appearance:fig2:examples.publication.chrome::model.decide"
+            marks
+                item "104"
+
+    use "examples.publication.chrome::model.stop" named "appearance:fig2:examples.publication.chrome::model.stop"
+        with
+            id "appearance:fig2:examples.publication.chrome::model.stop"
+            marks
+                item "106"
+
+    use "examples.publication.chrome::model.f2" named "appearance:fig2:examples.publication.chrome::model.f2"
+        with
+            id "appearance:fig2:examples.publication.chrome::model.f2"
+
+    use "examples.publication.chrome::model.f3" named "appearance:fig2:examples.publication.chrome::model.f3"
+        with
+            id "appearance:fig2:examples.publication.chrome::model.f3"
+
+    use "examples.publication.chrome::model.f4" named "appearance:fig2:examples.publication.chrome::model.f4"
+        with
+            id "appearance:fig2:examples.publication.chrome::model.f4"

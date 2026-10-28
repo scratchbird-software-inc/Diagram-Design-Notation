@@ -1,51 +1,332 @@
-ddn "0.5";
-module "ddn.examples.sysml";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:bdd"
+    with
+        id "publication:bdd"
+        title "Pump station block definition"
+        targets
+            item
+                target
+                    id "bdd"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic SysML-style block views for the sysml.bdd@1 / sysml.ibd@1 /
-// sysml.parametric@1 profiles. Blocks are sysml.block objects; under the ibd
-// view they declare a ports {} group and a sysml.flow relation carries the
-// item ("water") between the typed ports pump.out and reservoir.in — the
-// renderer draws a small square at each port attachment on the block border.
-// The parametric view shows a sysml.constraint whose label carries the
-// formula text, bound to exactly two endpoints (the two blocks) via assoc
-// relations. All data is synthetic. This is profile-level coverage, not
-// SysML conformance.
-data m {
-    object pump "Pump" { kind: "sysml.block";
-        ports { out { direction: out; } }
-    }
-    object reservoir "Reservoir" { kind: "sysml.block";
-        ports { in { direction: in; } }
-    }
-    object flow_balance "{flow = pressure × area}" { kind: "sysml.constraint"; }
 
-    assoc feeds "feeds" @pump -> @reservoir;
-    relation water "water" @pump.out -> @reservoir.in { kind: "sysml.flow"; }
-    assoc bind_pump "binds pump" @flow_balance -> @pump;
-    assoc bind_reservoir "binds reservoir" @flow_balance -> @reservoir;
-}
+publication "publication:ibd"
+    with
+        id "publication:ibd"
+        title "Pump station internal block"
+        targets
+            item
+                target
+                    id "ibd"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view bdd "Pump station block definition" {
-    data: [@m]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "sysml.bdd@1"; }
-    layout { algorithm: layered; direction: right; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-    exclude: [@m.flow_balance];
-}
 
-view ibd "Pump station internal block" {
-    data: [@m]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "sysml.ibd@1"; }
-    layout { algorithm: layered; direction: right; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-    exclude: [@m.flow_balance];
-}
+publication "publication:parametric"
+    with
+        id "publication:parametric"
+        title "Pump station flow balance"
+        targets
+            item
+                target
+                    id "parametric"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view parametric "Pump station flow balance" {
-    data: [@m]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "sysml.parametric@1"; }
-    layout { algorithm: layered; direction: right; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+
+element "ddn.examples.sysml::m.pump.out" as "core::Port"
+    with
+        id "ddn.examples.sysml::m.pump.out"
+        title "out"
+        content
+            owner
+                id "ddn.examples.sysml::m.pump"
+            direction "output"
+
+
+element "ddn.examples.sysml::m.pump" as "sysml.block"
+    with
+        id "ddn.examples.sysml::m.pump"
+        title "Pump"
+        members
+            item
+                id "ddn.examples.sysml::m.pump.out"
+
+
+element "ddn.examples.sysml::m.reservoir.in" as "core::Port"
+    with
+        id "ddn.examples.sysml::m.reservoir.in"
+        title "in"
+        content
+            owner
+                id "ddn.examples.sysml::m.reservoir"
+            direction "input"
+
+
+element "ddn.examples.sysml::m.reservoir" as "sysml.block"
+    with
+        id "ddn.examples.sysml::m.reservoir"
+        title "Reservoir"
+        members
+            item
+                id "ddn.examples.sysml::m.reservoir.in"
+
+
+element "ddn.examples.sysml::m.flow_balance" as "sysml.constraint"
+    with
+        id "ddn.examples.sysml::m.flow_balance"
+        title "{flow = pressure × area}"
+
+
+relation "ddn.examples.sysml::m.feeds" as "assoc"
+    with
+        id "ddn.examples.sysml::m.feeds"
+        title "feeds"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysml::m.pump"
+            item
+                definition
+                    id "ddn.examples.sysml::m.reservoir"
+
+
+relation "ddn.examples.sysml::m.water" as "sysml.flow"
+    with
+        id "ddn.examples.sysml::m.water"
+        title "water"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysml::m.pump"
+                member
+                    id "ddn.examples.sysml::m.pump.out"
+            item
+                definition
+                    id "ddn.examples.sysml::m.reservoir"
+                member
+                    id "ddn.examples.sysml::m.reservoir.in"
+
+
+relation "ddn.examples.sysml::m.bind_pump" as "assoc"
+    with
+        id "ddn.examples.sysml::m.bind_pump"
+        title "binds pump"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysml::m.flow_balance"
+            item
+                definition
+                    id "ddn.examples.sysml::m.pump"
+
+
+relation "ddn.examples.sysml::m.bind_reservoir" as "assoc"
+    with
+        id "ddn.examples.sysml::m.bind_reservoir"
+        title "binds reservoir"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysml::m.flow_balance"
+            item
+                definition
+                    id "ddn.examples.sysml::m.reservoir"
+
+
+view "bdd" as "sysml.bdd@1"
+    with
+        id "bdd"
+        title "Pump station block definition"
+        selection
+            include
+                item
+                    id "ddn.examples.sysml::m.pump"
+                item
+                    id "ddn.examples.sysml::m.reservoir"
+                item
+                    id "ddn.examples.sysml::m.feeds"
+                item
+                    id "ddn.examples.sysml::m.water"
+            exclude
+                item
+                    id "ddn.examples.sysml::m.bind_pump"
+                item
+                    id "ddn.examples.sysml::m.bind_reservoir"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:bdd"
+
+    use "ddn.examples.sysml::m.pump" named "appearance:bdd:ddn.examples.sysml::m.pump"
+        with
+            id "appearance:bdd:ddn.examples.sysml::m.pump"
+
+    use "ddn.examples.sysml::m.reservoir" named "appearance:bdd:ddn.examples.sysml::m.reservoir"
+        with
+            id "appearance:bdd:ddn.examples.sysml::m.reservoir"
+
+    use "ddn.examples.sysml::m.feeds" named "appearance:bdd:ddn.examples.sysml::m.feeds"
+        with
+            id "appearance:bdd:ddn.examples.sysml::m.feeds"
+
+    use "ddn.examples.sysml::m.water" named "appearance:bdd:ddn.examples.sysml::m.water"
+        with
+            id "appearance:bdd:ddn.examples.sysml::m.water"
+
+
+view "ibd" as "sysml.ibd@1"
+    with
+        id "ibd"
+        title "Pump station internal block"
+        selection
+            include
+                item
+                    id "ddn.examples.sysml::m.pump"
+                item
+                    id "ddn.examples.sysml::m.reservoir"
+                item
+                    id "ddn.examples.sysml::m.feeds"
+                item
+                    id "ddn.examples.sysml::m.water"
+            exclude
+                item
+                    id "ddn.examples.sysml::m.bind_pump"
+                item
+                    id "ddn.examples.sysml::m.bind_reservoir"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:ibd"
+
+    use "ddn.examples.sysml::m.pump" named "appearance:ibd:ddn.examples.sysml::m.pump"
+        with
+            id "appearance:ibd:ddn.examples.sysml::m.pump"
+
+    use "ddn.examples.sysml::m.reservoir" named "appearance:ibd:ddn.examples.sysml::m.reservoir"
+        with
+            id "appearance:ibd:ddn.examples.sysml::m.reservoir"
+
+    use "ddn.examples.sysml::m.feeds" named "appearance:ibd:ddn.examples.sysml::m.feeds"
+        with
+            id "appearance:ibd:ddn.examples.sysml::m.feeds"
+
+    use "ddn.examples.sysml::m.water" named "appearance:ibd:ddn.examples.sysml::m.water"
+        with
+            id "appearance:ibd:ddn.examples.sysml::m.water"
+
+
+view "parametric" as "sysml.parametric@1"
+    with
+        id "parametric"
+        title "Pump station flow balance"
+        selection
+            include
+                item
+                    id "ddn.examples.sysml::m.pump"
+                item
+                    id "ddn.examples.sysml::m.reservoir"
+                item
+                    id "ddn.examples.sysml::m.flow_balance"
+                item
+                    id "ddn.examples.sysml::m.feeds"
+                item
+                    id "ddn.examples.sysml::m.water"
+                item
+                    id "ddn.examples.sysml::m.bind_pump"
+                item
+                    id "ddn.examples.sysml::m.bind_reservoir"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:parametric"
+
+    use "ddn.examples.sysml::m.pump" named "appearance:parametric:ddn.examples.sysml::m.pump"
+        with
+            id "appearance:parametric:ddn.examples.sysml::m.pump"
+
+    use "ddn.examples.sysml::m.reservoir" named "appearance:parametric:ddn.examples.sysml::m.reservoir"
+        with
+            id "appearance:parametric:ddn.examples.sysml::m.reservoir"
+
+    use "ddn.examples.sysml::m.flow_balance" named "appearance:parametric:ddn.examples.sysml::m.flow_balance"
+        with
+            id "appearance:parametric:ddn.examples.sysml::m.flow_balance"
+
+    use "ddn.examples.sysml::m.feeds" named "appearance:parametric:ddn.examples.sysml::m.feeds"
+        with
+            id "appearance:parametric:ddn.examples.sysml::m.feeds"
+
+    use "ddn.examples.sysml::m.water" named "appearance:parametric:ddn.examples.sysml::m.water"
+        with
+            id "appearance:parametric:ddn.examples.sysml::m.water"
+
+    use "ddn.examples.sysml::m.bind_pump" named "appearance:parametric:ddn.examples.sysml::m.bind_pump"
+        with
+            id "appearance:parametric:ddn.examples.sysml::m.bind_pump"
+
+    use "ddn.examples.sysml::m.bind_reservoir" named "appearance:parametric:ddn.examples.sysml::m.bind_reservoir"
+        with
+            id "appearance:parametric:ddn.examples.sysml::m.bind_reservoir"

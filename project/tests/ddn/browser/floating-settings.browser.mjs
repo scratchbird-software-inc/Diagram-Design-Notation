@@ -1,0 +1,29 @@
+import test,{before,after} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile,mkdir} from 'node:fs/promises';
+import {join} from 'node:path';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+const root=fileURLToPath(new URL('../../../../',import.meta.url)),reports=join(root,'.work/reports/ddn-floating-settings');
+const {chromium}=await import(pathToFileURL(join(process.env.DDN_PLAYWRIGHT_ROOT??join(root,'.work/tools/browser/node_modules/playwright'),'index.mjs')));
+let browser,page;const errors=[];
+before(async()=>{await mkdir(reports,{recursive:true});browser=await chromium.launch({headless:true});page=await browser.newPage({viewport:{width:1360,height:880}});page.on('pageerror',e=>errors.push(e.message));await page.route(/^https?:\/\//,route=>route.abort());await page.goto(pathToFileURL(join(process.env.DDN_DDN_DISTRIBUTION??join(root,'.work/builds/ddn-distribution'),'complete/ddn-visual-designer.html')).href);await page.waitForFunction(()=>!!window.DDN);});
+after(async()=>{await browser?.close();});
+async function setup(design=true){const text=await readFile(join(root,'website/examples/appearance/standards.ddn'),'utf8');await page.evaluate(async({text,design})=>{if(window.floatingFixture){const f=floatingFixture;f.designer?.destroy();f.viewer.destroy();f.runtime.destroy();f.element.remove();}const element=document.createElement('main');element.id='floating-fixture';element.style.cssText='position:fixed;inset:0;background:white;z-index:10000';document.body.append(element);const runtime=DDN.createRuntime(DDN.createCompleteRuntimeOptions()),viewer=DDN.createViewer(element,{runtime});await viewer.open({entry:'main.ddn',files:[{id:'main.ddn',text,revision:'1',encoding:'utf-8',writable:true}]});const handle=DDN.getViewerHandle(viewer);await handle.whenRendered();const designer=design?DDN.createDesigner(viewer,{authority:{authorize:async action=>({allowed:true,principal:'tester',grants:[action]})}}):undefined;const first=handle.scene().entries.find(e=>e.definition.record.name==='PaperCard');handle.select(first.definition.ref,first.item.occurrence);window.floatingFixture={element,runtime,viewer,designer,handle};},{text,design});return page.locator('#floating-fixture');}
+const source=()=>page.evaluate(()=>floatingFixture.runtime.sources().files[0].text);
+
+test('canvas has no fixed property drawer; read-only details float on demand and follow selection',async()=>{
+ const fixture=await setup(false),before=await source();assert.equal(await fixture.locator('.ddn-viewer > .ddn-viewer-inspector').count(),0);assert.equal(await fixture.getByRole('dialog').count(),0);
+ const area=await fixture.locator('.ddn-viewer').boundingBox(),stage=await fixture.locator('.ddn-viewer-stage').boundingBox();assert.ok(area.x+area.width-stage.x-stage.width<3);
+ await fixture.getByRole('button',{name:'Item details',exact:true}).click();const details=fixture.getByRole('dialog',{name:'Item details'});assert.notEqual(await details.getAttribute('aria-modal'),'true');assert.equal(await details.locator('details').getAttribute('open'),null);
+ await fixture.getByRole('button',{name:'Linen weave',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.ddn-viewer-inspector h3')?.textContent==='Linen weave');assert.equal(await source(),before);await details.getByRole('button',{name:'Close',exact:true}).click();assert.equal(await fixture.getByRole('dialog').count(),0);
+});
+
+test('floating appearance sliders leave the canvas usable and keep the edit target explicit',async()=>{
+ const fixture=await setup(),before=await source();await fixture.getByRole('button',{name:'Appearance & presets',exact:true}).click();let form=fixture.getByRole('dialog',{name:'Appearance & presets'});await form.getByRole('slider',{name:'Texture scale slider',exact:true}).waitFor();assert.notEqual(await form.getAttribute('aria-modal'),'true');assert.match(await form.locator('.ddn-appearance-target').textContent(),/Paper grain/);
+ await form.getByRole('slider',{name:'Texture scale slider',exact:true}).fill('48');assert.equal(await form.getByLabel('Texture scale',{exact:true}).inputValue(),'48');await page.waitForFunction(()=>/scale 48/.test(floatingFixture.runtime.sources().files[0].text));const live=await source();
+ await form.getByRole('button',{name:'Close',exact:true}).focus();await page.keyboard.press('ArrowRight');await page.keyboard.press('Delete');await page.keyboard.press('Control+z');await page.evaluate(()=>floatingFixture.handle.whenRendered());assert.equal(await source(),live);
+ const zoom=await page.evaluate(()=>floatingFixture.handle.viewport().zoom);await fixture.getByRole('button',{name:'+',exact:true}).click();assert.ok(await page.evaluate(previous=>floatingFixture.handle.viewport().zoom>previous,zoom));
+ await fixture.getByRole('button',{name:'Linen weave',exact:true}).click();assert.match(await form.locator('.ddn-appearance-target').textContent(),/Paper grain/);await fixture.getByRole('button',{name:'Fit all',exact:true}).click();await page.screenshot({path:join(reports,'floating-appearance.png')});
+ await form.getByRole('button',{name:'Revert changes',exact:true}).click();await form.waitFor({state:'detached'});assert.equal(await source(),before);
+ await fixture.getByRole('button',{name:'Paper & attachments',exact:true}).click();form=fixture.getByRole('dialog',{name:'Paper & attachments'});await form.getByRole('slider',{name:'Shadow opacity slider',exact:true}).fill('0.45');assert.equal(await form.getByLabel('Shadow opacity',{exact:true}).inputValue(),'0.45');await form.getByRole('button',{name:'Close',exact:true}).click();await form.waitFor({state:'detached'});assert.match(await source(),/opacity 0.45/);await fixture.getByRole('button',{name:'Undo',exact:true}).click();await page.waitForFunction(before=>floatingFixture.runtime.sources().files[0].text===before,before);assert.deepEqual(errors,[]);
+});

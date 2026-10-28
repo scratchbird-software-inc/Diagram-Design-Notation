@@ -1,71 +1,875 @@
-ddn "0.5";
-module "ddn.examples.c4epc";
+version ddn-next-1
 
-// B1-076: C4 deployment + dynamic diagrams, and the full EPC notation.
-// All data is synthetic.
+publication "publication:deployment"
+    with
+        id "publication:deployment"
+        title "Shop deployment"
+        targets
+            item
+                target
+                    id "deployment"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data dep {
-    object cdn "Edge node" { kind: "uml.node"; x_c4tag: { tags: [ "infra", "edge" ]; }; }
-    object appbox "Shop server" { kind: "uml.device"; }
-    object db "Database host" { kind: "uml.device"; }
-    object war "shop.war" { kind: "uml.artifact"; }
-    relation deploy "" @war -> @appbox { kind: "uml.deploy"; }
-    relation path1 "" @cdn -> @appbox { kind: "uml.commpath"; x_endlabels: { target: { multiplicity: "1..2" } }; }
-    relation path2 "" @appbox -> @db { kind: "uml.commpath"; }
-}
 
-data dyn {
-    object cust "Customer" { kind: "c4.person"; }
-    object web "Web app" { kind: "c4.container"; x_c4tag: { tags: [ "web" ]; }; }
-    object api "API service" { kind: "c4.container"; }
-    relation m1 "browse catalog" @cust -> @web { kind: "uml.message"; x_message: { seq: "1" }; }
-    relation m2 "query products" @web -> @api { kind: "uml.message"; x_message: { seq: "2" }; }
-    relation m3 "product list" @api -> @web { kind: "uml.message"; x_message: { seq: "2.1" }; x_return: true; }
-    relation m4 "render page" @web -> @cust { kind: "uml.message"; x_message: { seq: "3" }; }
-}
+publication "publication:dynamic"
+    with
+        id "publication:dynamic"
+        title "Browse dynamic"
+        targets
+            item
+                target
+                    id "dynamic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data e {
-    object ev "Order received" { kind: "epk.event"; }
-    object check "Check stock" { kind: "epk.function"; }
-    object c1 "" { kind: "epk.connector"; x_epc: { operator: "and" }; }
-    object reserve "Reserve items" { kind: "epk.function"; }
-    object pick "Pick items" { kind: "epk.function"; }
-    object c2 "" { kind: "epk.connector"; x_epc: { operator: "and" }; }
-    object ev2 "Order ready" { kind: "epk.event"; }
-    object ship "Ship order" { kind: "epk.function"; }
-    object ev3 "Order shipped" { kind: "epk.event"; }
-    object wh "Warehouse" { kind: "epk.orgunit"; }
-    object picker "Picker" { kind: "epk.role"; }
-    object list "Pick list" { kind: "epk.infoobject"; }
-    object billing "Billing process" { kind: "epk.processlink"; }
 
-    relation n1 "" @ev -> @check { kind: "epk.next"; }
-    relation n2 "" @check -> @c1 { kind: "epk.next"; }
-    relation n3 "" @c1 -> @reserve { kind: "epk.next"; }
-    relation n4 "" @c1 -> @pick { kind: "epk.next"; }
-    relation n5 "" @reserve -> @c2 { kind: "epk.next"; }
-    relation n6 "" @pick -> @c2 { kind: "epk.next"; }
-    relation n7 "" @c2 -> @ev2 { kind: "epk.next"; }
-    relation n8 "" @ev2 -> @ship { kind: "epk.next"; }
-    relation n9 "" @ship -> @ev3 { kind: "epk.next"; }
-    relation a1 "" @wh -> @pick { kind: "epk.assigned"; }
-    relation a2 "" @picker -> @pick { kind: "epk.assigned"; }
-    relation i1 "" @list -> @pick { kind: "epk.infoflow"; }
-    relation i2 "" @ship -> @list { kind: "epk.infoflow"; }
-    relation l1 "" @billing -> @ev3 { kind: "epk.links"; }
-}
+publication "publication:epc"
+    with
+        id "publication:epc"
+        title "Fulfillment EPC"
+        targets
+            item
+                target
+                    id "epc"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view deployment "Shop deployment": [@dep] as "c4.deployment@1" {
-    frame rack "Shop server" { scope: @dep.appbox; members: [@dep.war]; }
-    publication { size: content; fit: none; }
-}
 
-view dynamic "Browse dynamic": [@dyn] as "c4.dynamic@1" {
-    publication { size: content; fit: none; }
-}
+element "ddn.examples.c4epc::dep.cdn" as "uml.node"
+    with
+        id "ddn.examples.c4epc::dep.cdn"
+        title "Edge node"
+        metadata
+            x_c4tag
+                tags
+                    item "infra"
+                    item "edge"
 
-view epc "Fulfillment EPC": [@e] as "epc.complete@1" {
-    layout { gap: 112px; row_gap: 112px; }
-    frame lane "Warehouse lane" { scope: @e.wh; members: [@e.pick, @e.picker, @e.list]; }
-    publication { size: content; fit: none; }
-}
+
+element "ddn.examples.c4epc::dep.appbox" as "uml.device"
+    with
+        id "ddn.examples.c4epc::dep.appbox"
+        title "Shop server"
+
+
+element "ddn.examples.c4epc::dep.db" as "uml.device"
+    with
+        id "ddn.examples.c4epc::dep.db"
+        title "Database host"
+
+
+element "ddn.examples.c4epc::dep.war" as "uml.artifact"
+    with
+        id "ddn.examples.c4epc::dep.war"
+        title "shop.war"
+
+
+relation "ddn.examples.c4epc::dep.deploy" as "uml.deploy"
+    with
+        id "ddn.examples.c4epc::dep.deploy"
+        title "«deploy»"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::dep.war"
+            item
+                definition
+                    id "ddn.examples.c4epc::dep.appbox"
+
+
+relation "ddn.examples.c4epc::dep.path1" as "uml.commpath"
+    with
+        id "ddn.examples.c4epc::dep.path1"
+        title "Communication path"
+        metadata
+            x_endlabels
+                target
+                    multiplicity "1..2"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::dep.cdn"
+            item
+                definition
+                    id "ddn.examples.c4epc::dep.appbox"
+
+
+relation "ddn.examples.c4epc::dep.path2" as "uml.commpath"
+    with
+        id "ddn.examples.c4epc::dep.path2"
+        title "Communication path"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::dep.appbox"
+            item
+                definition
+                    id "ddn.examples.c4epc::dep.db"
+
+
+element "ddn.examples.c4epc::dyn.cust" as "c4.person"
+    with
+        id "ddn.examples.c4epc::dyn.cust"
+        title "Customer"
+
+
+element "ddn.examples.c4epc::dyn.web" as "c4.container"
+    with
+        id "ddn.examples.c4epc::dyn.web"
+        title "Web app"
+        metadata
+            x_c4tag
+                tags
+                    item "web"
+
+
+element "ddn.examples.c4epc::dyn.api" as "c4.container"
+    with
+        id "ddn.examples.c4epc::dyn.api"
+        title "API service"
+
+
+relation "ddn.examples.c4epc::dyn.m1" as "uml.message"
+    with
+        id "ddn.examples.c4epc::dyn.m1"
+        title "browse catalog"
+        metadata
+            x_message
+                seq "1"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::dyn.cust"
+            item
+                definition
+                    id "ddn.examples.c4epc::dyn.web"
+
+
+relation "ddn.examples.c4epc::dyn.m2" as "uml.message"
+    with
+        id "ddn.examples.c4epc::dyn.m2"
+        title "query products"
+        metadata
+            x_message
+                seq "2"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::dyn.web"
+            item
+                definition
+                    id "ddn.examples.c4epc::dyn.api"
+
+
+relation "ddn.examples.c4epc::dyn.m3" as "uml.message"
+    with
+        id "ddn.examples.c4epc::dyn.m3"
+        title "product list"
+        metadata
+            x_message
+                seq "2.1"
+            x_return true
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::dyn.api"
+            item
+                definition
+                    id "ddn.examples.c4epc::dyn.web"
+
+
+relation "ddn.examples.c4epc::dyn.m4" as "uml.message"
+    with
+        id "ddn.examples.c4epc::dyn.m4"
+        title "render page"
+        metadata
+            x_message
+                seq "3"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::dyn.web"
+            item
+                definition
+                    id "ddn.examples.c4epc::dyn.cust"
+
+
+element "ddn.examples.c4epc::e.ev" as "epk.event"
+    with
+        id "ddn.examples.c4epc::e.ev"
+        title "Order received"
+
+
+element "ddn.examples.c4epc::e.check" as "epk.function"
+    with
+        id "ddn.examples.c4epc::e.check"
+        title "Check stock"
+
+
+element "ddn.examples.c4epc::e.c1" as "epk.connector"
+    with
+        id "ddn.examples.c4epc::e.c1"
+        title "c1"
+        metadata
+            x_epc
+                operator "and"
+
+
+element "ddn.examples.c4epc::e.reserve" as "epk.function"
+    with
+        id "ddn.examples.c4epc::e.reserve"
+        title "Reserve items"
+
+
+element "ddn.examples.c4epc::e.pick" as "epk.function"
+    with
+        id "ddn.examples.c4epc::e.pick"
+        title "Pick items"
+
+
+element "ddn.examples.c4epc::e.c2" as "epk.connector"
+    with
+        id "ddn.examples.c4epc::e.c2"
+        title "c2"
+        metadata
+            x_epc
+                operator "and"
+
+
+element "ddn.examples.c4epc::e.ev2" as "epk.event"
+    with
+        id "ddn.examples.c4epc::e.ev2"
+        title "Order ready"
+
+
+element "ddn.examples.c4epc::e.ship" as "epk.function"
+    with
+        id "ddn.examples.c4epc::e.ship"
+        title "Ship order"
+
+
+element "ddn.examples.c4epc::e.ev3" as "epk.event"
+    with
+        id "ddn.examples.c4epc::e.ev3"
+        title "Order shipped"
+
+
+element "ddn.examples.c4epc::e.wh" as "epk.orgunit"
+    with
+        id "ddn.examples.c4epc::e.wh"
+        title "Warehouse"
+
+
+element "ddn.examples.c4epc::e.picker" as "epk.role"
+    with
+        id "ddn.examples.c4epc::e.picker"
+        title "Picker"
+
+
+element "ddn.examples.c4epc::e.list" as "epk.infoobject"
+    with
+        id "ddn.examples.c4epc::e.list"
+        title "Pick list"
+
+
+element "ddn.examples.c4epc::e.billing" as "epk.processlink"
+    with
+        id "ddn.examples.c4epc::e.billing"
+        title "Billing process"
+
+
+relation "ddn.examples.c4epc::e.n1" as "epk.next"
+    with
+        id "ddn.examples.c4epc::e.n1"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.ev"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.check"
+
+
+relation "ddn.examples.c4epc::e.n2" as "epk.next"
+    with
+        id "ddn.examples.c4epc::e.n2"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.check"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.c1"
+
+
+relation "ddn.examples.c4epc::e.n3" as "epk.next"
+    with
+        id "ddn.examples.c4epc::e.n3"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.c1"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.reserve"
+
+
+relation "ddn.examples.c4epc::e.n4" as "epk.next"
+    with
+        id "ddn.examples.c4epc::e.n4"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.c1"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.pick"
+
+
+relation "ddn.examples.c4epc::e.n5" as "epk.next"
+    with
+        id "ddn.examples.c4epc::e.n5"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.reserve"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.c2"
+
+
+relation "ddn.examples.c4epc::e.n6" as "epk.next"
+    with
+        id "ddn.examples.c4epc::e.n6"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.pick"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.c2"
+
+
+relation "ddn.examples.c4epc::e.n7" as "epk.next"
+    with
+        id "ddn.examples.c4epc::e.n7"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.c2"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.ev2"
+
+
+relation "ddn.examples.c4epc::e.n8" as "epk.next"
+    with
+        id "ddn.examples.c4epc::e.n8"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.ev2"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.ship"
+
+
+relation "ddn.examples.c4epc::e.n9" as "epk.next"
+    with
+        id "ddn.examples.c4epc::e.n9"
+        title "Control passes to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.ship"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.ev3"
+
+
+relation "ddn.examples.c4epc::e.a1" as "epk.assigned"
+    with
+        id "ddn.examples.c4epc::e.a1"
+        title "Assigned to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.wh"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.pick"
+
+
+relation "ddn.examples.c4epc::e.a2" as "epk.assigned"
+    with
+        id "ddn.examples.c4epc::e.a2"
+        title "Assigned to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.picker"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.pick"
+
+
+relation "ddn.examples.c4epc::e.i1" as "epk.infoflow"
+    with
+        id "ddn.examples.c4epc::e.i1"
+        title "Informs"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.list"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.pick"
+
+
+relation "ddn.examples.c4epc::e.i2" as "epk.infoflow"
+    with
+        id "ddn.examples.c4epc::e.i2"
+        title "Informs"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.ship"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.list"
+
+
+relation "ddn.examples.c4epc::e.l1" as "epk.links"
+    with
+        id "ddn.examples.c4epc::e.l1"
+        title "Links process"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.c4epc::e.billing"
+            item
+                definition
+                    id "ddn.examples.c4epc::e.ev3"
+
+
+view "deployment" as "c4.deployment@1"
+    with
+        id "deployment"
+        title "Shop deployment"
+        selection
+            include
+                item
+                    id "ddn.examples.c4epc::dep.cdn"
+                item
+                    id "ddn.examples.c4epc::dep.appbox"
+                item
+                    id "ddn.examples.c4epc::dep.db"
+                item
+                    id "ddn.examples.c4epc::dep.war"
+                item
+                    id "ddn.examples.c4epc::dep.deploy"
+                item
+                    id "ddn.examples.c4epc::dep.path1"
+                item
+                    id "ddn.examples.c4epc::dep.path2"
+            exclude
+                item
+                    id "ddn.examples.c4epc::dyn.m1"
+                item
+                    id "ddn.examples.c4epc::dyn.m2"
+                item
+                    id "ddn.examples.c4epc::dyn.m3"
+                item
+                    id "ddn.examples.c4epc::dyn.m4"
+                item
+                    id "ddn.examples.c4epc::e.n1"
+                item
+                    id "ddn.examples.c4epc::e.n2"
+                item
+                    id "ddn.examples.c4epc::e.n3"
+                item
+                    id "ddn.examples.c4epc::e.n4"
+                item
+                    id "ddn.examples.c4epc::e.n5"
+                item
+                    id "ddn.examples.c4epc::e.n6"
+                item
+                    id "ddn.examples.c4epc::e.n7"
+                item
+                    id "ddn.examples.c4epc::e.n8"
+                item
+                    id "ddn.examples.c4epc::e.n9"
+                item
+                    id "ddn.examples.c4epc::e.a1"
+                item
+                    id "ddn.examples.c4epc::e.a2"
+                item
+                    id "ddn.examples.c4epc::e.i1"
+                item
+                    id "ddn.examples.c4epc::e.i2"
+                item
+                    id "ddn.examples.c4epc::e.l1"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.c4epc::deployment.rack"
+                name "Shop server"
+                scope
+                    id "ddn.examples.c4epc::dep.appbox"
+                members
+                    item
+                        id "ddn.examples.c4epc::dep.war"
+        publication
+            id "publication:deployment"
+
+    use "ddn.examples.c4epc::dep.cdn" named "appearance:deployment:ddn.examples.c4epc::dep.cdn"
+        with
+            id "appearance:deployment:ddn.examples.c4epc::dep.cdn"
+
+    use "ddn.examples.c4epc::dep.appbox" named "appearance:deployment:ddn.examples.c4epc::dep.appbox"
+        with
+            id "appearance:deployment:ddn.examples.c4epc::dep.appbox"
+
+    use "ddn.examples.c4epc::dep.db" named "appearance:deployment:ddn.examples.c4epc::dep.db"
+        with
+            id "appearance:deployment:ddn.examples.c4epc::dep.db"
+
+    use "ddn.examples.c4epc::dep.war" named "appearance:deployment:ddn.examples.c4epc::dep.war"
+        with
+            id "appearance:deployment:ddn.examples.c4epc::dep.war"
+
+    use "ddn.examples.c4epc::dep.deploy" named "appearance:deployment:ddn.examples.c4epc::dep.deploy"
+        with
+            id "appearance:deployment:ddn.examples.c4epc::dep.deploy"
+
+    use "ddn.examples.c4epc::dep.path1" named "appearance:deployment:ddn.examples.c4epc::dep.path1"
+        with
+            id "appearance:deployment:ddn.examples.c4epc::dep.path1"
+
+    use "ddn.examples.c4epc::dep.path2" named "appearance:deployment:ddn.examples.c4epc::dep.path2"
+        with
+            id "appearance:deployment:ddn.examples.c4epc::dep.path2"
+
+
+view "dynamic" as "c4.dynamic@1"
+    with
+        id "dynamic"
+        title "Browse dynamic"
+        selection
+            include
+                item
+                    id "ddn.examples.c4epc::dyn.cust"
+                item
+                    id "ddn.examples.c4epc::dyn.web"
+                item
+                    id "ddn.examples.c4epc::dyn.api"
+                item
+                    id "ddn.examples.c4epc::dyn.m1"
+                item
+                    id "ddn.examples.c4epc::dyn.m2"
+                item
+                    id "ddn.examples.c4epc::dyn.m3"
+                item
+                    id "ddn.examples.c4epc::dyn.m4"
+            exclude
+                item
+                    id "ddn.examples.c4epc::dep.deploy"
+                item
+                    id "ddn.examples.c4epc::dep.path1"
+                item
+                    id "ddn.examples.c4epc::dep.path2"
+                item
+                    id "ddn.examples.c4epc::e.n1"
+                item
+                    id "ddn.examples.c4epc::e.n2"
+                item
+                    id "ddn.examples.c4epc::e.n3"
+                item
+                    id "ddn.examples.c4epc::e.n4"
+                item
+                    id "ddn.examples.c4epc::e.n5"
+                item
+                    id "ddn.examples.c4epc::e.n6"
+                item
+                    id "ddn.examples.c4epc::e.n7"
+                item
+                    id "ddn.examples.c4epc::e.n8"
+                item
+                    id "ddn.examples.c4epc::e.n9"
+                item
+                    id "ddn.examples.c4epc::e.a1"
+                item
+                    id "ddn.examples.c4epc::e.a2"
+                item
+                    id "ddn.examples.c4epc::e.i1"
+                item
+                    id "ddn.examples.c4epc::e.i2"
+                item
+                    id "ddn.examples.c4epc::e.l1"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:dynamic"
+
+    use "ddn.examples.c4epc::dyn.cust" named "appearance:dynamic:ddn.examples.c4epc::dyn.cust"
+        with
+            id "appearance:dynamic:ddn.examples.c4epc::dyn.cust"
+
+    use "ddn.examples.c4epc::dyn.web" named "appearance:dynamic:ddn.examples.c4epc::dyn.web"
+        with
+            id "appearance:dynamic:ddn.examples.c4epc::dyn.web"
+
+    use "ddn.examples.c4epc::dyn.api" named "appearance:dynamic:ddn.examples.c4epc::dyn.api"
+        with
+            id "appearance:dynamic:ddn.examples.c4epc::dyn.api"
+
+    use "ddn.examples.c4epc::dyn.m1" named "appearance:dynamic:ddn.examples.c4epc::dyn.m1"
+        with
+            id "appearance:dynamic:ddn.examples.c4epc::dyn.m1"
+
+    use "ddn.examples.c4epc::dyn.m2" named "appearance:dynamic:ddn.examples.c4epc::dyn.m2"
+        with
+            id "appearance:dynamic:ddn.examples.c4epc::dyn.m2"
+
+    use "ddn.examples.c4epc::dyn.m3" named "appearance:dynamic:ddn.examples.c4epc::dyn.m3"
+        with
+            id "appearance:dynamic:ddn.examples.c4epc::dyn.m3"
+
+    use "ddn.examples.c4epc::dyn.m4" named "appearance:dynamic:ddn.examples.c4epc::dyn.m4"
+        with
+            id "appearance:dynamic:ddn.examples.c4epc::dyn.m4"
+
+
+view "epc" as "epc.complete@1"
+    with
+        id "epc"
+        title "Fulfillment EPC"
+        selection
+            include
+                item
+                    id "ddn.examples.c4epc::e.ev"
+                item
+                    id "ddn.examples.c4epc::e.check"
+                item
+                    id "ddn.examples.c4epc::e.c1"
+                item
+                    id "ddn.examples.c4epc::e.reserve"
+                item
+                    id "ddn.examples.c4epc::e.pick"
+                item
+                    id "ddn.examples.c4epc::e.c2"
+                item
+                    id "ddn.examples.c4epc::e.ev2"
+                item
+                    id "ddn.examples.c4epc::e.ship"
+                item
+                    id "ddn.examples.c4epc::e.ev3"
+                item
+                    id "ddn.examples.c4epc::e.wh"
+                item
+                    id "ddn.examples.c4epc::e.picker"
+                item
+                    id "ddn.examples.c4epc::e.list"
+                item
+                    id "ddn.examples.c4epc::e.billing"
+                item
+                    id "ddn.examples.c4epc::e.n1"
+                item
+                    id "ddn.examples.c4epc::e.n2"
+                item
+                    id "ddn.examples.c4epc::e.n3"
+                item
+                    id "ddn.examples.c4epc::e.n4"
+                item
+                    id "ddn.examples.c4epc::e.n5"
+                item
+                    id "ddn.examples.c4epc::e.n6"
+                item
+                    id "ddn.examples.c4epc::e.n7"
+                item
+                    id "ddn.examples.c4epc::e.n8"
+                item
+                    id "ddn.examples.c4epc::e.n9"
+                item
+                    id "ddn.examples.c4epc::e.a1"
+                item
+                    id "ddn.examples.c4epc::e.a2"
+                item
+                    id "ddn.examples.c4epc::e.i1"
+                item
+                    id "ddn.examples.c4epc::e.i2"
+                item
+                    id "ddn.examples.c4epc::e.l1"
+            exclude
+                item
+                    id "ddn.examples.c4epc::dep.deploy"
+                item
+                    id "ddn.examples.c4epc::dep.path1"
+                item
+                    id "ddn.examples.c4epc::dep.path2"
+                item
+                    id "ddn.examples.c4epc::dyn.m1"
+                item
+                    id "ddn.examples.c4epc::dyn.m2"
+                item
+                    id "ddn.examples.c4epc::dyn.m3"
+                item
+                    id "ddn.examples.c4epc::dyn.m4"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.c4epc::epc.lane"
+                name "Warehouse lane"
+                scope
+                    id "ddn.examples.c4epc::e.wh"
+                members
+                    item
+                        id "ddn.examples.c4epc::e.pick"
+                    item
+                        id "ddn.examples.c4epc::e.picker"
+                    item
+                        id "ddn.examples.c4epc::e.list"
+        publication
+            id "publication:epc"
+
+    use "ddn.examples.c4epc::e.ev" named "appearance:epc:ddn.examples.c4epc::e.ev"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.ev"
+
+    use "ddn.examples.c4epc::e.check" named "appearance:epc:ddn.examples.c4epc::e.check"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.check"
+
+    use "ddn.examples.c4epc::e.c1" named "appearance:epc:ddn.examples.c4epc::e.c1"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.c1"
+
+    use "ddn.examples.c4epc::e.reserve" named "appearance:epc:ddn.examples.c4epc::e.reserve"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.reserve"
+
+    use "ddn.examples.c4epc::e.pick" named "appearance:epc:ddn.examples.c4epc::e.pick"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.pick"
+
+    use "ddn.examples.c4epc::e.c2" named "appearance:epc:ddn.examples.c4epc::e.c2"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.c2"
+
+    use "ddn.examples.c4epc::e.ev2" named "appearance:epc:ddn.examples.c4epc::e.ev2"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.ev2"
+
+    use "ddn.examples.c4epc::e.ship" named "appearance:epc:ddn.examples.c4epc::e.ship"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.ship"
+
+    use "ddn.examples.c4epc::e.ev3" named "appearance:epc:ddn.examples.c4epc::e.ev3"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.ev3"
+
+    use "ddn.examples.c4epc::e.wh" named "appearance:epc:ddn.examples.c4epc::e.wh"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.wh"
+
+    use "ddn.examples.c4epc::e.picker" named "appearance:epc:ddn.examples.c4epc::e.picker"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.picker"
+
+    use "ddn.examples.c4epc::e.list" named "appearance:epc:ddn.examples.c4epc::e.list"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.list"
+
+    use "ddn.examples.c4epc::e.billing" named "appearance:epc:ddn.examples.c4epc::e.billing"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.billing"
+
+    use "ddn.examples.c4epc::e.n1" named "appearance:epc:ddn.examples.c4epc::e.n1"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.n1"
+
+    use "ddn.examples.c4epc::e.n2" named "appearance:epc:ddn.examples.c4epc::e.n2"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.n2"
+
+    use "ddn.examples.c4epc::e.n3" named "appearance:epc:ddn.examples.c4epc::e.n3"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.n3"
+
+    use "ddn.examples.c4epc::e.n4" named "appearance:epc:ddn.examples.c4epc::e.n4"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.n4"
+
+    use "ddn.examples.c4epc::e.n5" named "appearance:epc:ddn.examples.c4epc::e.n5"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.n5"
+
+    use "ddn.examples.c4epc::e.n6" named "appearance:epc:ddn.examples.c4epc::e.n6"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.n6"
+
+    use "ddn.examples.c4epc::e.n7" named "appearance:epc:ddn.examples.c4epc::e.n7"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.n7"
+
+    use "ddn.examples.c4epc::e.n8" named "appearance:epc:ddn.examples.c4epc::e.n8"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.n8"
+
+    use "ddn.examples.c4epc::e.n9" named "appearance:epc:ddn.examples.c4epc::e.n9"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.n9"
+
+    use "ddn.examples.c4epc::e.a1" named "appearance:epc:ddn.examples.c4epc::e.a1"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.a1"
+
+    use "ddn.examples.c4epc::e.a2" named "appearance:epc:ddn.examples.c4epc::e.a2"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.a2"
+
+    use "ddn.examples.c4epc::e.i1" named "appearance:epc:ddn.examples.c4epc::e.i1"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.i1"
+
+    use "ddn.examples.c4epc::e.i2" named "appearance:epc:ddn.examples.c4epc::e.i2"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.i2"
+
+    use "ddn.examples.c4epc::e.l1" named "appearance:epc:ddn.examples.c4epc::e.l1"
+        with
+            id "appearance:epc:ddn.examples.c4epc::e.l1"

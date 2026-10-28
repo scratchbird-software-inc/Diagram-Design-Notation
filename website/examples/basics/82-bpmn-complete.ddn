@@ -1,83 +1,1251 @@
-ddn "0.5";
-module "ddn.examples.bpmn";
+version ddn-next-1
 
-// B1-063: full BPMN 2.0.2 notation. process view: events (triggers, boundary,
-// non-interrupting), gateways, activity markers, data nodes, flow variants.
-// collaboration view: two pools, message flow, collapsed pool. choreography
-// and conversation views cover the remaining families. No pinned layout.
+publication "publication:process"
+    with
+        id "publication:process"
+        title "Process"
+        targets
+            item
+                target
+                    id "process"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 8
 
-data proc {
-    object start "Order received" { kind: "flow.start"; x_event: { type: message; }; }
-    object review "Review order" { kind: "flow.process"; x_activity: { markers: [loop]; }; }
-    object escalate "" { kind: "flow.intermediate"; x_event: { type: escalation; position: boundary; interrupting: false; on: @proc.review; }; }
-    object dec "" { kind: "flow.gateway"; x_gateway: { type: exclusive }; }
-    object pack "Pack" { kind: "flow.process"; x_activity: { markers: [parallel]; }; }
-    object call "Billing" { kind: "flow.process"; x_activity: { call: true; }; }
-    object tx "Reserve stock" { kind: "flow.subprocess"; x_activity: { transaction: true; }; }
-    object adhoc "Fix up" { kind: "flow.process"; x_activity: { adhoc: true; }; }
-    object evsub "Timeout handler" { kind: "flow.subprocess"; x_activity: { event_subprocess: true }; }
-    object data "Order data" { kind: "flow.dataobject"; }
-    object din "Credit check" { kind: "flow.datainput"; }
-    object dout "Invoice" { kind: "flow.dataoutput"; x_io: { set: true; }; }
-    object store "Order store" { kind: "flow.datastore"; }
-    object grp "Notes" { kind: "flow.group"; }
-    object cancel_end "Cancelled" { kind: "flow.end"; x_event: { type: cancel; }; }
-    object done "Shipped" { kind: "flow.end"; x_event: { type: terminate; }; }
 
-    relation f1 "" @start -> @review { kind: "uml.flow"; }
-    relation f2 "" @review -> @dec { kind: "uml.flow"; }
-    relation f3 "ok" @dec -> @pack { kind: "uml.flow"; source_mark: slash; }
-    relation f4 "big" @dec -> @tx { kind: "uml.flow"; source_mark: diamond; }
-    relation f5 "" @pack -> @call { kind: "uml.flow"; }
-    relation f6 "" @tx -> @call { kind: "uml.flow"; }
-    relation f7 "" @call -> @done { kind: "uml.flow"; }
-    relation f8 "" @review -> @cancel_end { kind: "uml.flow"; }
-    relation f9 "" @escalate -> @adhoc { kind: "uml.flow"; }
-    relation f10 "" @adhoc -> @done { kind: "uml.flow"; }
-    relation f11 "" @evsub -> @adhoc { kind: "uml.flow"; }
-    relation a1 "" @data -> @review { kind: "bpmn.association"; }
-    relation a2 "" @review -> @dout { kind: "bpmn.association"; }
-    relation a3 "" @din -> @call { kind: "bpmn.association"; }
-    relation a4 "" @call -> @store { kind: "bpmn.association"; }
-    relation msg "billing status" @pack -> @call { kind: "bpmn.messageflow"; }
-}
+publication "publication:collaboration"
+    with
+        id "publication:collaboration"
+        title "Collaboration"
+        targets
+            item
+                target
+                    id "collaboration"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data choreo {
-    object ship_order "Ship order" { kind: "flow.choreotask"; x_bands: [ "Shop", "Carrier" ]; }
-    object pay "Pay" { kind: "flow.choreotask"; x_bands: [ "Shop", "Bank *" ]; }
-    object gw "" { kind: "flow.gateway"; x_gateway: { type: parallel }; }
-    relation c1 "" @ship_order -> @gw { kind: "uml.flow"; }
-    relation c2 "" @gw -> @pay { kind: "uml.flow"; }
-}
 
-data conv {
-    object shop "Shop" { kind: "uml.actor"; }
-    object sup "Supplier" { kind: "uml.actor"; }
-    object talk "Ordering" { kind: "flow.conversation"; }
-    object sub "Payment" { kind: "flow.subconversation"; }
-    object shared "Shared billing" { kind: "flow.callconversation"; }
-    relation l1 "" @shop -> @talk { kind: "bpmn.conversationlink"; }
-    relation l2 "" @sup -> @talk { kind: "bpmn.conversationlink"; }
-    relation l3 "" @shop -> @sub { kind: "bpmn.conversationlink"; }
-    relation l4 "" @sup -> @shared { kind: "bpmn.conversationlink"; }
-}
+publication "publication:choreography"
+    with
+        id "publication:choreography"
+        title "Choreography"
+        targets
+            item
+                target
+                    id "choreography"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 8
 
-view process "Process": [@proc] as "bpmn.process@1" {
-    layout { gap: 112px; row_gap: 112px; }
-    frame pool "Webshop" { members: [@proc.start, @proc.review, @proc.escalate, @proc.dec, @proc.pack, @proc.call, @proc.tx, @proc.adhoc, @proc.evsub, @proc.cancel_end, @proc.done]; x_pool: true; }
-    publication { size: content; fit: none; minimum_text: 6pt; }
-}
-view collaboration "Collaboration": [@proc] as "bpmn.process@1" {
-    layout { gap: 112px; row_gap: 112px; }
-    frame shop "Webshop" { members: [@proc.start, @proc.review, @proc.dec, @proc.pack, @proc.done]; x_pool: true; }
-    frame erp "ERP (black box)" { members: [@proc.call, @proc.tx]; x_pool: true; x_collapsed: true; }
-    publication { size: content; fit: none; }
-}
 
-view choreography "Choreography": [@choreo] as "bpmn.choreography@1" {
-    publication { size: content; fit: none; minimum_text: 6pt; }
-}
-view conversation "Conversation": [@conv] as "bpmn.conversation@1" {
-    layout { gap: 130px; row_gap: 130px; algorithm: layered; routing: straight; }
-    publication { size: content; fit: none; minimum_text: 6pt; }
-}
+publication "publication:conversation"
+    with
+        id "publication:conversation"
+        title "Conversation"
+        targets
+            item
+                target
+                    id "conversation"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 8
+
+
+element "ddn.examples.bpmn::proc.start" as "flow.start"
+    with
+        id "ddn.examples.bpmn::proc.start"
+        title "Order received"
+        metadata
+            x_event
+                type "message"
+
+
+element "ddn.examples.bpmn::proc.review" as "flow.process"
+    with
+        id "ddn.examples.bpmn::proc.review"
+        title "Review order"
+        metadata
+            x_activity
+                markers
+                    item "loop"
+
+
+element "ddn.examples.bpmn::proc.escalate" as "flow.intermediate"
+    with
+        id "ddn.examples.bpmn::proc.escalate"
+        title "escalate"
+        metadata
+            x_event
+                type "escalation"
+                position "boundary"
+                interrupting false
+                on
+                    id "ddn.examples.bpmn::proc.review"
+
+
+element "ddn.examples.bpmn::proc.dec" as "flow.gateway"
+    with
+        id "ddn.examples.bpmn::proc.dec"
+        title "dec"
+        metadata
+            x_gateway
+                type "exclusive"
+
+
+element "ddn.examples.bpmn::proc.pack" as "flow.process"
+    with
+        id "ddn.examples.bpmn::proc.pack"
+        title "Pack"
+        metadata
+            x_activity
+                markers
+                    item "parallel"
+
+
+element "ddn.examples.bpmn::proc.call" as "flow.process"
+    with
+        id "ddn.examples.bpmn::proc.call"
+        title "Billing"
+        metadata
+            x_activity
+                call true
+
+
+element "ddn.examples.bpmn::proc.tx" as "flow.subprocess"
+    with
+        id "ddn.examples.bpmn::proc.tx"
+        title "Reserve stock"
+        metadata
+            x_activity
+                transaction true
+
+
+element "ddn.examples.bpmn::proc.adhoc" as "flow.process"
+    with
+        id "ddn.examples.bpmn::proc.adhoc"
+        title "Fix up"
+        metadata
+            x_activity
+                adhoc true
+
+
+element "ddn.examples.bpmn::proc.evsub" as "flow.subprocess"
+    with
+        id "ddn.examples.bpmn::proc.evsub"
+        title "Timeout handler"
+        metadata
+            x_activity
+                event_subprocess true
+
+
+element "ddn.examples.bpmn::proc.data" as "flow.dataobject"
+    with
+        id "ddn.examples.bpmn::proc.data"
+        title "Order data"
+
+
+element "ddn.examples.bpmn::proc.din" as "flow.datainput"
+    with
+        id "ddn.examples.bpmn::proc.din"
+        title "Credit check"
+
+
+element "ddn.examples.bpmn::proc.dout" as "flow.dataoutput"
+    with
+        id "ddn.examples.bpmn::proc.dout"
+        title "Invoice"
+        metadata
+            x_io
+                set true
+
+
+element "ddn.examples.bpmn::proc.store" as "flow.datastore"
+    with
+        id "ddn.examples.bpmn::proc.store"
+        title "Order store"
+
+
+element "ddn.examples.bpmn::proc.grp" as "flow.group"
+    with
+        id "ddn.examples.bpmn::proc.grp"
+        title "Notes"
+
+
+element "ddn.examples.bpmn::proc.cancel_end" as "flow.end"
+    with
+        id "ddn.examples.bpmn::proc.cancel_end"
+        title "Cancelled"
+        metadata
+            x_event
+                type "cancel"
+
+
+element "ddn.examples.bpmn::proc.done" as "flow.end"
+    with
+        id "ddn.examples.bpmn::proc.done"
+        title "Shipped"
+        metadata
+            x_event
+                type "terminate"
+
+
+relation "ddn.examples.bpmn::proc.f1" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f1"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.start"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.review"
+
+
+relation "ddn.examples.bpmn::proc.f2" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f2"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.review"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.dec"
+
+
+relation "ddn.examples.bpmn::proc.f3" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f3"
+        title "ok"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.dec"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.pack"
+        qualifiers
+            source
+                mark "slash"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "source_mark": "slash"
+                    }
+                format "plain"
+
+
+relation "ddn.examples.bpmn::proc.f4" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f4"
+        title "big"
+        properties
+            source_mark "diamond"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.dec"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.tx"
+        qualifiers
+            source
+                mark "diamond"
+
+
+relation "ddn.examples.bpmn::proc.f5" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f5"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.pack"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.call"
+
+
+relation "ddn.examples.bpmn::proc.f6" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f6"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.tx"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.call"
+
+
+relation "ddn.examples.bpmn::proc.f7" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f7"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.call"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.done"
+
+
+relation "ddn.examples.bpmn::proc.f8" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f8"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.review"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.cancel_end"
+
+
+relation "ddn.examples.bpmn::proc.f9" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f9"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.escalate"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.adhoc"
+
+
+relation "ddn.examples.bpmn::proc.f10" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f10"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.adhoc"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.done"
+
+
+relation "ddn.examples.bpmn::proc.f11" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::proc.f11"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.evsub"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.adhoc"
+
+
+relation "ddn.examples.bpmn::proc.a1" as "bpmn.association"
+    with
+        id "ddn.examples.bpmn::proc.a1"
+        title "Data association"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.data"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.review"
+
+
+relation "ddn.examples.bpmn::proc.a2" as "bpmn.association"
+    with
+        id "ddn.examples.bpmn::proc.a2"
+        title "Data association"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.review"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.dout"
+
+
+relation "ddn.examples.bpmn::proc.a3" as "bpmn.association"
+    with
+        id "ddn.examples.bpmn::proc.a3"
+        title "Data association"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.din"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.call"
+
+
+relation "ddn.examples.bpmn::proc.a4" as "bpmn.association"
+    with
+        id "ddn.examples.bpmn::proc.a4"
+        title "Data association"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.call"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.store"
+
+
+relation "ddn.examples.bpmn::proc.msg" as "bpmn.messageflow"
+    with
+        id "ddn.examples.bpmn::proc.msg"
+        title "billing status"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.pack"
+            item
+                definition
+                    id "ddn.examples.bpmn::proc.call"
+
+
+element "ddn.examples.bpmn::choreo.ship_order" as "flow.choreotask"
+    with
+        id "ddn.examples.bpmn::choreo.ship_order"
+        title "Ship order"
+        metadata
+            x_bands
+                item "Shop"
+                item "Carrier"
+
+
+element "ddn.examples.bpmn::choreo.pay" as "flow.choreotask"
+    with
+        id "ddn.examples.bpmn::choreo.pay"
+        title "Pay"
+        metadata
+            x_bands
+                item "Shop"
+                item "Bank *"
+
+
+element "ddn.examples.bpmn::choreo.gw" as "flow.gateway"
+    with
+        id "ddn.examples.bpmn::choreo.gw"
+        title "gw"
+        metadata
+            x_gateway
+                type "parallel"
+
+
+relation "ddn.examples.bpmn::choreo.c1" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::choreo.c1"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::choreo.ship_order"
+            item
+                definition
+                    id "ddn.examples.bpmn::choreo.gw"
+
+
+relation "ddn.examples.bpmn::choreo.c2" as "uml.flow"
+    with
+        id "ddn.examples.bpmn::choreo.c2"
+        title "Activity edge"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::choreo.gw"
+            item
+                definition
+                    id "ddn.examples.bpmn::choreo.pay"
+
+
+element "ddn.examples.bpmn::conv.shop" as "uml.actor"
+    with
+        id "ddn.examples.bpmn::conv.shop"
+        title "Shop"
+
+
+element "ddn.examples.bpmn::conv.sup" as "uml.actor"
+    with
+        id "ddn.examples.bpmn::conv.sup"
+        title "Supplier"
+
+
+element "ddn.examples.bpmn::conv.talk" as "flow.conversation"
+    with
+        id "ddn.examples.bpmn::conv.talk"
+        title "Ordering"
+
+
+element "ddn.examples.bpmn::conv.sub" as "flow.subconversation"
+    with
+        id "ddn.examples.bpmn::conv.sub"
+        title "Payment"
+
+
+element "ddn.examples.bpmn::conv.shared" as "flow.callconversation"
+    with
+        id "ddn.examples.bpmn::conv.shared"
+        title "Shared billing"
+
+
+relation "ddn.examples.bpmn::conv.l1" as "bpmn.conversationlink"
+    with
+        id "ddn.examples.bpmn::conv.l1"
+        title "Conversation link"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::conv.shop"
+            item
+                definition
+                    id "ddn.examples.bpmn::conv.talk"
+
+
+relation "ddn.examples.bpmn::conv.l2" as "bpmn.conversationlink"
+    with
+        id "ddn.examples.bpmn::conv.l2"
+        title "Conversation link"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::conv.sup"
+            item
+                definition
+                    id "ddn.examples.bpmn::conv.talk"
+
+
+relation "ddn.examples.bpmn::conv.l3" as "bpmn.conversationlink"
+    with
+        id "ddn.examples.bpmn::conv.l3"
+        title "Conversation link"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::conv.shop"
+            item
+                definition
+                    id "ddn.examples.bpmn::conv.sub"
+
+
+relation "ddn.examples.bpmn::conv.l4" as "bpmn.conversationlink"
+    with
+        id "ddn.examples.bpmn::conv.l4"
+        title "Conversation link"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.bpmn::conv.sup"
+            item
+                definition
+                    id "ddn.examples.bpmn::conv.shared"
+
+
+view "process" as "bpmn.process@1"
+    with
+        id "process"
+        title "Process"
+        selection
+            include
+                item
+                    id "ddn.examples.bpmn::proc.start"
+                item
+                    id "ddn.examples.bpmn::proc.review"
+                item
+                    id "ddn.examples.bpmn::proc.escalate"
+                item
+                    id "ddn.examples.bpmn::proc.dec"
+                item
+                    id "ddn.examples.bpmn::proc.pack"
+                item
+                    id "ddn.examples.bpmn::proc.call"
+                item
+                    id "ddn.examples.bpmn::proc.tx"
+                item
+                    id "ddn.examples.bpmn::proc.adhoc"
+                item
+                    id "ddn.examples.bpmn::proc.evsub"
+                item
+                    id "ddn.examples.bpmn::proc.data"
+                item
+                    id "ddn.examples.bpmn::proc.din"
+                item
+                    id "ddn.examples.bpmn::proc.dout"
+                item
+                    id "ddn.examples.bpmn::proc.store"
+                item
+                    id "ddn.examples.bpmn::proc.grp"
+                item
+                    id "ddn.examples.bpmn::proc.cancel_end"
+                item
+                    id "ddn.examples.bpmn::proc.done"
+                item
+                    id "ddn.examples.bpmn::proc.f1"
+                item
+                    id "ddn.examples.bpmn::proc.f2"
+                item
+                    id "ddn.examples.bpmn::proc.f3"
+                item
+                    id "ddn.examples.bpmn::proc.f4"
+                item
+                    id "ddn.examples.bpmn::proc.f5"
+                item
+                    id "ddn.examples.bpmn::proc.f6"
+                item
+                    id "ddn.examples.bpmn::proc.f7"
+                item
+                    id "ddn.examples.bpmn::proc.f8"
+                item
+                    id "ddn.examples.bpmn::proc.f9"
+                item
+                    id "ddn.examples.bpmn::proc.f10"
+                item
+                    id "ddn.examples.bpmn::proc.f11"
+                item
+                    id "ddn.examples.bpmn::proc.a1"
+                item
+                    id "ddn.examples.bpmn::proc.a2"
+                item
+                    id "ddn.examples.bpmn::proc.a3"
+                item
+                    id "ddn.examples.bpmn::proc.a4"
+                item
+                    id "ddn.examples.bpmn::proc.msg"
+            exclude
+                item
+                    id "ddn.examples.bpmn::choreo.c1"
+                item
+                    id "ddn.examples.bpmn::choreo.c2"
+                item
+                    id "ddn.examples.bpmn::conv.l1"
+                item
+                    id "ddn.examples.bpmn::conv.l2"
+                item
+                    id "ddn.examples.bpmn::conv.l3"
+                item
+                    id "ddn.examples.bpmn::conv.l4"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.bpmn::process.pool"
+                name "Webshop"
+                members
+                    item
+                        id "ddn.examples.bpmn::proc.start"
+                    item
+                        id "ddn.examples.bpmn::proc.review"
+                    item
+                        id "ddn.examples.bpmn::proc.escalate"
+                    item
+                        id "ddn.examples.bpmn::proc.dec"
+                    item
+                        id "ddn.examples.bpmn::proc.pack"
+                    item
+                        id "ddn.examples.bpmn::proc.call"
+                    item
+                        id "ddn.examples.bpmn::proc.tx"
+                    item
+                        id "ddn.examples.bpmn::proc.adhoc"
+                    item
+                        id "ddn.examples.bpmn::proc.evsub"
+                    item
+                        id "ddn.examples.bpmn::proc.cancel_end"
+                    item
+                        id "ddn.examples.bpmn::proc.done"
+        publication
+            id "publication:process"
+
+    use "ddn.examples.bpmn::proc.start" named "appearance:process:ddn.examples.bpmn::proc.start"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.start"
+
+    use "ddn.examples.bpmn::proc.review" named "appearance:process:ddn.examples.bpmn::proc.review"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.review"
+
+    use "ddn.examples.bpmn::proc.escalate" named "appearance:process:ddn.examples.bpmn::proc.escalate"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.escalate"
+
+    use "ddn.examples.bpmn::proc.dec" named "appearance:process:ddn.examples.bpmn::proc.dec"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.dec"
+
+    use "ddn.examples.bpmn::proc.pack" named "appearance:process:ddn.examples.bpmn::proc.pack"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.pack"
+
+    use "ddn.examples.bpmn::proc.call" named "appearance:process:ddn.examples.bpmn::proc.call"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.call"
+
+    use "ddn.examples.bpmn::proc.tx" named "appearance:process:ddn.examples.bpmn::proc.tx"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.tx"
+
+    use "ddn.examples.bpmn::proc.adhoc" named "appearance:process:ddn.examples.bpmn::proc.adhoc"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.adhoc"
+
+    use "ddn.examples.bpmn::proc.evsub" named "appearance:process:ddn.examples.bpmn::proc.evsub"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.evsub"
+
+    use "ddn.examples.bpmn::proc.data" named "appearance:process:ddn.examples.bpmn::proc.data"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.data"
+
+    use "ddn.examples.bpmn::proc.din" named "appearance:process:ddn.examples.bpmn::proc.din"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.din"
+
+    use "ddn.examples.bpmn::proc.dout" named "appearance:process:ddn.examples.bpmn::proc.dout"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.dout"
+
+    use "ddn.examples.bpmn::proc.store" named "appearance:process:ddn.examples.bpmn::proc.store"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.store"
+
+    use "ddn.examples.bpmn::proc.grp" named "appearance:process:ddn.examples.bpmn::proc.grp"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.grp"
+
+    use "ddn.examples.bpmn::proc.cancel_end" named "appearance:process:ddn.examples.bpmn::proc.cancel_end"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.cancel_end"
+
+    use "ddn.examples.bpmn::proc.done" named "appearance:process:ddn.examples.bpmn::proc.done"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.done"
+
+    use "ddn.examples.bpmn::proc.f1" named "appearance:process:ddn.examples.bpmn::proc.f1"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f1"
+
+    use "ddn.examples.bpmn::proc.f2" named "appearance:process:ddn.examples.bpmn::proc.f2"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f2"
+
+    use "ddn.examples.bpmn::proc.f3" named "appearance:process:ddn.examples.bpmn::proc.f3"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f3"
+
+    use "ddn.examples.bpmn::proc.f4" named "appearance:process:ddn.examples.bpmn::proc.f4"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f4"
+
+    use "ddn.examples.bpmn::proc.f5" named "appearance:process:ddn.examples.bpmn::proc.f5"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f5"
+
+    use "ddn.examples.bpmn::proc.f6" named "appearance:process:ddn.examples.bpmn::proc.f6"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f6"
+
+    use "ddn.examples.bpmn::proc.f7" named "appearance:process:ddn.examples.bpmn::proc.f7"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f7"
+
+    use "ddn.examples.bpmn::proc.f8" named "appearance:process:ddn.examples.bpmn::proc.f8"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f8"
+
+    use "ddn.examples.bpmn::proc.f9" named "appearance:process:ddn.examples.bpmn::proc.f9"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f9"
+
+    use "ddn.examples.bpmn::proc.f10" named "appearance:process:ddn.examples.bpmn::proc.f10"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f10"
+
+    use "ddn.examples.bpmn::proc.f11" named "appearance:process:ddn.examples.bpmn::proc.f11"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.f11"
+
+    use "ddn.examples.bpmn::proc.a1" named "appearance:process:ddn.examples.bpmn::proc.a1"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.a1"
+
+    use "ddn.examples.bpmn::proc.a2" named "appearance:process:ddn.examples.bpmn::proc.a2"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.a2"
+
+    use "ddn.examples.bpmn::proc.a3" named "appearance:process:ddn.examples.bpmn::proc.a3"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.a3"
+
+    use "ddn.examples.bpmn::proc.a4" named "appearance:process:ddn.examples.bpmn::proc.a4"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.a4"
+
+    use "ddn.examples.bpmn::proc.msg" named "appearance:process:ddn.examples.bpmn::proc.msg"
+        with
+            id "appearance:process:ddn.examples.bpmn::proc.msg"
+
+
+view "collaboration" as "bpmn.process@1"
+    with
+        id "collaboration"
+        title "Collaboration"
+        selection
+            include
+                item
+                    id "ddn.examples.bpmn::proc.start"
+                item
+                    id "ddn.examples.bpmn::proc.review"
+                item
+                    id "ddn.examples.bpmn::proc.escalate"
+                item
+                    id "ddn.examples.bpmn::proc.dec"
+                item
+                    id "ddn.examples.bpmn::proc.pack"
+                item
+                    id "ddn.examples.bpmn::proc.call"
+                item
+                    id "ddn.examples.bpmn::proc.tx"
+                item
+                    id "ddn.examples.bpmn::proc.adhoc"
+                item
+                    id "ddn.examples.bpmn::proc.evsub"
+                item
+                    id "ddn.examples.bpmn::proc.data"
+                item
+                    id "ddn.examples.bpmn::proc.din"
+                item
+                    id "ddn.examples.bpmn::proc.dout"
+                item
+                    id "ddn.examples.bpmn::proc.store"
+                item
+                    id "ddn.examples.bpmn::proc.grp"
+                item
+                    id "ddn.examples.bpmn::proc.cancel_end"
+                item
+                    id "ddn.examples.bpmn::proc.done"
+                item
+                    id "ddn.examples.bpmn::proc.f1"
+                item
+                    id "ddn.examples.bpmn::proc.f2"
+                item
+                    id "ddn.examples.bpmn::proc.f3"
+                item
+                    id "ddn.examples.bpmn::proc.f4"
+                item
+                    id "ddn.examples.bpmn::proc.f5"
+                item
+                    id "ddn.examples.bpmn::proc.f6"
+                item
+                    id "ddn.examples.bpmn::proc.f7"
+                item
+                    id "ddn.examples.bpmn::proc.f8"
+                item
+                    id "ddn.examples.bpmn::proc.f9"
+                item
+                    id "ddn.examples.bpmn::proc.f10"
+                item
+                    id "ddn.examples.bpmn::proc.f11"
+                item
+                    id "ddn.examples.bpmn::proc.a1"
+                item
+                    id "ddn.examples.bpmn::proc.a2"
+                item
+                    id "ddn.examples.bpmn::proc.a3"
+                item
+                    id "ddn.examples.bpmn::proc.a4"
+                item
+                    id "ddn.examples.bpmn::proc.msg"
+            exclude
+                item
+                    id "ddn.examples.bpmn::choreo.c1"
+                item
+                    id "ddn.examples.bpmn::choreo.c2"
+                item
+                    id "ddn.examples.bpmn::conv.l1"
+                item
+                    id "ddn.examples.bpmn::conv.l2"
+                item
+                    id "ddn.examples.bpmn::conv.l3"
+                item
+                    id "ddn.examples.bpmn::conv.l4"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.bpmn::collaboration.shop"
+                name "Webshop"
+                members
+                    item
+                        id "ddn.examples.bpmn::proc.start"
+                    item
+                        id "ddn.examples.bpmn::proc.review"
+                    item
+                        id "ddn.examples.bpmn::proc.dec"
+                    item
+                        id "ddn.examples.bpmn::proc.pack"
+                    item
+                        id "ddn.examples.bpmn::proc.done"
+            item
+                id "ddn.examples.bpmn::collaboration.erp"
+                name "ERP (black box)"
+                members
+                    item
+                        id "ddn.examples.bpmn::proc.call"
+                    item
+                        id "ddn.examples.bpmn::proc.tx"
+        publication
+            id "publication:collaboration"
+
+    use "ddn.examples.bpmn::proc.start" named "appearance:collaboration:ddn.examples.bpmn::proc.start"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.start"
+
+    use "ddn.examples.bpmn::proc.review" named "appearance:collaboration:ddn.examples.bpmn::proc.review"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.review"
+
+    use "ddn.examples.bpmn::proc.escalate" named "appearance:collaboration:ddn.examples.bpmn::proc.escalate"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.escalate"
+
+    use "ddn.examples.bpmn::proc.dec" named "appearance:collaboration:ddn.examples.bpmn::proc.dec"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.dec"
+
+    use "ddn.examples.bpmn::proc.pack" named "appearance:collaboration:ddn.examples.bpmn::proc.pack"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.pack"
+
+    use "ddn.examples.bpmn::proc.call" named "appearance:collaboration:ddn.examples.bpmn::proc.call"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.call"
+
+    use "ddn.examples.bpmn::proc.tx" named "appearance:collaboration:ddn.examples.bpmn::proc.tx"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.tx"
+
+    use "ddn.examples.bpmn::proc.adhoc" named "appearance:collaboration:ddn.examples.bpmn::proc.adhoc"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.adhoc"
+
+    use "ddn.examples.bpmn::proc.evsub" named "appearance:collaboration:ddn.examples.bpmn::proc.evsub"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.evsub"
+
+    use "ddn.examples.bpmn::proc.data" named "appearance:collaboration:ddn.examples.bpmn::proc.data"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.data"
+
+    use "ddn.examples.bpmn::proc.din" named "appearance:collaboration:ddn.examples.bpmn::proc.din"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.din"
+
+    use "ddn.examples.bpmn::proc.dout" named "appearance:collaboration:ddn.examples.bpmn::proc.dout"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.dout"
+
+    use "ddn.examples.bpmn::proc.store" named "appearance:collaboration:ddn.examples.bpmn::proc.store"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.store"
+
+    use "ddn.examples.bpmn::proc.grp" named "appearance:collaboration:ddn.examples.bpmn::proc.grp"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.grp"
+
+    use "ddn.examples.bpmn::proc.cancel_end" named "appearance:collaboration:ddn.examples.bpmn::proc.cancel_end"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.cancel_end"
+
+    use "ddn.examples.bpmn::proc.done" named "appearance:collaboration:ddn.examples.bpmn::proc.done"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.done"
+
+    use "ddn.examples.bpmn::proc.f1" named "appearance:collaboration:ddn.examples.bpmn::proc.f1"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f1"
+
+    use "ddn.examples.bpmn::proc.f2" named "appearance:collaboration:ddn.examples.bpmn::proc.f2"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f2"
+
+    use "ddn.examples.bpmn::proc.f3" named "appearance:collaboration:ddn.examples.bpmn::proc.f3"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f3"
+
+    use "ddn.examples.bpmn::proc.f4" named "appearance:collaboration:ddn.examples.bpmn::proc.f4"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f4"
+
+    use "ddn.examples.bpmn::proc.f5" named "appearance:collaboration:ddn.examples.bpmn::proc.f5"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f5"
+
+    use "ddn.examples.bpmn::proc.f6" named "appearance:collaboration:ddn.examples.bpmn::proc.f6"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f6"
+
+    use "ddn.examples.bpmn::proc.f7" named "appearance:collaboration:ddn.examples.bpmn::proc.f7"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f7"
+
+    use "ddn.examples.bpmn::proc.f8" named "appearance:collaboration:ddn.examples.bpmn::proc.f8"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f8"
+
+    use "ddn.examples.bpmn::proc.f9" named "appearance:collaboration:ddn.examples.bpmn::proc.f9"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f9"
+
+    use "ddn.examples.bpmn::proc.f10" named "appearance:collaboration:ddn.examples.bpmn::proc.f10"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f10"
+
+    use "ddn.examples.bpmn::proc.f11" named "appearance:collaboration:ddn.examples.bpmn::proc.f11"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.f11"
+
+    use "ddn.examples.bpmn::proc.a1" named "appearance:collaboration:ddn.examples.bpmn::proc.a1"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.a1"
+
+    use "ddn.examples.bpmn::proc.a2" named "appearance:collaboration:ddn.examples.bpmn::proc.a2"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.a2"
+
+    use "ddn.examples.bpmn::proc.a3" named "appearance:collaboration:ddn.examples.bpmn::proc.a3"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.a3"
+
+    use "ddn.examples.bpmn::proc.a4" named "appearance:collaboration:ddn.examples.bpmn::proc.a4"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.a4"
+
+    use "ddn.examples.bpmn::proc.msg" named "appearance:collaboration:ddn.examples.bpmn::proc.msg"
+        with
+            id "appearance:collaboration:ddn.examples.bpmn::proc.msg"
+
+
+view "choreography" as "bpmn.choreography@1"
+    with
+        id "choreography"
+        title "Choreography"
+        selection
+            include
+                item
+                    id "ddn.examples.bpmn::choreo.ship_order"
+                item
+                    id "ddn.examples.bpmn::choreo.pay"
+                item
+                    id "ddn.examples.bpmn::choreo.gw"
+                item
+                    id "ddn.examples.bpmn::choreo.c1"
+                item
+                    id "ddn.examples.bpmn::choreo.c2"
+            exclude
+                item
+                    id "ddn.examples.bpmn::proc.f1"
+                item
+                    id "ddn.examples.bpmn::proc.f2"
+                item
+                    id "ddn.examples.bpmn::proc.f3"
+                item
+                    id "ddn.examples.bpmn::proc.f4"
+                item
+                    id "ddn.examples.bpmn::proc.f5"
+                item
+                    id "ddn.examples.bpmn::proc.f6"
+                item
+                    id "ddn.examples.bpmn::proc.f7"
+                item
+                    id "ddn.examples.bpmn::proc.f8"
+                item
+                    id "ddn.examples.bpmn::proc.f9"
+                item
+                    id "ddn.examples.bpmn::proc.f10"
+                item
+                    id "ddn.examples.bpmn::proc.f11"
+                item
+                    id "ddn.examples.bpmn::proc.a1"
+                item
+                    id "ddn.examples.bpmn::proc.a2"
+                item
+                    id "ddn.examples.bpmn::proc.a3"
+                item
+                    id "ddn.examples.bpmn::proc.a4"
+                item
+                    id "ddn.examples.bpmn::proc.msg"
+                item
+                    id "ddn.examples.bpmn::conv.l1"
+                item
+                    id "ddn.examples.bpmn::conv.l2"
+                item
+                    id "ddn.examples.bpmn::conv.l3"
+                item
+                    id "ddn.examples.bpmn::conv.l4"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:choreography"
+
+    use "ddn.examples.bpmn::choreo.ship_order" named "appearance:choreography:ddn.examples.bpmn::choreo.ship_order"
+        with
+            id "appearance:choreography:ddn.examples.bpmn::choreo.ship_order"
+
+    use "ddn.examples.bpmn::choreo.pay" named "appearance:choreography:ddn.examples.bpmn::choreo.pay"
+        with
+            id "appearance:choreography:ddn.examples.bpmn::choreo.pay"
+
+    use "ddn.examples.bpmn::choreo.gw" named "appearance:choreography:ddn.examples.bpmn::choreo.gw"
+        with
+            id "appearance:choreography:ddn.examples.bpmn::choreo.gw"
+
+    use "ddn.examples.bpmn::choreo.c1" named "appearance:choreography:ddn.examples.bpmn::choreo.c1"
+        with
+            id "appearance:choreography:ddn.examples.bpmn::choreo.c1"
+
+    use "ddn.examples.bpmn::choreo.c2" named "appearance:choreography:ddn.examples.bpmn::choreo.c2"
+        with
+            id "appearance:choreography:ddn.examples.bpmn::choreo.c2"
+
+
+view "conversation" as "bpmn.conversation@1"
+    with
+        id "conversation"
+        title "Conversation"
+        selection
+            include
+                item
+                    id "ddn.examples.bpmn::conv.shop"
+                item
+                    id "ddn.examples.bpmn::conv.sup"
+                item
+                    id "ddn.examples.bpmn::conv.talk"
+                item
+                    id "ddn.examples.bpmn::conv.sub"
+                item
+                    id "ddn.examples.bpmn::conv.shared"
+                item
+                    id "ddn.examples.bpmn::conv.l1"
+                item
+                    id "ddn.examples.bpmn::conv.l2"
+                item
+                    id "ddn.examples.bpmn::conv.l3"
+                item
+                    id "ddn.examples.bpmn::conv.l4"
+            exclude
+                item
+                    id "ddn.examples.bpmn::proc.f1"
+                item
+                    id "ddn.examples.bpmn::proc.f2"
+                item
+                    id "ddn.examples.bpmn::proc.f3"
+                item
+                    id "ddn.examples.bpmn::proc.f4"
+                item
+                    id "ddn.examples.bpmn::proc.f5"
+                item
+                    id "ddn.examples.bpmn::proc.f6"
+                item
+                    id "ddn.examples.bpmn::proc.f7"
+                item
+                    id "ddn.examples.bpmn::proc.f8"
+                item
+                    id "ddn.examples.bpmn::proc.f9"
+                item
+                    id "ddn.examples.bpmn::proc.f10"
+                item
+                    id "ddn.examples.bpmn::proc.f11"
+                item
+                    id "ddn.examples.bpmn::proc.a1"
+                item
+                    id "ddn.examples.bpmn::proc.a2"
+                item
+                    id "ddn.examples.bpmn::proc.a3"
+                item
+                    id "ddn.examples.bpmn::proc.a4"
+                item
+                    id "ddn.examples.bpmn::proc.msg"
+                item
+                    id "ddn.examples.bpmn::choreo.c1"
+                item
+                    id "ddn.examples.bpmn::choreo.c2"
+        layout
+            algorithm "layered"
+            routing "straight"
+            gap 130
+            row_gap 130
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:conversation"
+
+    use "ddn.examples.bpmn::conv.shop" named "appearance:conversation:ddn.examples.bpmn::conv.shop"
+        with
+            id "appearance:conversation:ddn.examples.bpmn::conv.shop"
+
+    use "ddn.examples.bpmn::conv.sup" named "appearance:conversation:ddn.examples.bpmn::conv.sup"
+        with
+            id "appearance:conversation:ddn.examples.bpmn::conv.sup"
+
+    use "ddn.examples.bpmn::conv.talk" named "appearance:conversation:ddn.examples.bpmn::conv.talk"
+        with
+            id "appearance:conversation:ddn.examples.bpmn::conv.talk"
+
+    use "ddn.examples.bpmn::conv.sub" named "appearance:conversation:ddn.examples.bpmn::conv.sub"
+        with
+            id "appearance:conversation:ddn.examples.bpmn::conv.sub"
+
+    use "ddn.examples.bpmn::conv.shared" named "appearance:conversation:ddn.examples.bpmn::conv.shared"
+        with
+            id "appearance:conversation:ddn.examples.bpmn::conv.shared"
+
+    use "ddn.examples.bpmn::conv.l1" named "appearance:conversation:ddn.examples.bpmn::conv.l1"
+        with
+            id "appearance:conversation:ddn.examples.bpmn::conv.l1"
+
+    use "ddn.examples.bpmn::conv.l2" named "appearance:conversation:ddn.examples.bpmn::conv.l2"
+        with
+            id "appearance:conversation:ddn.examples.bpmn::conv.l2"
+
+    use "ddn.examples.bpmn::conv.l3" named "appearance:conversation:ddn.examples.bpmn::conv.l3"
+        with
+            id "appearance:conversation:ddn.examples.bpmn::conv.l3"
+
+    use "ddn.examples.bpmn::conv.l4" named "appearance:conversation:ddn.examples.bpmn::conv.l4"
+        with
+            id "appearance:conversation:ddn.examples.bpmn::conv.l4"

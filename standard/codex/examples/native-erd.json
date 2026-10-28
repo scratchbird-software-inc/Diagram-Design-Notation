@@ -1,0 +1,59 @@
+{
+  "workarea": {
+    "name": "Board"
+  },
+  "definitions": [
+    {
+      "name": "Customer",
+      "role": "entity",
+      "title": "Customer",
+      "data": {
+        "columns": [
+          {
+            "id": "field"
+          },
+          {
+            "id": "domain"
+          },
+          {
+            "id": "key"
+          }
+        ],
+        "rows": [
+          [
+            "Key",
+            null,
+            "primary"
+          ],
+          [
+            "Name",
+            "CustomerName"
+          ],
+          [
+            "Comment",
+            ""
+          ]
+        ]
+      }
+    }
+  ],
+  "views": [
+    {
+      "name": "Design",
+      "profile": "ddn@1",
+      "subtype": [
+        "erd"
+      ],
+      "style": {
+        "look": "handdrawn"
+      },
+      "selection": {
+        "include": [
+          {
+            "name": "Customer"
+          }
+        ]
+      }
+    }
+  ]
+}

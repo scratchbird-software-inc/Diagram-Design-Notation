@@ -1,0 +1,6 @@
+Presentation devices and places (Wikimedia Commons CC0/PD selection)
+Individual Wikimedia Commons authors (per-item provenance); all items CC0 or public domain
+https://commons.wikimedia.org/
+
+License: CC0-1.0
+Per-item license and provenance are preserved in manifest.json.

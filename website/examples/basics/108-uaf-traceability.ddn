@@ -1,25 +1,173 @@
-ddn "0.5";
-module "retail.strat";
+version ddn-next-1
 
-// B1-090: cross-file addressing — an architecture container groups this
-// file and 108-uaf-operations.ddn into one described architecture (ISO
-// 42010: the container is the description, each view is governed by its
-// profile). UAF cross-domain traceability relations then address elements
-// in the base file by module-qualified identity; an endpoint outside the
-// view renders as an off-page badge. All data is synthetic.
-architecture retail "Retail architecture" {
-    files: ["108-uaf-operations.ddn", "108-uaf-governance.ddn"];
-    description: "One described architecture: strategic capabilities here, operational activities and services in the base file.";
-}
-data strat {
-    object fulfill "Order fulfillment" { kind: "uaf.capability"; }
-    object brand "Trusted retailer" { kind: "uaf.enterprisevision"; }
-    relation t1 "" @fulfill -> @retail.ops.ops.deliver { kind: "uaf.mapsto"; }
-    relation t2 "" @fulfill -> @retail.ops.ops.ship { kind: "uaf.mapsto"; }
-    relation t3 "" @brand -> @fulfill { kind: "uaf.mapsto"; }
-    relation x1 "" @fulfill -> @brand { kind: "uaf.mapsto"; x_link: { file: "108-uaf-governance.ddn", target: "retail.gov.gov.policy1" }; }
-}
-view sv "Strategic capabilities": [@strat] as "uaf.strategic@1" {
-    layout { gap: 112px; row_gap: 112px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:sv"
+    with
+        id "publication:sv"
+        title "Strategic capabilities"
+        targets
+            item
+                target
+                    id "sv"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "retail.strat::strat.fulfill" as "uaf.capability"
+    with
+        id "retail.strat::strat.fulfill"
+        title "Order fulfillment"
+
+
+element "retail.strat::strat.brand" as "uaf.enterprisevision"
+    with
+        id "retail.strat::strat.brand"
+        title "Trusted retailer"
+
+
+element "retail.strat::strat.t1::__external" as "flow.offpage"
+    with
+        id "retail.strat::strat.t1::__external"
+        title "retail.ops::ops.deliver"
+        metadata
+            x_record
+                reference "retail.ops::ops.deliver (examples/basics/108-uaf-operations.ddn)"
+
+
+element "retail.strat::strat.t2::__external" as "flow.offpage"
+    with
+        id "retail.strat::strat.t2::__external"
+        title "retail.ops::ops.ship"
+        metadata
+            x_record
+                reference "retail.ops::ops.ship (examples/basics/108-uaf-operations.ddn)"
+
+
+relation "retail.strat::strat.t1" as "uaf.mapsto"
+    with
+        id "retail.strat::strat.t1"
+        title "«mapsTo»"
+        metadata
+            x_record
+                reference "retail.ops::ops.deliver (examples/basics/108-uaf-operations.ddn)"
+        endpoints
+            item
+                definition
+                    id "retail.strat::strat.fulfill"
+            item
+                definition
+                    id "retail.strat::strat.t1::__external"
+
+
+relation "retail.strat::strat.t2" as "uaf.mapsto"
+    with
+        id "retail.strat::strat.t2"
+        title "«mapsTo»"
+        metadata
+            x_record
+                reference "retail.ops::ops.ship (examples/basics/108-uaf-operations.ddn)"
+        endpoints
+            item
+                definition
+                    id "retail.strat::strat.fulfill"
+            item
+                definition
+                    id "retail.strat::strat.t2::__external"
+
+
+relation "retail.strat::strat.t3" as "uaf.mapsto"
+    with
+        id "retail.strat::strat.t3"
+        title "«mapsTo»"
+        endpoints
+            item
+                definition
+                    id "retail.strat::strat.brand"
+            item
+                definition
+                    id "retail.strat::strat.fulfill"
+
+
+relation "retail.strat::strat.x1" as "uaf.mapsto"
+    with
+        id "retail.strat::strat.x1"
+        title "«mapsTo»"
+        metadata
+            x_link
+                file "108-uaf-governance.ddn"
+                target "retail.gov.gov.policy1"
+        endpoints
+            item
+                definition
+                    id "retail.strat::strat.fulfill"
+            item
+                definition
+                    id "retail.strat::strat.brand"
+
+
+view "sv" as "uaf.strategic@1"
+    with
+        id "sv"
+        title "Strategic capabilities"
+        selection
+            include
+                item
+                    id "retail.strat::strat.fulfill"
+                item
+                    id "retail.strat::strat.brand"
+                item
+                    id "retail.strat::strat.t1::__external"
+                item
+                    id "retail.strat::strat.t2::__external"
+                item
+                    id "retail.strat::strat.t3"
+                item
+                    id "retail.strat::strat.x1"
+                item
+                    id "retail.strat::strat.t1"
+                item
+                    id "retail.strat::strat.t2"
+        layout
+            center "pins"
+            gap 112
+            row_gap 112
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:sv"
+
+    use "retail.strat::strat.fulfill" named "appearance:sv:retail.strat::strat.fulfill"
+        with
+            id "appearance:sv:retail.strat::strat.fulfill"
+
+    use "retail.strat::strat.brand" named "appearance:sv:retail.strat::strat.brand"
+        with
+            id "appearance:sv:retail.strat::strat.brand"
+
+    use "retail.strat::strat.t1::__external" named "appearance:sv:retail.strat::strat.t1::__external"
+        with
+            id "appearance:sv:retail.strat::strat.t1::__external"
+
+    use "retail.strat::strat.t2::__external" named "appearance:sv:retail.strat::strat.t2::__external"
+        with
+            id "appearance:sv:retail.strat::strat.t2::__external"
+
+    use "retail.strat::strat.t3" named "appearance:sv:retail.strat::strat.t3"
+        with
+            id "appearance:sv:retail.strat::strat.t3"
+
+    use "retail.strat::strat.x1" named "appearance:sv:retail.strat::strat.x1"
+        with
+            id "appearance:sv:retail.strat::strat.x1"
+
+    use "retail.strat::strat.t1" named "appearance:sv:retail.strat::strat.t1"
+        with
+            id "appearance:sv:retail.strat::strat.t1"
+
+    use "retail.strat::strat.t2" named "appearance:sv:retail.strat::strat.t2"
+        with
+            id "appearance:sv:retail.strat::strat.t2"

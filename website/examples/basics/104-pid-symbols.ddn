@@ -1,35 +1,502 @@
-ddn "0.5";
-module "ddn.examples.pidsymbols";
+version ddn-next-1
 
-// B1-087: the pid-common@1 icon library — an ISA-5.1-style common set.
-// P&ID symbols have no dedicated DDN profile; they bind per node via
-// x_icon on any profile-kind node (network.server serves as the neutral
-// host here). Common-practice rendering — ISA-5.1 is not in hand, so
-// compliance against the standard is pending document review. All data is
-// synthetic.
-data m {
-    object tk "Feed tank" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "tank-roof" }; }
-    object p1 "Feed pump" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "pump-centrifugal" }; }
-    object fv "Flow control valve" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "valve-control" }; }
-    object ft "FT 101" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "instrument-field" }; }
-    object fic "FIC 101" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "instrument-dcs" }; }
-    object hx "Preheater" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "heat-exchanger" }; }
-    object v1 "Separator" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "vessel-vertical" }; }
-    object xv "Shutoff valve" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "valve-gate" }; }
-    object li "LI 201" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "instrument-panel" }; }
-    object psv "PSV 202" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "valve-relief" }; }
-    assoc f1 "" @tk -> @p1;
-    assoc f2 "" @p1 -> @fv;
-    assoc f3 "" @fv -> @hx;
-    assoc f4 "" @hx -> @v1;
-    assoc f5 "" @v1 -> @xv;
-    assoc s1 "" @ft -> @fic;
-    assoc s2 "" @fic -> @fv;
-    assoc s3 "" @li -> @v1;
-    assoc s4 "" @psv -> @v1;
-    assoc s5 "" @ft -> @fv;
-}
-view pid "P&ID symbol library": [@m] as "network.basic@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
-    publication { size: content; fit: none; }
-}
+asset "artwork::pid-common@1:tank-roof" as resource from "../../assets/icons/pid-common-1/tank-roof.svg"
+    with
+        id "artwork::pid-common@1:tank-roof"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::pid-common@1:pump-centrifugal" as resource from "../../assets/icons/pid-common-1/pump-centrifugal.svg"
+    with
+        id "artwork::pid-common@1:pump-centrifugal"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::pid-common@1:valve-control" as resource from "../../assets/icons/pid-common-1/valve-control.svg"
+    with
+        id "artwork::pid-common@1:valve-control"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::pid-common@1:instrument-field" as resource from "../../assets/icons/pid-common-1/instrument-field.svg"
+    with
+        id "artwork::pid-common@1:instrument-field"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::pid-common@1:instrument-dcs" as resource from "../../assets/icons/pid-common-1/instrument-dcs.svg"
+    with
+        id "artwork::pid-common@1:instrument-dcs"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::pid-common@1:heat-exchanger" as resource from "../../assets/icons/pid-common-1/heat-exchanger.svg"
+    with
+        id "artwork::pid-common@1:heat-exchanger"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::pid-common@1:vessel-vertical" as resource from "../../assets/icons/pid-common-1/vessel-vertical.svg"
+    with
+        id "artwork::pid-common@1:vessel-vertical"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::pid-common@1:valve-gate" as resource from "../../assets/icons/pid-common-1/valve-gate.svg"
+    with
+        id "artwork::pid-common@1:valve-gate"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::pid-common@1:instrument-panel" as resource from "../../assets/icons/pid-common-1/instrument-panel.svg"
+    with
+        id "artwork::pid-common@1:instrument-panel"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+asset "artwork::pid-common@1:valve-relief" as resource from "../../assets/icons/pid-common-1/valve-relief.svg"
+    with
+        id "artwork::pid-common@1:valve-relief"
+        media_type "image/svg+xml"
+        intrinsic_size
+            width 24
+            height 24
+
+
+publication "publication:pid"
+    with
+        id "publication:pid"
+        title "P&ID symbol library"
+        targets
+            item
+                target
+                    id "pid"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.pidsymbols::m.tk" as "network.server"
+    with
+        id "ddn.examples.pidsymbols::m.tk"
+        title "Feed tank"
+        metadata
+            x_icon
+                library "pid-common@1"
+                icon "tank-roof"
+
+
+element "ddn.examples.pidsymbols::m.p1" as "network.server"
+    with
+        id "ddn.examples.pidsymbols::m.p1"
+        title "Feed pump"
+        metadata
+            x_icon
+                library "pid-common@1"
+                icon "pump-centrifugal"
+
+
+element "ddn.examples.pidsymbols::m.fv" as "network.server"
+    with
+        id "ddn.examples.pidsymbols::m.fv"
+        title "Flow control valve"
+        metadata
+            x_icon
+                library "pid-common@1"
+                icon "valve-control"
+
+
+element "ddn.examples.pidsymbols::m.ft" as "network.server"
+    with
+        id "ddn.examples.pidsymbols::m.ft"
+        title "FT 101"
+        metadata
+            x_icon
+                library "pid-common@1"
+                icon "instrument-field"
+
+
+element "ddn.examples.pidsymbols::m.fic" as "network.server"
+    with
+        id "ddn.examples.pidsymbols::m.fic"
+        title "FIC 101"
+        metadata
+            x_icon
+                library "pid-common@1"
+                icon "instrument-dcs"
+
+
+element "ddn.examples.pidsymbols::m.hx" as "network.server"
+    with
+        id "ddn.examples.pidsymbols::m.hx"
+        title "Preheater"
+        metadata
+            x_icon
+                library "pid-common@1"
+                icon "heat-exchanger"
+
+
+element "ddn.examples.pidsymbols::m.v1" as "network.server"
+    with
+        id "ddn.examples.pidsymbols::m.v1"
+        title "Separator"
+        metadata
+            x_icon
+                library "pid-common@1"
+                icon "vessel-vertical"
+
+
+element "ddn.examples.pidsymbols::m.xv" as "network.server"
+    with
+        id "ddn.examples.pidsymbols::m.xv"
+        title "Shutoff valve"
+        metadata
+            x_icon
+                library "pid-common@1"
+                icon "valve-gate"
+
+
+element "ddn.examples.pidsymbols::m.li" as "network.server"
+    with
+        id "ddn.examples.pidsymbols::m.li"
+        title "LI 201"
+        metadata
+            x_icon
+                library "pid-common@1"
+                icon "instrument-panel"
+
+
+element "ddn.examples.pidsymbols::m.psv" as "network.server"
+    with
+        id "ddn.examples.pidsymbols::m.psv"
+        title "PSV 202"
+        metadata
+            x_icon
+                library "pid-common@1"
+                icon "valve-relief"
+
+
+relation "ddn.examples.pidsymbols::m.f1" as "assoc"
+    with
+        id "ddn.examples.pidsymbols::m.f1"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.tk"
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.p1"
+
+
+relation "ddn.examples.pidsymbols::m.f2" as "assoc"
+    with
+        id "ddn.examples.pidsymbols::m.f2"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.p1"
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.fv"
+
+
+relation "ddn.examples.pidsymbols::m.f3" as "assoc"
+    with
+        id "ddn.examples.pidsymbols::m.f3"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.fv"
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.hx"
+
+
+relation "ddn.examples.pidsymbols::m.f4" as "assoc"
+    with
+        id "ddn.examples.pidsymbols::m.f4"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.hx"
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.v1"
+
+
+relation "ddn.examples.pidsymbols::m.f5" as "assoc"
+    with
+        id "ddn.examples.pidsymbols::m.f5"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.v1"
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.xv"
+
+
+relation "ddn.examples.pidsymbols::m.s1" as "assoc"
+    with
+        id "ddn.examples.pidsymbols::m.s1"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.ft"
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.fic"
+
+
+relation "ddn.examples.pidsymbols::m.s2" as "assoc"
+    with
+        id "ddn.examples.pidsymbols::m.s2"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.fic"
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.fv"
+
+
+relation "ddn.examples.pidsymbols::m.s3" as "assoc"
+    with
+        id "ddn.examples.pidsymbols::m.s3"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.li"
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.v1"
+
+
+relation "ddn.examples.pidsymbols::m.s4" as "assoc"
+    with
+        id "ddn.examples.pidsymbols::m.s4"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.psv"
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.v1"
+
+
+relation "ddn.examples.pidsymbols::m.s5" as "assoc"
+    with
+        id "ddn.examples.pidsymbols::m.s5"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.ft"
+            item
+                definition
+                    id "ddn.examples.pidsymbols::m.fv"
+
+
+view "pid" as "network.basic@1"
+    with
+        id "pid"
+        title "P&ID symbol library"
+        selection
+            include
+                item
+                    id "ddn.examples.pidsymbols::m.tk"
+                item
+                    id "ddn.examples.pidsymbols::m.p1"
+                item
+                    id "ddn.examples.pidsymbols::m.fv"
+                item
+                    id "ddn.examples.pidsymbols::m.ft"
+                item
+                    id "ddn.examples.pidsymbols::m.fic"
+                item
+                    id "ddn.examples.pidsymbols::m.hx"
+                item
+                    id "ddn.examples.pidsymbols::m.v1"
+                item
+                    id "ddn.examples.pidsymbols::m.xv"
+                item
+                    id "ddn.examples.pidsymbols::m.li"
+                item
+                    id "ddn.examples.pidsymbols::m.psv"
+                item
+                    id "ddn.examples.pidsymbols::m.f1"
+                item
+                    id "ddn.examples.pidsymbols::m.f2"
+                item
+                    id "ddn.examples.pidsymbols::m.f3"
+                item
+                    id "ddn.examples.pidsymbols::m.f4"
+                item
+                    id "ddn.examples.pidsymbols::m.f5"
+                item
+                    id "ddn.examples.pidsymbols::m.s1"
+                item
+                    id "ddn.examples.pidsymbols::m.s2"
+                item
+                    id "ddn.examples.pidsymbols::m.s3"
+                item
+                    id "ddn.examples.pidsymbols::m.s4"
+                item
+                    id "ddn.examples.pidsymbols::m.s5"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:pid"
+
+    use "ddn.examples.pidsymbols::m.tk" named "appearance:pid:ddn.examples.pidsymbols::m.tk"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.tk"
+            symbol
+                image
+                    id "artwork::pid-common@1:tank-roof"
+
+    use "ddn.examples.pidsymbols::m.p1" named "appearance:pid:ddn.examples.pidsymbols::m.p1"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.p1"
+            symbol
+                image
+                    id "artwork::pid-common@1:pump-centrifugal"
+
+    use "ddn.examples.pidsymbols::m.fv" named "appearance:pid:ddn.examples.pidsymbols::m.fv"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.fv"
+            symbol
+                image
+                    id "artwork::pid-common@1:valve-control"
+
+    use "ddn.examples.pidsymbols::m.ft" named "appearance:pid:ddn.examples.pidsymbols::m.ft"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.ft"
+            symbol
+                image
+                    id "artwork::pid-common@1:instrument-field"
+
+    use "ddn.examples.pidsymbols::m.fic" named "appearance:pid:ddn.examples.pidsymbols::m.fic"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.fic"
+            symbol
+                image
+                    id "artwork::pid-common@1:instrument-dcs"
+
+    use "ddn.examples.pidsymbols::m.hx" named "appearance:pid:ddn.examples.pidsymbols::m.hx"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.hx"
+            symbol
+                image
+                    id "artwork::pid-common@1:heat-exchanger"
+
+    use "ddn.examples.pidsymbols::m.v1" named "appearance:pid:ddn.examples.pidsymbols::m.v1"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.v1"
+            symbol
+                image
+                    id "artwork::pid-common@1:vessel-vertical"
+
+    use "ddn.examples.pidsymbols::m.xv" named "appearance:pid:ddn.examples.pidsymbols::m.xv"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.xv"
+            symbol
+                image
+                    id "artwork::pid-common@1:valve-gate"
+
+    use "ddn.examples.pidsymbols::m.li" named "appearance:pid:ddn.examples.pidsymbols::m.li"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.li"
+            symbol
+                image
+                    id "artwork::pid-common@1:instrument-panel"
+
+    use "ddn.examples.pidsymbols::m.psv" named "appearance:pid:ddn.examples.pidsymbols::m.psv"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.psv"
+            symbol
+                image
+                    id "artwork::pid-common@1:valve-relief"
+
+    use "ddn.examples.pidsymbols::m.f1" named "appearance:pid:ddn.examples.pidsymbols::m.f1"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.f1"
+
+    use "ddn.examples.pidsymbols::m.f2" named "appearance:pid:ddn.examples.pidsymbols::m.f2"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.f2"
+
+    use "ddn.examples.pidsymbols::m.f3" named "appearance:pid:ddn.examples.pidsymbols::m.f3"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.f3"
+
+    use "ddn.examples.pidsymbols::m.f4" named "appearance:pid:ddn.examples.pidsymbols::m.f4"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.f4"
+
+    use "ddn.examples.pidsymbols::m.f5" named "appearance:pid:ddn.examples.pidsymbols::m.f5"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.f5"
+
+    use "ddn.examples.pidsymbols::m.s1" named "appearance:pid:ddn.examples.pidsymbols::m.s1"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.s1"
+
+    use "ddn.examples.pidsymbols::m.s2" named "appearance:pid:ddn.examples.pidsymbols::m.s2"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.s2"
+
+    use "ddn.examples.pidsymbols::m.s3" named "appearance:pid:ddn.examples.pidsymbols::m.s3"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.s3"
+
+    use "ddn.examples.pidsymbols::m.s4" named "appearance:pid:ddn.examples.pidsymbols::m.s4"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.s4"
+
+    use "ddn.examples.pidsymbols::m.s5" named "appearance:pid:ddn.examples.pidsymbols::m.s5"
+        with
+            id "appearance:pid:ddn.examples.pidsymbols::m.s5"

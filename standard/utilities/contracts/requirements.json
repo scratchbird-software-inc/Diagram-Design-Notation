@@ -1,0 +1,526 @@
+{
+  "namespace": "UTIL",
+  "status": "specification acceptance scenarios; product implementation not tested",
+  "requirements": [
+    {
+      "id": "UTIL-VW01",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Offline open",
+      "scenario": "Open selected entry/include files from bundled HTML with network disabled.",
+      "expected": "Initial visible scene and explicit verification coverage; no server/fetch needed.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW02",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Spatial workarea",
+      "scenario": "Navigate W4, expand/restore a view and follow an offscreen link.",
+      "expected": "Authored placements unchanged; stable identities; only visible scene mounted.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW03",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Qualified names",
+      "scenario": "Two included files define the same reference name and repeated display labels.",
+      "expected": "Resolve by file-qualified identity; only entry workarea active.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW04",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Progressive drafts",
+      "scenario": "Display unnamed/title-only/freeform and structured native ERD in one workarea.",
+      "expected": "All legal draft forms shown; status, style, details and body mode independent.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW05",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Shared occurrences",
+      "scenario": "Show two appearances of one definition with different local presentation.",
+      "expected": "Shared content consistent; occurrence settings and focus survive culling.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW06",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Passive revisions",
+      "scenario": "Stream replacement and ordered keyed updates with a schema change.",
+      "expected": "Coherent revision vector; no keyed delta loss; no participation controls.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW07",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Stale evidence",
+      "scenario": "Update data used by an Accepted scope while its verifier job is outstanding.",
+      "expected": "Stored status unchanged; stale evidence marked; old result cannot clear marker.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW08",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Missing capability",
+      "scenario": "Open an unsupported profile, then install its trusted compatible pack.",
+      "expected": "Named placeholder preserves source; exact profile resumes without substitution.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW09",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Accessible inspection",
+      "scenario": "Keyboard/search to an offscreen entity and inspect truncated cell/hidden field.",
+      "expected": "Full semantic text reachable; focus survives scene patch; no dependence on SVG node presence.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW10",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Coherent capture",
+      "scenario": "Export whole document while viewport is a small corner; then request missing adapter.",
+      "expected": "Full declared scope and revision manifest; unsupported format is explicit.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW11",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Instance isolation",
+      "scenario": "Two viewers share a runtime; a third uses another runtime with different packs.",
+      "expected": "Per-view camera; no global registry/style mutation; one destroy does not affect other leases.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VW12",
+      "owner": "ddn-viewer",
+      "specification": "02-viewer.md",
+      "title": "Read-only disposal",
+      "scenario": "Navigate/select/preview/capture then destroy twice.",
+      "expected": "No source/status changes; no imported command service; owned resources released.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS01",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Composition",
+      "scenario": "Attach and detach designer on an existing populated viewer.",
+      "expected": "Same runtime/scene/camera; detached viewer read-only and usable.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS02",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Native creation",
+      "scenario": "Select DDN/ERD, Draft and handdrawn; add first entity without coordinates.",
+      "expected": "Centered in active viewport; <table> placeholder; independent status/style.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS03",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Provisional title",
+      "scenario": "Edit display title and reference name separately; choose scoped font.",
+      "expected": "Reference uniqueness checked; display labels legal; only selected typography scope set.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS04",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Draft conversion",
+      "scenario": "Convert field-list and explicit header-table drafts with empty/quoted cells.",
+      "expected": "Explicit interpretation; no guessed header loss; original text recoverable.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS05",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Field visibility",
+      "scenario": "Select Name/Domain/Key then change local table headers.",
+      "expected": "Menus derive from correct schema; visibility preserves values; provisional domain reusable.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS06",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Defaults",
+      "scenario": "Change and reset an inherited typed setting under two different methods.",
+      "expected": "File > scoped CSS > standard; reset omits property; no foreign rule/style leakage.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS07",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Relations",
+      "scenario": "Create/reconnect members and attempt a disallowed role/endpoint.",
+      "expected": "Exact profile contracts enforced; invalid command diagnostic; no partial commit.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS08",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Atomic edit",
+      "scenario": "Prepare a multi-file rename then change a read dependency before commit.",
+      "expected": "Conflict returned; no partial patches/model mutation; reprepare required.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS09",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Source preservation",
+      "scenario": "Edit visually around notes/comments/quotes/skipped cells; type broken source.",
+      "expected": "Untouched formatting and omissions retained; broken buffer recoverable; affected scene marked stale.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS10",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Gesture transaction",
+      "scenario": "Drag/resize with pointer cancellation and IME text entry while data updates.",
+      "expected": "One gesture commit; cancel restores preview; text composition and local drafts preserved.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS11",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "History",
+      "scenario": "Undo/redo content edits to budget then attempt undo of lifecycle transition.",
+      "expected": "Bounded patch history; no return to Draft or authority bypass; checkpoint retained.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS12",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Lifecycle",
+      "scenario": "Review incomplete/complete scopes, accept with event, reopen with and without authority.",
+      "expected": "Only eligible explicit transitions; acceptance user/time; protected changes require reopening.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS13",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Local save/recovery",
+      "scenario": "Save dirty multi-file state, deny optional storage, exhaust recovery quota.",
+      "expected": "Sources retained; downloadable artifacts; no false claim of durable save.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS14",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "Profile editing",
+      "scenario": "For every route create/edit its admitted roles, metadata and relations.",
+      "expected": "Registered typed controls plus exact command descriptors; no generic placeholder counted as coverage.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-DS15",
+      "owner": "ddn-visual-designer",
+      "specification": "03-visual-designer.md",
+      "title": "AI/host proposal",
+      "scenario": "Supply a proposed source or model command through a host adapter.",
+      "expected": "Same prepare/verify/authority/commit path; no automatic acceptance or execution.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF01",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Headless",
+      "scenario": "Import verifier under Node/cooperative executor without DOM or browser globals.",
+      "expected": "No viewer/editor/renderer dependency or semantic rendering call.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF02",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Input equivalence",
+      "scenario": "Check decoded source set and equivalent normalized snapshot.",
+      "expected": "Same rule outcomes/targets at same scope/purpose/version; source spans where supplied.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF03",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Diagnostics",
+      "scenario": "Supply malformed indentation, duplicate names, wrong endpoints and invalid values.",
+      "expected": "Specific file/span/code; no mutation or automatic repair.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF04",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Draft distinction",
+      "scenario": "Verify sparse native draft structurally, then request physical-schema review.",
+      "expected": "Structural validity not confused with complete review; missing facts not zero/false.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF05",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Stage coverage",
+      "scenario": "Request structure only, full review and publication with missing metrics.",
+      "expected": "Explicit check level/coverage; no unrequested success; missing evidence incomplete/unsupported.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF06",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Exact profiles",
+      "scenario": "Replay positive/negative witnesses for all 151 retained profiles.",
+      "expected": "Full declared bounded rules/limits preserved; foreign method semantics separate.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF07",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Global scope",
+      "scenario": "Hide/offload a graph node participating in a cycle or second root.",
+      "expected": "Global rule sees full closure or reports incomplete; visible subset cannot pass.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF08",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Dependency cache",
+      "scenario": "Change comment, cell, shared domain and profile version in turn.",
+      "expected": "Only safe caches reused; dynamic dependencies tracked; full-scope rules invalidated when required.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF09",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Stale reports",
+      "scenario": "Complete old work after relevant revision/font/purpose change.",
+      "expected": "Stale result not applied; unrelated source-only edits can remap locations safely.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF10",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Transition eligibility",
+      "scenario": "Ask about Draft exit, review, acceptance and authorized reopening.",
+      "expected": "Eligibility only; verifier never sets status; offline identity limits explicit.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF11",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Budget/cancel",
+      "scenario": "Interrupt expensive check or exceed a work/memory budget.",
+      "expected": "Exactly one terminal outcome; checked coverage retained; never false valid.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF12",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Unknown pack",
+      "scenario": "Load unsupported language/profile/default or partial provider.",
+      "expected": "Explicit missing capability and preserved source; no nearest-profile substitution.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-VF13",
+      "owner": "ddn-verifier",
+      "specification": "04-verifier.md",
+      "title": "Publication independence",
+      "scenario": "Check semantic model without renderer; later supply explicit metric evidence.",
+      "expected": "Semantic pass independent; publication eligibility tied to supplied current evidence.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH01",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Contract versions",
+      "scenario": "Load exact language/default/profile versions across modules.",
+      "expected": "Single codex authority; incompatibility diagnosed before pack activation.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH02",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Standalone editions",
+      "scenario": "Open all three HTML utilities offline, then embed ESM entries.",
+      "expected": "No backend/CDN required; local input works; complete edition contains all151 profiles.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH03",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Worker equivalence",
+      "scenario": "Run same request in worker and fallback, then kill worker mid-job.",
+      "expected": "Equivalent semantics; recovery from committed snapshot; stale work discarded.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH04",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Source/model ownership",
+      "scenario": "Commit prepared command and source edit against changing revision.",
+      "expected": "Atomic coherent source/model; explicit incomplete buffer, no competing authoritative stores.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH05",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Font/style metrics",
+      "scenario": "Change CSS font under explicit file settings and delay font readiness.",
+      "expected": "Precedence retained; matching geometry remeasured; no silent mismatch.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH06",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Restricted document content",
+      "scenario": "Load Markdown/URLs/SVG containing executable payloads.",
+      "expected": "Render as permitted data or diagnose; no executable document import/network fetch.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH07",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Resource provider",
+      "scenario": "Resolve includes/assets from selected map; omit one; disconnect passive provider.",
+      "expected": "File identity retained; missing/stale state explicit; no implicit disk/network access.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH08",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Output capability",
+      "scenario": "Capture content/viewport with draft/stale/missing asset policies.",
+      "expected": "Correct revision/fidelity manifest; no format substitution or accidental publication.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH09",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Performance",
+      "scenario": "Execute W1–W8 under pinned measurement protocol.",
+      "expected": "Publish timings/size/operation counts and failures against declared targets.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH10",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Disposal isolation",
+      "scenario": "Destroy mixed viewer/designer/verifier instances in varying order.",
+      "expected": "No global leaks; shared leases honored; final runtime releases workers and resources.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH11",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Edition boundary",
+      "scenario": "Consume server-supplied revisions without installing collaboration code.",
+      "expected": "Passive viewing works; interactive collaboration/managed services optional closed providers.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    },
+    {
+      "id": "UTIL-SH12",
+      "owner": "shared",
+      "specification": "05-packaging.md",
+      "title": "Requirement trace",
+      "scenario": "Ship every retained route with tests for render/rules/defaults/edit roundtrip.",
+      "expected": "151 exact profile routes covered; specification route alone is not product evidence.",
+      "implementation_state": "not-implemented",
+      "product_evidence": []
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  width="1000" height="800" viewBox="0 0 1000 800"
+  role="img" aria-labelledby="comparison-title comparison-desc">
+  <title id="comparison-title">SVG paper-shadow comparison</title>
+  <desc id="comparison-desc">Four identical sketch-style diagram nodes with different
+    shadow silhouettes: uniform offset, centre raised, lower corners raised,
+    and lower-right corner raised. The curves are artistic approximations.</desc>
+  <defs>
+    <filter id="demo-soft" filterUnits="userSpaceOnUse"
+      x="-28" y="-24" width="400" height="245"
+      color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="3.5"/>
+    </filter>
+    <filter id="demo-contact" filterUnits="userSpaceOnUse"
+      x="-10" y="144" width="354" height="30"
+      color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="0.8"/>
+    </filter>
+  </defs>
+  <rect width="1000" height="800" fill="#f1f0eb"/>
+  <g font-family="sans-serif" fill="#34332f">
+    <text x="66" y="50" font-size="12" letter-spacing="2.2">SVG / SKETCH APPEARANCE</text>
+    <text x="66" y="96" font-size="33" font-weight="600">A shadow is a shape, not just an offset.</text>
+    <text x="66" y="127" font-size="16" fill="#69675f">Same node geometry. Different shadow silhouettes. No 3D mesh or embedded images.</text>
+  </g>
+
+<g transform="translate(84 207)">
+<g pointer-events="none" aria-hidden="true"><rect x="7" y="8" width="330" height="160" fill="#000" fill-opacity="0.22" filter="url(#demo-soft)"/>
+</g>
+<path d="M0 0 C91 -1 236 1 330 0 C331 49 329 112 330 160 C240 159 89 162 0 160 C1 110 -1 52 0 0 Z" fill="#fffef9" stroke="#44413b" stroke-width="1.45" stroke-linejoin="round"/>
+<path d="M-0.7 1.4 Q170 -2 330.7 1.2 M331 0 Q328 90 331 160.5 M330 161 Q158 157 0 161.2"
+      fill="none" stroke="#555047" stroke-width="0.6" stroke-opacity="0.48"/>
+      <g font-family="sans-serif" fill="#3c3933">
+        <text x="26" y="48" font-size="21">Diagram node</text>
+        <text x="26" y="79" font-size="13" fill="#787268">The outline stays unchanged.</text>
+      </g>
+      <path d="M26 108 Q123 107 224 109 M26 124 Q89 125 169 123"
+        fill="none" stroke="#b8b0a2" stroke-width="1.1" stroke-linecap="round"/>
+    
+<g font-family="sans-serif">
+      <text x="0" y="215" font-size="17" font-weight="600" fill="#34332f">01  Uniform offset</text>
+      <text x="0" y="240" font-size="14" fill="#69675f">A conventional floating card.</text>
+    </g></g>
+<g transform="translate(578 207)">
+<g pointer-events="none" aria-hidden="true"><path d="M2 141 L328 141 L328 158 C257 193 79 193 2 158 Z" fill="#000" fill-opacity="0.24" filter="url(#demo-soft)"/>
+<path d="M2 158 Q18 162 35 159 M295 159 Q314 162 328 158" fill="none" stroke="#000" stroke-opacity="0.18" stroke-width="1.4" filter="url(#demo-contact)"/>
+</g>
+<path d="M0 0 C91 -1 236 1 330 0 C331 49 329 112 330 160 C240 159 89 162 0 160 C1 110 -1 52 0 0 Z" fill="#fffef9" stroke="#44413b" stroke-width="1.45" stroke-linejoin="round"/>
+<path d="M-0.7 1.4 Q170 -2 330.7 1.2 M331 0 Q328 90 331 160.5 M330 161 Q158 157 0 161.2"
+      fill="none" stroke="#555047" stroke-width="0.6" stroke-opacity="0.48"/>
+      <g font-family="sans-serif" fill="#3c3933">
+        <text x="26" y="48" font-size="21">Diagram node</text>
+        <text x="26" y="79" font-size="13" fill="#787268">The outline stays unchanged.</text>
+      </g>
+      <path d="M26 108 Q123 107 224 109 M26 124 Q89 125 169 123"
+        fill="none" stroke="#b8b0a2" stroke-width="1.1" stroke-linecap="round"/>
+    
+<g font-family="sans-serif">
+      <text x="0" y="215" font-size="17" font-weight="600" fill="#34332f">02  Centre raised</text>
+      <text x="0" y="240" font-size="14" fill="#69675f">Lower corners settle; the middle lifts.</text>
+    </g></g>
+<g transform="translate(84 502)">
+<g pointer-events="none" aria-hidden="true"><path d="M1 137 L329 137 L338 183 C283 183 231 158 165 158 C99 158 46 183 -8 183 Z" fill="#000" fill-opacity="0.24" filter="url(#demo-soft)"/>
+<path d="M132 159 Q165 163 198 159" fill="none" stroke="#000" stroke-opacity="0.18" stroke-width="1.4" filter="url(#demo-contact)"/>
+</g>
+<path d="M0 0 C91 -1 236 1 330 0 C331 49 329 112 330 160 C240 159 89 162 0 160 C1 110 -1 52 0 0 Z" fill="#fffef9" stroke="#44413b" stroke-width="1.45" stroke-linejoin="round"/>
+<path d="M-0.7 1.4 Q170 -2 330.7 1.2 M331 0 Q328 90 331 160.5 M330 161 Q158 157 0 161.2"
+      fill="none" stroke="#555047" stroke-width="0.6" stroke-opacity="0.48"/>
+      <g font-family="sans-serif" fill="#3c3933">
+        <text x="26" y="48" font-size="21">Diagram node</text>
+        <text x="26" y="79" font-size="13" fill="#787268">The outline stays unchanged.</text>
+      </g>
+      <path d="M26 108 Q123 107 224 109 M26 124 Q89 125 169 123"
+        fill="none" stroke="#b8b0a2" stroke-width="1.1" stroke-linecap="round"/>
+    
+<g font-family="sans-serif">
+      <text x="0" y="215" font-size="17" font-weight="600" fill="#34332f">03  Lower corners raised</text>
+      <text x="0" y="240" font-size="14" fill="#69675f">The middle settles; the corners lift.</text>
+    </g></g>
+<g transform="translate(578 502)">
+<g pointer-events="none" aria-hidden="true"><path d="M2 2 L328 2 C328 66 339 133 348 186 C264 174 135 158 2 159 Z" fill="#000" fill-opacity="0.24" filter="url(#demo-soft)"/>
+<path d="M2 158 Q29 162 60 159" fill="none" stroke="#000" stroke-opacity="0.18" stroke-width="1.4" filter="url(#demo-contact)"/>
+</g>
+<path d="M0 0 C91 -1 236 1 330 0 C331 49 329 112 330 160 C240 159 89 162 0 160 C1 110 -1 52 0 0 Z" fill="#fffef9" stroke="#44413b" stroke-width="1.45" stroke-linejoin="round"/>
+<path d="M-0.7 1.4 Q170 -2 330.7 1.2 M331 0 Q328 90 331 160.5 M330 161 Q158 157 0 161.2"
+      fill="none" stroke="#555047" stroke-width="0.6" stroke-opacity="0.48"/>
+      <g font-family="sans-serif" fill="#3c3933">
+        <text x="26" y="48" font-size="21">Diagram node</text>
+        <text x="26" y="79" font-size="13" fill="#787268">The outline stays unchanged.</text>
+      </g>
+      <path d="M26 108 Q123 107 224 109 M26 124 Q89 125 169 123"
+        fill="none" stroke="#b8b0a2" stroke-width="1.1" stroke-linecap="round"/>
+    
+<g font-family="sans-serif">
+      <text x="0" y="215" font-size="17" font-weight="600" fill="#34332f">04  One corner raised</text>
+      <text x="0" y="240" font-size="14" fill="#69675f">An asymmetric lift at the lower right.</text>
+    </g></g>
+<text x="66" y="782" font-family="sans-serif" font-size="12" fill="#777267">Technique: custom Bézier shadow path + blur, then opaque paper + crisp sketch strokes and labels.</text></svg>

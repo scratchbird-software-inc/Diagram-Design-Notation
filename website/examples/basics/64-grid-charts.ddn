@@ -1,109 +1,896 @@
-ddn "0.5";
-module "ddn.examples.grid-charts";
+version ddn-next-1
 
-// Synthetic telemetry: request counts by hour and endpoint, a latency scatter,
-// daily deploy counts, per-service metric vectors, and incident-tag weights.
-// All data is synthetic.
-data cells {
-    record h1 "api × morning" {x_record: {"hour": "morning", "endpoint": "api", "n": 420, "unit": "req"}; }
-    record h2 "api × midday" {x_record: {"hour": "midday", "endpoint": "api", "n": 610, "unit": "req"}; }
-    record h3 "api × evening" {x_record: {"hour": "evening", "endpoint": "api", "n": 380, "unit": "req"}; }
-    record h4 "web × morning" {x_record: {"hour": "morning", "endpoint": "web", "n": 250, "unit": "req"}; }
-    record h5 "web × midday" {x_record: {"hour": "midday", "endpoint": "web", "n": 470, "unit": "req"}; }
-    record h6 "web × evening" {x_record: {"hour": "evening", "endpoint": "web", "n": 520, "unit": "req"}; }
-    record h7 "batch × morning" {x_record: {"hour": "morning", "endpoint": "batch", "n": 90, "unit": "req"}; }
-    record h8 "batch × midday" {x_record: {"hour": "midday", "endpoint": "batch", "n": 140, "unit": "req"}; }
-    record h9 "batch × evening" {x_record: {"hour": "evening", "endpoint": "batch", "n": 60, "unit": "req"}; }
-}
+publication "publication:heatmap"
+    with
+        id "publication:heatmap"
+        title "Requests by hour and endpoint / heatmap"
+        targets
+            item
+                target
+                    id "heatmap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data scatter {
-    record p1 "s1" {x_record: {"size": 12, "ms": 44}; }
-    record p2 "s2" {x_record: {"size": 18, "ms": 51}; }
-    record p3 "s3" {x_record: {"size": 25, "ms": 63}; }
-    record p4 "s4" {x_record: {"size": 31, "ms": 70}; }
-    record p5 "s5" {x_record: {"size": 44, "ms": 95}; }
-    record p6 "s6" {x_record: {"size": 52, "ms": 101}; }
-    record p7 "s7" {x_record: {"size": 63, "ms": 130}; }
-    record p8 "s8" {x_record: {"size": 70, "ms": 128}; }
-    record p9 "s9" {x_record: {"size": 88, "ms": 170}; }
-    record p10 "s10" {x_record: {"size": 95, "ms": 182}; }
-}
 
-records deploys {
-    columns: day, n, unit;
-    label_column: day;
-    row w1: "2026-03-02", 3, "deploys";
-    row w2: "2026-03-03", 5, "deploys";
-    row w3: "2026-03-04", 2, "deploys";
-    row w4: "2026-03-06", 4, "deploys";
-    row w5: "2026-03-09", 6, "deploys";
-    row w6: "2026-03-10", 1, "deploys";
-    row w7: "2026-03-12", 4, "deploys";
-    row w8: "2026-03-13", 7, "deploys";
-    row w9: "2026-03-16", 2, "deploys";
-    row w10: "2026-03-18", 5, "deploys";
-    row w11: "2026-03-20", 3, "deploys";
-    row w12: "2026-03-24", 8, "deploys";
-    row w13: "2026-03-27", 2, "deploys";
-    row w14: "2026-03-31", 4, "deploys";
-}
+publication "publication:densityheatmap"
+    with
+        id "publication:densityheatmap"
+        title "Latency vs payload / density heatmap"
+        targets
+            item
+                target
+                    id "densityheatmap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data metrics {
-    record m1 "auth · cpu" {x_record: {"service": "auth", "metric": "cpu", "v": 62}; }
-    record m2 "auth · mem" {x_record: {"service": "auth", "metric": "mem", "v": 48}; }
-    record m3 "auth · p99" {x_record: {"service": "auth", "metric": "p99", "v": 210}; }
-    record m4 "auth · rps" {x_record: {"service": "auth", "metric": "rps", "v": 900}; }
-    record m5 "store · cpu" {x_record: {"service": "store", "metric": "cpu", "v": 81}; }
-    record m6 "store · mem" {x_record: {"service": "store", "metric": "mem", "v": 74}; }
-    record m7 "store · p99" {x_record: {"service": "store", "metric": "p99", "v": 340}; }
-    record m8 "store · rps" {x_record: {"service": "store", "metric": "rps", "v": 640}; }
-    record m9 "relay · cpu" {x_record: {"service": "relay", "metric": "cpu", "v": 35}; }
-    record m10 "relay · mem" {x_record: {"service": "relay", "metric": "mem", "v": 41}; }
-    record m11 "relay · p99" {x_record: {"service": "relay", "metric": "p99", "v": 120}; }
-    record m12 "relay · rps" {x_record: {"service": "relay", "metric": "rps", "v": 1250}; }
-}
 
-records tags {
-    columns: tag, n;
-    label_column: tag;
-    row t1: "latency", 34;
-    row t2: "timeout", 28;
-    row t3: "cache", 19;
-    row t4: "deploy", 15;
-    row t5: "dns", 9;
-    row t6: "tls", 7;
-    row t7: "quota", 5;
-    row t8: "retry", 12;
-    row t9: "shard", 4;
-    row t10: "queue", 8;
-}
+publication "publication:calendar"
+    with
+        id "publication:calendar"
+        title "Deploys per day / calendar"
+        targets
+            item
+                target
+                    id "calendar"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view heatmap "Requests by hour and endpoint / heatmap" {
-    data: [@cells];
-    projection { kind:chart; profile:"chart.heatmap@1"; records:[@cells.h1, @cells.h2, @cells.h3, @cells.h4, @cells.h5, @cells.h6, @cells.h7, @cells.h8, @cells.h9]; mark:heatmap; x:"x_record.hour"; y:"x_record.n"; series:"x_record.endpoint"; unit:"req"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
 
-view densityheatmap "Latency vs payload / density heatmap" {
-    data: [@scatter];
-    projection { kind:chart; profile:"chart.densityheatmap@1"; records:[@scatter.p1, @scatter.p2, @scatter.p3, @scatter.p4, @scatter.p5, @scatter.p6, @scatter.p7, @scatter.p8, @scatter.p9, @scatter.p10]; mark:densityheatmap; x:"x_record.size"; x_type:number; y:"x_record.ms"; bin_count:5; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:parallelcoords"
+    with
+        id "publication:parallelcoords"
+        title "Service metric vectors / parallel coordinates"
+        targets
+            item
+                target
+                    id "parallelcoords"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view calendar "Deploys per day / calendar" {
-    data: [@deploys];
-    projection { kind:chart; profile:"chart.calendar@1"; records:[@deploys.w1, @deploys.w2, @deploys.w3, @deploys.w4, @deploys.w5, @deploys.w6, @deploys.w7, @deploys.w8, @deploys.w9, @deploys.w10, @deploys.w11, @deploys.w12, @deploys.w13, @deploys.w14]; mark:calendar; x:"x_record.day"; x_type:date; y:"x_record.n"; unit:"deploys"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
 
-view parallelcoords "Service metric vectors / parallel coordinates" {
-    data: [@metrics];
-    projection { kind:chart; profile:"chart.parallelcoords@1"; records:[@metrics.m1, @metrics.m2, @metrics.m3, @metrics.m4, @metrics.m5, @metrics.m6, @metrics.m7, @metrics.m8, @metrics.m9, @metrics.m10, @metrics.m11, @metrics.m12]; mark:parallelcoords; x:"x_record.metric"; y:"x_record.v"; series:"x_record.service"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:wordcloud"
+    with
+        id "publication:wordcloud"
+        title "Incident tags / word cloud"
+        targets
+            item
+                target
+                    id "wordcloud"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view wordcloud "Incident tags / word cloud" {
-    data: [@tags];
-    projection { kind:chart; profile:"chart.wordcloud@1"; records:[@tags.t1, @tags.t2, @tags.t3, @tags.t4, @tags.t5, @tags.t6, @tags.t7, @tags.t8, @tags.t9, @tags.t10]; mark:wordcloud; x:"x_record.tag"; y:"x_record.n"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+
+element "ddn.examples.grid-charts::cells.h1" as "record"
+    with
+        id "ddn.examples.grid-charts::cells.h1"
+        title "api × morning"
+        metadata
+            x_record
+                hour "morning"
+                endpoint "api"
+                n 420
+                unit "req"
+
+
+element "ddn.examples.grid-charts::cells.h2" as "record"
+    with
+        id "ddn.examples.grid-charts::cells.h2"
+        title "api × midday"
+        metadata
+            x_record
+                hour "midday"
+                endpoint "api"
+                n 610
+                unit "req"
+
+
+element "ddn.examples.grid-charts::cells.h3" as "record"
+    with
+        id "ddn.examples.grid-charts::cells.h3"
+        title "api × evening"
+        metadata
+            x_record
+                hour "evening"
+                endpoint "api"
+                n 380
+                unit "req"
+
+
+element "ddn.examples.grid-charts::cells.h4" as "record"
+    with
+        id "ddn.examples.grid-charts::cells.h4"
+        title "web × morning"
+        metadata
+            x_record
+                hour "morning"
+                endpoint "web"
+                n 250
+                unit "req"
+
+
+element "ddn.examples.grid-charts::cells.h5" as "record"
+    with
+        id "ddn.examples.grid-charts::cells.h5"
+        title "web × midday"
+        metadata
+            x_record
+                hour "midday"
+                endpoint "web"
+                n 470
+                unit "req"
+
+
+element "ddn.examples.grid-charts::cells.h6" as "record"
+    with
+        id "ddn.examples.grid-charts::cells.h6"
+        title "web × evening"
+        metadata
+            x_record
+                hour "evening"
+                endpoint "web"
+                n 520
+                unit "req"
+
+
+element "ddn.examples.grid-charts::cells.h7" as "record"
+    with
+        id "ddn.examples.grid-charts::cells.h7"
+        title "batch × morning"
+        metadata
+            x_record
+                hour "morning"
+                endpoint "batch"
+                n 90
+                unit "req"
+
+
+element "ddn.examples.grid-charts::cells.h8" as "record"
+    with
+        id "ddn.examples.grid-charts::cells.h8"
+        title "batch × midday"
+        metadata
+            x_record
+                hour "midday"
+                endpoint "batch"
+                n 140
+                unit "req"
+
+
+element "ddn.examples.grid-charts::cells.h9" as "record"
+    with
+        id "ddn.examples.grid-charts::cells.h9"
+        title "batch × evening"
+        metadata
+            x_record
+                hour "evening"
+                endpoint "batch"
+                n 60
+                unit "req"
+
+
+element "ddn.examples.grid-charts::scatter.p1" as "record"
+    with
+        id "ddn.examples.grid-charts::scatter.p1"
+        title "s1"
+        metadata
+            x_record
+                size 12
+                ms 44
+
+
+element "ddn.examples.grid-charts::scatter.p2" as "record"
+    with
+        id "ddn.examples.grid-charts::scatter.p2"
+        title "s2"
+        metadata
+            x_record
+                size 18
+                ms 51
+
+
+element "ddn.examples.grid-charts::scatter.p3" as "record"
+    with
+        id "ddn.examples.grid-charts::scatter.p3"
+        title "s3"
+        metadata
+            x_record
+                size 25
+                ms 63
+
+
+element "ddn.examples.grid-charts::scatter.p4" as "record"
+    with
+        id "ddn.examples.grid-charts::scatter.p4"
+        title "s4"
+        metadata
+            x_record
+                size 31
+                ms 70
+
+
+element "ddn.examples.grid-charts::scatter.p5" as "record"
+    with
+        id "ddn.examples.grid-charts::scatter.p5"
+        title "s5"
+        metadata
+            x_record
+                size 44
+                ms 95
+
+
+element "ddn.examples.grid-charts::scatter.p6" as "record"
+    with
+        id "ddn.examples.grid-charts::scatter.p6"
+        title "s6"
+        metadata
+            x_record
+                size 52
+                ms 101
+
+
+element "ddn.examples.grid-charts::scatter.p7" as "record"
+    with
+        id "ddn.examples.grid-charts::scatter.p7"
+        title "s7"
+        metadata
+            x_record
+                size 63
+                ms 130
+
+
+element "ddn.examples.grid-charts::scatter.p8" as "record"
+    with
+        id "ddn.examples.grid-charts::scatter.p8"
+        title "s8"
+        metadata
+            x_record
+                size 70
+                ms 128
+
+
+element "ddn.examples.grid-charts::scatter.p9" as "record"
+    with
+        id "ddn.examples.grid-charts::scatter.p9"
+        title "s9"
+        metadata
+            x_record
+                size 88
+                ms 170
+
+
+element "ddn.examples.grid-charts::scatter.p10" as "record"
+    with
+        id "ddn.examples.grid-charts::scatter.p10"
+        title "s10"
+        metadata
+            x_record
+                size 95
+                ms 182
+
+
+element "ddn.examples.grid-charts::deploys.w1" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w1"
+        title "2026-03-02"
+        metadata
+            x_record
+                day "2026-03-02"
+                n 3
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w2" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w2"
+        title "2026-03-03"
+        metadata
+            x_record
+                day "2026-03-03"
+                n 5
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w3" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w3"
+        title "2026-03-04"
+        metadata
+            x_record
+                day "2026-03-04"
+                n 2
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w4" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w4"
+        title "2026-03-06"
+        metadata
+            x_record
+                day "2026-03-06"
+                n 4
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w5" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w5"
+        title "2026-03-09"
+        metadata
+            x_record
+                day "2026-03-09"
+                n 6
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w6" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w6"
+        title "2026-03-10"
+        metadata
+            x_record
+                day "2026-03-10"
+                n 1
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w7" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w7"
+        title "2026-03-12"
+        metadata
+            x_record
+                day "2026-03-12"
+                n 4
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w8" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w8"
+        title "2026-03-13"
+        metadata
+            x_record
+                day "2026-03-13"
+                n 7
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w9" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w9"
+        title "2026-03-16"
+        metadata
+            x_record
+                day "2026-03-16"
+                n 2
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w10" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w10"
+        title "2026-03-18"
+        metadata
+            x_record
+                day "2026-03-18"
+                n 5
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w11" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w11"
+        title "2026-03-20"
+        metadata
+            x_record
+                day "2026-03-20"
+                n 3
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w12" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w12"
+        title "2026-03-24"
+        metadata
+            x_record
+                day "2026-03-24"
+                n 8
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w13" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w13"
+        title "2026-03-27"
+        metadata
+            x_record
+                day "2026-03-27"
+                n 2
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::deploys.w14" as "record"
+    with
+        id "ddn.examples.grid-charts::deploys.w14"
+        title "2026-03-31"
+        metadata
+            x_record
+                day "2026-03-31"
+                n 4
+                unit "deploys"
+
+
+element "ddn.examples.grid-charts::metrics.m1" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m1"
+        title "auth · cpu"
+        metadata
+            x_record
+                service "auth"
+                metric "cpu"
+                v 62
+
+
+element "ddn.examples.grid-charts::metrics.m2" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m2"
+        title "auth · mem"
+        metadata
+            x_record
+                service "auth"
+                metric "mem"
+                v 48
+
+
+element "ddn.examples.grid-charts::metrics.m3" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m3"
+        title "auth · p99"
+        metadata
+            x_record
+                service "auth"
+                metric "p99"
+                v 210
+
+
+element "ddn.examples.grid-charts::metrics.m4" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m4"
+        title "auth · rps"
+        metadata
+            x_record
+                service "auth"
+                metric "rps"
+                v 900
+
+
+element "ddn.examples.grid-charts::metrics.m5" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m5"
+        title "store · cpu"
+        metadata
+            x_record
+                service "store"
+                metric "cpu"
+                v 81
+
+
+element "ddn.examples.grid-charts::metrics.m6" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m6"
+        title "store · mem"
+        metadata
+            x_record
+                service "store"
+                metric "mem"
+                v 74
+
+
+element "ddn.examples.grid-charts::metrics.m7" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m7"
+        title "store · p99"
+        metadata
+            x_record
+                service "store"
+                metric "p99"
+                v 340
+
+
+element "ddn.examples.grid-charts::metrics.m8" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m8"
+        title "store · rps"
+        metadata
+            x_record
+                service "store"
+                metric "rps"
+                v 640
+
+
+element "ddn.examples.grid-charts::metrics.m9" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m9"
+        title "relay · cpu"
+        metadata
+            x_record
+                service "relay"
+                metric "cpu"
+                v 35
+
+
+element "ddn.examples.grid-charts::metrics.m10" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m10"
+        title "relay · mem"
+        metadata
+            x_record
+                service "relay"
+                metric "mem"
+                v 41
+
+
+element "ddn.examples.grid-charts::metrics.m11" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m11"
+        title "relay · p99"
+        metadata
+            x_record
+                service "relay"
+                metric "p99"
+                v 120
+
+
+element "ddn.examples.grid-charts::metrics.m12" as "record"
+    with
+        id "ddn.examples.grid-charts::metrics.m12"
+        title "relay · rps"
+        metadata
+            x_record
+                service "relay"
+                metric "rps"
+                v 1250
+
+
+element "ddn.examples.grid-charts::tags.t1" as "record"
+    with
+        id "ddn.examples.grid-charts::tags.t1"
+        title "latency"
+        metadata
+            x_record
+                tag "latency"
+                n 34
+
+
+element "ddn.examples.grid-charts::tags.t2" as "record"
+    with
+        id "ddn.examples.grid-charts::tags.t2"
+        title "timeout"
+        metadata
+            x_record
+                tag "timeout"
+                n 28
+
+
+element "ddn.examples.grid-charts::tags.t3" as "record"
+    with
+        id "ddn.examples.grid-charts::tags.t3"
+        title "cache"
+        metadata
+            x_record
+                tag "cache"
+                n 19
+
+
+element "ddn.examples.grid-charts::tags.t4" as "record"
+    with
+        id "ddn.examples.grid-charts::tags.t4"
+        title "deploy"
+        metadata
+            x_record
+                tag "deploy"
+                n 15
+
+
+element "ddn.examples.grid-charts::tags.t5" as "record"
+    with
+        id "ddn.examples.grid-charts::tags.t5"
+        title "dns"
+        metadata
+            x_record
+                tag "dns"
+                n 9
+
+
+element "ddn.examples.grid-charts::tags.t6" as "record"
+    with
+        id "ddn.examples.grid-charts::tags.t6"
+        title "tls"
+        metadata
+            x_record
+                tag "tls"
+                n 7
+
+
+element "ddn.examples.grid-charts::tags.t7" as "record"
+    with
+        id "ddn.examples.grid-charts::tags.t7"
+        title "quota"
+        metadata
+            x_record
+                tag "quota"
+                n 5
+
+
+element "ddn.examples.grid-charts::tags.t8" as "record"
+    with
+        id "ddn.examples.grid-charts::tags.t8"
+        title "retry"
+        metadata
+            x_record
+                tag "retry"
+                n 12
+
+
+element "ddn.examples.grid-charts::tags.t9" as "record"
+    with
+        id "ddn.examples.grid-charts::tags.t9"
+        title "shard"
+        metadata
+            x_record
+                tag "shard"
+                n 4
+
+
+element "ddn.examples.grid-charts::tags.t10" as "record"
+    with
+        id "ddn.examples.grid-charts::tags.t10"
+        title "queue"
+        metadata
+            x_record
+                tag "queue"
+                n 8
+
+
+view "heatmap" as "chart.heatmap@1"
+    with
+        id "heatmap"
+        title "Requests by hour and endpoint / heatmap"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.grid-charts::cells.h1"
+                    item
+                        id "ddn.examples.grid-charts::cells.h2"
+                    item
+                        id "ddn.examples.grid-charts::cells.h3"
+                    item
+                        id "ddn.examples.grid-charts::cells.h4"
+                    item
+                        id "ddn.examples.grid-charts::cells.h5"
+                    item
+                        id "ddn.examples.grid-charts::cells.h6"
+                    item
+                        id "ddn.examples.grid-charts::cells.h7"
+                    item
+                        id "ddn.examples.grid-charts::cells.h8"
+                    item
+                        id "ddn.examples.grid-charts::cells.h9"
+                mark "heatmap"
+                x "metadata.x_record.hour"
+                y "metadata.x_record.n"
+                series "metadata.x_record.endpoint"
+                unit "req"
+                width 1120
+                height 620
+
+
+view "densityheatmap" as "chart.densityheatmap@1"
+    with
+        id "densityheatmap"
+        title "Latency vs payload / density heatmap"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.grid-charts::scatter.p1"
+                    item
+                        id "ddn.examples.grid-charts::scatter.p2"
+                    item
+                        id "ddn.examples.grid-charts::scatter.p3"
+                    item
+                        id "ddn.examples.grid-charts::scatter.p4"
+                    item
+                        id "ddn.examples.grid-charts::scatter.p5"
+                    item
+                        id "ddn.examples.grid-charts::scatter.p6"
+                    item
+                        id "ddn.examples.grid-charts::scatter.p7"
+                    item
+                        id "ddn.examples.grid-charts::scatter.p8"
+                    item
+                        id "ddn.examples.grid-charts::scatter.p9"
+                    item
+                        id "ddn.examples.grid-charts::scatter.p10"
+                mark "densityheatmap"
+                x "metadata.x_record.size"
+                x_type "number"
+                y "metadata.x_record.ms"
+                bin_count 5
+                width 1120
+                height 620
+
+
+view "calendar" as "chart.calendar@1"
+    with
+        id "calendar"
+        title "Deploys per day / calendar"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.grid-charts::deploys.w1"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w2"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w3"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w4"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w5"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w6"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w7"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w8"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w9"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w10"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w11"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w12"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w13"
+                    item
+                        id "ddn.examples.grid-charts::deploys.w14"
+                mark "calendar"
+                x "metadata.x_record.day"
+                x_type "date"
+                y "metadata.x_record.n"
+                unit "deploys"
+                width 1120
+                height 620
+
+
+view "parallelcoords" as "chart.parallelcoords@1"
+    with
+        id "parallelcoords"
+        title "Service metric vectors / parallel coordinates"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.grid-charts::metrics.m1"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m2"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m3"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m4"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m5"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m6"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m7"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m8"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m9"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m10"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m11"
+                    item
+                        id "ddn.examples.grid-charts::metrics.m12"
+                mark "parallelcoords"
+                x "metadata.x_record.metric"
+                y "metadata.x_record.v"
+                series "metadata.x_record.service"
+                width 1120
+                height 620
+
+
+view "wordcloud" as "chart.wordcloud@1"
+    with
+        id "wordcloud"
+        title "Incident tags / word cloud"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.grid-charts::tags.t1"
+                    item
+                        id "ddn.examples.grid-charts::tags.t2"
+                    item
+                        id "ddn.examples.grid-charts::tags.t3"
+                    item
+                        id "ddn.examples.grid-charts::tags.t4"
+                    item
+                        id "ddn.examples.grid-charts::tags.t5"
+                    item
+                        id "ddn.examples.grid-charts::tags.t6"
+                    item
+                        id "ddn.examples.grid-charts::tags.t7"
+                    item
+                        id "ddn.examples.grid-charts::tags.t8"
+                    item
+                        id "ddn.examples.grid-charts::tags.t9"
+                    item
+                        id "ddn.examples.grid-charts::tags.t10"
+                mark "wordcloud"
+                x "metadata.x_record.tag"
+                y "metadata.x_record.n"
+                width 1120
+                height 620

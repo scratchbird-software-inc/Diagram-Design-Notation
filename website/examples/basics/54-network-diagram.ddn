@@ -1,53 +1,371 @@
-ddn "0.5";
-module "ddn.examples.networkdiagram";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+asset "artwork::network-generic@1:cloud" as resource from "../../assets/icons/network-generic-1/cloud.svg"
+    with
+        id "artwork::network-generic@1:cloud"
+        media_type "image/svg+xml"
 
-// Synthetic office network for the network.basic@1 / network.rack@1
-// profiles. The bus is an ordinary network.bus node (sized wide and thin
-// with a place pin) — declared membership, not routing geometry; the
-// DDN046 junction/shared-trunk guards are untouched. network.attaches
-// edges point from a device to the bus (the file server attaches via its
-// eth0 port member) and from the uplink router to the switch. The rack
-// view frames rack_a (4U) with the two servers as members carrying
-// declared x_rack.unit slot numbers, pinned bottom-up. All data is
-// synthetic; glyphs are original DDN line art.
-data m {
-    object office_bus "Office bus" { kind: "network.bus"; }
-    object core_switch "Core switch" { kind: "network.switch";
-        ports { wan { direction: in; } }
-    }
-    object file_server "File server" { kind: "network.server"; x_rack: { unit: 1 };
-        ports { eth0 { direction: out; } }
-    }
-    object app_server "App server" { kind: "network.server"; x_rack: { unit: 3 };
-        ports { eth0 { direction: out; } }
-    }
-    router uplink "Uplink router";
-    object rack_a "Rack A" { kind: "network.rack"; x_rack: { units: 4 }; }
 
-    relation attach_switch "attaches to" @core_switch -> @office_bus { kind: "network.attaches"; }
-    relation attach_file "attaches to" @file_server.eth0 -> @office_bus { kind: "network.attaches"; }
-    relation attach_app "attaches to" @app_server -> @office_bus { kind: "network.attaches"; }
-    relation attach_uplink "attaches to" @uplink -> @core_switch.wan { kind: "network.attaches"; }
-}
+asset "artwork::network-generic@1:switch" as resource from "../../assets/icons/network-generic-1/switch.svg"
+    with
+        id "artwork::network-generic@1:switch"
+        media_type "image/svg+xml"
 
-view lan "Office LAN" {
-    data: [@m]; format: @shared.styles.technical;
-    select: [@m.office_bus, @m.core_switch, @m.file_server, @m.app_server, @m.uplink];
-    projection { kind: graph; profile: "network.basic@1"; }
-    layout { algorithm: layered; direction: down; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-    place @m.office_bus { size: [420px, 28px]; }
-}
 
-view rack "Rack A elevation" {
-    data: [@m]; format: @shared.styles.technical;
-    select: [@m.file_server, @m.app_server];
-    projection { kind: graph; profile: "network.rack@1"; }
-    layout { algorithm: layered; direction: down; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-    frame rack_a_frame "Rack A (4U)" { scope: @m.rack_a; members: [@m.file_server, @m.app_server]; }
-    place @m.file_server { at: [0px, 264px]; }
-    place @m.app_server { at: [0px, 88px]; }
-}
+asset "artwork::network-generic@1:server" as resource from "../../assets/icons/network-generic-1/server.svg"
+    with
+        id "artwork::network-generic@1:server"
+        media_type "image/svg+xml"
+
+
+asset "artwork::network-generic@1:database" as resource from "../../assets/icons/network-generic-1/database.svg"
+    with
+        id "artwork::network-generic@1:database"
+        media_type "image/svg+xml"
+
+
+publication "publication:lan"
+    with
+        id "publication:lan"
+        title "Office LAN"
+        targets
+            item
+                target
+                    id "lan"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+publication "publication:rack"
+    with
+        id "publication:rack"
+        title "Rack A elevation"
+        targets
+            item
+                target
+                    id "rack"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.networkdiagram::m.office_bus" as "network.bus"
+    with
+        id "ddn.examples.networkdiagram::m.office_bus"
+        title "Office bus"
+
+
+element "ddn.examples.networkdiagram::m.core_switch.wan" as "core::Port"
+    with
+        id "ddn.examples.networkdiagram::m.core_switch.wan"
+        title "wan"
+        content
+            owner
+                id "ddn.examples.networkdiagram::m.core_switch"
+            direction "input"
+
+
+element "ddn.examples.networkdiagram::m.core_switch" as "network.switch"
+    with
+        id "ddn.examples.networkdiagram::m.core_switch"
+        title "Core switch"
+        members
+            item
+                id "ddn.examples.networkdiagram::m.core_switch.wan"
+
+
+element "ddn.examples.networkdiagram::m.file_server.eth0" as "core::Port"
+    with
+        id "ddn.examples.networkdiagram::m.file_server.eth0"
+        title "eth0"
+        content
+            owner
+                id "ddn.examples.networkdiagram::m.file_server"
+            direction "output"
+
+
+element "ddn.examples.networkdiagram::m.file_server" as "network.server"
+    with
+        id "ddn.examples.networkdiagram::m.file_server"
+        title "File server"
+        metadata
+            x_rack
+                unit 1
+        members
+            item
+                id "ddn.examples.networkdiagram::m.file_server.eth0"
+
+
+element "ddn.examples.networkdiagram::m.app_server.eth0" as "core::Port"
+    with
+        id "ddn.examples.networkdiagram::m.app_server.eth0"
+        title "eth0"
+        content
+            owner
+                id "ddn.examples.networkdiagram::m.app_server"
+            direction "output"
+
+
+element "ddn.examples.networkdiagram::m.app_server" as "network.server"
+    with
+        id "ddn.examples.networkdiagram::m.app_server"
+        title "App server"
+        metadata
+            x_rack
+                unit 3
+        members
+            item
+                id "ddn.examples.networkdiagram::m.app_server.eth0"
+
+
+element "ddn.examples.networkdiagram::m.uplink" as "router"
+    with
+        id "ddn.examples.networkdiagram::m.uplink"
+        title "Uplink router"
+
+
+element "ddn.examples.networkdiagram::m.rack_a" as "network.rack"
+    with
+        id "ddn.examples.networkdiagram::m.rack_a"
+        title "Rack A"
+        metadata
+            x_rack
+                units 4
+
+
+relation "ddn.examples.networkdiagram::m.attach_switch" as "network.attaches"
+    with
+        id "ddn.examples.networkdiagram::m.attach_switch"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networkdiagram::m.core_switch"
+            item
+                definition
+                    id "ddn.examples.networkdiagram::m.office_bus"
+
+
+relation "ddn.examples.networkdiagram::m.attach_file" as "network.attaches"
+    with
+        id "ddn.examples.networkdiagram::m.attach_file"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networkdiagram::m.file_server"
+                member
+                    id "ddn.examples.networkdiagram::m.file_server.eth0"
+            item
+                definition
+                    id "ddn.examples.networkdiagram::m.office_bus"
+
+
+relation "ddn.examples.networkdiagram::m.attach_app" as "network.attaches"
+    with
+        id "ddn.examples.networkdiagram::m.attach_app"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networkdiagram::m.app_server"
+            item
+                definition
+                    id "ddn.examples.networkdiagram::m.office_bus"
+
+
+relation "ddn.examples.networkdiagram::m.attach_uplink" as "network.attaches"
+    with
+        id "ddn.examples.networkdiagram::m.attach_uplink"
+        title "attaches to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.networkdiagram::m.uplink"
+            item
+                definition
+                    id "ddn.examples.networkdiagram::m.core_switch"
+                member
+                    id "ddn.examples.networkdiagram::m.core_switch.wan"
+
+
+view "lan" as "network.basic@1"
+    with
+        id "lan"
+        title "Office LAN"
+        selection
+            include
+                item
+                    id "ddn.examples.networkdiagram::m.office_bus"
+                item
+                    id "ddn.examples.networkdiagram::m.core_switch"
+                item
+                    id "ddn.examples.networkdiagram::m.file_server"
+                item
+                    id "ddn.examples.networkdiagram::m.app_server"
+                item
+                    id "ddn.examples.networkdiagram::m.uplink"
+                item
+                    id "ddn.examples.networkdiagram::m.attach_switch"
+                item
+                    id "ddn.examples.networkdiagram::m.attach_file"
+                item
+                    id "ddn.examples.networkdiagram::m.attach_app"
+                item
+                    id "ddn.examples.networkdiagram::m.attach_uplink"
+        layout
+            algorithm "layered"
+            direction "down"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:lan"
+
+    use "ddn.examples.networkdiagram::m.office_bus" named "appearance:lan:ddn.examples.networkdiagram::m.office_bus"
+        with
+            id "appearance:lan:ddn.examples.networkdiagram::m.office_bus"
+            size
+                width 420
+                height 28
+            text
+                fit "wrap"
+            background
+                image
+                    id "artwork::network-generic@1:cloud"
+
+    use "ddn.examples.networkdiagram::m.core_switch" named "appearance:lan:ddn.examples.networkdiagram::m.core_switch"
+        with
+            id "appearance:lan:ddn.examples.networkdiagram::m.core_switch"
+            background
+                image
+                    id "artwork::network-generic@1:switch"
+
+    use "ddn.examples.networkdiagram::m.file_server" named "appearance:lan:ddn.examples.networkdiagram::m.file_server"
+        with
+            id "appearance:lan:ddn.examples.networkdiagram::m.file_server"
+            background
+                image
+                    id "artwork::network-generic@1:server"
+
+    use "ddn.examples.networkdiagram::m.app_server" named "appearance:lan:ddn.examples.networkdiagram::m.app_server"
+        with
+            id "appearance:lan:ddn.examples.networkdiagram::m.app_server"
+            background
+                image
+                    id "artwork::network-generic@1:server"
+
+    use "ddn.examples.networkdiagram::m.uplink" named "appearance:lan:ddn.examples.networkdiagram::m.uplink"
+        with
+            id "appearance:lan:ddn.examples.networkdiagram::m.uplink"
+
+    use "ddn.examples.networkdiagram::m.attach_switch" named "appearance:lan:ddn.examples.networkdiagram::m.attach_switch"
+        with
+            id "appearance:lan:ddn.examples.networkdiagram::m.attach_switch"
+
+    use "ddn.examples.networkdiagram::m.attach_file" named "appearance:lan:ddn.examples.networkdiagram::m.attach_file"
+        with
+            id "appearance:lan:ddn.examples.networkdiagram::m.attach_file"
+
+    use "ddn.examples.networkdiagram::m.attach_app" named "appearance:lan:ddn.examples.networkdiagram::m.attach_app"
+        with
+            id "appearance:lan:ddn.examples.networkdiagram::m.attach_app"
+
+    use "ddn.examples.networkdiagram::m.attach_uplink" named "appearance:lan:ddn.examples.networkdiagram::m.attach_uplink"
+        with
+            id "appearance:lan:ddn.examples.networkdiagram::m.attach_uplink"
+
+
+view "rack" as "network.rack@1"
+    with
+        id "rack"
+        title "Rack A elevation"
+        selection
+            include
+                item
+                    id "ddn.examples.networkdiagram::m.file_server"
+                item
+                    id "ddn.examples.networkdiagram::m.app_server"
+            exclude
+                item
+                    id "ddn.examples.networkdiagram::m.attach_switch"
+                item
+                    id "ddn.examples.networkdiagram::m.attach_file"
+                item
+                    id "ddn.examples.networkdiagram::m.attach_app"
+                item
+                    id "ddn.examples.networkdiagram::m.attach_uplink"
+        layout
+            algorithm "layered"
+            direction "down"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.networkdiagram::rack.rack_a_frame"
+                name "Rack A (4U)"
+                scope
+                    id "ddn.examples.networkdiagram::m.rack_a"
+                members
+                    item
+                        id "ddn.examples.networkdiagram::m.file_server"
+                    item
+                        id "ddn.examples.networkdiagram::m.app_server"
+        publication
+            id "publication:rack"
+
+    use "ddn.examples.networkdiagram::m.file_server" named "appearance:rack:ddn.examples.networkdiagram::m.file_server"
+        with
+            id "appearance:rack:ddn.examples.networkdiagram::m.file_server"
+            position
+                x 0
+                y 264
+            pinned true
+            background
+                image
+                    id "artwork::network-generic@1:server"
+
+    use "ddn.examples.networkdiagram::m.app_server" named "appearance:rack:ddn.examples.networkdiagram::m.app_server"
+        with
+            id "appearance:rack:ddn.examples.networkdiagram::m.app_server"
+            position
+                x 0
+                y 88
+            pinned true
+            background
+                image
+                    id "artwork::network-generic@1:server"

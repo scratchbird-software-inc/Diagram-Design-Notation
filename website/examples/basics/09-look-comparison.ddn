@@ -1,42 +1,505 @@
-ddn "0.5";
-module "ddn.examples.lookcomparison";
-import "shared.ddn" as shared;
+version ddn-next-1
 
-// One model, three renderings. No at coordinates or manual route waypoints.
-data model {
-    object customer "Customer" {
-        kind: table; maturity: draft; workload: [oltp];
-        fields { field customer_id { key: primary; } field status; }
-    }
-    object builder "Build history" { kind: activity; }
-    object history "Customer history" {
-        kind: history; workload: [olap]; temporal: bitemporal;
-        fields { field customer_id; field valid_from; field recorded_from; }
-    }
-    relation capture @customer -> @builder { kind: captures_changes_into; capture: cdc; }
-    relation load @builder -> @history { kind: write; }
-}
+publication "publication:classic"
+    with
+        id "publication:classic"
+        title "Classic / precise single strokes"
+        targets
+            item
+                target
+                    id "classic"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1500
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view classic "Classic / precise single strokes" {
-    data: [@model]; format: @shared.styles.technical;
-    style: @shared.styles.classic;
-    layout { algorithm: grid; columns: 3; gap: 95px; routing: orthogonal; direction: right; }
-    publication { width: 1500px; height: 440px; minimum_text: 8pt; }
-    legend { mode: numbers; keys: { "capture": 1, "load": 2 }; width: 300px; }
-}
 
-view handDrawn "Hand drawn / organic pen strokes" {
-    data: [@model]; format: @shared.styles.technical;
-    style: @shared.styles.hand;
-    layout { algorithm: grid; columns: 3; gap: 95px; routing: orthogonal; direction: right; }
-    publication { width: 1500px; height: 440px; minimum_text: 8pt; }
-    legend { mode: numbers; keys: { "capture": 1, "load": 2 }; width: 300px; }
-}
+publication "publication:handDrawn"
+    with
+        id "publication:handDrawn"
+        title "Hand drawn / organic pen strokes"
+        targets
+            item
+                target
+                    id "handDrawn"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1500
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view neo "Neo / raised, precise cards" {
-    data: [@model]; format: @shared.styles.technical;
-    style: @shared.styles.neo;
-    layout { algorithm: grid; columns: 3; gap: 95px; routing: orthogonal; direction: right; }
-    publication { width: 1500px; height: 440px; minimum_text: 8pt; }
-    legend { mode: numbers; keys: { "capture": 1, "load": 2 }; width: 300px; }
-}
+
+publication "publication:neo"
+    with
+        id "publication:neo"
+        title "Neo / raised, precise cards"
+        targets
+            item
+                target
+                    id "neo"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1500
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
+
+
+element "ddn.examples.lookcomparison::model.customer.customer_id" as "field"
+    with
+        id "ddn.examples.lookcomparison::model.customer.customer_id"
+        title "customer_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.examples.lookcomparison::model.customer"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.examples.lookcomparison::model.customer.status" as "field"
+    with
+        id "ddn.examples.lookcomparison::model.customer.status"
+        title "status"
+        content
+            parent
+                id "ddn.examples.lookcomparison::model.customer"
+            ordinal 1
+
+
+element "ddn.examples.lookcomparison::model.customer" as "table"
+    with
+        id "ddn.examples.lookcomparison::model.customer"
+        title "Customer"
+        facets
+            maturity
+                item "DRF"
+            workload
+                item "OLTP"
+        properties
+            workload
+                item "oltp"
+        members
+            item
+                id "ddn.examples.lookcomparison::model.customer.customer_id"
+            item
+                id "ddn.examples.lookcomparison::model.customer.status"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.lookcomparison::model.builder" as "activity"
+    with
+        id "ddn.examples.lookcomparison::model.builder"
+        title "Build history"
+
+
+element "ddn.examples.lookcomparison::model.history.customer_id" as "field"
+    with
+        id "ddn.examples.lookcomparison::model.history.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.examples.lookcomparison::model.history"
+            ordinal 0
+
+
+element "ddn.examples.lookcomparison::model.history.valid_from" as "field"
+    with
+        id "ddn.examples.lookcomparison::model.history.valid_from"
+        title "valid_from"
+        content
+            parent
+                id "ddn.examples.lookcomparison::model.history"
+            ordinal 1
+
+
+element "ddn.examples.lookcomparison::model.history.recorded_from" as "field"
+    with
+        id "ddn.examples.lookcomparison::model.history.recorded_from"
+        title "recorded_from"
+        content
+            parent
+                id "ddn.examples.lookcomparison::model.history"
+            ordinal 2
+
+
+element "ddn.examples.lookcomparison::model.history" as "history"
+    with
+        id "ddn.examples.lookcomparison::model.history"
+        title "Customer history"
+        facets
+            workload
+                item "OLAP"
+            temporal
+                item "BT"
+        properties
+            workload
+                item "olap"
+            temporal "bitemporal"
+        members
+            item
+                id "ddn.examples.lookcomparison::model.history.customer_id"
+            item
+                id "ddn.examples.lookcomparison::model.history.valid_from"
+            item
+                id "ddn.examples.lookcomparison::model.history.recorded_from"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "valid_from"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "recorded_from"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.lookcomparison::model.capture" as "capture"
+    with
+        id "ddn.examples.lookcomparison::model.capture"
+        title "captures changes into"
+        properties
+            capture "cdc"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.lookcomparison::model.customer"
+            item
+                definition
+                    id "ddn.examples.lookcomparison::model.builder"
+
+
+relation "ddn.examples.lookcomparison::model.load" as "write"
+    with
+        id "ddn.examples.lookcomparison::model.load"
+        title "writes output to"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.lookcomparison::model.builder"
+            item
+                definition
+                    id "ddn.examples.lookcomparison::model.history"
+
+
+view "classic" as "ddn@1"
+    with
+        id "classic"
+        title "Classic / precise single strokes"
+        selection
+            include
+                item
+                    id "ddn.examples.lookcomparison::model.customer"
+                item
+                    id "ddn.examples.lookcomparison::model.builder"
+                item
+                    id "ddn.examples.lookcomparison::model.history"
+                item
+                    id "ddn.examples.lookcomparison::model.capture"
+                item
+                    id "ddn.examples.lookcomparison::model.load"
+        layout
+            algorithm "grid"
+            gap 95
+        legend
+            mode "numbers"
+            width 300
+            keys
+                capture "1"
+                load "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:classic"
+
+    use "ddn.examples.lookcomparison::model.customer" named "appearance:classic:ddn.examples.lookcomparison::model.customer"
+        with
+            id "appearance:classic:ddn.examples.lookcomparison::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.lookcomparison::model.builder" named "appearance:classic:ddn.examples.lookcomparison::model.builder"
+        with
+            id "appearance:classic:ddn.examples.lookcomparison::model.builder"
+
+    use "ddn.examples.lookcomparison::model.history" named "appearance:classic:ddn.examples.lookcomparison::model.history"
+        with
+            id "appearance:classic:ddn.examples.lookcomparison::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.lookcomparison::model.capture" named "appearance:classic:ddn.examples.lookcomparison::model.capture"
+        with
+            id "appearance:classic:ddn.examples.lookcomparison::model.capture"
+
+    use "ddn.examples.lookcomparison::model.load" named "appearance:classic:ddn.examples.lookcomparison::model.load"
+        with
+            id "appearance:classic:ddn.examples.lookcomparison::model.load"
+
+
+view "handDrawn" as "ddn@1"
+    with
+        id "handDrawn"
+        title "Hand drawn / organic pen strokes"
+        selection
+            include
+                item
+                    id "ddn.examples.lookcomparison::model.customer"
+                item
+                    id "ddn.examples.lookcomparison::model.builder"
+                item
+                    id "ddn.examples.lookcomparison::model.history"
+                item
+                    id "ddn.examples.lookcomparison::model.capture"
+                item
+                    id "ddn.examples.lookcomparison::model.load"
+        style
+            look "handdrawn"
+            font "handwriting"
+            roughness 1.8
+        layout
+            algorithm "grid"
+            gap 95
+        legend
+            mode "numbers"
+            width 300
+            keys
+                capture "1"
+                load "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:handDrawn"
+
+    use "ddn.examples.lookcomparison::model.customer" named "appearance:handDrawn:ddn.examples.lookcomparison::model.customer"
+        with
+            id "appearance:handDrawn:ddn.examples.lookcomparison::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.lookcomparison::model.builder" named "appearance:handDrawn:ddn.examples.lookcomparison::model.builder"
+        with
+            id "appearance:handDrawn:ddn.examples.lookcomparison::model.builder"
+
+    use "ddn.examples.lookcomparison::model.history" named "appearance:handDrawn:ddn.examples.lookcomparison::model.history"
+        with
+            id "appearance:handDrawn:ddn.examples.lookcomparison::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.lookcomparison::model.capture" named "appearance:handDrawn:ddn.examples.lookcomparison::model.capture"
+        with
+            id "appearance:handDrawn:ddn.examples.lookcomparison::model.capture"
+
+    use "ddn.examples.lookcomparison::model.load" named "appearance:handDrawn:ddn.examples.lookcomparison::model.load"
+        with
+            id "appearance:handDrawn:ddn.examples.lookcomparison::model.load"
+
+
+view "neo" as "ddn@1"
+    with
+        id "neo"
+        title "Neo / raised, precise cards"
+        selection
+            include
+                item
+                    id "ddn.examples.lookcomparison::model.customer"
+                item
+                    id "ddn.examples.lookcomparison::model.builder"
+                item
+                    id "ddn.examples.lookcomparison::model.history"
+                item
+                    id "ddn.examples.lookcomparison::model.capture"
+                item
+                    id "ddn.examples.lookcomparison::model.load"
+        style
+            look "neo"
+        layout
+            algorithm "grid"
+            gap 95
+        legend
+            mode "numbers"
+            width 300
+            keys
+                capture "1"
+                load "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:neo"
+
+    use "ddn.examples.lookcomparison::model.customer" named "appearance:neo:ddn.examples.lookcomparison::model.customer"
+        with
+            id "appearance:neo:ddn.examples.lookcomparison::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.lookcomparison::model.builder" named "appearance:neo:ddn.examples.lookcomparison::model.builder"
+        with
+            id "appearance:neo:ddn.examples.lookcomparison::model.builder"
+
+    use "ddn.examples.lookcomparison::model.history" named "appearance:neo:ddn.examples.lookcomparison::model.history"
+        with
+            id "appearance:neo:ddn.examples.lookcomparison::model.history"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.lookcomparison::model.capture" named "appearance:neo:ddn.examples.lookcomparison::model.capture"
+        with
+            id "appearance:neo:ddn.examples.lookcomparison::model.capture"
+
+    use "ddn.examples.lookcomparison::model.load" named "appearance:neo:ddn.examples.lookcomparison::model.load"
+        with
+            id "appearance:neo:ddn.examples.lookcomparison::model.load"

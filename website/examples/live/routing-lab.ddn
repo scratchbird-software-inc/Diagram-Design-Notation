@@ -1,29 +1,321 @@
-ddn "0.5";
-module "ddn.live.routing-lab";
-// This is a diagram, not an executing order processing application.
-data model {
-    application intake "Order entry" {role: "UI + client library"; }
-    activity validation "Validate and reserve" {role: "Checks + inventory hold"; }
-    table orders "Accepted orders" {workload: [oltp];
-        fields { order_id { key: primary; } customer_id; accepted_at; }
-    }
-    topic publish "Publish order event" {role: "Transactional outbox consumer"; }
-    relation submit "Submit proposed order" @intake -> @validation { kind: flow; }
-    relation accept "Persist an accepted order" @validation -> @orders { kind: flow; }
-    relation event "Publish order-accepted event" @orders -> @publish { kind: flow; }
-}
-format shared {
-    style engineering;
-    layout routes { algorithm: manual; routing: orthogonal; crossings: gap; }
-    display detailed { maturity: none; }
-    publication web { width: 2040px; height: 740px; }
-    legend key { mode: numbers; width: 350px; keys: { "model.submit": 1, "model.accept": 2, "model.event": 3 }; }
-    bundle technical { style: @engineering; layout: @routes; display: @detailed; publication: @web; legend: @key; }
-}
-view diagram "Order acceptance / illustration" {
-    data: [@model]; format: @shared.technical;
-    place @model.intake { at: [0px, 0px]; size: [290px, 170px]; }
-    place @model.validation { at: [420px, 240px]; size: [300px, 170px]; }
-    place @model.orders { at: [850px, 0px]; size: [310px, 190px]; }
-    place @model.publish { at: [1290px, 240px]; size: [290px, 170px]; }
-}
+version ddn-next-1
+
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "Order acceptance / illustration"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            width
+                value 2040
+                unit "px"
+            height
+                value 740
+                unit "px"
+            minimum_text 10.666666666666666
+
+
+element "ddn.live.routing-lab::model.intake" as "application"
+    with
+        id "ddn.live.routing-lab::model.intake"
+        title "Order entry"
+        metadata
+            x_record
+                layout_group "UI + client library"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "role": "UI + client library"
+                    }
+                format "plain"
+
+
+element "ddn.live.routing-lab::model.validation" as "activity"
+    with
+        id "ddn.live.routing-lab::model.validation"
+        title "Validate and reserve"
+        metadata
+            x_record
+                layout_group "Checks + inventory hold"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "role": "Checks + inventory hold"
+                    }
+                format "plain"
+
+
+element "ddn.live.routing-lab::model.orders.order_id" as "field"
+    with
+        id "ddn.live.routing-lab::model.orders.order_id"
+        title "order_id"
+        properties
+            key "primary"
+        content
+            parent
+                id "ddn.live.routing-lab::model.orders"
+            ordinal 0
+            key "primary"
+
+
+element "ddn.live.routing-lab::model.orders.customer_id" as "field"
+    with
+        id "ddn.live.routing-lab::model.orders.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.live.routing-lab::model.orders"
+            ordinal 1
+
+
+element "ddn.live.routing-lab::model.orders.accepted_at" as "field"
+    with
+        id "ddn.live.routing-lab::model.orders.accepted_at"
+        title "accepted_at"
+        content
+            parent
+                id "ddn.live.routing-lab::model.orders"
+            ordinal 2
+
+
+element "ddn.live.routing-lab::model.orders" as "table"
+    with
+        id "ddn.live.routing-lab::model.orders"
+        title "Accepted orders"
+        facets
+            workload
+                item "OLTP"
+        properties
+            workload
+                item "oltp"
+        members
+            item
+                id "ddn.live.routing-lab::model.orders.order_id"
+            item
+                id "ddn.live.routing-lab::model.orders.customer_id"
+            item
+                id "ddn.live.routing-lab::model.orders.accepted_at"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item "primary"
+                    item null
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "accepted_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.live.routing-lab::model.publish" as "topic"
+    with
+        id "ddn.live.routing-lab::model.publish"
+        title "Publish order event"
+        metadata
+            x_record
+                layout_group "Transactional outbox consumer"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "role": "Transactional outbox consumer"
+                    }
+                format "plain"
+
+
+relation "ddn.live.routing-lab::model.submit" as "flow"
+    with
+        id "ddn.live.routing-lab::model.submit"
+        title "Submit proposed order"
+        endpoints
+            item
+                definition
+                    id "ddn.live.routing-lab::model.intake"
+            item
+                definition
+                    id "ddn.live.routing-lab::model.validation"
+
+
+relation "ddn.live.routing-lab::model.accept" as "flow"
+    with
+        id "ddn.live.routing-lab::model.accept"
+        title "Persist an accepted order"
+        endpoints
+            item
+                definition
+                    id "ddn.live.routing-lab::model.validation"
+            item
+                definition
+                    id "ddn.live.routing-lab::model.orders"
+
+
+relation "ddn.live.routing-lab::model.event" as "flow"
+    with
+        id "ddn.live.routing-lab::model.event"
+        title "Publish order-accepted event"
+        endpoints
+            item
+                definition
+                    id "ddn.live.routing-lab::model.orders"
+            item
+                definition
+                    id "ddn.live.routing-lab::model.publish"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "Order acceptance / illustration"
+        selection
+            include
+                item
+                    id "ddn.live.routing-lab::model.intake"
+                item
+                    id "ddn.live.routing-lab::model.validation"
+                item
+                    id "ddn.live.routing-lab::model.orders"
+                item
+                    id "ddn.live.routing-lab::model.publish"
+                item
+                    id "ddn.live.routing-lab::model.submit"
+                item
+                    id "ddn.live.routing-lab::model.accept"
+                item
+                    id "ddn.live.routing-lab::model.event"
+        layout
+            algorithm "manual"
+        display
+            maturity "none"
+        legend
+            mode "numbers"
+            width 350
+            keys
+                model.submit "1"
+                model.accept "2"
+                model.event "3"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.live.routing-lab::model.intake" named "appearance:diagram:ddn.live.routing-lab::model.intake"
+        with
+            id "appearance:diagram:ddn.live.routing-lab::model.intake"
+            position
+                x 0
+                y 0
+            pinned true
+            size
+                width 290
+                height 170
+            marks
+                item "UI + client library"
+            text
+                fit "wrap"
+
+    use "ddn.live.routing-lab::model.validation" named "appearance:diagram:ddn.live.routing-lab::model.validation"
+        with
+            id "appearance:diagram:ddn.live.routing-lab::model.validation"
+            position
+                x 420
+                y 240
+            pinned true
+            size
+                width 300
+                height 170
+            marks
+                item "Checks + inventory hold"
+            text
+                fit "wrap"
+
+    use "ddn.live.routing-lab::model.orders" named "appearance:diagram:ddn.live.routing-lab::model.orders"
+        with
+            id "appearance:diagram:ddn.live.routing-lab::model.orders"
+            position
+                x 850
+                y 0
+            pinned true
+            size
+                width 310
+                height 190
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+            text
+                fit "wrap"
+
+    use "ddn.live.routing-lab::model.publish" named "appearance:diagram:ddn.live.routing-lab::model.publish"
+        with
+            id "appearance:diagram:ddn.live.routing-lab::model.publish"
+            position
+                x 1290
+                y 240
+            pinned true
+            size
+                width 290
+                height 170
+            marks
+                item "Transactional outbox consumer"
+            text
+                fit "wrap"
+
+    use "ddn.live.routing-lab::model.submit" named "appearance:diagram:ddn.live.routing-lab::model.submit"
+        with
+            id "appearance:diagram:ddn.live.routing-lab::model.submit"
+
+    use "ddn.live.routing-lab::model.accept" named "appearance:diagram:ddn.live.routing-lab::model.accept"
+        with
+            id "appearance:diagram:ddn.live.routing-lab::model.accept"
+
+    use "ddn.live.routing-lab::model.event" named "appearance:diagram:ddn.live.routing-lab::model.event"
+        with
+            id "appearance:diagram:ddn.live.routing-lab::model.event"

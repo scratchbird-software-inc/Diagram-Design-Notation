@@ -1,0 +1,54 @@
+{
+  "format": "ddn-appearance-presets",
+  "version": 1,
+  "presets": [
+    {
+      "id": "company-warm-note",
+      "name": "Company warm note",
+      "scope": "company",
+      "target": "element",
+      "profile": "ddn@1",
+      "properties": {
+        "background.color": "#f5e9d4",
+        "background.texture": {
+          "kind": "paper",
+          "color": "#9b7952",
+          "opacity": 0.12,
+          "scale": 32,
+          "seed": 42
+        },
+        "style.font": "Inter",
+        "style.font_size": 16,
+        "style.paper": "note",
+        "text.color": "#473f35",
+        "shadow": {
+          "kind": "centre",
+          "opacity": 0.2
+        },
+        "decorations": [
+          {
+            "kind": "paper-clip",
+            "color": "#925225",
+            "position": "rt"
+          }
+        ]
+      }
+    },
+    {
+      "id": "company-dotted-workarea",
+      "name": "Company dotted workarea",
+      "scope": "company",
+      "target": "workarea",
+      "properties": {
+        "background.color": "#eee9df",
+        "background.texture": {
+          "kind": "dots",
+          "color": "#9b7952",
+          "opacity": 0.25,
+          "scale": 24,
+          "seed": 1
+        }
+      }
+    }
+  ]
+}

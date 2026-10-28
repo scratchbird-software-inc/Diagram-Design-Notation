@@ -1,24 +1,218 @@
-ddn "0.5";
-module "ddn.examples.petri";
+version ddn-next-1
 
-// B1-079: a producer/consumer Petri net — places with token markings (dots,
-// or a count above five), transitions as bars, a weighted arc, an inhibitor
-// arc (open circle at the transition end), and a dashed read/test arc.
-// All data is synthetic.
-data m {
-    object idle "Idle producers" { kind: "petri.place"; x_petri: { tokens: 3 }; }
-    object produce "Produce" { kind: "petri.transition"; }
-    object buf "Buffer" { kind: "petri.place"; x_petri: { tokens: 1 }; }
-    object consume "Consume" { kind: "petri.transition"; }
-    object done "Done items" { kind: "petri.place"; x_petri: { tokens: 7 }; }
-    relation a1 "" @idle -> @produce { kind: "petri.arc"; }
-    relation a2 "" @produce -> @buf { kind: "petri.arc"; x_petri: { weight: 2 }; }
-    relation a3 "" @buf -> @consume { kind: "petri.arc"; }
-    relation a4 "" @consume -> @done { kind: "petri.arc"; }
-    relation inh "" @buf -> @produce { kind: "petri.inhibitor"; }
-    relation rd "" @idle -> @consume { kind: "petri.testarc"; }
-}
-view net "Producer/consumer net": [@m] as "petri.basic@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
-    publication { size: content; fit: none; }
-}
+publication "publication:net"
+    with
+        id "publication:net"
+        title "Producer/consumer net"
+        targets
+            item
+                target
+                    id "net"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.petri::m.idle" as "petri.place"
+    with
+        id "ddn.examples.petri::m.idle"
+        title "Idle producers"
+        metadata
+            x_petri
+                tokens 3
+
+
+element "ddn.examples.petri::m.produce" as "petri.transition"
+    with
+        id "ddn.examples.petri::m.produce"
+        title "Produce"
+
+
+element "ddn.examples.petri::m.buf" as "petri.place"
+    with
+        id "ddn.examples.petri::m.buf"
+        title "Buffer"
+        metadata
+            x_petri
+                tokens 1
+
+
+element "ddn.examples.petri::m.consume" as "petri.transition"
+    with
+        id "ddn.examples.petri::m.consume"
+        title "Consume"
+
+
+element "ddn.examples.petri::m.done" as "petri.place"
+    with
+        id "ddn.examples.petri::m.done"
+        title "Done items"
+        metadata
+            x_petri
+                tokens 7
+
+
+relation "ddn.examples.petri::m.a1" as "petri.arc"
+    with
+        id "ddn.examples.petri::m.a1"
+        title "Arc"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.petri::m.idle"
+            item
+                definition
+                    id "ddn.examples.petri::m.produce"
+
+
+relation "ddn.examples.petri::m.a2" as "petri.arc"
+    with
+        id "ddn.examples.petri::m.a2"
+        title "Arc"
+        metadata
+            x_petri
+                weight 2
+        endpoints
+            item
+                definition
+                    id "ddn.examples.petri::m.produce"
+            item
+                definition
+                    id "ddn.examples.petri::m.buf"
+
+
+relation "ddn.examples.petri::m.a3" as "petri.arc"
+    with
+        id "ddn.examples.petri::m.a3"
+        title "Arc"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.petri::m.buf"
+            item
+                definition
+                    id "ddn.examples.petri::m.consume"
+
+
+relation "ddn.examples.petri::m.a4" as "petri.arc"
+    with
+        id "ddn.examples.petri::m.a4"
+        title "Arc"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.petri::m.consume"
+            item
+                definition
+                    id "ddn.examples.petri::m.done"
+
+
+relation "ddn.examples.petri::m.inh" as "petri.inhibitor"
+    with
+        id "ddn.examples.petri::m.inh"
+        title "Inhibits"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.petri::m.buf"
+            item
+                definition
+                    id "ddn.examples.petri::m.produce"
+
+
+relation "ddn.examples.petri::m.rd" as "petri.testarc"
+    with
+        id "ddn.examples.petri::m.rd"
+        title "Reads"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.petri::m.idle"
+            item
+                definition
+                    id "ddn.examples.petri::m.consume"
+
+
+view "net" as "petri.basic@1"
+    with
+        id "net"
+        title "Producer/consumer net"
+        selection
+            include
+                item
+                    id "ddn.examples.petri::m.idle"
+                item
+                    id "ddn.examples.petri::m.produce"
+                item
+                    id "ddn.examples.petri::m.buf"
+                item
+                    id "ddn.examples.petri::m.consume"
+                item
+                    id "ddn.examples.petri::m.done"
+                item
+                    id "ddn.examples.petri::m.a1"
+                item
+                    id "ddn.examples.petri::m.a2"
+                item
+                    id "ddn.examples.petri::m.a3"
+                item
+                    id "ddn.examples.petri::m.a4"
+                item
+                    id "ddn.examples.petri::m.inh"
+                item
+                    id "ddn.examples.petri::m.rd"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:net"
+
+    use "ddn.examples.petri::m.idle" named "appearance:net:ddn.examples.petri::m.idle"
+        with
+            id "appearance:net:ddn.examples.petri::m.idle"
+
+    use "ddn.examples.petri::m.produce" named "appearance:net:ddn.examples.petri::m.produce"
+        with
+            id "appearance:net:ddn.examples.petri::m.produce"
+
+    use "ddn.examples.petri::m.buf" named "appearance:net:ddn.examples.petri::m.buf"
+        with
+            id "appearance:net:ddn.examples.petri::m.buf"
+
+    use "ddn.examples.petri::m.consume" named "appearance:net:ddn.examples.petri::m.consume"
+        with
+            id "appearance:net:ddn.examples.petri::m.consume"
+
+    use "ddn.examples.petri::m.done" named "appearance:net:ddn.examples.petri::m.done"
+        with
+            id "appearance:net:ddn.examples.petri::m.done"
+
+    use "ddn.examples.petri::m.a1" named "appearance:net:ddn.examples.petri::m.a1"
+        with
+            id "appearance:net:ddn.examples.petri::m.a1"
+
+    use "ddn.examples.petri::m.a2" named "appearance:net:ddn.examples.petri::m.a2"
+        with
+            id "appearance:net:ddn.examples.petri::m.a2"
+
+    use "ddn.examples.petri::m.a3" named "appearance:net:ddn.examples.petri::m.a3"
+        with
+            id "appearance:net:ddn.examples.petri::m.a3"
+
+    use "ddn.examples.petri::m.a4" named "appearance:net:ddn.examples.petri::m.a4"
+        with
+            id "appearance:net:ddn.examples.petri::m.a4"
+
+    use "ddn.examples.petri::m.inh" named "appearance:net:ddn.examples.petri::m.inh"
+        with
+            id "appearance:net:ddn.examples.petri::m.inh"
+
+    use "ddn.examples.petri::m.rd" named "appearance:net:ddn.examples.petri::m.rd"
+        with
+            id "appearance:net:ddn.examples.petri::m.rd"

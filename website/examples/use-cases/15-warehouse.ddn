@@ -1,17 +1,555 @@
-ddn "0.5";
-module "ddn.usecases.views.warehouse";
-import "formats.ddn" as fmt;
-import "data/warehouse.ddn" as w;
+version ddn-next-1
 
-// What is the fact grain and which dimensions describe it?
-// Fixed teaching layout: coordinates belong to this view only.
-view diagram "15 / Dimensional warehouse" {
-    data: [@w.model];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.teaching;
-    select: [@w.model.fact, @w.model.customer, @w.model.product, @w.model.date, @w.model.grain];
-    publication { width: 1680px; height: 1050px; }
-    legend { keys: { "model.r_c": 1, "model.r_p": 2, "model.r_d": 3 }; }
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "15 / Dimensional warehouse"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1680
+                unit "px"
+            height
+                value 1050
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-}
+
+element "ddn.usecases.warehouse::model.fact.order_id" as "field"
+    with
+        id "ddn.usecases.warehouse::model.fact.order_id"
+        title "order_id"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.fact"
+            ordinal 0
+
+
+element "ddn.usecases.warehouse::model.fact.line_id" as "field"
+    with
+        id "ddn.usecases.warehouse::model.fact.line_id"
+        title "line_id"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.fact"
+            ordinal 1
+
+
+element "ddn.usecases.warehouse::model.fact.customer_key" as "field"
+    with
+        id "ddn.usecases.warehouse::model.fact.customer_key"
+        title "customer_key"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.fact"
+            ordinal 2
+
+
+element "ddn.usecases.warehouse::model.fact.product_key" as "field"
+    with
+        id "ddn.usecases.warehouse::model.fact.product_key"
+        title "product_key"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.fact"
+            ordinal 3
+
+
+element "ddn.usecases.warehouse::model.fact.date_key" as "field"
+    with
+        id "ddn.usecases.warehouse::model.fact.date_key"
+        title "date_key"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.fact"
+            ordinal 4
+
+
+element "ddn.usecases.warehouse::model.fact.net_amount" as "field"
+    with
+        id "ddn.usecases.warehouse::model.fact.net_amount"
+        title "net_amount"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.fact"
+            ordinal 5
+
+
+element "ddn.usecases.warehouse::model.fact" as "fact"
+    with
+        id "ddn.usecases.warehouse::model.fact"
+        title "Order line fact"
+        description "Grain: one row per order line."
+        facets
+            workload
+                item "OLAP"
+        properties
+            workload
+                item "olap"
+        members
+            item
+                id "ddn.usecases.warehouse::model.fact.order_id"
+            item
+                id "ddn.usecases.warehouse::model.fact.line_id"
+            item
+                id "ddn.usecases.warehouse::model.fact.customer_key"
+            item
+                id "ddn.usecases.warehouse::model.fact.product_key"
+            item
+                id "ddn.usecases.warehouse::model.fact.date_key"
+            item
+                id "ddn.usecases.warehouse::model.fact.net_amount"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "order_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "line_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "customer_key"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "product_key"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "date_key"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "net_amount"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.warehouse::model.customer.customer_key" as "field"
+    with
+        id "ddn.usecases.warehouse::model.customer.customer_key"
+        title "customer_key"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.customer"
+            ordinal 0
+
+
+element "ddn.usecases.warehouse::model.customer.display_name" as "field"
+    with
+        id "ddn.usecases.warehouse::model.customer.display_name"
+        title "display_name"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.customer"
+            ordinal 1
+
+
+element "ddn.usecases.warehouse::model.customer" as "dimension"
+    with
+        id "ddn.usecases.warehouse::model.customer"
+        title "Customer dimension"
+        members
+            item
+                id "ddn.usecases.warehouse::model.customer.customer_key"
+            item
+                id "ddn.usecases.warehouse::model.customer.display_name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_key"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "display_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.warehouse::model.product.product_key" as "field"
+    with
+        id "ddn.usecases.warehouse::model.product.product_key"
+        title "product_key"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.product"
+            ordinal 0
+
+
+element "ddn.usecases.warehouse::model.product.product_name" as "field"
+    with
+        id "ddn.usecases.warehouse::model.product.product_name"
+        title "product_name"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.product"
+            ordinal 1
+
+
+element "ddn.usecases.warehouse::model.product" as "dimension"
+    with
+        id "ddn.usecases.warehouse::model.product"
+        title "Product dimension"
+        members
+            item
+                id "ddn.usecases.warehouse::model.product.product_key"
+            item
+                id "ddn.usecases.warehouse::model.product.product_name"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "product_key"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "product_name"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.warehouse::model.date.date_key" as "field"
+    with
+        id "ddn.usecases.warehouse::model.date.date_key"
+        title "date_key"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.date"
+            ordinal 0
+
+
+element "ddn.usecases.warehouse::model.date.calendar_date" as "field"
+    with
+        id "ddn.usecases.warehouse::model.date.calendar_date"
+        title "calendar_date"
+        content
+            parent
+                id "ddn.usecases.warehouse::model.date"
+            ordinal 1
+
+
+element "ddn.usecases.warehouse::model.date" as "dimension"
+    with
+        id "ddn.usecases.warehouse::model.date"
+        title "Date dimension"
+        members
+            item
+                id "ddn.usecases.warehouse::model.date.date_key"
+            item
+                id "ddn.usecases.warehouse::model.date.calendar_date"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "date_key"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "calendar_date"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.warehouse::model.grain" as "note"
+    with
+        id "ddn.usecases.warehouse::model.grain"
+        title "Declare the grain"
+        description "One fact row per order line. Order totals must not be repeated as additive line measures."
+        content
+            text "One fact row per order line. Order totals must not be repeated as additive line measures."
+        draft
+            text "One fact row per order line. Order totals must not be repeated as additive line measures."
+
+
+relation "ddn.usecases.warehouse::model.r_c" as "ref"
+    with
+        id "ddn.usecases.warehouse::model.r_c"
+        title "references"
+        properties
+            source_mark "zeromany"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.warehouse::model.fact"
+                member
+                    id "ddn.usecases.warehouse::model.fact.customer_key"
+            item
+                definition
+                    id "ddn.usecases.warehouse::model.customer"
+                member
+                    id "ddn.usecases.warehouse::model.customer.customer_key"
+
+
+relation "ddn.usecases.warehouse::model.r_p" as "ref"
+    with
+        id "ddn.usecases.warehouse::model.r_p"
+        title "references"
+        properties
+            source_mark "zeromany"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.warehouse::model.fact"
+                member
+                    id "ddn.usecases.warehouse::model.fact.product_key"
+            item
+                definition
+                    id "ddn.usecases.warehouse::model.product"
+                member
+                    id "ddn.usecases.warehouse::model.product.product_key"
+
+
+relation "ddn.usecases.warehouse::model.r_d" as "ref"
+    with
+        id "ddn.usecases.warehouse::model.r_d"
+        title "references"
+        properties
+            source_mark "zeromany"
+            target_mark "one"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.warehouse::model.fact"
+                member
+                    id "ddn.usecases.warehouse::model.fact.date_key"
+            item
+                definition
+                    id "ddn.usecases.warehouse::model.date"
+                member
+                    id "ddn.usecases.warehouse::model.date.date_key"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "15 / Dimensional warehouse"
+        selection
+            include
+                item
+                    id "ddn.usecases.warehouse::model.fact"
+                item
+                    id "ddn.usecases.warehouse::model.customer"
+                item
+                    id "ddn.usecases.warehouse::model.product"
+                item
+                    id "ddn.usecases.warehouse::model.date"
+                item
+                    id "ddn.usecases.warehouse::model.grain"
+                item
+                    id "ddn.usecases.warehouse::model.r_c"
+                item
+                    id "ddn.usecases.warehouse::model.r_p"
+                item
+                    id "ddn.usecases.warehouse::model.r_d"
+        layout
+            algorithm "manual"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_c "1"
+                model.r_p "2"
+                model.r_d "3"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.warehouse::model.fact" named "appearance:diagram:ddn.usecases.warehouse::model.fact"
+        with
+            id "appearance:diagram:ddn.usecases.warehouse::model.fact"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.warehouse::model.customer" named "appearance:diagram:ddn.usecases.warehouse::model.customer"
+        with
+            id "appearance:diagram:ddn.usecases.warehouse::model.customer"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.warehouse::model.product" named "appearance:diagram:ddn.usecases.warehouse::model.product"
+        with
+            id "appearance:diagram:ddn.usecases.warehouse::model.product"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.warehouse::model.date" named "appearance:diagram:ddn.usecases.warehouse::model.date"
+        with
+            id "appearance:diagram:ddn.usecases.warehouse::model.date"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.warehouse::model.grain" named "appearance:diagram:ddn.usecases.warehouse::model.grain"
+        with
+            id "appearance:diagram:ddn.usecases.warehouse::model.grain"
+            body "draft"
+
+    use "ddn.usecases.warehouse::model.r_c" named "appearance:diagram:ddn.usecases.warehouse::model.r_c"
+        with
+            id "appearance:diagram:ddn.usecases.warehouse::model.r_c"
+
+    use "ddn.usecases.warehouse::model.r_p" named "appearance:diagram:ddn.usecases.warehouse::model.r_p"
+        with
+            id "appearance:diagram:ddn.usecases.warehouse::model.r_p"
+
+    use "ddn.usecases.warehouse::model.r_d" named "appearance:diagram:ddn.usecases.warehouse::model.r_d"
+        with
+            id "appearance:diagram:ddn.usecases.warehouse::model.r_d"

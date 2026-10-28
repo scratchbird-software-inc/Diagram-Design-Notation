@@ -1,0 +1,124 @@
+version ddn-next-1
+
+publication "publication:main"
+    with
+        id "publication:main"
+        title "Parameterized fragments"
+        targets
+            item
+                target
+                    id "main"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.fragparams::model.audit_trail" as "database"
+    with
+        id "ddn.fieldguide.fragparams::model.audit_trail"
+        title "Audit trail"
+
+
+element "ddn.fieldguide.fragparams::model.ingest" as "service"
+    with
+        id "ddn.fieldguide.fragparams::model.ingest"
+        title "Stage: ingest"
+
+
+element "ddn.fieldguide.fragparams::model.reconcile" as "service"
+    with
+        id "ddn.fieldguide.fragparams::model.reconcile"
+        title "Stage: reconcile"
+
+
+relation "ddn.fieldguide.fragparams::model.first_out" as "flow"
+    with
+        id "ddn.fieldguide.fragparams::model.first_out"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.fragparams::model.ingest"
+            item
+                definition
+                    id "ddn.fieldguide.fragparams::model.audit_trail"
+
+
+relation "ddn.fieldguide.fragparams::model.second_out" as "flow"
+    with
+        id "ddn.fieldguide.fragparams::model.second_out"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.fragparams::model.reconcile"
+            item
+                definition
+                    id "ddn.fieldguide.fragparams::model.audit_trail"
+
+
+relation "ddn.fieldguide.fragparams::model.chain" as "flow"
+    with
+        id "ddn.fieldguide.fragparams::model.chain"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.fragparams::model.ingest"
+            item
+                definition
+                    id "ddn.fieldguide.fragparams::model.reconcile"
+
+
+view "main" as "ddn@1"
+    with
+        id "main"
+        title "Parameterized fragments"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.fragparams::model.audit_trail"
+                item
+                    id "ddn.fieldguide.fragparams::model.ingest"
+                item
+                    id "ddn.fieldguide.fragparams::model.reconcile"
+                item
+                    id "ddn.fieldguide.fragparams::model.first_out"
+                item
+                    id "ddn.fieldguide.fragparams::model.second_out"
+                item
+                    id "ddn.fieldguide.fragparams::model.chain"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:main"
+
+    use "ddn.fieldguide.fragparams::model.audit_trail" named "appearance:main:ddn.fieldguide.fragparams::model.audit_trail"
+        with
+            id "appearance:main:ddn.fieldguide.fragparams::model.audit_trail"
+
+    use "ddn.fieldguide.fragparams::model.ingest" named "appearance:main:ddn.fieldguide.fragparams::model.ingest"
+        with
+            id "appearance:main:ddn.fieldguide.fragparams::model.ingest"
+
+    use "ddn.fieldguide.fragparams::model.reconcile" named "appearance:main:ddn.fieldguide.fragparams::model.reconcile"
+        with
+            id "appearance:main:ddn.fieldguide.fragparams::model.reconcile"
+
+    use "ddn.fieldguide.fragparams::model.first_out" named "appearance:main:ddn.fieldguide.fragparams::model.first_out"
+        with
+            id "appearance:main:ddn.fieldguide.fragparams::model.first_out"
+
+    use "ddn.fieldguide.fragparams::model.second_out" named "appearance:main:ddn.fieldguide.fragparams::model.second_out"
+        with
+            id "appearance:main:ddn.fieldguide.fragparams::model.second_out"
+
+    use "ddn.fieldguide.fragparams::model.chain" named "appearance:main:ddn.fieldguide.fragparams::model.chain"
+        with
+            id "appearance:main:ddn.fieldguide.fragparams::model.chain"

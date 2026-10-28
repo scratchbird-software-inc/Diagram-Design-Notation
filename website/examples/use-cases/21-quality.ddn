@@ -1,16 +1,263 @@
-ddn "0.5";
-module "ddn.usecases.views.quality";
-import "formats.ddn" as fmt;
-import "data/quality.ddn" as q;
+version ddn-next-1
 
-// What is the expected outcome for a concrete invalid input?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "21 / Example-driven data quality" {
-    data: [@q.model];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.row;
-    select: [@q.model.input, @q.model.check, @q.model.expected];
-    publication { width: 2130px; height: 440px; }
-    legend { keys: { "model.r_input": 1, "model.r_result": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "21 / Example-driven data quality"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 2130
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.quality::model.shape.customer_id" as "field"
+    with
+        id "ddn.usecases.quality::model.shape.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.usecases.quality::model.shape"
+            ordinal 0
+
+
+element "ddn.usecases.quality::model.shape.status" as "field"
+    with
+        id "ddn.usecases.quality::model.shape.status"
+        title "status"
+        properties
+            presence "required"
+            nullable false
+        content
+            parent
+                id "ddn.usecases.quality::model.shape"
+            ordinal 1
+            nullable false
+
+
+element "ddn.usecases.quality::model.shape" as "record"
+    with
+        id "ddn.usecases.quality::model.shape"
+        title "Status record"
+        members
+            item
+                id "ddn.usecases.quality::model.shape.customer_id"
+            item
+                id "ddn.usecases.quality::model.shape.status"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "status"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.quality::model.input" as "sample"
+    with
+        id "ddn.usecases.quality::model.input"
+        title "Input / intentional invalid value"
+        properties
+            mode "synthetic"
+            columns
+                item
+                    id "ddn.usecases.quality::model.shape.customer_id"
+                item
+                    id "ddn.usecases.quality::model.shape.status"
+            rows
+                item
+                    item "C001"
+                    item "Active"
+                item
+                    item "C002"
+        data
+            columns
+                item
+                    id "column-0"
+                    label "customer_id"
+                item
+                    id "column-1"
+                    label "status"
+            rows
+                item
+                    item "C001"
+                    item "Active"
+                item
+                    item "C002"
+                    item null
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "rows": [
+                        [
+                          "C001",
+                          "Active"
+                        ],
+                        [
+                          "C002",
+                          null
+                        ]
+                      ]
+                    }
+                format "plain"
+
+
+element "ddn.usecases.quality::model.check" as "activity"
+    with
+        id "ddn.usecases.quality::model.check"
+        title "Reject null status"
+        description "A documented expectation; this diagram renderer does not execute the validation."
+
+
+element "ddn.usecases.quality::model.expected" as "sample"
+    with
+        id "ddn.usecases.quality::model.expected"
+        title "Expected accepted rows"
+        properties
+            mode "synthetic"
+            columns
+                item
+                    id "ddn.usecases.quality::model.shape.customer_id"
+                item
+                    id "ddn.usecases.quality::model.shape.status"
+            rows
+                item
+                    item "C001"
+                    item "Active"
+        data
+            columns
+                item
+                    id "column-0"
+                    label "customer_id"
+                item
+                    id "column-1"
+                    label "status"
+            rows
+                item
+                    item "C001"
+                    item "Active"
+
+
+relation "ddn.usecases.quality::model.r_input" as "read"
+    with
+        id "ddn.usecases.quality::model.r_input"
+        title "read produces input for"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.quality::model.input"
+            item
+                definition
+                    id "ddn.usecases.quality::model.check"
+
+
+relation "ddn.usecases.quality::model.r_result" as "write"
+    with
+        id "ddn.usecases.quality::model.r_result"
+        title "expected accepted output"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.quality::model.check"
+            item
+                definition
+                    id "ddn.usecases.quality::model.expected"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "21 / Example-driven data quality"
+        selection
+            include
+                item
+                    id "ddn.usecases.quality::model.input"
+                item
+                    id "ddn.usecases.quality::model.check"
+                item
+                    id "ddn.usecases.quality::model.expected"
+                item
+                    id "ddn.usecases.quality::model.r_input"
+                item
+                    id "ddn.usecases.quality::model.r_result"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_input "1"
+                model.r_result "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.quality::model.input" named "appearance:diagram:ddn.usecases.quality::model.input"
+        with
+            id "appearance:diagram:ddn.usecases.quality::model.input"
+            body "columns"
+
+    use "ddn.usecases.quality::model.check" named "appearance:diagram:ddn.usecases.quality::model.check"
+        with
+            id "appearance:diagram:ddn.usecases.quality::model.check"
+            body "notes"
+
+    use "ddn.usecases.quality::model.expected" named "appearance:diagram:ddn.usecases.quality::model.expected"
+        with
+            id "appearance:diagram:ddn.usecases.quality::model.expected"
+            body "columns"
+
+    use "ddn.usecases.quality::model.r_input" named "appearance:diagram:ddn.usecases.quality::model.r_input"
+        with
+            id "appearance:diagram:ddn.usecases.quality::model.r_input"
+
+    use "ddn.usecases.quality::model.r_result" named "appearance:diagram:ddn.usecases.quality::model.r_result"
+        with
+            id "appearance:diagram:ddn.usecases.quality::model.r_result"

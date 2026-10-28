@@ -1,54 +1,453 @@
-ddn "0.5";
-module "ddn.examples.hierarchicalstate";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:lifecycle"
+    with
+        id "publication:lifecycle"
+        title "Order lifecycle / composite states"
+        targets
+            item
+                target
+                    id "lifecycle"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic hierarchical state machine for the state.composite@1 profile.
-// An order lifecycle with top-level states draft and closed, plus a composite
-// state fulfillment drawn as a frame containing substates. Two parallel regions
-// (payment, packing) are dashed frames inside the composite; each region has
-// its own initial/final pair. Transitions are ordinary state.transition
-// relations with event labels; one crosses the composite boundary
-// (paid -> closed). All data is synthetic. This is profile-level coverage,
-// not UML/SCXML conformance.
-data order {
-    object start "Start" { kind: "state.initial"; }
-    object draft "Draft" { kind: "state.state"; }
-    object fulfillment "Fulfillment" { kind: "state.state"; }
-    object closed "Closed" { kind: "state.state"; }
-    object done "Done" { kind: "state.final"; }
 
-    object payment_initial "Payment start" { kind: "state.initial"; }
-    object awaiting "Awaiting payment" { kind: "state.state"; }
-    object paid "Paid" { kind: "state.state"; }
-    object payment_final "Payment done" { kind: "state.final"; }
+element "ddn.examples.hierarchicalstate::order.start" as "state.initial"
+    with
+        id "ddn.examples.hierarchicalstate::order.start"
+        title "Start"
 
-    object packing_initial "Packing start" { kind: "state.initial"; }
-    object open "Open box" { kind: "state.state"; }
-    object packed "Packed" { kind: "state.state"; }
-    object packing_final "Packing done" { kind: "state.final"; }
 
-    relation begin "begin" @start -> @draft { kind: "state.transition"; }
-    relation submit "submit" @draft -> @fulfillment { kind: "state.transition"; x_transition: { "event": "submit" }; }
-    relation pay "pay" @payment_initial -> @awaiting { kind: "state.transition"; }
-    relation paid_ev "paid" @awaiting -> @paid { kind: "state.transition"; x_transition: { "event": "payment_received" }; }
-    relation payment_end "payment end" @paid -> @payment_final { kind: "state.transition"; x_transition: { "event": "reconcile" }; }
-    relation pack_start "pack start" @packing_initial -> @open { kind: "state.transition"; }
-    relation packed_ev "packed" @open -> @packed { kind: "state.transition"; x_transition: { "event": "box_sealed" }; }
-    relation packing_end "packing end" @packed -> @packing_final { kind: "state.transition"; x_transition: { "event": "label_printed" }; }
-    relation ship "ship" @paid -> @closed { kind: "state.transition"; x_transition: { "event": "shipped" }; }
-    relation finish "finish" @closed -> @done { kind: "state.transition"; x_transition: { "event": "archive" }; }
-}
+element "ddn.examples.hierarchicalstate::order.draft" as "state.state"
+    with
+        id "ddn.examples.hierarchicalstate::order.draft"
+        title "Draft"
 
-view lifecycle "Order lifecycle / composite states" {
-    data: [@order]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "state.composite@1"; }
-    layout { algorithm: layered; gap: 112px; row_gap: 112px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-    frame fulfillment "FULFILLMENT" { scope: @order.fulfillment;
-        members: [@order.fulfillment, @order.awaiting, @order.paid, @order.open, @order.packed]; }
-    frame payment "PAYMENT" { x_region: true;
-        members: [@order.payment_initial, @order.awaiting, @order.paid, @order.payment_final]; }
-    frame packing "PACKING" { x_region: true;
-        members: [@order.packing_initial, @order.open, @order.packed, @order.packing_final]; }
-}
+
+element "ddn.examples.hierarchicalstate::order.fulfillment" as "state.state"
+    with
+        id "ddn.examples.hierarchicalstate::order.fulfillment"
+        title "Fulfillment"
+
+
+element "ddn.examples.hierarchicalstate::order.closed" as "state.state"
+    with
+        id "ddn.examples.hierarchicalstate::order.closed"
+        title "Closed"
+
+
+element "ddn.examples.hierarchicalstate::order.done" as "state.final"
+    with
+        id "ddn.examples.hierarchicalstate::order.done"
+        title "Done"
+
+
+element "ddn.examples.hierarchicalstate::order.payment_initial" as "state.initial"
+    with
+        id "ddn.examples.hierarchicalstate::order.payment_initial"
+        title "Payment start"
+
+
+element "ddn.examples.hierarchicalstate::order.awaiting" as "state.state"
+    with
+        id "ddn.examples.hierarchicalstate::order.awaiting"
+        title "Awaiting payment"
+
+
+element "ddn.examples.hierarchicalstate::order.paid" as "state.state"
+    with
+        id "ddn.examples.hierarchicalstate::order.paid"
+        title "Paid"
+
+
+element "ddn.examples.hierarchicalstate::order.payment_final" as "state.final"
+    with
+        id "ddn.examples.hierarchicalstate::order.payment_final"
+        title "Payment done"
+
+
+element "ddn.examples.hierarchicalstate::order.packing_initial" as "state.initial"
+    with
+        id "ddn.examples.hierarchicalstate::order.packing_initial"
+        title "Packing start"
+
+
+element "ddn.examples.hierarchicalstate::order.open" as "state.state"
+    with
+        id "ddn.examples.hierarchicalstate::order.open"
+        title "Open box"
+
+
+element "ddn.examples.hierarchicalstate::order.packed" as "state.state"
+    with
+        id "ddn.examples.hierarchicalstate::order.packed"
+        title "Packed"
+
+
+element "ddn.examples.hierarchicalstate::order.packing_final" as "state.final"
+    with
+        id "ddn.examples.hierarchicalstate::order.packing_final"
+        title "Packing done"
+
+
+relation "ddn.examples.hierarchicalstate::order.begin" as "state.transition"
+    with
+        id "ddn.examples.hierarchicalstate::order.begin"
+        title "begin"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.start"
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.draft"
+
+
+relation "ddn.examples.hierarchicalstate::order.submit" as "state.transition"
+    with
+        id "ddn.examples.hierarchicalstate::order.submit"
+        title "submit"
+        metadata
+            x_transition
+                event "submit"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.draft"
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.fulfillment"
+
+
+relation "ddn.examples.hierarchicalstate::order.pay" as "state.transition"
+    with
+        id "ddn.examples.hierarchicalstate::order.pay"
+        title "pay"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.payment_initial"
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.awaiting"
+
+
+relation "ddn.examples.hierarchicalstate::order.paid_ev" as "state.transition"
+    with
+        id "ddn.examples.hierarchicalstate::order.paid_ev"
+        title "paid"
+        metadata
+            x_transition
+                event "payment_received"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.awaiting"
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.paid"
+
+
+relation "ddn.examples.hierarchicalstate::order.payment_end" as "state.transition"
+    with
+        id "ddn.examples.hierarchicalstate::order.payment_end"
+        title "payment end"
+        metadata
+            x_transition
+                event "reconcile"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.paid"
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.payment_final"
+
+
+relation "ddn.examples.hierarchicalstate::order.pack_start" as "state.transition"
+    with
+        id "ddn.examples.hierarchicalstate::order.pack_start"
+        title "pack start"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.packing_initial"
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.open"
+
+
+relation "ddn.examples.hierarchicalstate::order.packed_ev" as "state.transition"
+    with
+        id "ddn.examples.hierarchicalstate::order.packed_ev"
+        title "packed"
+        metadata
+            x_transition
+                event "box_sealed"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.open"
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.packed"
+
+
+relation "ddn.examples.hierarchicalstate::order.packing_end" as "state.transition"
+    with
+        id "ddn.examples.hierarchicalstate::order.packing_end"
+        title "packing end"
+        metadata
+            x_transition
+                event "label_printed"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.packed"
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.packing_final"
+
+
+relation "ddn.examples.hierarchicalstate::order.ship" as "state.transition"
+    with
+        id "ddn.examples.hierarchicalstate::order.ship"
+        title "ship"
+        metadata
+            x_transition
+                event "shipped"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.paid"
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.closed"
+
+
+relation "ddn.examples.hierarchicalstate::order.finish" as "state.transition"
+    with
+        id "ddn.examples.hierarchicalstate::order.finish"
+        title "finish"
+        metadata
+            x_transition
+                event "archive"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.closed"
+            item
+                definition
+                    id "ddn.examples.hierarchicalstate::order.done"
+
+
+view "lifecycle" as "state.composite@1"
+    with
+        id "lifecycle"
+        title "Order lifecycle / composite states"
+        selection
+            include
+                item
+                    id "ddn.examples.hierarchicalstate::order.start"
+                item
+                    id "ddn.examples.hierarchicalstate::order.draft"
+                item
+                    id "ddn.examples.hierarchicalstate::order.fulfillment"
+                item
+                    id "ddn.examples.hierarchicalstate::order.closed"
+                item
+                    id "ddn.examples.hierarchicalstate::order.done"
+                item
+                    id "ddn.examples.hierarchicalstate::order.payment_initial"
+                item
+                    id "ddn.examples.hierarchicalstate::order.awaiting"
+                item
+                    id "ddn.examples.hierarchicalstate::order.paid"
+                item
+                    id "ddn.examples.hierarchicalstate::order.payment_final"
+                item
+                    id "ddn.examples.hierarchicalstate::order.packing_initial"
+                item
+                    id "ddn.examples.hierarchicalstate::order.open"
+                item
+                    id "ddn.examples.hierarchicalstate::order.packed"
+                item
+                    id "ddn.examples.hierarchicalstate::order.packing_final"
+                item
+                    id "ddn.examples.hierarchicalstate::order.begin"
+                item
+                    id "ddn.examples.hierarchicalstate::order.submit"
+                item
+                    id "ddn.examples.hierarchicalstate::order.pay"
+                item
+                    id "ddn.examples.hierarchicalstate::order.paid_ev"
+                item
+                    id "ddn.examples.hierarchicalstate::order.payment_end"
+                item
+                    id "ddn.examples.hierarchicalstate::order.pack_start"
+                item
+                    id "ddn.examples.hierarchicalstate::order.packed_ev"
+                item
+                    id "ddn.examples.hierarchicalstate::order.packing_end"
+                item
+                    id "ddn.examples.hierarchicalstate::order.ship"
+                item
+                    id "ddn.examples.hierarchicalstate::order.finish"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.examples.hierarchicalstate::lifecycle.fulfillment"
+                name "FULFILLMENT"
+                scope
+                    id "ddn.examples.hierarchicalstate::order.fulfillment"
+                members
+                    item
+                        id "ddn.examples.hierarchicalstate::order.fulfillment"
+                    item
+                        id "ddn.examples.hierarchicalstate::order.awaiting"
+                    item
+                        id "ddn.examples.hierarchicalstate::order.paid"
+                    item
+                        id "ddn.examples.hierarchicalstate::order.open"
+                    item
+                        id "ddn.examples.hierarchicalstate::order.packed"
+            item
+                id "ddn.examples.hierarchicalstate::lifecycle.payment"
+                name "PAYMENT"
+                members
+                    item
+                        id "ddn.examples.hierarchicalstate::order.payment_initial"
+                    item
+                        id "ddn.examples.hierarchicalstate::order.awaiting"
+                    item
+                        id "ddn.examples.hierarchicalstate::order.paid"
+                    item
+                        id "ddn.examples.hierarchicalstate::order.payment_final"
+            item
+                id "ddn.examples.hierarchicalstate::lifecycle.packing"
+                name "PACKING"
+                members
+                    item
+                        id "ddn.examples.hierarchicalstate::order.packing_initial"
+                    item
+                        id "ddn.examples.hierarchicalstate::order.open"
+                    item
+                        id "ddn.examples.hierarchicalstate::order.packed"
+                    item
+                        id "ddn.examples.hierarchicalstate::order.packing_final"
+        publication
+            id "publication:lifecycle"
+
+    use "ddn.examples.hierarchicalstate::order.start" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.start"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.start"
+
+    use "ddn.examples.hierarchicalstate::order.draft" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.draft"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.draft"
+
+    use "ddn.examples.hierarchicalstate::order.fulfillment" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.fulfillment"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.fulfillment"
+
+    use "ddn.examples.hierarchicalstate::order.closed" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.closed"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.closed"
+
+    use "ddn.examples.hierarchicalstate::order.done" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.done"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.done"
+
+    use "ddn.examples.hierarchicalstate::order.payment_initial" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.payment_initial"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.payment_initial"
+
+    use "ddn.examples.hierarchicalstate::order.awaiting" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.awaiting"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.awaiting"
+
+    use "ddn.examples.hierarchicalstate::order.paid" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.paid"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.paid"
+
+    use "ddn.examples.hierarchicalstate::order.payment_final" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.payment_final"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.payment_final"
+
+    use "ddn.examples.hierarchicalstate::order.packing_initial" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.packing_initial"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.packing_initial"
+
+    use "ddn.examples.hierarchicalstate::order.open" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.open"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.open"
+
+    use "ddn.examples.hierarchicalstate::order.packed" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.packed"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.packed"
+
+    use "ddn.examples.hierarchicalstate::order.packing_final" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.packing_final"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.packing_final"
+
+    use "ddn.examples.hierarchicalstate::order.begin" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.begin"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.begin"
+
+    use "ddn.examples.hierarchicalstate::order.submit" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.submit"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.submit"
+
+    use "ddn.examples.hierarchicalstate::order.pay" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.pay"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.pay"
+
+    use "ddn.examples.hierarchicalstate::order.paid_ev" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.paid_ev"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.paid_ev"
+
+    use "ddn.examples.hierarchicalstate::order.payment_end" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.payment_end"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.payment_end"
+
+    use "ddn.examples.hierarchicalstate::order.pack_start" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.pack_start"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.pack_start"
+
+    use "ddn.examples.hierarchicalstate::order.packed_ev" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.packed_ev"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.packed_ev"
+
+    use "ddn.examples.hierarchicalstate::order.packing_end" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.packing_end"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.packing_end"
+
+    use "ddn.examples.hierarchicalstate::order.ship" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.ship"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.ship"
+
+    use "ddn.examples.hierarchicalstate::order.finish" named "appearance:lifecycle:ddn.examples.hierarchicalstate::order.finish"
+        with
+            id "appearance:lifecycle:ddn.examples.hierarchicalstate::order.finish"

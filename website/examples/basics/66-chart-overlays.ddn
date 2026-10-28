@@ -1,48 +1,358 @@
-ddn "0.5";
-module "ddn.examples.chart-overlays";
+version ddn-next-1
 
-// Synthetic bench results: mean render times with measurement error bars, and
-// a payload/latency scatter with regression and loess trend overlays.
-// All data is synthetic.
-records bench {
-    columns: stage, ms, err, unit;
-    label_column: stage;
-    row b1: "parser", 18, 2.5, "ms";
-    row b2: "layout", 42, 5, "ms";
-    row b3: "routing", 31, 4, "ms";
-    row b4: "render", 55, 6.5, "ms";
-    row b5: "export", 12, 1.5, "ms";
-}
+publication "publication:errorbars"
+    with
+        id "publication:errorbars"
+        title "Stage timings with measurement error / bar + error bars"
+        targets
+            item
+                target
+                    id "errorbars"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data samples {
-    record s1 "p1" {x_record: {"kb": 8, "ms": 24}; }
-    record s2 "p2" {x_record: {"kb": 15, "ms": 31}; }
-    record s3 "p3" {x_record: {"kb": 22, "ms": 39}; }
-    record s4 "p4" {x_record: {"kb": 30, "ms": 44}; }
-    record s5 "p5" {x_record: {"kb": 38, "ms": 58}; }
-    record s6 "p6" {x_record: {"kb": 47, "ms": 61}; }
-    record s7 "p7" {x_record: {"kb": 55, "ms": 79}; }
-    record s8 "p8" {x_record: {"kb": 64, "ms": 82}; }
-    record s9 "p9" {x_record: {"kb": 72, "ms": 97}; }
-    record s10 "p10" {x_record: {"kb": 81, "ms": 103}; }
-    record s11 "p11" {x_record: {"kb": 90, "ms": 118}; }
-    record s12 "p12" {x_record: {"kb": 99, "ms": 121}; }
-}
 
-view errorbars "Stage timings with measurement error / bar + error bars" {
-    data: [@bench];
-    projection { kind:chart; profile:"chart.basic@1"; records:[@bench.b1, @bench.b2, @bench.b3, @bench.b4, @bench.b5]; mark:bar; x:"x_record.stage"; y:"x_record.ms"; error:"x_record.err"; unit:"ms"; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:regression"
+    with
+        id "publication:regression"
+        title "Payload vs latency / point + least-squares trend"
+        targets
+            item
+                target
+                    id "regression"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view regression "Payload vs latency / point + least-squares trend" {
-    data: [@samples];
-    projection { kind:chart; profile:"chart.basic@1"; records:[@samples.s1, @samples.s2, @samples.s3, @samples.s4, @samples.s5, @samples.s6, @samples.s7, @samples.s8, @samples.s9, @samples.s10, @samples.s11, @samples.s12]; mark:point; x:"x_record.kb"; x_type:number; y:"x_record.ms"; trend:linear; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
 
-view loess "Payload vs latency / point + loess trend" {
-    data: [@samples];
-    projection { kind:chart; profile:"chart.basic@1"; records:[@samples.s1, @samples.s2, @samples.s3, @samples.s4, @samples.s5, @samples.s6, @samples.s7, @samples.s8, @samples.s9, @samples.s10, @samples.s11, @samples.s12]; mark:point; x:"x_record.kb"; x_type:number; y:"x_record.ms"; trend:loess; width:1120px; height:620px; }
-    publication { size: content; fit: none; }
-}
+publication "publication:loess"
+    with
+        id "publication:loess"
+        title "Payload vs latency / point + loess trend"
+        targets
+            item
+                target
+                    id "loess"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.chart-overlays::bench.b1" as "record"
+    with
+        id "ddn.examples.chart-overlays::bench.b1"
+        title "parser"
+        metadata
+            x_record
+                stage "parser"
+                ms 18
+                err 2.5
+                unit "ms"
+
+
+element "ddn.examples.chart-overlays::bench.b2" as "record"
+    with
+        id "ddn.examples.chart-overlays::bench.b2"
+        title "layout"
+        metadata
+            x_record
+                stage "layout"
+                ms 42
+                err 5
+                unit "ms"
+
+
+element "ddn.examples.chart-overlays::bench.b3" as "record"
+    with
+        id "ddn.examples.chart-overlays::bench.b3"
+        title "routing"
+        metadata
+            x_record
+                stage "routing"
+                ms 31
+                err 4
+                unit "ms"
+
+
+element "ddn.examples.chart-overlays::bench.b4" as "record"
+    with
+        id "ddn.examples.chart-overlays::bench.b4"
+        title "render"
+        metadata
+            x_record
+                stage "render"
+                ms 55
+                err 6.5
+                unit "ms"
+
+
+element "ddn.examples.chart-overlays::bench.b5" as "record"
+    with
+        id "ddn.examples.chart-overlays::bench.b5"
+        title "export"
+        metadata
+            x_record
+                stage "export"
+                ms 12
+                err 1.5
+                unit "ms"
+
+
+element "ddn.examples.chart-overlays::samples.s1" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s1"
+        title "p1"
+        metadata
+            x_record
+                kb 8
+                ms 24
+
+
+element "ddn.examples.chart-overlays::samples.s2" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s2"
+        title "p2"
+        metadata
+            x_record
+                kb 15
+                ms 31
+
+
+element "ddn.examples.chart-overlays::samples.s3" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s3"
+        title "p3"
+        metadata
+            x_record
+                kb 22
+                ms 39
+
+
+element "ddn.examples.chart-overlays::samples.s4" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s4"
+        title "p4"
+        metadata
+            x_record
+                kb 30
+                ms 44
+
+
+element "ddn.examples.chart-overlays::samples.s5" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s5"
+        title "p5"
+        metadata
+            x_record
+                kb 38
+                ms 58
+
+
+element "ddn.examples.chart-overlays::samples.s6" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s6"
+        title "p6"
+        metadata
+            x_record
+                kb 47
+                ms 61
+
+
+element "ddn.examples.chart-overlays::samples.s7" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s7"
+        title "p7"
+        metadata
+            x_record
+                kb 55
+                ms 79
+
+
+element "ddn.examples.chart-overlays::samples.s8" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s8"
+        title "p8"
+        metadata
+            x_record
+                kb 64
+                ms 82
+
+
+element "ddn.examples.chart-overlays::samples.s9" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s9"
+        title "p9"
+        metadata
+            x_record
+                kb 72
+                ms 97
+
+
+element "ddn.examples.chart-overlays::samples.s10" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s10"
+        title "p10"
+        metadata
+            x_record
+                kb 81
+                ms 103
+
+
+element "ddn.examples.chart-overlays::samples.s11" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s11"
+        title "p11"
+        metadata
+            x_record
+                kb 90
+                ms 118
+
+
+element "ddn.examples.chart-overlays::samples.s12" as "record"
+    with
+        id "ddn.examples.chart-overlays::samples.s12"
+        title "p12"
+        metadata
+            x_record
+                kb 99
+                ms 121
+
+
+view "errorbars" as "chart.basic@1"
+    with
+        id "errorbars"
+        title "Stage timings with measurement error / bar + error bars"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.chart-overlays::bench.b1"
+                    item
+                        id "ddn.examples.chart-overlays::bench.b2"
+                    item
+                        id "ddn.examples.chart-overlays::bench.b3"
+                    item
+                        id "ddn.examples.chart-overlays::bench.b4"
+                    item
+                        id "ddn.examples.chart-overlays::bench.b5"
+                mark "bar"
+                x "metadata.x_record.stage"
+                y "metadata.x_record.ms"
+                error
+                    value "metadata.x_record.err"
+                unit "ms"
+                width 1120
+                height 620
+
+
+view "regression" as "chart.basic@1"
+    with
+        id "regression"
+        title "Payload vs latency / point + least-squares trend"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.chart-overlays::samples.s1"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s2"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s3"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s4"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s5"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s6"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s7"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s8"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s9"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s10"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s11"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s12"
+                mark "point"
+                x "metadata.x_record.kb"
+                x_type "number"
+                y "metadata.x_record.ms"
+                trend "linear"
+                width 1120
+                height 620
+
+
+view "loess" as "chart.basic@1"
+    with
+        id "loess"
+        title "Payload vs latency / point + loess trend"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.chart-overlays::samples.s1"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s2"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s3"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s4"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s5"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s6"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s7"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s8"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s9"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s10"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s11"
+                    item
+                        id "ddn.examples.chart-overlays::samples.s12"
+                mark "point"
+                x "metadata.x_record.kb"
+                x_type "number"
+                y "metadata.x_record.ms"
+                trend
+                    method "loess"
+                    show true
+                width 1120
+                height 620

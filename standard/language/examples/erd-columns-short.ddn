@@ -1,0 +1,8 @@
+erd Sales as field:rt.type:ct.domain:lt.key:ct.comment:lt
+    Customer
+        Key.int..primary key
+        name.varchar(25)
+        email..EmailAddress
+        notes...."Includes punctuation: . , : ( )"
+    Order
+    connect Customer to Order

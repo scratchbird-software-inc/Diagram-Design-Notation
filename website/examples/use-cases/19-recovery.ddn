@@ -1,16 +1,125 @@
-ddn "0.5";
-module "ddn.usecases.views.recovery";
-import "formats.ddn" as fmt;
-import "data/recovery.ddn" as r;
+version ddn-next-1
 
-// Which artifact is used to construct a recovery target?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "19 / Backup and restore design" {
-    data: [@r.model];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.row;
-    select: [@r.model.backup, @r.model.restore, @r.model.target];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "model.r_restore": 1, "model.r_output": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "19 / Backup and restore design"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.recovery::model.backup" as "backup"
+    with
+        id "ddn.usecases.recovery::model.backup"
+        title "Full backup artifact"
+        description "A synthetic backup-artifact definition; test evidence would be a separate assertion."
+
+
+element "ddn.usecases.recovery::model.restore" as "activity"
+    with
+        id "ddn.usecases.recovery::model.restore"
+        title "Restore into isolation"
+
+
+element "ddn.usecases.recovery::model.target" as "database"
+    with
+        id "ddn.usecases.recovery::model.target"
+        title "Restored database"
+        properties
+            level "instance"
+
+
+relation "ddn.usecases.recovery::model.r_restore" as "restore"
+    with
+        id "ddn.usecases.recovery::model.r_restore"
+        title "restores into"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.recovery::model.backup"
+            item
+                definition
+                    id "ddn.usecases.recovery::model.restore"
+
+
+relation "ddn.usecases.recovery::model.r_output" as "write"
+    with
+        id "ddn.usecases.recovery::model.r_output"
+        title "writes output to"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.recovery::model.restore"
+            item
+                definition
+                    id "ddn.usecases.recovery::model.target"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "19 / Backup and restore design"
+        selection
+            include
+                item
+                    id "ddn.usecases.recovery::model.backup"
+                item
+                    id "ddn.usecases.recovery::model.restore"
+                item
+                    id "ddn.usecases.recovery::model.target"
+                item
+                    id "ddn.usecases.recovery::model.r_restore"
+                item
+                    id "ddn.usecases.recovery::model.r_output"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_restore "1"
+                model.r_output "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.recovery::model.backup" named "appearance:diagram:ddn.usecases.recovery::model.backup"
+        with
+            id "appearance:diagram:ddn.usecases.recovery::model.backup"
+            body "notes"
+
+    use "ddn.usecases.recovery::model.restore" named "appearance:diagram:ddn.usecases.recovery::model.restore"
+        with
+            id "appearance:diagram:ddn.usecases.recovery::model.restore"
+
+    use "ddn.usecases.recovery::model.target" named "appearance:diagram:ddn.usecases.recovery::model.target"
+        with
+            id "appearance:diagram:ddn.usecases.recovery::model.target"
+
+    use "ddn.usecases.recovery::model.r_restore" named "appearance:diagram:ddn.usecases.recovery::model.r_restore"
+        with
+            id "appearance:diagram:ddn.usecases.recovery::model.r_restore"
+
+    use "ddn.usecases.recovery::model.r_output" named "appearance:diagram:ddn.usecases.recovery::model.r_output"
+        with
+            id "appearance:diagram:ddn.usecases.recovery::model.r_output"

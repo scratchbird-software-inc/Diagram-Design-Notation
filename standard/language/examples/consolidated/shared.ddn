@@ -1,0 +1,17 @@
+version ddn-next-1
+
+// This workarea is active only when this file is opened first.
+workarea SharedDesign as ddn
+    with
+        background.color "#ffffff"
+
+data CustomerFields
+    field.type.domain.key.comment
+    Key.int..primary key
+    name.varchar(25)
+    email..EmailAddress.."Preferred contact address."
+
+element Customer as entity from CustomerFields
+
+erd Support
+    use Customer

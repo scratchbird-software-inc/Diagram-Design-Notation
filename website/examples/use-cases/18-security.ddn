@@ -1,18 +1,294 @@
-ddn "0.5";
-module "ddn.usecases.views.security";
-import "formats.ddn" as fmt;
-import "data/security.ddn" as s;
+version ddn-next-1
 
-// What must happen before data leaves a restricted context?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "18 / Data handling boundaries" {
-    data: [@s.model];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.row;
-    select: [@s.model.source, @s.model.mask, @s.model.export];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "model.r_input": 1, "model.r_output": 2 }; }
-    frame restricted "RESTRICTED / view scope" { scope: @s.model.restricted; members: [@s.model.source]; }
-    frame review "REVIEW BEFORE RELEASE / view scope" { scope: @s.model.egress; members: [@s.model.export]; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "18 / Data handling boundaries"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.security::model.source.customer_id" as "field"
+    with
+        id "ddn.usecases.security::model.source.customer_id"
+        title "customer_id"
+        content
+            parent
+                id "ddn.usecases.security::model.source"
+            ordinal 0
+
+
+element "ddn.usecases.security::model.source.email" as "field"
+    with
+        id "ddn.usecases.security::model.source.email"
+        title "email"
+        content
+            parent
+                id "ddn.usecases.security::model.source"
+            ordinal 1
+
+
+element "ddn.usecases.security::model.source" as "dataset"
+    with
+        id "ddn.usecases.security::model.source"
+        title "Contact records"
+        properties
+            level "instance"
+        members
+            item
+                id "ddn.usecases.security::model.source.customer_id"
+            item
+                id "ddn.usecases.security::model.source.email"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "customer_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "email"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.security::model.mask" as "activity"
+    with
+        id "ddn.usecases.security::model.mask"
+        title "Aggregate + remove IDs"
+
+
+element "ddn.usecases.security::model.export.cohort_id" as "field"
+    with
+        id "ddn.usecases.security::model.export.cohort_id"
+        title "cohort_id"
+        content
+            parent
+                id "ddn.usecases.security::model.export"
+            ordinal 0
+
+
+element "ddn.usecases.security::model.export.count" as "field"
+    with
+        id "ddn.usecases.security::model.export.count"
+        title "count"
+        content
+            parent
+                id "ddn.usecases.security::model.export"
+            ordinal 1
+
+
+element "ddn.usecases.security::model.export" as "dataset"
+    with
+        id "ddn.usecases.security::model.export"
+        title "Proposed cohort export"
+        properties
+            level "instance"
+        members
+            item
+                id "ddn.usecases.security::model.export.cohort_id"
+            item
+                id "ddn.usecases.security::model.export.count"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "cohort_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "count"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.security::model.restricted" as "security_zone"
+    with
+        id "ddn.usecases.security::model.restricted"
+        title "Restricted processing"
+
+
+element "ddn.usecases.security::model.egress" as "security_zone"
+    with
+        id "ddn.usecases.security::model.egress"
+        title "Review before release"
+
+
+relation "ddn.usecases.security::model.r_input" as "read"
+    with
+        id "ddn.usecases.security::model.r_input"
+        title "read produces input for"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.security::model.source"
+            item
+                definition
+                    id "ddn.usecases.security::model.mask"
+
+
+relation "ddn.usecases.security::model.r_output" as "write"
+    with
+        id "ddn.usecases.security::model.r_output"
+        title "writes output to"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.security::model.mask"
+            item
+                definition
+                    id "ddn.usecases.security::model.export"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "18 / Data handling boundaries"
+        selection
+            include
+                item
+                    id "ddn.usecases.security::model.source"
+                item
+                    id "ddn.usecases.security::model.mask"
+                item
+                    id "ddn.usecases.security::model.export"
+                item
+                    id "ddn.usecases.security::model.r_input"
+                item
+                    id "ddn.usecases.security::model.r_output"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                model.r_input "1"
+                model.r_output "2"
+        background
+            color "#f6f8fc"
+        regions
+            item
+                id "ddn.usecases.views.security::diagram.restricted"
+                name "RESTRICTED / view scope"
+                scope
+                    id "ddn.usecases.security::model.restricted"
+                members
+                    item
+                        id "ddn.usecases.security::model.source"
+            item
+                id "ddn.usecases.views.security::diagram.review"
+                name "REVIEW BEFORE RELEASE / view scope"
+                scope
+                    id "ddn.usecases.security::model.egress"
+                members
+                    item
+                        id "ddn.usecases.security::model.export"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.security::model.source" named "appearance:diagram:ddn.usecases.security::model.source"
+        with
+            id "appearance:diagram:ddn.usecases.security::model.source"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.security::model.mask" named "appearance:diagram:ddn.usecases.security::model.mask"
+        with
+            id "appearance:diagram:ddn.usecases.security::model.mask"
+
+    use "ddn.usecases.security::model.export" named "appearance:diagram:ddn.usecases.security::model.export"
+        with
+            id "appearance:diagram:ddn.usecases.security::model.export"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.security::model.r_input" named "appearance:diagram:ddn.usecases.security::model.r_input"
+        with
+            id "appearance:diagram:ddn.usecases.security::model.r_input"
+
+    use "ddn.usecases.security::model.r_output" named "appearance:diagram:ddn.usecases.security::model.r_output"
+        with
+            id "appearance:diagram:ddn.usecases.security::model.r_output"

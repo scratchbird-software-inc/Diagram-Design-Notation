@@ -1,45 +1,407 @@
-ddn "0.5";
-module "ddn.examples.story-map";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:storymap"
+    with
+        id "publication:storymap"
+        title "Shop rebuild / story map"
+        targets
+            item
+                target
+                    id "storymap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// Synthetic shop-rebuild story map (all data invented): five ordered backbone
-// activities as columns and two releases as rows (top = first release). Cells are
-// declared analysis.task story objects carried by assoc relations with x_story.task;
-// two stories share the r1 × checkout cell, exercising duplicates:join.
-data shop {
-    object browse "Browse catalogue" { kind: "analysis.task"; description: "Synthetic backbone activity: the shopper explores the catalogue."; }
-    object configure "Configure item" { kind: "analysis.task"; description: "Synthetic backbone activity: the shopper configures the chosen item."; }
-    object checkout "Check out" { kind: "analysis.task"; description: "Synthetic backbone activity: the shopper completes the order."; }
-    object pay "Pay" { kind: "analysis.task"; description: "Synthetic backbone activity: the shopper pays for the order."; }
-    object fulfil "Fulfil order" { kind: "analysis.task"; description: "Synthetic backbone activity: the shop fulfils the order."; }
-    record r1 "Release 1 · walkable skeleton" {description: "Synthetic first release: the thinnest end-to-end purchase path."; }
-    record r2 "Release 2 · polish" {description: "Synthetic second release: convenience and polish stories."; }
-    object s_list "List products" { kind: "analysis.task"; description: "Synthetic story: show a plain product list."; }
-    object s_search "Search by name" { kind: "analysis.task"; description: "Synthetic story: find products by name."; }
-    object s_photo "Photo gallery" { kind: "analysis.task"; description: "Synthetic story: browse item photos."; }
-    object s_cart "Cart" { kind: "analysis.task"; description: "Synthetic story: keep items in a cart."; }
-    object s_guest "Guest checkout" { kind: "analysis.task"; description: "Synthetic story: check out without an account."; }
-    object s_account "Account checkout" { kind: "analysis.task"; description: "Synthetic story: check out with a saved account."; }
-    object s_card "Card payment" { kind: "analysis.task"; description: "Synthetic story: pay by card."; }
-    object s_wallet "Wallet payment" { kind: "analysis.task"; description: "Synthetic story: pay with a wallet balance."; }
-    object s_pick "Picking list" { kind: "analysis.task"; description: "Synthetic story: warehouse picking list for the order."; }
-    object s_track "Tracking page" { kind: "analysis.task"; description: "Synthetic story: shipment tracking page."; }
-    relation r1_list @r1 -> @browse { kind: assoc; x_story: { task: @s_list }; }
-    relation r1_cart @r1 -> @configure { kind: assoc; x_story: { task: @s_cart }; }
-    relation r1_guest @r1 -> @checkout { kind: assoc; x_story: { task: @s_guest }; }
-    relation r1_account @r1 -> @checkout { kind: assoc; x_story: { task: @s_account }; }
-    relation r1_card @r1 -> @pay { kind: assoc; x_story: { task: @s_card }; }
-    relation r1_pick @r1 -> @fulfil { kind: assoc; x_story: { task: @s_pick }; }
-    relation r2_search @r2 -> @browse { kind: assoc; x_story: { task: @s_search }; }
-    relation r2_photo @r2 -> @configure { kind: assoc; x_story: { task: @s_photo }; }
-    relation r2_wallet @r2 -> @pay { kind: assoc; x_story: { task: @s_wallet }; }
-    relation r2_track @r2 -> @fulfil { kind: assoc; x_story: { task: @s_track }; }
-}
 
-view storymap "Shop rebuild / story map" {
-    layout { gap: 112px; row_gap: 112px; }
-    data: [@shop];
-    format: @shared.styles.technical;
-    projection { kind:matrix; profile:"matrix.storymap@1"; rows:[@shop.r1, @shop.r2]; columns:[@shop.browse, @shop.configure, @shop.checkout, @shop.pay, @shop.fulfil]; relation:"assoc"; value:"x_story.task"; duplicates:join; }
-}
+element "ddn.examples.story-map::shop.browse" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.browse"
+        title "Browse catalogue"
+        description "Synthetic backbone activity: the shopper explores the catalogue."
+
+
+element "ddn.examples.story-map::shop.configure" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.configure"
+        title "Configure item"
+        description "Synthetic backbone activity: the shopper configures the chosen item."
+
+
+element "ddn.examples.story-map::shop.checkout" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.checkout"
+        title "Check out"
+        description "Synthetic backbone activity: the shopper completes the order."
+
+
+element "ddn.examples.story-map::shop.pay" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.pay"
+        title "Pay"
+        description "Synthetic backbone activity: the shopper pays for the order."
+
+
+element "ddn.examples.story-map::shop.fulfil" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.fulfil"
+        title "Fulfil order"
+        description "Synthetic backbone activity: the shop fulfils the order."
+
+
+element "ddn.examples.story-map::shop.r1" as "record"
+    with
+        id "ddn.examples.story-map::shop.r1"
+        title "Release 1 · walkable skeleton"
+        description "Synthetic first release: the thinnest end-to-end purchase path."
+
+
+element "ddn.examples.story-map::shop.r2" as "record"
+    with
+        id "ddn.examples.story-map::shop.r2"
+        title "Release 2 · polish"
+        description "Synthetic second release: convenience and polish stories."
+
+
+element "ddn.examples.story-map::shop.s_list" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.s_list"
+        title "List products"
+        description "Synthetic story: show a plain product list."
+
+
+element "ddn.examples.story-map::shop.s_search" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.s_search"
+        title "Search by name"
+        description "Synthetic story: find products by name."
+
+
+element "ddn.examples.story-map::shop.s_photo" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.s_photo"
+        title "Photo gallery"
+        description "Synthetic story: browse item photos."
+
+
+element "ddn.examples.story-map::shop.s_cart" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.s_cart"
+        title "Cart"
+        description "Synthetic story: keep items in a cart."
+
+
+element "ddn.examples.story-map::shop.s_guest" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.s_guest"
+        title "Guest checkout"
+        description "Synthetic story: check out without an account."
+
+
+element "ddn.examples.story-map::shop.s_account" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.s_account"
+        title "Account checkout"
+        description "Synthetic story: check out with a saved account."
+
+
+element "ddn.examples.story-map::shop.s_card" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.s_card"
+        title "Card payment"
+        description "Synthetic story: pay by card."
+
+
+element "ddn.examples.story-map::shop.s_wallet" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.s_wallet"
+        title "Wallet payment"
+        description "Synthetic story: pay with a wallet balance."
+
+
+element "ddn.examples.story-map::shop.s_pick" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.s_pick"
+        title "Picking list"
+        description "Synthetic story: warehouse picking list for the order."
+
+
+element "ddn.examples.story-map::shop.s_track" as "analysis.task"
+    with
+        id "ddn.examples.story-map::shop.s_track"
+        title "Tracking page"
+        description "Synthetic story: shipment tracking page."
+
+
+relation "ddn.examples.story-map::shop.r1_list" as "assoc"
+    with
+        id "ddn.examples.story-map::shop.r1_list"
+        title "associated with"
+        metadata
+            x_story
+                task
+                    id "ddn.examples.story-map::shop.s_list"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.story-map::shop.r1"
+            item
+                definition
+                    id "ddn.examples.story-map::shop.browse"
+
+
+relation "ddn.examples.story-map::shop.r1_cart" as "assoc"
+    with
+        id "ddn.examples.story-map::shop.r1_cart"
+        title "associated with"
+        metadata
+            x_story
+                task
+                    id "ddn.examples.story-map::shop.s_cart"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.story-map::shop.r1"
+            item
+                definition
+                    id "ddn.examples.story-map::shop.configure"
+
+
+relation "ddn.examples.story-map::shop.r1_guest" as "assoc"
+    with
+        id "ddn.examples.story-map::shop.r1_guest"
+        title "associated with"
+        metadata
+            x_story
+                task
+                    id "ddn.examples.story-map::shop.s_guest"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.story-map::shop.r1"
+            item
+                definition
+                    id "ddn.examples.story-map::shop.checkout"
+
+
+relation "ddn.examples.story-map::shop.r1_account" as "assoc"
+    with
+        id "ddn.examples.story-map::shop.r1_account"
+        title "associated with"
+        metadata
+            x_story
+                task
+                    id "ddn.examples.story-map::shop.s_account"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.story-map::shop.r1"
+            item
+                definition
+                    id "ddn.examples.story-map::shop.checkout"
+
+
+relation "ddn.examples.story-map::shop.r1_card" as "assoc"
+    with
+        id "ddn.examples.story-map::shop.r1_card"
+        title "associated with"
+        metadata
+            x_story
+                task
+                    id "ddn.examples.story-map::shop.s_card"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.story-map::shop.r1"
+            item
+                definition
+                    id "ddn.examples.story-map::shop.pay"
+
+
+relation "ddn.examples.story-map::shop.r1_pick" as "assoc"
+    with
+        id "ddn.examples.story-map::shop.r1_pick"
+        title "associated with"
+        metadata
+            x_story
+                task
+                    id "ddn.examples.story-map::shop.s_pick"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.story-map::shop.r1"
+            item
+                definition
+                    id "ddn.examples.story-map::shop.fulfil"
+
+
+relation "ddn.examples.story-map::shop.r2_search" as "assoc"
+    with
+        id "ddn.examples.story-map::shop.r2_search"
+        title "associated with"
+        metadata
+            x_story
+                task
+                    id "ddn.examples.story-map::shop.s_search"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.story-map::shop.r2"
+            item
+                definition
+                    id "ddn.examples.story-map::shop.browse"
+
+
+relation "ddn.examples.story-map::shop.r2_photo" as "assoc"
+    with
+        id "ddn.examples.story-map::shop.r2_photo"
+        title "associated with"
+        metadata
+            x_story
+                task
+                    id "ddn.examples.story-map::shop.s_photo"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.story-map::shop.r2"
+            item
+                definition
+                    id "ddn.examples.story-map::shop.configure"
+
+
+relation "ddn.examples.story-map::shop.r2_wallet" as "assoc"
+    with
+        id "ddn.examples.story-map::shop.r2_wallet"
+        title "associated with"
+        metadata
+            x_story
+                task
+                    id "ddn.examples.story-map::shop.s_wallet"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.story-map::shop.r2"
+            item
+                definition
+                    id "ddn.examples.story-map::shop.pay"
+
+
+relation "ddn.examples.story-map::shop.r2_track" as "assoc"
+    with
+        id "ddn.examples.story-map::shop.r2_track"
+        title "associated with"
+        metadata
+            x_story
+                task
+                    id "ddn.examples.story-map::shop.s_track"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.story-map::shop.r2"
+            item
+                definition
+                    id "ddn.examples.story-map::shop.fulfil"
+
+
+view "storymap" as "matrix.storymap@1"
+    with
+        id "storymap"
+        title "Shop rebuild / story map"
+        selection
+            include
+                item
+                    id "ddn.examples.story-map::shop.browse"
+                item
+                    id "ddn.examples.story-map::shop.configure"
+                item
+                    id "ddn.examples.story-map::shop.checkout"
+                item
+                    id "ddn.examples.story-map::shop.pay"
+                item
+                    id "ddn.examples.story-map::shop.fulfil"
+                item
+                    id "ddn.examples.story-map::shop.r1"
+                item
+                    id "ddn.examples.story-map::shop.r2"
+                item
+                    id "ddn.examples.story-map::shop.r1_list"
+                item
+                    id "ddn.examples.story-map::shop.r1_cart"
+                item
+                    id "ddn.examples.story-map::shop.r1_guest"
+                item
+                    id "ddn.examples.story-map::shop.r1_account"
+                item
+                    id "ddn.examples.story-map::shop.r1_card"
+                item
+                    id "ddn.examples.story-map::shop.r1_pick"
+                item
+                    id "ddn.examples.story-map::shop.r2_search"
+                item
+                    id "ddn.examples.story-map::shop.r2_photo"
+                item
+                    id "ddn.examples.story-map::shop.r2_wallet"
+                item
+                    id "ddn.examples.story-map::shop.r2_track"
+                item
+                    id "ddn.examples.story-map::shop.s_list"
+                item
+                    id "ddn.examples.story-map::shop.s_cart"
+                item
+                    id "ddn.examples.story-map::shop.s_guest"
+                item
+                    id "ddn.examples.story-map::shop.s_account"
+                item
+                    id "ddn.examples.story-map::shop.s_card"
+                item
+                    id "ddn.examples.story-map::shop.s_pick"
+                item
+                    id "ddn.examples.story-map::shop.s_search"
+                item
+                    id "ddn.examples.story-map::shop.s_photo"
+                item
+                    id "ddn.examples.story-map::shop.s_wallet"
+                item
+                    id "ddn.examples.story-map::shop.s_track"
+        layout
+            algorithm "grid"
+            gap 112
+            row_gap 112
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                rows
+                    item
+                        id "ddn.examples.story-map::shop.r1"
+                    item
+                        id "ddn.examples.story-map::shop.r2"
+                columns
+                    item
+                        id "ddn.examples.story-map::shop.browse"
+                    item
+                        id "ddn.examples.story-map::shop.configure"
+                    item
+                        id "ddn.examples.story-map::shop.checkout"
+                    item
+                        id "ddn.examples.story-map::shop.pay"
+                    item
+                        id "ddn.examples.story-map::shop.fulfil"
+                relation "assoc"
+                value "metadata.x_story.task"
+                duplicates "join"

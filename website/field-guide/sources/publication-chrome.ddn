@@ -1,0 +1,251 @@
+version ddn-next-1
+
+publication "publication:overview"
+    with
+        id "publication:overview"
+        title "Billing path overview"
+        targets
+            item
+                target
+                    id "overview"
+                kind "view"
+        format "svg"
+        page
+            size "a4"
+            orientation "landscape"
+            margin
+                top 56.69291338582678
+                right 56.69291338582678
+                bottom 56.69291338582678
+                left 56.69291338582678
+            minimum_text 9.333333333333332
+        header
+            runs
+                left
+                    text "$title"
+                    align "left"
+                    size 12
+                    lines 1
+                right
+                    text "Release pack — $date"
+                    align "right"
+                    size 10.666666666666666
+                    lines 1
+            visible true
+        footer
+            runs
+                left
+                    text "$view_id"
+                    align "left"
+                    size 10.666666666666666
+                    lines 1
+                center
+                    text "Figure $figure"
+                    align "center"
+                    size 12
+                    lines 1
+                right
+                    text "Page $page"
+                    align "right"
+                    size 10.666666666666666
+                    lines 1
+            visible true
+        background
+            color "#f7f4ee"
+        border
+            width 1
+            style "solid"
+            color "#475569"
+
+
+publication "publication:detail"
+    with
+        id "publication:detail"
+        title "Billing path detail — rotated"
+        targets
+            item
+                target
+                    id "detail"
+                kind "view"
+        format "svg"
+        page
+            size "a4"
+            orientation "landscape"
+            margin
+                top 56.69291338582678
+                right 56.69291338582678
+                bottom 56.69291338582678
+                left 56.69291338582678
+            minimum_text 9.333333333333332
+        header
+            runs
+                left
+                    text "$title"
+                    align "left"
+                    size 12
+                    lines 1
+                right
+                    text "Release pack — $date"
+                    align "right"
+                    size 10.666666666666666
+                    lines 1
+            visible true
+        footer
+            runs
+                left
+                    text "$view_id"
+                    align "left"
+                    size 10.666666666666666
+                    lines 1
+                center
+                    text "Figure $figure"
+                    align "center"
+                    size 12
+                    lines 1
+                right
+                    text "Page $page"
+                    align "right"
+                    size 10.666666666666666
+                    lines 1
+            visible true
+        background
+            color "#f7f4ee"
+        border
+            width 1
+            style "solid"
+            color "#475569"
+
+
+element "ddn.fieldguide.pubchrome::model.gateway" as "service"
+    with
+        id "ddn.fieldguide.pubchrome::model.gateway"
+        title "Edge gateway"
+
+
+element "ddn.fieldguide.pubchrome::model.billing" as "service"
+    with
+        id "ddn.fieldguide.pubchrome::model.billing"
+        title "Billing service"
+
+
+element "ddn.fieldguide.pubchrome::model.ledger" as "database"
+    with
+        id "ddn.fieldguide.pubchrome::model.ledger"
+        title "Ledger"
+
+
+relation "ddn.fieldguide.pubchrome::model.charge" as "calls"
+    with
+        id "ddn.fieldguide.pubchrome::model.charge"
+        title "charges"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.pubchrome::model.gateway"
+            item
+                definition
+                    id "ddn.fieldguide.pubchrome::model.billing"
+
+
+relation "ddn.fieldguide.pubchrome::model.post" as "flow"
+    with
+        id "ddn.fieldguide.pubchrome::model.post"
+        title "posts"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.pubchrome::model.billing"
+            item
+                definition
+                    id "ddn.fieldguide.pubchrome::model.ledger"
+
+
+view "overview" as "ddn@1"
+    with
+        id "overview"
+        title "Billing path overview"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.pubchrome::model.gateway"
+                item
+                    id "ddn.fieldguide.pubchrome::model.billing"
+                item
+                    id "ddn.fieldguide.pubchrome::model.ledger"
+                item
+                    id "ddn.fieldguide.pubchrome::model.charge"
+                item
+                    id "ddn.fieldguide.pubchrome::model.post"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:overview"
+
+    use "ddn.fieldguide.pubchrome::model.gateway" named "appearance:overview:ddn.fieldguide.pubchrome::model.gateway"
+        with
+            id "appearance:overview:ddn.fieldguide.pubchrome::model.gateway"
+
+    use "ddn.fieldguide.pubchrome::model.billing" named "appearance:overview:ddn.fieldguide.pubchrome::model.billing"
+        with
+            id "appearance:overview:ddn.fieldguide.pubchrome::model.billing"
+
+    use "ddn.fieldguide.pubchrome::model.ledger" named "appearance:overview:ddn.fieldguide.pubchrome::model.ledger"
+        with
+            id "appearance:overview:ddn.fieldguide.pubchrome::model.ledger"
+
+    use "ddn.fieldguide.pubchrome::model.charge" named "appearance:overview:ddn.fieldguide.pubchrome::model.charge"
+        with
+            id "appearance:overview:ddn.fieldguide.pubchrome::model.charge"
+
+    use "ddn.fieldguide.pubchrome::model.post" named "appearance:overview:ddn.fieldguide.pubchrome::model.post"
+        with
+            id "appearance:overview:ddn.fieldguide.pubchrome::model.post"
+
+
+view "detail" as "ddn@1"
+    with
+        id "detail"
+        title "Billing path detail — rotated"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.pubchrome::model.gateway"
+                item
+                    id "ddn.fieldguide.pubchrome::model.billing"
+                item
+                    id "ddn.fieldguide.pubchrome::model.ledger"
+                item
+                    id "ddn.fieldguide.pubchrome::model.charge"
+                item
+                    id "ddn.fieldguide.pubchrome::model.post"
+        layout
+            center "pins"
+            direction "down"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:detail"
+
+    use "ddn.fieldguide.pubchrome::model.gateway" named "appearance:detail:ddn.fieldguide.pubchrome::model.gateway"
+        with
+            id "appearance:detail:ddn.fieldguide.pubchrome::model.gateway"
+
+    use "ddn.fieldguide.pubchrome::model.billing" named "appearance:detail:ddn.fieldguide.pubchrome::model.billing"
+        with
+            id "appearance:detail:ddn.fieldguide.pubchrome::model.billing"
+
+    use "ddn.fieldguide.pubchrome::model.ledger" named "appearance:detail:ddn.fieldguide.pubchrome::model.ledger"
+        with
+            id "appearance:detail:ddn.fieldguide.pubchrome::model.ledger"
+
+    use "ddn.fieldguide.pubchrome::model.charge" named "appearance:detail:ddn.fieldguide.pubchrome::model.charge"
+        with
+            id "appearance:detail:ddn.fieldguide.pubchrome::model.charge"
+
+    use "ddn.fieldguide.pubchrome::model.post" named "appearance:detail:ddn.fieldguide.pubchrome::model.post"
+        with
+            id "appearance:detail:ddn.fieldguide.pubchrome::model.post"

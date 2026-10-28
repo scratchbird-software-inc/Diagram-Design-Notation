@@ -1,70 +1,7 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Documentation — DDN</title>
-<link rel="icon" type="image/x-icon" href="../assets/brand/favicon.ico">
-<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
-<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
-<link rel="stylesheet" href="../assets/site.css">
-</head>
-<body>
-<header class="site-header"><div class="bar">
-  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn-dark.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
-  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
-  <nav class="site-nav">
-      <a href="../index.html">Home</a>
-      <a href="../features/index.html">Features</a>
-      <a href="../gallery/index.html">Gallery</a>
-      <a href="../icons/index.html">Icons</a>
-      <a href="../guide/index.html">Guide</a>
-      <a href="../reference/index.html">Reference</a>
-      <a href="../docs/index.html" class="active">Docs</a>
-      <a href="../standard/index.html">Standard</a>
-      <a href="../tools/index.html">Tools</a>
-      <a href="../download/index.html">Download</a>
-      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
-  </nav>
-</div></header>
-<main class="site-main">
-<h1 class="page-title">Documentation</h1>
-<p class="lede">Developer documentation for embedding, the workspace API, styling hooks, data refresh, and authoring .ddn sources — rendered from the Markdown in <code>website/docs/</code>.</p>
-<p><a href="developers/workspace-guide.html">Start with the DDN/DDNA/DDNN workspace walkthrough</a> — current functionality, file lifecycle and limitations.</p>
-<h2>Developer guide</h2>
-<ul>
-  <li><a href="developers/api-reference.html">API reference</a></li>
-  <li><a href="developers/authoring-sources.html">Authoring .ddn sources</a></li>
-  <li><a href="developers/data-refresh.html">Data refresh (live dashboards)</a></li>
-  <li><a href="developers/embedding.html">Embedding</a></li>
-  <li><a href="developers/getting-started.html">Getting started</a></li>
-  <li><a href="developers/icon-packs.html">Icon packs</a></li>
-  <li><a href="developers/limits.html">Limits &amp; capabilities</a></li>
-  <li><a href="developers/migration-0.5-to-0.6.html">Migration: 0.5 → 0.7.0</a></li>
-  <li><a href="developers/modules.html">Modules and bundles</a></li>
-  <li><a href="developers/README.html">DDN developer documentation</a></li>
-  <li><a href="developers/styling.html">Styling rendered diagrams</a></li>
-  <li><a href="developers/tool.html">Unified diagram tool</a></li>
-  <li><a href="developers/viewer.html">Viewer (retired)</a></li>
-  <li><a href="developers/workspace-guide.html">Working with DDN, DDNA and DDNN</a></li>
-</ul><h2>Engineering notes</h2>
-<ul>
-  <li><a href="notes/HANDDRAWN-FIX.html">Hand-drawn rendering correction — draft.2</a></li>
-  <li><a href="notes/ROUTING-PATCH.html">DDN 0.7.0 — endpoint-ordering replacement patch</a></li>
-</ul>
-</main>
-<footer class="site-footer"><div class="inner">
-  <span>ddn 0.8.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
-  <span><img src="../assets/brand/scratchweaver-dark.svg" alt="ScratchWeaver logo" style="height:25px;vertical-align:middle"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
-  <a href="../license/index.html">License: GPL-2.0-or-later</a>
-  <a href="../docs/index.html">Docs</a>
-  <a href="../standard/index.html">Standard</a>
-  <a href="../download/index.html">Download</a>
-  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
-  <span class="spacer"></span>
-  <span>All processing is local to this page.</span>
-</div></footer>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"><meta name="description" content="DDN is free, open-source diagramming under GPLv2 or later, sponsored by ScratchBird Software Inc. Explore the language, viewer, designer and verifier."><title>Documentation · DDN</title><link rel="icon" href="../assets/brand/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/site.css"><script>try{let n=JSON.parse(localStorage.getItem('ddn.interface.v1')||'null')?.name,q=new URLSearchParams(location.search).get('theme');if(['light','dark','midnight','warm'].includes(q))n=q;if(['light','dark','midnight','warm'].includes(n))document.documentElement.dataset.theme=n;}catch{}</script></head>
+<body data-site-root="../"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="bar"><a class="wordmark" href="../index.html"><img class="logo" data-brand="ddn" src="../assets/brand/ddn-dark.svg" alt="DDN"><span class="name">Diagram Design Notation<small>Design · describe · connect</small></span></a><nav class="site-nav" id="site-nav" aria-label="Main"><a href="../index.html">Home</a><a href="../features/index.html">Features</a><a href="../gallery/index.html">Gallery</a><a href="../icons/index.html">Icons</a><a href="../guide/index.html">Guide</a><a href="../reference/index.html">Reference</a><a href="../docs/index.html" class="active" aria-current="page">Docs</a><a href="../standard/index.html">Standard</a><a href="../tools/index.html">Tools</a><a href="../download/index.html">Download</a></nav><div class="header-controls"><label class="site-theme"><span class="sr-only">Website theme</span><select data-site-theme aria-label="Website theme"><option value="dark">Dark</option><option value="light">Light</option><option value="midnight">Midnight</option><option value="warm">Warm</option></select></label><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button></div></div><div class="project-bar">Free and open source · <a href="../license/index.html" rel="license">GPLv2 or later</a> · Sponsored by <a href="https://scratchbird.ca">ScratchBird Software Inc.</a></div></header>
+<main id="main"><p class="eyebrow">Developer guide</p><h1 class="page-title">Build with the DDN utilities.</h1><p class="lede">The model, language and rule modules are independent of the browser. DOM adapters provide viewing and editing; the host supplies IO and authority.</p><div class="grid"><a class="card" href="embedding.html"><h3>Embed a viewer</h3><p>Create a complete runtime, open source files and mount the read-only browser adapter.</p></a><a class="card" href="modular.html"><h3>Load only the required tools</h3><p>Offline packs, shared modules and automatic diagram-family loading.</p></a><a class="card" href="architecture.html"><h3>Module responsibilities</h3><p>How parser, model, profiles, defaults, runtime, presentation and utility adapters fit together.</p></a><a class="card" href="../guide/language.html"><h3>Author the source</h3><p>Use the adopted dialect and property codex rather than the deprecated prototype language.</p></a><a class="card" href="../download/index.html"><h3>Local distributions</h3><p>Open complete HTML utilities directly from disk or embed the shared module tree.</p></a></div><section><h2>Choose the API for the responsibility</h2><p>The viewer observes and captures. The designer applies authorized commands through the shared runtime. The verifier checks the selected scope and reports completeness and unsupported capabilities explicitly. Source parsing does not execute arbitrary scripts or fetch missing dependencies.</p></section></main>
+<footer class="site-footer"><div class="inner"><div class="footer-brand"><a href="https://scratchbird.ca" aria-label="ScratchBird Software Inc."><img data-brand="scratchbird" src="../assets/brand/scratchbird-dark.svg" alt="ScratchBird"></a><p>© ScratchBird Software Inc. and DDN contributors.<br><a href="../license/index.html" rel="license">Free and open source — GPLv2 or later</a></p></div><span class="spacer"></span><p><a href="../guide/quick-start.html">Start with a few lines</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation">DDN project</a> · <a href="../license/index.html">Licence &amp; sponsorship</a></p><nav class="suite-links" aria-label="ScratchBird suite"><a href="https://scratchbird.ca">ScratchBird Software Inc.</a><a href="https://scratchbird.ca/weaver">Weaver · commercial</a><a href="https://scratchbird.ca/bird">ScratchBird CDE</a><a href="https://scratchbird.ca/robin">ScratchRobin</a></nav><p class="project-note">DDN is free software for general public use, sponsored by ScratchBird Software Inc. Weaver is a separate commercial platform in the ScratchBird suite of systems software.</p></div></footer>
 <script src="../assets/site.js"></script>
-</body>
-</html>
+</body></html>

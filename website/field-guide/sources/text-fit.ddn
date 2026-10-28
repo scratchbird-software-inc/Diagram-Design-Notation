@@ -1,0 +1,168 @@
+version ddn-next-1
+
+publication "publication:fitted"
+    with
+        id "publication:fitted"
+        title "Fitted boxes — wrap, grow and shrink"
+        targets
+            item
+                target
+                    id "fitted"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:overflow"
+    with
+        id "publication:overflow"
+        title "Residual overflow — diagnosed, marked, not hidden"
+        targets
+            item
+                target
+                    id "overflow"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.textfit::notes.summary" as "note"
+    with
+        id "ddn.fieldguide.textfit::notes.summary"
+        title "Quarterly summary: ingestion stayed within budget while the archive backlog grew; see the recovery report for the two incidents that drove the overage."
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "text_fit": "wrap",
+                      "max_width": 300,
+                      "max_height": 340
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.textfit::notes.badge" as "note"
+    with
+        id "ddn.fieldguide.textfit::notes.badge"
+        title "OK"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "text_fit": "grow",
+                      "max_width": 240,
+                      "max_height": 120
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.textfit::notes.caption" as "term"
+    with
+        id "ddn.fieldguide.textfit::notes.caption"
+        title "A rather long caption that must still fit its box"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "text_fit": "shrink",
+                      "min_font": 10
+                    }
+                format "plain"
+
+
+element "ddn.fieldguide.textfit::tight.cramped" as "note"
+    with
+        id "ddn.fieldguide.textfit::tight.cramped"
+        title "This note carries far more text than its declared bounds can ever hold, so the overflow diagnostic fires and the render clips at the box edge with a visible ellipsis marker instead of hiding text."
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "text_fit": "wrap",
+                      "max_width": 160,
+                      "max_height": 64
+                    }
+                format "plain"
+
+
+view "fitted" as "ddn@1"
+    with
+        id "fitted"
+        title "Fitted boxes — wrap, grow and shrink"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.textfit::notes.summary"
+                item
+                    id "ddn.fieldguide.textfit::notes.badge"
+                item
+                    id "ddn.fieldguide.textfit::notes.caption"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:fitted"
+
+    use "ddn.fieldguide.textfit::notes.summary" named "appearance:fitted:ddn.fieldguide.textfit::notes.summary"
+        with
+            id "appearance:fitted:ddn.fieldguide.textfit::notes.summary"
+            body "draft"
+            text
+                fit "wrap"
+                max_width 300
+                max_height 340
+
+    use "ddn.fieldguide.textfit::notes.badge" named "appearance:fitted:ddn.fieldguide.textfit::notes.badge"
+        with
+            id "appearance:fitted:ddn.fieldguide.textfit::notes.badge"
+            body "draft"
+            text
+                fit "grow"
+                max_width 240
+                max_height 120
+
+    use "ddn.fieldguide.textfit::notes.caption" named "appearance:fitted:ddn.fieldguide.textfit::notes.caption"
+        with
+            id "appearance:fitted:ddn.fieldguide.textfit::notes.caption"
+            text
+                fit "shrink"
+                min_font 10
+
+
+view "overflow" as "ddn@1"
+    with
+        id "overflow"
+        title "Residual overflow — diagnosed, marked, not hidden"
+        selection
+            include
+                item
+                    id "ddn.fieldguide.textfit::tight.cramped"
+        layout
+            center "pins"
+            quality "warn"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:overflow"
+
+    use "ddn.fieldguide.textfit::tight.cramped" named "appearance:overflow:ddn.fieldguide.textfit::tight.cramped"
+        with
+            id "appearance:overflow:ddn.fieldguide.textfit::tight.cramped"
+            body "draft"
+            text
+                fit "wrap"
+                max_width 160
+                max_height 64

@@ -1,0 +1,134 @@
+version ddn-next-1
+
+publication "publication:roadmap"
+    with
+        id "publication:roadmap"
+        title "Synthetic platform rebuild / roadmap"
+        targets
+            item
+                target
+                    id "roadmap"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "ddn.fieldguide.roadmap::phases.discover" as "flow.process"
+    with
+        id "ddn.fieldguide.roadmap::phases.discover"
+        title "Discover"
+        metadata
+            x_record
+                start "2026-01-05"
+                end "2026-02-13"
+                status "Complete"
+
+
+element "ddn.fieldguide.roadmap::phases.foundation" as "flow.process"
+    with
+        id "ddn.fieldguide.roadmap::phases.foundation"
+        title "Foundation"
+        metadata
+            x_record
+                start "2026-02-16"
+                end "2026-04-10"
+                status "Complete"
+
+
+element "ddn.fieldguide.roadmap::phases.build" as "flow.process"
+    with
+        id "ddn.fieldguide.roadmap::phases.build"
+        title "Build out"
+        metadata
+            x_record
+                start "2026-04-13"
+                end "2026-07-31"
+                status "In progress"
+
+
+element "ddn.fieldguide.roadmap::phases.harden" as "flow.process"
+    with
+        id "ddn.fieldguide.roadmap::phases.harden"
+        title "Harden and launch"
+        metadata
+            x_record
+                start "2026-08-03"
+                end "2026-10-09"
+                status "Planned"
+
+
+relation "ddn.fieldguide.roadmap::sequence.d_then_f" as "analysis.precedes"
+    with
+        id "ddn.fieldguide.roadmap::sequence.d_then_f"
+        title "Discovery gates foundation"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.roadmap::phases.discover"
+            item
+                definition
+                    id "ddn.fieldguide.roadmap::phases.foundation"
+
+
+relation "ddn.fieldguide.roadmap::sequence.f_then_b" as "analysis.precedes"
+    with
+        id "ddn.fieldguide.roadmap::sequence.f_then_b"
+        title "Foundation gates build"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.roadmap::phases.foundation"
+            item
+                definition
+                    id "ddn.fieldguide.roadmap::phases.build"
+
+
+relation "ddn.fieldguide.roadmap::sequence.b_then_h" as "analysis.precedes"
+    with
+        id "ddn.fieldguide.roadmap::sequence.b_then_h"
+        title "Build gates hardening"
+        endpoints
+            item
+                definition
+                    id "ddn.fieldguide.roadmap::phases.build"
+            item
+                definition
+                    id "ddn.fieldguide.roadmap::phases.harden"
+
+
+view "roadmap" as "timeline.basic@1"
+    with
+        id "roadmap"
+        title "Synthetic platform rebuild / roadmap"
+        selection
+            include empty list
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.fieldguide.roadmap::phases.discover"
+                    item
+                        id "ddn.fieldguide.roadmap::phases.foundation"
+                    item
+                        id "ddn.fieldguide.roadmap::phases.build"
+                    item
+                        id "ddn.fieldguide.roadmap::phases.harden"
+                start "metadata.x_record.start"
+                end "metadata.x_record.end"
+                dependencies
+                    item
+                        id "ddn.fieldguide.roadmap::sequence.d_then_f"
+                    item
+                        id "ddn.fieldguide.roadmap::sequence.f_then_b"
+                    item
+                        id "ddn.fieldguide.roadmap::sequence.b_then_h"
+                width 1250
+                label "title"

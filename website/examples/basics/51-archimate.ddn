@@ -1,44 +1,326 @@
-ddn "0.5";
-module "ddn.examples.archimate";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:landscape"
+    with
+        id "publication:landscape"
+        title "Order platform landscape"
+        targets
+            item
+                target
+                    id "landscape"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic ArchiMate-style layered view for the archimate.basic@1 profile.
-// Three layers — business (governance family), application (interface
-// family), technology (deployment family) — coloured from the registered
-// family palette. archi.rel serving links point upward only: technology
-// serves application serves business; downward links are rejected as
-// DDN-PJ123. The business_viewpoint view is a viewpoint as a named view
-// (select of the business-layer objects only). All data is synthetic. This
-// is profile-level coverage, not ArchiMate conformance.
-data m {
-    object service_agent "Service agent" { kind: "archi.business_actor"; }
-    object order_desk "Order desk" { kind: "archi.business_role"; }
-    object order_handling "Order handling" { kind: "archi.business_process"; }
-    object order_api "Order API" { kind: "archi.application_component"; }
-    object order_service "Order service" { kind: "archi.application_service"; }
-    object db_node "Database node" { kind: "archi.technology_node"; }
-    object db_service "Database service" { kind: "archi.technology_service"; }
 
-    relation staffing "staffs" @service_agent -> @order_desk { kind: "archi.rel"; }
-    relation handling "runs" @order_desk -> @order_handling { kind: "archi.rel"; }
-    relation serving_process "serves" @order_service -> @order_handling { kind: "archi.rel"; }
-    relation exposed_on "realised by" @order_service -> @order_api { kind: "archi.rel"; }
-    relation serving_app "serves" @db_service -> @order_api { kind: "archi.rel"; }
-    relation hosted_on "hosted on" @db_service -> @db_node { kind: "archi.rel"; }
-}
+publication "publication:business_viewpoint"
+    with
+        id "publication:business_viewpoint"
+        title "Order platform business viewpoint"
+        targets
+            item
+                target
+                    id "business_viewpoint"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view landscape "Order platform landscape" {
-    data: [@m]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "archimate.basic@1"; }
-    layout { algorithm: layered; direction: up; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
 
-view business_viewpoint "Order platform business viewpoint" {
-    data: [@m]; format: @shared.styles.technical;
-    projection { kind: graph; profile: "archimate.basic@1"; }
-    layout { algorithm: layered; direction: right; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-    select: [@m.service_agent, @m.order_desk, @m.order_handling];
-}
+element "ddn.examples.archimate::m.service_agent" as "archi.business_actor"
+    with
+        id "ddn.examples.archimate::m.service_agent"
+        title "Service agent"
+
+
+element "ddn.examples.archimate::m.order_desk" as "archi.business_role"
+    with
+        id "ddn.examples.archimate::m.order_desk"
+        title "Order desk"
+
+
+element "ddn.examples.archimate::m.order_handling" as "archi.business_process"
+    with
+        id "ddn.examples.archimate::m.order_handling"
+        title "Order handling"
+
+
+element "ddn.examples.archimate::m.order_api" as "archi.application_component"
+    with
+        id "ddn.examples.archimate::m.order_api"
+        title "Order API"
+
+
+element "ddn.examples.archimate::m.order_service" as "archi.application_service"
+    with
+        id "ddn.examples.archimate::m.order_service"
+        title "Order service"
+
+
+element "ddn.examples.archimate::m.db_node" as "archi.technology_node"
+    with
+        id "ddn.examples.archimate::m.db_node"
+        title "Database node"
+
+
+element "ddn.examples.archimate::m.db_service" as "archi.technology_service"
+    with
+        id "ddn.examples.archimate::m.db_service"
+        title "Database service"
+
+
+relation "ddn.examples.archimate::m.staffing" as "archi.rel"
+    with
+        id "ddn.examples.archimate::m.staffing"
+        title "staffs"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.archimate::m.service_agent"
+            item
+                definition
+                    id "ddn.examples.archimate::m.order_desk"
+
+
+relation "ddn.examples.archimate::m.handling" as "archi.rel"
+    with
+        id "ddn.examples.archimate::m.handling"
+        title "runs"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.archimate::m.order_desk"
+            item
+                definition
+                    id "ddn.examples.archimate::m.order_handling"
+
+
+relation "ddn.examples.archimate::m.serving_process" as "archi.rel"
+    with
+        id "ddn.examples.archimate::m.serving_process"
+        title "serves"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.archimate::m.order_service"
+            item
+                definition
+                    id "ddn.examples.archimate::m.order_handling"
+
+
+relation "ddn.examples.archimate::m.exposed_on" as "archi.rel"
+    with
+        id "ddn.examples.archimate::m.exposed_on"
+        title "realised by"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.archimate::m.order_service"
+            item
+                definition
+                    id "ddn.examples.archimate::m.order_api"
+
+
+relation "ddn.examples.archimate::m.serving_app" as "archi.rel"
+    with
+        id "ddn.examples.archimate::m.serving_app"
+        title "serves"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.archimate::m.db_service"
+            item
+                definition
+                    id "ddn.examples.archimate::m.order_api"
+
+
+relation "ddn.examples.archimate::m.hosted_on" as "archi.rel"
+    with
+        id "ddn.examples.archimate::m.hosted_on"
+        title "hosted on"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.archimate::m.db_service"
+            item
+                definition
+                    id "ddn.examples.archimate::m.db_node"
+
+
+view "landscape" as "archimate.basic@1"
+    with
+        id "landscape"
+        title "Order platform landscape"
+        selection
+            include
+                item
+                    id "ddn.examples.archimate::m.service_agent"
+                item
+                    id "ddn.examples.archimate::m.order_desk"
+                item
+                    id "ddn.examples.archimate::m.order_handling"
+                item
+                    id "ddn.examples.archimate::m.order_api"
+                item
+                    id "ddn.examples.archimate::m.order_service"
+                item
+                    id "ddn.examples.archimate::m.db_node"
+                item
+                    id "ddn.examples.archimate::m.db_service"
+                item
+                    id "ddn.examples.archimate::m.staffing"
+                item
+                    id "ddn.examples.archimate::m.handling"
+                item
+                    id "ddn.examples.archimate::m.serving_process"
+                item
+                    id "ddn.examples.archimate::m.exposed_on"
+                item
+                    id "ddn.examples.archimate::m.serving_app"
+                item
+                    id "ddn.examples.archimate::m.hosted_on"
+        layout
+            algorithm "layered"
+            direction "up"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:landscape"
+
+    use "ddn.examples.archimate::m.service_agent" named "appearance:landscape:ddn.examples.archimate::m.service_agent"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.service_agent"
+
+    use "ddn.examples.archimate::m.order_desk" named "appearance:landscape:ddn.examples.archimate::m.order_desk"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.order_desk"
+
+    use "ddn.examples.archimate::m.order_handling" named "appearance:landscape:ddn.examples.archimate::m.order_handling"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.order_handling"
+
+    use "ddn.examples.archimate::m.order_api" named "appearance:landscape:ddn.examples.archimate::m.order_api"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.order_api"
+
+    use "ddn.examples.archimate::m.order_service" named "appearance:landscape:ddn.examples.archimate::m.order_service"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.order_service"
+
+    use "ddn.examples.archimate::m.db_node" named "appearance:landscape:ddn.examples.archimate::m.db_node"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.db_node"
+
+    use "ddn.examples.archimate::m.db_service" named "appearance:landscape:ddn.examples.archimate::m.db_service"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.db_service"
+
+    use "ddn.examples.archimate::m.staffing" named "appearance:landscape:ddn.examples.archimate::m.staffing"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.staffing"
+
+    use "ddn.examples.archimate::m.handling" named "appearance:landscape:ddn.examples.archimate::m.handling"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.handling"
+
+    use "ddn.examples.archimate::m.serving_process" named "appearance:landscape:ddn.examples.archimate::m.serving_process"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.serving_process"
+
+    use "ddn.examples.archimate::m.exposed_on" named "appearance:landscape:ddn.examples.archimate::m.exposed_on"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.exposed_on"
+
+    use "ddn.examples.archimate::m.serving_app" named "appearance:landscape:ddn.examples.archimate::m.serving_app"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.serving_app"
+
+    use "ddn.examples.archimate::m.hosted_on" named "appearance:landscape:ddn.examples.archimate::m.hosted_on"
+        with
+            id "appearance:landscape:ddn.examples.archimate::m.hosted_on"
+
+
+view "business_viewpoint" as "archimate.basic@1"
+    with
+        id "business_viewpoint"
+        title "Order platform business viewpoint"
+        selection
+            include
+                item
+                    id "ddn.examples.archimate::m.service_agent"
+                item
+                    id "ddn.examples.archimate::m.order_desk"
+                item
+                    id "ddn.examples.archimate::m.order_handling"
+                item
+                    id "ddn.examples.archimate::m.staffing"
+                item
+                    id "ddn.examples.archimate::m.handling"
+            exclude
+                item
+                    id "ddn.examples.archimate::m.serving_process"
+                item
+                    id "ddn.examples.archimate::m.exposed_on"
+                item
+                    id "ddn.examples.archimate::m.serving_app"
+                item
+                    id "ddn.examples.archimate::m.hosted_on"
+        layout
+            algorithm "layered"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:business_viewpoint"
+
+    use "ddn.examples.archimate::m.service_agent" named "appearance:business_viewpoint:ddn.examples.archimate::m.service_agent"
+        with
+            id "appearance:business_viewpoint:ddn.examples.archimate::m.service_agent"
+
+    use "ddn.examples.archimate::m.order_desk" named "appearance:business_viewpoint:ddn.examples.archimate::m.order_desk"
+        with
+            id "appearance:business_viewpoint:ddn.examples.archimate::m.order_desk"
+
+    use "ddn.examples.archimate::m.order_handling" named "appearance:business_viewpoint:ddn.examples.archimate::m.order_handling"
+        with
+            id "appearance:business_viewpoint:ddn.examples.archimate::m.order_handling"
+
+    use "ddn.examples.archimate::m.staffing" named "appearance:business_viewpoint:ddn.examples.archimate::m.staffing"
+        with
+            id "appearance:business_viewpoint:ddn.examples.archimate::m.staffing"
+
+    use "ddn.examples.archimate::m.handling" named "appearance:business_viewpoint:ddn.examples.archimate::m.handling"
+        with
+            id "appearance:business_viewpoint:ddn.examples.archimate::m.handling"

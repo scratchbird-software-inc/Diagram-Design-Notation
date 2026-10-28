@@ -1,25 +1,200 @@
-ddn "0.5";
-module "ddn.examples.geo-symbols";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+asset "assets/geo/world-110m.json" as resource from "../../assets/geo/world-110m.json"
+    with
+        id "geography::assets/geo/world-110m.json"
+        media_type "application/geo+json"
 
-// Synthetic seismic catalog: epicentre lon/lat plus magnitude per event.
-// All data is synthetic.
-data quakes {
-    record q1 "Honshu M7.1" {x_record: {"lon": 141.3, "lat": 38.3, "mag": 7.1, "unit": "Mw"}; }
-    record q2 "Aleutians M6.4" {x_record: {"lon": -178.6, "lat": 51.9, "mag": 6.4, "unit": "Mw"}; }
-    record q3 "Chile M6.8" {x_record: {"lon": -70.7, "lat": -33.4, "mag": 6.8, "unit": "Mw"}; }
-    record q4 "Sumatra M6.2" {x_record: {"lon": 100.5, "lat": -0.8, "mag": 6.2, "unit": "Mw"}; }
-    record q5 "Aegean M5.6" {x_record: {"lon": 26.8, "lat": 37.9, "mag": 5.6, "unit": "Mw"}; }
-    record q6 "Kermadec M6.9" {x_record: {"lon": -177.8, "lat": -29.5, "mag": 6.9, "unit": "Mw"}; }
-    record q7 "Hindu Kush M5.9" {x_record: {"lon": 70.9, "lat": 36.5, "mag": 5.9, "unit": "Mw"}; }
-    record q8 "Baja M5.4" {x_record: {"lon": -109.6, "lat": 24.1, "mag": 5.4, "unit": "Mw"}; }
-    record q9 "Iceland M5.1" {x_record: {"lon": -18.9, "lat": 64.8, "mag": 5.1, "unit": "Mw"}; }
-    record q10 "Vanuatu M6.5" {x_record: {"lon": 167.7, "lat": -15.4, "mag": 6.5, "unit": "Mw"}; }
-}
 
-view symbols "Synthetic seismic catalog / symbol map" {
-    data: [@quakes]; format: @shared.styles.technical;
-    projection { kind:geo; profile:"geo.symbols@1"; records:[@quakes.q1, @quakes.q2, @quakes.q3, @quakes.q4, @quakes.q5, @quakes.q6, @quakes.q7, @quakes.q8, @quakes.q9, @quakes.q10]; mark:symbol; geography:"assets/geo/world-110m.json"; method:mercator; x:"x_record.lon"; y:"x_record.lat"; size:"x_record.mag"; unit:"Mw"; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+publication "publication:symbols"
+    with
+        id "publication:symbols"
+        title "Synthetic seismic catalog / symbol map"
+        targets
+            item
+                target
+                    id "symbols"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.geo-symbols::quakes.q1" as "record"
+    with
+        id "ddn.examples.geo-symbols::quakes.q1"
+        title "Honshu M7.1"
+        metadata
+            x_record
+                lon 141.3
+                lat 38.3
+                mag 7.1
+                unit "Mw"
+
+
+element "ddn.examples.geo-symbols::quakes.q2" as "record"
+    with
+        id "ddn.examples.geo-symbols::quakes.q2"
+        title "Aleutians M6.4"
+        metadata
+            x_record
+                lon -178.6
+                lat 51.9
+                mag 6.4
+                unit "Mw"
+
+
+element "ddn.examples.geo-symbols::quakes.q3" as "record"
+    with
+        id "ddn.examples.geo-symbols::quakes.q3"
+        title "Chile M6.8"
+        metadata
+            x_record
+                lon -70.7
+                lat -33.4
+                mag 6.8
+                unit "Mw"
+
+
+element "ddn.examples.geo-symbols::quakes.q4" as "record"
+    with
+        id "ddn.examples.geo-symbols::quakes.q4"
+        title "Sumatra M6.2"
+        metadata
+            x_record
+                lon 100.5
+                lat -0.8
+                mag 6.2
+                unit "Mw"
+
+
+element "ddn.examples.geo-symbols::quakes.q5" as "record"
+    with
+        id "ddn.examples.geo-symbols::quakes.q5"
+        title "Aegean M5.6"
+        metadata
+            x_record
+                lon 26.8
+                lat 37.9
+                mag 5.6
+                unit "Mw"
+
+
+element "ddn.examples.geo-symbols::quakes.q6" as "record"
+    with
+        id "ddn.examples.geo-symbols::quakes.q6"
+        title "Kermadec M6.9"
+        metadata
+            x_record
+                lon -177.8
+                lat -29.5
+                mag 6.9
+                unit "Mw"
+
+
+element "ddn.examples.geo-symbols::quakes.q7" as "record"
+    with
+        id "ddn.examples.geo-symbols::quakes.q7"
+        title "Hindu Kush M5.9"
+        metadata
+            x_record
+                lon 70.9
+                lat 36.5
+                mag 5.9
+                unit "Mw"
+
+
+element "ddn.examples.geo-symbols::quakes.q8" as "record"
+    with
+        id "ddn.examples.geo-symbols::quakes.q8"
+        title "Baja M5.4"
+        metadata
+            x_record
+                lon -109.6
+                lat 24.1
+                mag 5.4
+                unit "Mw"
+
+
+element "ddn.examples.geo-symbols::quakes.q9" as "record"
+    with
+        id "ddn.examples.geo-symbols::quakes.q9"
+        title "Iceland M5.1"
+        metadata
+            x_record
+                lon -18.9
+                lat 64.8
+                mag 5.1
+                unit "Mw"
+
+
+element "ddn.examples.geo-symbols::quakes.q10" as "record"
+    with
+        id "ddn.examples.geo-symbols::quakes.q10"
+        title "Vanuatu M6.5"
+        metadata
+            x_record
+                lon 167.7
+                lat -15.4
+                mag 6.5
+                unit "Mw"
+
+
+view "symbols" as "geo.symbols@1"
+    with
+        id "symbols"
+        title "Synthetic seismic catalog / symbol map"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.geo-symbols::quakes.q1"
+                    item
+                        id "ddn.examples.geo-symbols::quakes.q2"
+                    item
+                        id "ddn.examples.geo-symbols::quakes.q3"
+                    item
+                        id "ddn.examples.geo-symbols::quakes.q4"
+                    item
+                        id "ddn.examples.geo-symbols::quakes.q5"
+                    item
+                        id "ddn.examples.geo-symbols::quakes.q6"
+                    item
+                        id "ddn.examples.geo-symbols::quakes.q7"
+                    item
+                        id "ddn.examples.geo-symbols::quakes.q8"
+                    item
+                        id "ddn.examples.geo-symbols::quakes.q9"
+                    item
+                        id "ddn.examples.geo-symbols::quakes.q10"
+                mark "symbol"
+                geography "assets/geo/world-110m.json"
+                method "mercator"
+                x "metadata.x_record.lon"
+                y "metadata.x_record.lat"
+                size "metadata.x_record.mag"
+                unit "Mw"
+                width 1120
+                height 640

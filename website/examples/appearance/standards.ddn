@@ -1,0 +1,106 @@
+version ddn-next-1
+
+workarea Studio as ddn
+    with
+        background.color "#eee9df"
+        background.texture
+            kind dots
+            color "#ae9d85"
+            opacity 0.3
+            scale 24
+            seed 7
+
+element PaperCard as note
+    with
+        title "Paper grain"
+        content.text "Editable text, local fonts and a repeatable texture."
+        background.color "#f5e9d4"
+        background.texture
+            kind paper
+            color "#473f35"
+            opacity 0.18
+            scale 24
+            seed 17
+        text.color "#473f35"
+        style.font "Inter"
+        style.font_size 18
+        shadow centre
+
+element LinenCard as note
+    with
+        title "Linen weave"
+        content.text "Editable text, local fonts and a repeatable texture."
+        background.color "#e4e8e2"
+        background.texture
+            kind linen
+            color "#243a30"
+            opacity 0.18
+            scale 24
+            seed 17
+        text.color "#243a30"
+        style.font "Source Serif 4"
+        style.font_size 18
+        shadow centre
+
+element GridCard as note
+    with
+        title "Drafting grid"
+        content.text "Editable text, local fonts and a repeatable texture."
+        background.color "#e4eef6"
+        background.texture
+            kind grid
+            color "#244054"
+            opacity 0.18
+            scale 24
+            seed 17
+        text.color "#244054"
+        style.font "JetBrains Mono"
+        style.font_size 18
+        shadow centre
+
+element DotsCard as note
+    with
+        title "Dotted paper"
+        content.text "Editable text, local fonts and a repeatable texture."
+        background.color "#fff4dc"
+        background.texture
+            kind dots
+            color "#503f26"
+            opacity 0.18
+            scale 24
+            seed 17
+        text.color "#503f26"
+        style.font "Caveat"
+        style.font_size 18
+        shadow centre
+
+view Textures as ddn@1
+    with
+        id Textures
+        title "Background textures and local fonts"
+        layout.algorithm manual
+        background.color "#f9f7f2"
+    use PaperCard named PaperPlaced
+        with
+            position.x 45
+            position.y 75
+            size.width 350
+            size.height 175
+    use LinenCard named LinenPlaced
+        with
+            position.x 455
+            position.y 75
+            size.width 350
+            size.height 175
+    use GridCard named GridPlaced
+        with
+            position.x 45
+            position.y 305
+            size.width 350
+            size.height 175
+    use DotsCard named DotsPlaced
+        with
+            position.x 455
+            position.y 305
+            size.width 350
+            size.height 175

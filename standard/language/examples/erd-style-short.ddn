@@ -1,0 +1,7 @@
+erd Sales
+    Customer
+    Order
+    connect Customer to Order
+    with
+        look handdrawn
+        font serif

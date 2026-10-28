@@ -1,37 +1,340 @@
-ddn "0.5";
-module "ddn.examples.wbs";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:wbs"
+    with
+        id "publication:wbs"
+        title "Synthetic project / work breakdown structure"
+        targets
+            item
+                target
+                    id "wbs"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-// Synthetic project work breakdown structure for the wbs.tree@1 profile.
-data plan {
-    object project "Website relaunch (synthetic)" { kind: "analysis.task"; }
-    object design "Design" { kind: "analysis.task"; }
-    object build "Build" { kind: "analysis.task"; }
-    object launch "Launch" { kind: "analysis.task"; }
-    object wireframes "Wireframes" { kind: "analysis.task"; }
-    object visual "Visual design" { kind: "analysis.task"; }
-    object pages "Page build" { kind: "analysis.task"; }
-    object cms "CMS wiring" { kind: "analysis.task"; }
-    object beta "Beta window" { kind: "analysis.task"; }
-    object golive "Go-live" { kind: "analysis.task"; }
-    relation r1 @project -> @design { kind: "analysis.decomposes"; }
-    relation r2 @project -> @build { kind: "analysis.decomposes"; }
-    relation r3 @project -> @launch { kind: "analysis.decomposes"; }
-    relation r4 @design -> @wireframes { kind: "analysis.decomposes"; }
-    relation r5 @design -> @visual { kind: "analysis.decomposes"; }
-    relation r6 @build -> @pages { kind: "analysis.decomposes"; }
-    relation r7 @build -> @cms { kind: "analysis.decomposes"; }
-    relation r8 @launch -> @beta { kind: "analysis.decomposes"; }
-    relation r9 @launch -> @golive { kind: "analysis.decomposes"; }
-}
 
-format options {
-    layout wbs { gap: 112px; row_gap: 112px; algorithm: tree; direction: down; root: @plan.project; hierarchy: ["analysis.decomposes"]; }
-}
+element "ddn.examples.wbs::plan.project" as "analysis.task"
+    with
+        id "ddn.examples.wbs::plan.project"
+        title "Website relaunch (synthetic)"
 
-view wbs "Synthetic project / work breakdown structure" {
-    data: [@plan]; format: @shared.styles.technical; layout: @options.wbs;
-    projection { kind: graph; profile: "wbs.tree@1"; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+
+element "ddn.examples.wbs::plan.design" as "analysis.task"
+    with
+        id "ddn.examples.wbs::plan.design"
+        title "Design"
+
+
+element "ddn.examples.wbs::plan.build" as "analysis.task"
+    with
+        id "ddn.examples.wbs::plan.build"
+        title "Build"
+
+
+element "ddn.examples.wbs::plan.launch" as "analysis.task"
+    with
+        id "ddn.examples.wbs::plan.launch"
+        title "Launch"
+
+
+element "ddn.examples.wbs::plan.wireframes" as "analysis.task"
+    with
+        id "ddn.examples.wbs::plan.wireframes"
+        title "Wireframes"
+
+
+element "ddn.examples.wbs::plan.visual" as "analysis.task"
+    with
+        id "ddn.examples.wbs::plan.visual"
+        title "Visual design"
+
+
+element "ddn.examples.wbs::plan.pages" as "analysis.task"
+    with
+        id "ddn.examples.wbs::plan.pages"
+        title "Page build"
+
+
+element "ddn.examples.wbs::plan.cms" as "analysis.task"
+    with
+        id "ddn.examples.wbs::plan.cms"
+        title "CMS wiring"
+
+
+element "ddn.examples.wbs::plan.beta" as "analysis.task"
+    with
+        id "ddn.examples.wbs::plan.beta"
+        title "Beta window"
+
+
+element "ddn.examples.wbs::plan.golive" as "analysis.task"
+    with
+        id "ddn.examples.wbs::plan.golive"
+        title "Go-live"
+
+
+relation "ddn.examples.wbs::plan.r1" as "analysis.decomposes"
+    with
+        id "ddn.examples.wbs::plan.r1"
+        title "Decomposes into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.wbs::plan.project"
+            item
+                definition
+                    id "ddn.examples.wbs::plan.design"
+
+
+relation "ddn.examples.wbs::plan.r2" as "analysis.decomposes"
+    with
+        id "ddn.examples.wbs::plan.r2"
+        title "Decomposes into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.wbs::plan.project"
+            item
+                definition
+                    id "ddn.examples.wbs::plan.build"
+
+
+relation "ddn.examples.wbs::plan.r3" as "analysis.decomposes"
+    with
+        id "ddn.examples.wbs::plan.r3"
+        title "Decomposes into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.wbs::plan.project"
+            item
+                definition
+                    id "ddn.examples.wbs::plan.launch"
+
+
+relation "ddn.examples.wbs::plan.r4" as "analysis.decomposes"
+    with
+        id "ddn.examples.wbs::plan.r4"
+        title "Decomposes into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.wbs::plan.design"
+            item
+                definition
+                    id "ddn.examples.wbs::plan.wireframes"
+
+
+relation "ddn.examples.wbs::plan.r5" as "analysis.decomposes"
+    with
+        id "ddn.examples.wbs::plan.r5"
+        title "Decomposes into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.wbs::plan.design"
+            item
+                definition
+                    id "ddn.examples.wbs::plan.visual"
+
+
+relation "ddn.examples.wbs::plan.r6" as "analysis.decomposes"
+    with
+        id "ddn.examples.wbs::plan.r6"
+        title "Decomposes into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.wbs::plan.build"
+            item
+                definition
+                    id "ddn.examples.wbs::plan.pages"
+
+
+relation "ddn.examples.wbs::plan.r7" as "analysis.decomposes"
+    with
+        id "ddn.examples.wbs::plan.r7"
+        title "Decomposes into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.wbs::plan.build"
+            item
+                definition
+                    id "ddn.examples.wbs::plan.cms"
+
+
+relation "ddn.examples.wbs::plan.r8" as "analysis.decomposes"
+    with
+        id "ddn.examples.wbs::plan.r8"
+        title "Decomposes into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.wbs::plan.launch"
+            item
+                definition
+                    id "ddn.examples.wbs::plan.beta"
+
+
+relation "ddn.examples.wbs::plan.r9" as "analysis.decomposes"
+    with
+        id "ddn.examples.wbs::plan.r9"
+        title "Decomposes into"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.wbs::plan.launch"
+            item
+                definition
+                    id "ddn.examples.wbs::plan.golive"
+
+
+view "wbs" as "wbs.tree@1"
+    with
+        id "wbs"
+        title "Synthetic project / work breakdown structure"
+        selection
+            include
+                item
+                    id "ddn.examples.wbs::plan.project"
+                item
+                    id "ddn.examples.wbs::plan.design"
+                item
+                    id "ddn.examples.wbs::plan.build"
+                item
+                    id "ddn.examples.wbs::plan.launch"
+                item
+                    id "ddn.examples.wbs::plan.wireframes"
+                item
+                    id "ddn.examples.wbs::plan.visual"
+                item
+                    id "ddn.examples.wbs::plan.pages"
+                item
+                    id "ddn.examples.wbs::plan.cms"
+                item
+                    id "ddn.examples.wbs::plan.beta"
+                item
+                    id "ddn.examples.wbs::plan.golive"
+                item
+                    id "ddn.examples.wbs::plan.r1"
+                item
+                    id "ddn.examples.wbs::plan.r2"
+                item
+                    id "ddn.examples.wbs::plan.r3"
+                item
+                    id "ddn.examples.wbs::plan.r4"
+                item
+                    id "ddn.examples.wbs::plan.r5"
+                item
+                    id "ddn.examples.wbs::plan.r6"
+                item
+                    id "ddn.examples.wbs::plan.r7"
+                item
+                    id "ddn.examples.wbs::plan.r8"
+                item
+                    id "ddn.examples.wbs::plan.r9"
+        layout
+            algorithm "tree"
+            direction "down"
+            gap 112
+            row_gap 112
+            root
+                id "ddn.examples.wbs::plan.project"
+            hierarchy "analysis.decomposes"
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:wbs"
+
+    use "ddn.examples.wbs::plan.project" named "appearance:wbs:ddn.examples.wbs::plan.project"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.project"
+
+    use "ddn.examples.wbs::plan.design" named "appearance:wbs:ddn.examples.wbs::plan.design"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.design"
+
+    use "ddn.examples.wbs::plan.build" named "appearance:wbs:ddn.examples.wbs::plan.build"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.build"
+
+    use "ddn.examples.wbs::plan.launch" named "appearance:wbs:ddn.examples.wbs::plan.launch"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.launch"
+
+    use "ddn.examples.wbs::plan.wireframes" named "appearance:wbs:ddn.examples.wbs::plan.wireframes"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.wireframes"
+
+    use "ddn.examples.wbs::plan.visual" named "appearance:wbs:ddn.examples.wbs::plan.visual"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.visual"
+
+    use "ddn.examples.wbs::plan.pages" named "appearance:wbs:ddn.examples.wbs::plan.pages"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.pages"
+
+    use "ddn.examples.wbs::plan.cms" named "appearance:wbs:ddn.examples.wbs::plan.cms"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.cms"
+
+    use "ddn.examples.wbs::plan.beta" named "appearance:wbs:ddn.examples.wbs::plan.beta"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.beta"
+
+    use "ddn.examples.wbs::plan.golive" named "appearance:wbs:ddn.examples.wbs::plan.golive"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.golive"
+
+    use "ddn.examples.wbs::plan.r1" named "appearance:wbs:ddn.examples.wbs::plan.r1"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.r1"
+
+    use "ddn.examples.wbs::plan.r2" named "appearance:wbs:ddn.examples.wbs::plan.r2"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.r2"
+
+    use "ddn.examples.wbs::plan.r3" named "appearance:wbs:ddn.examples.wbs::plan.r3"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.r3"
+
+    use "ddn.examples.wbs::plan.r4" named "appearance:wbs:ddn.examples.wbs::plan.r4"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.r4"
+
+    use "ddn.examples.wbs::plan.r5" named "appearance:wbs:ddn.examples.wbs::plan.r5"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.r5"
+
+    use "ddn.examples.wbs::plan.r6" named "appearance:wbs:ddn.examples.wbs::plan.r6"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.r6"
+
+    use "ddn.examples.wbs::plan.r7" named "appearance:wbs:ddn.examples.wbs::plan.r7"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.r7"
+
+    use "ddn.examples.wbs::plan.r8" named "appearance:wbs:ddn.examples.wbs::plan.r8"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.r8"
+
+    use "ddn.examples.wbs::plan.r9" named "appearance:wbs:ddn.examples.wbs::plan.r9"
+        with
+            id "appearance:wbs:ddn.examples.wbs::plan.r9"

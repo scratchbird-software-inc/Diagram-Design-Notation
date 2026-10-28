@@ -1,22 +1,459 @@
-ddn "0.5";
-module "ddn.usecases.views.keyed-storage";
-import "formats.ddn" as fmt;
-import "data/keyed.ddn" as k;
+version ddn-next-1
 
-// What is the key, and what shape is its value?
-// Automatic grid placement: no absolute positions or waypoints.
-view diagram "07 / Key-value design" {
-    data: [@k.kv];
-    format: @fmt.shared.technical;
-    style: @fmt.shared.classic;
-    layout: @fmt.shared.row;
-    select: [@k.kv.key, @k.kv.sessions, @k.kv.value];
-    publication { width: 1580px; height: 440px; }
-    legend { keys: { "kv.r_a": 1, "kv.r_b": 2 }; }
-}
+publication "publication:diagram"
+    with
+        id "publication:diagram"
+        title "07 / Key-value design"
+        targets
+            item
+                target
+                    id "diagram"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
 
-view wide_column "07b / Wide-column access pattern" {
-    data: [@k.wide]; format: @fmt.shared.technical;
-    select: [@k.wide.query, @k.wide.readings, @k.wide.key];
-    legend { keys: { "wide.r_a": 1, "wide.r_b": 2 }; }
-}
+
+publication "publication:wide_column"
+    with
+        id "publication:wide_column"
+        title "07b / Wide-column access pattern"
+        targets
+            item
+                target
+                    id "wide_column"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1580
+                unit "px"
+            height
+                value 440
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.usecases.keyed::kv.key" as "identity"
+    with
+        id "ddn.usecases.keyed::kv.key"
+        title "Session key"
+        description "Scope: one active login session."
+
+
+element "ddn.usecases.keyed::kv.sessions" as "key_value"
+    with
+        id "ddn.usecases.keyed::kv.sessions"
+        title "Session store"
+
+
+element "ddn.usecases.keyed::kv.value.user_id" as "field"
+    with
+        id "ddn.usecases.keyed::kv.value.user_id"
+        title "user_id"
+        content
+            parent
+                id "ddn.usecases.keyed::kv.value"
+            ordinal 0
+
+
+element "ddn.usecases.keyed::kv.value.expires_at" as "field"
+    with
+        id "ddn.usecases.keyed::kv.value.expires_at"
+        title "expires_at"
+        content
+            parent
+                id "ddn.usecases.keyed::kv.value"
+            ordinal 1
+
+
+element "ddn.usecases.keyed::kv.value.cart_id" as "field"
+    with
+        id "ddn.usecases.keyed::kv.value.cart_id"
+        title "cart_id"
+        content
+            parent
+                id "ddn.usecases.keyed::kv.value"
+            ordinal 2
+
+
+element "ddn.usecases.keyed::kv.value" as "record"
+    with
+        id "ddn.usecases.keyed::kv.value"
+        title "Session value"
+        members
+            item
+                id "ddn.usecases.keyed::kv.value.user_id"
+            item
+                id "ddn.usecases.keyed::kv.value.expires_at"
+            item
+                id "ddn.usecases.keyed::kv.value.cart_id"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "user_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "expires_at"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "cart_id"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.usecases.keyed::kv.r_a" as "ident"
+    with
+        id "ddn.usecases.keyed::kv.r_a"
+        title "identifies"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.keyed::kv.key"
+            item
+                definition
+                    id "ddn.usecases.keyed::kv.sessions"
+
+
+relation "ddn.usecases.keyed::kv.r_b" as "mem"
+    with
+        id "ddn.usecases.keyed::kv.r_b"
+        title "value shape"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.keyed::kv.sessions"
+            item
+                definition
+                    id "ddn.usecases.keyed::kv.value"
+
+
+element "ddn.usecases.keyed::wide.key" as "domain"
+    with
+        id "ddn.usecases.keyed::wide.key"
+        title "Device identifier"
+        content
+            meaning "Identifies the producing sensor."
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "meaning": "Identifies the producing sensor."
+                    }
+                format "plain"
+
+
+element "ddn.usecases.keyed::wide.readings.device_id" as "field"
+    with
+        id "ddn.usecases.keyed::wide.readings.device_id"
+        title "device_id"
+        properties
+            key "partition"
+        content
+            parent
+                id "ddn.usecases.keyed::wide.readings"
+            ordinal 0
+            key "partition"
+
+
+element "ddn.usecases.keyed::wide.readings.measured_at" as "field"
+    with
+        id "ddn.usecases.keyed::wide.readings.measured_at"
+        title "measured_at"
+        properties
+            key "clustering"
+        content
+            parent
+                id "ddn.usecases.keyed::wide.readings"
+            ordinal 1
+            key "clustering"
+
+
+element "ddn.usecases.keyed::wide.readings.value" as "field"
+    with
+        id "ddn.usecases.keyed::wide.readings.value"
+        title "value"
+        content
+            parent
+                id "ddn.usecases.keyed::wide.readings"
+            ordinal 2
+
+
+element "ddn.usecases.keyed::wide.readings" as "wide_column"
+    with
+        id "ddn.usecases.keyed::wide.readings"
+        title "Readings by device"
+        facets
+            workload
+                item "STR"
+        properties
+            workload
+                item "streaming"
+        members
+            item
+                id "ddn.usecases.keyed::wide.readings.device_id"
+            item
+                id "ddn.usecases.keyed::wide.readings.measured_at"
+            item
+                id "ddn.usecases.keyed::wide.readings.value"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "device_id"
+                    item null
+                    item null
+                    item null
+                    item "partition"
+                    item null
+                item
+                    item "measured_at"
+                    item null
+                    item null
+                    item null
+                    item "clustering"
+                    item null
+                item
+                    item "value"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.usecases.keyed::wide.query" as "qry"
+    with
+        id "ddn.usecases.keyed::wide.query"
+        title "Latest device readings"
+        description "Access pattern; not a claim that a database query has been executed."
+
+
+relation "ddn.usecases.keyed::wide.r_a" as "domain"
+    with
+        id "ddn.usecases.keyed::wide.r_a"
+        title "uses semantic domain"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.keyed::wide.readings"
+                member
+                    id "ddn.usecases.keyed::wide.readings.device_id"
+            item
+                definition
+                    id "ddn.usecases.keyed::wide.key"
+
+
+relation "ddn.usecases.keyed::wide.r_b" as "depends"
+    with
+        id "ddn.usecases.keyed::wide.r_b"
+        title "depends on"
+        endpoints
+            item
+                definition
+                    id "ddn.usecases.keyed::wide.query"
+            item
+                definition
+                    id "ddn.usecases.keyed::wide.readings"
+
+
+view "diagram" as "ddn@1"
+    with
+        id "diagram"
+        title "07 / Key-value design"
+        selection
+            include
+                item
+                    id "ddn.usecases.keyed::kv.key"
+                item
+                    id "ddn.usecases.keyed::kv.sessions"
+                item
+                    id "ddn.usecases.keyed::kv.value"
+                item
+                    id "ddn.usecases.keyed::kv.r_a"
+                item
+                    id "ddn.usecases.keyed::kv.r_b"
+            exclude
+                item
+                    id "ddn.usecases.keyed::wide.r_a"
+                item
+                    id "ddn.usecases.keyed::wide.r_b"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                kv.r_a "1"
+                kv.r_b "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:diagram"
+
+    use "ddn.usecases.keyed::kv.key" named "appearance:diagram:ddn.usecases.keyed::kv.key"
+        with
+            id "appearance:diagram:ddn.usecases.keyed::kv.key"
+            body "notes"
+
+    use "ddn.usecases.keyed::kv.sessions" named "appearance:diagram:ddn.usecases.keyed::kv.sessions"
+        with
+            id "appearance:diagram:ddn.usecases.keyed::kv.sessions"
+
+    use "ddn.usecases.keyed::kv.value" named "appearance:diagram:ddn.usecases.keyed::kv.value"
+        with
+            id "appearance:diagram:ddn.usecases.keyed::kv.value"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.keyed::kv.r_a" named "appearance:diagram:ddn.usecases.keyed::kv.r_a"
+        with
+            id "appearance:diagram:ddn.usecases.keyed::kv.r_a"
+
+    use "ddn.usecases.keyed::kv.r_b" named "appearance:diagram:ddn.usecases.keyed::kv.r_b"
+        with
+            id "appearance:diagram:ddn.usecases.keyed::kv.r_b"
+
+
+view "wide_column" as "ddn@1"
+    with
+        id "wide_column"
+        title "07b / Wide-column access pattern"
+        selection
+            include
+                item
+                    id "ddn.usecases.keyed::wide.query"
+                item
+                    id "ddn.usecases.keyed::wide.readings"
+                item
+                    id "ddn.usecases.keyed::wide.key"
+                item
+                    id "ddn.usecases.keyed::wide.r_a"
+                item
+                    id "ddn.usecases.keyed::wide.r_b"
+            exclude
+                item
+                    id "ddn.usecases.keyed::kv.r_a"
+                item
+                    id "ddn.usecases.keyed::kv.r_b"
+        layout
+            algorithm "grid"
+            gap 120
+        legend
+            mode "numbers"
+            width 340
+            keys
+                wide.r_a "1"
+                wide.r_b "2"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:wide_column"
+
+    use "ddn.usecases.keyed::wide.query" named "appearance:wide_column:ddn.usecases.keyed::wide.query"
+        with
+            id "appearance:wide_column:ddn.usecases.keyed::wide.query"
+            body "notes"
+
+    use "ddn.usecases.keyed::wide.readings" named "appearance:wide_column:ddn.usecases.keyed::wide.readings"
+        with
+            id "appearance:wide_column:ddn.usecases.keyed::wide.readings"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.usecases.keyed::wide.key" named "appearance:wide_column:ddn.usecases.keyed::wide.key"
+        with
+            id "appearance:wide_column:ddn.usecases.keyed::wide.key"
+            body "notes"
+
+    use "ddn.usecases.keyed::wide.r_a" named "appearance:wide_column:ddn.usecases.keyed::wide.r_a"
+        with
+            id "appearance:wide_column:ddn.usecases.keyed::wide.r_a"
+
+    use "ddn.usecases.keyed::wide.r_b" named "appearance:wide_column:ddn.usecases.keyed::wide.r_b"
+        with
+            id "appearance:wide_column:ddn.usecases.keyed::wide.r_b"

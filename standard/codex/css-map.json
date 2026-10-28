@@ -1,0 +1,2338 @@
+{
+  "--ddn-layout": {
+    "path": "layout",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00086"
+      }
+    ]
+  },
+  "--ddn-display": {
+    "path": "display",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00087"
+      },
+      {
+        "owner": "document",
+        "property": "P00791"
+      }
+    ]
+  },
+  "--ddn-legend": {
+    "path": "legend",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00088"
+      }
+    ]
+  },
+  "--ddn-projection-defaults": {
+    "path": "projection.defaults",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00089"
+      }
+    ]
+  },
+  "--ddn-background-color": {
+    "path": "background.color",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00156"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00157"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00158"
+      },
+      {
+        "owner": "publication",
+        "property": "P00159"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00160"
+      },
+      {
+        "owner": "document",
+        "property": "P00857"
+      },
+      {
+        "owner": "definition",
+        "property": "P06636"
+      }
+    ]
+  },
+  "--ddn-background-gradient": {
+    "path": "background.gradient",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00161"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00162"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00163"
+      },
+      {
+        "owner": "publication",
+        "property": "P00164"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00165"
+      },
+      {
+        "owner": "document",
+        "property": "P00858"
+      }
+    ]
+  },
+  "--ddn-background-image": {
+    "path": "background.image",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00166"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00167"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00168"
+      },
+      {
+        "owner": "publication",
+        "property": "P00169"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00170"
+      },
+      {
+        "owner": "document",
+        "property": "P00859"
+      }
+    ]
+  },
+  "--ddn-background-pattern": {
+    "path": "background.pattern",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00171"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00172"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00173"
+      },
+      {
+        "owner": "publication",
+        "property": "P00174"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00175"
+      },
+      {
+        "owner": "document",
+        "property": "P00860"
+      }
+    ]
+  },
+  "--ddn-background-opacity": {
+    "path": "background.opacity",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00176"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00177"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00178"
+      },
+      {
+        "owner": "publication",
+        "property": "P00179"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00180"
+      },
+      {
+        "owner": "document",
+        "property": "P00861"
+      }
+    ]
+  },
+  "--ddn-background-image-opacity": {
+    "path": "background.image_opacity",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00181"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00182"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00183"
+      },
+      {
+        "owner": "publication",
+        "property": "P00184"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00185"
+      },
+      {
+        "owner": "document",
+        "property": "P00862"
+      }
+    ]
+  },
+  "--ddn-background-pattern-opacity": {
+    "path": "background.pattern_opacity",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00186"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00187"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00188"
+      },
+      {
+        "owner": "publication",
+        "property": "P00189"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00190"
+      },
+      {
+        "owner": "document",
+        "property": "P00863"
+      }
+    ]
+  },
+  "--ddn-background-anchor": {
+    "path": "background.anchor",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00191"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00192"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00193"
+      },
+      {
+        "owner": "publication",
+        "property": "P00194"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00195"
+      },
+      {
+        "owner": "document",
+        "property": "P00864"
+      }
+    ]
+  },
+  "--ddn-background-area": {
+    "path": "background.area",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00196"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00197"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00198"
+      },
+      {
+        "owner": "publication",
+        "property": "P00199"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00200"
+      },
+      {
+        "owner": "document",
+        "property": "P00865"
+      }
+    ]
+  },
+  "--ddn-background-fit": {
+    "path": "background.fit",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00201"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00202"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00203"
+      },
+      {
+        "owner": "publication",
+        "property": "P00204"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00205"
+      },
+      {
+        "owner": "document",
+        "property": "P00866"
+      }
+    ]
+  },
+  "--ddn-background-position": {
+    "path": "background.position",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00206"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00207"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00208"
+      },
+      {
+        "owner": "publication",
+        "property": "P00209"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00210"
+      },
+      {
+        "owner": "document",
+        "property": "P00867"
+      }
+    ]
+  },
+  "--ddn-background-offset": {
+    "path": "background.offset",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00211"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00212"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00213"
+      },
+      {
+        "owner": "publication",
+        "property": "P00214"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00215"
+      },
+      {
+        "owner": "document",
+        "property": "P00868"
+      }
+    ]
+  },
+  "--ddn-background-repeat": {
+    "path": "background.repeat",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00216"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00217"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00218"
+      },
+      {
+        "owner": "publication",
+        "property": "P00219"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00220"
+      },
+      {
+        "owner": "document",
+        "property": "P00869"
+      }
+    ]
+  },
+  "--ddn-background-tile-size": {
+    "path": "background.tile_size",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00221"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00222"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00223"
+      },
+      {
+        "owner": "publication",
+        "property": "P00224"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00225"
+      },
+      {
+        "owner": "document",
+        "property": "P00870"
+      }
+    ]
+  },
+  "--ddn-border-color": {
+    "path": "border.color",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00231"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00232"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00233"
+      },
+      {
+        "owner": "publication",
+        "property": "P00234"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00235"
+      },
+      {
+        "owner": "document",
+        "property": "P00872"
+      }
+    ]
+  },
+  "--ddn-border-width": {
+    "path": "border.width",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00236"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00237"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00238"
+      },
+      {
+        "owner": "publication",
+        "property": "P00239"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00240"
+      },
+      {
+        "owner": "document",
+        "property": "P00873"
+      }
+    ]
+  },
+  "--ddn-border-style": {
+    "path": "border.style",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00241"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00242"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00243"
+      },
+      {
+        "owner": "publication",
+        "property": "P00244"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00245"
+      },
+      {
+        "owner": "document",
+        "property": "P00874"
+      }
+    ]
+  },
+  "--ddn-border-radius": {
+    "path": "border.radius",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00246"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00247"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00248"
+      },
+      {
+        "owner": "publication",
+        "property": "P00249"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00250"
+      },
+      {
+        "owner": "document",
+        "property": "P00875"
+      }
+    ]
+  },
+  "--ddn-shadow": {
+    "path": "shadow",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00251"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00252"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00253"
+      },
+      {
+        "owner": "publication",
+        "property": "P00254"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00255"
+      },
+      {
+        "owner": "document",
+        "property": "P00876"
+      },
+      {
+        "owner": "definition",
+        "property": "P06625"
+      }
+    ]
+  },
+  "--ddn-padding": {
+    "path": "padding",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00256"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00257"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00258"
+      },
+      {
+        "owner": "publication",
+        "property": "P00259"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00260"
+      },
+      {
+        "owner": "document",
+        "property": "P00877"
+      }
+    ]
+  },
+  "--ddn-opacity": {
+    "path": "opacity",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00261"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00262"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00263"
+      },
+      {
+        "owner": "publication",
+        "property": "P00264"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00265"
+      },
+      {
+        "owner": "document",
+        "property": "P00878"
+      }
+    ]
+  },
+  "--ddn-style-look": {
+    "path": "style.look",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00266"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00267"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00268"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00269"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00270"
+      },
+      {
+        "owner": "publication",
+        "property": "P00271"
+      },
+      {
+        "owner": "document",
+        "property": "P00879"
+      }
+    ]
+  },
+  "--ddn-style-theme": {
+    "path": "style.theme",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00272"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00273"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00274"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00275"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00276"
+      },
+      {
+        "owner": "publication",
+        "property": "P00277"
+      },
+      {
+        "owner": "document",
+        "property": "P00880"
+      }
+    ]
+  },
+  "--ddn-style-font": {
+    "path": "style.font",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00278"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00279"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00280"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00281"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00282"
+      },
+      {
+        "owner": "publication",
+        "property": "P00283"
+      },
+      {
+        "owner": "document",
+        "property": "P00881"
+      }
+    ]
+  },
+  "--ddn-style-font-size": {
+    "path": "style.font_size",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00284"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00285"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00286"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00287"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00288"
+      },
+      {
+        "owner": "publication",
+        "property": "P00289"
+      },
+      {
+        "owner": "document",
+        "property": "P00882"
+      }
+    ]
+  },
+  "--ddn-text-color": {
+    "path": "text.color",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00290"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00291"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00292"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00293"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00294"
+      },
+      {
+        "owner": "publication",
+        "property": "P00295"
+      },
+      {
+        "owner": "document",
+        "property": "P00883"
+      }
+    ]
+  },
+  "--ddn-text-weight": {
+    "path": "text.weight",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00296"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00297"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00298"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00299"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00300"
+      },
+      {
+        "owner": "publication",
+        "property": "P00301"
+      },
+      {
+        "owner": "document",
+        "property": "P00884"
+      }
+    ]
+  },
+  "--ddn-text-italic": {
+    "path": "text.italic",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00302"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00303"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00304"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00305"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00306"
+      },
+      {
+        "owner": "publication",
+        "property": "P00307"
+      },
+      {
+        "owner": "document",
+        "property": "P00885"
+      }
+    ]
+  },
+  "--ddn-text-variant": {
+    "path": "text.variant",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00308"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00309"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00310"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00311"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00312"
+      },
+      {
+        "owner": "publication",
+        "property": "P00313"
+      },
+      {
+        "owner": "document",
+        "property": "P00886"
+      }
+    ]
+  },
+  "--ddn-text-decoration": {
+    "path": "text.decoration",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00314"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00315"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00316"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00317"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00318"
+      },
+      {
+        "owner": "publication",
+        "property": "P00319"
+      },
+      {
+        "owner": "document",
+        "property": "P00887"
+      }
+    ]
+  },
+  "--ddn-text-align": {
+    "path": "text.align",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00320"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00321"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00322"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00323"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00324"
+      },
+      {
+        "owner": "publication",
+        "property": "P00325"
+      },
+      {
+        "owner": "document",
+        "property": "P00888"
+      }
+    ]
+  },
+  "--ddn-text-line-height": {
+    "path": "text.line_height",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00326"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00327"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00328"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00329"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00330"
+      },
+      {
+        "owner": "publication",
+        "property": "P00331"
+      },
+      {
+        "owner": "document",
+        "property": "P00889"
+      }
+    ]
+  },
+  "--ddn-text-roles": {
+    "path": "text.roles",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00332"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00333"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00334"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00335"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00336"
+      },
+      {
+        "owner": "publication",
+        "property": "P00337"
+      },
+      {
+        "owner": "document",
+        "property": "P00890"
+      }
+    ]
+  },
+  "--ddn-text-fit": {
+    "path": "text.fit",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00338"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00339"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00340"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00341"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00342"
+      },
+      {
+        "owner": "publication",
+        "property": "P00343"
+      },
+      {
+        "owner": "document",
+        "property": "P00891"
+      }
+    ]
+  },
+  "--ddn-text-max-width": {
+    "path": "text.max_width",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00344"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00345"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00346"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00347"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00348"
+      },
+      {
+        "owner": "publication",
+        "property": "P00349"
+      },
+      {
+        "owner": "document",
+        "property": "P00892"
+      }
+    ]
+  },
+  "--ddn-text-max-height": {
+    "path": "text.max_height",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00350"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00351"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00352"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00353"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00354"
+      },
+      {
+        "owner": "publication",
+        "property": "P00355"
+      },
+      {
+        "owner": "document",
+        "property": "P00893"
+      }
+    ]
+  },
+  "--ddn-text-min-font": {
+    "path": "text.min_font",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00356"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00357"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00358"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00359"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00360"
+      },
+      {
+        "owner": "publication",
+        "property": "P00361"
+      },
+      {
+        "owner": "document",
+        "property": "P00894"
+      }
+    ]
+  },
+  "--ddn-text-font-pin": {
+    "path": "text.font_pin",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00368"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00369"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00370"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00371"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00372"
+      },
+      {
+        "owner": "publication",
+        "property": "P00373"
+      },
+      {
+        "owner": "document",
+        "property": "P00896"
+      }
+    ]
+  },
+  "--ddn-style-seed": {
+    "path": "style.seed",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00374"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00375"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00376"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00377"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00378"
+      },
+      {
+        "owner": "publication",
+        "property": "P00379"
+      },
+      {
+        "owner": "document",
+        "property": "P00897"
+      }
+    ]
+  },
+  "--ddn-style-roughness": {
+    "path": "style.roughness",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00380"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00381"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00382"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00383"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00384"
+      },
+      {
+        "owner": "publication",
+        "property": "P00385"
+      },
+      {
+        "owner": "document",
+        "property": "P00898"
+      }
+    ]
+  },
+  "--ddn-grid-visible": {
+    "path": "grid.visible",
+    "bindings": [
+      {
+        "owner": "workarea",
+        "property": "P00386"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00387"
+      },
+      {
+        "owner": "document",
+        "property": "P00792"
+      }
+    ]
+  },
+  "--ddn-grid-kind": {
+    "path": "grid.kind",
+    "bindings": [
+      {
+        "owner": "workarea",
+        "property": "P00388"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00389"
+      },
+      {
+        "owner": "document",
+        "property": "P00793"
+      }
+    ]
+  },
+  "--ddn-grid-spacing": {
+    "path": "grid.spacing",
+    "bindings": [
+      {
+        "owner": "workarea",
+        "property": "P00390"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00391"
+      },
+      {
+        "owner": "document",
+        "property": "P00794"
+      }
+    ]
+  },
+  "--ddn-grid-color": {
+    "path": "grid.color",
+    "bindings": [
+      {
+        "owner": "workarea",
+        "property": "P00394"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00395"
+      },
+      {
+        "owner": "document",
+        "property": "P00796"
+      }
+    ]
+  },
+  "--ddn-grid-opacity": {
+    "path": "grid.opacity",
+    "bindings": [
+      {
+        "owner": "workarea",
+        "property": "P00396"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00397"
+      },
+      {
+        "owner": "document",
+        "property": "P00797"
+      }
+    ]
+  },
+  "--ddn-grid-major-every": {
+    "path": "grid.major_every",
+    "bindings": [
+      {
+        "owner": "workarea",
+        "property": "P00398"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00399"
+      },
+      {
+        "owner": "document",
+        "property": "P00798"
+      }
+    ]
+  },
+  "--ddn-grid-major-color": {
+    "path": "grid.major_color",
+    "bindings": [
+      {
+        "owner": "workarea",
+        "property": "P00400"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00401"
+      },
+      {
+        "owner": "document",
+        "property": "P00799"
+      }
+    ]
+  },
+  "--ddn-style-hachure": {
+    "path": "style.hachure",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00501"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P00502"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P00503"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00504"
+      },
+      {
+        "owner": "workarea",
+        "property": "P00505"
+      },
+      {
+        "owner": "publication",
+        "property": "P00506"
+      },
+      {
+        "owner": "document",
+        "property": "P00942"
+      }
+    ]
+  },
+  "--ddn-chrome-title": {
+    "path": "chrome.title",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00507"
+      },
+      {
+        "owner": "document",
+        "property": "P00812"
+      }
+    ]
+  },
+  "--ddn-chrome-footer": {
+    "path": "chrome.footer",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00508"
+      },
+      {
+        "owner": "document",
+        "property": "P00813"
+      }
+    ]
+  },
+  "--ddn-chrome-banner": {
+    "path": "chrome.banner",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00509"
+      },
+      {
+        "owner": "document",
+        "property": "P00814"
+      }
+    ]
+  },
+  "--ddn-chrome-legend": {
+    "path": "chrome.legend",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00510"
+      },
+      {
+        "owner": "document",
+        "property": "P00815"
+      }
+    ]
+  },
+  "--ddn-column-visibility": {
+    "path": "column_visibility",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00524"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00525"
+      }
+    ]
+  },
+  "--ddn-stroke-color": {
+    "path": "stroke.color",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00526"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00527"
+      }
+    ]
+  },
+  "--ddn-stroke-weight": {
+    "path": "stroke.weight",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00528"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00529"
+      }
+    ]
+  },
+  "--ddn-stroke-dash": {
+    "path": "stroke.dash",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00530"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00531"
+      }
+    ]
+  },
+  "--ddn-stroke-corners": {
+    "path": "stroke.corners",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P00532"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00533"
+      }
+    ]
+  },
+  "--ddn-page-frame-style": {
+    "path": "page.frame.style",
+    "bindings": [
+      {
+        "owner": "publication",
+        "property": "P00534"
+      },
+      {
+        "owner": "document",
+        "property": "P00947"
+      }
+    ]
+  },
+  "--ddn-page-frame-weight": {
+    "path": "page.frame.weight",
+    "bindings": [
+      {
+        "owner": "publication",
+        "property": "P00535"
+      },
+      {
+        "owner": "document",
+        "property": "P00948"
+      }
+    ]
+  },
+  "--ddn-page-frame-inset": {
+    "path": "page.frame.inset",
+    "bindings": [
+      {
+        "owner": "publication",
+        "property": "P00536"
+      },
+      {
+        "owner": "document",
+        "property": "P00949"
+      }
+    ]
+  },
+  "--ddn-page-frame-corner-marks": {
+    "path": "page.frame.corner_marks",
+    "bindings": [
+      {
+        "owner": "publication",
+        "property": "P00537"
+      },
+      {
+        "owner": "document",
+        "property": "P00950"
+      }
+    ]
+  },
+  "--ddn-symbol-color": {
+    "path": "symbol.color",
+    "bindings": [
+      {
+        "owner": "appearance",
+        "property": "P00560"
+      }
+    ]
+  },
+  "--ddn-symbol-fill": {
+    "path": "symbol.fill",
+    "bindings": [
+      {
+        "owner": "appearance",
+        "property": "P00561"
+      }
+    ]
+  },
+  "--ddn-symbol-width": {
+    "path": "symbol.width",
+    "bindings": [
+      {
+        "owner": "appearance",
+        "property": "P00562"
+      }
+    ]
+  },
+  "--ddn-table-wrap": {
+    "path": "table.wrap",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00570"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00577"
+      },
+      {
+        "owner": "definition",
+        "property": "P00584"
+      },
+      {
+        "owner": "document",
+        "property": "P00823"
+      }
+    ]
+  },
+  "--ddn-table-min-chars": {
+    "path": "table.min_chars",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00571"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00578"
+      },
+      {
+        "owner": "definition",
+        "property": "P00585"
+      },
+      {
+        "owner": "document",
+        "property": "P00824"
+      }
+    ]
+  },
+  "--ddn-table-max-lines": {
+    "path": "table.max_lines",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00572"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00579"
+      },
+      {
+        "owner": "definition",
+        "property": "P00586"
+      },
+      {
+        "owner": "document",
+        "property": "P00825"
+      }
+    ]
+  },
+  "--ddn-table-overflow": {
+    "path": "table.overflow",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00573"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00580"
+      },
+      {
+        "owner": "definition",
+        "property": "P00587"
+      },
+      {
+        "owner": "document",
+        "property": "P00826"
+      }
+    ]
+  },
+  "--ddn-table-header": {
+    "path": "table.header",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00576"
+      },
+      {
+        "owner": "appearance",
+        "property": "P00583"
+      },
+      {
+        "owner": "definition",
+        "property": "P00590"
+      },
+      {
+        "owner": "document",
+        "property": "P00829"
+      }
+    ]
+  },
+  "--ddn-layout-algorithm": {
+    "path": "layout.algorithm",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00596"
+      }
+    ]
+  },
+  "--ddn-layout-center": {
+    "path": "layout.center",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00597"
+      }
+    ]
+  },
+  "--ddn-layout-optimize": {
+    "path": "layout.optimize",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00598"
+      }
+    ]
+  },
+  "--ddn-layout-endpoint-ordering": {
+    "path": "layout.endpoint_ordering",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00599"
+      }
+    ]
+  },
+  "--ddn-layout-frame-overflow": {
+    "path": "layout.frame_overflow",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00600"
+      }
+    ]
+  },
+  "--ddn-layout-direction": {
+    "path": "layout.direction",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00601"
+      }
+    ]
+  },
+  "--ddn-layout-routing": {
+    "path": "layout.routing",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00602"
+      }
+    ]
+  },
+  "--ddn-layout-curve": {
+    "path": "layout.curve",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00603"
+      }
+    ]
+  },
+  "--ddn-layout-crossings": {
+    "path": "layout.crossings",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00604"
+      }
+    ]
+  },
+  "--ddn-layout-auto-place": {
+    "path": "layout.auto_place",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00605"
+      }
+    ]
+  },
+  "--ddn-layout-grid-step": {
+    "path": "layout.grid_step",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00606"
+      }
+    ]
+  },
+  "--ddn-layout-curve-tension": {
+    "path": "layout.curve_tension",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00607"
+      }
+    ]
+  },
+  "--ddn-layout-curve-radius": {
+    "path": "layout.curve_radius",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00608"
+      }
+    ]
+  },
+  "--ddn-layout-gap": {
+    "path": "layout.gap",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00609"
+      }
+    ]
+  },
+  "--ddn-layout-columns": {
+    "path": "layout.columns",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00610"
+      }
+    ]
+  },
+  "--ddn-layout-port-clearance": {
+    "path": "layout.port_clearance",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00611"
+      }
+    ]
+  },
+  "--ddn-layout-object-clearance": {
+    "path": "layout.object_clearance",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00612"
+      }
+    ]
+  },
+  "--ddn-layout-edge-clearance": {
+    "path": "layout.edge_clearance",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00613"
+      }
+    ]
+  },
+  "--ddn-layout-row-gap": {
+    "path": "layout.row_gap",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00614"
+      }
+    ]
+  },
+  "--ddn-layout-route-policy": {
+    "path": "layout.route_policy",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00620"
+      }
+    ]
+  },
+  "--ddn-layout-quality": {
+    "path": "layout.quality",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00621"
+      }
+    ]
+  },
+  "--ddn-display-fields": {
+    "path": "display.fields",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00622"
+      },
+      {
+        "owner": "document",
+        "property": "P00833"
+      }
+    ]
+  },
+  "--ddn-display-kind": {
+    "path": "display.kind",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00623"
+      },
+      {
+        "owner": "document",
+        "property": "P00834"
+      }
+    ]
+  },
+  "--ddn-display-maturity": {
+    "path": "display.maturity",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00624"
+      },
+      {
+        "owner": "document",
+        "property": "P00835"
+      }
+    ]
+  },
+  "--ddn-display-badges": {
+    "path": "display.badges",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00625"
+      },
+      {
+        "owner": "document",
+        "property": "P00836"
+      }
+    ]
+  },
+  "--ddn-display-relations": {
+    "path": "display.relations",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00626"
+      },
+      {
+        "owner": "document",
+        "property": "P00837"
+      }
+    ]
+  },
+  "--ddn-display-samples": {
+    "path": "display.samples",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00627"
+      },
+      {
+        "owner": "document",
+        "property": "P00838"
+      }
+    ]
+  },
+  "--ddn-display-domains": {
+    "path": "display.domains",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00628"
+      },
+      {
+        "owner": "document",
+        "property": "P00839"
+      }
+    ]
+  },
+  "--ddn-display-datatypes": {
+    "path": "display.datatypes",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00629"
+      },
+      {
+        "owner": "document",
+        "property": "P00840"
+      }
+    ]
+  },
+  "--ddn-display-depth": {
+    "path": "display.depth",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00630"
+      },
+      {
+        "owner": "document",
+        "property": "P00841"
+      }
+    ]
+  },
+  "--ddn-legend-mode": {
+    "path": "legend.mode",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00631"
+      }
+    ]
+  },
+  "--ddn-legend-placement": {
+    "path": "legend.placement",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00632"
+      }
+    ]
+  },
+  "--ddn-legend-width": {
+    "path": "legend.width",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00633"
+      }
+    ]
+  },
+  "--ddn-projection-options-arrangement": {
+    "path": "projection.options.arrangement",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00671"
+      }
+    ]
+  },
+  "--ddn-projection-options-graticule": {
+    "path": "projection.options.graticule",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00695"
+      }
+    ]
+  },
+  "--ddn-projection-options-iso": {
+    "path": "projection.options.iso",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00696"
+      }
+    ]
+  },
+  "--ddn-projection-options-width": {
+    "path": "projection.options.width",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00698"
+      }
+    ]
+  },
+  "--ddn-projection-options-height": {
+    "path": "projection.options.height",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00699"
+      }
+    ]
+  },
+  "--ddn-projection-options-inner-radius": {
+    "path": "projection.options.inner_radius",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00700"
+      }
+    ]
+  },
+  "--ddn-projection-options-depth": {
+    "path": "projection.options.depth",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P00701"
+      }
+    ]
+  },
+  "--ddn-style-paper": {
+    "path": "style.paper",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P06626"
+      },
+      {
+        "owner": "appearance",
+        "property": "P06628"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P06630"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P06632"
+      },
+      {
+        "owner": "document",
+        "property": "P06634"
+      }
+    ]
+  },
+  "--ddn-decorations": {
+    "path": "decorations",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P06627"
+      },
+      {
+        "owner": "appearance",
+        "property": "P06629"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P06631"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P06633"
+      },
+      {
+        "owner": "document",
+        "property": "P06635"
+      }
+    ]
+  },
+  "--ddn-background-texture": {
+    "path": "background.texture",
+    "bindings": [
+      {
+        "owner": "workarea",
+        "property": "P06637"
+      },
+      {
+        "owner": "definition",
+        "property": "P06638"
+      },
+      {
+        "owner": "appearance",
+        "property": "P06639"
+      },
+      {
+        "owner": "view_definition",
+        "property": "P06640"
+      },
+      {
+        "owner": "view_placement",
+        "property": "P06641"
+      },
+      {
+        "owner": "document",
+        "property": "P06642"
+      }
+    ]
+  },
+  "--ddn-symbol-mode": {
+    "path": "symbol.mode",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P06643"
+      },
+      {
+        "owner": "appearance",
+        "property": "P06647"
+      }
+    ]
+  },
+  "--ddn-symbol-image": {
+    "path": "symbol.image",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P06644"
+      },
+      {
+        "owner": "appearance",
+        "property": "P06648"
+      }
+    ]
+  },
+  "--ddn-symbol-label": {
+    "path": "symbol.label",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P06645"
+      },
+      {
+        "owner": "appearance",
+        "property": "P06649"
+      }
+    ]
+  },
+  "--ddn-symbol-label-gap": {
+    "path": "symbol.label_gap",
+    "bindings": [
+      {
+        "owner": "definition",
+        "property": "P06646"
+      },
+      {
+        "owner": "appearance",
+        "property": "P06650"
+      }
+    ]
+  },
+  "--ddn-surface-width": {
+    "path": "surface.width",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P06653"
+      }
+    ]
+  },
+  "--ddn-surface-height": {
+    "path": "surface.height",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P06654"
+      }
+    ]
+  },
+  "--ddn-surface-scale": {
+    "path": "surface.scale",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P06655"
+      }
+    ]
+  },
+  "--ddn-surface-fit": {
+    "path": "surface.fit",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P06656"
+      }
+    ]
+  },
+  "--ddn-surface-padding": {
+    "path": "surface.padding",
+    "bindings": [
+      {
+        "owner": "view_definition",
+        "property": "P06657"
+      }
+    ]
+  },
+  "--ddn-label-visible": {
+    "path": "label.visible",
+    "bindings": [
+      {
+        "owner": "appearance",
+        "property": "P06658"
+      }
+    ]
+  },
+  "--ddn-label-mode": {
+    "path": "label.mode",
+    "bindings": [
+      {
+        "owner": "appearance",
+        "property": "P06659"
+      }
+    ]
+  },
+  "--ddn-legend-include": {
+    "path": "legend.include",
+    "bindings": [
+      {
+        "owner": "appearance",
+        "property": "P06660"
+      }
+    ]
+  }
+}

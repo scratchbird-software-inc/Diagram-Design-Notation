@@ -1,0 +1,5 @@
+Value-stream mapping symbols (agent-drawn)
+DDN contributors (agent-drawn artwork)
+https://github.com/scratchbird-software-inc/Diagram-Design-Notation
+
+GPL-2.0-or-later. Agent-drawn for the Diagram Design Notation project; copyright the DDN contributors.

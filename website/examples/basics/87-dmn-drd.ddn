@@ -1,48 +1,434 @@
-ddn "0.5";
-module "ddn.examples.dmn";
+version ddn-next-1
 
-// B1-066: DMN 1.4 — decision requirements diagram plus decision-table
-// integration. The DRD shows decisions, a business knowledge model (clipped
-// corner), input data (rounded), a knowledge source (document), and a
-// decision service (band), wired with information/knowledge/authority
-// requirements. The decision binds the decision-table view via
-// x_subdiagram (the ↗ ref badge). The table uses the DMN-labelled hit
-// policies and the completeness cell. Boxed expressions render as text —
-// they are never evaluated (expression evaluation is a backend capability
-// of host applications, not the notation). All data is synthetic.
+publication "publication:drd"
+    with
+        id "publication:drd"
+        title "Claim handling DRD"
+        targets
+            item
+                target
+                    id "drd"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data rules {
-    object high "High severity" { kind: "rule.row"; x_rule: { when: { severity: { op: "eq", value: "high" } }; then: { route: "senior review", fee: 100, flag: "urgent" } }; }
-    object low "Low severity" { kind: "rule.row"; x_rule: { when: { severity: { op: "eq", value: "low" } }; then: { route: "standard", fee: 20, flag: "none" } }; }
-}
 
-data d {
-    object claim "Claim data" { kind: "dmn.inputdata"; }
-    object policy "Claims policy manual" { kind: "dmn.knowledgesource"; }
-    object route "Route claim" { kind: "dmn.decision"; x_subdiagram: { view: "table" };
-        x_boxed: { form: "literal"; text: "if severity = high then senior review else standard" }; }
-    object feerules "Fee schedule" { kind: "dmn.bkm";
-        x_boxed: { form: "context"; entries: [ { name: "base"; text: "20" }, { name: "uplift"; text: "80" } ] }; }
-    object svc "Claim handling service" { kind: "dmn.decisionservice"; }
+publication "publication:table"
+    with
+        id "publication:table"
+        title "Routing rules — priority"
+        targets
+            item
+                target
+                    id "table"
+                kind "view"
+        format "svg"
+        page
+            minimum_text 10.666666666666666
 
-    relation i1 "" @claim -> @route { kind: "dmn.inforeq"; }
-    relation k1 "" @feerules -> @route { kind: "dmn.knowledgereq"; }
-    relation a1 "" @policy -> @feerules { kind: "dmn.authorityreq"; }
-    relation a2 "" @policy -> @route { kind: "dmn.authorityreq"; }
-    relation i2 "" @route -> @svc { kind: "dmn.inforeq"; }
-}
 
-view drd "Claim handling DRD": [@d] as "dmn.drd@1" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
-    publication { size: content; fit: none; }
-}
+publication "publication:table_collect"
+    with
+        id "publication:table_collect"
+        title "Routing rules — collect with completeness"
+        targets
+            item
+                target
+                    id "table_collect"
+                kind "view"
+        format "svg"
+        page
+            minimum_text 10.666666666666666
 
-view table "Routing rules — priority" {
-    data: [@rules];
-    projection { kind: decision; profile: "decision.rules@1"; records: [@rules.high, @rules.low]; inputs: [{ "key": "severity", "type": "enum", "values": ["low", "high"] }]; outputs: ["route", "fee", "flag"]; hit_policy: "priority"; coverage: "complete"; analysis_budget: 4096; }
-}
 
-view table_collect "Routing rules — collect with completeness" {
-    data: [@rules];
-    projection { kind: decision; profile: "decision.rules@1"; records: [@rules.high, @rules.low]; inputs: [{ "key": "severity", "type": "enum", "values": ["low", "high"] }]; outputs: ["route", "fee", "flag"]; hit_policy: "collect"; coverage: "complete"; x_completeness: true; analysis_budget: 4096; }
-}
+element "ddn.examples.dmn::d.claim" as "dmn.inputdata"
+    with
+        id "ddn.examples.dmn::d.claim"
+        title "Claim data"
+
+
+element "ddn.examples.dmn::d.policy" as "dmn.knowledgesource"
+    with
+        id "ddn.examples.dmn::d.policy"
+        title "Claims policy manual"
+
+
+element "ddn.examples.dmn::d.route" as "dmn.decision"
+    with
+        id "ddn.examples.dmn::d.route"
+        title "Route claim"
+        metadata
+            x_subdiagram
+                view "table"
+            x_boxed
+                form "literal"
+                text "if severity = high then senior review else standard"
+
+
+element "ddn.examples.dmn::d.feerules" as "dmn.bkm"
+    with
+        id "ddn.examples.dmn::d.feerules"
+        title "Fee schedule"
+        metadata
+            x_boxed
+                form "context"
+                entries
+                    item
+                        name "base"
+                        text "20"
+                    item
+                        name "uplift"
+                        text "80"
+
+
+element "ddn.examples.dmn::d.svc" as "dmn.decisionservice"
+    with
+        id "ddn.examples.dmn::d.svc"
+        title "Claim handling service"
+
+
+relation "ddn.examples.dmn::d.i1" as "dmn.inforeq"
+    with
+        id "ddn.examples.dmn::d.i1"
+        title "Information requirement"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.dmn::d.claim"
+            item
+                definition
+                    id "ddn.examples.dmn::d.route"
+
+
+relation "ddn.examples.dmn::d.k1" as "dmn.knowledgereq"
+    with
+        id "ddn.examples.dmn::d.k1"
+        title "Knowledge requirement"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.dmn::d.feerules"
+            item
+                definition
+                    id "ddn.examples.dmn::d.route"
+
+
+relation "ddn.examples.dmn::d.a1" as "dmn.authorityreq"
+    with
+        id "ddn.examples.dmn::d.a1"
+        title "Authority requirement"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.dmn::d.policy"
+            item
+                definition
+                    id "ddn.examples.dmn::d.feerules"
+
+
+relation "ddn.examples.dmn::d.a2" as "dmn.authorityreq"
+    with
+        id "ddn.examples.dmn::d.a2"
+        title "Authority requirement"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.dmn::d.policy"
+            item
+                definition
+                    id "ddn.examples.dmn::d.route"
+
+
+relation "ddn.examples.dmn::d.i2" as "dmn.inforeq"
+    with
+        id "ddn.examples.dmn::d.i2"
+        title "Information requirement"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.dmn::d.route"
+            item
+                definition
+                    id "ddn.examples.dmn::d.svc"
+
+
+element "ddn.examples.dmn::rules.high" as "rule.row"
+    with
+        id "ddn.examples.dmn::rules.high"
+        title "High severity"
+        metadata
+            x_rule
+                inputs
+                    severity
+                        op "eq"
+                        value "high"
+                outputs
+                    route "senior review"
+                    fee 100
+                    flag "urgent"
+
+
+element "ddn.examples.dmn::rules.low" as "rule.row"
+    with
+        id "ddn.examples.dmn::rules.low"
+        title "Low severity"
+        metadata
+            x_rule
+                inputs
+                    severity
+                        op "eq"
+                        value "low"
+                outputs
+                    route "standard"
+                    fee 20
+                    flag "none"
+
+
+element "table::input::severity" as "domain"
+    with
+        id "table::input::severity"
+        title "severity"
+        content
+            allowed_values
+                type "enum"
+                values
+                    item "low"
+                    item "high"
+
+
+element "table::rule::ddn.examples.dmn::rules.high" as "rule.row"
+    with
+        id "table::rule::ddn.examples.dmn::rules.high"
+        title "High severity"
+        metadata
+            x_rule
+                inputs
+                    table::input::severity
+                        op "eq"
+                        value "high"
+                outputs
+                    route "senior review"
+                    fee 100
+                    flag "urgent"
+
+
+element "table::rule::ddn.examples.dmn::rules.low" as "rule.row"
+    with
+        id "table::rule::ddn.examples.dmn::rules.low"
+        title "Low severity"
+        metadata
+            x_rule
+                inputs
+                    table::input::severity
+                        op "eq"
+                        value "low"
+                outputs
+                    route "standard"
+                    fee 20
+                    flag "none"
+
+
+element "table_collect::input::severity" as "domain"
+    with
+        id "table_collect::input::severity"
+        title "severity"
+        content
+            allowed_values
+                type "enum"
+                values
+                    item "low"
+                    item "high"
+
+
+element "table_collect::rule::ddn.examples.dmn::rules.high" as "rule.row"
+    with
+        id "table_collect::rule::ddn.examples.dmn::rules.high"
+        title "High severity"
+        metadata
+            x_rule
+                inputs
+                    table_collect::input::severity
+                        op "eq"
+                        value "high"
+                outputs
+                    route "senior review"
+                    fee 100
+                    flag "urgent"
+
+
+element "table_collect::rule::ddn.examples.dmn::rules.low" as "rule.row"
+    with
+        id "table_collect::rule::ddn.examples.dmn::rules.low"
+        title "Low severity"
+        metadata
+            x_rule
+                inputs
+                    table_collect::input::severity
+                        op "eq"
+                        value "low"
+                outputs
+                    route "standard"
+                    fee 20
+                    flag "none"
+
+
+view "drd" as "dmn.drd@1"
+    with
+        id "drd"
+        title "Claim handling DRD"
+        selection
+            include
+                item
+                    id "ddn.examples.dmn::d.claim"
+                item
+                    id "ddn.examples.dmn::d.policy"
+                item
+                    id "ddn.examples.dmn::d.route"
+                item
+                    id "ddn.examples.dmn::d.feerules"
+                item
+                    id "ddn.examples.dmn::d.svc"
+                item
+                    id "ddn.examples.dmn::d.i1"
+                item
+                    id "ddn.examples.dmn::d.k1"
+                item
+                    id "ddn.examples.dmn::d.a1"
+                item
+                    id "ddn.examples.dmn::d.a2"
+                item
+                    id "ddn.examples.dmn::d.i2"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:drd"
+
+    use "ddn.examples.dmn::d.claim" named "appearance:drd:ddn.examples.dmn::d.claim"
+        with
+            id "appearance:drd:ddn.examples.dmn::d.claim"
+
+    use "ddn.examples.dmn::d.policy" named "appearance:drd:ddn.examples.dmn::d.policy"
+        with
+            id "appearance:drd:ddn.examples.dmn::d.policy"
+
+    use "ddn.examples.dmn::d.route" named "appearance:drd:ddn.examples.dmn::d.route"
+        with
+            id "appearance:drd:ddn.examples.dmn::d.route"
+
+    use "ddn.examples.dmn::d.feerules" named "appearance:drd:ddn.examples.dmn::d.feerules"
+        with
+            id "appearance:drd:ddn.examples.dmn::d.feerules"
+
+    use "ddn.examples.dmn::d.svc" named "appearance:drd:ddn.examples.dmn::d.svc"
+        with
+            id "appearance:drd:ddn.examples.dmn::d.svc"
+
+    use "ddn.examples.dmn::d.i1" named "appearance:drd:ddn.examples.dmn::d.i1"
+        with
+            id "appearance:drd:ddn.examples.dmn::d.i1"
+
+    use "ddn.examples.dmn::d.k1" named "appearance:drd:ddn.examples.dmn::d.k1"
+        with
+            id "appearance:drd:ddn.examples.dmn::d.k1"
+
+    use "ddn.examples.dmn::d.a1" named "appearance:drd:ddn.examples.dmn::d.a1"
+        with
+            id "appearance:drd:ddn.examples.dmn::d.a1"
+
+    use "ddn.examples.dmn::d.a2" named "appearance:drd:ddn.examples.dmn::d.a2"
+        with
+            id "appearance:drd:ddn.examples.dmn::d.a2"
+
+    use "ddn.examples.dmn::d.i2" named "appearance:drd:ddn.examples.dmn::d.i2"
+        with
+            id "appearance:drd:ddn.examples.dmn::d.i2"
+
+
+view "table" as "decision.rules@1"
+    with
+        id "table"
+        title "Routing rules — priority"
+        selection
+            include empty list
+            exclude
+                item
+                    id "ddn.examples.dmn::d.i1"
+                item
+                    id "ddn.examples.dmn::d.k1"
+                item
+                    id "ddn.examples.dmn::d.a1"
+                item
+                    id "ddn.examples.dmn::d.a2"
+                item
+                    id "ddn.examples.dmn::d.i2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "table::rule::ddn.examples.dmn::rules.high"
+                    item
+                        id "table::rule::ddn.examples.dmn::rules.low"
+                inputs
+                    item
+                        id "table::input::severity"
+                outputs
+                    item "route"
+                    item "fee"
+                    item "flag"
+                hit_policy "priority"
+                coverage "error"
+                analysis_budget 4096
+
+
+view "table_collect" as "decision.rules@1"
+    with
+        id "table_collect"
+        title "Routing rules — collect with completeness"
+        selection
+            include empty list
+            exclude
+                item
+                    id "ddn.examples.dmn::d.i1"
+                item
+                    id "ddn.examples.dmn::d.k1"
+                item
+                    id "ddn.examples.dmn::d.a1"
+                item
+                    id "ddn.examples.dmn::d.a2"
+                item
+                    id "ddn.examples.dmn::d.i2"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "table_collect::rule::ddn.examples.dmn::rules.high"
+                    item
+                        id "table_collect::rule::ddn.examples.dmn::rules.low"
+                inputs
+                    item
+                        id "table_collect::input::severity"
+                outputs
+                    item "route"
+                    item "fee"
+                    item "flag"
+                hit_policy "collect"
+                coverage "error"
+                x_completeness true
+                analysis_budget 4096

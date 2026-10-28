@@ -1,58 +1,618 @@
-ddn "0.5";
-module "ddn.examples.canvas-pack-b";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+publication "publication:pest"
+    with
+        id "publication:pest"
+        title "Fizzberry in Aurelia / PEST scan"
+        targets
+            item
+                target
+                    id "pest"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-// Synthetic regional market-entry study (all data invented): the fictional beverage
-// brand "Fizzberry" entering the fictional region of "Aurelia", for the
-// canvas.pest@1, canvas.pestle@1 and canvas.porter5@1 profiles.
-data scan {
-    note pest_political "Political" {description: "Synthetic: Aurelia's stable coalition government is drafting a sugar-tax bill affecting soft drinks."; }
-    note pest_economic "Economic" {description: "Synthetic: disposable income in Aurelia's coastal cities is rising while the currency stays weak against imports."; }
-    note pest_social "Social" {description: "Synthetic: younger Aurelians favor low-sugar craft sodas and reusable packaging."; }
-    note pest_technological "Technological" {description: "Synthetic: mobile ordering covers most urban Aurelian retail, but cold-chain logistics remain patchy inland."; }
-    note pestle_political "Political" {description: "Synthetic: Aurelia's proposed sugar levy would add a per-litre duty on sweetened beverages by next year."; }
-    note pestle_economic "Economic" {description: "Synthetic: regional GDP growth near four percent supports premium pricing despite import-cost pressure."; }
-    note pestle_social "Social" {description: "Synthetic: health-conscious urban consumers are shifting from colas toward botanical sparkling drinks."; }
-    note pestle_technological "Technological" {description: "Synthetic: direct-to-consumer delivery apps reach most of Aurelia's cities within a day."; }
-    note pestle_legal "Legal" {description: "Synthetic: Aurelian labeling law requires front-of-pack sugar warnings and a deposit-return scheme for bottles."; }
-    note pestle_environmental "Environmental" {description: "Synthetic: coastal water-stress rules cap bottling-plant extraction during Aurelia's dry season."; }
-    note p5_entrants "Threat of new entrants" {description: "Synthetic: low bottling capital costs and contract packers make new local soda brands easy to launch."; }
-    note p5_supplier "Supplier power" {description: "Synthetic: two Aurelian bottling-glass works hold most capacity, giving them strong price leverage."; }
-    note p5_rivalry "Competitive rivalry" {description: "Synthetic: three entrenched cola brands discount aggressively each summer in Aurelia's coastal cities."; }
-    note p5_buyer "Buyer power" {description: "Synthetic: Aurelia's two supermarket chains control most shelf space and demand listing fees."; }
-    note p5_substitutes "Threat of substitutes" {description: "Synthetic: tap-water carbonation devices and kombucha stalls are gaining share with Aurelian households."; }
-}
 
-view pest "Fizzberry in Aurelia / PEST scan" {
-    data: [@scan];
-    format: @shared.styles.technical;
-    projection { kind:panels; profile:"canvas.pest@1"; columns:4; panels:[
-        {id:"political",title:"POLITICAL",row:0,column:0,rowspan:1,colspan:1,items:[@scan.pest_political]},
-        {id:"economic",title:"ECONOMIC",row:0,column:1,rowspan:1,colspan:1,items:[@scan.pest_economic]},
-        {id:"social",title:"SOCIAL",row:0,column:2,rowspan:1,colspan:1,items:[@scan.pest_social]},
-        {id:"technological",title:"TECHNOLOGICAL",row:0,column:3,rowspan:1,colspan:1,items:[@scan.pest_technological]}]; }
-}
+publication "publication:pestle"
+    with
+        id "publication:pestle"
+        title "Fizzberry in Aurelia / PESTLE scan"
+        targets
+            item
+                target
+                    id "pestle"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
 
-view pestle "Fizzberry in Aurelia / PESTLE scan" {
-    data: [@scan];
-    format: @shared.styles.technical;
-    projection { kind:panels; profile:"canvas.pestle@1"; columns:3; panels:[
-        {id:"political",title:"POLITICAL",row:0,column:0,rowspan:1,colspan:1,items:[@scan.pestle_political]},
-        {id:"economic",title:"ECONOMIC",row:0,column:1,rowspan:1,colspan:1,items:[@scan.pestle_economic]},
-        {id:"social",title:"SOCIAL",row:0,column:2,rowspan:1,colspan:1,items:[@scan.pestle_social]},
-        {id:"technological",title:"TECHNOLOGICAL",row:1,column:0,rowspan:1,colspan:1,items:[@scan.pestle_technological]},
-        {id:"legal",title:"LEGAL",row:1,column:1,rowspan:1,colspan:1,items:[@scan.pestle_legal]},
-        {id:"environmental",title:"ENVIRONMENTAL",row:1,column:2,rowspan:1,colspan:1,items:[@scan.pestle_environmental]}]; }
-}
 
-view porter5 "Fizzberry in Aurelia / five forces" {
-    data: [@scan];
-    format: @shared.styles.technical;
-    projection { kind:panels; profile:"canvas.porter5@1"; columns:3; panels:[
-        {id:"entrants",title:"THREAT OF NEW ENTRANTS",row:0,column:1,rowspan:1,colspan:1,items:[@scan.p5_entrants]},
-        {id:"supplier",title:"SUPPLIER POWER",row:1,column:0,rowspan:1,colspan:1,items:[@scan.p5_supplier]},
-        {id:"rivalry",title:"COMPETITIVE RIVALRY",row:1,column:1,rowspan:1,colspan:1,items:[@scan.p5_rivalry]},
-        {id:"buyer",title:"BUYER POWER",row:1,column:2,rowspan:1,colspan:1,items:[@scan.p5_buyer]},
-        {id:"substitutes",title:"THREAT OF SUBSTITUTES",row:2,column:1,rowspan:1,colspan:1,items:[@scan.p5_substitutes]}]; }
-}
+publication "publication:porter5"
+    with
+        id "publication:porter5"
+        title "Fizzberry in Aurelia / five forces"
+        targets
+            item
+                target
+                    id "porter5"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+            overflow "report"
+
+
+element "ddn.examples.canvas-pack-b::scan.pest_political" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.pest_political"
+        title "Political"
+        description "Synthetic: Aurelia's stable coalition government is drafting a sugar-tax bill affecting soft drinks."
+        content
+            text "Synthetic: Aurelia's stable coalition government is drafting a sugar-tax bill affecting soft drinks."
+        draft
+            text "Synthetic: Aurelia's stable coalition government is drafting a sugar-tax bill affecting soft drinks."
+
+
+element "ddn.examples.canvas-pack-b::scan.pest_economic" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.pest_economic"
+        title "Economic"
+        description "Synthetic: disposable income in Aurelia's coastal cities is rising while the currency stays weak against imports."
+        content
+            text "Synthetic: disposable income in Aurelia's coastal cities is rising while the currency stays weak against imports."
+        draft
+            text "Synthetic: disposable income in Aurelia's coastal cities is rising while the currency stays weak against imports."
+
+
+element "ddn.examples.canvas-pack-b::scan.pest_social" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.pest_social"
+        title "Social"
+        description "Synthetic: younger Aurelians favor low-sugar craft sodas and reusable packaging."
+        content
+            text "Synthetic: younger Aurelians favor low-sugar craft sodas and reusable packaging."
+        draft
+            text "Synthetic: younger Aurelians favor low-sugar craft sodas and reusable packaging."
+
+
+element "ddn.examples.canvas-pack-b::scan.pest_technological" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.pest_technological"
+        title "Technological"
+        description "Synthetic: mobile ordering covers most urban Aurelian retail, but cold-chain logistics remain patchy inland."
+        content
+            text "Synthetic: mobile ordering covers most urban Aurelian retail, but cold-chain logistics remain patchy inland."
+        draft
+            text "Synthetic: mobile ordering covers most urban Aurelian retail, but cold-chain logistics remain patchy inland."
+
+
+element "ddn.examples.canvas-pack-b::scan.pestle_political" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.pestle_political"
+        title "Political"
+        description "Synthetic: Aurelia's proposed sugar levy would add a per-litre duty on sweetened beverages by next year."
+        content
+            text "Synthetic: Aurelia's proposed sugar levy would add a per-litre duty on sweetened beverages by next year."
+        draft
+            text "Synthetic: Aurelia's proposed sugar levy would add a per-litre duty on sweetened beverages by next year."
+
+
+element "ddn.examples.canvas-pack-b::scan.pestle_economic" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.pestle_economic"
+        title "Economic"
+        description "Synthetic: regional GDP growth near four percent supports premium pricing despite import-cost pressure."
+        content
+            text "Synthetic: regional GDP growth near four percent supports premium pricing despite import-cost pressure."
+        draft
+            text "Synthetic: regional GDP growth near four percent supports premium pricing despite import-cost pressure."
+
+
+element "ddn.examples.canvas-pack-b::scan.pestle_social" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.pestle_social"
+        title "Social"
+        description "Synthetic: health-conscious urban consumers are shifting from colas toward botanical sparkling drinks."
+        content
+            text "Synthetic: health-conscious urban consumers are shifting from colas toward botanical sparkling drinks."
+        draft
+            text "Synthetic: health-conscious urban consumers are shifting from colas toward botanical sparkling drinks."
+
+
+element "ddn.examples.canvas-pack-b::scan.pestle_technological" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.pestle_technological"
+        title "Technological"
+        description "Synthetic: direct-to-consumer delivery apps reach most of Aurelia's cities within a day."
+        content
+            text "Synthetic: direct-to-consumer delivery apps reach most of Aurelia's cities within a day."
+        draft
+            text "Synthetic: direct-to-consumer delivery apps reach most of Aurelia's cities within a day."
+
+
+element "ddn.examples.canvas-pack-b::scan.pestle_legal" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.pestle_legal"
+        title "Legal"
+        description "Synthetic: Aurelian labeling law requires front-of-pack sugar warnings and a deposit-return scheme for bottles."
+        content
+            text "Synthetic: Aurelian labeling law requires front-of-pack sugar warnings and a deposit-return scheme for bottles."
+        draft
+            text "Synthetic: Aurelian labeling law requires front-of-pack sugar warnings and a deposit-return scheme for bottles."
+
+
+element "ddn.examples.canvas-pack-b::scan.pestle_environmental" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.pestle_environmental"
+        title "Environmental"
+        description "Synthetic: coastal water-stress rules cap bottling-plant extraction during Aurelia's dry season."
+        content
+            text "Synthetic: coastal water-stress rules cap bottling-plant extraction during Aurelia's dry season."
+        draft
+            text "Synthetic: coastal water-stress rules cap bottling-plant extraction during Aurelia's dry season."
+
+
+element "ddn.examples.canvas-pack-b::scan.p5_entrants" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.p5_entrants"
+        title "Threat of new entrants"
+        description "Synthetic: low bottling capital costs and contract packers make new local soda brands easy to launch."
+        content
+            text "Synthetic: low bottling capital costs and contract packers make new local soda brands easy to launch."
+        draft
+            text "Synthetic: low bottling capital costs and contract packers make new local soda brands easy to launch."
+
+
+element "ddn.examples.canvas-pack-b::scan.p5_supplier" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.p5_supplier"
+        title "Supplier power"
+        description "Synthetic: two Aurelian bottling-glass works hold most capacity, giving them strong price leverage."
+        content
+            text "Synthetic: two Aurelian bottling-glass works hold most capacity, giving them strong price leverage."
+        draft
+            text "Synthetic: two Aurelian bottling-glass works hold most capacity, giving them strong price leverage."
+
+
+element "ddn.examples.canvas-pack-b::scan.p5_rivalry" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.p5_rivalry"
+        title "Competitive rivalry"
+        description "Synthetic: three entrenched cola brands discount aggressively each summer in Aurelia's coastal cities."
+        content
+            text "Synthetic: three entrenched cola brands discount aggressively each summer in Aurelia's coastal cities."
+        draft
+            text "Synthetic: three entrenched cola brands discount aggressively each summer in Aurelia's coastal cities."
+
+
+element "ddn.examples.canvas-pack-b::scan.p5_buyer" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.p5_buyer"
+        title "Buyer power"
+        description "Synthetic: Aurelia's two supermarket chains control most shelf space and demand listing fees."
+        content
+            text "Synthetic: Aurelia's two supermarket chains control most shelf space and demand listing fees."
+        draft
+            text "Synthetic: Aurelia's two supermarket chains control most shelf space and demand listing fees."
+
+
+element "ddn.examples.canvas-pack-b::scan.p5_substitutes" as "note"
+    with
+        id "ddn.examples.canvas-pack-b::scan.p5_substitutes"
+        title "Threat of substitutes"
+        description "Synthetic: tap-water carbonation devices and kombucha stalls are gaining share with Aurelian households."
+        content
+            text "Synthetic: tap-water carbonation devices and kombucha stalls are gaining share with Aurelian households."
+        draft
+            text "Synthetic: tap-water carbonation devices and kombucha stalls are gaining share with Aurelian households."
+
+
+element "pest::panel::political" as "note"
+    with
+        id "pest::panel::political"
+        title "POLITICAL"
+        metadata
+            x_record
+                id "political"
+                row 0
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.pest_political"
+
+
+element "pest::panel::economic" as "note"
+    with
+        id "pest::panel::economic"
+        title "ECONOMIC"
+        metadata
+            x_record
+                id "economic"
+                row 0
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.pest_economic"
+
+
+element "pest::panel::social" as "note"
+    with
+        id "pest::panel::social"
+        title "SOCIAL"
+        metadata
+            x_record
+                id "social"
+                row 0
+                column 2
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.pest_social"
+
+
+element "pest::panel::technological" as "note"
+    with
+        id "pest::panel::technological"
+        title "TECHNOLOGICAL"
+        metadata
+            x_record
+                id "technological"
+                row 0
+                column 3
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.pest_technological"
+
+
+element "pestle::panel::political" as "note"
+    with
+        id "pestle::panel::political"
+        title "POLITICAL"
+        metadata
+            x_record
+                id "political"
+                row 0
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.pestle_political"
+
+
+element "pestle::panel::economic" as "note"
+    with
+        id "pestle::panel::economic"
+        title "ECONOMIC"
+        metadata
+            x_record
+                id "economic"
+                row 0
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.pestle_economic"
+
+
+element "pestle::panel::social" as "note"
+    with
+        id "pestle::panel::social"
+        title "SOCIAL"
+        metadata
+            x_record
+                id "social"
+                row 0
+                column 2
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.pestle_social"
+
+
+element "pestle::panel::technological" as "note"
+    with
+        id "pestle::panel::technological"
+        title "TECHNOLOGICAL"
+        metadata
+            x_record
+                id "technological"
+                row 1
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.pestle_technological"
+
+
+element "pestle::panel::legal" as "note"
+    with
+        id "pestle::panel::legal"
+        title "LEGAL"
+        metadata
+            x_record
+                id "legal"
+                row 1
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.pestle_legal"
+
+
+element "pestle::panel::environmental" as "note"
+    with
+        id "pestle::panel::environmental"
+        title "ENVIRONMENTAL"
+        metadata
+            x_record
+                id "environmental"
+                row 1
+                column 2
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.pestle_environmental"
+
+
+element "porter5::panel::entrants" as "note"
+    with
+        id "porter5::panel::entrants"
+        title "THREAT OF NEW ENTRANTS"
+        metadata
+            x_record
+                id "entrants"
+                row 0
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.p5_entrants"
+
+
+element "porter5::panel::supplier" as "note"
+    with
+        id "porter5::panel::supplier"
+        title "SUPPLIER POWER"
+        metadata
+            x_record
+                id "supplier"
+                row 1
+                column 0
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.p5_supplier"
+
+
+element "porter5::panel::rivalry" as "note"
+    with
+        id "porter5::panel::rivalry"
+        title "COMPETITIVE RIVALRY"
+        metadata
+            x_record
+                id "rivalry"
+                row 1
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.p5_rivalry"
+
+
+element "porter5::panel::buyer" as "note"
+    with
+        id "porter5::panel::buyer"
+        title "BUYER POWER"
+        metadata
+            x_record
+                id "buyer"
+                row 1
+                column 2
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.p5_buyer"
+
+
+element "porter5::panel::substitutes" as "note"
+    with
+        id "porter5::panel::substitutes"
+        title "THREAT OF SUBSTITUTES"
+        metadata
+            x_record
+                id "substitutes"
+                row 2
+                column 1
+                rowspan 1
+                colspan 1
+                items
+                    item
+                        id "ddn.examples.canvas-pack-b::scan.p5_substitutes"
+
+
+view "pest" as "canvas.pest@1"
+    with
+        id "pest"
+        title "Fizzberry in Aurelia / PEST scan"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                columns 4
+                panels
+                    item
+                        target
+                            id "pest::panel::political"
+                        kind "text"
+                        title "POLITICAL"
+                    item
+                        target
+                            id "pest::panel::economic"
+                        kind "text"
+                        title "ECONOMIC"
+                    item
+                        target
+                            id "pest::panel::social"
+                        kind "text"
+                        title "SOCIAL"
+                    item
+                        target
+                            id "pest::panel::technological"
+                        kind "text"
+                        title "TECHNOLOGICAL"
+
+
+view "pestle" as "canvas.pestle@1"
+    with
+        id "pestle"
+        title "Fizzberry in Aurelia / PESTLE scan"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                columns 3
+                panels
+                    item
+                        target
+                            id "pestle::panel::political"
+                        kind "text"
+                        title "POLITICAL"
+                    item
+                        target
+                            id "pestle::panel::economic"
+                        kind "text"
+                        title "ECONOMIC"
+                    item
+                        target
+                            id "pestle::panel::social"
+                        kind "text"
+                        title "SOCIAL"
+                    item
+                        target
+                            id "pestle::panel::technological"
+                        kind "text"
+                        title "TECHNOLOGICAL"
+                    item
+                        target
+                            id "pestle::panel::legal"
+                        kind "text"
+                        title "LEGAL"
+                    item
+                        target
+                            id "pestle::panel::environmental"
+                        kind "text"
+                        title "ENVIRONMENTAL"
+
+
+view "porter5" as "canvas.porter5@1"
+    with
+        id "porter5"
+        title "Fizzberry in Aurelia / five forces"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                columns 3
+                panels
+                    item
+                        target
+                            id "porter5::panel::entrants"
+                        kind "text"
+                        title "THREAT OF NEW ENTRANTS"
+                    item
+                        target
+                            id "porter5::panel::supplier"
+                        kind "text"
+                        title "SUPPLIER POWER"
+                    item
+                        target
+                            id "porter5::panel::rivalry"
+                        kind "text"
+                        title "COMPETITIVE RIVALRY"
+                    item
+                        target
+                            id "porter5::panel::buyer"
+                        kind "text"
+                        title "BUYER POWER"
+                    item
+                        target
+                            id "porter5::panel::substitutes"
+                        kind "text"
+                        title "THREAT OF SUBSTITUTES"

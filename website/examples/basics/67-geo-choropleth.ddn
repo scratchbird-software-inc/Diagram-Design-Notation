@@ -1,27 +1,215 @@
-ddn "0.5";
-module "ddn.examples.geo-choropleth";
+version ddn-next-1
 
-import "shared.ddn" as shared;
+asset "assets/geo/world-110m.json" as resource from "../../assets/geo/world-110m.json"
+    with
+        id "geography::assets/geo/world-110m.json"
+        media_type "application/geo+json"
 
-// Synthetic indicator dataset: one value per country, joined to the world-110m
-// outline by ISO 3166-1 numeric feature id. All data is synthetic.
-data indicators {
-    record c840 "United States" {x_record: {"id": "840", "value": 86, "unit": "index"}; }
-    record c156 "China" {x_record: {"id": "156", "value": 74, "unit": "index"}; }
-    record c356 "India" {x_record: {"id": "356", "value": 58, "unit": "index"}; }
-    record c276 "Germany" {x_record: {"id": "276", "value": 81, "unit": "index"}; }
-    record c076 "Brazil" {x_record: {"id": "076", "value": 49, "unit": "index"}; }
-    record c566 "Nigeria" {x_record: {"id": "566", "value": 31, "unit": "index"}; }
-    record c392 "Japan" {x_record: {"id": "392", "value": 78, "unit": "index"}; }
-    record c036 "Australia" {x_record: {"id": "036", "value": 69, "unit": "index"}; }
-    record c124 "Canada" {x_record: {"id": "124", "value": 77, "unit": "index"}; }
-    record c710 "South Africa" {x_record: {"id": "710", "value": 42, "unit": "index"}; }
-    record c752 "Sweden" {x_record: {"id": "752", "value": 88, "unit": "index"}; }
-    record c484 "Mexico" {x_record: {"id": "484", "value": 53, "unit": "index"}; }
-}
 
-view choropleth "Synthetic adoption index / world choropleth" {
-    data: [@indicators]; format: @shared.styles.technical;
-    projection { kind:geo; profile:"geo.choropleth@1"; records:[@indicators.c840, @indicators.c156, @indicators.c356, @indicators.c276, @indicators.c076, @indicators.c566, @indicators.c392, @indicators.c036, @indicators.c124, @indicators.c710, @indicators.c752, @indicators.c484]; mark:choropleth; geography:"assets/geo/world-110m.json"; method:equalEarth; x:"x_record.id"; value:"x_record.value"; unit:"index"; width:1120px; height:640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
+publication "publication:choropleth"
+    with
+        id "publication:choropleth"
+        title "Synthetic adoption index / world choropleth"
+        targets
+            item
+                target
+                    id "choropleth"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            width
+                value 1360
+                unit "px"
+            height
+                value 860
+                unit "px"
+            margin
+                top 30
+                right 30
+                bottom 30
+                left 30
+            minimum_text 10.666666666666666
+
+
+element "ddn.examples.geo-choropleth::indicators.c840" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c840"
+        title "United States"
+        metadata
+            x_record
+                id "840"
+                value 86
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c156" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c156"
+        title "China"
+        metadata
+            x_record
+                id "156"
+                value 74
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c356" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c356"
+        title "India"
+        metadata
+            x_record
+                id "356"
+                value 58
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c276" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c276"
+        title "Germany"
+        metadata
+            x_record
+                id "276"
+                value 81
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c076" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c076"
+        title "Brazil"
+        metadata
+            x_record
+                id "076"
+                value 49
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c566" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c566"
+        title "Nigeria"
+        metadata
+            x_record
+                id "566"
+                value 31
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c392" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c392"
+        title "Japan"
+        metadata
+            x_record
+                id "392"
+                value 78
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c036" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c036"
+        title "Australia"
+        metadata
+            x_record
+                id "036"
+                value 69
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c124" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c124"
+        title "Canada"
+        metadata
+            x_record
+                id "124"
+                value 77
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c710" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c710"
+        title "South Africa"
+        metadata
+            x_record
+                id "710"
+                value 42
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c752" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c752"
+        title "Sweden"
+        metadata
+            x_record
+                id "752"
+                value 88
+                unit "index"
+
+
+element "ddn.examples.geo-choropleth::indicators.c484" as "record"
+    with
+        id "ddn.examples.geo-choropleth::indicators.c484"
+        title "Mexico"
+        metadata
+            x_record
+                id "484"
+                value 53
+                unit "index"
+
+
+view "choropleth" as "geo.choropleth@1"
+    with
+        id "choropleth"
+        title "Synthetic adoption index / world choropleth"
+        selection
+            include empty list
+        layout
+            algorithm "grid"
+            gap 80
+        legend
+            width 280
+        background
+            color "#f6f8fc"
+        projection
+            options
+                records
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c840"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c156"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c356"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c276"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c076"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c566"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c392"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c036"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c124"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c710"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c752"
+                    item
+                        id "ddn.examples.geo-choropleth::indicators.c484"
+                mark "choropleth"
+                geography "assets/geo/world-110m.json"
+                method "equalEarth"
+                x "metadata.x_record.id"
+                value "metadata.x_record.value"
+                unit "index"
+                width 1120
+                height 640

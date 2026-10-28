@@ -1,0 +1,35 @@
+version ddn-next-1
+include "shared.ddn"
+style "theme.css"
+
+workarea Planning as ddn
+    with
+        background.color "#f5f5f5"
+
+defaults element as entity
+    font serif
+
+erd Sales
+    use "shared.ddn"::Customer
+    Order
+    connect "shared.ddn"::Customer to Order as assoc named CustomerOrders
+    with
+        look handdrawn
+
+erd Overview
+    use "shared.ddn"::Customer named OverviewCustomer
+    use Order
+    use CustomerOrders
+
+document SalesReport as pdf : Sales design
+    notes : ##Overview
+        This document shows the current **sales design**.
+
+        Its figures share their data with the diagram views.
+    use Sales
+    use Overview
+    with
+        page.size a4
+
+document CustomerExport as csv
+    use "shared.ddn"::CustomerFields

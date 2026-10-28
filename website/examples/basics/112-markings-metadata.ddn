@@ -1,28 +1,248 @@
-ddn "0.6";
-module "examples.markings.metadata";
-data model {
-    object gateway "Payment gateway" { kind: service; numeral: 110; }
-    object ledger "Ledger" { kind: database; numeral: 112; }
-    object export_api "Experimental export" { kind: api; marks: [tentative]; }
-    relation charge @gateway -> @ledger {
-        kind: flow;
-        assertion: "every charge posts exactly one ledger entry";
-    }
-    relation legacy @export_api -> @ledger { kind: flow; marks: [forbidden]; }
-    object ops_note "Drain via ref:gateway before opening ref:ledger." { kind: note; }
-}
-view overview "Billing overview" {
-    data: [@model];
-    source: "billing-design.docx §4";
-    generator: "ddn-import 0.8.0 (2026-10-04)";
-    assertions: [
-        "no cycle contains a payment gateway",
-        "every refund references an order"
-    ];
-    publication { size: content; fit: none; }
-}
-view filing "Billing overview (print)" {
-    data: [@model];
-    theme: mono_print;
-    publication { size: content; fit: none; }
-}
+version ddn-next-1
+
+publication "publication:overview"
+    with
+        id "publication:overview"
+        title "Billing overview"
+        targets
+            item
+                target
+                    id "overview"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+publication "publication:filing"
+    with
+        id "publication:filing"
+        title "Billing overview (print)"
+        targets
+            item
+                target
+                    id "filing"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
+
+
+element "examples.markings.metadata::model.gateway" as "service"
+    with
+        id "examples.markings.metadata::model.gateway"
+        title "Payment gateway"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 110
+                    }
+                format "plain"
+
+
+element "examples.markings.metadata::model.ledger" as "database"
+    with
+        id "examples.markings.metadata::model.ledger"
+        title "Ledger"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "numeral": 112
+                    }
+                format "plain"
+
+
+element "examples.markings.metadata::model.export_api" as "api"
+    with
+        id "examples.markings.metadata::model.export_api"
+        title "Experimental export"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "marks": [
+                        "tentative"
+                      ]
+                    }
+                format "plain"
+
+
+element "examples.markings.metadata::model.ops_note" as "note"
+    with
+        id "examples.markings.metadata::model.ops_note"
+        title "Drain via 110 before opening 112."
+
+
+relation "examples.markings.metadata::model.charge" as "flow"
+    with
+        id "examples.markings.metadata::model.charge"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "examples.markings.metadata::model.gateway"
+            item
+                definition
+                    id "examples.markings.metadata::model.ledger"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "assertion": "every charge posts exactly one ledger entry"
+                    }
+                format "plain"
+
+
+relation "examples.markings.metadata::model.legacy" as "flow"
+    with
+        id "examples.markings.metadata::model.legacy"
+        title "transfers data to"
+        endpoints
+            item
+                definition
+                    id "examples.markings.metadata::model.export_api"
+            item
+                definition
+                    id "examples.markings.metadata::model.ledger"
+        notes
+            item
+                title "Additional source details"
+                text
+                    {
+                      "marks": [
+                        "forbidden"
+                      ]
+                    }
+                format "plain"
+
+
+view "overview" as "ddn@1"
+    with
+        id "overview"
+        title "Billing overview"
+        selection
+            include
+                item
+                    id "examples.markings.metadata::model.gateway"
+                item
+                    id "examples.markings.metadata::model.ledger"
+                item
+                    id "examples.markings.metadata::model.export_api"
+                item
+                    id "examples.markings.metadata::model.ops_note"
+                item
+                    id "examples.markings.metadata::model.charge"
+                item
+                    id "examples.markings.metadata::model.legacy"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:overview"
+
+    use "examples.markings.metadata::model.gateway" named "appearance:overview:examples.markings.metadata::model.gateway"
+        with
+            id "appearance:overview:examples.markings.metadata::model.gateway"
+            marks
+                item "110"
+
+    use "examples.markings.metadata::model.ledger" named "appearance:overview:examples.markings.metadata::model.ledger"
+        with
+            id "appearance:overview:examples.markings.metadata::model.ledger"
+            marks
+                item "112"
+
+    use "examples.markings.metadata::model.export_api" named "appearance:overview:examples.markings.metadata::model.export_api"
+        with
+            id "appearance:overview:examples.markings.metadata::model.export_api"
+            marks
+                item "tentative"
+
+    use "examples.markings.metadata::model.ops_note" named "appearance:overview:examples.markings.metadata::model.ops_note"
+        with
+            id "appearance:overview:examples.markings.metadata::model.ops_note"
+            body "draft"
+
+    use "examples.markings.metadata::model.charge" named "appearance:overview:examples.markings.metadata::model.charge"
+        with
+            id "appearance:overview:examples.markings.metadata::model.charge"
+
+    use "examples.markings.metadata::model.legacy" named "appearance:overview:examples.markings.metadata::model.legacy"
+        with
+            id "appearance:overview:examples.markings.metadata::model.legacy"
+            marks
+                item "forbidden"
+
+
+view "filing" as "ddn@1"
+    with
+        id "filing"
+        title "Billing overview (print)"
+        selection
+            include
+                item
+                    id "examples.markings.metadata::model.gateway"
+                item
+                    id "examples.markings.metadata::model.ledger"
+                item
+                    id "examples.markings.metadata::model.export_api"
+                item
+                    id "examples.markings.metadata::model.ops_note"
+                item
+                    id "examples.markings.metadata::model.charge"
+                item
+                    id "examples.markings.metadata::model.legacy"
+        layout
+            center "pins"
+            algorithm "auto"
+        background
+            color "#ffffff"
+        style
+            theme "neutral"
+        publication
+            id "publication:filing"
+
+    use "examples.markings.metadata::model.gateway" named "appearance:filing:examples.markings.metadata::model.gateway"
+        with
+            id "appearance:filing:examples.markings.metadata::model.gateway"
+            marks
+                item "110"
+
+    use "examples.markings.metadata::model.ledger" named "appearance:filing:examples.markings.metadata::model.ledger"
+        with
+            id "appearance:filing:examples.markings.metadata::model.ledger"
+            marks
+                item "112"
+
+    use "examples.markings.metadata::model.export_api" named "appearance:filing:examples.markings.metadata::model.export_api"
+        with
+            id "appearance:filing:examples.markings.metadata::model.export_api"
+            marks
+                item "tentative"
+
+    use "examples.markings.metadata::model.ops_note" named "appearance:filing:examples.markings.metadata::model.ops_note"
+        with
+            id "appearance:filing:examples.markings.metadata::model.ops_note"
+            body "draft"
+
+    use "examples.markings.metadata::model.charge" named "appearance:filing:examples.markings.metadata::model.charge"
+        with
+            id "appearance:filing:examples.markings.metadata::model.charge"
+
+    use "examples.markings.metadata::model.legacy" named "appearance:filing:examples.markings.metadata::model.legacy"
+        with
+            id "appearance:filing:examples.markings.metadata::model.legacy"
+            marks
+                item "forbidden"

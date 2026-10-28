@@ -1,68 +1,780 @@
-ddn "0.5";
-module "ddn.examples.sysmlblocks";
+version ddn-next-1
 
-// B1-065: SysML 1.6 structural diagrams — BDD@2 (block compartments with
-// units, composition and generalization, value type, interface block, flow
-// specification), IBD@2 (proxy/full/conjugated port glyphs, multiplicity,
-// nested ports, flow properties, item flow), and parametric@2 (constraint
-// with three bindings and a parameters compartment). All data is synthetic.
+publication "publication:bdd"
+    with
+        id "publication:bdd"
+        title "Pump block definition"
+        targets
+            item
+                target
+                    id "bdd"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-data m {
-    object pump "Pump" { kind: "sysml.block";
-        fields {
-            capacity "capacity" { x_block: { compartment: "values" }; x_unit: { unit: "L/min" }; }
-            mass "mass" { x_block: { compartment: "values" }; x_unit: { unit: "kg" }; }
-            impeller "impeller" { x_block: { compartment: "parts" }; }
-            mount "mounting" { x_block: { compartment: "references" }; }
-            prime "prime()" { x_block: { compartment: "operations" }; }
-            cav "cavitation free" { x_block: { compartment: "constraints" }; }
-        }
-        ports {
-            outlet { direction: out; x_port: { type: "full"; multiplicity: "1..2"; nested: [ { name: "seal"; direction: "out" } ] }; }
-        }
-    }
-    object reservoir "Reservoir" { kind: "sysml.block";
-        ports { inlet { direction: in; x_port: { type: "proxy"; conjugated: true }; } }
-    }
-    object pumpBase "Fluid mover" { kind: "sysml.block"; }
-    object litres "Litres per minute" { kind: "sysml.valuetype"; }
-    object pumpIf "Pump interface" { kind: "sysml.interfaceblock";
-        ports { flowOut { direction: out; } cmd { direction: in; } }
-    }
-    object waterSpec "Water flow spec" { kind: "sysml.flowspec";
-        ports { flowRate { direction: out; } temperature { direction: inout; } }
-    }
-    object balance "{flow = pressure x area}" { kind: "sysml.constraint";
-        fields {
-            flow "flow" { x_unit: { unit: "L/min" }; }
-            pressure "pressure" { x_unit: { unit: "bar" }; }
-            area "area" { x_unit: { unit: "m3" }; }
-        }
-    }
 
-    relation gen "" @pump -> @pumpBase { kind: "uml.generalization"; }
-    relation comp "" @pump -> @reservoir { kind: "sysml.composition"; }
-    assoc typed "" @pump -> @litres;
-    relation water "water" @pump.outlet -> @reservoir.inlet { kind: "sysml.flow"; }
-    assoc b1 "" @balance -> @pump;
-    assoc b2 "" @balance -> @reservoir;
-    assoc b3 "" @balance -> @pumpBase;
-}
+publication "publication:ibd"
+    with
+        id "publication:ibd"
+        title "Pump station internals"
+        targets
+            item
+                target
+                    id "ibd"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view bdd "Pump block definition": [@m] as "sysml.bdd@2" {
-    layout { algorithm: layered; direction: down; }
-    publication { size: content; fit: none; }
-    exclude: [@m.water, @m.balance, @m.b1, @m.b2, @m.b3];
-}
 
-view ibd "Pump station internals": [@m] as "sysml.ibd@2" {
-    layout { algorithm: layered; }
-    publication { size: content; fit: none; }
-    exclude: [@m.balance, @m.b1, @m.b2, @m.b3, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpBase];
-}
+publication "publication:parametric"
+    with
+        id "publication:parametric"
+        title "Flow balance"
+        targets
+            item
+                target
+                    id "parametric"
+                kind "view"
+        format "svg"
+        page
+            size "content"
+            fit "none"
+            minimum_text 10.666666666666666
 
-view parametric "Flow balance": [@m] as "sysml.parametric@2" {
-    layout { gap: 112px; row_gap: 112px; algorithm: layered; }
-    publication { size: content; fit: none; }
-    exclude: [@m.water, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpIf, @m.waterSpec];
-}
+
+element "ddn.examples.sysmlblocks::m.pump.capacity" as "field"
+    with
+        id "ddn.examples.sysmlblocks::m.pump.capacity"
+        title "capacity"
+        metadata
+            x_block
+                compartment "values"
+            x_unit
+                unit "L/min"
+        content
+            parent
+                id "ddn.examples.sysmlblocks::m.pump"
+            ordinal 0
+
+
+element "ddn.examples.sysmlblocks::m.pump.mass" as "field"
+    with
+        id "ddn.examples.sysmlblocks::m.pump.mass"
+        title "mass"
+        metadata
+            x_block
+                compartment "values"
+            x_unit
+                unit "kg"
+        content
+            parent
+                id "ddn.examples.sysmlblocks::m.pump"
+            ordinal 1
+
+
+element "ddn.examples.sysmlblocks::m.pump.impeller" as "field"
+    with
+        id "ddn.examples.sysmlblocks::m.pump.impeller"
+        title "impeller"
+        metadata
+            x_block
+                compartment "parts"
+        content
+            parent
+                id "ddn.examples.sysmlblocks::m.pump"
+            ordinal 2
+
+
+element "ddn.examples.sysmlblocks::m.pump.mount" as "field"
+    with
+        id "ddn.examples.sysmlblocks::m.pump.mount"
+        title "mounting"
+        metadata
+            x_block
+                compartment "references"
+        content
+            parent
+                id "ddn.examples.sysmlblocks::m.pump"
+            ordinal 3
+
+
+element "ddn.examples.sysmlblocks::m.pump.prime" as "field"
+    with
+        id "ddn.examples.sysmlblocks::m.pump.prime"
+        title "prime()"
+        metadata
+            x_block
+                compartment "operations"
+        content
+            parent
+                id "ddn.examples.sysmlblocks::m.pump"
+            ordinal 4
+
+
+element "ddn.examples.sysmlblocks::m.pump.cav" as "field"
+    with
+        id "ddn.examples.sysmlblocks::m.pump.cav"
+        title "cavitation free"
+        metadata
+            x_block
+                compartment "constraints"
+        content
+            parent
+                id "ddn.examples.sysmlblocks::m.pump"
+            ordinal 5
+
+
+element "ddn.examples.sysmlblocks::m.pump.outlet" as "core::Port"
+    with
+        id "ddn.examples.sysmlblocks::m.pump.outlet"
+        title "outlet"
+        metadata
+            x_port
+                type "full"
+                multiplicity "1..2"
+                nested
+                    item
+                        name "seal"
+                        direction "out"
+        content
+            owner
+                id "ddn.examples.sysmlblocks::m.pump"
+            direction "output"
+
+
+element "ddn.examples.sysmlblocks::m.pump" as "sysml.block"
+    with
+        id "ddn.examples.sysmlblocks::m.pump"
+        title "Pump"
+        members
+            item
+                id "ddn.examples.sysmlblocks::m.pump.capacity"
+            item
+                id "ddn.examples.sysmlblocks::m.pump.mass"
+            item
+                id "ddn.examples.sysmlblocks::m.pump.impeller"
+            item
+                id "ddn.examples.sysmlblocks::m.pump.mount"
+            item
+                id "ddn.examples.sysmlblocks::m.pump.prime"
+            item
+                id "ddn.examples.sysmlblocks::m.pump.cav"
+            item
+                id "ddn.examples.sysmlblocks::m.pump.outlet"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "capacity"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "mass"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "impeller"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "mounting"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "prime()"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "cavitation free"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+element "ddn.examples.sysmlblocks::m.reservoir.inlet" as "core::Port"
+    with
+        id "ddn.examples.sysmlblocks::m.reservoir.inlet"
+        title "inlet"
+        metadata
+            x_port
+                type "proxy"
+                conjugated true
+        content
+            owner
+                id "ddn.examples.sysmlblocks::m.reservoir"
+            direction "input"
+
+
+element "ddn.examples.sysmlblocks::m.reservoir" as "sysml.block"
+    with
+        id "ddn.examples.sysmlblocks::m.reservoir"
+        title "Reservoir"
+        members
+            item
+                id "ddn.examples.sysmlblocks::m.reservoir.inlet"
+
+
+element "ddn.examples.sysmlblocks::m.pumpBase" as "sysml.block"
+    with
+        id "ddn.examples.sysmlblocks::m.pumpBase"
+        title "Fluid mover"
+
+
+element "ddn.examples.sysmlblocks::m.litres" as "sysml.valuetype"
+    with
+        id "ddn.examples.sysmlblocks::m.litres"
+        title "Litres per minute"
+
+
+element "ddn.examples.sysmlblocks::m.pumpIf.flowOut" as "core::Port"
+    with
+        id "ddn.examples.sysmlblocks::m.pumpIf.flowOut"
+        title "flowOut"
+        content
+            owner
+                id "ddn.examples.sysmlblocks::m.pumpIf"
+            direction "output"
+
+
+element "ddn.examples.sysmlblocks::m.pumpIf.cmd" as "core::Port"
+    with
+        id "ddn.examples.sysmlblocks::m.pumpIf.cmd"
+        title "cmd"
+        content
+            owner
+                id "ddn.examples.sysmlblocks::m.pumpIf"
+            direction "input"
+
+
+element "ddn.examples.sysmlblocks::m.pumpIf" as "sysml.interfaceblock"
+    with
+        id "ddn.examples.sysmlblocks::m.pumpIf"
+        title "Pump interface"
+        members
+            item
+                id "ddn.examples.sysmlblocks::m.pumpIf.flowOut"
+            item
+                id "ddn.examples.sysmlblocks::m.pumpIf.cmd"
+
+
+element "ddn.examples.sysmlblocks::m.waterSpec.flowRate" as "core::Port"
+    with
+        id "ddn.examples.sysmlblocks::m.waterSpec.flowRate"
+        title "flowRate"
+        content
+            owner
+                id "ddn.examples.sysmlblocks::m.waterSpec"
+            direction "output"
+
+
+element "ddn.examples.sysmlblocks::m.waterSpec.temperature" as "core::Port"
+    with
+        id "ddn.examples.sysmlblocks::m.waterSpec.temperature"
+        title "temperature"
+        content
+            owner
+                id "ddn.examples.sysmlblocks::m.waterSpec"
+            direction "inout"
+
+
+element "ddn.examples.sysmlblocks::m.waterSpec" as "sysml.flowspec"
+    with
+        id "ddn.examples.sysmlblocks::m.waterSpec"
+        title "Water flow spec"
+        members
+            item
+                id "ddn.examples.sysmlblocks::m.waterSpec.flowRate"
+            item
+                id "ddn.examples.sysmlblocks::m.waterSpec.temperature"
+
+
+element "ddn.examples.sysmlblocks::m.balance.flow" as "field"
+    with
+        id "ddn.examples.sysmlblocks::m.balance.flow"
+        title "flow"
+        metadata
+            x_unit
+                unit "L/min"
+        content
+            parent
+                id "ddn.examples.sysmlblocks::m.balance"
+            ordinal 0
+
+
+element "ddn.examples.sysmlblocks::m.balance.pressure" as "field"
+    with
+        id "ddn.examples.sysmlblocks::m.balance.pressure"
+        title "pressure"
+        metadata
+            x_unit
+                unit "bar"
+        content
+            parent
+                id "ddn.examples.sysmlblocks::m.balance"
+            ordinal 1
+
+
+element "ddn.examples.sysmlblocks::m.balance.area" as "field"
+    with
+        id "ddn.examples.sysmlblocks::m.balance.area"
+        title "area"
+        metadata
+            x_unit
+                unit "m3"
+        content
+            parent
+                id "ddn.examples.sysmlblocks::m.balance"
+            ordinal 2
+
+
+element "ddn.examples.sysmlblocks::m.balance" as "sysml.constraint"
+    with
+        id "ddn.examples.sysmlblocks::m.balance"
+        title "{flow = pressure x area}"
+        members
+            item
+                id "ddn.examples.sysmlblocks::m.balance.flow"
+            item
+                id "ddn.examples.sysmlblocks::m.balance.pressure"
+            item
+                id "ddn.examples.sysmlblocks::m.balance.area"
+        data
+            columns
+                item
+                    id "field"
+                    label "field"
+                item
+                    id "type"
+                    label "type"
+                item
+                    id "domain"
+                    label "domain"
+                item
+                    id "constraint"
+                    label "constraint"
+                item
+                    id "key"
+                    label "key"
+                item
+                    id "comment"
+                    label "comment"
+            rows
+                item
+                    item "flow"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "pressure"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+                item
+                    item "area"
+                    item null
+                    item null
+                    item null
+                    item null
+                    item null
+
+
+relation "ddn.examples.sysmlblocks::m.gen" as "uml.generalization"
+    with
+        id "ddn.examples.sysmlblocks::m.gen"
+        title "Generalization"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.pump"
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.pumpBase"
+
+
+relation "ddn.examples.sysmlblocks::m.comp" as "sysml.composition"
+    with
+        id "ddn.examples.sysmlblocks::m.comp"
+        title "Composition"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.pump"
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.reservoir"
+
+
+relation "ddn.examples.sysmlblocks::m.typed" as "assoc"
+    with
+        id "ddn.examples.sysmlblocks::m.typed"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.pump"
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.litres"
+
+
+relation "ddn.examples.sysmlblocks::m.water" as "sysml.flow"
+    with
+        id "ddn.examples.sysmlblocks::m.water"
+        title "water"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.pump"
+                member
+                    id "ddn.examples.sysmlblocks::m.pump.outlet"
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.reservoir"
+                member
+                    id "ddn.examples.sysmlblocks::m.reservoir.inlet"
+
+
+relation "ddn.examples.sysmlblocks::m.b1" as "assoc"
+    with
+        id "ddn.examples.sysmlblocks::m.b1"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.balance"
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.pump"
+
+
+relation "ddn.examples.sysmlblocks::m.b2" as "assoc"
+    with
+        id "ddn.examples.sysmlblocks::m.b2"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.balance"
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.reservoir"
+
+
+relation "ddn.examples.sysmlblocks::m.b3" as "assoc"
+    with
+        id "ddn.examples.sysmlblocks::m.b3"
+        title "associated with"
+        endpoints
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.balance"
+            item
+                definition
+                    id "ddn.examples.sysmlblocks::m.pumpBase"
+
+
+view "bdd" as "sysml.bdd@2"
+    with
+        id "bdd"
+        title "Pump block definition"
+        selection
+            include
+                item
+                    id "ddn.examples.sysmlblocks::m.pump"
+                item
+                    id "ddn.examples.sysmlblocks::m.reservoir"
+                item
+                    id "ddn.examples.sysmlblocks::m.pumpBase"
+                item
+                    id "ddn.examples.sysmlblocks::m.litres"
+                item
+                    id "ddn.examples.sysmlblocks::m.pumpIf"
+                item
+                    id "ddn.examples.sysmlblocks::m.waterSpec"
+                item
+                    id "ddn.examples.sysmlblocks::m.gen"
+                item
+                    id "ddn.examples.sysmlblocks::m.comp"
+                item
+                    id "ddn.examples.sysmlblocks::m.typed"
+                item
+                    id "ddn.examples.sysmlblocks::m.water"
+            exclude
+                item
+                    id "ddn.examples.sysmlblocks::m.b1"
+                item
+                    id "ddn.examples.sysmlblocks::m.b2"
+                item
+                    id "ddn.examples.sysmlblocks::m.b3"
+        layout
+            algorithm "layered"
+            direction "down"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:bdd"
+
+    use "ddn.examples.sysmlblocks::m.pump" named "appearance:bdd:ddn.examples.sysmlblocks::m.pump"
+        with
+            id "appearance:bdd:ddn.examples.sysmlblocks::m.pump"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.sysmlblocks::m.reservoir" named "appearance:bdd:ddn.examples.sysmlblocks::m.reservoir"
+        with
+            id "appearance:bdd:ddn.examples.sysmlblocks::m.reservoir"
+
+    use "ddn.examples.sysmlblocks::m.pumpBase" named "appearance:bdd:ddn.examples.sysmlblocks::m.pumpBase"
+        with
+            id "appearance:bdd:ddn.examples.sysmlblocks::m.pumpBase"
+
+    use "ddn.examples.sysmlblocks::m.litres" named "appearance:bdd:ddn.examples.sysmlblocks::m.litres"
+        with
+            id "appearance:bdd:ddn.examples.sysmlblocks::m.litres"
+
+    use "ddn.examples.sysmlblocks::m.pumpIf" named "appearance:bdd:ddn.examples.sysmlblocks::m.pumpIf"
+        with
+            id "appearance:bdd:ddn.examples.sysmlblocks::m.pumpIf"
+
+    use "ddn.examples.sysmlblocks::m.waterSpec" named "appearance:bdd:ddn.examples.sysmlblocks::m.waterSpec"
+        with
+            id "appearance:bdd:ddn.examples.sysmlblocks::m.waterSpec"
+
+    use "ddn.examples.sysmlblocks::m.gen" named "appearance:bdd:ddn.examples.sysmlblocks::m.gen"
+        with
+            id "appearance:bdd:ddn.examples.sysmlblocks::m.gen"
+
+    use "ddn.examples.sysmlblocks::m.comp" named "appearance:bdd:ddn.examples.sysmlblocks::m.comp"
+        with
+            id "appearance:bdd:ddn.examples.sysmlblocks::m.comp"
+
+    use "ddn.examples.sysmlblocks::m.typed" named "appearance:bdd:ddn.examples.sysmlblocks::m.typed"
+        with
+            id "appearance:bdd:ddn.examples.sysmlblocks::m.typed"
+
+    use "ddn.examples.sysmlblocks::m.water" named "appearance:bdd:ddn.examples.sysmlblocks::m.water"
+        with
+            id "appearance:bdd:ddn.examples.sysmlblocks::m.water"
+
+
+view "ibd" as "sysml.ibd@2"
+    with
+        id "ibd"
+        title "Pump station internals"
+        selection
+            include
+                item
+                    id "ddn.examples.sysmlblocks::m.pump"
+                item
+                    id "ddn.examples.sysmlblocks::m.reservoir"
+                item
+                    id "ddn.examples.sysmlblocks::m.pumpIf"
+                item
+                    id "ddn.examples.sysmlblocks::m.waterSpec"
+                item
+                    id "ddn.examples.sysmlblocks::m.comp"
+                item
+                    id "ddn.examples.sysmlblocks::m.water"
+            exclude
+                item
+                    id "ddn.examples.sysmlblocks::m.gen"
+                item
+                    id "ddn.examples.sysmlblocks::m.typed"
+                item
+                    id "ddn.examples.sysmlblocks::m.b1"
+                item
+                    id "ddn.examples.sysmlblocks::m.b2"
+                item
+                    id "ddn.examples.sysmlblocks::m.b3"
+        layout
+            algorithm "layered"
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:ibd"
+
+    use "ddn.examples.sysmlblocks::m.pump" named "appearance:ibd:ddn.examples.sysmlblocks::m.pump"
+        with
+            id "appearance:ibd:ddn.examples.sysmlblocks::m.pump"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.sysmlblocks::m.reservoir" named "appearance:ibd:ddn.examples.sysmlblocks::m.reservoir"
+        with
+            id "appearance:ibd:ddn.examples.sysmlblocks::m.reservoir"
+
+    use "ddn.examples.sysmlblocks::m.pumpIf" named "appearance:ibd:ddn.examples.sysmlblocks::m.pumpIf"
+        with
+            id "appearance:ibd:ddn.examples.sysmlblocks::m.pumpIf"
+
+    use "ddn.examples.sysmlblocks::m.waterSpec" named "appearance:ibd:ddn.examples.sysmlblocks::m.waterSpec"
+        with
+            id "appearance:ibd:ddn.examples.sysmlblocks::m.waterSpec"
+
+    use "ddn.examples.sysmlblocks::m.comp" named "appearance:ibd:ddn.examples.sysmlblocks::m.comp"
+        with
+            id "appearance:ibd:ddn.examples.sysmlblocks::m.comp"
+
+    use "ddn.examples.sysmlblocks::m.water" named "appearance:ibd:ddn.examples.sysmlblocks::m.water"
+        with
+            id "appearance:ibd:ddn.examples.sysmlblocks::m.water"
+
+
+view "parametric" as "sysml.parametric@2"
+    with
+        id "parametric"
+        title "Flow balance"
+        selection
+            include
+                item
+                    id "ddn.examples.sysmlblocks::m.pump"
+                item
+                    id "ddn.examples.sysmlblocks::m.reservoir"
+                item
+                    id "ddn.examples.sysmlblocks::m.pumpBase"
+                item
+                    id "ddn.examples.sysmlblocks::m.balance"
+                item
+                    id "ddn.examples.sysmlblocks::m.gen"
+                item
+                    id "ddn.examples.sysmlblocks::m.comp"
+                item
+                    id "ddn.examples.sysmlblocks::m.water"
+                item
+                    id "ddn.examples.sysmlblocks::m.b1"
+                item
+                    id "ddn.examples.sysmlblocks::m.b2"
+                item
+                    id "ddn.examples.sysmlblocks::m.b3"
+            exclude
+                item
+                    id "ddn.examples.sysmlblocks::m.typed"
+        layout
+            algorithm "layered"
+            gap 112
+            row_gap 112
+        background
+            color "#f6f8fc"
+        publication
+            id "publication:parametric"
+
+    use "ddn.examples.sysmlblocks::m.pump" named "appearance:parametric:ddn.examples.sysmlblocks::m.pump"
+        with
+            id "appearance:parametric:ddn.examples.sysmlblocks::m.pump"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.sysmlblocks::m.reservoir" named "appearance:parametric:ddn.examples.sysmlblocks::m.reservoir"
+        with
+            id "appearance:parametric:ddn.examples.sysmlblocks::m.reservoir"
+
+    use "ddn.examples.sysmlblocks::m.pumpBase" named "appearance:parametric:ddn.examples.sysmlblocks::m.pumpBase"
+        with
+            id "appearance:parametric:ddn.examples.sysmlblocks::m.pumpBase"
+
+    use "ddn.examples.sysmlblocks::m.balance" named "appearance:parametric:ddn.examples.sysmlblocks::m.balance"
+        with
+            id "appearance:parametric:ddn.examples.sysmlblocks::m.balance"
+            body "columns"
+            column_visibility
+                field "shown"
+                type "hidden"
+                domain "hidden"
+                constraint "hidden"
+                key "hidden"
+                comment "hidden"
+            table
+                header false
+
+    use "ddn.examples.sysmlblocks::m.gen" named "appearance:parametric:ddn.examples.sysmlblocks::m.gen"
+        with
+            id "appearance:parametric:ddn.examples.sysmlblocks::m.gen"
+
+    use "ddn.examples.sysmlblocks::m.comp" named "appearance:parametric:ddn.examples.sysmlblocks::m.comp"
+        with
+            id "appearance:parametric:ddn.examples.sysmlblocks::m.comp"
+
+    use "ddn.examples.sysmlblocks::m.water" named "appearance:parametric:ddn.examples.sysmlblocks::m.water"
+        with
+            id "appearance:parametric:ddn.examples.sysmlblocks::m.water"
+
+    use "ddn.examples.sysmlblocks::m.b1" named "appearance:parametric:ddn.examples.sysmlblocks::m.b1"
+        with
+            id "appearance:parametric:ddn.examples.sysmlblocks::m.b1"
+
+    use "ddn.examples.sysmlblocks::m.b2" named "appearance:parametric:ddn.examples.sysmlblocks::m.b2"
+        with
+            id "appearance:parametric:ddn.examples.sysmlblocks::m.b2"
+
+    use "ddn.examples.sysmlblocks::m.b3" named "appearance:parametric:ddn.examples.sysmlblocks::m.b3"
+        with
+            id "appearance:parametric:ddn.examples.sysmlblocks::m.b3"

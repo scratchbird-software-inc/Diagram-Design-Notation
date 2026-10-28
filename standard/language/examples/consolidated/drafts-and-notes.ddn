@@ -1,0 +1,29 @@
+erd WorkingDesign
+    Customer
+        draft fields
+            Customer identifier
+            Preferred contact method
+    Order
+        draft table
+            field.comment
+            Total.To discuss
+    element as entity
+        draft
+            What else belongs in this design?
+            // This is free-form content, not a DDN comment.
+
+notes design_notes : ##Design questions
+    This is the first line,
+    continuing the same paragraph.
+
+    ## Questions
+
+    - Which address is ++preferred++?
+    - Can an order have several deliveries?
+
+    connect Customer to Order
+
+    The indented connect line above is note content.
+
+erd NextView
+    use Customer

@@ -1,44 +1,17 @@
 # Contributing to DDN
 
-Start with the scope and invariants in
-`standard/specification/00-status-and-scope.md`. The project lives in four
-components (see the root `README.md`); identify which your change affects:
-language, registry/vocabulary, runtime, projections, geometry/routing,
-publishing/export, Studio, designer, or docs.
+Use the current `ddn-next-1` language and utility API 1.0. The retired 0.8 implementation is available in Git history and is not a compatibility target. Read the [project guide](README.md), [adopted contracts](standard/README.md) and [implementation limits](docs/DDN/IMPLEMENTATION.md).
 
-## How to propose changes
+The standalone packages under `project/ddn` must not import commercial Weaver code, Node APIs or services. Core language/model/rules remain browser-neutral; DOM and worker adapters are explicit. Preserve GPL and third-party notices.
 
-- **Bugs and minimal clarifications:** open an issue or PR with a concrete
-  ambiguity report or a minimal source/expected-semantics fixture.
-- **Language, registry, or visual-meaning changes:** write an RFC using
-  `standard/governance/RFC-TEMPLATE.md`. Do not silently rewrite existing
-  vocabulary (152 object kinds, 90 relation verbs, 118 facets are the
-  0.7.0 baseline).
-- **Designer changes:** follow `designer/specification/00-charter.md` and its
-  non-negotiables (VE-001…VE-008); record decisions as ADRs in
-  `designer/decisions/`.
+Run the bootstrap and commands in the README. `check` verifies declaration fidelity and the compiler-resolved dependency boundary. `test:ddn` runs maintained unit/integration suites, including all-profile and type-boundary checks. Browser suites exercise real Chromium. Website checks cover offline tools, local assets, links, converted examples and exact semantic expectations; a website build captures every gallery view before updating previews.
 
-## Rules of the road
+Edit `standard/utilities/contracts` before intentionally changing the adopted ABI, then run `node project/ddn/tooling/sync-contracts.mjs --write` and review the declaration manifest. Schema/codex changes must update their compiled package counterparts and tests together. Counts alone do not establish standards conformance or release readiness.
 
-- Run `npm test` (notation suites) before proposing code changes, and
-  `npm run build:sdk` after any runtime edit. Add explicit tests for
-  rejection cases as well as successful diagrams. Preserve comments and
-  existing fixtures.
-- Keep model, format, and view declarations separate; never invent a business
-  relationship from drawing geometry; stable IDs are not display labels.
-- All contributions must be licensed GPL-2.0-or-later and be your original
-  work (or clearly licensed compatibly). Do not add fonts, vendor logos, or
-  copied artwork without a documented rights review. The reference runtime
-  has no runtime dependencies; keep it that way.
-- Hiding is not redaction: use the export/profile machinery for any public
-  output, and never expose source text or semantic JSON through a public
-  diagram action.
-- Do not claim legal/accounting/security approval or conformance with
-  external standards (UML/BPMN/DMN) from local fixture tests.
+The website's authored inputs, converted examples and build tooling are maintained together. Do not restore the old parser to regenerate examples. `python3 tooling/wiki/build-wiki.py` emits the complete wiki under `.work/builds/wiki`; deploy that content to the separate GitHub wiki repository. Wiki content is derived from the same current pages as the website.
 
-## Sign-off
+GitHub Actions runs standalone checks before publishing Pages on main. A manually dispatched release workflow produces a distribution artifact; it does not publish the retired `@ddn/notation` npm package. No package registry release is implied by the language contract identifier or the staging package version `0.0.0`.
 
-By contributing you certify that you have the right to submit the work under
-the GPL-2.0-or-later license (developer's certificate of origin, as in the
-Linux kernel tradition). Add `Signed-off-by: Your Name <email>` to commits
-where practical.
+For deeply nested checkout paths, set `DDN_TEMP_ROOT` to an owned short temporary directory before browser commands; Chromium has platform path-length limits for its temporary sockets. Other generated outputs remain under `.work`.
+
+Agents must use the dedicated work area identified in AGENTS.md and build in a disposable checkout. Keep generated logs, profiles, caches and temporary files out of maintained source.

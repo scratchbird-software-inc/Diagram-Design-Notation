@@ -1,0 +1,12 @@
+// Illustrative stored acceptance; this file does not perform an acceptance.
+element Reviewer as core::Actor
+
+erd ReviewedDesign
+    Customer
+    Order
+    connect Customer to Order
+    with
+        status accepted
+        acceptance
+            at 2026-10-23T15:30:00Z
+            by Reviewer
