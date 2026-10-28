@@ -1,9 +1,10 @@
+import {optimizeEntries} from './ddn-optimize.mjs';
 import { readFileSync, realpathSync, statSync } from 'node:fs';
 import { relative, resolve, dirname, join } from 'node:path';
 import { createHash } from 'node:crypto';
 
 const digest = value => createHash('sha256').update(value).digest('hex');
-const factory = module => 'function(module,exports,require){\n' + module.code + '\n}';
+const factory = module => 'function(module,exports,require,__ddnImport){\n' + module.code + '\n}';
 const factories = (graph, ids) => '{' + [...ids].map(id => JSON.stringify(id) + ':' + factory(graph.modules.get(id))).join(',\n') + '}';
 const namespaceOf = value => {
     const namespace = value ?? 'DDN_MODULES';
@@ -13,7 +14,7 @@ const namespaceOf = value => {
 
 /** Compile a dependency graph without executing modules. IDs are relative to built.
  * The TypeScript AST rewrites actual static require calls, never text in a string
- * or comment. Dynamic/nonlocal imports and symlink escapes fail the build.
+ * or comment. Nonliteral/nonlocal imports and symlink escapes fail the build; literal local dynamic imports stay deferred.
  * Module bodies and side effects are retained; this is not a tree shaker. */
 export function collectModules(entries, { built, ts }) {
     const root = realpathSync(built), modules = new Map();
@@ -22,7 +23,7 @@ export function collectModules(entries, { built, ts }) {
         if (id === '..' || id.startsWith('../') || !statSync(file).isFile()) throw new Error('Bundle dependency escaped DDN: ' + path);
         if (modules.has(id)) return id;
         modules.set(id, undefined); // Cycles terminate before their dependencies are visited.
-        const dependencies = new Set();
+        const dependencies = new Set(), asyncDependencies = new Set();
         const rewritten = context => {
             const transform = node => {
                 if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === 'require') {
@@ -38,14 +39,26 @@ export function collectModules(entries, { built, ts }) {
             };
             return source => ts.visitNode(source, transform);
         };
+        const dynamic = context => {
+            const transform = node => {
+                if(ts.isCallExpression(node) && node.expression.kind===ts.SyntaxKind.ImportKeyword){
+                    const arg=node.arguments[0];
+                    if(node.arguments.length!==1 || !arg || !ts.isStringLiteralLike(arg) || !arg.text.startsWith('.'))throw Error('Untrusted dynamic import: '+id);
+                    const dependency=visit(resolve(dirname(file),arg.text));asyncDependencies.add(dependency);
+                    return ts.factory.createCallExpression(ts.factory.createIdentifier('__ddnImport'),undefined,[ts.factory.createStringLiteral(dependency)]);
+                }
+                return ts.visitEachChild(node,transform,context);
+            };
+            return source=>ts.visitNode(source,transform);
+        };
         const result = ts.transpileModule(readFileSync(file, 'utf8'), {
             compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, removeComments: true },
-            fileName: file, transformers: { after: [rewritten] }, reportDiagnostics: true,
+            fileName: file, transformers: { before: [dynamic], after: [rewritten] }, reportDiagnostics: true,
         });
         const error = result.diagnostics?.find(d => d.category === ts.DiagnosticCategory.Error);
         if (error) throw new Error('Cannot compile bundled module ' + id + ': ' + ts.flattenDiagnosticMessageText(error.messageText, '\n'));
         const code = result.outputText;
-        modules.set(id, { code, dependencies: [...dependencies], sha256: digest(code), bytes: Buffer.byteLength(code) });
+        modules.set(id, { code, dependencies: [...dependencies], asyncDependencies:[...asyncDependencies], sha256: digest(code), bytes: Buffer.byteLength(code) });
         return id;
     }
     const names = Object.fromEntries(Object.entries(entries).map(([name, path]) => [name, visit(path)]));
@@ -82,21 +95,23 @@ function moduleLoader(modules) {
         if (Object.hasOwn(cache, id)) return cache[id].exports;
         if (!Object.hasOwn(modules, id)) throw new Error('Missing bundled module ' + id);
         const module = cache[id] = { exports: {} };
-        try { modules[id](module, module.exports, require); }
+        try { modules[id](module, module.exports, require, id=>Promise.resolve().then(()=>require(id))); }
         catch (error) { delete cache[id]; throw error; }
         return module.exports;
     };
 }
 
 /** Self-contained classic-script registry, serialized by runtimeScript(). */
-function createModuleRuntime(version, releaseHash) {
+function createModuleRuntime(version, releaseHash, expectedChunks) {
+    const allowed=new Map(expectedChunks.map(chunk=>[chunk.id,chunk]));
     const modules = Object.create(null), metadata = Object.create(null), chunks = new Map();
     const cache = Object.create(null);
+    let importer=id=>Promise.reject(new Error('No lazy module loader for '+id));
     function require(id) {
         if (Object.hasOwn(cache, id)) return cache[id].exports;
         if (!Object.hasOwn(modules, id)) throw new Error('Missing bundled module ' + id);
         const module = cache[id] = { exports: {} };
-        try { modules[id](module, module.exports, require); }
+        try { modules[id](module, module.exports, require, importer); }
         catch (error) { delete cache[id]; throw error; }
         return module.exports;
     }
@@ -113,7 +128,7 @@ function createModuleRuntime(version, releaseHash) {
     }
     function register(manifest, incoming) {
         if (!manifest || typeof manifest.id !== 'string' || !manifest.id || typeof manifest.hash !== 'string' || !manifest.hash ||
-            manifest.version !== version || manifest.releaseHash !== releaseHash || !Array.isArray(manifest.dependencies) || !Array.isArray(manifest.modules))
+            manifest.version !== version || !allowed.has(manifest.id) || allowed.get(manifest.id).hash!==manifest.hash || JSON.stringify(allowed.get(manifest.id).dependencies)!==JSON.stringify(manifest.dependencies) || !Array.isArray(manifest.dependencies) || !Array.isArray(manifest.modules))
             throw new Error('Incompatible or malformed DDN chunk');
         const existing = chunks.get(manifest.id);
         if (existing) {
@@ -148,7 +163,7 @@ function createModuleRuntime(version, releaseHash) {
                     if (Object.hasOwn(cache, id)) return cache[id].exports;
                     if (!Object.hasOwn(modules, id)) throw new Error('Missing bundled module ' + id);
                     const module = cache[id] = { exports: {} };
-                    try { modules[id](module, module.exports, require); }
+                    try { modules[id](module, module.exports, require, id=>Promise.resolve().then(()=>require(id))); }
                     catch (error) { delete cache[id]; throw error; }
                     return module.exports;
                 };
@@ -161,23 +176,25 @@ function createModuleRuntime(version, releaseHash) {
         return { version, hash: releaseHash, chunks: [...chunks].map(([id, value]) => ({ id, ...value, dependencies: [...value.dependencies], modules: [...value.modules] })),
             modules: Object.keys(metadata), executed: Object.keys(cache) };
     }
-    return Object.freeze({ version, hash: releaseHash, register, require, worker, describe });
+    return Object.freeze({ version, hash: releaseHash, register, require, worker, describe, setImporter: value=>{if(typeof value!=='function')throw new TypeError('Module importer required');importer=value;} });
 }
 
 /** Install one shared registry. Repeated identical runtime scripts are harmless. */
-export function runtimeScript({ namespace, version = 'ddn-next-1', hash }) {
+export function runtimeScript({ namespace, version = 'ddn-next-1', hash, chunks=[], chunkList }) {
     namespace = namespaceOf(namespace);
     if (typeof hash !== 'string' || !hash || typeof version !== 'string' || !version) throw new Error('Runtime version and hash are required');
+    if(chunkList!==undefined&&!/^[A-Za-z_$][\w$]*\.chunks$/.test(chunkList))throw Error('Invalid chunk list reference');
+    const selection=chunkList??JSON.stringify(chunks.map(({id,hash,dependencies})=>({id,hash,dependencies})));
     return '(()=>{"use strict";const name=' + JSON.stringify(namespace) + ',version=' + JSON.stringify(version) + ',hash=' + JSON.stringify(hash) + ';' +
         'if(Object.hasOwn(globalThis,name)){const current=globalThis[name];if(current?.version!==version||current?.hash!==hash||typeof current.register!=="function")throw Error("Incompatible DDN module runtime");return;}' +
-        'Object.defineProperty(globalThis,name,{value:(' + createModuleRuntime.toString() + ')(version,hash)});})();';
+        'Object.defineProperty(globalThis,name,{value:(' + createModuleRuntime.toString() + ')(version,hash,'+selection+')});})();';
 }
 
 export function chunkManifest(graph, ids, { id, version = 'ddn-next-1', releaseHash, dependencies = [] }) {
-    if (!id || typeof releaseHash !== 'string' || !releaseHash || !Array.isArray(dependencies)) throw new Error('Chunk id and releaseHash are required');
+    if (!id || !Array.isArray(dependencies)) throw new Error('Chunk id and dependencies are required');
     const modules = moduleReport(graph, ids);
     if (new Set(modules.map(module => module.id)).size !== modules.length) throw new Error('Duplicate module in chunk ' + id);
-    const content = { id, version, releaseHash, dependencies: [...dependencies], modules };
+    const content = { id, version, dependencies: [...dependencies], modules };
     return { ...content, hash: digest(JSON.stringify(content)) };
 }
 
@@ -199,9 +216,12 @@ export function entryScript(entry, { namespace, workerEntry, workerPreloads = []
 
 /** Preserve the portable single-file build; worker code is its own dependency closure. */
 export function bundle(entry, edition, { built, ts }) {
-    const graph = collectModules({ main: entry, worker: join(built, 'standalone/src/' + (edition === 'complete' ? 'complete-' : '') + 'worker-bootstrap.js') }, { built, ts });
+    const inputs={main:entry,worker:join(built,'standalone/src/'+(edition==='complete'?'complete-':'')+'worker-bootstrap.js')};
+    collectModules(inputs,{built,ts});
+    const optimized=optimizeEntries(inputs,{built,label:edition+'-'+entry.split(/[\\/]/).at(-1)});
+    const graph=collectModules(optimized.entries,{built:optimized.built,ts});
     const workerIds = moduleClosure(graph, graph.entries.worker);
     const loader = 'const require=(' + moduleLoader.toString() + ')(modules);';
     const workerFactory = 'Object.defineProperty(globalThis,"__ddnCreateWorker",{configurable:true,value:()=>{const source="const modules={"+' + JSON.stringify(workerIds) + '.map(id=>JSON.stringify(id)+":"+modules[id].toString()).join(",")+"};"+' + JSON.stringify(loader + 'require(' + JSON.stringify(graph.entries.worker) + ');') + ';const url=URL.createObjectURL(new Blob([source],{type:"text/javascript"}));try{return new Worker(url,{name:"ddn-compute"});}finally{URL.revokeObjectURL(url);}}});';
-    return '(()=>{"use strict";const modules=' + factories(graph, graph.modules.keys()) + ';' + loader + workerFactory + 'require(' + JSON.stringify(graph.entries.main) + ');})();';
+    return optimized.minify('(()=>{"use strict";const modules=' + factories(graph, graph.modules.keys()) + ';' + loader + workerFactory + 'require(' + JSON.stringify(graph.entries.main) + ');})();');
 }

@@ -63,3 +63,7 @@ for (const [label,args,version] of [
  console.log(`${label}: ${result.stdout.trim()}`);
 }
 console.log('Toolchain is ready under .work. This does not qualify the full BOOT01 dependency/release gate.');
+
+const optimizer=spawnSync(node,[join(root,'tooling/optimizer/bootstrap.mjs'),...(offline?['--offline']:[])],{cwd:root,env,stdio:'inherit'});
+if(optimizer.error)throw optimizer.error;
+if(optimizer.status!==0)process.exit(optimizer.status??1);

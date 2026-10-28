@@ -9,6 +9,9 @@ manifest = json.loads((source / 'manifest.json').read_text())
 files = ['manifest.json', 'ddn-loader.js', 'viewer.html', 'designer.html', 'verifier.html',
          'LICENSE', 'NOTICE.md', 'ddn-fonts.js', 'ddn-fonts-manifest.json', 'ddn-fonts-LICENSES.txt']
 files += [chunk['file'] for chunk in manifest['chunks']]
+font_index=source/'ddn-fonts-index.json'
+if font_index.exists():
+    files += ['ddn-fonts-index.json', *[face['file'] for face in json.loads(font_index.read_text())['faces']]]
 with zipfile.ZipFile(destination, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
     for name in sorted(set(files)):
         path = source / name

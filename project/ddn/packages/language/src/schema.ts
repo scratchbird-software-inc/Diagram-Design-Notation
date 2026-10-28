@@ -13,7 +13,7 @@ function unfold(shape: Shape | undefined): Shape | undefined {
     }
     return shape;
 }
-const genericOptions = unfold(unfold(lexicalShapes.view_definition)?.properties?.projection)?.properties?.options;
+const genericOptions = () => unfold(unfold(lexicalShapes.view_definition)?.properties?.projection)?.properties?.options;
 const aliases: Record<string, string> = { boolean: 'bool', timestamp: 'instant' };
 export const shapes: Readonly<Record<string, Shape>> = new Proxy(lexicalShapes, {
     get(target, key) {
@@ -25,7 +25,7 @@ export const shapes: Readonly<Record<string, Shape>> = new Proxy(lexicalShapes, 
         // Non-native profiles remain parseable against the shared option vocabulary; their
         // specialized verification and rendering still require their registered packs.
         if (key.startsWith('profile_') && Object.hasOwn(codex.knownProfiles, key.slice(8)))
-            return genericOptions;
+            return genericOptions();
         return undefined;
     },
 });

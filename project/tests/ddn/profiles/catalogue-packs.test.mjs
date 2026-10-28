@@ -67,3 +67,14 @@ test('complete assembly reproduces all151 profile contracts without changing nat
   assert.deepEqual(actual.relation_endpoint_contracts,expected.relation_endpoint_contracts.map(e=>Object.fromEntries(['role','source_roles','target_roles','member_endpoints','self_allowed','canonical_pattern','canonical_direction'].map(key=>[key,e[key]]))),id+': endpoints');
  }
 });
+
+test('deferred native schema keeps a stable frozen facade and rejects incompatible data before installation',async()=>{
+ const {createCatalogue}=await load('catalogue-store'),{nativeIndex,nativeSchemaHash}=await load('generated-native-index'),{nativeCatalogue}=await load('generated-native-data');
+ const store=createCatalogue(nativeIndex,catalogueFamilies,nativeSchemaHash),facade=store.compiledCodex;
+ assert.equal(Object.keys(facade.knownProfiles).length,151);assert.ok(Object.isFrozen(facade));
+ assert.throws(()=>facade.nodes,/not loaded/);assert.throws(()=>facade.properties,/not loaded/);
+ assert.throws(()=>store.installCore(nativeCatalogue,'wrong'),/Incompatible/);assert.throws(()=>facade.roots,/not loaded/);
+ store.installCore(nativeCatalogue,nativeSchemaHash);assert.strictEqual(store.compiledCodex,facade);
+ for(const key of ['nodes','roots','properties','roles','core','profiles'])assert.deepEqual(facade[key],nativeCatalogue[key],key);
+ store.installCore(nativeCatalogue,nativeSchemaHash);assert.ok(Object.isFrozen(facade.nodes));
+});

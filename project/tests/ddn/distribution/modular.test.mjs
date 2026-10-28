@@ -18,8 +18,7 @@ test('modular distribution emits every module once and records exact entry depen
     assert.equal(manifest.license, 'GPL-2.0-or-later');
     assert.equal(manifest.sponsor, 'https://scratchbird.ca');
     const ids = manifest.chunks.flatMap(chunk => chunk.moduleIds);
-    assert.equal(ids.length, new Set(ids).size); assert.equal(ids.length, Object.keys(f.files).length); assert.equal(manifest.totals.modules, ids.length);
-    const graph = collectModules(Object.fromEntries(Object.entries(manifest.entries).map(([alias, entry]) => [alias, join(f.built, entry.moduleId)])), { built: f.built, ts });
+    assert.equal(ids.length, new Set(ids).size); assert.ok(ids.length<=Object.keys(f.files).length); assert.deepEqual(new Set(Object.values(manifest.sourceModules).flat().map(input=>input.id)),new Set(Object.keys(f.files)));  assert.equal(manifest.totals.modules, ids.length);
     const registered = new Set();
     for (const chunk of manifest.chunks) {
         assert.ok(chunk.dependencies.every(id => registered.has(id)), 'Chunks are ordered after their prerequisites');
@@ -31,7 +30,8 @@ test('modular distribution emits every module once and records exact entry depen
     }
     for (const entry of Object.values(manifest.entries)) {
         const chunks = entry.chunks.map(id => manifest.chunks.find(chunk => chunk.id === id));
-        assert.deepEqual(new Set(chunks.flatMap(chunk => chunk.moduleIds)), new Set(moduleClosure(graph, entry.moduleId)));
+        assert.ok(chunks.some(chunk=>chunk.moduleIds.includes(entry.moduleId)));
+        assert.ok(chunks.every(chunk=>chunk.dependencies.every(id=>entry.chunks.includes(id))));
         assert.equal(entry.rawBytes, chunks.reduce((sum, chunk) => sum + chunk.rawBytes, 0));
         assert.equal(entry.moduleCount, chunks.reduce((sum, chunk) => sum + chunk.moduleIds.length, 0));
     }
@@ -44,13 +44,16 @@ test('modular distribution emits every module once and records exact entry depen
     }
 });
 
-test('modular output is deterministic and all chunk URLs change when the release changes', () => {
+test('modular output is deterministic and unchanged content retains its cache URL across releases', () => {
     const f = modularFixture(work), first = buildModularDistribution({ ...f, ts }), second = buildModularDistribution({ ...f, ts });
     assert.deepEqual(first, second);
+    const isolated=modularFixture(work);assert.deepEqual(buildModularDistribution({...isolated,ts}),first,'Checkout paths must not change emitted bytes or hashes');
     writeFileSync(join(f.built, 'shared.js'), f.files['shared.js'].replace('value=7', 'value=8'));
     const third = buildModularDistribution({ ...f, ts });
     assert.notEqual(third.releaseHash, first.releaseHash);
-    assert.ok(third.chunks.every(chunk => !first.chunks.some(old => old.file === chunk.file)));
+    const retained=third.chunks.filter(chunk=>first.chunks.some(old=>old.file===chunk.file));
+    assert.ok(retained.length>0); assert.ok(retained.length<third.chunks.length);
+    for(const chunk of retained)assert.deepEqual(chunk,first.chunks.find(old=>old.file===chunk.file));
     assert.equal(third.entries.worker.kind, 'worker');
     assert.equal(third.entries['verify:graphs'].kind, 'verification');
     assert.equal(third.entries['render:graphs'].kind, 'rendering');

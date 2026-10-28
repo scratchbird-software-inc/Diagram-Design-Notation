@@ -25,6 +25,9 @@ test('offline loader coalesces optional packs, retries unavailable files, and pr
         await page.goto(pathToFileURL(join(f.destination, 'verifier.html')).href);
         await page.waitForFunction(() => globalThis.utility === 'verifier');
         assert.equal(await page.evaluate(() => DDN_LOADER.describe().registry.executed.includes(DDN_LOADER.manifest.entries.worker.moduleId)), false);
+        assert.match(await page.evaluate(() => {try{DDN_LOADER.worker('worker');}catch(error){return error.message;}}),/not prepared/);
+        await page.evaluate(()=>DDN_LOADER.prepareEntry('worker'));
+        assert.equal(await page.evaluate(()=>DDN_LOADER.describe().registry.executed.includes(DDN_LOADER.manifest.entries.worker.moduleId)),false);
         assert.match(await page.evaluate(() => { try { DDN_LOADER.worker('worker', ['verify:charts']); } catch (error) { return error.message; } }), /initializer is not loaded/);
         const result = await page.evaluate(async () => {
             const [a, b] = await Promise.all([DDN_LOADER.loadEntry('verify:charts'), DDN_LOADER.loadEntry('verify:charts')]);

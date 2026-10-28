@@ -5,18 +5,14 @@ import { paletteGroup, paletteGroupOrder } from './palette-groups.js';
 import { createStandardDialog, colourField, syncColourField, numberField, syncNumberField } from './dialogs.js';
 import { choiceField, syncChoiceField } from '../../viewer/src/choice-field.js';
 import { flushLiveSettings, notifyLiveSettings, waitForSettingsSave } from './live-settings.js';
-import { openAppearance } from './appearance.js';
-import { openSymbol } from './symbol.js';
 import { uiIcon } from '../../viewer/src/ui-icons.js';
-import { openProperties } from './properties.js';
 import { createLiveSettings } from './live-settings.js';
 import { mountMindmapActions, mindmapSelection } from './mindmap-actions.js';
 import { mountResizeHandles } from './resize-handles.js';
 import { relationMenuItems } from './relation-menu.js';
 import { mindmapSource } from './mindmap-source.js';
-import { viewTypePicker, profileDisplayName, diagramHeader } from './view-picker.js';
-import { newDiagramDialog } from './new-diagram.js';
-import { viewLayoutDialog, viewLayoutSource } from './view-layout-picker.js';
+import { profileDisplayName, diagramHeader } from './view-labels.js';
+import { viewLayoutSource } from './layout-source.js';
 import { getViewSurfacePreset } from '../../profiles/src/view-surfaces.js';
 export { createStandardDialog, colourField } from './dialogs.js';
 export { parsePresetPack, serializePresetPack } from './presets.js';
@@ -55,6 +51,18 @@ export function createDesigner(viewer, options) {
     const baseline = new Map(handle.runtime.sources()?.files.map(file => [file.id, file.text]) ?? []);
     let documentOpenGeneration = 0;
     let disposed = false, connectFrom, menu;
+    let uiRequest = 0;
+    function deferred(pending, open) {
+        const ticket = documentOpenGeneration, request = ++uiRequest;
+        void pending.then(module => { if (!disposed && ticket === documentOpenGeneration && request === uiRequest)
+            open(module); }).catch(error => { if (!disposed)
+            handle.announce('Unable to open the controls: ' + String(error.message ?? error)); });
+    }
+    const openAppearance = (...args) => deferred(import('./appearance.js'), module => { module.openAppearance(...args); });
+    const openSymbol = (...args) => deferred(import('./symbol.js'), module => { module.openSymbol(...args); });
+    const openProperties = (...args) => deferred(import('./properties.js'), module => { module.openProperties(...args); });
+    const newDiagramDialog = (...args) => deferred(import('./new-diagram.js'), module => { module.newDiagramDialog(...args); });
+    const viewLayoutDialog = (...args) => deferred(import('./view-layout-picker.js'), module => { module.viewLayoutDialog(...args); });
     const cleanups = [];
     const panels = new Set();
     const panelClosers = new Map();
@@ -822,71 +830,73 @@ export function createDesigner(viewer, options) {
         handle.announce(`View "${name}" added.`);
     }
     function addView(chooseType = false) {
-        if (standalone() && handle.scene()?.views.length) {
-            handle.announce('A standalone document contains one view.');
-            return;
-        }
-        const snapshot = handle.runtime.snapshot();
-        if (!snapshot)
-            return;
-        if (!currentView() && !handle.runtime.sources()?.files.some(file => file.text.trim())) {
-            chooseViewType();
-            return;
-        }
-        const existing = [...panels][0];
-        if (existing) {
-            existing.focus();
-            handle.announce('Close the open editor before adding a view.');
-            return;
-        }
-        const profiles = allowedViewProfiles();
-        let initialName = 'NewView', index = 2, layout = 'dynamic';
-        const names = new Set(records(snapshot).map(record => record.record.name));
-        while (names.has(initialName))
-            initialName = 'NewView' + index++;
-        const chooseLayout = () => viewLayoutDialog(handle.overlays, { selected: layout, onContinue(preset) { layout = preset; chooseProfile(); } });
-        const chooseProfile = () => {
+        deferred(import('./view-picker.js'), ({ viewTypePicker }) => {
+            if (standalone() && handle.scene()?.views.length) {
+                handle.announce('A standalone document contains one view.');
+                return;
+            }
+            const snapshot = handle.runtime.snapshot();
+            if (!snapshot)
+                return;
+            if (!currentView() && !handle.runtime.sources()?.files.some(file => file.text.trim())) {
+                chooseViewType();
+                return;
+            }
             const existing = [...panels][0];
             if (existing) {
                 existing.focus();
                 handle.announce('Close the open editor before adding a view.');
                 return;
             }
-            let input;
-            const form = panel(chooseType ? 'Choose diagram type' : 'Add view', (body, applyButton) => {
-                const summary = document.createElement('p');
-                summary.className = 'ddn-appearance-message';
-                summary.textContent = 'View layout: ' + getViewSurfacePreset(layout).label;
-                body.append(summary);
-                const type = viewTypePicker(body, profiles, chooseType ? 'Diagram type' : 'View profile');
-                const settings = viewTypeSettings(body, type, applyButton);
-                const name = field(settings, chooseType ? 'View name' : 'Unique view name', initialName);
-                input = name;
-                const note = document.createElement('p');
-                note.className = 'ddn-appearance-message';
-                note.textContent = 'The chosen type supplies the view defaults, available elements and connection rules.';
-                settings.append(note);
-                return async () => {
-                    if (!name.value.trim())
-                        throw Error('Give the view a name.');
-                    if (!allowedViewProfiles().some(profile => profile.id === type.value))
-                        throw Error('Choose an available diagram type.');
-                    await createView(name.value.trim(), type.value, layout);
-                };
-            }, chooseType ? 'Create view' : undefined);
-            const back = document.createElement('button');
-            back.type = 'button';
-            back.textContent = 'Back';
-            back.addEventListener('click', () => {
-                if (form.getAttribute('aria-busy') === 'true')
+            const profiles = allowedViewProfiles();
+            let initialName = 'NewView', index = 2, layout = 'dynamic';
+            const names = new Set(records(snapshot).map(record => record.record.name));
+            while (names.has(initialName))
+                initialName = 'NewView' + index++;
+            const chooseLayout = () => viewLayoutDialog(handle.overlays, { selected: layout, onContinue(preset) { layout = preset; chooseProfile(); } });
+            const chooseProfile = () => {
+                const existing = [...panels][0];
+                if (existing) {
+                    existing.focus();
+                    handle.announce('Close the open editor before adding a view.');
                     return;
-                initialName = input.value;
-                panelClosers.get(form)?.();
-                chooseLayout();
-            });
-            form.querySelector('footer')?.prepend(back);
-        };
-        chooseLayout();
+                }
+                let input;
+                const form = panel(chooseType ? 'Choose diagram type' : 'Add view', (body, applyButton) => {
+                    const summary = document.createElement('p');
+                    summary.className = 'ddn-appearance-message';
+                    summary.textContent = 'View layout: ' + getViewSurfacePreset(layout).label;
+                    body.append(summary);
+                    const type = viewTypePicker(body, profiles, chooseType ? 'Diagram type' : 'View profile');
+                    const settings = viewTypeSettings(body, type, applyButton);
+                    const name = field(settings, chooseType ? 'View name' : 'Unique view name', initialName);
+                    input = name;
+                    const note = document.createElement('p');
+                    note.className = 'ddn-appearance-message';
+                    note.textContent = 'The chosen type supplies the view defaults, available elements and connection rules.';
+                    settings.append(note);
+                    return async () => {
+                        if (!name.value.trim())
+                            throw Error('Give the view a name.');
+                        if (!allowedViewProfiles().some(profile => profile.id === type.value))
+                            throw Error('Choose an available diagram type.');
+                        await createView(name.value.trim(), type.value, layout);
+                    };
+                }, chooseType ? 'Create view' : undefined);
+                const back = document.createElement('button');
+                back.type = 'button';
+                back.textContent = 'Back';
+                back.addEventListener('click', () => {
+                    if (form.getAttribute('aria-busy') === 'true')
+                        return;
+                    initialName = input.value;
+                    panelClosers.get(form)?.();
+                    chooseLayout();
+                });
+                form.querySelector('footer')?.prepend(back);
+            };
+            chooseLayout();
+        });
     }
     function viewTypeSettings(body, type, applyButton) {
         const settings = document.createElement('div');
@@ -906,74 +916,76 @@ export function createDesigner(viewer, options) {
         return settings;
     }
     function chooseViewType() {
-        const view = currentView();
-        if (!view) {
-            const sources = handle.runtime.sources();
-            // An existing, deliberately empty workarea only needs its first view.
-            if (sources?.files.some(file => file.text.trim())) {
-                addView(true);
+        deferred(import('./view-picker.js'), ({ viewTypePicker }) => {
+            const view = currentView();
+            if (!view) {
+                const sources = handle.runtime.sources();
+                // An existing, deliberately empty workarea only needs its first view.
+                if (sources?.files.some(file => file.text.trim())) {
+                    addView(true);
+                    return;
+                }
+                newDiagramDialog(viewer, async (text) => {
+                    const snapshot = handle.runtime.snapshot(), source = handle.runtime.sources();
+                    const file = source?.files.find(file => file.id === snapshot?.rootFile);
+                    if (!file || !snapshot || source?.files.some(file => file.text.trim()))
+                        throw Error('This document is no longer empty.');
+                    await apply({ kind: 'edit-source', patches: [{ file: file.id, base: file.revision, start: 0, end: file.text.length, text }] });
+                });
                 return;
             }
-            newDiagramDialog(viewer, async (text) => {
-                const snapshot = handle.runtime.snapshot(), source = handle.runtime.sources();
-                const file = source?.files.find(file => file.id === snapshot?.rootFile);
-                if (!file || !snapshot || source?.files.some(file => file.text.trim()))
-                    throw Error('This document is no longer empty.');
-                await apply({ kind: 'edit-source', patches: [{ file: file.id, base: file.revision, start: 0, end: file.text.length, text }] });
-            });
-            return;
-        }
-        if (!viewCanChooseType(view)) {
-            handle.announce('This view already contains content. Add a new view to choose another diagram type.');
-            return;
-        }
-        if (!writable(view.ref)) {
-            handle.announce('This view is read-only.');
-            return;
-        }
-        const profiles = allowedViewProfiles();
-        panel('Choose diagram type', (body, applyButton) => {
-            const type = viewTypePicker(body, profiles, 'Diagram type', str(view.record.profile));
-            const settings = viewTypeSettings(body, type, applyButton);
-            const note = document.createElement('p');
-            note.className = 'ddn-appearance-message';
-            note.textContent = `Set the diagram type for "${titleOf(view.record)}". Explicit appearance settings are retained; omitted values use the chosen type’s defaults.`;
-            settings.append(note);
-            return async () => {
-                if (!allowedViewProfiles().some(profile => profile.id === type.value))
-                    throw Error('Choose an available diagram type.');
-                const state = runtimeState(handle.runtime), original = state.source;
-                if (!original || !state.decoded || !viewCanChooseType(view))
-                    throw Error('This view is no longer empty and editable.');
-                let source = original, decoded = state.decoded;
-                // Header identity controls the profile/recipe. Remove overrides
-                // of just those fields, retaining all other authored settings.
-                for (const path of ['profile', 'subtype']) {
-                    const removals = patchProperty(decoded, view.ref, path, undefined).map(patch => {
-                        const file = source.files.find(file => file.id === patch.file);
-                        const comments = file.text.slice(patch.start, patch.end).split(/(?<=\n)/).filter(line => line.trimStart().startsWith('//')).join('');
-                        return { ...patch, text: comments };
+            if (!viewCanChooseType(view)) {
+                handle.announce('This view already contains content. Add a new view to choose another diagram type.');
+                return;
+            }
+            if (!writable(view.ref)) {
+                handle.announce('This view is read-only.');
+                return;
+            }
+            const profiles = allowedViewProfiles();
+            panel('Choose diagram type', (body, applyButton) => {
+                const type = viewTypePicker(body, profiles, 'Diagram type', str(view.record.profile));
+                const settings = viewTypeSettings(body, type, applyButton);
+                const note = document.createElement('p');
+                note.className = 'ddn-appearance-message';
+                note.textContent = `Set the diagram type for "${titleOf(view.record)}". Explicit appearance settings are retained; omitted values use the chosen type’s defaults.`;
+                settings.append(note);
+                return async () => {
+                    if (!allowedViewProfiles().some(profile => profile.id === type.value))
+                        throw Error('Choose an available diagram type.');
+                    const state = runtimeState(handle.runtime), original = state.source;
+                    if (!original || !state.decoded || !viewCanChooseType(view))
+                        throw Error('This view is no longer empty and editable.');
+                    let source = original, decoded = state.decoded;
+                    // Header identity controls the profile/recipe. Remove overrides
+                    // of just those fields, retaining all other authored settings.
+                    for (const path of ['profile', 'subtype']) {
+                        const removals = patchProperty(decoded, view.ref, path, undefined).map(patch => {
+                            const file = source.files.find(file => file.id === patch.file);
+                            const comments = file.text.slice(patch.start, patch.end).split(/(?<=\n)/).filter(line => line.trimStart().startsWith('//')).join('');
+                            return { ...patch, text: comments };
+                        });
+                        source = applySourcePatches(source, removals);
+                        decoded = decodeSources(source, { previous: decoded });
+                    }
+                    const node = findNode(decoded, view.ref), file = source.files.find(file => file.id === view.ref.file);
+                    const documentSource = decoded.documents.find(document => document.file.id === view.ref.file);
+                    if (!node || !file || !documentSource)
+                        throw Error('View source is unavailable.');
+                    const title = node.titleStart !== undefined && typeof view.record.title === 'string' ? view.record.title : undefined;
+                    const header = (node.start === 0 && documentSource.bom ? '\ufeff' : '') + ' '.repeat(node.indent) + diagramHeader(str(view.record.name), type.value, title) + documentSource.newline;
+                    source = applySourcePatches(source, [{ file: file.id, base: file.revision, start: node.start, end: node.headerEnd, text: header }]);
+                    const patches = source.files.flatMap(file => {
+                        const before = original.files.find(candidate => candidate.id === file.id);
+                        return file.text === before.text ? [] : [{ file: file.id, base: before.revision, start: 0, end: before.text.length, text: file.text }];
                     });
-                    source = applySourcePatches(source, removals);
-                    decoded = decodeSources(source, { previous: decoded });
-                }
-                const node = findNode(decoded, view.ref), file = source.files.find(file => file.id === view.ref.file);
-                const documentSource = decoded.documents.find(document => document.file.id === view.ref.file);
-                if (!node || !file || !documentSource)
-                    throw Error('View source is unavailable.');
-                const title = node.titleStart !== undefined && typeof view.record.title === 'string' ? view.record.title : undefined;
-                const header = (node.start === 0 && documentSource.bom ? '\ufeff' : '') + ' '.repeat(node.indent) + diagramHeader(str(view.record.name), type.value, title) + documentSource.newline;
-                source = applySourcePatches(source, [{ file: file.id, base: file.revision, start: node.start, end: node.headerEnd, text: header }]);
-                const patches = source.files.flatMap(file => {
-                    const before = original.files.find(candidate => candidate.id === file.id);
-                    return file.text === before.text ? [] : [{ file: file.id, base: before.revision, start: 0, end: before.text.length, text: file.text }];
-                });
-                if (patches.length)
-                    await apply({ kind: 'edit-source', patches });
-                const configured = handle.scene()?.views.find(candidate => refKey(candidate.ref) === refKey(view.ref));
-                if (configured)
-                    await activateView(configured);
-            };
+                    if (patches.length)
+                        await apply({ kind: 'edit-source', patches });
+                    const configured = handle.scene()?.views.find(candidate => refKey(candidate.ref) === refKey(view.ref));
+                    if (configured)
+                        await activateView(configured);
+                };
+            });
         });
     }
     let paletteSection = 'All elements';

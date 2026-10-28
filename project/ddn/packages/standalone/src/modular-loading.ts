@@ -1,7 +1,8 @@
 import type { Diagnostic, ModelSnapshot, RuntimeOptions, SourceSet, TaskOptions, VerificationReport, VerifyOptions, VersionSet } from '../../types/src/core.js';
 import { decodeSources } from '../../language/src/index.js';
 import { indexRecords } from '../../profiles/src/core.js';
-import { profileCatalogueFamily } from '../../profiles/src/generated-families.js';
+import { profileCatalogueShard } from '../../profiles/src/generated-shards.js';
+import {catalogueShards} from '../../profiles/src/generated-shards.js';
 import { loadedProfilePacks } from '../../profiles/src/family-packs.js';
 import { STANDARD_VERSIONS } from '../../runtime/src/versions.js';
 import { withBrowserExecutor } from './browser-options.js';
@@ -9,6 +10,7 @@ import { ComputationStopped, createContext, fingerprint } from '../../execution/
 
 interface DistributionLoader {
     loadEntry(alias: string): Promise<unknown>;
+    prepareEntry(alias:string):Promise<unknown>;
     worker(alias: string, initializers?: readonly string[]): Worker;
 }
 type Host = typeof globalThis & { DDN_LOADER?: DistributionLoader; __ddnCreateWorker?: (options?: RuntimeOptions) => Worker };
@@ -54,7 +56,9 @@ export async function ensureProfileInput(input: SourceSet | ModelSnapshot | read
     const units = scanUnits(input);
     if (!Array.isArray(input) && 'files' in input) context.accountMemory(units * 2);
     await context.checkpoint(units);
-    const families = [...new Set(requiredProfiles(input, task).map(profileCatalogueFamily).filter((family): family is string => !!family && family !== 'native'))];
+    await waitForPack(loader().loadEntry('schema:native'),task,started);
+    await waitForPack(loader().prepareEntry('worker'),task,started);
+    const families = [...new Set(requiredProfiles(input, task).map(profileCatalogueShard).filter((family): family is string => !!family && family !== 'native'))];
     await Promise.all(families.map(async family => {
         try {
             context.check();
@@ -77,7 +81,7 @@ export function installModularWorkerFactory(): void {
         const packs = options?.packs ?? loadedProfilePacks();
         const initializers = packs.filter(pack => pack.manifest.id !== 'ddn-native' && !pack.manifest.id.endsWith('-commands')).map(pack => {
             const family = pack.manifest.id.slice(4);
-            if (!['graphs', 'charts', 'geography', 'surfaces'].includes(family)) throw new Error('No local compute initializer for pack ' + pack.manifest.id);
+            if (!Object.hasOwn(catalogueShards,family)) throw new Error('No local compute initializer for pack ' + pack.manifest.id);
             return 'verify:' + family;
         });
         return loader().worker('worker', initializers);

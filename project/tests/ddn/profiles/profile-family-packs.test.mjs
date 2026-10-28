@@ -144,3 +144,21 @@ test('family registration rejects unknown, partial and conflicting declarations'
  assert.throws(()=>registerProfileFamily('graphs',catalogueFamilies.graphs.profiles,()=>[]));
  assert.deepEqual(loadedProfilePacks().map(p=>p.manifest.id),['ddn-native','ddn-graphs']);
 `));
+
+test('fine packs preserve every broad-family descriptor and register each optional profile once',()=>fresh(`
+ const {catalogueShards,profileCatalogueShard}=await load('profiles/src/generated-shards.js');
+ const {loadedProfilePacks}=await load('profiles/src/family-packs.js');
+ const {codex}=await load('profiles/src/schema-core.js');
+ const parents=new Map();
+ assert.equal(Object.keys(catalogueShards).length,19);
+ for(const [id,manifest]of Object.entries(catalogueShards)){
+  if(!parents.has(manifest.parent))parents.set(manifest.parent,(await load('profiles/src/generated-family-'+manifest.parent+'.js')).catalogueFamily);
+  await load('profiles/src/shards/'+id+'.js');
+  const pack=loadedProfilePacks().find(pack=>pack.manifest.id==='ddn-'+id);assert.ok(pack);
+  assert.deepEqual(pack.manifest.profiles,manifest.profiles);assert.equal(pack.manifest.hash,manifest.hash);
+  for(const profile of manifest.profiles){assert.equal(profileCatalogueShard(profile),id);assert.deepEqual(codex.profiles[profile],parents.get(manifest.parent).profiles[profile]);}
+ }
+ const packs=loadedProfilePacks();assert.equal(packs.length,20);assert.equal(new Set(packs.flatMap(pack=>pack.manifest.profiles)).size,151);
+ const {createRuntime}=await load('runtime/src/runtime.js'),{STANDARD_VERSIONS}=await load('runtime/src/versions.js');
+ const runtime=createRuntime({versions:STANDARD_VERSIONS,packs});assert.equal(runtime.registry.describe().length,20);runtime.destroy();
+`));

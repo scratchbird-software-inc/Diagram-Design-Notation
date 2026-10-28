@@ -1,7 +1,9 @@
 import type { Diagnostic, Pack } from '../../types/src/core.js';
 import { codex } from './schema-core.js';
 import { contractVersion, nativeProfileIds, profileDescriptor, freezeProfileData, type IndexedRecord } from './core.js';
-import { catalogueFamilies } from './generated-families.js';
+import { catalogueFamilies as parentFamilies } from './generated-families.js';
+import {catalogueShards} from './generated-shards.js';
+const catalogueFamilies={...parentFamilies,...catalogueShards};
 import { createNativePack } from './native.js';
 import { rulesFor } from './rules.js';
 

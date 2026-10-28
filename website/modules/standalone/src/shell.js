@@ -10,7 +10,6 @@ import { decodeSources } from '../../language/src/index.js';
 import { findUICommand, commandEnabled, UI_COMMANDS_CHANGED } from '../../viewer/src/ui-commands.js';
 import { popOut, floatPanel, syncDetachedThemes } from '../../viewer/src/popout.js';
 import { createMenuBar, openPopupMenu } from './menus.js';
-import { zipFiles } from './zip.js';
 const BLANK_DOCUMENT = '';
 const examples = {
     'ERD whiteboard': 'erd Sales : Sales design\n    Customer\n    Order\n    connect Customer to Order\n',
@@ -823,6 +822,9 @@ body[data-ddn-contrast=high]{--ddn-ui-border:var(--ddn-ui-text);--ddn-ui-muted:v
             if (!files.has(id) && !entries.some(entry => entry.name === id))
                 entries.push({ name: id, bytes: new Uint8Array(await file.arrayBuffer()) });
         const base = documentEntry.split('/').at(-1)?.replace(/\.ddn$/i, '') || 'document';
+        const { zipFiles } = await import('./zip.js');
+        if (viewer !== currentViewer)
+            return;
         download(base + '.zip', zipFiles(entries));
         persistDraft();
     };

@@ -1,7 +1,7 @@
 import type {Json,Ref} from '@ddn/types';
 import type {Viewer} from '@ddn/types/browser';
 import {getViewerHandle} from '../../viewer/src/native.js';
-import {fontFamily,listFonts,loadFontFile,getFontResources,installFontResources} from '../../viewer/src/fonts.js';
+import {fontFamily,listFonts,loadFontFile,ensureFontResources,getFontResources,installFontResources} from '../../viewer/src/fonts.js';
 import {textureBackground} from '../../viewer/src/texture.js';
 import {choiceField} from '../../viewer/src/choice-field.js';
 import {flushLiveSettings,notifyLiveSettings} from './live-settings.js';
@@ -76,7 +76,7 @@ export function openAppearance(viewer:Viewer,panel:Panel,commit:Commit):void {
                 const names=[...new Set(['sans','serif','mono','handwriting',...listFonts(document).map(f=>f.family),String(effective('style.font','sans'))])];
                 const family=select(grid,'Font family',names,String(effective('style.font','sans'))),size=numberField(grid,'Font size (pt)',Number(effective('style.font_size',16))*.75,{min:6,max:48,step:.5});
                 size.step='any';syncNumberField(size);
-                family.addEventListener('change',()=>{changed('style.font',family.value);update();});size.addEventListener('input',()=>{changed('style.font_size',size.valueAsNumber*4/3);update();});
+                family.addEventListener('change',()=>{const key=family.value,scopeTicket=ticket;void ensureFontResources(document,[{family:key}]).then(()=>{if(body.isConnected&&ticket===scopeTicket){changed('style.font',key);update();}}).catch(error=>{if(body.isConnected)message.textContent=String(error.message);});});size.addEventListener('input',()=>{changed('style.font_size',size.valueAsNumber*4/3);update();});
                 const ink=colourField(grid,'Text colour',String(effective('text.color','#243449')));ink.addEventListener('input',()=>{changed('text.color',ink.value);update();});
                 inherit(grid,'style.font');inherit(grid,'style.font_size');inherit(grid,'text.color');
                 const fontFile=field(content,'Load local font','','file');fontFile.accept='.woff2,.woff,.ttf,.otf';

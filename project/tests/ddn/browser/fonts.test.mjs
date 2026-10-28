@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, mkdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import vm from 'node:vm';
@@ -100,15 +101,27 @@ test('SVG CSS includes only used, successfully registered local faces and escape
     assert.equal(getFontResources(document, ['"Local Test", serif']).length, 1);
 });
 
-test('optional pack preserves official font integrity and licenses without executable network loading', () => {
-    const output = join(root, '.work/reports/ddn-fonts/unit-pack'); mkdirSync(output, { recursive: true });
-    const built = buildFontPack(output), script = readFileSync(built.script, 'utf8'), context = { globalThis: {} };
-    vm.runInNewContext(script, context);
-    const resources = context.globalThis.DDN_FONT_RESOURCES;
-    assert.equal(resources.length, 7); assert.equal(new Set(resources.map(font => font.family)).size, 4);
-    assert.ok(resources.every(font => font.dataURL.startsWith('data:font/woff2;base64,')));
-    assert.ok(Object.isFrozen(resources)); assert.ok(Object.isFrozen(resources[0]));
-    assert.equal((script.match(/SIL OPEN FONT LICENSE Version 1.1/gi) ?? []).length, 11); assert.ok(resources.every(font => font.license.includes('SIL OPEN FONT LICENSE')));
-    assert.ok(built.bytes < 3_000_000); assert.ok(!script.includes('fetch('));
-    assert.throws(() => buildFontPack(join(root, 'forbidden-font-output')), /beneath .work/);
+test('optional font catalogue loads only requested faces, deduplicates and retries local resources', async () => {
+    const output=join(root,'.work/reports/ddn-fonts/unit-pack');mkdirSync(output,{recursive:true});
+    const built=buildFontPack(output),script=readFileSync(built.script,'utf8'),requested=[];
+    const sandbox={URL,setTimeout,clearTimeout};sandbox.globalThis=sandbox;
+    let fail=false;
+    sandbox.document={currentScript:{src:'file:///fonts/ddn-fonts.js',nonce:'font-test'},createElement(){return {remove(){}};},head:{append(element){
+        requested.push(element.src);assert.equal(element.nonce,'font-test');
+        queueMicrotask(()=>{if(fail){fail=false;element.onerror();return;}const file=new URL(element.src).pathname.replace('/fonts/','');vm.runInContext(readFileSync(join(output,file),'utf8'),context);element.onload();});
+    }}};
+    const context=vm.createContext(sandbox);vm.runInContext(script,context);
+    assert.equal(sandbox.DDN_FONT_RESOURCES.length,0);assert.equal(sandbox.DDN_FONT_CATALOGUE.length,7);assert.ok(built.bytes<12000);
+    assert.doesNotMatch(script,/data:font|fetch\(|eval\(/);
+    await Promise.all([sandbox.DDN_LOAD_FONTS([{family:'Inter',style:'normal'}]),sandbox.DDN_LOAD_FONTS([{family:'Inter',style:'normal'}])]);
+    assert.equal(requested.length,1);assert.equal(sandbox.DDN_FONT_RESOURCES.length,1);
+    await sandbox.DDN_LOAD_FONTS([{family:'Unknown'}]);assert.equal(requested.length,1);
+    fail=true;await assert.rejects(sandbox.DDN_LOAD_FONTS([{family:'Caveat',style:'italic'}]),/Unable to load/);
+    await sandbox.DDN_LOAD_FONTS([{family:'Caveat',style:'italic'}]);assert.equal(sandbox.DDN_FONT_RESOURCES.length,2);
+    await sandbox.DDN_LOAD_FONTS();const resources=sandbox.DDN_FONT_RESOURCES;
+    assert.equal(resources.length,7);assert.equal(new Set(resources.map(font=>font.family)).size,4);
+    assert.ok(Object.isFrozen(resources));assert.ok(resources.every(font=>Object.isFrozen(font)&&font.license.includes('SIL OPEN FONT LICENSE')));
+    for(const face of built.faces){const bytes=readFileSync(join(output,face.file));assert.equal(createHash('sha256').update(bytes).digest('hex'),face.sha256);const resource=resources.find(font=>font.family===face.family&&font.style===face.style);assert.equal(createHash('sha256').update(Buffer.from(resource.dataURL.split(',')[1],'base64')).digest('hex'),face.fontSha256);}
+    assert.throws(()=>sandbox.DDN_REGISTER_FONT('unknown',{}),/Incompatible/);
+    assert.throws(()=>buildFontPack(join(root,'forbidden-font-output')),/beneath .work/);
 });

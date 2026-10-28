@@ -34,6 +34,7 @@ async function choose(page) {
         return chooseNewDocument(page);
     }
     await page.getByRole('button', {name: 'Choose diagram type…', exact: true}).click();
+    await page.getByRole('dialog',{name:'Choose view layout',exact:true}).or(page.getByRole('dialog',{name:'Choose diagram type',exact:true})).waitFor();
     if (await page.getByRole('dialog', {name: 'Choose view layout', exact: true}).isVisible()) await chooseViewLayout(page);
     const dialog = page.getByRole('dialog', {name: 'Choose diagram type', exact: true});
     await dialog.waitFor(); return dialog;

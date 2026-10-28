@@ -20,7 +20,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .work/cache
-          key: ddn-linux-x64-${{ hashFiles('tooling/bootstrap/*lock.json', 'tooling/browser/package-lock.json') }}
+          key: ddn-linux-x64-${{ hashFiles('tooling/bootstrap/*lock.json', 'tooling/browser/package-lock.json', 'tooling/optimizer/package-lock.json') }}
       - name: Bootstrap exact toolchain
         run: node tooling/bootstrap/bootstrap.mjs
       - name: Check contracts and standalone dependency boundary

@@ -1,6 +1,11 @@
 """Compile the adopted codex to deduplicated validation instructions and runtime data."""
 from pathlib import Path
-import json,hashlib
+import json,hashlib,sys
+CHECK='--check' in sys.argv
+OUTPUTS={}
+def emit(path,text):
+ OUTPUTS[path]=text
+ if not CHECK:path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text)
 ROOT=Path(__file__).resolve().parents[5]
 SOURCE=ROOT/'standard/codex'
 TARGET=ROOT/'project/ddn/packages/profiles/src/generated.ts'
@@ -209,23 +214,90 @@ header='// Generated from the adopted codex; run profiles/tools/generate.py.\n'
 manifest_text=header+"import type { CatalogueFamilyManifest } from './catalogue-store.js';\n"+'export const catalogueFamilies: Readonly<Record<string,CatalogueFamilyManifest>> = '+json_text(manifests)+';\n'
 manifest_text+="for(const family of Object.values(catalogueFamilies)){Object.freeze(family.profiles);Object.freeze(family);}Object.freeze(catalogueFamilies);\n"
 manifest_text+="const familyByProfile = new Map(Object.values(catalogueFamilies).flatMap(family => family.profiles.map(profile => [profile,family.id] as const)));\nexport function profileCatalogueFamily(profile: string): string | undefined { return familyByProfile.get(profile); }\n"
-TARGET.with_name('generated-families.ts').write_text(manifest_text)
+emit(TARGET.with_name('generated-families.ts'),manifest_text)
+# Fine capability packs retain the original descriptor data exactly.
+def shard_for(profile):
+ parent=family_for(profile);name=profile['id'].split('@')[0]
+ if parent=='graphs':
+  if name.startswith(('uml.','requirements.')):part='uml'
+  elif name.startswith(('sysml.','soaml.','uaf.')):part='systems'
+  elif name.startswith(('chen.','erd.','orm.')):part='erd'
+  elif name.startswith(('flow.','dfd.','epc.','epk.','petri.','idef0.','sdl.','cmmn.','bpmn.')):part='process'
+  elif name.startswith(('c4.','archimate.','architecture.','network.','iso.','icons.')):part='architecture'
+  else:part='specialist'
+ elif parent=='charts':
+  if name in ['chart.histogram','chart.density','chart.qq','chart.quantiledot','chart.dotplot','chart.boxplot','chart.violin','chart.beeswarm','chart.topk']:part='statistics'
+  elif name in ['chart.treemap','chart.tidytree','chart.radialtree','chart.circlepack','chart.sunburst','chart.packedbubble']:part='hierarchy'
+  elif name in ['chart.sankey','chart.parallelcoords','chart.arc','chart.force','chart.edgebundle']:part='relationships'
+  elif name in ['chart.heatmap','chart.densityheatmap','chart.calendar','chart.wordcloud']:part='density-calendar'
+  else:part='standard'
+ elif parent=='surfaces':part='matrices' if name.startswith('matrix.') else 'panels' if name.startswith('panels.') else 'canvases' if name.startswith('canvas.') else 'timeline' if name.startswith('timeline.') else 'decisions'
+ elif parent=='geography':part=name.split('.')[-1]
+ else:return 'native'
+ return parent+'-'+part
+shards={}
+for name,profile in profiles.items():
+ key=shard_for(profile)
+ if key!='native':shards.setdefault(key,{})[name]=profile
+assert sum(map(len,shards.values()))==147
+assert {key:value for group in shards.values() for key,value in group.items()}=={key:value for key,value in profiles.items() if key not in native}
+shard_manifests={name:{'id':name,'parent':family_for(next(iter(value.values()))),'version':'1.0.0','contract':data['version'],'codexHash':data['sourceHashes']['ddn.schema.json'],'hash':hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest(),'profiles':list(value)} for name,value in shards.items()}
+shard_text=header+"import type { CatalogueFamilyManifest } from './catalogue-store.js';\n"+'export const catalogueShards:Readonly<Record<string,CatalogueFamilyManifest & {readonly parent:string}>>='+json_text(shard_manifests)+';\n'
+shard_text+="for(const value of Object.values(catalogueShards)){Object.freeze(value.profiles);Object.freeze(value);}Object.freeze(catalogueShards);\nconst owner=new Map(Object.values(catalogueShards).flatMap(group=>group.profiles.map(profile=>[profile,group.id] as const)));\nexport function profileCatalogueShard(profile:string):string|undefined{return owner.get(profile); }\n"
+emit(TARGET.with_name('generated-shards.ts'),shard_text)
+emit(TARGET.with_name('generated-shards.json'),json.dumps(shard_manifests,indent=2,ensure_ascii=False)+'\n')
+for parent in ['graphs','charts','geography','surfaces']:
+ names=[name for name,meta in shard_manifests.items() if meta['parent']==parent]
+ imports=''.join("import './"+name+".js';\n" for name in names)
+ emit(TARGET.parent/'shards'/('all-'+parent+'.ts'),header+imports)
+ emit(ROOT/'project/ddn/packages/standalone/src/shards'/('all-'+parent+'.ts'),header+imports)
 native_data={**data,'profiles':families['native']}
-native_text=header+"import { decodeCatalogue } from './generated-codec.js';\nimport { createCatalogue } from './catalogue-store.js';\nimport { catalogueFamilies } from './generated-families.js';\n"
-native_text+='const catalogue=createCatalogue(decodeCatalogue('+encoded(native_data)+'),catalogueFamilies);\n'
-native_text+='export const compiledCodex: unknown=catalogue.compiledCodex;\nexport const installCatalogueFamily=catalogue.installCatalogueFamily;\nexport const installedCatalogueFamilies=catalogue.installedCatalogueFamilies;\n'
-TARGET.with_name('generated-native.ts').write_text(native_text)
+native_expression='decodeCatalogue('+encoded(native_data)+')'
+native_hash=hashlib.sha256(native_expression.encode()).hexdigest()
+emit(TARGET.with_name('generated-native-data.ts'),header+"import {decodeCatalogue} from './generated-codec.js';\nexport const nativeSchemaHash="+json_text(native_hash)+';\nexport const nativeCatalogue='+native_expression+';\n')
+index={key:deepcopy(original_data[key]) for key in ['version','nativeProfiles','knownProfiles','sourceHashes','coreTypes']}
+index['roles']={key:{field:value[field] for field in ['role','category','core','schema']} for key,value in original_data['roles'].items()}
+index['profiles']={}
+for name in native:
+ profile=profiles[name];fields=['id','method','inherits','projection','primary_palette','context_roles','relation_roles','projection_schema','scope','exclusions']
+ row={key:deepcopy(profile[key]) for key in fields if key in profile}
+ context=profiles.get(profile.get('external_context_profile'),{})
+ relations=profiles.get(profile.get('external_relation_profile'),{})
+ row['context_roles']=list(dict.fromkeys(row['context_roles']+context.get('primary_palette',[])+context.get('context_roles',[])))
+ row['context_roles']=[role for role in row['context_roles'] if role not in row['primary_palette']]
+ row['relation_roles']=list(dict.fromkeys(row['relation_roles']+relations.get('relation_roles',[])))
+ index['profiles'][name]=row
+emit(TARGET.with_name('generated-native-index.ts'),header+'export const nativeSchemaHash='+json_text(native_hash)+';\nexport const nativeIndex:Record<string,unknown>='+json_text(index)+';\n')
+for light in [False,True]:
+ text=header+("import {nativeIndex,nativeSchemaHash} from './generated-native-index.js';\n" if light else "import {nativeCatalogue} from './generated-native-data.js';\n")
+ text+="import {createCatalogue} from './catalogue-store.js';\nimport {catalogueFamilies} from './generated-families.js';\nimport {catalogueShards} from './generated-shards.js';\n"
+ text+='const catalogue=createCatalogue('+('nativeIndex' if light else 'nativeCatalogue')+',{...catalogueFamilies,...catalogueShards}'+(',nativeSchemaHash' if light else '')+');\n'
+ text+='export const compiledCodex:unknown=catalogue.compiledCodex;\nexport const installCatalogueFamily=catalogue.installCatalogueFamily;\nexport const installedCatalogueFamilies=catalogue.installedCatalogueFamilies;\nexport const installNativeCatalogue=catalogue.installCore;\n'
+ emit(TARGET.with_name('generated-native-light.ts' if light else 'generated-native.ts'),text)
+for name,value in shards.items():
+ payload={**{key:value for key,value in shard_manifests[name].items() if key!='parent'},'profiles':value}
+ text=header+"import {decodeWire} from '../generated-codec.js';\nimport type {CatalogueFamily} from '../catalogue-store.js';\nexport const catalogueFamily=decodeWire("+encoded(payload)+") as CatalogueFamily;\n"
+ emit(TARGET.parent/'shards'/('data-'+name+'.ts'),text)
+ parent=shard_manifests[name]['parent']
+ emit(TARGET.parent/'shards'/(name+'.ts'),header+"import {catalogueFamily} from './data-"+name+".js';\nimport {installCatalogueFamily} from '../generated-native.js';\nimport {registerProfileFamily} from '../family-packs.js';\nimport {completeProfileDiagnostics} from '../semantic.js';\ninstallCatalogueFamily(catalogueFamily);\nregisterProfileFamily("+json_text(name)+",Object.keys(catalogueFamily.profiles),completeProfileDiagnostics);\n")
+ presentation='graphs' if parent=='graphs' else parent
+ emit(ROOT/'project/ddn/packages/standalone/src/shards'/(name+'.ts'),header+"import {installPresentationFamily} from '../../../presentation/src/adapters.js';\nimport {"+presentation+"Presentation as family} from '../../../presentation/src/family-"+parent+".js';\ninstallPresentationFamily({...family,id:"+json_text(name)+",profiles:"+json_text(list(value))+"});\n")
 full=header+"import { installCatalogueFamily } from './generated-native.js';\n"
 for name,value in families.items():
  if name=='native':continue
  payload={**manifests[name],'profiles':value}
  text=header+"import { decodeWire } from './generated-codec.js';\nimport type { CatalogueFamily } from './catalogue-store.js';\n"+'export const catalogueFamily=decodeWire('+encoded(payload)+') as CatalogueFamily;\n'
- TARGET.with_name('generated-family-'+name+'.ts').write_text(text)
+ emit(TARGET.with_name('generated-family-'+name+'.ts'),text)
  full+="import { catalogueFamily as "+name+" } from './generated-family-"+name+".js';\n"
 for name in families:
  if name!='native':full+='installCatalogueFamily('+name+');\n'
 full+="export { compiledCodex, installCatalogueFamily, installedCatalogueFamilies } from './generated-native.js';\n"
-TARGET.write_text(full)
+emit(TARGET,full)
 import gzip
 sizes={path.name:{'bytes':len(path.read_bytes()),'gzip_bytes':len(gzip.compress(path.read_bytes()))} for path in [TARGET.with_name('generated-native.ts'),TARGET.with_name('generated-families.ts'),*[TARGET.with_name('generated-family-'+name+'.ts') for name in families if name!='native']]}
 print(json.dumps({'schema_nodes':len(compact),'schema_roots':len(selected_roots),'properties':len(props),'families':{k:len(v) for k,v in families.items()},'files':sizes}))
+
+if CHECK:
+ differences=[str(path.relative_to(ROOT)) for path,text in OUTPUTS.items() if not path.is_file() or path.read_text()!=text]
+ print(json.dumps({'mode':'check','generatedFiles':len(OUTPUTS),'shards':len(shards),'differences':differences}))
+ if differences:raise SystemExit(1)

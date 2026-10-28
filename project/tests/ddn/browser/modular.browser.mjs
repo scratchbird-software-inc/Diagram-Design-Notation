@@ -10,6 +10,8 @@ const root=fileURLToPath(new URL('../../../../',import.meta.url));
 const distribution=process.env.DDN_DDN_DISTRIBUTION??resolve(root,'.work/builds/ddn-distribution');
 const build=process.env.DDN_BUILD_ROOT??resolve(root,'.work/builds/ddn');
 const reports=resolve(root,'.work/reports/ddn-modular-browser');
+const manifest=JSON.parse(await readFile(join(distribution,'modular/manifest.json'),'utf8'));
+const originalModules=ids=>[...new Set(ids.flatMap(id=>(manifest.sourceModules[id]??[]).map(input=>input.id)))];
 const tool=process.env.DDN_PLAYWRIGHT_ROOT??resolve(root,'.work/tools/browser/node_modules/playwright');
 const {chromium}=await import(pathToFileURL(join(tool,'index.mjs')));
 // Source generation is test-side only. It must not preload browser capabilities.
@@ -36,9 +38,10 @@ async function open(mode,{base=distribution,http,trackNetwork=true}={}){
  await page.locator('.app-status').filter({hasText:mode==='verifier'?/^Verification /:/ready/}).waitFor();
  return {context,page,network,errors,requests};
 }
-async function moduleEvidence(page){return page.evaluate(()=>({registry:DDN_MODULES.describe(),loader:DDN_LOADER.describe()}));}
+async function moduleEvidence(page){const state=await page.evaluate(()=>({registry:DDN_MODULES.describe(),loader:DDN_LOADER.describe()}));state.registry.modules=originalModules(state.registry.modules);return state;}
 async function workerEvidence(page){
- const workers=await page.evaluate(async()=>Promise.all(window.__modularWorkerSources).then(sources=>sources.map(source=>({bytes:source.length,modules:[...source.matchAll(/"([^"\n]+\.js)":function\(/g)].map(match=>match[1])}))));
+ const workers=await page.evaluate(async()=>Promise.all(window.__modularWorkerSources).then(sources=>sources.map(source=>({bytes:source.length,modules:[...source.matchAll(/"([^"\n]+\.js)"\s*:/g)].map(match=>match[1])}))));
+ for(const worker of workers)worker.modules=originalModules(worker.modules);
  assert.ok(workers.length,'a real compute worker was created');
  for(const worker of workers){
   assert.ok(worker.modules.includes('language/src/index.js'),'worker contains the decoder');
@@ -65,14 +68,18 @@ async function openSource(page,text){return page.evaluate(async sources=>{
 test('modular native startup loads only the selected utility and no optional profile families',async()=>{
  const evidence={};
  for(const mode of ['viewer','designer','verifier']){
-  const session=await open(mode);const {context,page,network,errors}=session;
+  const session=await open(mode);const {context,page,network,errors,requests}=session;
   try{
    const state=await moduleEvidence(page),ids=state.registry.modules;
-   assert.ok(!ids.some(id=>/generated-family-(graphs|charts|geography|surfaces)\.js$/.test(id)),JSON.stringify(ids));
+   assert.ok(!ids.some(id=>/(?:generated-family-(graphs|charts|geography|surfaces)|shards\/data-[^/]+)\.js$/.test(id)),JSON.stringify(ids));
    assert.ok(!ids.some(id=>/presentation\/src\/(data-charts|data-geo|data-surfaces|graph-profiles|complete-renderers)\.js$/.test(id)),JSON.stringify(ids));
    if(mode!=='designer')assert.ok(!ids.some(id=>id.startsWith('designer/')),'viewer/verifier must not carry editing code');
    if(mode==='verifier')assert.ok(!ids.some(id=>id.startsWith('presentation/')),'verifier must not carry drawing code');
-   const workers=await workerEvidence(page);evidence[mode]={...state,workers};
+   const fonts=await page.evaluate(()=>window.DDN_FONT_RESOURCES?.map(face=>({family:face.family,style:face.style}))??[]);
+   assert.deepEqual(fonts,mode==='verifier'?[]:[{family:'Inter',style:'normal'}]);
+   const scripts=[...new Set(requests.filter(url=>url.startsWith('file:')&&new URL(url).pathname.endsWith('.js')))];
+   const scriptBytes=(await Promise.all(scripts.map(url=>readFile(fileURLToPath(url))))).reduce((sum,bytes)=>sum+bytes.length,0);
+   const workers=await workerEvidence(page);evidence[mode]={...state,workers,fonts,scriptFiles:scripts.map(url=>relative(distribution,fileURLToPath(url))),scriptBytes};
    assert.deepEqual(network,[]);assert.deepEqual(errors,[]);
   }finally{await context.close();}
  }
@@ -116,11 +123,11 @@ test('modular designer loads a newly selected family and retains undo, redo and 
  const {context,page,network,errors}=await open('designer');
  try{
   await createFixture(page,true);await openSource(page,'erd Sales\n    Customer\n');
-  assert.ok(!(await moduleEvidence(page)).registry.modules.some(id=>/generated-family-graphs\.js$/.test(id)));
+  assert.ok(!(await moduleEvidence(page)).registry.modules.some(id=>/shards\/data-graphs-uml\.js$/.test(id)));
   const fixture=page.locator('#modular-fixture');await fixture.getByRole('button',{name:'Add view',exact:true}).click();await chooseViewLayout(fixture);
   const dialog=fixture.getByRole('dialog');await selectDiagramProfile(dialog,'uml.structure@2','MT02');await dialog.getByRole('textbox',{name:'Unique view name'}).fill('ClassDesign');await dialog.getByRole('button',{name:'Apply',exact:true}).click();await dialog.waitFor({state:'detached'});
   await page.waitForFunction(()=>modularFixture.runtime.sources().files[0].text.includes('uml.structure@2'));
-  assert.ok((await moduleEvidence(page)).registry.modules.some(id=>/generated-family-graphs\.js$/.test(id)));
+  assert.ok((await moduleEvidence(page)).registry.modules.some(id=>/shards\/data-graphs-uml\.js$/.test(id)));
   await page.evaluate(async()=>{await modularFixture.handle.whenRendered();const entry=modularFixture.handle.scene().entries.find(e=>e.definition.record.name==='ClassDesign');modularFixture.handle.select(entry.definition.ref,entry.item.occurrence);});
   await paletteElement(page,fixture,'uml.class','CustomerClass');
   await page.waitForFunction(()=>modularFixture.runtime.sources().files[0].text.includes('CustomerClass'));
@@ -134,13 +141,13 @@ test('modular designer loads a newly selected family and retains undo, redo and 
 
 test('a missing optional family reports a visible failure and cannot produce a successful new view',async()=>{
  const base=await mkdtemp(join(reports,'missing-family-'));await cp(join(distribution,'modular'),join(base,'modular'),{recursive:true});
- const manifest=JSON.parse(await readFile(join(base,'modular/manifest.json'),'utf8')),candidates=manifest.chunks.filter(chunk=>chunk.moduleIds.includes('profiles/src/generated-family-charts.js'));
+ const manifest=JSON.parse(await readFile(join(base,'modular/manifest.json'),'utf8')),candidates=manifest.chunks.filter(chunk=>originalModules(chunk.moduleIds).includes('profiles/src/shards/data-charts-relationships.js'));
  assert.equal(candidates.length,1,'the chart catalogue belongs to exactly one active local chunk');const missing=join(base,'modular',candidates[0].file);await rename(missing,missing+'.unavailable');
  const {context,page,network}=await open('designer',{base});
  try{
   const editor=page.getByRole('textbox',{name:'DDN source',exact:true});await editor.fill(profileSource('chart.arc@1',language));await page.getByRole('button',{name:'Apply source',exact:true}).click();
   await page.waitForFunction(()=>/failed|unable|missing|error|could not/i.test([...document.querySelectorAll('.app-status,[role="alert"]')].map(e=>e.textContent).join(' ')));
-  assert.ok(!(await moduleEvidence(page)).registry.modules.some(id=>id==='profiles/src/generated-family-charts.js'));
+  assert.ok(!(await moduleEvidence(page)).registry.modules.some(id=>id==='profiles/src/shards/data-charts-relationships.js'));
   assert.equal(await page.locator('.ddn-viewer-stage svg').getByText('Example chart.arc@1',{exact:true}).count(),0);
   assert.deepEqual(network,[]);
  }finally{await context.close();}
@@ -177,6 +184,7 @@ test('shell-free viewer API embeds into an existing page and loads a foreign pro
   },sourceSet(profileSource('uml.sequence@2',language)));
   assert.equal(result.loaded,true);assert.equal(result.coverage.complete,true);assert.equal(result.outcome,'valid',JSON.stringify(result.diagnostics));assert.match(result.svg,/<svg/);assert.doesNotMatch(result.svg,/NaN|Infinity|undefined/);
   assert.equal(result.hostTitle,'Host application');assert.equal(result.shellElements,0);
+  result.state.modules=originalModules(result.state.modules);
   assert.ok(result.state.modules.includes('presentation/src/graph-profiles.js'),'the foreign method was loaded on demand');
   assert.ok(!result.state.modules.some(id=>id.startsWith('designer/')||/standalone\/src\/(shell|modular-shell|website-navigation)\.js$/.test(id)),JSON.stringify(result.state.modules));
   assert.deepEqual(network,[]);assert.deepEqual(errors,[]);await writeFile(join(reports,'embedded-viewer.json'),JSON.stringify({...result,svg:undefined},null,2)+'\n');
@@ -197,8 +205,50 @@ test('shell-free verifier API checks a foreign profile without loading viewer or
   },sourceSet(profileSource('chart.arc@1',language)));
   assert.equal(result.report.outcome,'valid',JSON.stringify(result.report.diagnostics));assert.equal(result.report.coverage.complete,true);assert.ok(result.report.coverage.checked.length>0);
   assert.equal(result.hostTitle,'Host validation');assert.equal(result.shellElements,0);
-  assert.ok(result.state.modules.includes('profiles/src/generated-family-charts.js'));
+  result.state.modules=originalModules(result.state.modules);
+  assert.ok(result.state.modules.includes('profiles/src/shards/data-charts-relationships.js'));
   assert.ok(!result.state.modules.some(id=>/^(viewer|designer|presentation)\//.test(id)||/standalone\/src\/(shell|modular-shell|website-navigation)\.js$/.test(id)),JSON.stringify(result.state.modules));
   assert.deepEqual(network,[]);assert.deepEqual(errors,[]);await writeFile(join(reports,'embedded-verifier.json'),JSON.stringify(result,null,2)+'\n');
+ }finally{await context.close();}
+});
+
+test('the API bootstrap defers native schema until use, reports a missing schema and permits retry',async()=>{
+ const html=join(reports,'schema-deferred.html'),loader=pathToFileURL(join(distribution,'modular/ddn-loader.js')).href;
+ await writeFile(html,`<!doctype html><meta charset="utf-8"><div id="host-canvas"></div><script src="${loader}"></script>`);
+ const context=await browser.newContext(),page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
+ await context.route(/^https?:\/\//,route=>route.abort());
+ const schemaChunk=manifest.chunks.find(chunk=>chunk.moduleIds.some(id=>(manifest.sourceModules[id]??[]).some(input=>input.id==='profiles/src/generated-native-data.js')));
+ assert.ok(schemaChunk);let blocked=true;
+ await context.route('**/'+schemaChunk.file,route=>{if(blocked){blocked=false;return route.abort();}return route.continue();});
+ try{
+  await page.goto(pathToFileURL(html).href);await page.waitForFunction(()=>!!window.DDN_LOADER);
+  const before=await page.evaluate(async()=>{window.api=await DDN_LOADER.loadEntry('api:viewer');window.rt=api.createRuntime(api.createBrowserRuntimeOptions());return DDN_MODULES.describe().modules;});
+  assert.ok(!originalModules(before).includes('profiles/src/generated-native-data.js'));
+  const failed=await page.evaluate(input=>rt.open(input),sourceSet('erd Sales\n    Customer\n'));
+  assert.equal(failed.snapshot,undefined);assert.equal(failed.coverage.complete,false);assert.match(failed.diagnostics[0].message,/Unable to load/);
+  const success=await page.evaluate(async input=>{const opened=await rt.open(input);rt.destroy();return opened;},sourceSet('erd Sales\n    Customer\n'));
+  assert.ok(success.snapshot,JSON.stringify(success.diagnostics));assert.deepEqual(errors,[]);
+ }finally{await context.close();}
+});
+
+test('designer panels and font styles load on demand, retry after failure and reuse their chunks',async()=>{
+ const {context,page,requests,network,errors}=await open('designer');
+ try{
+  await createFixture(page,true);await openSource(page,'erd Sales\n    Customer\n');
+  await page.evaluate(()=>{const f=modularFixture,entry=f.handle.scene().entries.find(e=>e.definition.record.name==='Customer');f.handle.select(entry.definition.ref,entry.item.occurrence);});
+  const initial=await moduleEvidence(page);assert.ok(!initial.registry.modules.includes('designer/src/appearance.js'));
+  assert.deepEqual(await page.evaluate(()=>DDN_FONT_RESOURCES.map(face=>[face.family,face.style])),[['Inter','normal']]);
+  const appearance=manifest.chunks.find(chunk=>chunk.moduleIds.some(id=>(manifest.sourceModules[id]??[]).some(input=>input.id==='designer/src/appearance.js')));assert.ok(appearance);let blocked=true;
+  await context.route('**/'+appearance.file,route=>{if(blocked){blocked=false;return route.abort();}return route.continue();});
+  const fixture=page.locator('#modular-fixture');await fixture.getByRole('button',{name:'Appearance & presets',exact:true}).click();
+  await page.waitForFunction(()=>document.body.innerText.includes('Unable to open the controls:'));
+  assert.equal(await fixture.getByRole('dialog').count(),0);
+  await fixture.getByRole('button',{name:'Appearance & presets',exact:true}).click();const dialog=page.getByRole('dialog',{name:'Appearance & presets',exact:true});await dialog.waitFor();
+  await dialog.getByRole('tab',{name:'Font',exact:true}).click();await dialog.getByRole('group',{name:'Font family',exact:true}).getByRole('button',{name:'Source Serif 4',exact:true}).click();
+  await page.waitForFunction(()=>DDN_FONT_RESOURCES.some(face=>face.family==='Source Serif 4'));
+  assert.equal(await page.evaluate(()=>DDN_FONT_RESOURCES.filter(face=>face.family==='Source Serif 4').length),1);
+  await dialog.getByRole('button',{name:'Close',exact:true}).click();
+  const first=requests.length;await fixture.getByRole('button',{name:'Appearance & presets',exact:true}).click();await dialog.waitFor();assert.equal(requests.length,first);
+  await dialog.getByRole('button',{name:'Close',exact:true}).click();assert.deepEqual(network,[]);assert.deepEqual(errors,[]);
  }finally{await context.close();}
 });

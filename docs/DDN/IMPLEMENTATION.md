@@ -49,7 +49,7 @@ File settings override type-scoped CSS, which overrides versioned standards. Sta
 
 The complete browser editions install rule, command and presentation packs and use local Blob workers with the same handlers as the explicit local fallback. `createCompletePresentationPack()` also exposes the adopted portable measurement/projection ABI with revision, version, fingerprint and font-generation checks. Core language, model and verifier modules require neither DOM nor Node APIs. The build boundary excludes commercial Weaver dependencies.
 
-The native single-file distribution currently **exceeds its gzip size targets**; the verifier also exceeds its raw target. Its manifest reports these failures explicitly. This migration does not claim the bundle-size release gate is qualified.
+The native single-file viewer and verifier currently **exceed their gzip size targets**. The designer passes its raw and gzip gates; all three meet their raw limits. Its manifest reports these failures explicitly. This migration does not claim the bundle-size release gate is qualified.
 
 ## Evidence and qualification
 
@@ -67,7 +67,23 @@ Release qualification remains separate. Chromium behavior is tested; the full br
 
 The [modular distribution](MODULAR-DISTRIBUTION.md) separates shared code, utility APIs/shells, compute workers and optional catalogue/rule/rendering families. Website tools load required families automatically; the offline folder and ZIP use the same loader. Native and complete single-file editions remain available. The earlier bundle-separation change preserved all gallery SVGs byte for byte.
 
-The build records actual raw/gzip sizes for each delivery form. Native single-file sizes with the complete GPL licence and notices included are 274,202 gzip bytes for the viewer, 318,214 for the designer and 177,702 for the verifier. The designer meets its size gates. The viewer exceeds its 256,000-byte gzip limit by 18,202 bytes; the verifier exceeds its 102,400-byte gzip limit. Both meet their raw limits. The viewer regression and remaining verifier compression work are recorded explicitly; no target was relaxed. Full-profile budgets remain observations. Modular startup totals include the loader and worker prerequisites and count each shared chunk once. Optional font resources are measured separately. Artifacts remain development builds; this work does not establish release qualification.
+The production build uses pinned esbuild 0.28.2, specializes each utility shell, defers the full native schema behind a lightweight index, loads 19 optional profile packs and opens designer panels through literal dynamic imports. Font binaries load per family/style; explicit installation of the whole suite remains available. The normal ESM and native/complete single-file APIs retain their full declared capabilities.
+
+The manifest distinguishes code bootstrap from first-native-document cost (including schema and worker), then accounts for optional fonts independently. New modular size regression ceilings are enforced during distribution generation. They are delivery-layout ceilings, separate from the original native single-file targets. The viewer and verifier compressed native gates remain open; no original target was relaxed. Full-profile budgets remain observations. Artifacts remain development builds; bundle reduction does not establish release qualification.
+
+### Bundle delivery measurements — 28 October 2026
+
+Code bytes below exclude optional fonts and user assets. Gzip totals sum independently compressed resources.
+
+| Utility | Previous first document, raw | New bootstrap, raw | New first document, raw | New first document, gzip |
+| --- | ---: | ---: | ---: | ---: |
+| Viewer | 1,821,558 | 764,516 | 1,346,145 | 335,437 |
+| Designer | 2,294,817 | 945,262 | 1,526,891 | 398,526 |
+| Verifier | 1,327,749 | 515,125 | 1,096,754 | 244,940 |
+
+The optional font catalogue is 5,573 raw bytes. A normal viewer/designer start adds only the 474,446-byte Inter normal resource; the previous monolithic font script was 2,619,658 bytes. Other families and italic faces load on use. The verifier loads no fonts. All seven faces remain distributed with their licences.
+
+Native single-file gzip sizes are ddn-viewer.html: 279,904, ddn-visual-designer.html: 369,641, ddn-verifier.html: 194,271 bytes. Designer passes its original 409,600-byte compressed ceiling. Viewer and verifier exceed their respective 256,000- and 102,400-byte ceilings; all raw ceilings pass.
 
 ### Public DDN licensing and sponsorship — 24 October 2026
 

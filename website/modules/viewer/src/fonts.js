@@ -121,8 +121,25 @@ export function listFonts(document) {
     }
     return options;
 }
+/** Load only the named trusted standard resources; generic/system fonts perform no IO. */
+export async function ensureFontResources(document, requests) {
+    const host = document.defaultView;
+    if (!host?.DDN_LOAD_FONTS)
+        return false;
+    const selected = requests.flatMap(request => names(request.family).filter(name => !generics.has(name) && !aliases[name]).map(family => ({ family, style: request.style ?? 'normal' })));
+    if (!selected.length)
+        return false;
+    const resources = await host.DDN_LOAD_FONTS(selected), current = state(document);
+    const missing = resources.some(resource => !current.installed.has(slot(resource)));
+    if (missing)
+        await installFontResources(document, resources);
+    return missing;
+}
 /** Install an explicit local resource pack (or the page's DDN_FONT_RESOURCES) without fetching. */
 export async function installFontResources(document, resources) {
+    const loader = document.defaultView?.DDN_LOAD_FONTS;
+    if (resources === undefined && loader)
+        return installFontResources(document, await loader());
     const supplied = resources ?? document.defaultView?.DDN_FONT_RESOURCES ?? [];
     if (!Array.isArray(supplied) || supplied.length > MAX_FACES)
         throw new Error('A font pack may contain at most 128 faces.');

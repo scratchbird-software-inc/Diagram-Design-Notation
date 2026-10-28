@@ -17,7 +17,7 @@ function fresh(body){return new Promise((done,fail)=>{
  const graphSource=sources('view Graph as uml.structure@2\\n    element Thing as uml.class\\n');
  const settings={scope:{kind:'workarea'},level:'semantic',purpose:'inspect'};
  const calls=[];let intercept=async()=>{};
- globalThis.DDN_LOADER={async loadEntry(alias){calls.push(alias);await intercept(alias);const [kind,family]=alias.split(':');if(kind==='verify')await load('profiles/src/families/'+family+'.js');else if(kind==='render')await load('presentation/src/family-'+family+'.js');},worker(){throw Error('Worker unavailable in this host test');}};
+ globalThis.DDN_LOADER={async loadEntry(alias){calls.push(alias);await intercept(alias);const [kind,family]=alias.split(':');if(kind==='schema')await load('standalone/src/schema-native.js');else if(kind==='verify')await load('profiles/src/shards/'+family+'.js');else if(kind==='render')await load('standalone/src/shards/'+family+'.js');},async prepareEntry(alias){calls.push('prepare:'+alias);},worker(){throw Error('Worker unavailable in this host test');}};
  const host=await load('standalone/src/modular-host.js');
  const cancel=()=>{const handlers=new Set();let aborted=false;return{token:{get aborted(){return aborted;},onAbort(fn){handlers.add(fn);return()=>handlers.delete(fn);}},abort(){aborted=true;for(const fn of handlers)fn();}};};
  `;
@@ -35,7 +35,7 @@ test('headless modular verifier leaf excludes runtime state, editing and renderi
 });
 
 test('a slow earlier profile load cannot replace a newer opened document',()=>fresh(`
- const gate=deferred(),entered=deferred();intercept=async alias=>{if(alias==='verify:charts'){entered.resolve();await gate.promise;}};
+ const gate=deferred(),entered=deferred();intercept=async alias=>{if(alias==='verify:charts-standard'){entered.resolve();await gate.promise;}};
  const runtime=host.createModularRuntime(host.createModularRuntimeOptions(),false);
  const earlier=runtime.open(chartSource);await entered.promise;
  const latest=await runtime.open(nativeSource);assert.ok(latest.snapshot);
@@ -51,9 +51,9 @@ test('partial source ingestion discovers profiles with the complete merged inclu
  const opened=await runtime.open(initial);assert.ok(opened.snapshot,JSON.stringify(opened.diagnostics));
  const updated=await runtime.ingest({base:opened.revision,origin:'local-provider',sources:[source('view Auxiliary as chart.basic@1\\n','./views.ddn','2')]});
  assert.ok(updated.snapshot,JSON.stringify(updated.diagnostics));
- assert.ok(calls.includes('verify:charts'));
+ assert.ok(calls.includes('verify:charts-standard'));
  assert.equal(runtime.sources().files.length,2);
- assert.ok(runtime.registry.describe().some(p=>p.id==='ddn-charts'));runtime.destroy();
+ assert.ok(runtime.registry.describe().some(p=>p.id==='ddn-charts-standard'));runtime.destroy();
 `));
 
 test('a newer preload immediately supersedes older work already inside the core runtime',()=>fresh(`
@@ -62,14 +62,14 @@ test('a newer preload immediately supersedes older work already inside the core 
  const executor={async run(request,task){if(first){first=false;decoding.resolve();await decodeGate.promise;}return local.run(request,task);},destroy(){local.destroy();}};
  const runtime=host.createModularRuntime({...options,executor},false);
  const earlier=runtime.open(nativeSource);await decoding.promise;
- intercept=async alias=>{if(alias==='verify:charts'){loading.resolve();await loadGate.promise;}};
+ intercept=async alias=>{if(alias==='verify:charts-standard'){loading.resolve();await loadGate.promise;}};
  const latest=runtime.open(chartSource);await loading.promise;decodeGate.resolve();
  const stale=await earlier;assert.ok(stale.diagnostics.some(d=>d.code==='runtime.stale'));assert.equal(runtime.snapshot(),undefined);
  loadGate.resolve();const opened=await latest;assert.ok(opened.snapshot);assert.equal(runtime.sources().files[0].text,chartSource.files[0].text);runtime.destroy();
 `));
 
 test('aborted preload returns promptly with ordinary cancelled results and no runtime install',()=>fresh(`
- const gate=deferred(),entered=deferred();intercept=async alias=>{if(alias==='verify:charts'){entered.resolve();await gate.promise;}};
+ const gate=deferred(),entered=deferred();intercept=async alias=>{if(alias==='verify:charts-standard'){entered.resolve();await gate.promise;}};
  const runtime=host.createModularRuntime(host.createModularRuntimeOptions(),false),signal=cancel();
  const pending=runtime.open(chartSource,{cancel:signal.token});await entered.promise;signal.abort();
  const result=await Promise.race([pending,delay(300).then(()=>{throw Error('Cancellation waited for the pending script');})]);
@@ -81,7 +81,7 @@ test('aborted preload returns promptly with ordinary cancelled results and no ru
 `));
 
 test('destroying a runtime during preload prevents late registry installation',()=>fresh(`
- const gate=deferred(),entered=deferred();intercept=async alias=>{if(alias==='verify:charts'){entered.resolve();await gate.promise;}};
+ const gate=deferred(),entered=deferred();intercept=async alias=>{if(alias==='verify:charts-standard'){entered.resolve();await gate.promise;}};
  const runtime=host.createModularRuntime(host.createModularRuntimeOptions(),false);
  const pending=runtime.open(chartSource);await entered.promise;runtime.destroy();gate.resolve();const result=await pending;
  assert.ok(result.diagnostics.some(d=>d.code==='runtime.disposed'));
@@ -89,19 +89,19 @@ test('destroying a runtime during preload prevents late registry installation',(
 `));
 
 test('attaching a viewer upgrades an existing verification runtime to load rendering',()=>fresh(`
- const gate=deferred(),entered=deferred();intercept=async alias=>{if(alias==='verify:graphs'){entered.resolve();await gate.promise;}};
+ const gate=deferred(),entered=deferred();intercept=async alias=>{if(alias==='verify:graphs-uml'){entered.resolve();await gate.promise;}};
  const runtime=host.createModularRuntime(host.createModularRuntimeOptions(),false);
  const pending=runtime.open(graphSource);await entered.promise;
  assert.strictEqual(host.attachModularRuntime(runtime,true),runtime);gate.resolve();const result=await pending;
- assert.ok(result.snapshot,JSON.stringify(result.diagnostics));assert.ok(calls.includes('render:graphs'));runtime.destroy();
+ assert.ok(result.snapshot,JSON.stringify(result.diagnostics));assert.ok(calls.includes('render:graphs-uml'));runtime.destroy();
 `));
 
 test('missing or incompatible packs preserve the prior model and return explicit failure',()=>fresh(`
- const options=host.createModularRuntimeOptions(),runtime=host.createModularRuntime({...options,versions:{...options.versions,packs:{'ddn-charts':'9.0.0'}}},false);
+ const options=host.createModularRuntimeOptions(),runtime=host.createModularRuntime({...options,versions:{...options.versions,packs:{'ddn-charts-standard':'9.0.0'}}},false);
  const result=await runtime.open(chartSource);
  assert.ok(result.diagnostics.some(d=>/Pack version differs/.test(d.message)));assert.equal(result.coverage.complete,false);
  assert.equal(runtime.snapshot(),undefined);runtime.destroy();
- intercept=async()=>{throw Error('Missing local pack file');};
+ intercept=async alias=>{if(alias.startsWith('verify:'))throw Error('Missing local pack file');};
  const display=host.createModularRuntime(host.createModularRuntimeOptions(),false);const good=await display.open(nativeSource);assert.ok(good.snapshot);
  const failed=await display.open(graphSource);assert.equal(failed.coverage.complete,false);assert.equal(display.snapshot().semanticFingerprint,good.snapshot.semanticFingerprint);display.destroy();
  const verifier=host.createModularVerifier(host.createModularRuntimeOptions());
@@ -113,7 +113,7 @@ test('profile waiting consumes the operation elapsed budget',()=>fresh(`
  // Advance the clock at the loading boundary. Under concurrent test load a
  // real 30ms budget can expire during decoding, before the loader is entered.
  const wallClock=Date.now;let now=wallClock();Date.now=()=>now;
- const gate=deferred(),entered=deferred();intercept=async alias=>{if(alias==='verify:charts'){now+=31;entered.resolve();await gate.promise;}};
+ const gate=deferred(),entered=deferred();intercept=async alias=>{if(alias==='verify:charts-standard'){now+=31;entered.resolve();await gate.promise;}};
  const runtime=host.createModularRuntime(host.createModularRuntimeOptions(),false);
  try {
   const pending=runtime.open(chartSource,{budget:{elapsedMs:30,workUnits:100000,memoryBytes:1000000}});await entered.promise;
@@ -137,7 +137,7 @@ test('provided executors remain active while newer verifier pack signatures are 
 test('headless verification loads rules without pulling rendering families',()=>fresh(`
  const verifier=host.createModularVerifier(host.createModularRuntimeOptions());
  await verifier.verifySources(graphSource,settings);
- assert.ok(calls.includes('verify:graphs'));assert.ok(!calls.some(alias=>alias.startsWith('render:')));verifier.destroy();
+ assert.ok(calls.includes('verify:graphs-uml'));assert.ok(!calls.some(alias=>alias.startsWith('render:')));verifier.destroy();
 `));
 
 test('an unused supplied executor is disposed after changed packs require local fallback',()=>fresh(`

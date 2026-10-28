@@ -7,8 +7,8 @@ export const completeProfileIds: readonly string[] = Object.freeze(Object.keys(c
 export const nativeProfileIds: readonly string[] = Object.freeze([...codex.nativeProfiles]);
 export function freezeProfileData<T>(v: T): T { if (v && typeof v === 'object' && !Object.isFrozen(v)) {
     Object.freeze(v);
-    for (const child of Object.values(v))
-        freezeProfileData(child);
+    for (const descriptor of Object.values(Object.getOwnPropertyDescriptors(v)))
+        if('value' in descriptor)freezeProfileData(descriptor.value);
 } return v; }
 freezeProfileData(codex);
 type CatalogueProfile = (typeof codex.profiles)[string];

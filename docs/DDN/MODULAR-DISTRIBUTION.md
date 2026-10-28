@@ -14,22 +14,23 @@ The [download page](../../website/download/index.html) includes the modular ZIP.
 
 The shared foundation contains the language, model, structural schema, default resolution and native verification. Native presentation adds cards, tables, native graph layout, navigation and capture. Designer commands and controls are a separate dependency. The verifier loads no diagram renderers.
 
-Optional families are `graphs` (92 method profiles), `charts` (30), `geography` (3) and `surfaces` (22). The four native profiles bring the total to 151. Each family has separately loadable catalogue/default data, verification registration and rendering implementation. Shared advanced analysis/rule helpers are emitted once across the families. Fonts and document/geographic assets remain independent resources.
+The 147 optional profiles are divided into 19 packs: graphs (process, UML, ERD, architecture, systems, specialist), charts (standard, statistics, hierarchy, relationships, density/calendar), surfaces (matrices, panels, canvases, timeline, decisions), and geography (choropleth, symbols, outline). Four native profiles bring the total to 151. Each pack has independent catalogue and verification entries and an optional rendering registration. Related packs can share rendering algorithms. The four broad family aliases remain convenience entries that load all their smaller packs.
 
-The shared structural/lexical vocabulary deliberately remains available before a family loads. This preserves recognition of known names and exact schema indexes. Recognizing a profile or loading its data does **not** install its semantic rules. Missing capabilities remain unsupported/incomplete, and failed pack loads are reported explicitly.
+The lightweight profile index is available at bootstrap. The full structural schema and native catalogue are loaded before the first source/model operation, then reused across utilities. Recognition of a profile does **not** install its semantic rules. Missing capabilities remain unsupported/incomplete, and failed pack loads are reported explicitly. The schema generator verifies exact equivalence with the canonical codex; normal ESM and single-file builds retain eager data.
 
-The generator partitions modules by their entry-point dependency sets. A module is emitted in one chunk, shared where required; arbitrary boundaries cannot duplicate a dependency or create cyclic chunk dependencies. The manifest records every module, chunk, dependency, hash and size. Core/source utilities remain usable through ordinary ESM imports as well.
+Appearance, symbol, property and diagram/layout chooser panels load when opened. ZIP support loads when saving an archive. The production build specializes one maintained shell for each utility and uses pinned esbuild tree shaking/minification before offline classic-script packaging. Literal local dynamic imports become trusted module-loader requests; source text cannot supply executable paths. Complete single-file editions embed all these modules and defer execution only.
+
+A module is emitted in one chunk, shared where required. The manifest records dependency closures, content hashes, compressed/raw sizes and optimizer provenance mapping emitted modules to original source files. Bootstrap bytes and first-native-document bytes are reported separately; the latter includes the full schema and worker prerequisites. Fonts and user assets are separate resources.
 
 ## Embed without the application shell
 
-Load `ddn-loader.js` without a `data-entry` attribute, prepare the worker modules, and select an API entry:
+Load `ddn-loader.js` without a `data-entry` attribute, select an API entry:
 
 ```html
 <div id="diagram"></div>
 <script src="./ddn-modular/ddn-loader.js"></script>
 <script>
 (async () => {
-  await DDN_LOADER.prepareEntry('worker');
   const DDN = await DDN_LOADER.loadEntry('api:viewer');
   const runtime = DDN.createRuntime(DDN.createBrowserRuntimeOptions());
   const viewer = DDN.createViewer(document.querySelector('#diagram'), { runtime });
@@ -51,9 +52,9 @@ For manually composed ESM applications, use `@ddn/runtime/native`, `@ddn/profile
 
 Workers contain the dependency closure of their compute bootstrap plus the selected verification-family initializers. They contain no viewer, designer, DOM shell or drawing modules. CSP restrictions can use the same cooperative computation fallback. Adding packs to an existing runtime may trigger cooperative verification because its original executor configuration differs; creating a new verifier uses the selected rule set in its worker.
 
-Pack/chunk installation checks the language/default versions, release identity, declared dependencies and conflicting registrations. Repeated identical loading is harmless. Concurrent loads share one request; failures can be retried and have a bounded timeout. Missing packs never authorize a false-valid verification result. These are trusted application modules, not a sandbox for arbitrary third-party code.
+The loader selects a release-specific allowlist of chunk hashes and dependencies. Chunk installation checks that selection, language/default versions and conflicting registrations; a loader from another release cannot replace the active runtime. Repeated identical loading is harmless. Concurrent loads share one request; failures can be retried and have a bounded timeout. Missing packs never authorize a false-valid verification result. These are trusted application modules, not a sandbox for arbitrary third-party code.
 
-Publish each release's loader, manifest and referenced chunks together. Revalidate HTML and the loader; release-specific chunk URLs can be cached. Keep previous release chunks in the deployment store while old pages remain open. Generated local build folders and offline ZIPs contain only the current release.
+Publish each release's loader, manifest and referenced chunks together. Revalidate HTML and the loader; content-addressed chunks and font faces can be cached across releases when their code and dependencies are unchanged. Keep previous release chunks in the deployment store while old pages remain open. Generated local build folders and offline ZIPs contain only the current release.
 
 ## Build and qualification
 

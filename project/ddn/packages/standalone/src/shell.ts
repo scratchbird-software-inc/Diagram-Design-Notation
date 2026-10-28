@@ -12,7 +12,6 @@ import {decodeSources} from '../../language/src/index.js';
 import {findUICommand, commandEnabled, UI_COMMANDS_CHANGED} from '../../viewer/src/ui-commands.js';
 import {popOut, floatPanel, syncDetachedThemes, type Detached} from '../../viewer/src/popout.js';
 import {createMenuBar, openPopupMenu, type MenuItem, type MenuSpec} from './menus.js';
-import {zipFiles} from './zip.js';
 
 interface Sample {entry: string; title?: string; views?: readonly {profile: string}[]}
 interface SiteHost {DDN_WEBSITE_CATALOGUE?: {corpus: readonly Sample[]}; DDN_SITE_INITIAL?: {sources: SourceSet; assets?: Record<string, {text: string; mime: string}>}}
@@ -706,6 +705,8 @@ body[data-ddn-contrast=high]{--ddn-ui-border:var(--ddn-ui-text);--ddn-ui-muted:v
         if (viewer !== currentViewer) return;
         for (const [id, file] of assets) if (!files.has(id) && !entries.some(entry => entry.name === id)) entries.push({name: id, bytes: new Uint8Array(await file.arrayBuffer())});
         const base = documentEntry.split('/').at(-1)?.replace(/\.ddn$/i, '') || 'document';
+        const {zipFiles}=await import('./zip.js');
+        if(viewer!==currentViewer)return;
         download(base + '.zip', zipFiles(entries));
         persistDraft();
     };

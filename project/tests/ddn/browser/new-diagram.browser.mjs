@@ -91,11 +91,11 @@ for (const edition of ['complete', 'modular']) test(`${edition} New offers all 1
             profiles.push(...await diagramProfileIds(dialog, method));
         }
         assert.equal(profiles.length, 151); assert.equal(new Set(profiles).size, 151);
-        if (edition === 'modular') assert.equal(await page.evaluate(() => DDN_MODULES.describe().modules.some(id => /generated-family-graphs\.js$/.test(id))), false);
+        if (edition === 'modular') assert.equal(await page.evaluate(() => DDN_LOADER.describe().loadedEntries.includes('verify:graphs-uml')), false);
         await create(dialog, 'ClassDesign', 'uml.structure@2', 'MT02');
         assert.equal(await source(page).inputValue(), 'workarea "Untitled"\nview "ClassDesign" as "uml.structure@2"\n');
         await addFromPalette(page, 'uml.class', 'CustomerClass');
-        if (edition === 'modular') assert.equal(await page.evaluate(() => DDN_MODULES.describe().modules.some(id => /generated-family-graphs\.js$/.test(id))), true);
+        if (edition === 'modular') assert.equal(await page.evaluate(() => DDN_LOADER.describe().loadedEntries.includes('verify:graphs-uml')), true);
         dialog = await start(page);
         await create(dialog, 'Ideas', 'mindmap.basic@1');
         assert.equal(await source(page).inputValue(), 'workarea "Untitled"\nmindmap "Ideas"\n');

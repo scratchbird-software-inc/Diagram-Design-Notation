@@ -8,12 +8,14 @@ The shared module is [viewer/src/fonts.ts](../../project/ddn/packages/viewer/src
 <script src="ddn-fonts.js"></script>
 ```
 
-The script registers `globalThis.DDN_FONT_RESOURCES`. It contains local base64 data URLs and complete font notices. Missing resource registration is a no-op. A host that does not include it keeps system fonts. A missing script file may appear as a browser resource warning but must not prevent application startup.
+The script is a small catalogue/loader. Keep its `fonts/` directory beside it, using the resources from the modular ZIP. It registers `DDN_FONT_CATALOGUE` and `DDN_LOAD_FONTS`; `DDN_FONT_RESOURCES` initially contains no binaries. Viewers load the normal Inter face, then only the family/style faces used by their scenes. Appearance selection loads a selected face before applying it. Verifiers do not load fonts. Each face is a local content-addressed script carrying base64 WOFF2 bytes and its full licence notice. Concurrent requests share one load, errors are bounded and retryable, and filenames come exclusively from the trusted catalogue. Missing resource registration is a no-op. A host that does not include it keeps system fonts. A missing script file may appear as a browser resource warning but must not prevent application startup.
 
 ## API
 
 ```ts
 fontFamily(key: string): string
+ensureFontResources(document: Document,
+  requests: readonly { family: string; style?: FontStyle }[]): Promise<boolean>
 installFontResources(document: Document,
   resources?: readonly FontResource[]): Promise<readonly FontOption[]>
 listFonts(document: Document): readonly FontOption[]
@@ -27,7 +29,7 @@ fontCSS(document: Document, usedFontKeys: Iterable<string>): string
 
 `fontFamily` preserves `sans`, `serif`, `mono`, `monospace` and `handwriting`. Named families and comma-separated fallback lists become safely quoted CSS family values. Family selection uses existing `style.font`; font size uses existing `style.font_size`. The optional suite does not change their defaults or the file > CSS > standard priority.
 
-`installFontResources` reads the explicit resource array or the page's global registration. Await its result before initial text measurement, layout and capture. It validates the whole input array before constructing any browser `FontFace`, loads each binary and registers only successful faces with that document's `FontFaceSet`. Simultaneous identical registrations share pending work. A different binary for an already occupied family/weight/style slot is rejected; one user font cannot silently replace another. A failed browser load rejects the call; other successfully loaded faces remain usable. The host should report that failure and allow system fallback. Document font loading events can invalidate viewer text measurements after later custom additions.
+`ensureFontResources` loads and installs only requested standard faces and reports whether installation changed. Unknown/system families do not load resources. `installFontResources` reads an explicit resource array; with no array it explicitly loads the complete optional standard suite when a catalogue loader exists, or uses the page's global registration otherwise. Await its result before initial text measurement, layout and capture. It validates the whole input array before constructing any browser `FontFace`, loads each binary and registers only successful faces with that document's `FontFaceSet`. Simultaneous identical registrations share pending work. A different binary for an already occupied family/weight/style slot is rejected; one user font cannot silently replace another. A failed browser load rejects the call; other successfully loaded faces remain usable. The host should report that failure and allow system fallback. Document font loading events can invalidate viewer text measurements after later custom additions.
 
 Each `FontOption` has `key`, `family`, `label`, `category`, `source`, `available`, `weights` and `styles`. Generic choices are always available. Standard family entries exist before installation with `available: false`; after loading they describe the faces actually present. Custom entries appear only after successful loading. Weight strings are actual single weights or ranges. Style metadata does not promise unsupported italic files or arbitrary variable-axis controls. Caveat has a normal face; any browser synthesized italic is not a bundled italic face.
 
@@ -47,6 +49,6 @@ The same self-contained SVG can be rasterized to PNG. Generic or unknown system 
 
 ## Pack builder and validation
 
-[tooling/workspace/ddn-fonts.mjs](../../tooling/workspace/ddn-fonts.mjs) exports `buildFontPack(outputDirectory)` and returns `{script, manifest, licenses, bytes}`. Output must be beneath the repository's `.work`. It reads only the maintained local font assets, verifies recorded hashes and creates the three pack files. No build-time download is necessary. Distribution/site builders can copy those outputs to their existing publication destinations.
+[tooling/workspace/ddn-fonts.mjs](../../tooling/workspace/ddn-fonts.mjs) exports `buildFontPack(outputDirectory)` and returns `{script, manifest, licenses, index, bytes, files, faces}`. Output must be beneath the repository's `.work`. It reads only the maintained local font assets, verifies recorded hashes and creates the catalogue script, face index, original provenance manifest, licence file and seven face scripts. No build-time download is necessary. Distribution/site builders can copy those outputs to their existing publication destinations.
 
 Focused tests are [fonts.test.mjs](../../project/tests/ddn/browser/fonts.test.mjs) and [fonts.browser.mjs](../../project/tests/ddn/browser/fonts.browser.mjs). They cover default preservation, input validation, concurrent registration, failure handling, document isolation, export subsets and notices, official asset integrity, real offline `file://` loading, distinct measured family metrics, custom TTF loading, malformed fonts and SVG raster fidelity after the originating document's font set is removed. Build DDN before running them. Browser artifacts remain under `.work/reports/ddn-fonts`.

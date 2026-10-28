@@ -7,8 +7,9 @@ export const nativeProfileIds = Object.freeze([...codex.nativeProfiles]);
 export function freezeProfileData(v) {
     if (v && typeof v === 'object' && !Object.isFrozen(v)) {
         Object.freeze(v);
-        for (const child of Object.values(v))
-            freezeProfileData(child);
+        for (const descriptor of Object.values(Object.getOwnPropertyDescriptors(v)))
+            if ('value' in descriptor)
+                freezeProfileData(descriptor.value);
     }
     return v;
 }

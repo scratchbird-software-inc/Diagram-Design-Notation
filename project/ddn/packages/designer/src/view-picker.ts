@@ -1,10 +1,7 @@
 import {knownProfile} from '../../profiles/src/core.js';
-import {quoteText} from '../../language/src/index.js';
 import {methodLabel, profileLabel, methodPreview, profilePreview} from './view-previews.js';
 
-export function profileDisplayName(id: string): string {
-    return `${profileLabel(id)} (${id})`;
-}
+export {profileDisplayName,diagramHeader} from './view-labels.js';
 
 export interface ViewTypePicker {
     readonly element: HTMLElement;
@@ -127,9 +124,3 @@ export function viewTypePicker(body: HTMLElement, profiles: readonly {id: string
 }
 
 /** A new mind map includes its central topic; other defaults remain implicit. */
-export function diagramHeader(name: string, profile: string, title?: string): string {
-    const header = profile === 'ddn@1' ? 'erd ' + quoteText(name)
-        : profile === 'mindmap.basic@1' ? 'mindmap ' + quoteText(name)
-        : 'view ' + quoteText(name) + ' as ' + quoteText(profile);
-    return header + (title === undefined ? '' : ' : ' + quoteText(title));
-}

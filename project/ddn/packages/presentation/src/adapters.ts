@@ -4,7 +4,10 @@ import type { ProjectedRecord } from './project-core.js';
 import type { GraphProjectionOptions, GraphProjectionResult } from './graph-common.js';
 import type { DataProfileProjection, DataProjectionOptions } from './data-common.js';
 
-export type PresentationFamilyId = 'graphs' | 'charts' | 'geography' | 'surfaces';
+import {catalogueFamilies} from '../../profiles/src/generated-families.js';
+import {catalogueShards} from '../../profiles/src/generated-shards.js';
+const manifests = {...catalogueFamilies,...catalogueShards};
+export type PresentationFamilyId = string;
 export type GraphProjector = (snapshot: ModelSnapshot, view: LocatedRecord, entries: readonly ProjectedRecord[], options?: GraphProjectionOptions) => GraphProjectionResult;
 export type DataProjector = (snapshot: ModelSnapshot, view: LocatedRecord, bounds: Bounds, effective: DataRecord, options?: DataProjectionOptions & { geography?: ReadonlyMap<string, unknown> }) => DataProfileProjection | undefined;
 export type ProfileAnalyzer = (normalized: Json, target: Ref, values?: Record<string, Json>) => Json;
@@ -26,7 +29,8 @@ const available = new Set(nativeProfiles);
 export const availableProjectionProfiles: ReadonlySet<string> = available;
 /** Trusted local code registration. Assets are authenticated/version-selected by the host loader. */
 export function installPresentationFamily(family: PresentationFamily): void {
-    if (!['graphs','charts','geography','surfaces'].includes(family.id) || family.version !== '1.0.0' || family.language !== 'ddn-next-1' || !family.profiles.length || new Set(family.profiles).size !== family.profiles.length || (family.kind === 'graph' ? typeof family.graph !== 'function' || !!family.data : family.kind === 'data' ? typeof family.data !== 'function' || !!family.graph : true))
+    const expected=manifests[family.id];
+    if (!expected || expected.profiles.length!==family.profiles.length || family.profiles.some(profile=>!expected.profiles.includes(profile)) || family.version !== '1.0.0' || family.language !== 'ddn-next-1' || !family.profiles.length || new Set(family.profiles).size !== family.profiles.length || (family.kind === 'graph' ? typeof family.graph !== 'function' || !!family.data : family.kind === 'data' ? typeof family.data !== 'function' || !!family.graph : true))
         throw new TypeError('Unsupported presentation family: ' + family.id);
     const previous = installed.get(family.id);
     if (previous) {

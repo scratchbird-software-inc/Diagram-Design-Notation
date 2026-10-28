@@ -12,7 +12,7 @@ import { publicationScene, resolveRecord, projectSnapshot, availableProjectionPr
 import {installUITheme} from './ui-theme.js';
 import {uiIcon} from './ui-icons.js';
 import {createStandardDialog,type StandardDialog} from './dialogs.js';
-import {fontFamily,installFontResources,fontCSS} from './fonts.js';
+import {fontFamily,installFontResources,ensureFontResources,fontCSS} from './fonts.js';
 import {createTexturePattern} from './texture.js';
 import {registerUICommands,notifyUICommands} from './ui-commands.js';
 import {gridStep,viewSetting} from './grid.js';
@@ -209,9 +209,13 @@ export function createViewer(element: HTMLElement, options: ViewerOptions): View
     let generation = 0;
     let styleGeneration = 0, fontGeneration = 0;
     let rendering = Promise.resolve();
+    async function waitForRendering(): Promise<void> {
+        let pending: Promise<void>;
+        do { pending=rendering; await pending; } while(pending!==rendering);
+    }
     let workareaBackground = '#f2f4f7';
     let workareaTexture:Json|undefined;
-    const fontsReady=installFontResources(document);
+    const fontsReady=ensureFontResources(document,[{family:'Inter'}]);
     const assets = new Map<string, LoadedAsset>();
     const assetSizes = () => new Map([...assets].flatMap(([id, asset]) => asset.intrinsicSize ? [[id, asset.intrinsicSize] as const] : []));
     const geography = new Map<string, unknown>();
@@ -908,6 +912,11 @@ export function createViewer(element: HTMLElement, options: ViewerOptions): View
             return;
         const project = () => projectSnapshot(snapshot, { ...(onlyView ? { onlyView } : {}), resolve: (target, context) => styledResolve(snapshot, target, context), measure, geography, assetSizes: assetSizes(), ...(preview ? { preview } : {}), supports: profile => availableProjectionProfiles.has(profile) && !!registrations(runtime.registry).profiles?.some(p => p.id === profile) });
         let nextProjection = project();
+        const fontRequests=nextProjection.items.flatMap(item=>item.primitives.flatMap(primitive=>primitive.kind==='text'?primitive.runs.map(run=>({family:run.fontKey,style:(run.style?.['font-style']==='italic'?'italic':'normal') as 'italic'|'normal'})):[]));
+        if(await ensureFontResources(document,fontRequests)) {
+            if(disposed || ticket!==generation)return;
+            nextProjection=project();
+        }
         const sizesChanged = await loadAssets(nextProjection);
         if (disposed || ticket !== generation)
             return;
@@ -1259,6 +1268,9 @@ export function createViewer(element: HTMLElement, options: ViewerOptions): View
         observer.observe(stage);
         cleanups.push(() => observer.disconnect());
     }
+    const resourcesChanged = () => {fontGeneration++; schedule();};
+    document.addEventListener('ddn:font-resources',resourcesChanged);
+    cleanups.push(()=>document.removeEventListener('ddn:font-resources',resourcesChanged));
     const fonts = document.fonts;
     if (fonts) {
         const changed = () => { fontGeneration++; schedule(); };
@@ -1298,7 +1310,7 @@ export function createViewer(element: HTMLElement, options: ViewerOptions): View
             diagnostics = [...runtimeDiagnostics];
             stale = !!result.snapshot && result.coverage !== result.snapshot.coverage && result.diagnostics.some(d => d.severity === 'error');
             schedule();
-            await rendering;
+            await waitForRendering();
             if (projection && !stale)
                 fit(projection.bounds);
             return result;
@@ -1307,7 +1319,7 @@ export function createViewer(element: HTMLElement, options: ViewerOptions): View
         async navigate(request: Navigation) {
             ensure();
             finishWheel();
-            await rendering;
+            await waitForRendering();
             if (!projection)
                 return;
             if (request.kind === 'fit-workarea')
@@ -1346,7 +1358,7 @@ export function createViewer(element: HTMLElement, options: ViewerOptions): View
         },
         async inspect(target): Promise<Inspection> {
             ensure();
-            await rendering;
+            await waitForRendering();
             const snapshot = runtime.snapshot();
             if (!snapshot)
                 throw new Error('No workarea is open');
@@ -1367,7 +1379,7 @@ export function createViewer(element: HTMLElement, options: ViewerOptions): View
         },
         async capture(request): Promise<CaptureResult> {
             ensure();
-            await rendering;
+            await waitForRendering();
             if (request.cancel?.aborted)
                 return { ok: false, reason: 'cancelled', diagnostics: [] };
             const snapshot = currentSnapshot;
@@ -1497,7 +1509,7 @@ export function createViewer(element: HTMLElement, options: ViewerOptions): View
                 runtime.destroy();
         },
     };
-    handles.set(viewer, { runtime, element, surface: svg, container, overlays, ownerDocument: document, scene: () => projection, viewport: () => viewport, selected: () => selection, clearSelection, expanded: () => expandedView, stage, subscribeOpen(listener) { openListeners.add(listener); return () => openListeners.delete(listener); }, selectedEntry: () => projection?.entries.find(e => selectedOccurrence ? e.item.occurrence === selectedOccurrence : !!selection && refKey(e.definition.ref) === refKey(selection)), select, subscribeSelection(listener) { selectionListeners.add(listener); return () => selectionListeners.delete(listener); }, refresh: async () => { schedule(); await rendering; }, whenRendered: () => rendering, diagnostics: () => diagnostics, toWorld, announce });
+    handles.set(viewer, { runtime, element, surface: svg, container, overlays, ownerDocument: document, scene: () => projection, viewport: () => viewport, selected: () => selection, clearSelection, expanded: () => expandedView, stage, subscribeOpen(listener) { openListeners.add(listener); return () => openListeners.delete(listener); }, selectedEntry: () => projection?.entries.find(e => selectedOccurrence ? e.item.occurrence === selectedOccurrence : !!selection && refKey(e.definition.ref) === refKey(selection)), select, subscribeSelection(listener) { selectionListeners.add(listener); return () => selectionListeners.delete(listener); }, refresh: async () => { schedule(); await waitForRendering(); }, whenRendered: waitForRendering, diagnostics: () => diagnostics, toWorld, announce });
     if (runtime.snapshot())
         schedule();
     return viewer;

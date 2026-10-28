@@ -28,7 +28,7 @@ function context() {
     return { global, blobs, workers, revoked, run: source => vm.runInContext(source, global) };
 }
 const options = { id: 'main', releaseHash: 'release-1' };
-const install = c => c.run(runtimeScript({ hash: options.releaseHash }));
+const install = (c,graph,specs=[{ids:[...graph.modules.keys()],...options}]) => c.run(runtimeScript({hash:options.releaseHash,chunks:specs.map(({ids,graph:input=graph,...spec})=>chunkManifest(input,ids,spec))}));
 const plain = value => JSON.parse(JSON.stringify(value));
 
 test('AST collection preserves imports, re-exports, cycles and literal require text', () => {
@@ -39,7 +39,7 @@ test('AST collection preserves imports, re-exports, cycles and literal require t
         'index.js': 'export {value as answer} from "./shared.js"; export * from "./a.js";',
         'entry.js': 'import {answer,sum} from "./index.js"; globalThis.result=[answer,sum(),\'require("./missing.js")\'];',
     });
-    const graph = f.graph(['entry.js']), c = context(); install(c);
+    const graph = f.graph(['entry.js']), c = context(); install(c,graph);
     assert.equal(graph.modules.size, 5);
     assert.ok(moduleClosure(graph, 'a.js').includes('b.js'));
     assert.equal(moduleReport(graph).length, 5);
@@ -49,8 +49,8 @@ test('AST collection preserves imports, re-exports, cycles and literal require t
     c.run(entryScript('entry.js')); assert.equal(c.global.runs, 1);
 });
 
-test('collection rejects nonlocal, dynamic and escaping dependencies', () => {
-    for (const [source, pattern] of [['import "package";', /Nonlocal runtime import/], ['const path="./x.js";require(path);', /Dynamic runtime import/]]) {
+test('collection rejects nonlocal, nonliteral and escaping dependencies', () => {
+    for (const [source, pattern] of [['import "package";', /Nonlocal runtime import/], ['const path="./x.js";require(path);', /Dynamic runtime import/], ['const path="./x.js";import(path);', /Untrusted dynamic import/], ['import("https://example.com/x.js");', /Untrusted dynamic import/]]) {
         const f = fixture({ 'entry.js': source }); assert.throws(() => f.graph(['entry.js']), pattern);
     }
     const f = fixture({ 'entry.js': 'import "./outside.js";' }), external = join(work, 'tmp/ddn-bundler-external.js');
@@ -60,8 +60,12 @@ test('collection rejects nonlocal, dynamic and escaping dependencies', () => {
 
 test('chunks share one module instance and cannot mix releases or replace modules', () => {
     const f = fixture({ 'shared.js': 'globalThis.count=(globalThis.count||0)+1;export const value=9;', 'entry.js': 'import{value}from"./shared.js";globalThis.result=value;' });
-    const graph = f.graph(['entry.js']), c = context(); install(c);
+    const graph = f.graph(['entry.js']), c = context();
     const common = { ...options, id: 'core' }, app = { ...options, id: 'app', dependencies: ['core'] };
+    const different = { ...graph, modules: new Map(graph.modules) };
+    different.modules.set('shared.js', { ...graph.modules.get('shared.js'), sha256: 'different', code: 'exports.value=10;' });
+    install(c,graph,[{...common,ids:['shared.js']},{...app,ids:['entry.js']}, {...options,id:'other',graph:different,ids:['shared.js']}]);
+    // Authorize the altered chunk's metadata separately; module conflicts remain checked.
     assert.throws(() => c.run(chunkScript(graph, ['entry.js'], app)), /Missing DDN chunk dependency core/);
     assert.equal(c.global.DDN_MODULES.describe().modules.length, 0);
     c.run(chunkScript(graph, ['shared.js'], common)); c.run(chunkScript(graph, ['entry.js'], app));
@@ -69,15 +73,13 @@ test('chunks share one module instance and cannot mix releases or replace module
     assert.equal(c.global.count, 1); assert.equal(c.global.result, 9);
     assert.throws(() => c.run(runtimeScript({ hash: 'other' })), /Incompatible DDN module runtime/);
     assert.throws(() => c.run(chunkScript(graph, ['entry.js'], { ...options, id: 'other', releaseHash: 'other' })), /Incompatible/);
-    const different = { ...graph, modules: new Map(graph.modules) };
-    different.modules.set('shared.js', { ...graph.modules.get('shared.js'), sha256: 'different', code: 'exports.value=10;' });
     assert.throws(() => c.run(chunkScript(different, ['shared.js'], { ...options, id: 'other' })), /Conflicting DDN module shared.js/);
     assert.deepEqual(plain(c.global.DDN_MODULES.describe().chunks.map(v => v.id)), ['core', 'app']);
 });
 
 test('unavailable optional modules fail explicitly and can be loaded before retry', () => {
     const f = fixture({ 'entry.js': 'import{value}from"./optional.js";globalThis.result=value;', 'optional.js': 'export const value=11;' });
-    const graph = f.graph(['entry.js']), c = context(); install(c);
+    const graph = f.graph(['entry.js']), c = context(); install(c,graph,[{...options,ids:['entry.js']},{...options,id:'optional',ids:['optional.js']}]);
     c.run(chunkScript(graph, ['entry.js'], options));
     assert.throws(() => c.run(entryScript('entry.js')), /Missing bundled module optional.js/);
     assert.deepEqual(plain(c.global.DDN_MODULES.describe().executed), []);
@@ -86,7 +88,7 @@ test('unavailable optional modules fail explicitly and can be loaded before retr
 });
 
 test('chunk installation is atomic and duplicate content uses deterministic hashes', () => {
-    const f = fixture({ 'entry.js': 'export const value=1;' }), graph = f.graph(['entry.js']), c = context(); install(c);
+    const f = fixture({ 'entry.js': 'export const value=1;' }), graph = f.graph(['entry.js']), c = context(); install(c,graph);
     const manifest = chunkManifest(graph, ['entry.js'], options);
     assert.deepEqual(manifest, chunkManifest(graph, ['entry.js'], options));
     const broken = { ...manifest, modules: [...manifest.modules, { id: 'missing.js', dependencies: [], sha256: 'missing' }] };
@@ -102,7 +104,7 @@ test('modular workers contain only compute closure and selected initializers', (
         'initializer.js': 'globalThis.extra=8;',
         'designer.js': 'globalThis.UI_ONLY_SENTINEL=document.createElement("div");',
     });
-    const graph = f.graph(['worker.js', 'initializer.js', 'designer.js']), c = context(); install(c);
+    const graph = f.graph(['worker.js', 'initializer.js', 'designer.js']), c = context(); install(c,graph);
     c.run(chunkScript(graph, graph.modules.keys(), options));
     c.global.DDN_MODULES.worker('worker.js', ['initializer.js']);
     assert.equal(c.blobs.length, 1); assert.equal(c.workers.length, 1); assert.deepEqual(c.revoked, ['blob:0']);
@@ -126,4 +128,11 @@ test('single-file worker retains computation but excludes application and editor
         assert.ok(!c.blobs[0].source.includes('UI_ONLY_SENTINEL')); assert.ok(!c.blobs[0].source.includes('designer.js'));
         const worker = context(); worker.run(c.blobs[0].source); assert.equal(worker.global.result, edition === 'native' ? 17 : 18);
     }
+});
+
+test('literal local dynamic imports remain outside the static closure and execute asynchronously',async()=>{
+ const f=fixture({'entry.js':'globalThis.ready=import("./feature.js").then(m=>m.answer);','feature.js':'export const answer=42;'}),graph=f.graph(['entry.js']),c=context();install(c,graph);
+ assert.deepEqual(moduleClosure(graph,'entry.js'),['entry.js']);
+ c.run(chunkScript(graph,graph.modules.keys(),options));
+ c.global.DDN_MODULES.setImporter(id=>Promise.resolve(c.global.DDN_MODULES.require(id)));c.run(entryScript('entry.js'));assert.equal(await c.global.ready,42);
 });

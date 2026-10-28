@@ -19,7 +19,7 @@ Native DDN supports progressive design, shared definitions, linked views, struct
 
 ## Build and test
 
-Development needs Node.js, Python 3 and tar. The integrity-pinned bootstrap installs Node **24.22.1**, TypeScript **5.9.3** pnpm **10.34.7** and npm **12.2.1** under `.work`; its bundled Node archive currently targets **Linux x64**. Browser tests use pinned Playwright **1.64.1** and Chromium. The distributed browser utilities have no Node/Python dependency.
+Development needs Node.js, Python 3 and tar. The integrity-pinned bootstrap installs Node **24.22.1**, TypeScript **5.9.3** pnpm **10.34.7** and npm **12.2.1** under `.work`; its bundled Node archive currently targets **Linux x64**. Production bundles use pinned esbuild **0.28.2** for tree shaking, minification and code splitting. Browser tests use pinned Playwright **1.64.1** and Chromium. The distributed browser utilities have no Node/Python dependency.
 
 ```sh
 node tooling/bootstrap/bootstrap.mjs
@@ -37,7 +37,7 @@ Outputs live under `.work`. The website build refreshes the maintained static si
 
 ## Embed the modules
 
-See the [package and embedding guide](project/ddn/README.md), [modular delivery guide](docs/DDN/MODULAR-DISTRIBUTION.md), [browser API declarations](project/ddn/packages/types/src/browser.d.ts) and [adopted contracts](standard/README.md). Shared language/model/verifier packages are independent of the DOM and Node. Browser adapters and optional profile/worker/font packs are explicit.
+See the [package and embedding guide](project/ddn/README.md), [modular delivery guide](docs/DDN/MODULAR-DISTRIBUTION.md), [browser API declarations](project/ddn/packages/types/src/browser.d.ts) and [adopted contracts](standard/README.md). Shared language/model/verifier packages are independent of the DOM and Node. Browser adapters and optional profile/worker/font packs are explicit. Modular delivery defers the full schema, 19 optional profile packs, designer panels and individual font faces until needed. Single-file editions remain available.
 
 This repository contains only the standalone DDN foundation. Multi-user collaboration, accounts, coordinated servers and media belong to the separate commercial Weaver product; they are not required to use DDN.
 

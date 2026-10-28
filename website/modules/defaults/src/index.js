@@ -61,10 +61,17 @@ const themePaint = {
     forest: { background: '#f2f6ef', surface: '#fbfdf9', ink: '#20342b', rule: '#d6e0d0', accent: '#375a42' },
 };
 const defs = new Map();
-for (const p of codex.properties) {
-    const list = defs.get(p.owner) ?? [];
-    list.push(p);
-    defs.set(p.owner, list);
+let definitionsReady = false;
+function ownerDefinitions(owner) {
+    if (!definitionsReady) {
+        for (const p of codex.properties) {
+            const list = defs.get(p.owner) ?? [];
+            list.push(p);
+            defs.set(p.owner, list);
+        }
+        definitionsReady = true;
+    }
+    return defs.get(owner);
 }
 function merge(target, value, origin, origins, prefix = '') {
     for (const [key, v] of Object.entries(value)) {
@@ -91,7 +98,7 @@ function leaves(value, prefix = '') {
         return isRecord(v) ? leaves(v, path) : [[path, v]];
     });
 }
-function definition(owner, path) { return defs.get(owner)?.find(p => path === p.path) ?? defs.get(owner)?.find(p => path.startsWith(p.path + '.')); }
+function definition(owner, path) { return ownerDefinitions(owner)?.find(p => path === p.path) ?? ownerDefinitions(owner)?.find(p => path.startsWith(p.path + '.')); }
 function canonicalOwner(owner) { return aliases[owner] ?? owner; }
 /** Checks a single supplied setting using the exact generated owner/role schema. */
 export function validateProperty(owner, path, value, context = {}) {
@@ -165,7 +172,7 @@ export function resolve(record, owner, context = {}) {
         for (const [p] of isRecord(value) ? leaves(value, path) : [[path, value]])
             origins.set(p, origin);
     };
-    for (const p of defs.get(owner) ?? [])
+    for (const p of ownerDefinitions(owner) ?? [])
         if (p.default.kind === 'literal' && p.default.value !== undefined && !(p.path.startsWith('draft.') && record.draft === undefined))
             set(p.path, p.default.value, 'standard:' + owner);
     const role = context.role ? roleDescriptor(context.role, context.category) : undefined;
@@ -277,7 +284,7 @@ export function resolve(record, owner, context = {}) {
             for (const rule of rules(context.definition.defaults))
                 apply(rule, 'file:definition defaults', false);
         const inherited = {};
-        for (const p of defs.get(owner) ?? []) {
+        for (const p of ownerDefinitions(owner) ?? []) {
             if (!p.defaultable)
                 continue;
             const v = getPath(context.definition, p.path);
@@ -315,7 +322,7 @@ export function resolve(record, owner, context = {}) {
                 set('projection.options.mark', transform === 'boxplot' ? 'boxplot' : 'bar', 'standard:transform');
         }
     }
-    for (const p of defs.get(owner) ?? []) {
+    for (const p of ownerDefinitions(owner) ?? []) {
         const value = getPath(record, p.path);
         if (value !== undefined)
             diagnostics.push(...validateProperty(owner, p.path, value, context));

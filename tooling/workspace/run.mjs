@@ -30,6 +30,7 @@ function copy(source,destination) {
   outputPath(destination); mkdirSync(dirname(destination),{recursive:true}); copyFileSync(source,destination);
 }
 function compile(scope='all',emit=false) {
+  run('python3',['project/ddn/packages/profiles/tools/generate.py','--check']);
   const selected=packages();
   const buildRoot=scope==='ddn' ? env.DDN_BUILD_ROOT : env.DDN_BUILD_ROOT;
   const sources=selected.flatMap(p=>files(join(p.path,'src'),p=>p.endsWith('.ts')));

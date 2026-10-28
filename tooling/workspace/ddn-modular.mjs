@@ -1,4 +1,5 @@
-import { mkdirSync, writeFileSync, readdirSync, unlinkSync } from 'node:fs';
+import {optimizeEntries} from './ddn-optimize.mjs';
+import { mkdirSync, writeFileSync, readdirSync, unlinkSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
@@ -22,6 +23,16 @@ function installLoader(manifest, timeoutMs) {
         return;
     }
     const chunks = new Map(manifest.chunks.map(chunk => [chunk.id, chunk]));
+    // Derive redundant size/closure metadata locally instead of transferring it per entry.
+    const closure=id=>{const seen=new Set();const visit=id=>{if(seen.has(id))return;chunks.get(id).dependencies.forEach(visit);seen.add(id);};visit(id);return [...seen];};
+    for(const entry of Object.values(manifest.entries)){
+        entry.chunks=closure(entry.chunkId);
+        entry.moduleCount=entry.chunks.reduce((sum,id)=>sum+chunks.get(id).moduleIds.length,0);
+        for(const key of ['rawBytes','gzipBytes'])entry[key]=entry.chunks.reduce((sum,id)=>sum+chunks.get(id)[key],0);
+    }
+    for(const chunk of manifest.chunks)chunk.entries=Object.entries(manifest.entries).filter(([,entry])=>entry.chunks.includes(chunk.id)).map(([alias])=>alias);
+    manifest.totals={modules:manifest.chunks.reduce((sum,chunk)=>sum+chunk.moduleIds.length,0),chunks:manifest.chunks.length,rawBytes:manifest.chunks.reduce((sum,chunk)=>sum+chunk.rawBytes,0),gzipBytes:manifest.chunks.reduce((sum,chunk)=>sum+chunk.gzipBytes,0)};
+
     const pendingChunks = new Map(), pendingEntries = new Map(), loadedEntries = new Set();
     const freeze = value => { if (value && typeof value === 'object' && !Object.isFrozen(value)) { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
     freeze(manifest);
@@ -93,8 +104,10 @@ function installLoader(manifest, timeoutMs) {
         return { version: manifest.version, hash: manifest.releaseHash, loadedEntries: [...loadedEntries],
             pendingEntries: [...pendingEntries.keys()].filter(alias => !loadedEntries.has(alias)), pendingChunks: [...pendingChunks.keys()], registry: runtime.describe() };
     }
+    const owners=new Map(manifest.chunks.flatMap(chunk=>chunk.moduleIds.map(id=>[id,chunk.id])));
+    runtime.setImporter(id=>{const owner=owners.get(id);return owner?loadChunk(owner).then(()=>runtime.require(id)):Promise.reject(new Error('Unknown DDN lazy module '+id));});
     const auto = script.dataset.entry;
-    const ready = auto ? prepareEntry('worker').then(() => loadEntry(auto)) : Promise.resolve();
+    const ready = auto ? loadEntry(auto) : Promise.resolve();
     const api = Object.freeze({ version: manifest.version, hash: manifest.releaseHash, manifest, prepareEntry, loadEntry, worker, describe, ready });
     Object.defineProperty(globalThis, 'DDN_LOADER', { value: api });
     ready.then(() => { if (auto) document.querySelector('[data-ddn-loader-status]')?.remove(); }).catch(error => {
@@ -112,25 +125,42 @@ export function buildModularDistribution({ built, ts, destination, timeoutMs = 1
     if (!Number.isInteger(timeoutMs) || timeoutMs < 100 || timeoutMs > 60000) throw new Error('DDN loader timeout must be between 100 and 60000 milliseconds');
     const entries = Object.fromEntries(['viewer', 'designer', 'verifier'].map(mode => [mode, join(built, 'standalone/src/modular-' + mode + '-entry.js')]));
     entries.worker = join(built, 'standalone/src/modular-worker.js');
+    if(existsSync(join(built,'standalone/src/schema-native.js')))entries['schema:native']=join(built,'standalone/src/schema-native.js');
     for (const mode of ['viewer', 'designer', 'verifier']) entries['api:' + mode] = join(built, 'standalone/src/modular-' + mode + '-api.js');
     for (const family of families) {
         entries['verify:' + family] = join(built, 'profiles/src/families/' + family + '.js');
         entries['render:' + family] = join(built, 'standalone/src/families/' + family + '.js');
     }
-    const graph = collectModules(entries, { built, ts }), aliases = Object.keys(entries).sort();
+    const shardFile=join(built,'profiles/src/generated-shards.json');
+    if(existsSync(shardFile)){
+        const shards=JSON.parse(readFileSync(shardFile,'utf8'));
+        for(const id of Object.keys(shards)){
+            entries['verify:'+id]=join(built,'profiles/src/shards/'+id+'.js');
+            entries['render:'+id]=join(built,'standalone/src/shards/'+id+'.js');
+        }
+        for(const family of families){
+            entries['verify:'+family]=join(built,'profiles/src/shards/all-'+family+'.js');
+            entries['render:'+family]=join(built,'standalone/src/shards/all-'+family+'.js');
+        }
+    }
+    collectModules(entries,{built,ts}); // Validate source paths before the optimizer can read them.
+    const optimized=optimizeEntries(entries,{built,label:'modular'});
+    const graph=collectModules(optimized.entries,{built:optimized.built,ts});
+    for(const module of graph.modules.values())for(const id of module.asyncDependencies??[])graph.entries['module:'+id]=id;
+    const aliases=Object.keys(graph.entries).sort();
     const closures = new Map(aliases.map(alias => [alias, moduleClosure(graph, graph.entries[alias])]));
     const memberships = new Map([...graph.modules.keys()].sort().map(id => [id, aliases.filter(alias => closures.get(alias).includes(id))]));
     const releaseHash = hash(JSON.stringify({ entries: graph.entries, modules: moduleReport(graph, [...graph.modules.keys()].sort()), licensing: ddnLicenseMetadata, notice: ddnScriptNotice }));
     const groups = new Map();
-    for (const [id, members] of memberships) {
-        const key = members.join('\0');
-        if (!groups.has(key)) groups.set(key, { members, modules: [] });
-        groups.get(key).modules.push(id);
+    for(const [id,members] of memberships){
+        const key=members.join('\0');
+        if(!groups.has(key))groups.set(key,{members:[],modules:[]});
+        const group=groups.get(key);group.members=[...new Set([...group.members,...members])].sort();group.modules.push(id);
     }
     const owners = new Map();
     for (const group of groups.values()) {
-        const label = group.members.length === 1 ? group.members[0].replaceAll(':', '-') : group.members.length === aliases.length ? 'core' : 'shared';
-        group.id = label + '-' + hash(JSON.stringify([releaseHash, group.members, group.modules])).slice(0, 12);
+        const label = group.members.length === 1 ? group.members[0].replace(/[^a-z0-9-]/gi,'-').toLowerCase() : group.members.length === aliases.length ? 'core' : 'shared';
+        group.id = label + '-' + hash(JSON.stringify([group.members, group.modules])).slice(0, 12);
         for (const id of group.modules) owners.set(id, group.id);
     }
     const byId = new Map([...groups.values()].map(group => [group.id, group]));
@@ -142,11 +172,20 @@ export function buildModularDistribution({ built, ts, destination, timeoutMs = 1
         active.add(id); byId.get(id).dependencies.forEach(visit); active.delete(id); seen.add(id); ordered.push(byId.get(id));
     }
     [...byId.keys()].sort().forEach(visit);
+    // Chunk identity follows its own code and static dependencies, never a release stamp.
+    const identities=new Map();
+    for(const group of ordered){
+        const previous=group.id;
+        group.dependencies=group.dependencies.map(id=>identities.get(id)).sort();
+        group.id='chunk-'+hash(JSON.stringify({version:'ddn-next-1',modules:moduleReport(graph,group.modules),dependencies:group.dependencies,notice:ddnScriptNotice})).slice(0,20);
+        identities.set(previous,group.id);
+    }
+    for(const [module,owner] of owners)owners.set(module,identities.get(owner));
     mkdirSync(join(destination, 'chunks'), { recursive: true });
     copyDdnLicense(destination);
     const chunks = ordered.map(group => {
-        const options = { id: group.id, releaseHash, dependencies: group.dependencies };
-        const declaration = chunkManifest(graph, group.modules, options), code = ddnScriptNotice + chunkScript(graph, group.modules, options), file = 'chunks/' + group.id + '.js';
+        const options = { id: group.id, dependencies: group.dependencies };
+        const declaration = chunkManifest(graph, group.modules, options), code = ddnScriptNotice + optimized.minify(chunkScript(graph, group.modules, options)), file = 'chunks/' + group.id + '.js';
         writeFileSync(join(destination, file), code + '\n');
         return { id: group.id, file, hash: declaration.hash, dependencies: group.dependencies, moduleIds: group.modules, entries: group.members, ...sizes(code + '\n') };
     });
@@ -154,7 +193,7 @@ export function buildModularDistribution({ built, ts, destination, timeoutMs = 1
     // deploying cached releases retain old chunks in their deployment store.
     const currentFiles = new Set(chunks.map(chunk => chunk.file.slice('chunks/'.length)));
     for (const file of readdirSync(join(destination, 'chunks')))
-        if (/^(?:core|shared|viewer|designer|verifier|worker|api-(?:viewer|designer|verifier)|(?:verify|render)-(?:graphs|charts|geography|surfaces))-[a-f0-9]{12}\.js$/.test(file) && !currentFiles.has(file))
+        if (/^(?:chunk-[a-f0-9]{20}|[a-z0-9-]+-[a-f0-9]{12})\.js$/.test(file) && !currentFiles.has(file))
             unlinkSync(join(destination, 'chunks', file));
     const chunkById = new Map(chunks.map(chunk => [chunk.id, chunk]));
     function requiredChunks(root) {
@@ -172,16 +211,25 @@ export function buildModularDistribution({ built, ts, destination, timeoutMs = 1
         })), chunks,
         totals: { modules: graph.modules.size, chunks: chunks.length, rawBytes: chunks.reduce((sum, chunk) => sum + chunk.rawBytes, 0), gzipBytes: chunks.reduce((sum, chunk) => sum + chunk.gzipBytes, 0) },
     };
-    const loader = ddnScriptNotice + runtimeScript({ hash: releaseHash }) + '\n(' + installLoader.toString() + ')(' + JSON.stringify(manifest) + ',' + timeoutMs + ');\n';
+    const runtimeManifest={format:manifest.format,version:manifest.version,releaseHash:manifest.releaseHash,...ddnLicenseMetadata,
+        entries:Object.fromEntries(Object.entries(manifest.entries).map(([alias,{kind,moduleId,chunkId}])=>[alias,{kind,moduleId,chunkId}])),
+        chunks:manifest.chunks.map(({id,file,hash,dependencies,moduleIds,rawBytes,gzipBytes})=>({id,file,hash,dependencies,moduleIds,rawBytes,gzipBytes}))};
+    const loader = ddnScriptNotice + optimized.minify('(()=>{const manifest='+JSON.stringify(runtimeManifest)+';'+runtimeScript({hash:releaseHash,chunkList:'manifest.chunks'})+'\n('+installLoader.toString()+')(manifest,'+timeoutMs+');})();');
     writeFileSync(join(destination, 'ddn-loader.js'), loader);
     const loaderSizes = sizes(loader);
-    const startup = Object.fromEntries(['viewer', 'designer', 'verifier'].map(alias => {
-        const required = [...new Set([...manifest.entries.worker.chunks, ...manifest.entries[alias].chunks])];
-        return [alias, { chunks: required, rawBytes: loaderSizes.rawBytes + required.reduce((sum, id) => sum + chunkById.get(id).rawBytes, 0),
-            gzipBytes: loaderSizes.gzipBytes + required.reduce((sum, id) => sum + chunkById.get(id).gzipBytes, 0) }];
+    const startupFor = includeData=>Object.fromEntries(['viewer','designer','verifier'].map(alias=>{
+        const required=[...new Set([...(includeData?manifest.entries.worker.chunks:[]),...(includeData?(manifest.entries['schema:native']?.chunks??[]):[]),...manifest.entries[alias].chunks])];
+        return [alias,{chunks:required,rawBytes:loaderSizes.rawBytes+required.reduce((sum,id)=>sum+chunkById.get(id).rawBytes,0),gzipBytes:loaderSizes.gzipBytes+required.reduce((sum,id)=>sum+chunkById.get(id).gzipBytes,0)}];
     }));
-    const report = { ...manifest, loader: { file: 'ddn-loader.js', sha256: hash(loader), ...loaderSizes }, startup };
+    const startup=startupFor(true),bootstrap=startupFor(false);
+    const report = { ...manifest, optimizer:{name:'esbuild',version:optimized.version,treeShaking:true,minified:true}, sourceModules:Object.fromEntries(optimized.provenance),bootstrap,loader: { file: 'ddn-loader.js', sha256: hash(loader), ...loaderSizes }, startup };
+    if(existsSync(shardFile)) {
+        // Regression ceilings for the new delivery layout, separate from the unchanged native gates.
+        const limits={bootstrap:{viewer:[920000,300000],designer:[1100000,370000],verifier:[660000,210000]},startup:{viewer:[1500000,365199],designer:[1800000,472266],verifier:[1250000,260000]}};
+        report.sizeBudgets=Object.fromEntries(Object.entries(limits).map(([phase,modes])=>[phase,Object.fromEntries(Object.entries(modes).map(([mode,[rawLimit,gzipLimit]])=>[mode,{rawLimit,gzipLimit,pass:report[phase][mode].rawBytes<=rawLimit&&report[phase][mode].gzipBytes<=gzipLimit}]))]));
+    }
     writeFileSync(join(destination, 'manifest.json'), JSON.stringify(report, null, 2) + '\n');
+    if(report.sizeBudgets&&Object.values(report.sizeBudgets).some(modes=>Object.values(modes).some(gate=>!gate.pass)))throw Error('Modular bundle size regression; see manifest.json sizeBudgets.');
     for (const mode of ['viewer', 'designer', 'verifier']) writeFileSync(join(destination, mode + '.html'), '<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DDN ' + mode + '</title>'+ddnHtmlNotice()+'</head><body><p role="status" data-ddn-loader-status>Loading DDN ' + mode + '…</p><noscript>Enable JavaScript to use this local DDN utility.</noscript><script src="ddn-loader.js" data-entry="' + mode + '"></script></body></html>\n');
     return report;
 }

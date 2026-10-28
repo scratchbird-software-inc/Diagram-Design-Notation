@@ -5,18 +5,15 @@ import {paletteGroup, paletteGroupOrder} from './palette-groups.js';
 import {createStandardDialog,colourField,syncColourField,numberField,syncNumberField} from './dialogs.js';
 import {choiceField,syncChoiceField} from '../../viewer/src/choice-field.js';
 import {flushLiveSettings,notifyLiveSettings,waitForSettingsSave} from './live-settings.js';
-import {openAppearance} from './appearance.js';
-import {openSymbol} from './symbol.js';
 import {uiIcon} from '../../viewer/src/ui-icons.js';
-import {openProperties} from './properties.js';
 import {createLiveSettings, type LiveSettings} from './live-settings.js';
 import {mountMindmapActions,mindmapSelection} from './mindmap-actions.js';
 import {mountResizeHandles} from './resize-handles.js';
 import {relationMenuItems, type ContextMenuItem} from './relation-menu.js';
 import {mindmapSource} from './mindmap-source.js';
-import {viewTypePicker,profileDisplayName,diagramHeader,type ViewTypePicker} from './view-picker.js';
-import {newDiagramDialog} from './new-diagram.js';
-import {viewLayoutDialog, viewLayoutSource} from './view-layout-picker.js';
+import type {ViewTypePicker} from './view-picker.js';
+import {profileDisplayName,diagramHeader} from './view-labels.js';
+import {viewLayoutSource} from './layout-source.js';
 import {getViewSurfacePreset} from '../../profiles/src/view-surfaces.js';
 export {createStandardDialog,colourField} from './dialogs.js';
 export {parsePresetPack,serializePresetPack} from './presets.js';
@@ -59,6 +56,18 @@ export function createDesigner(viewer: Viewer, options: DesignerOptions): Design
     const baseline = new Map(handle.runtime.sources()?.files.map(file => [file.id, file.text]) ?? []);
     let documentOpenGeneration = 0;
     let disposed = false, connectFrom: Ref | undefined, menu: HTMLElement | undefined;
+
+    let uiRequest=0;
+    function deferred<T>(pending:Promise<T>,open:(module:T)=>void):void{
+        const ticket=documentOpenGeneration,request=++uiRequest;
+        void pending.then(module=>{if(!disposed&&ticket===documentOpenGeneration&&request===uiRequest)open(module);}).catch(error=>{if(!disposed)handle.announce('Unable to open the controls: '+String(error.message??error));});
+    }
+    const openAppearance=(...args:Parameters<typeof import('./appearance.js').openAppearance>):void=>deferred(import('./appearance.js'),module=>{module.openAppearance(...args);});
+    const openSymbol=(...args:Parameters<typeof import('./symbol.js').openSymbol>):void=>deferred(import('./symbol.js'),module=>{module.openSymbol(...args);});
+    const openProperties=(...args:Parameters<typeof import('./properties.js').openProperties>):void=>deferred(import('./properties.js'),module=>{module.openProperties(...args);});
+    const newDiagramDialog=(...args:Parameters<typeof import('./new-diagram.js').newDiagramDialog>):void=>deferred(import('./new-diagram.js'),module=>{module.newDiagramDialog(...args);});
+    const viewLayoutDialog=(...args:Parameters<typeof import('./view-layout-picker.js').viewLayoutDialog>):void=>deferred(import('./view-layout-picker.js'),module=>{module.viewLayoutDialog(...args);});
+
     const cleanups: (() => void)[] = [];
     const panels = new Set<HTMLElement>();
     const panelClosers = new Map<HTMLElement, () => void>();
@@ -670,6 +679,7 @@ export function createDesigner(viewer: Viewer, options: DesignerOptions): Design
         handle.announce(`View "${name}" added.`);
     }
     function addView(chooseType = false) {
+        deferred(import('./view-picker.js'),({viewTypePicker})=>{
         if (standalone() && handle.scene()?.views.length) { handle.announce('A standalone document contains one view.'); return; }
         const snapshot = handle.runtime.snapshot();
         if (!snapshot) return;
@@ -708,6 +718,8 @@ export function createDesigner(viewer: Viewer, options: DesignerOptions): Design
             form.querySelector('footer')?.prepend(back);
         };
         chooseLayout();
+
+        });
     }
     function viewTypeSettings(body: HTMLElement, type: ViewTypePicker, applyButton: HTMLButtonElement): HTMLElement {
         const settings = document.createElement('div'); settings.className = 'ddn-view-type-settings'; body.append(settings);
@@ -722,6 +734,7 @@ export function createDesigner(viewer: Viewer, options: DesignerOptions): Design
         return settings;
     }
     function chooseViewType() {
+        deferred(import('./view-picker.js'),({viewTypePicker})=>{
         const view = currentView();
         if (!view) {
             const sources = handle.runtime.sources();
@@ -773,6 +786,8 @@ export function createDesigner(viewer: Viewer, options: DesignerOptions): Design
                 const configured = handle.scene()?.views.find(candidate => refKey(candidate.ref) === refKey(view.ref));
                 if (configured) await activateView(configured);
             };
+        });
+
         });
     }
     let paletteSection = 'All elements';

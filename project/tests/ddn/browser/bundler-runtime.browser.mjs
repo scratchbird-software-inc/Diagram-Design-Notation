@@ -4,7 +4,7 @@ import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
-import { collectModules, runtimeScript, chunkScript, entryScript } from '../../../../tooling/workspace/ddn-bundle.mjs';
+import { collectModules, runtimeScript, chunkManifest, chunkScript, entryScript } from '../../../../tooling/workspace/ddn-bundle.mjs';
 const root = fileURLToPath(new URL('../../../../', import.meta.url));
 const work = process.env.DDN_BUILD_WORKAREA ?? resolve(root, '.work');
 const require = createRequire(import.meta.url);
@@ -26,7 +26,7 @@ test('classic file bundles load optional modules locally and initialize a comput
     for (const [name, source] of Object.entries(sources)) await writeFile(join(built, name), source);
     const graph = collectModules(Object.fromEntries(Object.keys(sources).map(name => [name, join(built, name)])), { built, ts });
     const options = { releaseHash: 'browser-test-release' };
-    await writeFile(join(built, 'runtime.bundle.js'), runtimeScript({ hash: options.releaseHash }));
+    await writeFile(join(built, 'runtime.bundle.js'), runtimeScript({hash:options.releaseHash,chunks:[chunkManifest(graph,['core.js'],{...options,id:'core'}),chunkManifest(graph,['app.js'],{...options,id:'app',dependencies:['core']}),chunkManifest(graph,['initializer.js','worker.js'],{...options,id:'family',dependencies:['core']})]}));
     await writeFile(join(built, 'core.bundle.js'), chunkScript(graph, ['core.js'], { ...options, id: 'core' }));
     await writeFile(join(built, 'app.bundle.js'), chunkScript(graph, ['app.js'], { ...options, id: 'app', dependencies: ['core'] }));
     await writeFile(join(built, 'family.bundle.js'), chunkScript(graph, ['initializer.js', 'worker.js'], { ...options, id: 'family', dependencies: ['core'] }));
