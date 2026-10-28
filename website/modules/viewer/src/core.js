@@ -787,10 +787,12 @@ export function createViewer(element, options) {
         context.font = `${size}px ${fontFamily(font)}`;
         return context.measureText(value).width;
     };
-    async function loadAssets(scene) {
+    async function loadAssets(scene, current) {
         let sizesChanged = false;
         const ids = [...new Set(scene.items.flatMap(item => item.primitives.filter((p) => p.kind === 'image').map(p => p.assetId)))];
         for (const id of ids) {
+            if (!current())
+                return sizesChanged;
             if (assets.has(id) || assetFailures.has(id))
                 continue;
             if (!options.assets) {
@@ -800,6 +802,8 @@ export function createViewer(element, options) {
             }
             try {
                 const result = await options.assets.read(id);
+                if (!current())
+                    return sizesChanged;
                 if (result.bytes.byteLength > 16 * 1024 * 1024)
                     throw new Error('Asset exceeds the local image budget');
                 let bytes = new Uint8Array(result.bytes).buffer;
@@ -826,10 +830,14 @@ export function createViewer(element, options) {
                     throw new Error('Unsupported image media type');
                 const blob = new Blob([bytes], { type: mime });
                 const dataURL = await new Promise((resolve, reject) => { const reader = new win.FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error('Asset encoding failed')); reader.readAsDataURL(blob); });
+                if (!current())
+                    return sizesChanged;
                 if (!intrinsicSize) {
                     const image = new win.Image();
                     image.src = dataURL;
                     await image.decode();
+                    if (!current())
+                        return sizesChanged;
                     if (image.naturalWidth > 0 && image.naturalHeight > 0)
                         intrinsicSize = { width: image.naturalWidth, height: image.naturalHeight };
                 }
@@ -837,19 +845,25 @@ export function createViewer(element, options) {
                 sizesChanged ||= !!intrinsicSize;
             }
             catch (error) {
+                if (!current())
+                    return sizesChanged;
                 assetFailures.add(id);
                 diagnostics.push({ code: 'asset-unavailable', severity: 'warning', message: `Asset ${id}: ${String(error)}` });
             }
         }
+        if (!current())
+            return sizesChanged;
         for (const id of assets.keys())
             if (!ids.includes(id))
                 assets.delete(id);
         return sizesChanged;
     }
-    async function loadGeography(snapshot) {
+    async function loadGeography(snapshot, current) {
         const problems = [], all = records(snapshot);
         const requested = all.filter(r => r.owner === 'view' && str(r.record.profile).startsWith('geo.')).map(r => ({ view: r, name: str(pathValue(r.record, 'projection.options.geography')) }));
         for (const { view, name } of requested) {
+            if (!current())
+                return [];
             const separator = name.indexOf('::');
             const file = separator >= 0 ? name.slice(0, separator) : view.file;
             const localName = separator >= 0 ? name.slice(separator + 2) : name;
@@ -861,6 +875,8 @@ export function createViewer(element, options) {
                 continue;
             try {
                 const result = await options.assets.read(key);
+                if (!current())
+                    return [];
                 if (result.bytes.byteLength > 16 * 1024 * 1024)
                     throw Error('Geography exceeds the local 16 MiB asset budget');
                 if (!['application/json', 'application/geo+json', 'application/geojson', 'application/octet-stream', 'text/plain'].includes(result.mime))
@@ -875,6 +891,8 @@ export function createViewer(element, options) {
                 assetFailures.delete(key);
             }
             catch (error) {
+                if (!current())
+                    return [];
                 assetFailures.add(key);
                 problems.push({ code: 'geography-unavailable', severity: 'warning', message: error instanceof Error ? error.message : 'Geography could not be loaded', target: view.ref });
             }
@@ -885,11 +903,12 @@ export function createViewer(element, options) {
         const ticket = ++generation;
         await fontsReady;
         const snapshot = runtime.snapshot();
-        if (!snapshot || disposed)
+        if (!snapshot || disposed || ticket !== generation)
             return;
+        const current = () => !disposed && ticket === generation && runtime.snapshot() === snapshot;
         emit({ kind: 'pending', revision: snapshot.revision });
         const report = await runtime.verifier.verifyModel(snapshot, { scope: { kind: 'workarea' }, purpose: 'display', level: 'structural' });
-        if (disposed || ticket !== generation)
+        if (!current())
             return;
         const all = records(snapshot);
         const workarea = all.find(r => r.owner === 'workarea' && r.file === snapshot.rootFile);
@@ -906,19 +925,22 @@ export function createViewer(element, options) {
             workareaTexture = undefined;
         }
         diagnostics = [...runtimeDiagnostics, ...report.diagnostics];
-        diagnostics.push(...await loadGeography(snapshot));
-        if (disposed || ticket !== generation)
+        const geographyProblems = await loadGeography(snapshot, current);
+        if (!current())
+            return;
+        diagnostics.push(...geographyProblems);
+        if (!current())
             return;
         const project = () => projectSnapshot(snapshot, { ...(onlyView ? { onlyView } : {}), resolve: (target, context) => styledResolve(snapshot, target, context), measure, geography, assetSizes: assetSizes(), ...(preview ? { preview } : {}), supports: profile => availableProjectionProfiles.has(profile) && !!registrations(runtime.registry).profiles?.some(p => p.id === profile) });
         let nextProjection = project();
         const fontRequests = nextProjection.items.flatMap(item => item.primitives.flatMap(primitive => primitive.kind === 'text' ? primitive.runs.map(run => ({ family: run.fontKey, style: (run.style?.['font-style'] === 'italic' ? 'italic' : 'normal') })) : []));
         if (await ensureFontResources(document, fontRequests)) {
-            if (disposed || ticket !== generation)
+            if (!current())
                 return;
             nextProjection = project();
         }
-        const sizesChanged = await loadAssets(nextProjection);
-        if (disposed || ticket !== generation)
+        const sizesChanged = await loadAssets(nextProjection, current);
+        if (!current())
             return;
         if (sizesChanged)
             nextProjection = project();

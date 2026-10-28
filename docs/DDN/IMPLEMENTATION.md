@@ -67,7 +67,7 @@ Release qualification remains separate. Chromium behavior is tested; the full br
 
 The [modular distribution](MODULAR-DISTRIBUTION.md) separates shared code, utility APIs/shells, compute workers and optional catalogue/rule/rendering families. Website tools load required families automatically; the offline folder and ZIP use the same loader. Native and complete single-file editions remain available. The earlier bundle-separation change preserved all gallery SVGs byte for byte.
 
-The production build uses pinned esbuild 0.28.2, specializes each utility shell, defers the full native schema behind a lightweight index, loads 19 optional profile packs and opens designer panels through literal dynamic imports. Font binaries load per family/style; explicit installation of the whole suite remains available. The normal ESM and native/complete single-file APIs retain their full declared capabilities.
+The production build uses pinned esbuild 0.28.2, specializes each utility shell, defers the full native schema behind a lightweight index, loads 19 optional profile packs and opens designer panels through literal dynamic imports. Font binaries load per family/style; explicit installation of the whole suite remains available. The normal ESM and native/complete single-file APIs retain their full declared capabilities. Obsolete image and geography results are discarded before updating caches or diagnostics, so late providers cannot contaminate a newer document.
 
 The manifest distinguishes code bootstrap from first-native-document cost (including schema and worker), then accounts for optional fonts independently. New modular size regression ceilings are enforced during distribution generation. They are delivery-layout ceilings, separate from the original native single-file targets. The viewer and verifier compressed native gates remain open; no original target was relaxed. Full-profile budgets remain observations. Artifacts remain development builds; bundle reduction does not establish release qualification.
 
@@ -77,13 +77,13 @@ Code bytes below exclude optional fonts and user assets. Gzip totals sum indepen
 
 | Utility | Previous first document, raw | New bootstrap, raw | New first document, raw | New first document, gzip |
 | --- | ---: | ---: | ---: | ---: |
-| Viewer | 1,821,558 | 764,516 | 1,346,145 | 335,437 |
-| Designer | 2,294,817 | 945,262 | 1,526,891 | 398,526 |
-| Verifier | 1,327,749 | 515,125 | 1,096,754 | 244,940 |
+| Viewer | 1,821,558 | 764,988 | 1,346,617 | 335,582 |
+| Designer | 2,294,817 | 945,734 | 1,527,363 | 398,657 |
+| Verifier | 1,327,749 | 515,360 | 1,096,989 | 245,014 |
 
 The optional font catalogue is 5,573 raw bytes. A normal viewer/designer start adds only the 474,446-byte Inter normal resource; the previous monolithic font script was 2,619,658 bytes. Other families and italic faces load on use. The verifier loads no fonts. All seven faces remain distributed with their licences.
 
-Native single-file gzip sizes are ddn-viewer.html: 279,904, ddn-visual-designer.html: 369,641, ddn-verifier.html: 194,271 bytes. Designer passes its original 409,600-byte compressed ceiling. Viewer and verifier exceed their respective 256,000- and 102,400-byte ceilings; all raw ceilings pass.
+Native single-file gzip sizes are ddn-viewer.html: 280,060, ddn-visual-designer.html: 369,737, ddn-verifier.html: 194,274 bytes. Designer passes its original 409,600-byte compressed ceiling. Viewer and verifier exceed their respective 256,000- and 102,400-byte ceilings; all raw ceilings pass.
 
 ### Public DDN licensing and sponsorship — 24 October 2026
 
@@ -132,9 +132,9 @@ The baseline complete edition's observed HTML sizes were:
 
 | Utility | Raw bytes | Gzip bytes |
 | --- | ---: | ---: |
-| Viewer | 1,767,392 | 335,280 |
+| Viewer | 1,821,558 | 764,988 | 1,346,617 | 335,582 |
 | Visual designer | 1,836,298 | 350,109 |
-| Verifier | 1,269,698 | 225,376 |
+| Verifier | 1,327,749 | 515,360 | 1,096,989 | 245,014 |
 
 The complete designer was measured in Chromium 156.0.8078.4 on an Intel Core Ultra 7 165U host (14 logical CPUs, approximately 33 GB RAM). Each workload used three fresh browser contexts, five warmups and ten measured samples per context, with a fixed supplied font and HTTP(S) blocked. All observed W1/W2 thresholds passed:
 

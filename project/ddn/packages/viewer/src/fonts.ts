@@ -108,7 +108,7 @@ function decode(resource: FontResource): { resource: FontResource; bytes: Uint8A
     if (format(bytes) !== match[1]) throw new Error('Font MIME type does not match its binary format.');
     return { resource: Object.freeze({ family, dataURL: resource.dataURL, weight, style, category: resource.category ?? 'custom', source: resource.source ?? 'custom', ...(resource.license !== undefined ? { license: resource.license } : {}) }), bytes };
 }
-function slot(resource: FontResource): string { return JSON.stringify([resource.family.toLowerCase(), resource.weight, resource.style]); }
+function slot(resource: FontResource): string { return JSON.stringify([familyName(resource.family).toLowerCase(), fontWeight(resource.weight), resource.style??'normal']); }
 function copyOption(value: FontOption): FontOption { return { ...value, weights: [...value.weights], styles: [...value.styles] }; }
 /** Standard entries report availability after installation; generic choices always remain usable. */
 export function listFonts(document: Document): readonly FontOption[] {
@@ -126,11 +126,12 @@ export function listFonts(document: Document): readonly FontOption[] {
 }
 /** Load only the named trusted standard resources; generic/system fonts perform no IO. */
 export async function ensureFontResources(document: Document, requests: readonly { family: string; style?: FontStyle }[]): Promise<boolean> {
-    const host=document.defaultView as (Window & { DDN_LOAD_FONTS?: (requests?: readonly {family:string;style?:FontStyle}[])=>Promise<readonly FontResource[]> }) | null;
-    if(!host?.DDN_LOAD_FONTS)return false;
+    const host=document.defaultView as (Window & { DDN_LOAD_FONTS?: (requests?: readonly {family:string;style?:FontStyle}[])=>Promise<readonly FontResource[]>; DDN_FONT_RESOURCES?:readonly FontResource[] }) | null;
+    if(!host)return false;
     const selected=requests.flatMap(request=>names(request.family).filter(name=>!generics.has(name)&&!aliases[name]).map(family=>({family,style:request.style??'normal'})));
     if(!selected.length)return false;
-    const resources=await host.DDN_LOAD_FONTS(selected),current=state(document);
+    const supplied=host.DDN_FONT_RESOURCES??[];
+    const resources=host.DDN_LOAD_FONTS?await host.DDN_LOAD_FONTS(selected):supplied.filter(resource=>selected.some(request=>resource.family.toLowerCase()===request.family.toLowerCase()&&((resource.style??'normal')===request.style||!supplied.some(face=>face.family===resource.family&&face.style===request.style)&&(resource.style??'normal')==='normal'))),current=state(document);
     const missing=resources.some(resource=>!current.installed.has(slot(resource)));
     if(missing)await installFontResources(document,resources);
     return missing;

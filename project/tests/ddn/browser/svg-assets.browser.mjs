@@ -56,3 +56,20 @@ test('safe inline paint survives while executable styles and external references
  assert.equal(result.attributes.escaped.fill,undefined);assert.equal(result.attributes.priority.fill,'rgb(255, 0, 0)');assert.equal(result.attributes.hidden.display,'none');assert.equal(result.attributes.external.href,undefined);assert.equal(result.attributes.external['xlink:href'],undefined);
  assert.doesNotMatch(result.text,/invalid\.example|javascript:|data:image|var\(|onmouseover|onload/);assert.ok(result.colored>1000);assert.ok(result.colors>20);assert.equal(result.green,0);assert.deepEqual(network,[]);assert.deepEqual(errors,[]);
 });
+
+for(const outcome of ['success','failure'])test(`an obsolete ${outcome} image read cannot alter a newer document or block its capture`,async()=>{
+ await page.evaluate(async()=>{
+  const element=document.createElement('div');document.body.append(element);let enter,release,reject;
+  const entered=new Promise(resolve=>enter=resolve),pending=new Promise((resolve,fail)=>{release=resolve;reject=fail;});
+  const runtime=DDN.createRuntime(DDN.createCompleteRuntimeOptions()),viewer=DDN.createViewer(element,{runtime,assets:{read:async id=>{if(JSON.parse(id)[0]==='old.ddn'){enter();return pending;}return {bytes:new TextEncoder().encode('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="10" fill="green"/></svg>'),mime:'image/svg+xml',hash:'current'};}}});
+  const source='asset Picture as resource from "local.svg"\n    with\n        media_type "image/svg+xml"\nelement Artwork as object\n    with\n        symbol.image Picture\nview Board as ddn@1\n    use Artwork named Here\n';
+  const old=viewer.open({entry:'old.ddn',files:[{id:'old.ddn',text:source,revision:'1',encoding:'utf-8',writable:true}]});
+  window.assetRace={element,runtime,viewer,old,release,reject,handle:DDN.getViewerHandle(viewer)};await entered;
+ });
+ try{
+  const opened=await page.evaluate(async()=>{const f=assetRace;await f.viewer.open({entry:'latest.ddn',files:[{id:'latest.ddn',text:'asset Fresh as resource from "current.svg"\n    with\n        media_type "image/svg+xml"\nelement Customer as object\n    with\n        symbol.image Fresh\nview Latest as ddn@1\n    use Customer named Here\n',revision:'1',encoding:'utf-8',writable:true}]});await f.handle.whenRendered();const capture=await f.viewer.capture({scope:{kind:'workarea'},format:'svg',extent:'content',stale:'reject',partial:'reject',includePreview:false});return {ok:capture.ok,svg:capture.ok?await capture.artifacts[0].blob.text():''};});
+  assert.equal(opened.ok,true,'a newer document must not wait for an obsolete asset provider');
+  const final=await page.evaluate(async outcome=>{const f=assetRace;if(outcome==='failure')f.reject(Error('Obsolete image failed'));else f.release({bytes:new TextEncoder().encode('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24"/></svg>'),mime:'image/svg+xml',hash:'obsolete'});await f.old;await f.handle.whenRendered();const capture=await f.viewer.capture({scope:{kind:'workarea'},format:'svg',extent:'content',stale:'reject',partial:'reject',includePreview:false});return {ok:capture.ok,diagnostics:f.handle.diagnostics(),root:f.runtime.snapshot().rootFile,svg:capture.ok?await capture.artifacts[0].blob.text():''};},outcome);
+  assert.equal(final.ok,true,JSON.stringify(final.diagnostics));assert.equal(final.root,'latest.ddn');assert.ok(!final.diagnostics.some(d=>d.code==='asset-unavailable'));assert.doesNotMatch(final.svg,/Artwork/);assert.equal(final.svg,opened.svg,'obsolete reads must not evict or replace the current image');
+ }finally{await page.evaluate(()=>{assetRace.viewer.destroy();assetRace.runtime.destroy();assetRace.element.remove();delete window.assetRace;});}
+});

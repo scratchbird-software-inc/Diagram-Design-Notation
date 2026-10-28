@@ -7,7 +7,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import vm from 'node:vm';
 import { buildFontPack } from '../../../../tooling/workspace/ddn-fonts.mjs';
 const root = fileURLToPath(new URL('../../../../', import.meta.url));
-const { fontFamily, installFontResources, listFonts, loadFontFile, getFontResources, fontCSS } = await import(pathToFileURL(join(root, '.work/builds/ddn/ddn/packages/viewer/src/fonts.js')));
+const { fontFamily, installFontResources, ensureFontResources, listFonts, loadFontFile, getFontResources, fontCSS } = await import(pathToFileURL(join(root, '.work/builds/ddn/ddn/packages/viewer/src/fonts.js')));
 const binary = Buffer.from([119,79,70,50,0,0,0,0,0,0,0,0]);
 const resource = (overrides = {}) => ({ family: 'Local Test', dataURL: 'data:font/woff2;base64,' + binary.toString('base64'), ...overrides });
 function fakeDocument({ reject = false } = {}) {
@@ -124,4 +124,11 @@ test('optional font catalogue loads only requested faces, deduplicates and retri
     for(const face of built.faces){const bytes=readFileSync(join(output,face.file));assert.equal(createHash('sha256').update(bytes).digest('hex'),face.sha256);const resource=resources.find(font=>font.family===face.family&&font.style===face.style);assert.equal(createHash('sha256').update(Buffer.from(resource.dataURL.split(',')[1],'base64')).digest('hex'),face.fontSha256);}
     assert.throws(()=>sandbox.DDN_REGISTER_FONT('unknown',{}),/Incompatible/);
     assert.throws(()=>buildFontPack(join(root,'forbidden-font-output')),/beneath .work/);
+});
+
+test('selective loading also accepts explicitly supplied page resources without a standard catalogue',async()=>{
+ const {document,added}=fakeDocument();document.defaultView.DDN_FONT_RESOURCES=[resource({family:'Inter'}),resource({family:'Local Test'})];
+ assert.equal(await ensureFontResources(document,[{family:'Inter'}]),true);assert.equal(added.length,1);
+ assert.equal(await ensureFontResources(document,[{family:'Local Test',style:'italic'}]),true);assert.equal(added.length,2);
+ assert.equal(await ensureFontResources(document,[{family:'Inter'}]),false);
 });
