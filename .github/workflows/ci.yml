@@ -10,10 +10,10 @@ permissions:
 jobs:
   standalone:
     runs-on: ubuntu-latest
-    env:
-      DDN_TEMP_ROOT: ${{ runner.temp }}/ddn-browser
     steps:
       - uses: actions/checkout@v4
+      - name: Configure short browser temporary path
+        run: echo "DDN_TEMP_ROOT=$RUNNER_TEMP/ddn-browser" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with:
           node-version: '24.22.1'
