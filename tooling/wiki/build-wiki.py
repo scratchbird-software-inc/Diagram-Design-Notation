@@ -5,6 +5,7 @@ from html.parser import HTMLParser
 from urllib.parse import urlsplit, unquote
 from argparse import ArgumentParser
 import json, re, shutil
+from collections import Counter
 ROOT = Path(__file__).resolve().parents[2]
 SITE = ROOT / 'website'
 PUBLIC = 'https://scratchbird-software-inc.github.io/Diagram-Design-Notation/'
@@ -122,6 +123,12 @@ def build(destination):
     # Only generated pages are replaced. Deployment performs the separate mirror step.
     pages = {p.relative_to(SITE): name(p.relative_to(SITE)) for p in sorted(SITE.rglob('*.html'))
              if '<main' in p.read_text() and 'class="site-footer"' in p.read_text()}
+    # A literal role called index is distinct from the role-list landing page.
+    counts = Counter(pages.values())
+    pages = {path: page if counts[page] == 1 else 'DDN-' + '-'.join(path.with_suffix('').parts)
+             for path, page in pages.items()}
+    if len(set(pages.values())) != len(pages):
+        raise RuntimeError('Wiki page names collide; refusing to overwrite a reference page')
     for path, page in pages.items():
         renderer = Markdown(path, pages)
         renderer.feed((SITE / path).read_text())
