@@ -19,7 +19,7 @@ Native DDN supports progressive design, shared definitions, linked views, struct
 
 ## Build and test
 
-Development needs Node.js, Python 3 and tar. The integrity-pinned bootstrap installs Node **24.22.1**, TypeScript **5.9.3** and pnpm **10.34.7** under `.work`; its bundled Node archive currently targets **Linux x64**. Browser tests use pinned Playwright **1.64.1** and Chromium. The distributed browser utilities have no Node/Python dependency.
+Development needs Node.js, Python 3 and tar. The integrity-pinned bootstrap installs Node **24.22.1**, TypeScript **5.9.3** pnpm **10.34.7** and npm **12.2.1** under `.work`; its bundled Node archive currently targets **Linux x64**. Browser tests use pinned Playwright **1.64.1** and Chromium. The distributed browser utilities have no Node/Python dependency.
 
 ```sh
 node tooling/bootstrap/bootstrap.mjs

@@ -47,6 +47,16 @@
         "type": "git"
       },
       "selection": "build baseline; qualify transitive dependency lock before code integration"
+    },
+    {
+      "package": "npm",
+      "version": "12.2.1",
+      "integrity": "sha512-bKCmFRVT/BB+YPEYbZwQ1XUI3N5t4xKSpU1MxOjo7z3iWzKBJ0ZXRC1xFdEN+TC7N5TdywaBzf2dMXGJq/e2PQ==",
+      "license": "Artistic-2.0",
+      "engines": {
+        "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+      },
+      "source": "https://registry.npmjs.org/npm/-/npm-12.2.1.tgz"
     }
   ]
 }

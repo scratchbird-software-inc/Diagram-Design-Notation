@@ -6,7 +6,7 @@ import { root, environment, outputPath } from '../workspace/context.mjs';
 const env = environment();
 const destination = outputPath(join(env.DDN_BUILD_WORKAREA, 'tools/browser'));
 const node = join(env.DDN_BUILD_WORKAREA, 'tools/toolchain/node/bin/node');
-const npm = join(env.DDN_BUILD_WORKAREA, 'tools/toolchain/node/lib/node_modules/npm/bin/npm-cli.js');
+const npm = join(env.DDN_BUILD_WORKAREA, 'tools/toolchain/npm/bin/npm-cli.js');
 mkdirSync(destination, { recursive: true });
 for (const file of ['package.json', 'package-lock.json']) cpSync(join(root, 'tooling/browser', file), join(destination, file));
 function run(args) {

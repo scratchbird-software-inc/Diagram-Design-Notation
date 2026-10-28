@@ -24,7 +24,7 @@ The 0.8 grammar and public APIs are incompatible and retired. Historical impleme
 | Gallery regeneration | 166 files / 474 views; no failed capture, nonfinite geometry, browser error or network request |
 | Wiki generation and local link resolution | 894 pages plus 99 redirects |
 | Maintained JSON, tooling syntax and documentation links | Passed |
-| Clean integrity-pinned toolchain bootstrap | Passed; downloaded and verified Node, pnpm and TypeScript |
+| Clean integrity-pinned toolchain bootstrap | Passed; downloaded and verified Node, pnpm, npm and TypeScript |
 
 The gallery preserves the original 163 converted files and 466 views. Tests and gallery builds use the current parser and runtime; no retired runtime is needed. The website is directly usable from disk, through HTTP and from the offline distribution.
 

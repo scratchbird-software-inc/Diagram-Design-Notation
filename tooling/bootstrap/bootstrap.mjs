@@ -55,6 +55,7 @@ const node=join(target,'node/bin/node');
 for (const [label,args,version] of [
  ['Node',['--version'],`v${selected.node}`],
  ['pnpm',[join(target,'pnpm/bin/pnpm.cjs'),'--version'],'10.34.7'],
+ ['npm',[join(target,'npm/bin/npm-cli.js'),'--version'],'12.2.1'],
  ['TypeScript',[join(target,'typescript/bin/tsc'),'--version'],'Version 5.9.3'],
 ]) {
  const result=spawnSync(node,args,{encoding:'utf8',env});
