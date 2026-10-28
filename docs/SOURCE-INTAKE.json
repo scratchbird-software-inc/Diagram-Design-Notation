@@ -21,6 +21,7 @@
     "standalone root build and CI",
     "public contract paths",
     "DDN build environment names",
-    "current public documentation and generated wiki"
+    "current public documentation and generated wiki",
+    "synchronize the imported popup-close regression with its expected window closure"
   ]
 }

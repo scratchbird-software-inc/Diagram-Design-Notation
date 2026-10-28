@@ -100,7 +100,12 @@ test('detached appearance controls update the main diagram and flush before chan
  await detached.getByRole('group',{name:'Texture',exact:true}).getByRole('button',{name:'grid',exact:true}).click();
  await page.waitForFunction(()=>appearanceFixture.runtime.snapshot().normalized.files[0].document.workarea.background.texture.kind==='grid');
  await detached.getByText('Changes update the diagram immediately.',{exact:true}).waitFor();
- const closed=popup.waitForEvent('close');await detached.getByRole('button',{name:'Close',exact:true}).click();await closed;
+ const closed=popup.waitForEvent('close');
+ // A native Close handler may destroy its window before Chromium acknowledges
+ // the click. Accept only that expected popup closure; keep all state/undo checks.
+ try {await detached.getByRole('button',{name:'Close',exact:true}).click();}
+ catch(error){if(!popup.isClosed() || !/has been closed/.test(error.message))throw error;}
+ await closed;
  await fixture.getByRole('button',{name:'Undo',exact:true}).click();await page.waitForFunction(before=>appearanceFixture.runtime.sources().files[0].text===before,before);
  assert.deepEqual(errors,[]);
 });

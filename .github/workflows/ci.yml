@@ -32,14 +32,18 @@ jobs:
       - name: Install Chromium system dependencies
         run: .work/tools/toolchain/node/bin/node .work/tools/browser/node_modules/playwright/cli.js install-deps chromium
       - name: Build website and capture every gallery view
+        id: website_build
         run: bash tooling/run.sh build:ddn:website
       - name: Real-browser utility suites
         run: bash tooling/run.sh test:ddn:browser
       - name: Website suites
+        if: ${{ !cancelled() && steps.website_build.outcome == 'success' }}
         run: bash tooling/run.sh test:ddn:website
       - name: Generate and validate wiki
+        if: ${{ !cancelled() && steps.website_build.outcome == 'success' }}
         run: python3 tooling/wiki/build-wiki.py
       - name: Verify maintained site is reproducible
+        if: ${{ !cancelled() && steps.website_build.outcome == 'success' }}
         run: git diff --exit-code -- website
       - uses: actions/upload-artifact@v4
         if: always()
