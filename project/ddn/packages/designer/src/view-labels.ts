@@ -38,6 +38,7 @@ const labels:Readonly<Record<string,string>>={
     "uml.usecase@3": "Use cases — extended",
     "chen.binary@2": "Binary relationships",
     "chen.nary@3": "N-ary relationships",
+    "chebotko.conceptual@1": "Chebotko conceptual",
     "flow.documented@2": "Documented flowchart",
     "chart.gauge@1": "Gauge",
     "chart.candlestick@1": "Candlestick chart",

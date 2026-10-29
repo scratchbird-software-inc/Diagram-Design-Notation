@@ -139,10 +139,10 @@ def build(destination):
     aliases = json.loads((ROOT / 'tooling/wiki/legacy-pages.json').read_text())
     for alias, path in aliases.items():
         current = pages[Path(path)]
-        (destination / (alias + '.md')).write_text('# ' + alias.replace('-', ' ') + '\n\nThis page has moved to the current **ddn-next-1** documentation: [' + current + '](' + current + ').\n\nThe retired 0.8 language and APIs are available in repository history. [Start with the current guide](DDN-guide-quick-start), [browse all 151 profiles](DDN-gallery) or [read the API documentation](DDN-docs).\n')
+        (destination / (alias + '.md')).write_text('# ' + alias.replace('-', ' ') + '\n\nThis page has moved to the current **ddn-next-1** documentation: [' + current + '](' + current + ').\n\nThe retired 0.8 language and APIs are available in repository history. [Start with the current guide](DDN-guide-quick-start), [browse all 152 profiles](DDN-gallery) or [read the API documentation](DDN-docs).\n')
     (destination/'Home.md').write_text('''# DDN — Diagram Design Notation
 
-The current language is **ddn-next-1**, utility API **1.0**, with **151 bounded profiles**. DDN provides a standalone read-only viewer, a visual designer for local editing, and a verifier shared by both. It works offline without an account, server or commercial subscription.
+The current language is **ddn-next-1**, utility API **1.0**, with **152 bounded profiles**. DDN provides a standalone read-only viewer, a visual designer for local editing, and a verifier shared by both. It works offline without an account, server or commercial subscription.
 
 - [Your first diagram](DDN-guide-quick-start) and [language guide](DDN-guide-language).
 - [Field guide](DDN-guide), [gallery](DDN-gallery) and [complete reference](DDN-reference).
@@ -164,7 +164,7 @@ DDN is GPL-2.0-or-later, sponsored by [ScratchBird Software Inc.](https://scratc
 - [Quick start](DDN-guide-quick-start)
 - [Language](DDN-guide-language)
 - [Field guide](DDN-guide)
-- [151 profiles](DDN-gallery)
+- [152 profiles](DDN-gallery)
 - [Reference](DDN-reference)
 - [Embedding/API](DDN-docs)
 - [Downloads](DDN-download)

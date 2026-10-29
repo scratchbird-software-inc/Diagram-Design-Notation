@@ -86,7 +86,7 @@ test('modular native startup loads only the selected utility and no optional pro
  await writeFile(join(reports,'native-startup.json'),JSON.stringify(evidence,null,2)+'\n');
 });
 
-test('modular viewer automatically loads, verifies, renders and exports all151 profiles offline',async t=>{
+test('modular viewer automatically loads, verifies, renders and exports all152 profiles offline',async t=>{
  const {context,page,network,errors}=await open('viewer');const results=[];
  try{
   await createFixture(page);
@@ -105,7 +105,7 @@ test('modular viewer automatically loads, verifies, renders and exports all151 p
  }finally{await context.close();}
 });
 
-test('modular verifier loads all151 rule families without loading any renderer',async t=>{
+test('modular verifier loads all152 rule families without loading any renderer',async t=>{
  const {context,page,network,errors}=await open('verifier');const results=[];
  try{
   await page.evaluate(()=>{window.modularVerifier=DDN.createVerifier(DDN.createBrowserRuntimeOptions());});

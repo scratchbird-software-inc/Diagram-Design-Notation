@@ -773,6 +773,17 @@
       "component": "exact descriptor, validators, semantic rules; no rendering/editor"
     },
     {
+      "id": "profile/chebotko.conceptual@1",
+      "dependencies": [
+        "rules-common",
+        "profile/chen.binary@2"
+      ],
+      "headless": true,
+      "profile": "chebotko.conceptual@1",
+      "method": "MT22",
+      "component": "exact descriptor, validators, semantic rules; no rendering/editor"
+    },
+    {
       "id": "profile/flow.documented@2",
       "dependencies": [
         "rules-common",
@@ -2018,6 +2029,7 @@
     "uml.usecase@3",
     "chen.binary@2",
     "chen.nary@3",
+    "chebotko.conceptual@1",
     "flow.documented@2",
     "chart.gauge@1",
     "chart.candlestick@1",

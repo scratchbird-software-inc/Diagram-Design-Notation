@@ -25,10 +25,10 @@ const errors=report=>report.filter(d=>d.severity==='error');
 const valid=f=>assert.deepEqual(errors(f.check()),[]);
 const has=(f,code)=>assert.ok(codes(f.check()).includes(code),JSON.stringify(f.check()));
 
-test('complete pack contains exact adopted151descriptors and preserves native edition isolation',()=>{
- assert.equal(completeProfileIds.length,151); assert.deepEqual(completeProfileIds,Object.keys(contracts));
+test('complete pack contains exact adopted152descriptors and preserves native edition isolation',()=>{
+ assert.equal(completeProfileIds.length,152); assert.deepEqual(completeProfileIds,Object.keys(contracts));
  assert.equal(createCompletePack().manifest.id,'ddn-complete');assert.equal(createNativePack().manifest.profiles.length,4);
- const pack=createCompletePack();assert.equal(pack.registrations.rules.length,151);
+ const pack=createCompletePack();assert.equal(pack.registrations.rules.length,152);
  for(const id of completeProfileIds){
   const p=getProfile(id),c=contracts[id],context=contracts[c.external_context_profile],relations=contracts[c.external_relation_profile];
   const contextRoles=context?[...new Set([...c.context_roles,...context.primary_palette,...context.context_roles])].filter(role=>!c.primary_palette.includes(role)):c.context_roles;
@@ -120,9 +120,9 @@ test('complete verifier executes non-native semantic rules through adopted ABI',
  f.normalized.files[0].document.definitions[1].metadata={x_petri:{tokens:2}};const invalid=await verifier.verifyModel({...snapshot,semanticFingerprint:fingerprint(f.normalized)},{scope,level:'review',purpose:'design'});assert.equal(invalid.outcome,'invalid');assert.equal(invalid.reviewEligible,false);
 });
 
-test('all151 profile omission defaults remain schema-valid including derived auto bins',()=>{for(const id of completeProfileIds){const values=resolve({id:'view',profile:id},'view_definition',{profile:id}).values;assert.deepEqual(validateSchema('view_definition',values),[],id);}assert.equal(resolve({id:'view',profile:'chart.histogram@1'},'view_definition',{profile:'chart.histogram@1'}).values.projection.options.bin_count,'auto');});
+test('all152 profile omission defaults remain schema-valid including derived auto bins',()=>{for(const id of completeProfileIds){const values=resolve({id:'view',profile:id},'view_definition',{profile:id}).values;assert.deepEqual(validateSchema('view_definition',values),[],id);}assert.equal(resolve({id:'view',profile:'chart.histogram@1'},'view_definition',{profile:'chart.histogram@1'}).values.projection.options.bin_count,'auto');});
 
-test('all151 empty views permit progressive draft editing',()=>{for(const id of completeProfileIds){const f=fixture(id);assert.deepEqual(errors(f.check(false)),[],id);}});
+test('all152 empty views permit progressive draft editing',()=>{for(const id of completeProfileIds){const f=fixture(id);assert.deepEqual(errors(f.check(false)),[],id);}});
 test('chart gap and skip policies exclude null measurements without coercing them',()=>{for(const missing of ['gap','skip'])valid(chart('chart.basic@1',[{x:'A',y:2.5},{x:'B',y:null},{x:'',y:0}],{mark:'bar',missing}));});
 
 test('typed guard partitions include comparison boundaries and unknown policies are explicit',()=>{

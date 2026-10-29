@@ -2713,6 +2713,14 @@
       "views": "VW03 VW04",
       "role_prefixes": "fbd ladder",
       "scope": "Existing FBD/ladder and illustrative asset scope only; no CAD, circuit solver or normative electrical/P&ID method"
+    },
+    {
+      "id": "MT22",
+      "method": "chebotko",
+      "workarea": "WA02",
+      "views": "VW02",
+      "role_prefixes": "chebotko",
+      "scope": "Chebotko data-modeling method for Cassandra and YCQL: conceptual, workflow and logical diagrams in their published notation"
     }
   ],
   "modules": [

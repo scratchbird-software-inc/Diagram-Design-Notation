@@ -429,7 +429,7 @@ export function completeProfileDiagnostics(view, records, review = false) {
             if (review && (!text(object(meta(n, 'x_diagram')).code).trim() || !text(object(meta(n, 'x_diagram')).text).trim()))
                 incomplete('A completed requirement needs nonempty code and text', n.ref);
     }
-    if (profileId.startsWith('chen.')) {
+    if (profileId.startsWith('chen.') || profileId === 'chebotko.conceptual@1') {
         for (const l of links) {
             if (l.ends.some(e => e.member !== undefined))
                 issue('DDN-CHEN-MEMBER', 'Chen relationships connect entities, not member endpoints', l.item.ref);

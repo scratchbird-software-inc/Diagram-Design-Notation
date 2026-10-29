@@ -29715,6 +29715,7 @@
       "chen.basic@1",
       "chen.binary@2",
       "chen.nary@3",
+      "chebotko.conceptual@1",
       "erd.crowfoot@1",
       "orm.basic@1"
     ],
@@ -63648,6 +63649,7 @@
       "chen.basic@1",
       "chen.binary@2",
       "chen.nary@3",
+      "chebotko.conceptual@1",
       "flow.documented@2",
       "epc.basic@1",
       "erd.crowfoot@1",

@@ -11,6 +11,8 @@ import { graphLayout } from './graph-layouts.js';
 import { wrapCell } from './table.js';
 import { graphCatalogue } from './graph-catalogue.js';
 import { nodeGlyph, coreCardText, metadata, arrowMarker, sketchPrimitive, shadowPrimitive, line, label, box, oval, path, polygon, type Point } from './graph-glyphs.js';
+// Chen-style projection profiles (chen.*, chebotko.conceptual@1) share one renderer.
+const isChenFamily = (id: string): boolean => graphCatalogue[id]?.projection === 'chen';
 export const graphProfileIds: readonly string[] = Object.freeze(Object.keys(graphCatalogue));
 function dimensions(entry: ProjectedRecord, profile: string): Bounds {
     return graphNodeDimensions(str(entry.definition.record.role), profile, entry.item.bounds, entry.definition.record, typeof entry.appearance?.record.size === 'object');
@@ -30,7 +32,7 @@ function compartmentRows(entry: ProjectedRecord, all: readonly LocatedRecord[], 
         cells?: readonly string[];
     }[] = [];
     const record = entry.definition.record, requirement = object(metadata(record, 'x_requirement')), diagram=object(metadata(record,'x_diagram'));
-    if(profile.startsWith('chen.'))return [];
+    if(isChenFamily(profile))return [];
     if(['req.requirement','sysml.requirement'].includes(str(record.role))){for(const key of ['code','text'])if(diagram[key])result.push({group:'requirement',label:String(diagram[key]),style:{}});}
     for (const key of ['id', 'owner', 'acceptance', 'state'])
         if (requirement[key])
@@ -146,7 +148,7 @@ function decorateNode(entry: ProjectedRecord, all: readonly LocatedRecord[], pro
     let bounds = preserveBounds ? entry.item.bounds : dimensions(entry, profile);
     const rows = compartmentRows(entry, all, profile), { fill, stroke, width } = glyphStyle(entry, profile), textScale = num(pathValue(effective, 'style.font_size'), 16) / 16;
     const nativeCard=!role.includes('.')&&!!roleDescriptor(role),title = str(entry.appearance?.record.title) || titleOf(record), decorated = rows.length > 0 && !role.startsWith('ladder.');
-    if(nativeCard && !profile.startsWith('chen.')) {
+    if(nativeCard && !isChenFamily(profile)) {
         const header=coreCardText(role,title,bounds.width,textScale);
         if(!preserveBounds && pathValue(effective,'size.height')===undefined) bounds={...bounds,height:Math.max(bounds.height,header.height)};
     }

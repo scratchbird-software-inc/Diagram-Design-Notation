@@ -41,6 +41,7 @@ const profiles = {
     'uml.usecase@3': ['usecase', 2],
     'chen.binary@2': ['chen', 1],
     'chen.nary@3': ['chen', 2],
+    'chebotko.conceptual@1': ['chen', 1],
     'flow.documented@2': ['flow', 1],
     'chart.gauge@1': ['gauge'],
     'chart.candlestick@1': ['candlestick'],

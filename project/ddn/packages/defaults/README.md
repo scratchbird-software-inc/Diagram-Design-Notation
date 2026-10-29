@@ -51,7 +51,7 @@ Style schema. The parser accepts registered virtual hooks/custom properties;
 it does not load resources or implement general DOM CSS.
 
 The maintained `project/tests/CORE02/defaults*.test.mjs` vectors cover all eight
-codex owners, all 151 selected profiles, provider scope, specificity, nullable
+codex owners, all 152 selected profiles, provider scope, specificity, nullable
 and collection semantics, exclusions and source isolation. Run against compiled
 DDN packages with `DDN_BUILD_ROOT` pointing at the checkout's
 `.work/builds/ddn`. Existing verification/profile-family suites retain the

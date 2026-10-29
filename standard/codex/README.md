@@ -25,6 +25,5 @@ Defaults: explicit file values > eligible CSS > versioned standards. Omission ke
 Presentation extensions: [paper and stationery](PAPER-AND-STATIONERY.md),
 [background textures](BACKGROUND-TEXTURES.md), [symbol presentation](SYMBOL-PRESENTATION.md), [view surfaces](VIEW-SURFACES.md).
 
-Rebuild: `python3 build_codex.py`; validate: `python3 validate_codex.py`. Source the project workarea `env.sh` first. All generated files stay in this directory.
 
 Historical evidence/source snapshots cited in this chapter are excluded from the standalone distribution. Current behavior and qualification are documented in [the public project](https://github.com/scratchbird-software-inc/Diagram-Design-Notation).

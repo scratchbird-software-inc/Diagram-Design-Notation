@@ -25,7 +25,7 @@ before(async()=>{
 });
 after(async()=>{await context?.close();await browser?.close();});
 async function openSource(text){return page.evaluate(async text=>{const f=window.completeFixture;f.designer?.destroy();f.designer=undefined;const opened=await f.viewer.open({entry:'main.ddn',files:[{id:'main.ddn',text,revision:'1',encoding:'utf-8',writable:true}]});await f.handle.whenRendered();const scene=f.handle.scene(),report=opened.snapshot?await f.runtime.verifier.verifyModel(opened.snapshot,{scope:{kind:'workarea'},purpose:'design',level:'semantic'}):undefined;return{loaded:!!opened.snapshot,coverage:scene?.coverage,items:scene?.items.length,diagnostics:f.handle.diagnostics(),semanticOutcome:report?.outcome,semanticDiagnostics:report?.diagnostics};},text);}
-test('all151 profiles load from redesigned source through workers, render and export offline SVG',async t=>{
+test('all152 profiles load from redesigned source through workers, render and export offline SVG',async t=>{
  const evidence=[];
  for(const profile of allFixtureProfiles)await t.test(profile,async()=>{
   const opened=await openSource(profileSource(profile,language));assert.equal(opened.loaded,true,JSON.stringify(opened.diagnostics));assert.equal(opened.coverage.complete,true,JSON.stringify(opened.diagnostics));assert.ok(opened.items>1);assert.equal(opened.semanticOutcome,'valid',JSON.stringify(opened.semanticDiagnostics));

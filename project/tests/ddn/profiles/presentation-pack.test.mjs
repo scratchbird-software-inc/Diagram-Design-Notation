@@ -21,7 +21,7 @@ async function setup(profile='uml.structure@2'){
 }
 test('portable presentation pack registers every adopted profile exactly once',()=>{
  const p=createCompletePresentationPack(),profiles=p.registrations.projections.flatMap(p=>p.profiles);
- assert.equal(profiles.length,151);assert.deepEqual([...profiles].sort(),[...completeProfileIds].sort());assert.equal(new Set(profiles).size,151);
+ assert.equal(profiles.length,152);assert.deepEqual([...profiles].sort(),[...completeProfileIds].sort());assert.equal(new Set(profiles).size,152);
 });
 test('portable projection produces scoped patches and removes retired occurrences',async()=>{
  const f=await setup();try{

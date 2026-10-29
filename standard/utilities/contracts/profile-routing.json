@@ -10188,6 +10188,62 @@
       "capability_state": "specified; redesigned implementation and acceptance evidence required"
     },
     {
+      "id": "chebotko.conceptual@1",
+      "method": "MT22",
+      "workarea": "WA02",
+      "projection": "chen",
+      "native_distribution": false,
+      "profile_pack": "profile/chebotko.conceptual@1",
+      "render_pack": "projection/chen",
+      "editor_pack": "editor/chen",
+      "contract": "../2026-10-property-codex/profile-contracts.json#/chebotko.conceptual@1",
+      "schema_definition": "profile_chebotko.conceptual@1",
+      "catalogue": [
+        "BF107",
+        "C088"
+      ],
+      "related_catalogue": [],
+      "admitted_roles": [
+        "entity"
+      ],
+      "context_roles": [],
+      "relation_roles": [
+        "assoc",
+        "ref"
+      ],
+      "rule_requirements": [
+        "Entity types, attribute ovals and relationship diamonds are generated from the selected native entity definitions and their binary relations; no duplicate stored business objects.",
+        "Every relationship declares cardinality at both ends (one or many); this is the Chebotko 1:1, 1:N or M:N annotation and carries no physical key or ordering meaning.",
+        "Key attributes are underlined. A conceptual key never implies a partition or clustering key; those belong to the logical profile.",
+        "No table, query or workflow content appears here; queries belong to the workflow profile and tables to the logical profile."
+      ],
+      "inherited_profile": "chen.binary@2",
+      "bounded_scope": "Chebotko conceptual data model for query-driven Cassandra and YCQL design: entity types, key attributes (underlined), attribute ovals and relationship diamonds with explicit cardinality; drawn in Chen-style ER as Chebotko publishes it.",
+      "exclusions": [
+        "workflow and query nodes",
+        "physical or logical table content",
+        "n-ary relationships"
+      ],
+      "editor_requirements": [
+        "Create or select entity; edit its fields; connect a binary relationship; inspect the source identity of generated attribute and relationship marks."
+      ],
+      "geometry_editor": "projection-specific controls only; no graph-only place/route/frame/subdiagram if planner rejects them",
+      "metadata_contract": "metadata-index.json and exact role-contracts.json dispatch into ddn.schema.json; retained semantic owner predicates remain mandatory",
+      "descriptor_paths": [
+        "metadata_editor_fields",
+        "metadata_contract",
+        "element_contracts",
+        "relation_contracts",
+        "property_bindings",
+        "relation_endpoint_contracts"
+      ],
+      "regression_suites": [
+        "quality"
+      ],
+      "witness": "../2026-10-profile-contracts/examples/chen-binary-v2/witness.json",
+      "capability_state": "specified; redesigned implementation and acceptance evidence required"
+    },
+    {
       "id": "flow.documented@2",
       "method": "MT04",
       "workarea": "WA02",

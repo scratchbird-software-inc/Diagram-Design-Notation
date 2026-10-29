@@ -75,8 +75,8 @@ test('blank startup asks for diagram type; Cancel leaves source and workarea emp
         assert.equal(await dialog.getByLabel('View name', {exact: true}).isVisible(), false);
         assert.equal(await dialog.getByRole('group', {name: 'Diagram types', exact: true}).isVisible(), false);
         const methods = dialog.getByRole('group', {name: 'Diagram methods', exact: true});
-        assert.equal(await methods.locator('button[data-method]').count(), 21);
-        assert.equal(await methods.locator('button[data-method] svg[aria-hidden=true]').count(), 21);
+        assert.equal(await methods.locator('button[data-method]').count(), 22);
+        assert.equal(await methods.locator('button[data-method] svg[aria-hidden=true]').count(), 22);
         await page.screenshot({path: join(reports, 'method-grid.png')});
         await dialog.getByRole('button', {name: 'Cancel', exact: true}).click();
         assert.equal(await source(page).inputValue(), '');
@@ -112,7 +112,7 @@ test('native chooser exposes four supported profiles and creates an immediately 
     } finally {await s.close();}
 });
 
-test('website chooser offers all 151 profiles and switches to UML defaults and elements', async () => {
+test('website chooser offers all 152 profiles and switches to UML defaults and elements', async () => {
     const s = await session(); const {page} = s;
     try {
         const dialog = await choose(page), methods = await diagramMethodIds(dialog), profiles = [];
@@ -121,7 +121,7 @@ test('website chooser offers all 151 profiles and switches to UML defaults and e
             const grid = dialog.getByRole('group', {name: 'Diagram types', exact: true});
             assert.equal(await grid.locator('button[data-profile] svg[aria-hidden=true]').count(), await grid.locator('button[data-profile]').count());
         }
-        assert.equal(new Set(profiles).size, 151);
+        assert.equal(new Set(profiles).size, 152);
         await selectDiagramProfile(dialog, 'uml.structure@2', 'MT02');
         await page.screenshot({path: join(reports, 'uml-type-grid.png')});
         await dialog.getByLabel('View name', {exact: true}).fill('Classes');

@@ -225,7 +225,7 @@ def build():
     for key, entry in relations.items():
         parts.append(entry['name'] + ' = ' + ','.join(entry['source_ids']) + '>' + ','.join(entry['target_ids']) + ';' + typeref(entry['qualifier_schema']) + ';' + entry['qualifiers_and_rules'])
 
-    # Deduplicate exact palettes and constraints across all 151 profiles.
+    # Deduplicate exact palettes and constraints across all 152 profiles.
     sets, rules = {}, {}
     def group(values, prefix):
         signature = tuple(sorted(values))
@@ -246,7 +246,7 @@ def build():
         constraints = ','.join(rule(t) for t in profile['profile_rules'])
         defaults = {path: d['value'] for path, d in profile['defaults'].items() if d.get('kind') == 'literal'}
         rows.append(name + ' ' + profile['projection'] + ' ' + elements + ' ' + connectors + ' ' + typeref(profile['projection_schema']) + (' defaults=' + compact(defaults) if defaults else '') + ' ' + constraints)
-    parts.append('PROFILES\nExactly 151 registered profiles. Each row: profile ID, projection family, allowed element set E, allowed relation set L, projection.options type, standard overrides by full owning path, rule IDs R. Defaults outside projection.options are NOT projection options. An exact view ID does not activate a short recipe. Use element/connect statements with exact roles. Do not infer that a chart has its own profile from its mark name. E/L/R are reference labels only.')
+    parts.append('PROFILES\nExactly 152 registered profiles. Each row: profile ID, projection family, allowed element set E, allowed relation set L, projection.options type, standard overrides by full owning path, rule IDs R. Defaults outside projection.options are NOT projection options. An exact view ID does not activate a short recipe. Use element/connect statements with exact roles. Do not infer that a chart has its own profile from its mark name. E/L/R are reference labels only.')
     parts.extend(rows)
     def compact_sets(entries):
         output = []
@@ -308,4 +308,4 @@ if __name__ == '__main__':
             raise SystemExit('DDN AI reference is stale; run tooling/website/build-ai-reference.py')
     else:
         OUTPUT.write_text(text)
-    print(f'DDN AI reference: {len(text.encode()):,} bytes, {len(text.splitlines()):,} lines; 151 profiles.')
+    print(f'DDN AI reference: {len(text.encode()):,} bytes, {len(text.splitlines()):,} lines; 152 profiles.')
