@@ -1,2 +1,2 @@
-export declare const nativeSchemaHash = "dcd838e101ef05cfd856e8ff16c80e612a7819870f824d7d9b75251600da9f16";
+export declare const nativeSchemaHash = "fd31d1a80ee1611a6d750aa17a99b1dec8ff00b937b55a20c9a37b59314b6466";
 export declare const nativeCatalogue: Record<string, unknown>;

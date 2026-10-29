@@ -19,6 +19,19 @@ function compartmentRows(entry, all, profile) {
     const record = entry.definition.record, requirement = object(metadata(record, 'x_requirement')), diagram = object(metadata(record, 'x_diagram'));
     if (isChenFamily(profile))
         return [];
+    if (profile === 'chebotko.logical@1') {
+        // Chebotko table card: one two-cell row per column, `name: type` and the K / C↑ / C↓ / S marker.
+        for (const member of memberRecords(entry, all)) {
+            const props = object(member.record.properties), meta = object(metadata(member.record, 'x_member')), content = object(member.record.content);
+            const marker = props.key === 'partition' ? 'K' : props.key === 'clustering' ? 'C' + (props.sort === 'desc' ? '↓' : '↑') : meta.static ? 'S' : '';
+            const type = str(content.datatype) || str(props.datatype), shape = str(props.shape);
+            const kind = ['set', 'array', 'map'].includes(shape) ? { set: 'set', array: 'list', map: 'map' }[shape] : '';
+            const detail = kind && type && !type.includes('<') ? kind + '<' + type + '>' : type || kind;
+            const label = titleOf(member.record) + (detail ? ': ' + detail : '');
+            result.push({ group: 'columns', label, style: {}, source: member, cells: [label, marker] });
+        }
+        return result;
+    }
     if (['req.requirement', 'sysml.requirement'].includes(str(record.role))) {
         for (const key of ['code', 'text'])
             if (diagram[key])

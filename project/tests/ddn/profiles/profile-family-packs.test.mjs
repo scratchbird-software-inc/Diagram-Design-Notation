@@ -158,7 +158,7 @@ test('fine packs preserve every broad-family descriptor and register each option
   assert.deepEqual(pack.manifest.profiles,manifest.profiles);assert.equal(pack.manifest.hash,manifest.hash);
   for(const profile of manifest.profiles){assert.equal(profileCatalogueShard(profile),id);assert.deepEqual(codex.profiles[profile],parents.get(manifest.parent).profiles[profile]);}
  }
- const packs=loadedProfilePacks();assert.equal(packs.length,20);assert.equal(new Set(packs.flatMap(pack=>pack.manifest.profiles)).size,152);
+ const packs=loadedProfilePacks();assert.equal(packs.length,20);assert.equal(new Set(packs.flatMap(pack=>pack.manifest.profiles)).size,153);
  const {createRuntime}=await load('runtime/src/runtime.js'),{STANDARD_VERSIONS}=await load('runtime/src/versions.js');
  const runtime=createRuntime({versions:STANDARD_VERSIONS,packs});assert.equal(runtime.registry.describe().length,20);runtime.destroy();
 `));

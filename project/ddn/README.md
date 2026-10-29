@@ -9,7 +9,7 @@ See [notices and sponsorship](NOTICE.md).
 
 This is the new `ddn-next-1` implementation: a standalone viewer, a visual designer that extends that viewer, and a shared headless verifier. It uses the [adopted dialect and property codex](../../docs/DDN/README.md). It contains no code or grammar from the incompatible proof of concept.
 
-The complete edition implements all **152 adopted bounded profiles**, with method-specific palettes, relation rules, defaults, projections and editing controls. The [coverage index](../../docs/DDN/PROFILE-COVERAGE.md) links every contract and its tests. The native edition retains the four-profile capability set (`ddn@1`, `mindmap.basic@1`, `concept.map@1`, `table.records@1`). Missing or deliberately uninstalled packs still produce explicit unsupported/partial results.
+The complete edition implements all **153 adopted bounded profiles**, with method-specific palettes, relation rules, defaults, projections and editing controls. The [coverage index](../../docs/DDN/PROFILE-COVERAGE.md) links every contract and its tests. The native edition retains the four-profile capability set (`ddn@1`, `mindmap.basic@1`, `concept.map@1`, `table.records@1`). Missing or deliberately uninstalled packs still produce explicit unsupported/partial results.
 
 ## Run locally
 
@@ -31,7 +31,7 @@ The `modular/` directory contains `viewer.html`, `designer.html` and `verifier.h
 
 The shells include examples and a local file picker for DDN, included files, stylesheets and image assets. They do not fetch missing files or send data to a service. The viewer source pane is read-only. The designer provides method/profile selection, filtered palettes, eligible-item reuse, connection editing, schema-driven profile/projection controls, typed datasets, workarea settings, draft/column editing, lifecycle actions, undo/redo and source downloads. Saving returns artifacts; it does not claim successful browser persistence.
 
-Choose **File → New diagram…** in the designer to clear the source, workarea, supplied files/assets and undo history, then pick a diagram method/type and name. **Create diagram** starts a fresh editable view; cancelling leaves an empty document. Download work you want to keep before starting over. Native offers its four profiles; complete and modular editions offer all 152, with modular families loaded on demand.
+Choose **File → New diagram…** in the designer to clear the source, workarea, supplied files/assets and undo history, then pick a diagram method/type and name. **Create diagram** starts a fresh editable view; cancelling leaves an empty document. Download work you want to keep before starting over. Native offers its four profiles; complete and modular editions offer all 153, with modular families loaded on demand.
 
 The designer starts without an assumed diagram type. Choose **Choose diagram type…**, select a method preview, then a diagram-type preview, and name the view. Use **All diagram methods** to go back, or search the type previews within a method. Creating it applies that profile’s inherited defaults and opens its matching element palette; charts and tables offer their data and projection controls. **File → Open a sample…** offers small starters and the website gallery. Source diagnostics appear below the editor; **Apply source** or Ctrl+Enter applies text edits. Ctrl+S downloads the current source, including unapplied text. Edits and supplied local assets are also kept in browser storage when available; the next visit offers Restore or Discard. New, sample loading and file drops confirm before replacing unsaved work. Download copies you want to retain outside browser storage.
 
@@ -102,7 +102,7 @@ runtime.destroy(); // The host owns a supplied runtime.
 | `profiles`, `defaults` | Complete compiled codex, profile rules and file > CSS > standard resolution |
 | `execution` | Fingerprints, budgets, cancellation and worker/local execution |
 | `runtime` | Immutable revisions, providers, commands, lifecycle protection and history |
-| `presentation`, `viewer` | All 152 profile scenes, tables, safe Markdown, navigation, inspection and capture |
+| `presentation`, `viewer` | All 153 profile scenes, tables, safe Markdown, navigation, inspection and capture |
 | `designer` | Editing controls using the shared viewer and command service |
 | `verifier`, `standalone` | Staged verification and offline application shells |
 

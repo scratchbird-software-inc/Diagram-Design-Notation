@@ -5,7 +5,7 @@
   "language": "ddn-next-1",
   "identitySource": {
     "source": "standard/utilities/contracts/modules.json",
-    "sha256": "31ac4759b31bb60644eca8422ee3f5c9eea3604a9fa1337d3c49c4343a2bb66f"
+    "sha256": "6c057823725ced4b1589cbf3b37ad15f11176f3da0374720b12a7e4bf08c83e6"
   },
   "scope": "Declaration-only DDN utility ABI. No parser, renderer or factory implementation is included.",
   "files": [

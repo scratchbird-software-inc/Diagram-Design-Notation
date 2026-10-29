@@ -240,7 +240,7 @@ def family_for(profile):
  return 'surfaces'
 families={name:{} for name in ['native','graphs','charts','geography','surfaces']}
 for name,profile in profiles.items():families[family_for(profile)][name]=profile
-assert len({key for family in families.values() for key in family})==152
+assert len({key for family in families.values() for key in family})==153
 assert {key:value for family in families.values() for key,value in family.items()}==profiles
 manifests={name:{'id':name,'version':'1.0.0','contract':data['version'],'codexHash':data['sourceHashes']['ddn.schema.json'],'hash':hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest(),'profiles':list(value)} for name,value in families.items()}
 header='// Generated from the adopted codex; run profiles/tools/generate.py.\n'
@@ -272,7 +272,7 @@ shards={}
 for name,profile in profiles.items():
  key=shard_for(profile)
  if key!='native':shards.setdefault(key,{})[name]=profile
-assert sum(map(len,shards.values()))==148
+assert sum(map(len,shards.values()))==149
 assert {key:value for group in shards.values() for key,value in group.items()}=={key:value for key,value in profiles.items() if key not in native}
 shard_manifests={name:{'id':name,'parent':family_for(next(iter(value.values()))),'version':'1.0.0','contract':data['version'],'codexHash':data['sourceHashes']['ddn.schema.json'],'hash':hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest(),'profiles':list(value)} for name,value in shards.items()}
 shard_text=header+"import type { CatalogueFamilyManifest } from './catalogue-store.js';\n"+'export const catalogueShards:Readonly<Record<string,CatalogueFamilyManifest & {readonly parent:string}>>='+json_text(shard_manifests)+';\n'

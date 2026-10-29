@@ -10244,6 +10244,60 @@
       "capability_state": "specified; redesigned implementation and acceptance evidence required"
     },
     {
+      "id": "chebotko.logical@1",
+      "method": "MT22",
+      "workarea": "WA02",
+      "projection": "graph",
+      "native_distribution": false,
+      "profile_pack": "profile/chebotko.logical@1",
+      "render_pack": "projection/graph",
+      "editor_pack": "editor/graph",
+      "contract": "../2026-10-property-codex/profile-contracts.json#/chebotko.logical@1",
+      "schema_definition": "profile_chebotko.logical@1",
+      "catalogue": [
+        "BF107",
+        "C088"
+      ],
+      "related_catalogue": [],
+      "admitted_roles": [
+        "table"
+      ],
+      "context_roles": [],
+      "relation_roles": [
+        "ref"
+      ],
+      "rule_requirements": [
+        "Each table declares at least one partition-key column (key partition); the partition key identifies where rows live and is never nullable.",
+        "Clustering columns (key clustering) follow the partition key and may carry a sort direction (asc or desc); an absent direction is shown as ascending.",
+        "A static column (member static) must not be a partition or clustering key and requires the table to have at least one clustering column.",
+        "Collection columns are shown by their declared type (list, set or map) and are never key columns.",
+        "Each table names the queries it serves; a table with no query is reported as incomplete in review."
+      ],
+      "inherited_profile": null,
+      "bounded_scope": "Chebotko logical data model for Cassandra and YCQL: query-driven tables whose columns are marked K (partition key), C with up or down (clustering key and sort direction), S (static) or collection, each table serving one or more named queries.",
+      "exclusions": [
+        "workflow or query nodes",
+        "physical settings (keyspace, replication, compaction)",
+        "cross-table foreign keys"
+      ],
+      "editor_requirements": [
+        "Create a table; add columns and mark partition, clustering, static or collection roles; set clustering sort direction; name the queries the table serves."
+      ],
+      "geometry_editor": "legal graph/frame/route/placement or interaction-order controls under the profile",
+      "metadata_contract": "metadata-index.json and exact role-contracts.json dispatch into ddn.schema.json; retained semantic owner predicates remain mandatory",
+      "descriptor_paths": [
+        "metadata_editor_fields",
+        "metadata_contract",
+        "element_contracts",
+        "relation_contracts",
+        "property_bindings",
+        "relation_endpoint_contracts"
+      ],
+      "regression_suites": [],
+      "witness": "../2026-10-profile-contracts/examples/erd-crowfoot-v1/witness.json",
+      "capability_state": "specified; redesigned implementation and acceptance evidence required"
+    },
+    {
       "id": "flow.documented@2",
       "method": "MT04",
       "workarea": "WA02",

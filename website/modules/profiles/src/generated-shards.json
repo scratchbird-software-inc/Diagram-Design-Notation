@@ -4,7 +4,7 @@
     "parent": "graphs",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "2d7e026545dad94e2a439c35e317133aa9a58dd90f38bdc11d4bc7541e1bc165",
     "profiles": [
       "flow.basic@1",
@@ -31,7 +31,7 @@
     "parent": "graphs",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "ea3e8be89a78a05754fb9049164c381ef9ba95f8917cd2742795b405a0756efd",
     "profiles": [
       "uml.structure@1",
@@ -63,13 +63,14 @@
     "parent": "graphs",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
-    "hash": "9fd4df4e7f23c65bc2dd89f177c5defb6bc0af8449e799d6ad8b83cb4b6eeb19",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
+    "hash": "1ba9fa2d24bf0965565fdf6ac8c0c9b79176d8748553c9f75b53b177515db7d0",
     "profiles": [
       "chen.basic@1",
       "chen.binary@2",
       "chen.nary@3",
       "chebotko.conceptual@1",
+      "chebotko.logical@1",
       "erd.crowfoot@1",
       "orm.basic@1"
     ]
@@ -79,7 +80,7 @@
     "parent": "surfaces",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "e40bc87d31baece45099370d259158b3c6b224be70700dc796bc16c4f84de69a",
     "profiles": [
       "matrix.raci@1",
@@ -97,7 +98,7 @@
     "parent": "surfaces",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "84b5307b591540be5619e6d7884a2728ed20e9433123caa6cc6091a24423d04c",
     "profiles": [
       "panels.basic@1",
@@ -112,7 +113,7 @@
     "parent": "surfaces",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "ceeed116fd188800282ab30053419f70de567b07b1db5adf1ae52f2194b18e18",
     "profiles": [
       "canvas.bmc@1",
@@ -129,7 +130,7 @@
     "parent": "charts",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "1e7ed8228a73b34c07adeb264e0dc605d54a5984bd312876b7f219e2100a7e28",
     "profiles": [
       "chart.basic@1",
@@ -145,7 +146,7 @@
     "parent": "surfaces",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "79dbd0c6aecf2459480bb2d5777efe3fa72021174cebd0dd50c84e6405d9d421",
     "profiles": [
       "timeline.basic@1"
@@ -156,7 +157,7 @@
     "parent": "graphs",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "d180ba7c04648692d7755dfeee6480915bd138de4576a131c25eb08b59189c79",
     "profiles": [
       "fishbone.basic@1",
@@ -181,7 +182,7 @@
     "parent": "surfaces",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "fee1f1fa72c4696c130ad91455d9be47fbc126a67d0980cf7d3c46cbe74b7596",
     "profiles": [
       "decision.rules@1"
@@ -192,7 +193,7 @@
     "parent": "charts",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "1ab6e723e6b054c674a9ea78bcc8e68abe9165cbb16fae50169c660010d16b11",
     "profiles": [
       "chart.treemap@1",
@@ -208,7 +209,7 @@
     "parent": "charts",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "1beab47f25a5786e138a456cff94325d996a8d792607bc769619e0fd88d10e60",
     "profiles": [
       "chart.sankey@1",
@@ -223,7 +224,7 @@
     "parent": "graphs",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "20dce883d9e63e532f3805ea6c5a91960afb0be4e77592576057f3276456d886",
     "profiles": [
       "c4.context@1",
@@ -241,7 +242,7 @@
     "parent": "graphs",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "2845b73fafadf2691a47b9ffaf5fd372624ed4b72545cbab8ad90e220e65b557",
     "profiles": [
       "sysml.bdd@1",
@@ -276,7 +277,7 @@
     "parent": "charts",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "a30882eb107c812fb5e47944efac5761a24c597e1bf43a43441e2a9cabdb3dd3",
     "profiles": [
       "chart.histogram@1",
@@ -295,7 +296,7 @@
     "parent": "charts",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "72d54efbf78c4c51a9d32e03a819e0177ceab8e09212d8f6e8171276309c1c50",
     "profiles": [
       "chart.heatmap@1",
@@ -309,7 +310,7 @@
     "parent": "geography",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "afd852d3c29ddb01c5baac89c7d75d4bb28f11807347e512a78b8547a3a9bd4e",
     "profiles": [
       "geo.choropleth@1"
@@ -320,7 +321,7 @@
     "parent": "geography",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "70a1d08596e81a37c285fda7bd366c6e6c6a51be8882d12248da897d2ef1da5d",
     "profiles": [
       "geo.symbols@1"
@@ -331,7 +332,7 @@
     "parent": "geography",
     "version": "1.0.0",
     "contract": "ddn-next-1",
-    "codexHash": "3732831a5bb53961c7a99ad7fd0fc12af1a75d2261d7a6bc5a79167ad24ac34a",
+    "codexHash": "7395fa0649f2d4ca012635785fbd65fd7cc6e729b969f358e88e3aea38d65eaa",
     "hash": "d93e5a31ddba0036aa93d962862077790f6dbcfb9a6d16572ca2191245f447eb",
     "profiles": [
       "geo.outline@1"

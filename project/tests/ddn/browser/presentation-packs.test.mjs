@@ -42,7 +42,7 @@ test('missing presentation families remain unavailable until explicitly installe
  assert.throws(()=>native.installPresentationFamily({...charts.chartsPresentation,version:'99.0.0'}),/Unsupported/);
  assert.throws(()=>native.installPresentationFamily({...charts.chartsPresentation,data:()=>undefined}),/Conflicting/);
  const all=await load('presentation/src/index.js');
- assert.equal(all.availableProjectionProfiles.size,152);
+ assert.equal(all.availableProjectionProfiles.size,153);
  const graph=createGraphFixture('uml.sequence@2'),result=all.projectSnapshot(graph.snapshot,{resolve:(target,context)=>resolveProperties(graph.snapshot,target,context)});
  assert.equal(result.coverage.complete,true,JSON.stringify(result.diagnostics));assert.ok(result.entries.some(e=>e.definition.record.category==='relation'));
  assert.deepEqual(native.installedPresentationFamilies().map(f=>f.id).sort(),['charts','geography','graphs','surfaces']);

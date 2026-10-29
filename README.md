@@ -1,6 +1,6 @@
 # DDN — Diagram Design Notation
 
-DDN is free, open-source design notation with a standalone **viewer, visual designer and verifier**. The current language is **`ddn-next-1`**, with utility API **1.0** and **152 bounded diagram profiles**. It replaces the incompatible 0.8 proof of concept; there is no legacy parser or compatibility mode.
+DDN is free, open-source design notation with a standalone **viewer, visual designer and verifier**. The current language is **`ddn-next-1`**, with utility API **1.0** and **153 bounded diagram profiles**. It replaces the incompatible 0.8 proof of concept; there is no legacy parser or compatibility mode.
 
 [Website](https://scratchbird-software-inc.github.io/Diagram-Design-Notation/) · [Try the designer](https://scratchbird-software-inc.github.io/Diagram-Design-Notation/tools/index.html?mode=design) · [Downloads](https://scratchbird-software-inc.github.io/Diagram-Design-Notation/download/) · [Wiki](https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki) · [Documentation](docs/README.md)
 
@@ -13,7 +13,7 @@ version ddn-next-1
 view Orders : ddn@1
 ```
 
-Start with the [quick start](website/guide/quick-start.html), [language guide](website/guide/language.html), [gallery](website/gallery/index.html) and [complete reference](website/reference/index.html). For AI-generated diagrams, supply the single [AI authoring reference](website/guide/ddn-ai-reference.txt) with your request. It contains the syntax, defaults, constraints, examples and all 152 profiles.
+Start with the [quick start](website/guide/quick-start.html), [language guide](website/guide/language.html), [gallery](website/gallery/index.html) and [complete reference](website/reference/index.html). For AI-generated diagrams, supply the single [AI authoring reference](website/guide/ddn-ai-reference.txt) with your request. It contains the syntax, defaults, constraints, examples and all 153 profiles.
 
 Native DDN supports progressive design, shared definitions, linked views, structured fields, notes, datasets, file/CSS/standard defaults and explicit lifecycle commands. Additional profiles retain their own method rules. Profile support is bounded authoring, checking and presentation, not full external-standard certification or execution engines.
 

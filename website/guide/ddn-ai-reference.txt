@@ -224,7 +224,7 @@ sequence,index,ext,pub,sub,endpoint,topic,consumer_group,subscription,schema_reg
 constraint,pol,partition_rule,retention,dct,gpo,qlr,slo,dcl,rule.row,cmmn.sentry,sysml.constraint,tree.gate,uaf.servicepolicy,uaf.securitycontrol,uaf.standard,uaf.standardcollection,uaf.protocol = EL21;content_EL21;meta_cls;props_api
 pkg,bucket,catalog,database,schema,keyspace,namespace,workspace,folder,registry = EL54;content_EL54;meta_cls;props_api
 record = EL09;content_EL09;meta_record;props_api
-field,chen.attribute = EL10;content_EL10;meta_field;props_field
+field = EL10;content_EL10;meta_field;props_field
 file,model_artifact = EL32;asset_record;meta_cls;props_api
 manifest,flow.document = EL31;content_EL31;meta_cls;props_api
 metric = EL24;content_EL24;meta_cls;props_api
@@ -253,6 +253,7 @@ observation = EL25;content_EL25;meta_cls;props_api
 change = EL44;content_EL44;meta_cls;props_api
 flow.start,flow.end,flow.timeevent,flow.flowfinal,epk.event,flow.intermediate,cmmn.milestone,cmmn.timerevent,cmmn.userevent,tree.event,soaml.milestone,uaf.projectmilestone,sdl.timer = EL19;content_EL19;meta_cls;props_api
 req.requirement = EL22;content_EL22;meta_cls;props_api
+chen.attribute = EL10;content_EL10;meta_field;props_chen.attribute
 quality.category = EL06;content_EL06;meta_cls;props_api
 state.initial,state.state,state.final,state.history_shallow,state.history_deep,state.junction,state.choice,state.entrypoint,state.exitpoint,state.forkjoin,state.terminate,petri.place = EL20;content_EL20;meta_cls;props_api
 flow.connector = EL11;content_EL11;meta_flow.connector;props_flow.offpage
@@ -659,7 +660,7 @@ subset-of = EL06,EL07,EL08,EL09,EL55>EL06,EL07,EL08,EL09,EL55;qualifiers_RL92;OR
 excludes = EL07,EL20,EL21,EL55>EL07,EL20,EL21,EL55;qualifiers_RL93;Symmetry and applicable scope explicit; ORM exclusion differs from access denial
 refines = ANY>ANY;qualifiers_RL94;Requirement refinement, decomposition and trace roles preserve their distinct contracts
 PROFILES
-Exactly 152 registered profiles. Each row: profile ID, projection family, allowed element set E, allowed relation set L, projection.options type, standard overrides by full owning path, rule IDs R. Defaults outside projection.options are NOT projection options. An exact view ID does not activate a short recipe. Use element/connect statements with exact roles. Do not infer that a chart has its own profile from its mark name. E/L/R are reference labels only.
+Exactly 153 registered profiles. Each row: profile ID, projection family, allowed element set E, allowed relation set L, projection.options type, standard overrides by full owning path, rule IDs R. Defaults outside projection.options are NOT projection options. An exact view ID does not activate a short recipe. Use element/connect statements with exact roles. Do not infer that a chart has its own profile from its mark name. E/L/R are reference labels only.
 ddn@1 graph E1 L1 opts_ddn@1 defaults={"appearance.body":"title","appearance.columns":[{"id":"field","path":"field"}],"design.state":"draft","entity.placeholder":"<table>"} R1,R2,R3,R4
 flow.basic@1 graph E2 L2 opts_ddn@1 R5,R6,R7
 dfd.gane_sarson@1 graph E3 L3 opts_ddn@1 R8,R9,R10
@@ -698,229 +699,232 @@ uml.usecase@3 graph E13 L7 opts_ddn@1 R25,R84,R85,R86,R87
 chen.binary@2 chen E9 L9 opts_chen.nary@3 R30,R31,R32,R88,R89,R90,R91,R33
 chen.nary@3 chen E9 L9 opts_chen.nary@3 R92,R31,R88,R89,R90,R93,R94,R33
 chebotko.conceptual@1 chen E9 L9 opts_chen.nary@3 R95,R96,R97,R98
-flow.documented@2 graph E2 L16 opts_ddn@1 R5,R6,R7,R99,R100
-chart.gauge@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"gauge","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R101
-chart.candlestick@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"candlestick","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R102
-chart.treemap@1 chart E1 L12 opts_chart.basic@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"treemap","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R103
-chart.sankey@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"sankey","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R104
-c4.context@1 graph E14 L17 opts_ddn@1 R105,R106
-c4.container@1 graph E15 L17 opts_ddn@1 R107,R106,R108
-c4.component@1 graph E16 L17 opts_ddn@1 R107,R106,R109
-org.tree@1 graph E17 L18 opts_ddn@1 defaults={"layout.algorithm":"tree"} R110,R111
-wbs.tree@1 graph E18 L19 opts_ddn@1 defaults={"layout.algorithm":"tree","layout.direction":"down"} R112,R113
-mindmap.basic@1 graph E1 L1 opts_ddn@1 defaults={"layout.algorithm":"mindmap"} R114,R115,R116,R117,R118,R119,R120,R121
-concept.map@1 graph E19 L9 opts_ddn@1 R122,R123
-epc.basic@1 graph E20 L20 opts_ddn@1 R124,R125
-matrix.bcg@1 matrix E1 L1 opts_matrix.bcg@1 defaults={"projection.options.duplicates":"join"} R34,R35,R36,R126
-matrix.ansoff@1 matrix E1 L1 opts_matrix.bcg@1 defaults={"projection.options.duplicates":"join"} R34,R35,R36,R127
-matrix.tows@1 matrix E1 L1 opts_matrix.bcg@1 defaults={"projection.options.duplicates":"join"} R34,R35,R36,R128
-panels.journey@1 panels E1 L12 opts_canvas.bmc@1 defaults={"projection.options.columns":1} R39,R40,R129,R130
-matrix.storymap@1 matrix E1 L21 opts_matrix.bcg@1 defaults={"projection.options.duplicates":"join"} R34,R35,R36,R131,R132
-erd.crowfoot@1 graph E21 L9 opts_ddn@1 defaults={"appearance.body":"title"} R133,R134,R135
-panels.pyramid@1 panels E1 L12 opts_canvas.bmc@1 defaults={"projection.options.columns":1} R39,R40,R136,R137
-panels.venn@1 panels E1 L12 opts_canvas.bmc@1 defaults={"projection.options.columns":1} R39,R40,R138,R139
-uml.sequence@1 sequence E22 L22 opts_chen.nary@3 R140,R141,R142
-uml.sequence@2 sequence E22 L22 opts_chen.nary@3 R140,R141,R143,R144,R145,R146
-uml.communication@1 graph E22 L23 opts_ddn@1 R147,R148
-uml.communication@2 graph E22 L22 opts_ddn@1 R147,R148,R149
-uml.object@1 graph E22 L24 opts_ddn@1 R150,R151
-uml.object@2 graph E22 L25 opts_ddn@1 R150,R151,R152
-state.composite@1 graph E11 L15 opts_ddn@1 R153,R154
-uml.statemachine@1 graph E23 L15 opts_ddn@1 R153,R154,R155,R156,R157
-uml.activity@1 graph E2 L26 opts_ddn@1 R158,R159,R160
-uml.activity@2 graph E2 L26 opts_ddn@1 R158,R159,R160,R161,R162,R163
-bpmn.basic@1 graph E2 L27 opts_ddn@1 R164,R165
-bpmn.process@1 graph E2 L28 opts_ddn@1 R164,R165,R166,R167,R168
-bpmn.choreography@1 graph E2 L28 opts_ddn@1 R164,R165,R166,R167,R168,R169,R170
-bpmn.conversation@1 graph E24 L29 opts_ddn@1 R171,R172
-uml.timing@1 timing E22 L22 opts_chen.nary@3 R173,R174
-uml.timing@2 timing E22 L22 opts_chen.nary@3 R173,R174,R175
-uml.interaction_overview@1 graph E2 L30 opts_ddn@1 R176,R177
-uml.interaction_overview@2 graph E2 L30 opts_ddn@1 R176,R177,R178
-uml.profile@1 graph E25 L31 opts_ddn@1 R179,R180
-cmmn.basic@1 graph E26 L32 opts_ddn@1 R181,R182
-cmmn.complete@1 graph E27 L33 opts_ddn@1 R181,R182,R183,R184,R185
-sysml.bdd@1 graph E28 L34 opts_ddn@1 R186,R187
-sysml.ibd@1 graph E28 L34 opts_ddn@1 R186,R187
-sysml.parametric@1 graph E28 L34 opts_ddn@1 R186,R187,R188
-archimate.basic@1 graph E29 L35 opts_ddn@1 R189,R190,R191
-pert.cpm@1 graph E18 L36 opts_ddn@1 R192,R193,R194
-fault.tree@1 graph E30 L37 opts_ddn@1 R195,R196
-event.tree@1 graph E30 L37 opts_ddn@1 R195,R196
-network.basic@1 graph E31 L38 opts_ddn@1 R197,R198
-network.rack@1 graph E32 L39 opts_ddn@1 R197,R198,R199,R200
-wireframe.ui@1 graph E33 L21 opts_ddn@1 R201,R202
-family.tree@1 graph E34 L40 opts_ddn@1 R203,R204
-chart.histogram@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"histogram","projection.options.missing":"error","projection.options.x_type":"number"} R51,R52,R53,R54,R55,R205
-chart.density@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"density","projection.options.missing":"error","projection.options.x_type":"number"} R51,R52,R53,R54,R55,R206
-chart.qq@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"qq","projection.options.missing":"error","projection.options.x_type":"number"} R51,R52,R53,R54,R55,R207
-chart.quantiledot@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"quantiledot","projection.options.missing":"error","projection.options.x_type":"number"} R51,R52,R53,R54,R55,R208
-chart.dotplot@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"dotplot","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R209
-chart.boxplot@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"boxplot","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R210
-chart.violin@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"violin","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R211
-chart.beeswarm@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"beeswarm","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R212
-chart.topk@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.k":10,"projection.options.mark":"topk","projection.options.missing":"error","projection.options.others":true,"projection.options.x_type":"category"} R51,R52,R53,R54,R55,R213
-chart.tidytree@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"tidytree","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R214
-chart.radialtree@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"radialtree","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R215
-chart.circlepack@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"circlepack","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R216
-chart.sunburst@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"sunburst","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R217
-chart.packedbubble@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"packedbubble","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R218
-chart.heatmap@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"heatmap","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R219,R220
-chart.densityheatmap@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.bin_count":20,"projection.options.mark":"densityheatmap","projection.options.missing":"error","projection.options.x_type":"number"} R51,R52,R53,R54,R55,R221
-chart.calendar@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"calendar","projection.options.missing":"error","projection.options.x_type":"date"} R51,R52,R53,R54,R55,R222
-chart.parallelcoords@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"parallelcoords","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R223
-chart.wordcloud@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"wordcloud","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R224
-chart.arc@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"arc","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R225
-chart.force@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"force","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R226
-chart.edgebundle@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"edgebundle","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R227
-geo.choropleth@1 geo E1 L12 opts_geo.outline@1 defaults={"projection.options.graticule":false,"projection.options.mark":"choropleth","projection.options.method":"mercator"} R228,R229,R230
-geo.symbols@1 geo E1 L12 opts_geo.outline@1 defaults={"projection.options.graticule":false,"projection.options.mark":"symbol","projection.options.method":"mercator"} R231,R229,R230
-geo.outline@1 geo E1 L12 opts_geo.outline@1 defaults={"projection.options.graticule":false,"projection.options.mark":"outline","projection.options.method":"mercator"} R232,R229,R230
-sysml.requirements@1 graph E35 L41 opts_ddn@1 R233,R234,R235
-sysml.bdd@2 graph E36 L42 opts_ddn@1 R186,R187,R236,R237
-sysml.ibd@2 graph E36 L42 opts_ddn@1 R186,R187,R238,R239
-sysml.parametric@2 graph E36 L42 opts_ddn@1 R186,R187,R238,R239,R240
-sysml.package@1 graph E37 L43 opts_ddn@1 R241,R242
-sysml.usecase@1 graph E13 L7 opts_ddn@1 R25,R84,R85,R86,R87,R243
-sysml.activity@1 graph E2 L26 opts_ddn@1 R158,R159,R160,R161,R162,R163,R243,R244
-sysml.sequence@1 sequence E22 L22 opts_chen.nary@3 R140,R141,R143,R144,R145,R146,R243
-sysml.statemachine@1 graph E23 L15 opts_ddn@1 R153,R154,R155,R156,R157,R243
-dmn.drd@1 graph E38 L44 opts_ddn@1 R245,R246,R247
-soaml.services@1 graph E39 L45 opts_ddn@1 defaults={"compatibility.mode":"same"} R248,R249,R250
-uaf.strategic@1 graph E40 L46 opts_ddn@1 R251,R252,R253
-uaf.operational@1 graph E41 L47 opts_ddn@1 R254,R252,R253
-uaf.services@1 graph E41 L46 opts_ddn@1 R255,R252,R253
-uaf.systems@1 graph E41 L46 opts_ddn@1 R256,R252,R253
-uaf.personnel@1 graph E41 L46 opts_ddn@1 R257,R252,R253
-uaf.resources@1 graph E41 L46 opts_ddn@1 R258,R252,R253
-uaf.security@1 graph E41 L46 opts_ddn@1 R259,R252,R253
-uaf.projects@1 graph E41 L46 opts_ddn@1 R260,R252,R253
-uaf.standards@1 graph E41 L46 opts_ddn@1 R261,R252,R253
-uaf.actualresources@1 graph E41 L46 opts_ddn@1 R262,R252,R253
-uaf.dictionary@1 graph E41 L46 opts_ddn@1 R263,R252,R253
-uaf.summary@1 graph E41 L46 opts_ddn@1 R264,R252,R253
-flow.iso5807@1 graph E2 L2 opts_ddn@1 R5,R6,R7,R265
-c4.deployment@1 graph E5 L5 opts_ddn@1 R19,R20,R21,R243
-c4.dynamic@1 graph E42 L22 opts_ddn@1 R147,R148,R149,R243
-epc.complete@1 graph E43 L48 opts_ddn@1 R124,R125,R266,R267
-msc.basic@1 sequence E44 L22 opts_chen.nary@3 R140,R141,R143,R144,R145,R146,R243,R268
-idef0.basic@1 graph E45 L49 opts_ddn@1 R269,R270,R271
-petri.basic@1 graph E46 L50 opts_ddn@1 defaults={"petri.tokens":0,"petri.weight":1} R272,R273,R274,R275
-orm.basic@1 graph E47 L51 opts_ddn@1 R276,R277,R278
-vsm.basic@1 graph E48 L52 opts_ddn@1 R279,R280
-sdl.basic@1 graph E49 L53 opts_ddn@1 R281
-sdl.process@1 graph E50 L15 opts_ddn@1 R153,R154,R155,R156,R157,R282,R283,R284
-fbd.basic@1 graph E51 L54 opts_ddn@1 R285,R286
-ladder.basic@1 graph E52 L55 opts_ddn@1 defaults={"coil.mode":"normal","contact.form":"no","layout.algorithm":"ladder"} R287,R288,R289
+chebotko.logical@1 graph E14 L16 opts_ddn@1 R99,R100,R101,R102,R103
+flow.documented@2 graph E2 L17 opts_ddn@1 R5,R6,R7,R104,R105
+chart.gauge@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"gauge","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R106
+chart.candlestick@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"candlestick","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R107
+chart.treemap@1 chart E1 L12 opts_chart.basic@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"treemap","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R108
+chart.sankey@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"sankey","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R109
+c4.context@1 graph E15 L18 opts_ddn@1 R110,R111
+c4.container@1 graph E16 L18 opts_ddn@1 R112,R111,R113
+c4.component@1 graph E17 L18 opts_ddn@1 R112,R111,R114
+org.tree@1 graph E18 L19 opts_ddn@1 defaults={"layout.algorithm":"tree"} R115,R116
+wbs.tree@1 graph E19 L20 opts_ddn@1 defaults={"layout.algorithm":"tree","layout.direction":"down"} R117,R118
+mindmap.basic@1 graph E1 L1 opts_ddn@1 defaults={"layout.algorithm":"mindmap"} R119,R120,R121,R122,R123,R124,R125,R126
+concept.map@1 graph E20 L9 opts_ddn@1 R127,R128
+epc.basic@1 graph E21 L21 opts_ddn@1 R129,R130
+matrix.bcg@1 matrix E1 L1 opts_matrix.bcg@1 defaults={"projection.options.duplicates":"join"} R34,R35,R36,R131
+matrix.ansoff@1 matrix E1 L1 opts_matrix.bcg@1 defaults={"projection.options.duplicates":"join"} R34,R35,R36,R132
+matrix.tows@1 matrix E1 L1 opts_matrix.bcg@1 defaults={"projection.options.duplicates":"join"} R34,R35,R36,R133
+panels.journey@1 panels E1 L12 opts_canvas.bmc@1 defaults={"projection.options.columns":1} R39,R40,R134,R135
+matrix.storymap@1 matrix E1 L22 opts_matrix.bcg@1 defaults={"projection.options.duplicates":"join"} R34,R35,R36,R136,R137
+erd.crowfoot@1 graph E22 L9 opts_ddn@1 defaults={"appearance.body":"title"} R138,R139,R140
+panels.pyramid@1 panels E1 L12 opts_canvas.bmc@1 defaults={"projection.options.columns":1} R39,R40,R141,R142
+panels.venn@1 panels E1 L12 opts_canvas.bmc@1 defaults={"projection.options.columns":1} R39,R40,R143,R144
+uml.sequence@1 sequence E23 L23 opts_chen.nary@3 R145,R146,R147
+uml.sequence@2 sequence E23 L23 opts_chen.nary@3 R145,R146,R148,R149,R150,R151
+uml.communication@1 graph E23 L24 opts_ddn@1 R152,R153
+uml.communication@2 graph E23 L23 opts_ddn@1 R152,R153,R154
+uml.object@1 graph E23 L25 opts_ddn@1 R155,R156
+uml.object@2 graph E23 L26 opts_ddn@1 R155,R156,R157
+state.composite@1 graph E11 L15 opts_ddn@1 R158,R159
+uml.statemachine@1 graph E24 L15 opts_ddn@1 R158,R159,R160,R161,R162
+uml.activity@1 graph E2 L27 opts_ddn@1 R163,R164,R165
+uml.activity@2 graph E2 L27 opts_ddn@1 R163,R164,R165,R166,R167,R168
+bpmn.basic@1 graph E2 L28 opts_ddn@1 R169,R170
+bpmn.process@1 graph E2 L29 opts_ddn@1 R169,R170,R171,R172,R173
+bpmn.choreography@1 graph E2 L29 opts_ddn@1 R169,R170,R171,R172,R173,R174,R175
+bpmn.conversation@1 graph E25 L30 opts_ddn@1 R176,R177
+uml.timing@1 timing E23 L23 opts_chen.nary@3 R178,R179
+uml.timing@2 timing E23 L23 opts_chen.nary@3 R178,R179,R180
+uml.interaction_overview@1 graph E2 L31 opts_ddn@1 R181,R182
+uml.interaction_overview@2 graph E2 L31 opts_ddn@1 R181,R182,R183
+uml.profile@1 graph E26 L32 opts_ddn@1 R184,R185
+cmmn.basic@1 graph E27 L33 opts_ddn@1 R186,R187
+cmmn.complete@1 graph E28 L34 opts_ddn@1 R186,R187,R188,R189,R190
+sysml.bdd@1 graph E29 L35 opts_ddn@1 R191,R192
+sysml.ibd@1 graph E29 L35 opts_ddn@1 R191,R192
+sysml.parametric@1 graph E29 L35 opts_ddn@1 R191,R192,R193
+archimate.basic@1 graph E30 L36 opts_ddn@1 R194,R195,R196
+pert.cpm@1 graph E19 L37 opts_ddn@1 R197,R198,R199
+fault.tree@1 graph E31 L38 opts_ddn@1 R200,R201
+event.tree@1 graph E31 L38 opts_ddn@1 R200,R201
+network.basic@1 graph E32 L39 opts_ddn@1 R202,R203
+network.rack@1 graph E33 L40 opts_ddn@1 R202,R203,R204,R205
+wireframe.ui@1 graph E34 L22 opts_ddn@1 R206,R207
+family.tree@1 graph E35 L41 opts_ddn@1 R208,R209
+chart.histogram@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"histogram","projection.options.missing":"error","projection.options.x_type":"number"} R51,R52,R53,R54,R55,R210
+chart.density@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"density","projection.options.missing":"error","projection.options.x_type":"number"} R51,R52,R53,R54,R55,R211
+chart.qq@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"qq","projection.options.missing":"error","projection.options.x_type":"number"} R51,R52,R53,R54,R55,R212
+chart.quantiledot@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"quantiledot","projection.options.missing":"error","projection.options.x_type":"number"} R51,R52,R53,R54,R55,R213
+chart.dotplot@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"dotplot","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R214
+chart.boxplot@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"boxplot","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R215
+chart.violin@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"violin","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R216
+chart.beeswarm@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"beeswarm","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R217
+chart.topk@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.k":10,"projection.options.mark":"topk","projection.options.missing":"error","projection.options.others":true,"projection.options.x_type":"category"} R51,R52,R53,R54,R55,R218
+chart.tidytree@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"tidytree","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R219
+chart.radialtree@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"radialtree","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R220
+chart.circlepack@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"circlepack","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R221
+chart.sunburst@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"sunburst","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R222
+chart.packedbubble@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"packedbubble","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R223
+chart.heatmap@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"heatmap","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R224,R225
+chart.densityheatmap@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.bin_count":20,"projection.options.mark":"densityheatmap","projection.options.missing":"error","projection.options.x_type":"number"} R51,R52,R53,R54,R55,R226
+chart.calendar@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"calendar","projection.options.missing":"error","projection.options.x_type":"date"} R51,R52,R53,R54,R55,R227
+chart.parallelcoords@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"parallelcoords","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R228
+chart.wordcloud@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"wordcloud","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R229
+chart.arc@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"arc","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R230
+chart.force@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"force","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R231
+chart.edgebundle@1 chart E1 L12 opts_chart.qq@1 defaults={"projection.options.aggregate":"none","projection.options.mark":"edgebundle","projection.options.missing":"error","projection.options.x_type":"category"} R51,R52,R53,R54,R55,R232
+geo.choropleth@1 geo E1 L12 opts_geo.outline@1 defaults={"projection.options.graticule":false,"projection.options.mark":"choropleth","projection.options.method":"mercator"} R233,R234,R235
+geo.symbols@1 geo E1 L12 opts_geo.outline@1 defaults={"projection.options.graticule":false,"projection.options.mark":"symbol","projection.options.method":"mercator"} R236,R234,R235
+geo.outline@1 geo E1 L12 opts_geo.outline@1 defaults={"projection.options.graticule":false,"projection.options.mark":"outline","projection.options.method":"mercator"} R237,R234,R235
+sysml.requirements@1 graph E36 L42 opts_ddn@1 R238,R239,R240
+sysml.bdd@2 graph E37 L43 opts_ddn@1 R191,R192,R241,R242
+sysml.ibd@2 graph E37 L43 opts_ddn@1 R191,R192,R243,R244
+sysml.parametric@2 graph E37 L43 opts_ddn@1 R191,R192,R243,R244,R245
+sysml.package@1 graph E38 L44 opts_ddn@1 R246,R247
+sysml.usecase@1 graph E13 L7 opts_ddn@1 R25,R84,R85,R86,R87,R248
+sysml.activity@1 graph E2 L27 opts_ddn@1 R163,R164,R165,R166,R167,R168,R248,R249
+sysml.sequence@1 sequence E23 L23 opts_chen.nary@3 R145,R146,R148,R149,R150,R151,R248
+sysml.statemachine@1 graph E24 L15 opts_ddn@1 R158,R159,R160,R161,R162,R248
+dmn.drd@1 graph E39 L45 opts_ddn@1 R250,R251,R252
+soaml.services@1 graph E40 L46 opts_ddn@1 defaults={"compatibility.mode":"same"} R253,R254,R255
+uaf.strategic@1 graph E41 L47 opts_ddn@1 R256,R257,R258
+uaf.operational@1 graph E42 L48 opts_ddn@1 R259,R257,R258
+uaf.services@1 graph E42 L47 opts_ddn@1 R260,R257,R258
+uaf.systems@1 graph E42 L47 opts_ddn@1 R261,R257,R258
+uaf.personnel@1 graph E42 L47 opts_ddn@1 R262,R257,R258
+uaf.resources@1 graph E42 L47 opts_ddn@1 R263,R257,R258
+uaf.security@1 graph E42 L47 opts_ddn@1 R264,R257,R258
+uaf.projects@1 graph E42 L47 opts_ddn@1 R265,R257,R258
+uaf.standards@1 graph E42 L47 opts_ddn@1 R266,R257,R258
+uaf.actualresources@1 graph E42 L47 opts_ddn@1 R267,R257,R258
+uaf.dictionary@1 graph E42 L47 opts_ddn@1 R268,R257,R258
+uaf.summary@1 graph E42 L47 opts_ddn@1 R269,R257,R258
+flow.iso5807@1 graph E2 L2 opts_ddn@1 R5,R6,R7,R270
+c4.deployment@1 graph E5 L5 opts_ddn@1 R19,R20,R21,R248
+c4.dynamic@1 graph E43 L23 opts_ddn@1 R152,R153,R154,R248
+epc.complete@1 graph E44 L49 opts_ddn@1 R129,R130,R271,R272
+msc.basic@1 sequence E45 L23 opts_chen.nary@3 R145,R146,R148,R149,R150,R151,R248,R273
+idef0.basic@1 graph E46 L50 opts_ddn@1 R274,R275,R276
+petri.basic@1 graph E47 L51 opts_ddn@1 defaults={"petri.tokens":0,"petri.weight":1} R277,R278,R279,R280
+orm.basic@1 graph E48 L52 opts_ddn@1 R281,R282,R283
+vsm.basic@1 graph E49 L53 opts_ddn@1 R284,R285
+sdl.basic@1 graph E50 L54 opts_ddn@1 R286
+sdl.process@1 graph E51 L15 opts_ddn@1 R158,R159,R160,R161,R162,R287,R288,R289
+fbd.basic@1 graph E52 L55 opts_ddn@1 R290,R291
+ladder.basic@1 graph E53 L56 opts_ddn@1 defaults={"coil.mode":"normal","contact.form":"no","layout.algorithm":"ladder"} R292,R293,R294
 ROLE SETS
 + adds names; - removes names; recursively expand referenced sets.
 L12=(none)
 E12=rule.row
-E18=analysis.task
-E45=idef0.activity
+E14=table
+E19=analysis.task
+E46=idef0.activity
 E9=entity
 L14=quality.cause
 L15=state.transition
-L17=c4.rel
-L18=reports_to
-L19=analysis.decomposes
+L16=ref
+L18=c4.rel
+L19=reports_to
 L2=flow.next
-L20=epk.next
-L21=assoc
-L22=uml.message
-L26=uml.flow
-L29=bpmn.conversationlink
+L20=analysis.decomposes
+L21=epk.next
+L22=assoc
+L23=uml.message
+L27=uml.flow
 L3=dfd.data
-L35=archi.rel
-L36=analysis.precedes
-L37=tree.input
-L39=network.attaches
-L54=fbd.wire
-E14=c4.person,c4.system
-E30=tree.event,tree.gate
-E34=family.person,family.union
-E46=petri.place,petri.transition
-E51=fbd.block,fbd.variable
+L30=bpmn.conversationlink
+L36=archi.rel
+L37=analysis.precedes
+L38=tree.input
+L40=network.attaches
+L55=fbd.wire
+E15=c4.person,c4.system
+E31=tree.event,tree.gate
+E35=family.person,family.union
+E47=petri.place,petri.transition
+E52=fbd.block,fbd.variable
 E7=uml.actor,uml.usecase
 L10=L2 + analysis.assignment
-L23=L22 + assoc
-L25=uml.association,uml.link
-L30=L2 + uml.flow
-L33=cmmn.dependency,cmmn.sentryref
-L38=L39 + assoc
-L40=family.parent_of,family.partner_of
-L49=idef0.call,idef0.flow
-L53=sdl.channel,sdl.links
-L55=L54 + ladder.series
+L24=L23 + assoc
+L26=uml.association,uml.link
+L31=L2 + uml.flow
+L34=cmmn.dependency,cmmn.sentryref
+L39=L40 + assoc
+L41=family.parent_of,family.partner_of
+L50=idef0.call,idef0.flow
+L54=sdl.channel,sdl.links
+L56=L55 + ladder.series
 L9=assoc,ref
 E10=L14 + quality.category,quality.effect
 E11=state.final,state.initial,state.state
 E13=E7 + uml.subject
-E20=epk.connector,epk.event,epk.function
+E21=epk.connector,epk.event,epk.function
 E3=dfd.external,dfd.process,dfd.store
-E47=orm.entitytype,orm.facttype,orm.valuetype
+E48=orm.entitytype,orm.facttype,orm.valuetype
 E8=req.implementation,req.requirement,req.test
 L11=L2 + analysis.access,assoc
-L13=L36 + depends,flow.next
-L16=L2 + flow.annotation,flow.continues
-L24=L25 + assoc
-L27=L30 + bpmn.messageflow
-L32=L36 + assoc,cmmn.dependency
-L43=uml.access,uml.import,uml.merge
-L44=dmn.authorityreq,dmn.inforeq,dmn.knowledgereq
-L50=petri.arc,petri.inhibitor,petri.testarc
+L13=L37 + depends,flow.next
+L17=L2 + flow.annotation,flow.continues
+L25=L26 + assoc
+L28=L31 + bpmn.messageflow
+L33=L37 + assoc,cmmn.dependency
+L44=uml.access,uml.import,uml.merge
+L45=dmn.authorityreq,dmn.inforeq,dmn.knowledgereq
+L51=petri.arc,petri.inhibitor,petri.testarc
 L8=req.derives,req.satisfies,req.verifies
-E17=analysis.role,organization,role,team
-E19=E9 + domain,object,term
-E25=uml.class,uml.metaclass,uml.package,uml.stereotype
-E32=network.bus,network.rack,network.server,network.switch
-E49=sdl.agent,sdl.block,sdl.signal,sdl.signalset
+E18=analysis.role,organization,role,team
+E20=E9 + domain,object,term
+E26=uml.class,uml.metaclass,uml.package,uml.stereotype
+E33=network.bus,network.rack,network.server,network.switch
+E50=sdl.agent,sdl.block,sdl.signal,sdl.signalset
 E6=uml.class,uml.collaboration,uml.component,uml.interface
-L28=L27 + bpmn.association
-L34=assoc,sysml.allocate,sysml.flow,uml.generalization
-L48=L20 + epk.assigned,epk.infoflow,epk.links
+L29=L28 + bpmn.association
+L35=assoc,sysml.allocate,sysml.flow,uml.generalization
+L49=L21 + epk.assigned,epk.infoflow,epk.links
 L5=uml.commpath,uml.dependency,uml.deploy,uml.manifest
-L51=orm.equality,orm.exclusion,orm.plays,orm.subset
+L52=orm.equality,orm.exclusion,orm.plays,orm.subset
 L7=uml.extend,uml.generalization,uml.include,uml.uses
-E15=E14 + c4.container,c4.queue,c4.store
-E16=E15 + c4.component - c4.queue
-E26=E18 + cmmn.milestone,cmmn.sentry,cmmn.stage,cmmn.task
-E28=req.requirement,req.test,sysml.block,sysml.constraint,sysml.testcase
-E31=E32 + router
-E38=dmn.bkm,dmn.decision,dmn.decisionservice,dmn.inputdata,dmn.knowledgesource
+E16=E15 + c4.container,c4.queue,c4.store
+E17=E16 + c4.component - c4.queue
+E27=E19 + cmmn.milestone,cmmn.sentry,cmmn.stage,cmmn.task
+E29=req.requirement,req.test,sysml.block,sysml.constraint,sysml.testcase
+E32=E33 + router
+E39=dmn.bkm,dmn.decision,dmn.decisionservice,dmn.inputdata,dmn.knowledgesource
 E4=E6 + uml.enumeration,uml.package - uml.collaboration
 E5=uml.artifact,uml.component,uml.device,uml.executionenv,uml.node
-L52=vsm.einfo,vsm.material,vsm.minfo,vsm.pull,vsm.push
-L31=L43 + uml.application,uml.extension,uml.generalization
-E24=flow.callconversation,flow.conversation,flow.process,flow.subconversation,flow.subprocess,object,uml.actor
-E33=ui.button,ui.checkbox,ui.frame,ui.image,ui.input,ui.label,ui.list
-E43=E20 + epk.infoobject,epk.orgunit,epk.processlink,epk.role
-E48=vsm.control,vsm.customer,vsm.inventory,vsm.kaizen,vsm.operator,vsm.process,vsm.supermarket
-E52=E51 + ladder.coil,ladder.contact,ladder.jump,ladder.label,ladder.return
+L53=vsm.einfo,vsm.material,vsm.minfo,vsm.pull,vsm.push
+L32=L44 + uml.application,uml.extension,uml.generalization
+E25=flow.callconversation,flow.conversation,flow.process,flow.subconversation,flow.subprocess,object,uml.actor
+E34=ui.button,ui.checkbox,ui.frame,ui.image,ui.input,ui.label,ui.list
+E44=E21 + epk.infoobject,epk.orgunit,epk.processlink,epk.role
+E49=vsm.control,vsm.customer,vsm.inventory,vsm.kaizen,vsm.operator,vsm.process,vsm.supermarket
+E53=E52 + ladder.coil,ladder.contact,ladder.jump,ladder.label,ladder.return
 L6=uml.assembly,uml.connector,uml.delegation,uml.generalization,uml.provided,uml.realization,uml.required
-E36=E28 + sysml.flowspec,sysml.interfaceblock,sysml.valuetype
-L45=L6 + uml.dependency
-E29=archi.application_component,archi.application_service,archi.business_actor,archi.business_interface,archi.business_process,archi.business_role,archi.business_service,archi.technology_node,archi.technology_service
-E35=E36 + req.implementation
-L4=L43 + uml.association,uml.dependency,uml.generalization,uml.provided,uml.realization,uml.required
-E23=E11 + state.choice,state.entrypoint,state.exitpoint,state.forkjoin,state.history_deep,state.history_shallow,state.junction,state.terminate
-L41=L34 + sysml.composition,sysml.copy,sysml.derive,sysml.master,sysml.refine,sysml.satisfy,sysml.trace,sysml.verify - assoc
-E27=E26 + cmmn.casefile,cmmn.caseplan,cmmn.decisiontask,cmmn.humantask,cmmn.processtask,cmmn.timerevent,cmmn.userevent
-L42=L41 + assoc
-L46=uaf.assignedto,uaf.capabilitydependency,uaf.complieswith,uaf.exhibits,uaf.forecast,uaf.mapsto,uaf.milestonedependency,uaf.mitigates,uaf.owns,uaf.performs,uaf.satisfiescapability,uaf.supports
-L47=L46 + uml.flow
-E50=E11 + sdl.create,sdl.input,sdl.output,sdl.procedure,sdl.reset,sdl.save,sdl.set,sdl.task,sdl.timer,state.choice,state.junction
-E37=E36 + uml.actor,uml.artifact,uml.class,uml.collaboration,uml.component,uml.device,uml.enumeration,uml.executionenv,uml.interface,uml.metaclass,uml.node,uml.package,uml.stereotype,uml.subject,uml.usecase - req.requirement,req.test
-E39=E37 + soaml.agent,soaml.capability,soaml.message,soaml.milestone,soaml.participant,soaml.servicecontract,soaml.serviceinterface - sysml.block,sysml.constraint,sysml.flowspec,sysml.interfaceblock,sysml.testcase,sysml.valuetype
-E41=uaf.actualorganization,uaf.actualperson,uaf.actualresource,uaf.archdesc,uaf.asset,uaf.capability,uaf.dictionaryentry,uaf.enterprisegoal,uaf.enterprisevision,uaf.implementer,uaf.modelref,uaf.opactivity,uaf.opexchange,uaf.opnode,uaf.opperformer,uaf.organization,uaf.person,uaf.post,uaf.project,uaf.projectmilestone,uaf.protocol,uaf.resource,uaf.resourcefunction,uaf.resourceperformer,uaf.responsibility,uaf.securitycontrol,uaf.securityelement,uaf.servicefunction,uaf.servicepolicy,uaf.servicespec,uaf.standard,uaf.standardcollection,uaf.strategicphase,uaf.system,uaf.systemfunction,uaf.technology,uaf.threat,uaf.viewpoint,uaf.workpackage
-E40=E41 + flow.offpage
-E2=E24 + flow.acceptsignal,flow.annotation,flow.card,flow.choreotask,flow.collate,flow.connector,flow.datainput,flow.dataobject,flow.dataoutput,flow.datastore,flow.decision,flow.delay,flow.display,flow.document,flow.end,flow.flowfinal,flow.forkjoin,flow.gateway,flow.group,flow.intermediate,flow.io,flow.isoextract,flow.isomerge,flow.loopend,flow.loopstart,flow.manualinput,flow.manualop,flow.merge,flow.objectnode,flow.offpage,flow.parallelmode,flow.preparation,flow.sendsignal,flow.sort,flow.start,flow.storage,flow.timeevent - object,uml.actor
-E21=E19 + activity,aggregate,api,application,archive,array,backup,binding,blob,bridge,bucket,cache,catalog,change,checkpoint,cloud,cloud_account,cls,cluster,collection,colocation,command,connector,constraint,consumer_group,container,context,cube,dashboard,data_product,database,dataset,dcl,dct,decision,device,dimension,document,endpoint,entl,enumeration,environment,export,ext,extension,fact,feature,federation,field,file,file_set,fixture,folder,foreign_table,function,gateway,gpo,graph,graph_edge,graph_node,history,host,identity,index,issue,job,key_value,keyspace,log,manifest,manual_activity,map,materialized_view,message,metric,model_artifact,namespace,network,note,note.sticky,observation,opr,organization,partition,partition_rule,pipeline,pkg,placement,pol,procedure,prv,pub,qlr,qry,query_operation,queue,rdf,record,recovery,region,registry,rel,replica,replica_set,report,retention,role,router,rule,run,sample,saved_view,schedule,schema,schema_registry,search_index,security_zone,semantic_model,sequence,service,set,shard,site,slo,snapshot,sql_domain,sql_type,sub,subscription,synonym,table,team,tensor,test,time_series,timeline,topic,trigger,unit,variant,vector,view,volume,webhook,wide_column,window,workspace,write_operation,zone
-E22=E21 + uml.actor,uml.artifact,uml.class,uml.collaboration,uml.component,uml.device,uml.enumeration,uml.executionenv,uml.interface,uml.metaclass,uml.node,uml.package,uml.stereotype,uml.subject,uml.usecase
-E44=E22 + msc.hmscref
-E42=E22 + c4.container,c4.person
-L1=L47 + ack,aggregates,aliases,analysis.access,analysis.assignment,analysis.decomposes,analysis.precedes,appear,archi.rel,assoc,bindfield,binds,bpmn.association,bpmn.conversationlink,bpmn.messageflow,c4.rel,calls,cancel,candidate,capture,class,cmmn.dependency,cmmn.sentryref,coloc,compat,consent,consumed,contract,copyof,decision,delete,deliver,depends,derives,dfd.data,dmn.authorityreq,dmn.inforeq,dmn.knowledgereq,domain,edge,emb,enforces,epk.assigned,epk.infoflow,epk.links,epk.next,evidence,example,export,exposes,extract,failover,family.parent_of,family.partner_of,fbd.wire,feature,filters,flow,flow.annotation,flow.continues,flow.next,gate,generates,grant,hold,idef0.call,idef0.flow,ident,implements,import,instance,invalidate,invoke,issue,joins,ladder.series,load,lookup,masks,mem,namespace,network.attaches,note,operate,orm.equality,orm.exclusion,orm.plays,orm.subset,owns,part,petri.arc,petri.inhibitor,petri.testarc,placed,policy,precede,publish,quality,quality.cause,queries,read,realizes,ref,refresh,reject,replay,replicate,report,reports_to,represents,req.derives,req.satisfies,req.verifies,resides,restore,retain,retry,same,schedule,sdl.channel,sdl.links,slo,snapshot,state.transition,steward,subtype,supersedes,sync,sysml.allocate,sysml.composition,sysml.copy,sysml.derive,sysml.flow,sysml.master,sysml.refine,sysml.satisfy,sysml.trace,sysml.verify,test,train,tree.input,trigger,uml.access,uml.application,uml.assembly,uml.association,uml.commpath,uml.connector,uml.delegation,uml.dependency,uml.deploy,uml.extend,uml.extension,uml.generalization,uml.import,uml.include,uml.link,uml.manifest,uml.merge,uml.message,uml.provided,uml.realization,uml.required,uml.uses,uses,version,vsm.einfo,vsm.material,vsm.minfo,vsm.pull,vsm.push,write
-E1=E42 + analysis.role,analysis.task,archi.application_component,archi.application_service,archi.business_actor,archi.business_interface,archi.business_process,archi.business_role,archi.business_service,archi.technology_node,archi.technology_service,c4.component,c4.queue,c4.store,c4.system,chen.association,chen.attribute,chen.entity,cmmn.casefile,cmmn.caseplan,cmmn.decisiontask,cmmn.humantask,cmmn.milestone,cmmn.processtask,cmmn.sentry,cmmn.stage,cmmn.task,cmmn.timerevent,cmmn.userevent,dfd.external,dfd.process,dfd.store,dmn.bkm,dmn.decision,dmn.decisionservice,dmn.inputdata,dmn.knowledgesource,epk.connector,epk.event,epk.function,epk.infoobject,epk.orgunit,epk.processlink,epk.role,family.person,family.union,fbd.block,fbd.variable,flow.acceptsignal,flow.annotation,flow.callconversation,flow.card,flow.choreotask,flow.collate,flow.connector,flow.conversation,flow.datainput,flow.dataobject,flow.dataoutput,flow.datastore,flow.decision,flow.delay,flow.display,flow.document,flow.end,flow.flowfinal,flow.forkjoin,flow.gateway,flow.group,flow.intermediate,flow.io,flow.isoextract,flow.isomerge,flow.loopend,flow.loopstart,flow.manualinput,flow.manualop,flow.merge,flow.objectnode,flow.offpage,flow.parallelmode,flow.preparation,flow.process,flow.sendsignal,flow.sort,flow.start,flow.storage,flow.subconversation,flow.subprocess,flow.timeevent,idef0.activity,ladder.coil,ladder.contact,ladder.jump,ladder.label,ladder.return,msc.hmscref,network.bus,network.rack,network.server,network.switch,orm.entitytype,orm.facttype,orm.valuetype,petri.place,petri.transition,quality.category,quality.cause,quality.effect,req.implementation,req.requirement,req.test,rule.row,sdl.agent,sdl.block,sdl.create,sdl.input,sdl.output,sdl.procedure,sdl.reset,sdl.save,sdl.set,sdl.signal,sdl.signalset,sdl.task,sdl.timer,soaml.agent,soaml.capability,soaml.message,soaml.milestone,soaml.participant,soaml.servicecontract,soaml.serviceinterface,state.choice,state.entrypoint,state.exitpoint,state.final,state.forkjoin,state.history_deep,state.history_shallow,state.initial,state.junction,state.state,state.terminate,sysml.block,sysml.constraint,sysml.flowspec,sysml.interfaceblock,sysml.testcase,sysml.valuetype,tree.event,tree.gate,uaf.actualorganization,uaf.actualperson,uaf.actualresource,uaf.archdesc,uaf.asset,uaf.capability,uaf.dictionaryentry,uaf.enterprisegoal,uaf.enterprisevision,uaf.implementer,uaf.modelref,uaf.opactivity,uaf.opexchange,uaf.opnode,uaf.opperformer,uaf.organization,uaf.person,uaf.post,uaf.project,uaf.projectmilestone,uaf.protocol,uaf.resource,uaf.resourcefunction,uaf.resourceperformer,uaf.responsibility,uaf.securitycontrol,uaf.securityelement,uaf.servicefunction,uaf.servicepolicy,uaf.servicespec,uaf.standard,uaf.standardcollection,uaf.strategicphase,uaf.system,uaf.systemfunction,uaf.technology,uaf.threat,uaf.viewpoint,uaf.workpackage,ui.button,ui.checkbox,ui.frame,ui.image,ui.input,ui.label,ui.list,vsm.control,vsm.customer,vsm.inventory,vsm.kaizen,vsm.operator,vsm.process,vsm.supermarket
+E37=E29 + sysml.flowspec,sysml.interfaceblock,sysml.valuetype
+L46=L6 + uml.dependency
+E30=archi.application_component,archi.application_service,archi.business_actor,archi.business_interface,archi.business_process,archi.business_role,archi.business_service,archi.technology_node,archi.technology_service
+E36=E37 + req.implementation
+L4=L44 + uml.association,uml.dependency,uml.generalization,uml.provided,uml.realization,uml.required
+E24=E11 + state.choice,state.entrypoint,state.exitpoint,state.forkjoin,state.history_deep,state.history_shallow,state.junction,state.terminate
+L42=L35 + sysml.composition,sysml.copy,sysml.derive,sysml.master,sysml.refine,sysml.satisfy,sysml.trace,sysml.verify - assoc
+E28=E27 + cmmn.casefile,cmmn.caseplan,cmmn.decisiontask,cmmn.humantask,cmmn.processtask,cmmn.timerevent,cmmn.userevent
+L43=L42 + assoc
+L47=uaf.assignedto,uaf.capabilitydependency,uaf.complieswith,uaf.exhibits,uaf.forecast,uaf.mapsto,uaf.milestonedependency,uaf.mitigates,uaf.owns,uaf.performs,uaf.satisfiescapability,uaf.supports
+L48=L47 + uml.flow
+E51=E11 + sdl.create,sdl.input,sdl.output,sdl.procedure,sdl.reset,sdl.save,sdl.set,sdl.task,sdl.timer,state.choice,state.junction
+E38=E37 + uml.actor,uml.artifact,uml.class,uml.collaboration,uml.component,uml.device,uml.enumeration,uml.executionenv,uml.interface,uml.metaclass,uml.node,uml.package,uml.stereotype,uml.subject,uml.usecase - req.requirement,req.test
+E40=E38 + soaml.agent,soaml.capability,soaml.message,soaml.milestone,soaml.participant,soaml.servicecontract,soaml.serviceinterface - sysml.block,sysml.constraint,sysml.flowspec,sysml.interfaceblock,sysml.testcase,sysml.valuetype
+E42=uaf.actualorganization,uaf.actualperson,uaf.actualresource,uaf.archdesc,uaf.asset,uaf.capability,uaf.dictionaryentry,uaf.enterprisegoal,uaf.enterprisevision,uaf.implementer,uaf.modelref,uaf.opactivity,uaf.opexchange,uaf.opnode,uaf.opperformer,uaf.organization,uaf.person,uaf.post,uaf.project,uaf.projectmilestone,uaf.protocol,uaf.resource,uaf.resourcefunction,uaf.resourceperformer,uaf.responsibility,uaf.securitycontrol,uaf.securityelement,uaf.servicefunction,uaf.servicepolicy,uaf.servicespec,uaf.standard,uaf.standardcollection,uaf.strategicphase,uaf.system,uaf.systemfunction,uaf.technology,uaf.threat,uaf.viewpoint,uaf.workpackage
+E41=E42 + flow.offpage
+E2=E25 + flow.acceptsignal,flow.annotation,flow.card,flow.choreotask,flow.collate,flow.connector,flow.datainput,flow.dataobject,flow.dataoutput,flow.datastore,flow.decision,flow.delay,flow.display,flow.document,flow.end,flow.flowfinal,flow.forkjoin,flow.gateway,flow.group,flow.intermediate,flow.io,flow.isoextract,flow.isomerge,flow.loopend,flow.loopstart,flow.manualinput,flow.manualop,flow.merge,flow.objectnode,flow.offpage,flow.parallelmode,flow.preparation,flow.sendsignal,flow.sort,flow.start,flow.storage,flow.timeevent - object,uml.actor
+E22=E20 + activity,aggregate,api,application,archive,array,backup,binding,blob,bridge,bucket,cache,catalog,change,checkpoint,cloud,cloud_account,cls,cluster,collection,colocation,command,connector,constraint,consumer_group,container,context,cube,dashboard,data_product,database,dataset,dcl,dct,decision,device,dimension,document,endpoint,entl,enumeration,environment,export,ext,extension,fact,feature,federation,field,file,file_set,fixture,folder,foreign_table,function,gateway,gpo,graph,graph_edge,graph_node,history,host,identity,index,issue,job,key_value,keyspace,log,manifest,manual_activity,map,materialized_view,message,metric,model_artifact,namespace,network,note,note.sticky,observation,opr,organization,partition,partition_rule,pipeline,pkg,placement,pol,procedure,prv,pub,qlr,qry,query_operation,queue,rdf,record,recovery,region,registry,rel,replica,replica_set,report,retention,role,router,rule,run,sample,saved_view,schedule,schema,schema_registry,search_index,security_zone,semantic_model,sequence,service,set,shard,site,slo,snapshot,sql_domain,sql_type,sub,subscription,synonym,table,team,tensor,test,time_series,timeline,topic,trigger,unit,variant,vector,view,volume,webhook,wide_column,window,workspace,write_operation,zone
+E23=E22 + uml.actor,uml.artifact,uml.class,uml.collaboration,uml.component,uml.device,uml.enumeration,uml.executionenv,uml.interface,uml.metaclass,uml.node,uml.package,uml.stereotype,uml.subject,uml.usecase
+E45=E23 + msc.hmscref
+E43=E23 + c4.container,c4.person
+L1=L48 + ack,aggregates,aliases,analysis.access,analysis.assignment,analysis.decomposes,analysis.precedes,appear,archi.rel,assoc,bindfield,binds,bpmn.association,bpmn.conversationlink,bpmn.messageflow,c4.rel,calls,cancel,candidate,capture,class,cmmn.dependency,cmmn.sentryref,coloc,compat,consent,consumed,contract,copyof,decision,delete,deliver,depends,derives,dfd.data,dmn.authorityreq,dmn.inforeq,dmn.knowledgereq,domain,edge,emb,enforces,epk.assigned,epk.infoflow,epk.links,epk.next,evidence,example,export,exposes,extract,failover,family.parent_of,family.partner_of,fbd.wire,feature,filters,flow,flow.annotation,flow.continues,flow.next,gate,generates,grant,hold,idef0.call,idef0.flow,ident,implements,import,instance,invalidate,invoke,issue,joins,ladder.series,load,lookup,masks,mem,namespace,network.attaches,note,operate,orm.equality,orm.exclusion,orm.plays,orm.subset,owns,part,petri.arc,petri.inhibitor,petri.testarc,placed,policy,precede,publish,quality,quality.cause,queries,read,realizes,ref,refresh,reject,replay,replicate,report,reports_to,represents,req.derives,req.satisfies,req.verifies,resides,restore,retain,retry,same,schedule,sdl.channel,sdl.links,slo,snapshot,state.transition,steward,subtype,supersedes,sync,sysml.allocate,sysml.composition,sysml.copy,sysml.derive,sysml.flow,sysml.master,sysml.refine,sysml.satisfy,sysml.trace,sysml.verify,test,train,tree.input,trigger,uml.access,uml.application,uml.assembly,uml.association,uml.commpath,uml.connector,uml.delegation,uml.dependency,uml.deploy,uml.extend,uml.extension,uml.generalization,uml.import,uml.include,uml.link,uml.manifest,uml.merge,uml.message,uml.provided,uml.realization,uml.required,uml.uses,uses,version,vsm.einfo,vsm.material,vsm.minfo,vsm.pull,vsm.push,write
+E1=E43 + analysis.role,analysis.task,archi.application_component,archi.application_service,archi.business_actor,archi.business_interface,archi.business_process,archi.business_role,archi.business_service,archi.technology_node,archi.technology_service,c4.component,c4.queue,c4.store,c4.system,chen.association,chen.attribute,chen.entity,cmmn.casefile,cmmn.caseplan,cmmn.decisiontask,cmmn.humantask,cmmn.milestone,cmmn.processtask,cmmn.sentry,cmmn.stage,cmmn.task,cmmn.timerevent,cmmn.userevent,dfd.external,dfd.process,dfd.store,dmn.bkm,dmn.decision,dmn.decisionservice,dmn.inputdata,dmn.knowledgesource,epk.connector,epk.event,epk.function,epk.infoobject,epk.orgunit,epk.processlink,epk.role,family.person,family.union,fbd.block,fbd.variable,flow.acceptsignal,flow.annotation,flow.callconversation,flow.card,flow.choreotask,flow.collate,flow.connector,flow.conversation,flow.datainput,flow.dataobject,flow.dataoutput,flow.datastore,flow.decision,flow.delay,flow.display,flow.document,flow.end,flow.flowfinal,flow.forkjoin,flow.gateway,flow.group,flow.intermediate,flow.io,flow.isoextract,flow.isomerge,flow.loopend,flow.loopstart,flow.manualinput,flow.manualop,flow.merge,flow.objectnode,flow.offpage,flow.parallelmode,flow.preparation,flow.process,flow.sendsignal,flow.sort,flow.start,flow.storage,flow.subconversation,flow.subprocess,flow.timeevent,idef0.activity,ladder.coil,ladder.contact,ladder.jump,ladder.label,ladder.return,msc.hmscref,network.bus,network.rack,network.server,network.switch,orm.entitytype,orm.facttype,orm.valuetype,petri.place,petri.transition,quality.category,quality.cause,quality.effect,req.implementation,req.requirement,req.test,rule.row,sdl.agent,sdl.block,sdl.create,sdl.input,sdl.output,sdl.procedure,sdl.reset,sdl.save,sdl.set,sdl.signal,sdl.signalset,sdl.task,sdl.timer,soaml.agent,soaml.capability,soaml.message,soaml.milestone,soaml.participant,soaml.servicecontract,soaml.serviceinterface,state.choice,state.entrypoint,state.exitpoint,state.final,state.forkjoin,state.history_deep,state.history_shallow,state.initial,state.junction,state.state,state.terminate,sysml.block,sysml.constraint,sysml.flowspec,sysml.interfaceblock,sysml.testcase,sysml.valuetype,tree.event,tree.gate,uaf.actualorganization,uaf.actualperson,uaf.actualresource,uaf.archdesc,uaf.asset,uaf.capability,uaf.dictionaryentry,uaf.enterprisegoal,uaf.enterprisevision,uaf.implementer,uaf.modelref,uaf.opactivity,uaf.opexchange,uaf.opnode,uaf.opperformer,uaf.organization,uaf.person,uaf.post,uaf.project,uaf.projectmilestone,uaf.protocol,uaf.resource,uaf.resourcefunction,uaf.resourceperformer,uaf.responsibility,uaf.securitycontrol,uaf.securityelement,uaf.servicefunction,uaf.servicepolicy,uaf.servicespec,uaf.standard,uaf.standardcollection,uaf.strategicphase,uaf.system,uaf.systemfunction,uaf.technology,uaf.threat,uaf.viewpoint,uaf.workpackage,ui.button,ui.checkbox,ui.frame,ui.image,ui.input,ui.label,ui.list,vsm.control,vsm.customer,vsm.inventory,vsm.kaizen,vsm.operator,vsm.process,vsm.supermarket
 PROFILE RULES
 R1 Native DDN retains its complete 153-kind vocabulary, 91 relationship roles, facets, members, ports, samples, containment, routing, frames and embedded-view occurrences. A native dataset view role and a placed presentation view remain different concepts.
 R2 A name-only or unnamed entity is a valid draft. Display <table> for the unnamed title; do not infer required fields, types, primary keys or database bindings.
@@ -1020,197 +1024,202 @@ R95 Entity types, attribute ovals and relationship diamonds are generated from t
 R96 Every relationship declares cardinality at both ends (one or many); this is the Chebotko 1:1, 1:N or M:N annotation and carries no physical key or ordering meaning.
 R97 Key attributes are underlined. A conceptual key never implies a partition or clustering key; those belong to the logical profile.
 R98 No table, query or workflow content appears here; queries belong to the workflow profile and tables to the logical profile.
-R99 Annotations are attached through flow.annotation and excluded from control reachability.
-R100 Off-page continuation keys have exactly one outgoing and one incoming connector, with a matching directed flow.continues link; a label alone does not connect pages.
-R101 Specialization mark gauge uses x/y and optional numeric target. Exactly one record after filtering; value and target are finite numbers in 0..100 inclusive. Zero is a valid target. No series.
-R102 Specialization mark candlestick uses channels: x open high low close. Category or UTC date x; supplied OHLC only. High >= low and open/close lie within that interval. No series or invented intra-period prices.
-R103 Specialization mark treemap uses channels: x y. Dotted paths define hierarchy; nonnegative leaf weights. Deterministic slice-and-dice tiles; area encodes weight, not sibling order. No pre-aggregation or series.
-R104 Specialization mark sankey uses channels: x y target. Positive finite flows between explicit source/target names; DAG columns derive from pure sources. Duplicate source/target pairs remain separate ribbons stacked in declaration order; thickness encodes value. No series or implicit accounting conservation claim.
-R105 Only people and systems are visible participants. No field endpoints or attribute compartments.
-R106 Relationships preserve labels and system/person identity; no model discovery is implied.
-R107 Visible participants use this subtype's explicit palette. No field endpoints or attribute compartments.
-R108 Replace context-only palette with the declared container palette. Exactly one frame scopes a selected system and covers every interior container/store/queue; people remain external.
-R109 Replace context-only palette with the declared component palette. Exactly one frame scopes a selected container and covers its components; people/systems/stores can be external.
-R110 Exactly one root, no directed cycle and no node with multiple incoming managers.
-R111 Preserve current role direction manager → report; the proposed generic reports-to pattern has the reverse direction and cannot be substituted blindly.
-R112 Exactly one decomposition root, no cycle and no child with multiple parents.
-R113 Tree layout does not calculate effort, cost or scheduling from the hierarchy.
-R114 Selected domain/entity/object/term definitions are topics. A link between two selected topics is internal; exactly one selected topic is an external link. Foreign context must be directly linked to a topic.
-R115 Internal links are assoc only. Require one topic root and no internal cycles. A topic may have at most one incoming selected relationship in total, including external links and duplicate links from the same parent. Explicit root must be the actual topic root.
-R116 Incoming and outgoing internal branches use opposite horizontal sides; the centre may have outgoing branches on both sides. Topic attachments never use top or bottom except a single incoming external link to the centre, which may attach at its top or bottom. Distinct attachments are evenly spaced along each occupied side.
-R117 Internal curves avoid crossings in automatic tree placement and have no relation types, names, numbers or legend entries. Only external relationships can create a legend.
-R118 The existing relation appearance route.source_side east/west can choose a root branch side. Omission alternates root branches; descendants continue outward.
-R119 Selected topics in the designer expose equally spaced circular add-left/add-right/delete/edit-name/note controls below the body. Add-left is available at the root or with incoming on the right; add-right is available at the root or with incoming on the left. The viewer and exports omit editing controls.
-R120 External links use existing native DDN role/endpoint contracts, retain applicable labels/legend entries and do not affect internal topic root or cycle counts. Incoming external links still count toward the single-incoming-relation limit.
-R121 Incompatible authored pins/routes are diagnosed when attachment and noncrossing constraints cannot be satisfied. Top/bottom is permitted only on the target of an incoming external link to the unique internal root.
-R122 Every relationship has an explicit author-written meaning label; the verb default is insufficient.
-R123 Cycles and multiple connections are legal; no tree constraint or inferred ontology is added.
-R124 Events/functions alternate, with connectors mediating branches. Direct event→event and function→function are rejected.
-R125 Every connector declares and/or/xor, and nonconnectors cannot carry operator metadata. EPC symbols have labels rather than attribute compartments.
-R126 Exactly two rows and two columns with x_category axis/level growth:high/low by share:high/low. Preserve declared order; cells are declared strategy content, not inferred recommendations.
-R127 Exactly two rows and two columns with x_category axis/level market:existing/new by product:existing/new. Preserve declared order; cells are declared strategy content, not inferred recommendations.
-R128 Exactly two rows and two columns with x_category axis/level internal:strength/weakness by external:opportunity/threat. Preserve declared order; cells are declared strategy content, not inferred recommendations.
-R129 Use 2..8 ordered phase columns. For each phase slug require phase-<slug>, actions-<slug>, touchpoints-<slug>, opportunities-<slug> in rows 0..3; emotions spans the full width in row 4; no extra panel IDs.
-R130 Emotion records identify a phase and numeric value 1..5; render the supplied phase-ordered straight-segment polyline without smoothing.
-R131 Rows are ordered releases and columns ordered backbone activities. Cell x_story.task resolves to a selected analysis.task.
-R132 A story cannot appear in multiple cells/releases. Preserve story identity plus assignment relation provenance.
-R133 Every visible ref/assoc edge declares both endpoint marks: one, zeroone, many or zeromany. Unknown marks are rejected.
-R134 Native progressive entity editing remains available; a simple named box does not require field detail.
-R135 The four marks do not carry Chen weak/identifying semantics; explicit numerical bounds retain their separate properties.
-R136 Require one column and 3..5 contiguous bands, rows 0..N-1.
-R137 Top/bottom width grows by band index to form trapezoids; position is hierarchy, not a quantitative encoding. Optional item annotations preserve sources.
-R138 Exactly two or three set panels; each member declares its exact set IDs in x_sets, matching appearances.
-R139 Fixed overlap regions display declared membership counts. Areas are schematic and do not encode cardinality; do not infer set membership from geometry.
-R140 Selected objects are participants in declaration order, with lifelines. Visible messages follow declaration order and use selected object endpoints, not fields.
-R141 Dashed returns and automatic activation bars retain source IDs; unused lifelines warn.
-R142 Only the basic interaction presentation is promised in this version; advanced fragments are a version-2 capability.
-R143 Support synch/asynch/create/delete/reply/lost/found with applicable gate rules.
-R144 Combined fragments retain operator, ordered operands, guards, message membership and nesting; spans must resolve without illegal overlaps.
-R145 Explicit activations and invariant-after anchors resolve to the participant message order; time/duration constraints preserve their declared syntax.
-R146 Parallel operands share the containing lifelines; no independent region-local lifelines or protocol verification is implied.
-R147 Every visible message has well-formed explicit sequence numbering; reply numbering is dotted beneath its request.
-R148 Numbering is semantic interaction order; screen geometry and node order do not replace it.
-R149 Add combined-fragment references and time/duration constraints; referenced messages must resolve. Preserve explicit numbering independently of graph layout.
-R150 Instances name a classifier and explicit slots; if that classifier declares fields, slot names must exist on it.
-R151 Preserve instance label/underline and classifier reference; a depicted instance is not a running object identity system.
-R152 Add bounded slot datatype-form checks; do not infer general constraint solving from those checks.
-R153 Frames define composite regions with at most one initial marker per region.
-R154 Preserve region nesting and transition labels; do not apply the flat trace evaluator to a hierarchical diagram.
-R155 Add shallow/deep history, junction, choice, entry/exit point, fork/join and terminate pseudostates.
-R156 Choice has at least two outgoing, junction has incoming/outgoing, terminate has no outgoing; history and entry/exit need a composite region.
-R157 Entry/exit/do/internal compartments belong to state.state; submachine reference resolves to a different state. Time triggers retain after(...), at(...), when(...) form; guard/effect text is not executable.
-R158 Retain flow start/end, reachability and named-decision-branch checks.
-R159 Partition references name declared lanes; fork/join counts balance under the current structural check.
-R160 Activity edges use uml.flow rather than ordinary flow.next.
-R161 Merge fans in at least two and out exactly one.
-R162 Pins belong to permitted action kinds; interrupt/exception edges preserve explicit ownership and marker rules.
-R163 Streaming/typed pin notation does not introduce object-flow type inference, activity execution or collection expansion.
-R164 Gateway type is explicit. Message flows cross pool boundaries; a message flow inside the same pool is invalid.
-R165 Keep process sequence and message flow as separate verbs and symbols.
-R166 Validate trigger against event position; boundary events attach to legal selected activities and retain interrupting status.
-R167 Validate gateway fan/marker rules, task/activity decorators, data association endpoints and pool separation.
-R168 Data/group/annotation items are not control-flow tasks; keep their distinct renderer and endpoint contracts.
-R169 Choreography tasks have at least two distinct participant band names, with the schema maximum of six. The bounded contract does not add an unimplemented initiating-participant reference field.
-R170 Pool participant references remain context, not ordinary choreography tasks; preserve band positions and message markers.
-R171 Conversation links connect a pool/participant to a conversation node under their explicit endpoint rules.
-R172 Conversation/subconversation/callconversation glyphs remain distinct; sequence flow is not substituted for a conversation link.
-R173 Each selected participant supplies well-formed, strictly increasing x_states entries.
-R174 Render state changes along the declared time axis; no clock or unit conversion is inferred.
-R175 Add timestamp anchors, duration/time constraints and supported annotations. Anchors resolve to the declared timeline; no simulation or slew model is supplied.
-R176 Interaction references name existing views in the same resolved workspace.
-R177 Version 1 preserves the reference node without requiring inline expansion.
-R178 Add supported argument/gate metadata and one-level inline reference presentation. Prevent recursive expansion beyond the declared bound; keep child source IDs.
-R179 Extension endpoints are stereotype → metaclass; retain profile/package ownership and application relations.
-R180 A diagram describing a stereotype does not install a new executable method profile.
-R181 Sentries are placed inside a stage frame and declare entry or exit.
-R182 Keep stage, milestone, sentry and dependency identities separate; no case execution follows from drawing them.
-R183 Exactly one case plan per completed view; add task variants, events and case-file items.
-R184 Decorator owners, sentry attachment/on-part references and planning table applicability must validate.
-R185 Preserve discretionary/required/repetition/manual-activation notation as declared metadata; it does not execute case behavior.
-R186 Version-1 ports belong only to blocks; fields retain the bounded block member notation.
-R187 BDD emphasizes definitions and IBD emphasizes parts/ports/flows; the selected profile identity remains visible even when they share the renderer.
-R188 Every selected constraint binds exactly two endpoints in this version. Binding represents an equation relationship without evaluating it.
-R189 Keep the nine implemented business/application/technology roles and their silhouettes.
-R190 Relations obey the implemented fixed three-by-three legal layer-pair table; this is a bounded subset, not the full derivation calculus.
-R191 The fixed legal direction is same-layer or upward serving: technology→application/business, application→business, and each layer→itself. Downward layer pairs reject.
-R192 Every task supplies a finite nonnegative duration in days; precedence is a DAG.
-R193 Forward pass ES=max predecessor EF, EF=ES+duration; backward pass LF=min successor LS or project duration, LS=LF-duration; slack=LS-ES.
-R194 Critical tasks have zero slack; a critical edge joins critical endpoints with predecessor EF equal to successor ES.
-R195 Each gate declares and/or and has at least two inputs.
-R196 These two named profiles retain the existing shared gate-tree notation; event.tree is not a full probabilistic branching-event-tree engine.
-R197 Attachments terminate at a bus or a declared port under the registry contract.
-R198 A semantic bus node is distinct from an unsupported arbitrary routing-geometry junction network.
-R199 Rack slot declarations stay within the rack height and are unique in that rack.
-R200 Slot data is verified; exact 1U engineering geometry, power, weight and thermal calculations are not supplied.
-R201 Use the seven bounded UI roles; controls outside any UI frame produce a warning.
-R202 Preserve labels and declared placeholder content; no real widget behavior, responsive layout or image fetching is implied.
-R203 Parent relationships are acyclic and no person has more than two parents in this bounded model.
-R204 Partner/union relationships remain distinct; display declared birth/death values without claiming record verification.
-R205 Specialization mark histogram uses channels: x. Raw numeric samples, no y or series. Equal-width bins, bin_count 2..100; final maximum belongs to the last bin; contributor IDs retained.
-R206 Specialization mark density uses channels: x. Raw samples, no y/series. Gaussian KDE with Silverman bandwidth on a fixed 81-point grid; at least two observations. Zero variance is explicitly UNKNOWN, not a meaningful distribution estimate.
-R207 Specialization mark qq uses channels: x. Sorted numeric samples against standard-normal theoretical quantiles; no fitted normality verdict. Preserve rank/source ties and deterministic inverse-normal approximation.
-R208 Specialization mark quantiledot takes at least two raw numeric x samples, no y/series. Generate Q=min(n,20) R-7 quantiles at (i+0.5)/Q. Dots are calculated quantiles, not necessarily observed values. Preserve parent sample provenance and, in the redesign, the bracketing observations and interpolation weights for every dot; the current runtime only maps exact-value matches.
-R209 Specialization mark dotplot uses channels: x y. One dot per category/value record; deterministic sideways dodge resolves ties. Horizontal displacement encodes nothing.
-R210 Specialization mark boxplot groups categorical x with measured y, at most 40 categories. R-7 quartiles, fixed Tukey 1.5×IQR whiskers and individual outliers. The quality transform boxplot separately supports minmax whiskers; do not promise that option for this direct mark.
-R211 Specialization mark violin groups categorical x with measured y, at most 40 categories. Each category needs at least two nonidentical values or fails with PJ132 (UNKNOWN). Gaussian KDE uses population SD, bandwidth 1.06*sd*n^(-0.2), 61 points over [min-3h,max+3h], shared density scale, inner IQR and median.
-R212 Specialization mark beeswarm uses channels: x y. One dot per record; deterministic greedy nonoverlap lanes. Swarm displacement is solely collision avoidance.
-R213 Specialization mark topk uses channels: x y. Rank descending value, then ascending name and declaration order. Keep k=1..100; optional Others aggregates remainder with every contributor ID.
-R214 Specialization mark tidytree uses channels: x y. Dotted hierarchy paths; consecutive leaf slots in declaration order, parents centered above children. Preserve shared hierarchy aggregation and leaf provenance.
-R215 Specialization mark radialtree uses channels: x y. Tidy hierarchy leaf slots become equal angles and depth becomes radius; distance does not encode a numerical relationship strength.
-R216 Specialization mark circlepack uses channels: x y. Leaf circle area encodes weight. Deterministic descending-size sibling ring packing; padded parent circles are approximate containers, not exact sum-area encodings.
-R217 Specialization mark sunburst uses channels: x y. Within-parent angle encodes weight share; rings encode hierarchy depth; zero-weight leaves take zero angle. Keep hierarchy and contributor IDs.
-R218 Specialization mark packedbubble uses channels: x y. Bubble area encodes weight; group by first dotted-path segment with deterministic ring packing. Group position has no quantitative meaning.
-R219 Specialization mark heatmap uses channels: x y series. Categorical columns × series rows, one value per cell, maximum 60×60. Shared linear color scale; absent pairs remain empty, never zero.
-R220 Here y is the numeric value; series identifies the row. It is distinct from relation-derived matrix.heatmap@1.
-R221 Specialization mark densityheatmap uses channels: x y. Numeric scatter binned into bin_count×bin_count cells, bin_count 2..60; color encodes count. No series; preserve contributors per bin.
-R222 Specialization mark calendar uses channels: x y. One value per UTC date, Monday-first week grid. Duplicate day rejected; unobserved days blank. Do not inherit timeline business calendars.
-R223 Specialization mark parallelcoords uses channels: x y series. One polyline per series across 2..24 categorical axes, unique axis/series samples. Normalize each axis independently. Constant/missing axes are UNKNOWN at mid-height with PW04, not zero.
-R224 Specialization mark wordcloud uses channels: x y. Unique word labels with positive weights, square-root font-size mapping, maximum 120 words. Deterministic Archimedean spiral and shared text measure; unplaceable words omitted with explicit PW04 warning.
-R225 Specialization mark arc uses channels: x y target. Positive finite weighted links with distinct nonempty endpoints; at most 200 nodes/1000 links. Nodes order by total weight descending; arc thickness encodes link weight, axis positions do not encode distance.
-R226 Specialization mark force uses channels: x y target. Positive finite weighted links; at most 200 nodes/1000 links. Fixed seed 0xB1024, 300 cooling Fruchterman–Reingold iterations; radius encodes total weight, position has no additional semantics.
-R227 Specialization mark edgebundle uses channels: x y target. Positive finite links between dotted-path endpoints, depth at most three, 200 nodes/500 links. Radial tidy hierarchy; routes pass through least common ancestor; thickness encodes weight.
-R228 One numeric measure per region, joined by feature ID or name. Keys are unique; unmatched features/records are explicitly reported. Fill encodes value, not region area.
-R229 Load the optional geo module and host-supplied GeoJSON; DDN does not fetch arbitrary geography URLs. Supported geometry is Polygon/MultiPolygon/Point/MultiPoint, wrapped as Feature/FeatureCollection or bare geometry.
-R230 Select mercator/equirectangular/albers/equalEarth; fit the declared projection, split antimeridian crossings, clamp Mercator latitude as implemented. Missing module produces a visible error placeholder, not a successful map.
-R231 Declared longitude/latitude point records over a base map; optional size channel. Coordinates are finite and in range; no geocoding or geographic inference.
-R232 Render supplied geography and optional graticule; no data-value encoding or synthetic records.
-R233 Use nonempty unique requirement codes and text, plus the registered SysML dependency directions.
-R234 Verify originates from a permitted test role; satisfy originates from a permitted implementation role; copy/master/derive retain distinct meanings.
-R235 Traceability is not formal requirement proof.
-R236 Version 2 permits the declared block-family port owners, compartment types, value types, interface blocks and flow specifications.
-R237 Composition/generalization endpoints preserve block types; x_unit names a registered unit. No constraint evaluation is added.
-R238 Version 2 adds proxy/full/conjugated port glyphs, multiplicity and bounded nested ports.
-R239 Item-flow endpoints must be legal ports and declared direction/typing remains intact; no propagation/evaluation is inferred.
-R240 Every selected constraint binds at least one endpoint, replacing the version-1 exactly-two limit. Show constraint parameters; equation text is not evaluated.
-R241 Reuse package ownership/import/access/merge contracts, including ownership cycles, private import restrictions and ancestor merge checks.
-R242 Package library resolution beyond explicit workspace references is outside this profile.
-R243 Reuse the named base machinery while retaining this profile identity, method route, styling scope and exclusions. Renderer reuse does not import unrelated method permissions.
-R244 SysML activity edges may display rate/probability/continuous annotations and streaming pins; annotations are not evaluated.
-R245 Decision, BKM, input, knowledge source and service nodes have distinct endpoint contracts for information/knowledge/authority requirements.
-R246 Decision drill-down references resolve to decision views; boxed-expression data validates its presentation shape.
-R247 Expressions are displayed as data; neither FEEL nor host expression evaluation is provided.
-R248 Participant/agent service and request ports have declared interface types. Pairing defaults to same type.
-R249 Explicit compatibility modes are same, specialization, realization and operation-coverage; apply the chosen bounded check without claiming behavioral substitutability.
-R250 Service contract provider/consumer rows preserve roles. Choreography references resolve to supported sequence/state-machine views.
-R251 The strategic palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R252 Every UAF verb keeps the exact registry source/target sets; shared arrow artwork does not widen them.
-R253 Roadmaps, forecast tables and dictionaries can reference separate timeline/table views; those projections are not silently enabled inside this graph profile.
-R254 The operational palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R255 The services palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R256 The systems palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R257 The personnel palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R258 The resources palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R259 The security palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R260 The projects palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R261 The standards palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R262 The actualresources palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R263 The dictionary palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R264 The summary palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
-R265 Retain each ISO-style silhouette and its role identity; shared flow structural checks still apply. Symbol availability does not claim certification.
-R266 Add organization/role lanes, information objects and process links under their distinct verbs.
-R267 Operator split/join fan counts must balance under the implemented bounded check; this is not general process soundness proof.
-R268 HMSC references bind an existing view and retain actual parameter lists; setting/guarding invariant roles remain distinct.
-R269 ICOM port type matches side: input left, control top, output right, mechanism bottom.
-R270 Declared A-number node codes are unique and decomposition-prefixed. Preserve current schema ^A[0-9]+$; the display label A-0 does not silently widen that schema.
-R271 Flow/call arrows retain forks, joins and explicit tunneled-end markers.
-R272 Arcs are bipartite between place and transition; each registered arc role retains its direction.
-R273 Token counts are integers >=0; explicit arc weights are integers >=1, not zero.
-R274 Draw place markings and transition bars; inhibitor and test arcs remain separate verbs.
-R275 Weight metadata applies to petri.arc and petri.testarc; inhibitor arcs do not accept a weight field. Tokens metadata belongs only to petri.place.
-R276 Fact types contain at least one role field; roles link to entity/value players under exact member-endpoint restrictions.
-R277 Uniqueness bars and mandatory dots come from declared role metadata.
-R278 Keep subset/equality/exclusion, value lists, objectification and derivation text as distinct assertions; no general formal constraint proof or schema generation.
-R279 Only process nodes carry VA/NVA durations; values are finite nonnegative numbers with declared units.
-R280 Render the supplied timeline ladder strip, inventory and generic process/flow glyphs. No measured production simulation or detailed industry artwork is inferred.
-R281 Channels connect registered structural endpoints; gates are block ports. Signal references resolve to sdl.signal; signal lists and NODELAY remain declared annotations.
-R282 Exactly one start; input/output/task/save/create/set/reset nodes have an outgoing transition.
-R283 Timer references resolve to timer declarations; priority/spontaneous/continuous/active markers are legal only on their permitted owners.
-R284 Preserve SDL input/output/save/procedure silhouettes and the reused state-machine rules without executing the process.
-R285 Pins declare BOOL/INT/DINT/REAL/TIME/STRING/WORD; wire endpoint types match.
-R286 Negation is allowed only on BOOL pins. Feedback cycles are legal and do not trigger a generic DAG rule.
-R287 Each data block is one rung, in declaration order; exactly one output coil per rung.
-R288 Series links stay in the same rung; parallel OR branches follow declared topology. Jump target is a selected label.
-R289 Require ladder layout; render rails and right-aligned coil, contact/coil variants and hosted FBD pins.
+R99 Each table declares at least one partition-key column (key partition); the partition key identifies where rows live and is never nullable.
+R100 Clustering columns (key clustering) follow the partition key and may carry a sort direction (asc or desc); an absent direction is shown as ascending.
+R101 A static column (member static) must not be a partition or clustering key and requires the table to have at least one clustering column.
+R102 Collection columns are shown by their declared type (list, set or map) and are never key columns.
+R103 Each table names the queries it serves; a table with no query is reported as incomplete in review.
+R104 Annotations are attached through flow.annotation and excluded from control reachability.
+R105 Off-page continuation keys have exactly one outgoing and one incoming connector, with a matching directed flow.continues link; a label alone does not connect pages.
+R106 Specialization mark gauge uses x/y and optional numeric target. Exactly one record after filtering; value and target are finite numbers in 0..100 inclusive. Zero is a valid target. No series.
+R107 Specialization mark candlestick uses channels: x open high low close. Category or UTC date x; supplied OHLC only. High >= low and open/close lie within that interval. No series or invented intra-period prices.
+R108 Specialization mark treemap uses channels: x y. Dotted paths define hierarchy; nonnegative leaf weights. Deterministic slice-and-dice tiles; area encodes weight, not sibling order. No pre-aggregation or series.
+R109 Specialization mark sankey uses channels: x y target. Positive finite flows between explicit source/target names; DAG columns derive from pure sources. Duplicate source/target pairs remain separate ribbons stacked in declaration order; thickness encodes value. No series or implicit accounting conservation claim.
+R110 Only people and systems are visible participants. No field endpoints or attribute compartments.
+R111 Relationships preserve labels and system/person identity; no model discovery is implied.
+R112 Visible participants use this subtype's explicit palette. No field endpoints or attribute compartments.
+R113 Replace context-only palette with the declared container palette. Exactly one frame scopes a selected system and covers every interior container/store/queue; people remain external.
+R114 Replace context-only palette with the declared component palette. Exactly one frame scopes a selected container and covers its components; people/systems/stores can be external.
+R115 Exactly one root, no directed cycle and no node with multiple incoming managers.
+R116 Preserve current role direction manager → report; the proposed generic reports-to pattern has the reverse direction and cannot be substituted blindly.
+R117 Exactly one decomposition root, no cycle and no child with multiple parents.
+R118 Tree layout does not calculate effort, cost or scheduling from the hierarchy.
+R119 Selected domain/entity/object/term definitions are topics. A link between two selected topics is internal; exactly one selected topic is an external link. Foreign context must be directly linked to a topic.
+R120 Internal links are assoc only. Require one topic root and no internal cycles. A topic may have at most one incoming selected relationship in total, including external links and duplicate links from the same parent. Explicit root must be the actual topic root.
+R121 Incoming and outgoing internal branches use opposite horizontal sides; the centre may have outgoing branches on both sides. Topic attachments never use top or bottom except a single incoming external link to the centre, which may attach at its top or bottom. Distinct attachments are evenly spaced along each occupied side.
+R122 Internal curves avoid crossings in automatic tree placement and have no relation types, names, numbers or legend entries. Only external relationships can create a legend.
+R123 The existing relation appearance route.source_side east/west can choose a root branch side. Omission alternates root branches; descendants continue outward.
+R124 Selected topics in the designer expose equally spaced circular add-left/add-right/delete/edit-name/note controls below the body. Add-left is available at the root or with incoming on the right; add-right is available at the root or with incoming on the left. The viewer and exports omit editing controls.
+R125 External links use existing native DDN role/endpoint contracts, retain applicable labels/legend entries and do not affect internal topic root or cycle counts. Incoming external links still count toward the single-incoming-relation limit.
+R126 Incompatible authored pins/routes are diagnosed when attachment and noncrossing constraints cannot be satisfied. Top/bottom is permitted only on the target of an incoming external link to the unique internal root.
+R127 Every relationship has an explicit author-written meaning label; the verb default is insufficient.
+R128 Cycles and multiple connections are legal; no tree constraint or inferred ontology is added.
+R129 Events/functions alternate, with connectors mediating branches. Direct event→event and function→function are rejected.
+R130 Every connector declares and/or/xor, and nonconnectors cannot carry operator metadata. EPC symbols have labels rather than attribute compartments.
+R131 Exactly two rows and two columns with x_category axis/level growth:high/low by share:high/low. Preserve declared order; cells are declared strategy content, not inferred recommendations.
+R132 Exactly two rows and two columns with x_category axis/level market:existing/new by product:existing/new. Preserve declared order; cells are declared strategy content, not inferred recommendations.
+R133 Exactly two rows and two columns with x_category axis/level internal:strength/weakness by external:opportunity/threat. Preserve declared order; cells are declared strategy content, not inferred recommendations.
+R134 Use 2..8 ordered phase columns. For each phase slug require phase-<slug>, actions-<slug>, touchpoints-<slug>, opportunities-<slug> in rows 0..3; emotions spans the full width in row 4; no extra panel IDs.
+R135 Emotion records identify a phase and numeric value 1..5; render the supplied phase-ordered straight-segment polyline without smoothing.
+R136 Rows are ordered releases and columns ordered backbone activities. Cell x_story.task resolves to a selected analysis.task.
+R137 A story cannot appear in multiple cells/releases. Preserve story identity plus assignment relation provenance.
+R138 Every visible ref/assoc edge declares both endpoint marks: one, zeroone, many or zeromany. Unknown marks are rejected.
+R139 Native progressive entity editing remains available; a simple named box does not require field detail.
+R140 The four marks do not carry Chen weak/identifying semantics; explicit numerical bounds retain their separate properties.
+R141 Require one column and 3..5 contiguous bands, rows 0..N-1.
+R142 Top/bottom width grows by band index to form trapezoids; position is hierarchy, not a quantitative encoding. Optional item annotations preserve sources.
+R143 Exactly two or three set panels; each member declares its exact set IDs in x_sets, matching appearances.
+R144 Fixed overlap regions display declared membership counts. Areas are schematic and do not encode cardinality; do not infer set membership from geometry.
+R145 Selected objects are participants in declaration order, with lifelines. Visible messages follow declaration order and use selected object endpoints, not fields.
+R146 Dashed returns and automatic activation bars retain source IDs; unused lifelines warn.
+R147 Only the basic interaction presentation is promised in this version; advanced fragments are a version-2 capability.
+R148 Support synch/asynch/create/delete/reply/lost/found with applicable gate rules.
+R149 Combined fragments retain operator, ordered operands, guards, message membership and nesting; spans must resolve without illegal overlaps.
+R150 Explicit activations and invariant-after anchors resolve to the participant message order; time/duration constraints preserve their declared syntax.
+R151 Parallel operands share the containing lifelines; no independent region-local lifelines or protocol verification is implied.
+R152 Every visible message has well-formed explicit sequence numbering; reply numbering is dotted beneath its request.
+R153 Numbering is semantic interaction order; screen geometry and node order do not replace it.
+R154 Add combined-fragment references and time/duration constraints; referenced messages must resolve. Preserve explicit numbering independently of graph layout.
+R155 Instances name a classifier and explicit slots; if that classifier declares fields, slot names must exist on it.
+R156 Preserve instance label/underline and classifier reference; a depicted instance is not a running object identity system.
+R157 Add bounded slot datatype-form checks; do not infer general constraint solving from those checks.
+R158 Frames define composite regions with at most one initial marker per region.
+R159 Preserve region nesting and transition labels; do not apply the flat trace evaluator to a hierarchical diagram.
+R160 Add shallow/deep history, junction, choice, entry/exit point, fork/join and terminate pseudostates.
+R161 Choice has at least two outgoing, junction has incoming/outgoing, terminate has no outgoing; history and entry/exit need a composite region.
+R162 Entry/exit/do/internal compartments belong to state.state; submachine reference resolves to a different state. Time triggers retain after(...), at(...), when(...) form; guard/effect text is not executable.
+R163 Retain flow start/end, reachability and named-decision-branch checks.
+R164 Partition references name declared lanes; fork/join counts balance under the current structural check.
+R165 Activity edges use uml.flow rather than ordinary flow.next.
+R166 Merge fans in at least two and out exactly one.
+R167 Pins belong to permitted action kinds; interrupt/exception edges preserve explicit ownership and marker rules.
+R168 Streaming/typed pin notation does not introduce object-flow type inference, activity execution or collection expansion.
+R169 Gateway type is explicit. Message flows cross pool boundaries; a message flow inside the same pool is invalid.
+R170 Keep process sequence and message flow as separate verbs and symbols.
+R171 Validate trigger against event position; boundary events attach to legal selected activities and retain interrupting status.
+R172 Validate gateway fan/marker rules, task/activity decorators, data association endpoints and pool separation.
+R173 Data/group/annotation items are not control-flow tasks; keep their distinct renderer and endpoint contracts.
+R174 Choreography tasks have at least two distinct participant band names, with the schema maximum of six. The bounded contract does not add an unimplemented initiating-participant reference field.
+R175 Pool participant references remain context, not ordinary choreography tasks; preserve band positions and message markers.
+R176 Conversation links connect a pool/participant to a conversation node under their explicit endpoint rules.
+R177 Conversation/subconversation/callconversation glyphs remain distinct; sequence flow is not substituted for a conversation link.
+R178 Each selected participant supplies well-formed, strictly increasing x_states entries.
+R179 Render state changes along the declared time axis; no clock or unit conversion is inferred.
+R180 Add timestamp anchors, duration/time constraints and supported annotations. Anchors resolve to the declared timeline; no simulation or slew model is supplied.
+R181 Interaction references name existing views in the same resolved workspace.
+R182 Version 1 preserves the reference node without requiring inline expansion.
+R183 Add supported argument/gate metadata and one-level inline reference presentation. Prevent recursive expansion beyond the declared bound; keep child source IDs.
+R184 Extension endpoints are stereotype → metaclass; retain profile/package ownership and application relations.
+R185 A diagram describing a stereotype does not install a new executable method profile.
+R186 Sentries are placed inside a stage frame and declare entry or exit.
+R187 Keep stage, milestone, sentry and dependency identities separate; no case execution follows from drawing them.
+R188 Exactly one case plan per completed view; add task variants, events and case-file items.
+R189 Decorator owners, sentry attachment/on-part references and planning table applicability must validate.
+R190 Preserve discretionary/required/repetition/manual-activation notation as declared metadata; it does not execute case behavior.
+R191 Version-1 ports belong only to blocks; fields retain the bounded block member notation.
+R192 BDD emphasizes definitions and IBD emphasizes parts/ports/flows; the selected profile identity remains visible even when they share the renderer.
+R193 Every selected constraint binds exactly two endpoints in this version. Binding represents an equation relationship without evaluating it.
+R194 Keep the nine implemented business/application/technology roles and their silhouettes.
+R195 Relations obey the implemented fixed three-by-three legal layer-pair table; this is a bounded subset, not the full derivation calculus.
+R196 The fixed legal direction is same-layer or upward serving: technology→application/business, application→business, and each layer→itself. Downward layer pairs reject.
+R197 Every task supplies a finite nonnegative duration in days; precedence is a DAG.
+R198 Forward pass ES=max predecessor EF, EF=ES+duration; backward pass LF=min successor LS or project duration, LS=LF-duration; slack=LS-ES.
+R199 Critical tasks have zero slack; a critical edge joins critical endpoints with predecessor EF equal to successor ES.
+R200 Each gate declares and/or and has at least two inputs.
+R201 These two named profiles retain the existing shared gate-tree notation; event.tree is not a full probabilistic branching-event-tree engine.
+R202 Attachments terminate at a bus or a declared port under the registry contract.
+R203 A semantic bus node is distinct from an unsupported arbitrary routing-geometry junction network.
+R204 Rack slot declarations stay within the rack height and are unique in that rack.
+R205 Slot data is verified; exact 1U engineering geometry, power, weight and thermal calculations are not supplied.
+R206 Use the seven bounded UI roles; controls outside any UI frame produce a warning.
+R207 Preserve labels and declared placeholder content; no real widget behavior, responsive layout or image fetching is implied.
+R208 Parent relationships are acyclic and no person has more than two parents in this bounded model.
+R209 Partner/union relationships remain distinct; display declared birth/death values without claiming record verification.
+R210 Specialization mark histogram uses channels: x. Raw numeric samples, no y or series. Equal-width bins, bin_count 2..100; final maximum belongs to the last bin; contributor IDs retained.
+R211 Specialization mark density uses channels: x. Raw samples, no y/series. Gaussian KDE with Silverman bandwidth on a fixed 81-point grid; at least two observations. Zero variance is explicitly UNKNOWN, not a meaningful distribution estimate.
+R212 Specialization mark qq uses channels: x. Sorted numeric samples against standard-normal theoretical quantiles; no fitted normality verdict. Preserve rank/source ties and deterministic inverse-normal approximation.
+R213 Specialization mark quantiledot takes at least two raw numeric x samples, no y/series. Generate Q=min(n,20) R-7 quantiles at (i+0.5)/Q. Dots are calculated quantiles, not necessarily observed values. Preserve parent sample provenance and, in the redesign, the bracketing observations and interpolation weights for every dot; the current runtime only maps exact-value matches.
+R214 Specialization mark dotplot uses channels: x y. One dot per category/value record; deterministic sideways dodge resolves ties. Horizontal displacement encodes nothing.
+R215 Specialization mark boxplot groups categorical x with measured y, at most 40 categories. R-7 quartiles, fixed Tukey 1.5×IQR whiskers and individual outliers. The quality transform boxplot separately supports minmax whiskers; do not promise that option for this direct mark.
+R216 Specialization mark violin groups categorical x with measured y, at most 40 categories. Each category needs at least two nonidentical values or fails with PJ132 (UNKNOWN). Gaussian KDE uses population SD, bandwidth 1.06*sd*n^(-0.2), 61 points over [min-3h,max+3h], shared density scale, inner IQR and median.
+R217 Specialization mark beeswarm uses channels: x y. One dot per record; deterministic greedy nonoverlap lanes. Swarm displacement is solely collision avoidance.
+R218 Specialization mark topk uses channels: x y. Rank descending value, then ascending name and declaration order. Keep k=1..100; optional Others aggregates remainder with every contributor ID.
+R219 Specialization mark tidytree uses channels: x y. Dotted hierarchy paths; consecutive leaf slots in declaration order, parents centered above children. Preserve shared hierarchy aggregation and leaf provenance.
+R220 Specialization mark radialtree uses channels: x y. Tidy hierarchy leaf slots become equal angles and depth becomes radius; distance does not encode a numerical relationship strength.
+R221 Specialization mark circlepack uses channels: x y. Leaf circle area encodes weight. Deterministic descending-size sibling ring packing; padded parent circles are approximate containers, not exact sum-area encodings.
+R222 Specialization mark sunburst uses channels: x y. Within-parent angle encodes weight share; rings encode hierarchy depth; zero-weight leaves take zero angle. Keep hierarchy and contributor IDs.
+R223 Specialization mark packedbubble uses channels: x y. Bubble area encodes weight; group by first dotted-path segment with deterministic ring packing. Group position has no quantitative meaning.
+R224 Specialization mark heatmap uses channels: x y series. Categorical columns × series rows, one value per cell, maximum 60×60. Shared linear color scale; absent pairs remain empty, never zero.
+R225 Here y is the numeric value; series identifies the row. It is distinct from relation-derived matrix.heatmap@1.
+R226 Specialization mark densityheatmap uses channels: x y. Numeric scatter binned into bin_count×bin_count cells, bin_count 2..60; color encodes count. No series; preserve contributors per bin.
+R227 Specialization mark calendar uses channels: x y. One value per UTC date, Monday-first week grid. Duplicate day rejected; unobserved days blank. Do not inherit timeline business calendars.
+R228 Specialization mark parallelcoords uses channels: x y series. One polyline per series across 2..24 categorical axes, unique axis/series samples. Normalize each axis independently. Constant/missing axes are UNKNOWN at mid-height with PW04, not zero.
+R229 Specialization mark wordcloud uses channels: x y. Unique word labels with positive weights, square-root font-size mapping, maximum 120 words. Deterministic Archimedean spiral and shared text measure; unplaceable words omitted with explicit PW04 warning.
+R230 Specialization mark arc uses channels: x y target. Positive finite weighted links with distinct nonempty endpoints; at most 200 nodes/1000 links. Nodes order by total weight descending; arc thickness encodes link weight, axis positions do not encode distance.
+R231 Specialization mark force uses channels: x y target. Positive finite weighted links; at most 200 nodes/1000 links. Fixed seed 0xB1024, 300 cooling Fruchterman–Reingold iterations; radius encodes total weight, position has no additional semantics.
+R232 Specialization mark edgebundle uses channels: x y target. Positive finite links between dotted-path endpoints, depth at most three, 200 nodes/500 links. Radial tidy hierarchy; routes pass through least common ancestor; thickness encodes weight.
+R233 One numeric measure per region, joined by feature ID or name. Keys are unique; unmatched features/records are explicitly reported. Fill encodes value, not region area.
+R234 Load the optional geo module and host-supplied GeoJSON; DDN does not fetch arbitrary geography URLs. Supported geometry is Polygon/MultiPolygon/Point/MultiPoint, wrapped as Feature/FeatureCollection or bare geometry.
+R235 Select mercator/equirectangular/albers/equalEarth; fit the declared projection, split antimeridian crossings, clamp Mercator latitude as implemented. Missing module produces a visible error placeholder, not a successful map.
+R236 Declared longitude/latitude point records over a base map; optional size channel. Coordinates are finite and in range; no geocoding or geographic inference.
+R237 Render supplied geography and optional graticule; no data-value encoding or synthetic records.
+R238 Use nonempty unique requirement codes and text, plus the registered SysML dependency directions.
+R239 Verify originates from a permitted test role; satisfy originates from a permitted implementation role; copy/master/derive retain distinct meanings.
+R240 Traceability is not formal requirement proof.
+R241 Version 2 permits the declared block-family port owners, compartment types, value types, interface blocks and flow specifications.
+R242 Composition/generalization endpoints preserve block types; x_unit names a registered unit. No constraint evaluation is added.
+R243 Version 2 adds proxy/full/conjugated port glyphs, multiplicity and bounded nested ports.
+R244 Item-flow endpoints must be legal ports and declared direction/typing remains intact; no propagation/evaluation is inferred.
+R245 Every selected constraint binds at least one endpoint, replacing the version-1 exactly-two limit. Show constraint parameters; equation text is not evaluated.
+R246 Reuse package ownership/import/access/merge contracts, including ownership cycles, private import restrictions and ancestor merge checks.
+R247 Package library resolution beyond explicit workspace references is outside this profile.
+R248 Reuse the named base machinery while retaining this profile identity, method route, styling scope and exclusions. Renderer reuse does not import unrelated method permissions.
+R249 SysML activity edges may display rate/probability/continuous annotations and streaming pins; annotations are not evaluated.
+R250 Decision, BKM, input, knowledge source and service nodes have distinct endpoint contracts for information/knowledge/authority requirements.
+R251 Decision drill-down references resolve to decision views; boxed-expression data validates its presentation shape.
+R252 Expressions are displayed as data; neither FEEL nor host expression evaluation is provided.
+R253 Participant/agent service and request ports have declared interface types. Pairing defaults to same type.
+R254 Explicit compatibility modes are same, specialization, realization and operation-coverage; apply the chosen bounded check without claiming behavioral substitutability.
+R255 Service contract provider/consumer rows preserve roles. Choreography references resolve to supported sequence/state-machine views.
+R256 The strategic palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R257 Every UAF verb keeps the exact registry source/target sets; shared arrow artwork does not widen them.
+R258 Roadmaps, forecast tables and dictionaries can reference separate timeline/table views; those projections are not silently enabled inside this graph profile.
+R259 The operational palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R260 The services palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R261 The systems palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R262 The personnel palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R263 The resources palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R264 The security palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R265 The projects palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R266 The standards palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R267 The actualresources palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R268 The dictionary palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R269 The summary palette contains its named domain roles. Cross-domain UAF context can be selected explicitly without changing those role identities.
+R270 Retain each ISO-style silhouette and its role identity; shared flow structural checks still apply. Symbol availability does not claim certification.
+R271 Add organization/role lanes, information objects and process links under their distinct verbs.
+R272 Operator split/join fan counts must balance under the implemented bounded check; this is not general process soundness proof.
+R273 HMSC references bind an existing view and retain actual parameter lists; setting/guarding invariant roles remain distinct.
+R274 ICOM port type matches side: input left, control top, output right, mechanism bottom.
+R275 Declared A-number node codes are unique and decomposition-prefixed. Preserve current schema ^A[0-9]+$; the display label A-0 does not silently widen that schema.
+R276 Flow/call arrows retain forks, joins and explicit tunneled-end markers.
+R277 Arcs are bipartite between place and transition; each registered arc role retains its direction.
+R278 Token counts are integers >=0; explicit arc weights are integers >=1, not zero.
+R279 Draw place markings and transition bars; inhibitor and test arcs remain separate verbs.
+R280 Weight metadata applies to petri.arc and petri.testarc; inhibitor arcs do not accept a weight field. Tokens metadata belongs only to petri.place.
+R281 Fact types contain at least one role field; roles link to entity/value players under exact member-endpoint restrictions.
+R282 Uniqueness bars and mandatory dots come from declared role metadata.
+R283 Keep subset/equality/exclusion, value lists, objectification and derivation text as distinct assertions; no general formal constraint proof or schema generation.
+R284 Only process nodes carry VA/NVA durations; values are finite nonnegative numbers with declared units.
+R285 Render the supplied timeline ladder strip, inventory and generic process/flow glyphs. No measured production simulation or detailed industry artwork is inferred.
+R286 Channels connect registered structural endpoints; gates are block ports. Signal references resolve to sdl.signal; signal lists and NODELAY remain declared annotations.
+R287 Exactly one start; input/output/task/save/create/set/reset nodes have an outgoing transition.
+R288 Timer references resolve to timer declarations; priority/spontaneous/continuous/active markers are legal only on their permitted owners.
+R289 Preserve SDL input/output/save/procedure silhouettes and the reused state-machine rules without executing the process.
+R290 Pins declare BOOL/INT/DINT/REAL/TIME/STRING/WORD; wire endpoint types match.
+R291 Negation is allowed only on BOOL pins. Feedback cycles are legal and do not trigger a generic DAG rule.
+R292 Each data block is one rung, in declaration order; exactly one output coil per rung.
+R293 Series links stay in the same rung; parallel OR branches follow declared topology. Jump target is a selected label.
+R294 Require ladder layout; render rails and right-aligned coil, contact/coil variants and hosted FBD pins.
 PROJECTION RULES
 These rules narrow the property schemas. A schema accepting a value does not make it valid for every profile/mark. Use the exact profile ID; there is no chart.bar@1, chart.line@1 or electrical profile. Bar/line/area/point/pie/donut use chart.basic@1 with mark. A profile does not gain another method's permissions by reusing its renderer.
 
@@ -1402,6 +1411,7 @@ data_property_104=marker_rate
 data_property_105=marker_speed
 data_property_107=frame_inset
 data_property_108="north"|"south"|"east"|"west"
+data_property_109=order_direction
 data_property_11="hash"|"range"|"list"|"composite"|"unpartitioned"
 data_property_12=representation_binding
 data_property_13=schema_shape
@@ -1731,8 +1741,9 @@ positive=num<=1000000000.0>0
 positive_integer=int>=1<=1000000
 precedence_kind="FS"|"SS"|"FF"|"SF"
 props_api=props_domain+{uid:data_property_1;description:data_property_2;aliases:data_property_3;kind:data_property_4;level:data_property_5;maturity:data_property_6;meaning:data_property_2;workload:data_property_8;role:data_property_9;location:data_property_10;distribution:data_property_11;representation:data_property_12;temporal:data_property_55;time:{valid:data_property_57;recorded:data_property_57;retention:data_property_59;event:data_property_15;arrival:data_property_15;processing:data_property_15};snapshot_at:data_property_63;recovery_window:data_property_64;provider:data_property_2;region:data_property_16;environment:data_property_16;partition_key:data_property_26;partition_rule:data_property_29;replication_factor:data_property_70;replica_role:data_property_71;consistency:data_property_72;residency:data_property_29;owner:data_property_15;classification:data_property_16;contract:data_property_15;quality:data_property_26;dialect:data_property_1;definition:data_property_79;parameters:data_property_26;refresh:data_property_81;index_method:data_property_2;depth:data_property_107}
+props_chen.attribute={uid:data_property_1;description:data_property_2;aliases:data_property_3;shape:data_property_13;key:data_property_14;domain:data_property_15;datatype:data_property_16;presence:data_property_17;nullable:data_property_18;min_items:data_property_19;max_items:data_property_20;ordered:data_property_18;unique:data_property_18;default:data_property_23;generated:data_property_24;discriminator:data_property_15;variants:data_property_26;owner:data_property_15;classification:data_property_16;contract:data_property_15;quality:data_property_26;dialect:data_property_1;definition:data_property_79;parameters:data_property_26;refresh:data_property_81;index_method:data_property_2}
 props_domain={allowed_values:data_property_27;unit:data_property_16;normalization:data_property_29;equality:data_property_29;platform:data_property_2;platform_version:data_property_2;precision:data_property_19;scale:data_property_34}
-props_field={uid:data_property_1;description:data_property_2;aliases:data_property_3;shape:data_property_13;key:data_property_14;domain:data_property_15;datatype:data_property_16;presence:data_property_17;nullable:data_property_18;min_items:data_property_19;max_items:data_property_20;ordered:data_property_18;unique:data_property_18;default:data_property_23;generated:data_property_24;discriminator:data_property_15;variants:data_property_26;owner:data_property_15;classification:data_property_16;contract:data_property_15;quality:data_property_26;dialect:data_property_1;definition:data_property_79;parameters:data_property_26;refresh:data_property_81;index_method:data_property_2}
+props_field=props_chen.attribute+{sort:data_property_109}
 props_flow.offpage={uid:data_property_1;description:data_property_2;aliases:data_property_3;direction:data_property_97;payload:data_property_15;binding:data_property_15;side:data_property_108}
 props_issue={subject:data_property_15;property:data_property_1;value:data_property_91;state:data_property_92;basis:assertion_basis;source:data_property_16;observed_at:data_property_95;confidence:data_property_96}
 props_sample=props_api+{mode:data_property_83;columns:data_property_26;rows:data_property_85;source:data_property_16;model_revision:data_property_16;expected:data_property_26}

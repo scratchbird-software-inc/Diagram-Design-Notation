@@ -146561,6 +146561,30 @@
       "settable": true,
       "defaultable": true,
       "css_name": "--ddn-legend-include"
+    },
+    {
+      "id": "P06661",
+      "owner": "retained:field",
+      "path": "properties.sort",
+      "schema": {
+        "$ref": "#/$defs/data_property_109"
+      },
+      "default": {
+        "kind": "absent"
+      },
+      "css": false,
+      "storage": "authored",
+      "meaning": "Sort direction of a key field within its ordered key, for example a clustering column; asc or desc. Absent means not asserted.",
+      "provenance": [
+        "owner:chebotko-logical"
+      ],
+      "version": "ddn-next-1",
+      "targets": [
+        "field"
+      ],
+      "legacy_absence": "absent / not asserted",
+      "settable": true,
+      "defaultable": false
     }
   ],
   "structured_properties": [
@@ -148435,6 +148459,7 @@
           "chen.binary@2",
           "chen.nary@3",
           "chebotko.conceptual@1",
+          "chebotko.logical@1",
           "flow.documented@2",
           "chart.gauge@1",
           "chart.candlestick@1",
@@ -160101,7 +160126,7 @@
     }
   },
   "counts": {
-    "properties": 6660,
+    "properties": 6661,
     "structured_properties": 743,
     "core_elements": 55,
     "relation_patterns": 94,

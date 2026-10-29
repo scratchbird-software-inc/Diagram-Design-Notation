@@ -39,6 +39,7 @@ const labels = {
     "chen.binary@2": "Binary relationships",
     "chen.nary@3": "N-ary relationships",
     "chebotko.conceptual@1": "Chebotko conceptual",
+    "chebotko.logical@1": "Chebotko logical",
     "flow.documented@2": "Documented flowchart",
     "chart.gauge@1": "Gauge",
     "chart.candlestick@1": "Candlestick chart",

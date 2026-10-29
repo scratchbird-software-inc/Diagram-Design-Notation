@@ -26,9 +26,9 @@ const valid=f=>assert.deepEqual(errors(f.check()),[]);
 const has=(f,code)=>assert.ok(codes(f.check()).includes(code),JSON.stringify(f.check()));
 
 test('complete pack contains exact adopted152descriptors and preserves native edition isolation',()=>{
- assert.equal(completeProfileIds.length,152); assert.deepEqual(completeProfileIds,Object.keys(contracts));
+ assert.equal(completeProfileIds.length,153); assert.deepEqual(completeProfileIds,Object.keys(contracts));
  assert.equal(createCompletePack().manifest.id,'ddn-complete');assert.equal(createNativePack().manifest.profiles.length,4);
- const pack=createCompletePack();assert.equal(pack.registrations.rules.length,152);
+ const pack=createCompletePack();assert.equal(pack.registrations.rules.length,153);
  for(const id of completeProfileIds){
   const p=getProfile(id),c=contracts[id],context=contracts[c.external_context_profile],relations=contracts[c.external_relation_profile];
   const contextRoles=context?[...new Set([...c.context_roles,...context.primary_palette,...context.context_roles])].filter(role=>!c.primary_palette.includes(role)):c.context_roles;

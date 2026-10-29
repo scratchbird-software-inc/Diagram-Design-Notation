@@ -14,7 +14,7 @@ const contracts=JSON.parse(readFileSync('standard/codex/profile-contracts.json',
 
 test('native catalogue has four descriptors and a complete recognition/schema vocabulary',()=>{
  assert.deepEqual(Object.keys(codex.profiles).sort(),['ddn@1','mindmap.basic@1','concept.map@1','table.records@1'].sort());
- assert.equal(Object.keys(codex.knownProfiles).length,152);
+ assert.equal(Object.keys(codex.knownProfiles).length,153);
  assert.deepEqual(native.installedCatalogueFamilies(),['native']);
  assert.equal(profileCatalogueFamily('uml.sequence@1'),'graphs');
  assert.equal(profileCatalogueFamily('chart.arc@1'),'charts');
@@ -57,7 +57,7 @@ test('complete assembly reproduces all152 profile contracts without changing nat
  const full=await load('generated');
  assert.strictEqual(full.compiledCodex,native.compiledCodex);
  assert.deepEqual(Object.keys(codex.profiles),Object.keys(contracts));
- assert.equal(Object.values(catalogueFamilies).reduce((sum,f)=>sum+f.profiles.length,0),152);
+ assert.equal(Object.values(catalogueFamilies).reduce((sum,f)=>sum+f.profiles.length,0),153);
  for(const [id,actual]of Object.entries(codex.profiles)){
   const expected=contracts[id];
   for(const key of ['id','method','projection','primary_palette','context_roles','relation_roles','defaults','standard_overrides','inherits','projection_schema','bounded_analysis','metadata_editor_fields','designer_commands','scope'])
@@ -71,7 +71,7 @@ test('complete assembly reproduces all152 profile contracts without changing nat
 test('deferred native schema keeps a stable frozen facade and rejects incompatible data before installation',async()=>{
  const {createCatalogue}=await load('catalogue-store'),{nativeIndex,nativeSchemaHash}=await load('generated-native-index'),{nativeCatalogue}=await load('generated-native-data');
  const store=createCatalogue(nativeIndex,catalogueFamilies,nativeSchemaHash),facade=store.compiledCodex;
- assert.equal(Object.keys(facade.knownProfiles).length,152);assert.ok(Object.isFrozen(facade));
+ assert.equal(Object.keys(facade.knownProfiles).length,153);assert.ok(Object.isFrozen(facade));
  assert.throws(()=>facade.nodes,/not loaded/);assert.throws(()=>facade.properties,/not loaded/);
  assert.throws(()=>store.installCore(nativeCatalogue,'wrong'),/Incompatible/);assert.throws(()=>facade.roots,/not loaded/);
  store.installCore(nativeCatalogue,nativeSchemaHash);assert.strictEqual(store.compiledCodex,facade);

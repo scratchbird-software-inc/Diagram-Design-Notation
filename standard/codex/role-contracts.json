@@ -5000,6 +5000,7 @@
       "panels.journey@1",
       "matrix.storymap@1",
       "erd.crowfoot@1",
+      "chebotko.logical@1",
       "panels.pyramid@1",
       "panels.venn@1",
       "uml.sequence@1",
@@ -143511,7 +143512,8 @@
       "matrix.bcg@1",
       "matrix.ansoff@1",
       "matrix.tows@1",
-      "erd.crowfoot@1"
+      "erd.crowfoot@1",
+      "chebotko.logical@1"
     ],
     "absence": "Unspecified semantic metadata/data properties remain absent; rendering inherits registered core/owner defaults."
   },

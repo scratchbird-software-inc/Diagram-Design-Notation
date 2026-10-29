@@ -11,8 +11,8 @@ const { completeProfileIds } = await load('profiles');
 const { projectSnapshot, availableProjectionProfiles } = await load('presentation');
 const { resolveProperties } = await load('defaults');
 test('complete profile fixtures and presentation routing exactly cover the adopted152 identities', () => {
-    assert.equal(completeProfileIds.length, 152);
-    assert.equal(new Set(allFixtureProfiles).size, 152);
+    assert.equal(completeProfileIds.length, 153);
+    assert.equal(new Set(allFixtureProfiles).size, 153);
     assert.deepEqual([...allFixtureProfiles].sort(), [...completeProfileIds].sort());
     assert.deepEqual([...availableProjectionProfiles].sort(), [...completeProfileIds].sort());
 });

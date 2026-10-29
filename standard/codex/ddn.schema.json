@@ -13110,6 +13110,9 @@
         "west"
       ]
     },
+    "data_property_109": {
+      "$ref": "#/$defs/order_direction"
+    },
     "projection_all": {
       "type": "object",
       "properties": {
@@ -14052,6 +14055,7 @@
             "chen.binary@2",
             "chen.nary@3",
             "chebotko.conceptual@1",
+            "chebotko.logical@1",
             "flow.documented@2",
             "chart.gauge@1",
             "chart.candlestick@1",
@@ -43880,6 +43884,7 @@
             "chen.binary@2",
             "chen.nary@3",
             "chebotko.conceptual@1",
+            "chebotko.logical@1",
             "flow.documented@2",
             "chart.gauge@1",
             "chart.candlestick@1",
@@ -81944,6 +81949,9 @@
         },
         "index_method": {
           "$ref": "#/$defs/data_property_82"
+        },
+        "sort": {
+          "$ref": "#/$defs/data_property_109"
         }
       },
       "required": [],
@@ -360020,6 +360028,35 @@
         },
         "height": {
           "$ref": "#/$defs/positive"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "profile_chebotko.logical@1": {
+      "type": "object",
+      "properties": {
+        "inputs": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/refs"
+            },
+            {
+              "$ref": "#/$defs/strings"
+            }
+          ]
+        },
+        "analysis_budget": {
+          "$ref": "#/$defs/positive_integer"
+        },
+        "traces": {
+          "$ref": "#/$defs/refs"
+        },
+        "iso": {
+          "$ref": "#/$defs/bool"
+        },
+        "depth": {
+          "$ref": "#/$defs/nonnegative"
         }
       },
       "required": [],
